@@ -21,7 +21,7 @@ KC2는 KC1 핸드와이어링 키보드의 배열 철학과 결합/분리 사용
 - 키스위치: 특정 모델을 문서에 고정하지 않는다.
 - 스위치 실장: PCB 직접 납땜
 - 스위치 footprint 기준: 특정 키스위치 전용 footprint를 피하고, 가능한 한 여러 키스위치를 꽂을 수 있는 다중 호환 switch hole/pad pattern을 만든다.
-- 큰 키: 보강판 없이 PCB-mounted stabilizer를 사용한다.
+- 큰 키: 무보강판에서 실제로 체결 가능한 PCB-mounted/PCB-retained stabilizer hole/cutout를 설계한다. 검증 전 generic/MX-style placeholder hole로 발주하지 않는다.
 - 프로그래밍용 택트 스위치: 디바이스마트 상품번호 1322056 `NW3-A06-B3`, SMD micro tact switch, 6.1 mm x 3.7 mm급 body, 2.55 mm급 높이
 - 전원 스위치: 없음. 일반 사용 중 hard power-off는 제공하지 않는다. 장기 보관/정비 시에는 `BAT+` service pad desolder 또는 optional solder jumper 개방으로 차단한다.
 - 보강판: 없음
@@ -46,12 +46,67 @@ KC1과의 관계는 배열 철학과 사용성의 계승이며, KC2의 하드웨
 - PCB 아래에는 3D 프린터로 제작한 하부 바닥판을 둔다.
 - PCB가 전기 회로이자 스위치 고정 구조물이다.
 - 키스위치 모델은 고정하지 않고 PCB에 직접 납땜한다.
-- 큰 키 stabilizer도 plate-mounted가 아니라 PCB-mounted stabilizer를 사용한다.
+- 큰 키 stabilizer는 plate-mounted가 아니라, 무보강판에서 실제로 고정되는 PCB-mounted/PCB-retained 방식을 사용한다.
 - PCB 외곽선은 키 배열, 결합부, controller 돌출부, USB-C 접근 방향을 따라 최대한 타이트하게 잡는다.
 - 실리콘 feet는 PCB가 아니라 3D 프린터 하부 바닥판 아래에 부착한다.
 - PCB와 하부 바닥판은 가능하면 M2 나사로 고정한다.
 - M2 고정 홀을 둘 공간이 부족하면 접착제 고정을 대안으로 허용한다.
 - 배터리, 납땜부, diode lead/pad, controller pin이 하부 바닥판 또는 책상과 직접 닿아 쇼트되지 않도록 한다.
+
+## 무보강판 스테빌라이저
+
+KC2는 상부 보강판이 없는 PCB 직접 납땜 구조이므로, 큰 키의 stabilizer는 단순한 plate-mounted low-profile stabilizer를 사용할 수 없다. 조사 결과 Kailh Choc V1/V2 계열 stabilizer는 일반적으로 PCB cutout과 1.2 mm급 switch plate cutout을 함께 요구한다. 따라서 KC2에서는 "PCB에 구멍만 있는 상태"로 실제 부품이 고정되는지 검증되지 않은 footprint를 발주용으로 인정하지 않는다.
+
+5개 서브에이전트 검토 결론:
+
+- stabilizer 적용 기준은 `2u 이상`으로 둔다.
+- `1.75u` 이하 key는 기본적으로 stabilizer를 넣지 않는다.
+- 현재 KiCad generator의 `KC2:PCB_Mount_2u_Stabilizer_NPTH`는 Cherry MX PCB-mount에서 온 형태에 가까운 provisional keepout/placement marker다. low-profile 무보강판 발주용 final footprint가 아니다.
+- 최종 stabilizer family는 switch/keycap ecosystem과 함께 결정해야 한다. MX-style PCB stabilizer hole과 Choc/low-profile keycap/stabilizer를 섞어 발주하지 않는다.
+- 실물 stabilizer, keycap underside, switch footprint, 하부 바닥판 간섭을 1:1 출력물 또는 test coupon으로 확인한 뒤 final drill/cutout를 고정한다.
+
+스테빌라이저가 필요한 위치:
+
+| Half | Key | Width | 위치 기준 | 결정 |
+| --- | --- | --- | --- | --- |
+| Left | `Shift` | 2.25u | Row 4, `Z` 왼쪽 | stabilizer 필수 |
+| Left | `Space` | 2.25u | Row 5, 오른쪽 끝 | stabilizer 필수 |
+| Right | `Backspace` | 2.25u | Row 1, `=` 오른쪽 | stabilizer 필수 |
+| Right | `Enter` | 2.5u | Row 3, `"` 오른쪽 | stabilizer 필수 |
+| Right | `Shift` | 2u | Row 4, `?` 오른쪽 | stabilizer 필수 |
+| Right | `Space` | 2u | Row 5, `B_RH` 오른쪽 | stabilizer 필수 |
+
+스테빌라이저를 넣지 않는 위치:
+
+- Left `Tab` 1.5u
+- Left `Caps Lock` 1.75u
+- Right `\` 1.75u
+- 모든 1.25u, 1u key
+
+배치 규칙:
+
+- 모든 stabilized key는 현재 KLE key width의 중심에 switch center를 두고, stabilizer pair를 key의 긴 축 방향으로 switch center 좌우에 대칭 배치한다.
+- KC2의 wide key는 모두 수평 key이므로 stabilizer bar 방향은 좌우 방향이다.
+- 2u, 2.25u, 2.5u key는 기본 후보로 2u stabilizer spacing을 검토하되, 실제 keycap underside의 보조 stem 간격과 stabilizer wire 규격을 실측해 확정한다.
+- low-profile/Choc stabilizer를 유지하려면 무보강판에서도 고정되는 part이거나, 하부 바닥판/별도 3D printed retainer가 stabilizer 이탈을 막는 구조여야 한다. 단, 별도 retainer는 보강판을 새로 추가하는 결정이므로 발주 전에 별도 검토한다.
+- 최종 footprint에는 stabilizer body courtyard, wire swing/insert keepout, PCB cutout, NPTH drill, copper keepout이 모두 포함되어야 한다.
+
+제조 및 routing keepout:
+
+- stabilizer NPTH/cutout에는 top/bottom copper, trace, via, pad, zone이 겹치면 안 된다.
+- stabilizer hole edge에서 copper/trace/via까지 최소 0.50 mm, 목표 1.00 mm clearance를 둔다.
+- stabilizer hole edge는 PCB outline에서 최소 4.0 mm, 가능하면 5.0 mm 이상 떨어뜨린다.
+- diode pad, diode body, switch solder joint, M2 hole, 하부 바닥판 screw boss/rib는 stabilizer body courtyard와 겹치면 안 된다.
+- routing과 diode 배치는 stabilizer footprint를 먼저 고정한 뒤 그 주변으로 피해서 잡는다. 공간이 부족하면 stabilizer hole을 줄이지 말고 diode 위치, diode package, trace layer, outline, M2 위치 순서로 재검토한다.
+- 하부 바닥판은 stabilizer clip, wire, keycap 하강 공간을 막지 않아야 한다.
+
+조사 근거:
+
+- Keebio Choc stabilizer installation: https://docs.keeb.io/choc-stabs
+- LowproKB Kailh Choc stabilizers: https://lowprokb.ca/products/kailh-choc-stabilizers
+- Keebio Kailh Choc V2 stabilizers: https://keeb.io/products/kailh-choc-v2-stabilizers
+- splitkb Cherry 2u PCB Mount Stabilizer: https://splitkb.com/products/cherry-2u-pcb-mount-stabilizer
+- Keebio Kailh PG1350 2u footprint reference: https://raw.githubusercontent.com/keebio/Keebio-Parts.pretty/master/Kailh-PG1350-2u.kicad_mod
 
 ## 외형 및 결합 구조
 
@@ -66,7 +121,7 @@ KC1과의 관계는 배열 철학과 사용성의 계승이며, KC2의 하드웨
 - PCB edge-to-copper clearance는 일반 edge에서 1.0 mm 이상, 결합 edge에서 최소 0.8 mm 이상을 유지하되 가능하면 1.0 mm를 목표로 한다.
 - PCB 외형은 단순 사각형이 아니라 키 배열 외곽을 따라 남는 공간을 최소화한다.
 - controller가 놓이는 영역은 숫자열 바로 위에 붙은 돌출 탭 형태로 만든다.
-- controller 돌출 탭의 X 위치는 결합 edge 쪽에 가깝게 두되, 탭의 결합면 쪽 끝은 실제 결합 edge보다 안쪽으로 들어가게 한다. 현재 draft 기준 왼쪽 half는 약 14 mm, 오른쪽 half는 약 12 mm recessed 배치로 둔다. 왼쪽 half는 오른쪽 결합 edge 쪽, 오른쪽 half는 왼쪽 결합 edge 쪽에 탭을 배치하되, 맞붙임을 방해하지 않아야 한다.
+- controller 돌출 탭의 X 위치는 결합 edge 쪽에 가깝게 두되, 탭의 결합면 쪽 끝은 실제 결합 edge보다 안쪽으로 들어가게 한다. 현재 draft 기준 왼쪽 half는 약 12 mm, 오른쪽 half는 약 17 mm recessed 배치로 둔다. 왼쪽 half는 오른쪽 결합 edge 쪽, 오른쪽 half는 왼쪽 결합 edge 쪽에 탭을 배치하되, 맞붙임을 방해하지 않아야 한다.
 - controller 돌출 탭은 요철처럼 튀어나오되, 모서리는 둥글게 처리한다.
 - controller 돌출 탭은 전기적 배치뿐 아니라 손가락/케이블/하부 바닥판 간섭을 함께 고려한다.
 - M2 나사 홀은 키 스위치, stabilizer, diode, controller socket, battery, wire strain relief와 간섭하지 않는 중간 지점에 우선 배치한다.
@@ -248,7 +303,9 @@ Row 5: Ctrl GUI Alt Fn Space     |  B  Space RAlt Fn RCtrl Left Down Right
 - switch footprint는 다중 호환 hole/pad pattern을 목표로 한다.
 - 목표는 하나의 PCB에서 가능한 한 여러 switch family를 납땜할 수 있게 하는 것이다.
 - 단일 hole pattern이 모든 제조사/모든 switch를 물리적으로 지원할 수는 없으므로, KiCad footprint 작성 전에 지원하려는 switch family별 pin pitch, metal pin, center/locator hole, keycap 간섭 치수를 라이브러리와 실물로 검증한다.
-- PCB-mounted stabilizer footprint를 큰 키 위치에 포함한다. 보강판이나 하우징에 의존하는 stabilizer는 사용하지 않는다.
+- `무보강판 스테빌라이저` 섹션의 적용 키에는 stabilizer footprint와 keepout을 포함한다.
+- 보강판에 의존하는 plate-mounted stabilizer는 KC2 기본 구조와 맞지 않으므로 final footprint로 사용하지 않는다.
+- 현 draft의 MX-style `KC2:PCB_Mount_2u_Stabilizer_NPTH`는 위치/공간 확인용 placeholder이며, low-profile 무보강판 실물 체결 검증 전에는 fabrication footprint로 사용하지 않는다.
 - SOD-27(DO-35) 축형 1N4148 diode 71개를 배치할 공간이 충분한지 다중 호환 switch footprint와 동시에 검증한다.
 - 이 다이오드는 through-hole axial 부품이므로 SMD diode보다 차지하는 면적과 lead bending 공간이 크다.
 - DO-35 유지 실패 기준은 switch/stabilizer footprint와의 courtyard overlap, M2 hole 배치 실패, hole-to-hole clearance 위반, 결합 edge 2.5-3.0 mm 여백 침범, 하부 바닥판 지지점 간섭, lead bending 공간 부족 중 하나라도 발생하는 경우로 둔다.
@@ -260,7 +317,7 @@ Row 5: Ctrl GUI Alt Fn Space     |  B  Space RAlt Fn RCtrl Left Down Right
 - nice!nano는 각 half의 숫자열 바로 위에 가로 배치한다.
 - controller는 키 배열 위쪽의 둥근 돌출 탭 안에 배치한다.
 - controller 돌출 탭은 X 좌표상 결합 edge에 가까운 끝쪽으로 붙인다. 왼쪽 half에서는 오른쪽 끝, 오른쪽 half에서는 왼쪽 끝이 기준이다.
-- 단, controller 돌출 탭은 결합 edge 최외곽까지 튀어나오면 안 된다. 결합/분리 시 탭이 먼저 닿지 않도록 왼쪽 half는 약 14 mm, 오른쪽 half는 약 12 mm 안쪽으로 recessed 처리한다.
+- 단, controller 돌출 탭은 결합 edge 최외곽까지 튀어나오면 안 된다. 결합/분리 시 탭이 먼저 닿지 않도록 왼쪽 half는 약 12 mm, 오른쪽 half는 약 17 mm 안쪽으로 recessed 처리한다.
 - 좌우 half를 붙였을 때 nice!nano의 USB-C 포트는 서로 반대쪽, 즉 바깥쪽을 바라보게 한다.
 - 왼쪽 keyboard의 USB-C 포트는 왼쪽 바깥쪽을 향하게 한다.
 - 오른쪽 keyboard의 USB-C 포트는 오른쪽 바깥쪽을 향하게 한다.
@@ -287,7 +344,8 @@ Row 5: Ctrl GUI Alt Fn Space     |  B  Space RAlt Fn RCtrl Left Down Right
 - 71개 diode의 실제 배치 가능 여부
 - DO-35 유지, SOD-123 전환, SOD-323 전환 각각의 실제 배치 가능 여부
 - SMD 전환 시 손납땜이면 SOD-123 우선, PCBA 또는 극한 compact 배치가 필요하면 SOD-323 허용
-- keycap unit, PCB-mounted stabilizer footprint
+- keycap unit, 실제 keycap underside stem 간격, 무보강판에서 체결 가능한 PCB-mounted/PCB-retained stabilizer footprint
+- stabilizer 1:1 출력물 또는 test coupon 기반 실물 끼움 테스트
 - 실물 측정 기반 71개 switch center 좌표
 - 좌우 PCB outline
 - `TW301525` 배터리 위치와 고정 방식

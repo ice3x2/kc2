@@ -46,8 +46,9 @@ MCP backup files were produced beside the PCB files during keepout edits.
   - left half right edge
   - right half left edge
 - Controller protrusion tabs are now X-aligned toward the joining edge:
-  - left half controller tab toward the right edge, recessed 14 mm from the joining edge
-  - right half controller tab toward the left edge, recessed 12 mm from the joining edge
+  - left half controller tab toward the right edge, recessed 12 mm from the joining edge
+  - right half controller tab toward the left edge, recessed 17 mm from the joining edge
+- Controller protrusion tab width is 72 mm. The added width grows away from the joining edge and keeps the joining-edge recess unchanged.
 - Top render PNGs were generated successfully with `kicad-cli pcb render`.
 
 ## Draft Footprint Decisions
@@ -70,8 +71,8 @@ MCP/KiCad DRC summary after Freerouting/SES import and right-side pin-map adjust
 
 | Board | Total | Errors | Warnings | Remaining Warning Rules |
 | --- | ---: | ---: | ---: | --- |
-| left | 39 | 0 | 39 | `track_dangling`, `lib_footprint_issues`, `text_height`, `silk_over_copper`, `silk_overlap`, `nonmirrored_text_on_back_layer` |
-| right | 57 | 0 | 57 | `track_dangling`, `lib_footprint_issues`, `text_height`, `silk_over_copper`, `silk_overlap`, `nonmirrored_text_on_back_layer` |
+| left | 38 | 0 | 38 | `lib_footprint_issues`, `text_height`, `silk_over_copper`, `silk_edge_clearance`, `silk_overlap`, `nonmirrored_text_on_back_layer` |
+| right | 47 | 0 | 47 | `track_dangling`, `lib_footprint_issues`, `text_height`, `silk_over_copper`, `silk_overlap`, `nonmirrored_text_on_back_layer` |
 
 The boards have no KiCad DRC errors and no unrouted nets in the current draft. Remaining warnings are review items rather than hard connectivity/clearance blockers.
 

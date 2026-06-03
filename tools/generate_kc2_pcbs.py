@@ -38,11 +38,11 @@ SOCKET_ROW_SPACING = 17.78
 PIN_PITCH = 2.54
 PIN_COUNT = 12
 PIN_SPAN = PIN_PITCH * (PIN_COUNT - 1)
-CONTROLLER_TAB_W = 70.0
+CONTROLLER_TAB_W = 72.0
 CONTROLLER_TAB_H = 28.0
 CONTROLLER_CENTER_Y = -19.0
-LEFT_CONTROLLER_JOIN_EDGE_RECESS = 14.0
-RIGHT_CONTROLLER_JOIN_EDGE_RECESS = 12.0
+LEFT_CONTROLLER_JOIN_EDGE_RECESS = 12.0
+RIGHT_CONTROLLER_JOIN_EDGE_RECESS = 17.0
 ANTENNA_KEEP_START_FROM_CENTER = PIN_SPAN / 2.0 + 4.0
 ANTENNA_KEEP_LENGTH = 10.0
 
@@ -1075,7 +1075,8 @@ def main() -> None:
             "Antenna keepout rule areas are generated directly in the board files.",
             "Switch footprint values are sanitized as KEY_XX so Specctra DSN export does not expose legend characters such as backslash to Freerouting.",
             "Right-half R_COL7 uses D21 and R_COL8 uses D20 to keep the longer outer column on the easier controller fanout pin.",
-            "Controller protrusion tabs are aligned toward the inner joining edge: left recessed 14 mm, right recessed 12 mm.",
+            f"Controller protrusion tabs are aligned toward the inner joining edge: left recessed {LEFT_CONTROLLER_JOIN_EDGE_RECESS:g} mm, right recessed {RIGHT_CONTROLLER_JOIN_EDGE_RECESS:g} mm.",
+            f"Controller protrusion tab width is {CONTROLLER_TAB_W:g} mm and grows away from the inner joining edge.",
             "Programming tact switch uses the smaller DeviceMart 1322056 NW3-A06-B3 SMD footprint.",
         ],
     }

@@ -1,0 +1,13 @@
+__pycache__/
+*.pyc
+
+# KiCad local/editor artifacts
+*.lck
+fp-info-cache
+*-backups/
+
+# Generated scratch outputs
+hardware/kicad/autoroute_*/
+hardware/kicad/backups/*.zip
+tmp_*/
+tools/cache/freerouting-userdata/

@@ -6,15 +6,15 @@
   },
   "antenna_keepout_mm": {
     "left": [
-      150.38250000000002,
+      151.38250000000002,
       39.85,
-      160.38250000000002,
+      161.38250000000002,
       58.15
     ],
     "right": [
-      54.03,
+      60.03,
       39.85,
-      64.03,
+      70.03,
       58.15
     ]
   },
@@ -26,7 +26,8 @@
     "Antenna keepout rule areas are generated directly in the board files.",
     "Switch footprint values are sanitized as KEY_XX so Specctra DSN export does not expose legend characters such as backslash to Freerouting.",
     "Right-half R_COL7 uses D21 and R_COL8 uses D20 to keep the longer outer column on the easier controller fanout pin.",
-    "Controller protrusion tabs are aligned toward the inner joining edge: left recessed 14 mm, right recessed 12 mm.",
+    "Controller protrusion tabs are aligned toward the inner joining edge: left recessed 12 mm, right recessed 17 mm.",
+    "Controller protrusion tab width is 72 mm and grows away from the inner joining edge.",
     "Programming tact switch uses the smaller DeviceMart 1322056 NW3-A06-B3 SMD footprint."
   ]
 }
