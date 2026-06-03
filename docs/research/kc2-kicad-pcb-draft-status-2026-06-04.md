@@ -119,6 +119,44 @@ KiCad DRC hotswap summary after SES import:
 
 The hot-swap variant is routed and DRC-clean for hard errors, with warning-only review items remaining. Because KC2 is plateless, hotswap socket retention, socket body clearance against the bottom plate, and stabilized-key behavior still need a 1:1 test coupon or physical print before ordering.
 
+## X1 Variant - 2026-06-04
+
+The `x1` variant copies the hot-swap board shape and switch socket choice, then replaces the diode footprint with a hand-solder-oriented SOD-123 footprint for DeviceMart 14592018 `1N4148W`.
+
+- Left KiCad project: `hardware/kicad/kc2_left-x1/kc2_left-x1.kicad_pro`
+- Left PCB: `hardware/kicad/kc2_left-x1/kc2_left-x1.kicad_pcb`
+- Right KiCad project: `hardware/kicad/kc2_right-x1/kc2_right-x1.kicad_pro`
+- Right PCB: `hardware/kicad/kc2_right-x1/kc2_right-x1.kicad_pcb`
+- Manifest: `hardware/kicad/kc2_x1_generation_manifest.json`
+- Diode footprint: `kc2.pretty:D_SOD123_HandSolder_14592018`
+- Diode value: `1N4148W_SOD123_DeviceMart_14592018`
+- Switch footprint: `key-switches.pretty:SW_Kailh_Choc_V1V2_HotSwap_Hybrid`
+- The diode pad is enlarged to `1.4 mm x 1.55 mm`; KiCad's default `D_SOD-123` pad is `0.9 mm x 1.2 mm`.
+- Right half top outline relief: `0.3 mm`, added to preserve edge clearance after autorouting with enlarged diode pads.
+
+Freerouting v2.1.0 x1 result:
+
+| Board | Incomplete Connections | Clearance Violations |
+| --- | ---: | ---: |
+| left-x1 | 0 | 0 |
+| right-x1 | 0 | 0 |
+
+KiCad DRC x1 summary after SES import:
+
+| Board | Total | Errors | Warnings | Unconnected | Remaining Warning Rules |
+| --- | ---: | ---: | ---: | ---: | --- |
+| left-x1 | 70 | 0 | 70 | 0 | `silk_over_copper`, `text_height`, `lib_footprint_issues`, `silk_overlap`, `track_dangling`, `nonmirrored_text_on_back_layer`, `silk_edge_clearance` |
+| right-x1 | 99 | 0 | 99 | 0 | `silk_over_copper`, `text_height`, `track_dangling`, `lib_footprint_issues`, `silk_overlap`, `nonmirrored_text_on_back_layer` |
+
+X1 render previews:
+
+- `hardware/kicad/renders/kc2_left-x1_top.png`
+- `hardware/kicad/renders/kc2_left-x1_bottom.png`
+- `hardware/kicad/renders/kc2_right-x1_top.png`
+- `hardware/kicad/renders/kc2_right-x1_bottom.png`
+
+The X1 boards have no KiCad DRC errors and no unrouted nets. Remaining warnings are review items, mostly silkscreen overlap/text height plus embedded generated KC2 placeholder footprints that are not yet standalone `.kicad_mod` library entries.
+
 ## Routing Notes
 
 - Manual lane routing was replaced by a Specctra DSN/Freerouting/SES flow.

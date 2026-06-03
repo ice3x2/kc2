@@ -20,6 +20,9 @@ HOTSWAP_SWITCH_FP = "SW_Kailh_Choc_V1V2_HotSwap_Hybrid"
 KC2_FP_LIB = ROOT / "third_party" / "kc2.pretty"
 DIODE_LIB = KICAD_SHARE / "footprints" / "Diode_SMD.pretty"
 DIODE_FP = "D_SOD-123"
+X1_DIODE_LIB = KC2_FP_LIB
+X1_DIODE_FP = "D_SOD123_HandSolder_14592018"
+X1_DIODE_VALUE = "1N4148W_SOD123_DeviceMart_14592018"
 TACT_LIB = KC2_FP_LIB
 TACT_FP = "SW_NW3_A06_B3_SMD"
 MOUNT_LIB = KICAD_SHARE / "footprints" / "MountingHole.pretty"
@@ -295,7 +298,7 @@ def controller_center_x(keys: list[Key], side: str) -> float:
     raise ValueError(f"Unknown side: {side}")
 
 
-def raw_outline(keys: list[Key], side: str, ctrl_cx: float) -> list[tuple[float, float]]:
+def raw_outline(keys: list[Key], side: str, ctrl_cx: float, top_margin_extra: float = 0.0) -> list[tuple[float, float]]:
     ext = row_extents(keys)
     rows = sorted(ext)
     left_margin = INNER_MARGIN if side == "right" else GENERAL_MARGIN
@@ -303,7 +306,7 @@ def raw_outline(keys: list[Key], side: str, ctrl_cx: float) -> list[tuple[float,
 
     lefts = {r: ext[r][0] - left_margin for r in rows}
     rights = {r: ext[r][2] + right_margin for r in rows}
-    top_y = min(ext[r][1] for r in rows) - GENERAL_MARGIN
+    top_y = min(ext[r][1] for r in rows) - GENERAL_MARGIN - top_margin_extra
     bottom_y = max(ext[r][3] for r in rows) + GENERAL_MARGIN
 
     tab_left = ctrl_cx - CONTROLLER_TAB_W / 2.0
@@ -684,6 +687,9 @@ def make_board(
     *,
     project_suffix: str = "",
     switch_fp: str = SOLDERED_SWITCH_FP,
+    diode_lib: Path = DIODE_LIB,
+    diode_fp: str = DIODE_FP,
+    diode_value: str = "1N4148W_SOD-123",
     variant: str = "soldered",
 ) -> tuple[Path, tuple[float, float, float, float]]:
     name = f"kc2_{side}{project_suffix}"
@@ -695,7 +701,8 @@ def make_board(
     project_dir.mkdir(parents=True, exist_ok=True)
 
     ctrl_cx = controller_center_x(keys, side)
-    outline = raw_outline(keys, side, ctrl_cx)
+    top_margin_extra = 0.3 if variant == "x1" and side == "right" else 0.0
+    outline = raw_outline(keys, side, ctrl_cx, top_margin_extra=top_margin_extra)
     rounded = rounded_polygon(outline, radius=2.0, steps=5)
     min_x = min(x for x, _ in rounded)
     min_y = min(y for _, y in rounded)
@@ -814,7 +821,7 @@ def make_board(
         switch_refs[key.label + str(idx)] = sw
         add_board_text(board, key.label, key.cx - 3.0, key.cy - 9.2, pcbnew.F_SilkS, 0.9)
 
-        dio = load_footprint(board, DIODE_LIB, DIODE_FP, f"D{idx}", "1N4148W_SOD-123", key.cx, key.cy - 6.8, bottom=True)
+        dio = load_footprint(board, diode_lib, diode_fp, f"D{idx}", diode_value, key.cx, key.cy - 6.8, bottom=True)
         set_pad_net(dio, "1", row_net)
         set_pad_net(dio, "2", local_net)
         diode_refs[key.label + str(idx)] = dio
@@ -881,6 +888,8 @@ def make_board(
     add_board_text(board, "Diode fallback: 1N4148W SOD-123 because DO-35 conflicts with compact hybrid footprint", 35, 30, pcbnew.Cmts_User, 0.9)
     if variant == "hotswap":
         add_board_text(board, "Hot-swap variant: Kailh Choc V1/V2 socket footprint, not MX-only socket", 35, 33, pcbnew.Cmts_User, 0.9)
+    elif variant == "x1":
+        add_board_text(board, "X1: DeviceMart 14592018 1N4148W SOD-123, enlarged hand-solder pads", 35, 33, pcbnew.Cmts_User, 0.9)
 
     make_project_file(project_dir, name)
     make_fp_lib_table(project_dir)
@@ -1065,11 +1074,24 @@ def generate_variant(variant: str) -> dict[str, object]:
     if variant == "soldered":
         project_suffix = ""
         switch_fp = SOLDERED_SWITCH_FP
+        diode_lib = DIODE_LIB
+        diode_fp = DIODE_FP
+        diode_value = "1N4148W_SOD-123"
         manifest_name = "kc2_generation_manifest.json"
     elif variant == "hotswap":
         project_suffix = "-hotswap"
         switch_fp = HOTSWAP_SWITCH_FP
+        diode_lib = DIODE_LIB
+        diode_fp = DIODE_FP
+        diode_value = "1N4148W_SOD-123"
         manifest_name = "kc2_hotswap_generation_manifest.json"
+    elif variant == "x1":
+        project_suffix = "-x1"
+        switch_fp = HOTSWAP_SWITCH_FP
+        diode_lib = X1_DIODE_LIB
+        diode_fp = X1_DIODE_FP
+        diode_value = X1_DIODE_VALUE
+        manifest_name = "kc2_x1_generation_manifest.json"
     else:
         raise ValueError(f"Unknown variant: {variant}")
 
@@ -1079,6 +1101,9 @@ def generate_variant(variant: str) -> dict[str, object]:
         KICAD_ROOT,
         project_suffix=project_suffix,
         switch_fp=switch_fp,
+        diode_lib=diode_lib,
+        diode_fp=diode_fp,
+        diode_value=diode_value,
         variant=variant,
     )
     right_path, right_keepout = make_board(
@@ -1087,6 +1112,9 @@ def generate_variant(variant: str) -> dict[str, object]:
         KICAD_ROOT,
         project_suffix=project_suffix,
         switch_fp=switch_fp,
+        diode_lib=diode_lib,
+        diode_fp=diode_fp,
+        diode_value=diode_value,
         variant=variant,
     )
     notes = [
@@ -1100,6 +1128,9 @@ def generate_variant(variant: str) -> dict[str, object]:
     ]
     if variant == "hotswap":
         notes.append("Hot-swap variant uses the Kailh Choc V1/V2 low-profile socket footprint. MX-only Kailh sockets are not compatible with this variant.")
+    elif variant == "x1":
+        notes.append("X1 copies the hot-swap switch layout and replaces the diode with a local hand-solder SOD-123 footprint for DeviceMart 14592018 1N4148W.")
+        notes.append("X1 right half adds 0.3 mm top outline relief to preserve board-edge clearance after autorouting with enlarged diode pads.")
     manifest: dict[str, object] = {
         "generated": "2026-06-04",
         "variant": variant,
@@ -1112,7 +1143,8 @@ def generate_variant(variant: str) -> dict[str, object]:
             "right": right_keepout,
         },
         "switch_footprint": f"{SWITCH_LIB.name}:{switch_fp}",
-        "diode_footprint": f"Diode_SMD:{DIODE_FP}",
+        "diode_footprint": f"{diode_lib.name}:{diode_fp}",
+        "diode_value": diode_value,
         "tact_footprint": f"{KC2_FP_LIB.name}:{TACT_FP}",
         "notes": notes,
     }
@@ -1124,7 +1156,7 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="Generate KC2 KiCad PCB drafts.")
     parser.add_argument(
         "--variant",
-        choices=("soldered", "hotswap", "all"),
+        choices=("soldered", "hotswap", "x1", "all"),
         default="soldered",
         help="PCB variant to generate. Default keeps the original soldered KC2 output.",
     )
@@ -1137,7 +1169,7 @@ def main() -> None:
     KICAD_ROOT.mkdir(parents=True, exist_ok=True)
     copy_license()
 
-    variants = ("soldered", "hotswap") if args.variant == "all" else (args.variant,)
+    variants = ("soldered", "hotswap", "x1") if args.variant == "all" else (args.variant,)
     manifests = [generate_variant(variant) for variant in variants]
     print(json.dumps(manifests[0] if len(manifests) == 1 else manifests, indent=2))
 

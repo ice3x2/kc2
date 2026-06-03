@@ -316,6 +316,10 @@ Row 5: Ctrl GUI Alt Fn Space     |  B  Space RAlt Fn RCtrl Left Down Right
 - hotswap 변형은 Kailh Choc V1/V2 low-profile socket, `CPG135001S30` 계열을 전제로 한다. MX 전용 Kailh hot-swap socket, 예: `CPG151101S11` 계열은 이 변형에 사용하지 않는다.
 - hotswap socket은 bottom-side SMD pad를 갖는 부품이므로 PCB 하부면 soldering 방향, socket orientation, switch pin hole clearance를 1:1 출력물과 실물 소켓으로 확인한다.
 - 무보강판 구조에서는 hotswap socket만으로 switch/keycap 흔들림과 이탈을 충분히 억제하지 못할 수 있다. 하부 바닥판, keycap, stabilizer, socket body 간섭을 test coupon으로 검증한 뒤 발주한다.
+- `x1` 변형은 `hotswap` 변형을 복사한 hand-solder diode 개선판이다.
+- `x1` 변형의 diode는 디바이스마트 상품번호 14592018 `1N4148W`, SOD-123을 사용한다.
+- `x1` 변형의 diode footprint는 `kc2.pretty:D_SOD123_HandSolder_14592018`이며, KiCad 기본 `D_SOD-123`의 `0.9 mm x 1.2 mm` pad보다 큰 `1.4 mm x 1.55 mm` pad를 사용한다.
+- `x1` 오른쪽 half는 enlarged diode pad를 쓴 autoroute의 board-edge clearance를 확보하기 위해 상단 outline에 0.3 mm relief를 둔다.
 - 상부 하우징이 없으므로 PCB outline은 손에 노출되는 최종 상부 외형이다.
 - PCB 모서리는 라운드 처리한다.
 - nice!nano는 각 half의 숫자열 바로 위에 가로 배치한다.

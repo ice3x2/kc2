@@ -1,0 +1,37 @@
+{
+  "generated": "2026-06-04",
+  "variant": "x1",
+  "boards": {
+    "left": "hardware\\kicad\\kc2_left-x1\\kc2_left-x1.kicad_pcb",
+    "right": "hardware\\kicad\\kc2_right-x1\\kc2_right-x1.kicad_pcb"
+  },
+  "antenna_keepout_mm": {
+    "left": [
+      151.38250000000002,
+      39.85,
+      161.38250000000002,
+      58.15
+    ],
+    "right": [
+      60.03,
+      39.85,
+      70.03,
+      58.15
+    ]
+  },
+  "switch_footprint": "key-switches.pretty:SW_Kailh_Choc_V1V2_HotSwap_Hybrid",
+  "diode_footprint": "kc2.pretty:D_SOD123_HandSolder_14592018",
+  "diode_value": "1N4148W_SOD123_DeviceMart_14592018",
+  "tact_footprint": "kc2.pretty:SW_NW3_A06_B3_SMD",
+  "notes": [
+    "SOD-123 1N4148W fallback is used because DO-35 conflicts with the compact hybrid switch footprint at 19.05 mm pitch.",
+    "Antenna keepout rule areas are generated directly in the board files.",
+    "Switch footprint values are sanitized as KEY_XX so Specctra DSN export does not expose legend characters such as backslash to Freerouting.",
+    "Right-half R_COL7 uses D21 and R_COL8 uses D20 to keep the longer outer column on the easier controller fanout pin.",
+    "Controller protrusion tabs are aligned toward the inner joining edge: left recessed 12 mm, right recessed 17 mm.",
+    "Controller protrusion tab width is 72 mm and grows away from the inner joining edge.",
+    "Programming tact switch uses the smaller DeviceMart 1322056 NW3-A06-B3 SMD footprint.",
+    "X1 copies the hot-swap switch layout and replaces the diode with a local hand-solder SOD-123 footprint for DeviceMart 14592018 1N4148W.",
+    "X1 right half adds 0.3 mm top outline relief to preserve board-edge clearance after autorouting with enlarged diode pads."
+  ]
+}

@@ -1,0 +1,243 @@
+(footprint "D_SOD123_HandSolder_14592018"
+	(version 20241229)
+	(generator "pcbnew")
+	(generator_version "9.0")
+	(layer "F.Cu")
+	(descr "SOD-123 diode hand-solder footprint for DeviceMart 14592018 1N4148W")
+	(tags "SOD-123 diode 1N4148W hand-solder DeviceMart 14592018")
+	(property "Reference" "REF**"
+		(at 0 -2.4 0)
+		(layer "F.SilkS")
+		(uuid "298349bf-d7b8-4a4e-9a3b-850088859629")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "Value" "D_SOD123_HandSolder_14592018"
+		(at 0 2.35 0)
+		(layer "F.Fab")
+		(uuid "3468879a-4a22-47bf-9b95-fd14720ea1bd")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "Datasheet" "https://www.devicemart.co.kr/goods/view?no=14592018"
+		(at 0 0 0)
+		(unlocked yes)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "3dfbb4aa-379d-4220-b2e7-563dc7f8fe0a")
+		(effects
+			(font
+				(size 1.27 1.27)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "Description" "1N4148W SOD-123, hand-solder pads enlarged from KiCad D_SOD-123 default"
+		(at 0 0 0)
+		(unlocked yes)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "51ce0f9b-3203-44e1-9a57-21335a484aa9")
+		(effects
+			(font
+				(size 1.27 1.27)
+				(thickness 0.15)
+			)
+		)
+	)
+	(attr smd)
+	(fp_line
+		(start -2.55 -1.15)
+		(end -2.55 1.15)
+		(stroke
+			(width 0.12)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(uuid "96323b86-2d1d-4472-b9f4-32661be4ddf4")
+	)
+	(fp_line
+		(start -2.55 -1.15)
+		(end 1.8 -1.15)
+		(stroke
+			(width 0.12)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(uuid "d57f14f3-48e4-4eea-9d13-629ac16c21fc")
+	)
+	(fp_line
+		(start -2.55 1.15)
+		(end 1.8 1.15)
+		(stroke
+			(width 0.12)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(uuid "3dfecf8e-ee62-4419-9732-85ece5f1d6e1")
+	)
+	(fp_line
+		(start -2.8 -1.45)
+		(end 2.8 -1.45)
+		(stroke
+			(width 0.05)
+			(type solid)
+		)
+		(layer "F.CrtYd")
+		(uuid "5f0f34ac-1d1c-4bb1-b3f3-c7d024c5f42d")
+	)
+	(fp_line
+		(start 2.8 -1.45)
+		(end 2.8 1.45)
+		(stroke
+			(width 0.05)
+			(type solid)
+		)
+		(layer "F.CrtYd")
+		(uuid "af2aee11-b7f8-4a63-b83e-7b70d6d8a916")
+	)
+	(fp_line
+		(start 2.8 1.45)
+		(end -2.8 1.45)
+		(stroke
+			(width 0.05)
+			(type solid)
+		)
+		(layer "F.CrtYd")
+		(uuid "3d05c5ed-4093-47e3-b9ed-1589a7c97745")
+	)
+	(fp_line
+		(start -2.8 1.45)
+		(end -2.8 -1.45)
+		(stroke
+			(width 0.05)
+			(type solid)
+		)
+		(layer "F.CrtYd")
+		(uuid "ee5f12d1-e0a4-4446-aa86-cb49e6d84ef1")
+	)
+	(fp_line
+		(start -1.4 -0.9)
+		(end 1.4 -0.9)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(layer "F.Fab")
+		(uuid "dff88a19-c6a9-4183-bc87-904fb3aa7e32")
+	)
+	(fp_line
+		(start 1.4 -0.9)
+		(end 1.4 0.9)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(layer "F.Fab")
+		(uuid "a87761c8-8da4-410e-a48b-aa3c6bd80e91")
+	)
+	(fp_line
+		(start 1.4 0.9)
+		(end -1.4 0.9)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(layer "F.Fab")
+		(uuid "d5c11d4d-9e1d-46c6-a503-9c6c39eff8a5")
+	)
+	(fp_line
+		(start -1.4 0.9)
+		(end -1.4 -0.9)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(layer "F.Fab")
+		(uuid "e4b40510-7626-4c78-9a74-907686939d7b")
+	)
+	(fp_line
+		(start -0.75 0)
+		(end -0.35 0)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(layer "F.Fab")
+		(uuid "164d65f2-cddd-452a-8b34-b816fd980da9")
+	)
+	(fp_line
+		(start -0.35 -0.55)
+		(end -0.35 0.55)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(layer "F.Fab")
+		(uuid "ccde6918-6afb-4c36-b2e1-df450252524f")
+	)
+	(fp_line
+		(start -0.35 0)
+		(end 0.25 -0.4)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(layer "F.Fab")
+		(uuid "39de0b07-42aa-498f-a3ff-580191154982")
+	)
+	(fp_line
+		(start 0.25 -0.4)
+		(end 0.25 0.4)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(layer "F.Fab")
+		(uuid "a5f6e541-4737-43a3-951b-7430193d42a6")
+	)
+	(fp_line
+		(start 0.25 0)
+		(end 0.75 0)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(layer "F.Fab")
+		(uuid "07191833-7f76-44c6-9174-39c084256bf7")
+	)
+	(fp_text user "${REFERENCE}"
+		(at 0 0 0)
+		(layer "F.Fab")
+		(uuid "34c9bb2e-5382-460a-918a-f1e2739ff63b")
+		(effects
+			(font
+				(size 0.65 0.65)
+				(thickness 0.1)
+			)
+		)
+	)
+	(pad "1" smd roundrect
+		(at -1.8 0)
+		(size 1.4 1.55)
+		(layers "F.Cu" "F.Mask" "F.Paste")
+		(roundrect_rratio 0.18)
+		(uuid "a0923863-4ed7-4f48-9535-ea80284485fa")
+	)
+	(pad "2" smd roundrect
+		(at 1.8 0)
+		(size 1.4 1.55)
+		(layers "F.Cu" "F.Mask" "F.Paste")
+		(roundrect_rratio 0.18)
+		(uuid "afde5f97-9390-4536-b2c4-df31c0a7388c")
+	)
+	(embedded_fonts no)
+)
