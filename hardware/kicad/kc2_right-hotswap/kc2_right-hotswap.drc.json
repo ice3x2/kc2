@@ -1,0 +1,792 @@
+{
+    "$schema": "https://schemas.kicad.org/drc.v1.json",
+    "coordinate_units": "mm",
+    "date": "2026-06-04T03:41:21+0900",
+    "kicad_version": "9.0.7",
+    "schematic_parity": [],
+    "source": "kc2_right-hotswap.kicad_pcb",
+    "unconnected_items": [],
+    "violations": [
+        {
+            "description": "배선에 연결되지 않은 끝이 존재",
+            "items": [
+                {
+                    "description": "배선 [R_COL2] on F.Cu, 길이 0.5349 mm",
+                    "pos": {
+                        "x": 86.6933,
+                        "y": 78.9789
+                    },
+                    "uuid": "626f93ad-deb2-492d-9dbc-8d655ddad6be"
+                }
+            ],
+            "severity": "warning",
+            "type": "track_dangling"
+        },
+        {
+            "description": "배선에 연결되지 않은 끝이 존재",
+            "items": [
+                {
+                    "description": "배선 [R_COL2] on B.Cu, 길이 0.5349 mm",
+                    "pos": {
+                        "x": 86.6933,
+                        "y": 78.9789
+                    },
+                    "uuid": "930e432c-5fe3-4348-a8cf-011e46ce4d93"
+                }
+            ],
+            "severity": "warning",
+            "type": "track_dangling"
+        },
+        {
+            "description": "배선에 연결되지 않은 끝이 존재",
+            "items": [
+                {
+                    "description": "배선 [R_COL5] on F.Cu, 길이 2.9730 mm",
+                    "pos": {
+                        "x": 173.856,
+                        "y": 140.575
+                    },
+                    "uuid": "6f7d7cb7-adca-4b7d-a2a2-a87ea258da26"
+                }
+            ],
+            "severity": "warning",
+            "type": "track_dangling"
+        },
+        {
+            "description": "배선에 연결되지 않은 끝이 존재",
+            "items": [
+                {
+                    "description": "배선 [R_COL5] on F.Cu, 길이 2.9883 mm",
+                    "pos": {
+                        "x": 173.856,
+                        "y": 149.494
+                    },
+                    "uuid": "e71c60f3-baa6-4328-8da2-efb642cefb41"
+                }
+            ],
+            "severity": "warning",
+            "type": "track_dangling"
+        },
+        {
+            "description": "배선에 연결되지 않은 끝이 존재",
+            "items": [
+                {
+                    "description": "배선 [R_COL5] on B.Cu, 길이 2.9730 mm",
+                    "pos": {
+                        "x": 173.856,
+                        "y": 140.575
+                    },
+                    "uuid": "8777a22d-bd72-437d-a0e4-212a4b6e32ee"
+                }
+            ],
+            "severity": "warning",
+            "type": "track_dangling"
+        },
+        {
+            "description": "배선에 연결되지 않은 끝이 존재",
+            "items": [
+                {
+                    "description": "배선 [R_COL5] on B.Cu, 길이 2.9883 mm",
+                    "pos": {
+                        "x": 173.856,
+                        "y": 149.494
+                    },
+                    "uuid": "c7e28d75-33cc-445b-aaaf-e5aef4855ea8"
+                }
+            ],
+            "severity": "warning",
+            "type": "track_dangling"
+        },
+        {
+            "description": "배선에 연결되지 않은 끝이 존재",
+            "items": [
+                {
+                    "description": "배선 [RK15_D] on F.Cu, 길이 0.4552 mm",
+                    "pos": {
+                        "x": 158.017,
+                        "y": 89.5424
+                    },
+                    "uuid": "15524b0e-d5e9-454e-a116-8eebcd104cfe"
+                }
+            ],
+            "severity": "warning",
+            "type": "track_dangling"
+        },
+        {
+            "description": "배선에 연결되지 않은 끝이 존재",
+            "items": [
+                {
+                    "description": "배선 [RK15_D] on B.Cu, 길이 0.4552 mm",
+                    "pos": {
+                        "x": 158.017,
+                        "y": 89.5424
+                    },
+                    "uuid": "8ab0aae7-a6fc-4974-aebf-d01e205f5ff6"
+                }
+            ],
+            "severity": "warning",
+            "type": "track_dangling"
+        },
+        {
+            "description": "풋프린트 'PCB_Mount_2u_Stabilizer_NPTH'이(가) 라이브러리 'KC2'에서 찾을 수 없습니다.",
+            "items": [
+                {
+                    "description": "풋프린트 STAB31",
+                    "pos": {
+                        "x": 166.3875,
+                        "y": 134.675
+                    },
+                    "uuid": "46dba9f3-de4b-4142-b11c-01df720f2842"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "풋프린트 'DirectSolderPowerPads'이(가) 라이브러리 'KC2'에서 찾을 수 없습니다.",
+            "items": [
+                {
+                    "description": "풋프린트 J_PWR1",
+                    "pos": {
+                        "x": 116.0,
+                        "y": 50.0
+                    },
+                    "uuid": "5f5ba417-95fc-4be2-900a-7e2d43bb0022"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "풋프린트 'NiceNanoV2_Socket_24Pin'이(가) 라이브러리 'KC2'에서 찾을 수 없습니다.",
+            "items": [
+                {
+                    "description": "풋프린트 U1",
+                    "pos": {
+                        "x": 88.0,
+                        "y": 49.0
+                    },
+                    "uuid": "9510e194-960e-4db7-baff-76bfd01c0c26"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "풋프린트 'PCB_Mount_2u_Stabilizer_NPTH'이(가) 라이브러리 'KC2'에서 찾을 수 없습니다.",
+            "items": [
+                {
+                    "description": "풋프린트 STAB35",
+                    "pos": {
+                        "x": 90.1875,
+                        "y": 153.725
+                    },
+                    "uuid": "ad34bc56-f699-4198-9506-1f5d68f34e18"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "풋프린트 'PCB_Mount_2u_Stabilizer_NPTH'이(가) 라이브러리 'KC2'에서 찾을 수 없습니다.",
+            "items": [
+                {
+                    "description": "풋프린트 STAB24",
+                    "pos": {
+                        "x": 180.675,
+                        "y": 115.625
+                    },
+                    "uuid": "d640bbf0-cc88-41d6-96fe-63d555cbb1d1"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "풋프린트 'PCB_Mount_2u_Stabilizer_NPTH'이(가) 라이브러리 'KC2'에서 찾을 수 없습니다.",
+            "items": [
+                {
+                    "description": "풋프린트 STAB7",
+                    "pos": {
+                        "x": 183.0563,
+                        "y": 77.525
+                    },
+                    "uuid": "fd11acf5-831b-41bf-8152-55e5147ea3b2"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "텍스트 높이가 범위를 벗어남 (board setup constraints silk text height 최소 높이 0.8000 mm; 실제 0.6500 mm)",
+            "items": [
+                {
+                    "description": "풋프린트 텍스트 U1 (D0)",
+                    "pos": {
+                        "x": 99.43,
+                        "y": 55.79
+                    },
+                    "uuid": "0c3477b8-86f8-4542-b938-c948f12025dc"
+                }
+            ],
+            "severity": "warning",
+            "type": "text_height"
+        },
+        {
+            "description": "텍스트 높이가 범위를 벗어남 (board setup constraints silk text height 최소 높이 0.8000 mm; 실제 0.6500 mm)",
+            "items": [
+                {
+                    "description": "풋프린트 텍스트 U1 (D1)",
+                    "pos": {
+                        "x": 101.97,
+                        "y": 55.79
+                    },
+                    "uuid": "14e87175-e38a-4db3-9851-5c228ad16f92"
+                }
+            ],
+            "severity": "warning",
+            "type": "text_height"
+        },
+        {
+            "description": "텍스트 높이가 범위를 벗어남 (board setup constraints silk text height 최소 높이 0.8000 mm; 실제 0.6500 mm)",
+            "items": [
+                {
+                    "description": "풋프린트 텍스트 U1 (D20)",
+                    "pos": {
+                        "x": 89.27,
+                        "y": 42.21
+                    },
+                    "uuid": "160b3f8f-470f-4225-a5f4-20e638475aaf"
+                }
+            ],
+            "severity": "warning",
+            "type": "text_height"
+        },
+        {
+            "description": "텍스트 높이가 범위를 벗어남 (board setup constraints silk text height 최소 높이 0.8000 mm; 실제 0.6500 mm)",
+            "items": [
+                {
+                    "description": "풋프린트 텍스트 U1 (D5)",
+                    "pos": {
+                        "x": 84.19,
+                        "y": 55.79
+                    },
+                    "uuid": "16c883f4-34a8-4858-a627-bbc8f9a1159b"
+                }
+            ],
+            "severity": "warning",
+            "type": "text_height"
+        },
+        {
+            "description": "텍스트 높이가 범위를 벗어남 (board setup constraints silk text height 최소 높이 0.8000 mm; 실제 0.6500 mm)",
+            "items": [
+                {
+                    "description": "풋프린트 텍스트 U1 (D21)",
+                    "pos": {
+                        "x": 91.81,
+                        "y": 42.21
+                    },
+                    "uuid": "23e30c7b-d7df-4af8-af9b-30ed1947a210"
+                }
+            ],
+            "severity": "warning",
+            "type": "text_height"
+        },
+        {
+            "description": "텍스트 높이가 범위를 벗어남 (board setup constraints silk text height 최소 높이 0.8000 mm; 실제 0.6500 mm)",
+            "items": [
+                {
+                    "description": "풋프린트 텍스트 U1 (D3)",
+                    "pos": {
+                        "x": 89.27,
+                        "y": 55.79
+                    },
+                    "uuid": "24c2ca84-9912-463e-a0e0-6838b25f1e31"
+                }
+            ],
+            "severity": "warning",
+            "type": "text_height"
+        },
+        {
+            "description": "텍스트 높이가 범위를 벗어남 (board setup constraints silk text height 최소 높이 0.8000 mm; 실제 0.6500 mm)",
+            "items": [
+                {
+                    "description": "풋프린트 텍스트 U1 (RST)",
+                    "pos": {
+                        "x": 96.89,
+                        "y": 42.21
+                    },
+                    "uuid": "3146fd6b-8992-42bf-aecb-43e4687a8e60"
+                }
+            ],
+            "severity": "warning",
+            "type": "text_height"
+        },
+        {
+            "description": "텍스트 높이가 범위를 벗어남 (board setup constraints silk text height 최소 높이 0.8000 mm; 실제 0.6500 mm)",
+            "items": [
+                {
+                    "description": "풋프린트 텍스트 U1 (GNDA)",
+                    "pos": {
+                        "x": 96.89,
+                        "y": 55.79
+                    },
+                    "uuid": "35375bb8-38b2-4564-a4e1-5d8b080eedf5"
+                }
+            ],
+            "severity": "warning",
+            "type": "text_height"
+        },
+        {
+            "description": "텍스트 높이가 범위를 벗어남 (board setup constraints silk text height 최소 높이 0.8000 mm; 실제 0.6500 mm)",
+            "items": [
+                {
+                    "description": "풋프린트 텍스트 U1 (GNDB)",
+                    "pos": {
+                        "x": 94.35,
+                        "y": 55.79
+                    },
+                    "uuid": "3feca996-32f2-436a-a321-0997d027e328"
+                }
+            ],
+            "severity": "warning",
+            "type": "text_height"
+        },
+        {
+            "description": "텍스트 높이가 범위를 벗어남 (board setup constraints silk text height 최소 높이 0.8000 mm; 실제 0.6500 mm)",
+            "items": [
+                {
+                    "description": "풋프린트 텍스트 U1 (GNDC)",
+                    "pos": {
+                        "x": 99.43,
+                        "y": 42.21
+                    },
+                    "uuid": "42aeeeb0-5a79-4693-abf2-3cb61dc66c17"
+                }
+            ],
+            "severity": "warning",
+            "type": "text_height"
+        },
+        {
+            "description": "텍스트 높이가 범위를 벗어남 (board setup constraints silk text height 최소 높이 0.8000 mm; 실제 0.6500 mm)",
+            "items": [
+                {
+                    "description": "풋프린트 텍스트 U1 (D15)",
+                    "pos": {
+                        "x": 81.65,
+                        "y": 42.21
+                    },
+                    "uuid": "69c6d6c4-c37c-4d56-8344-41a868e17327"
+                }
+            ],
+            "severity": "warning",
+            "type": "text_height"
+        },
+        {
+            "description": "텍스트 높이가 범위를 벗어남 (board setup constraints silk text height 최소 높이 0.8000 mm; 실제 0.6500 mm)",
+            "items": [
+                {
+                    "description": "풋프린트 텍스트 U1 (D6)",
+                    "pos": {
+                        "x": 81.65,
+                        "y": 55.79
+                    },
+                    "uuid": "7f6a1d65-2777-49c8-a47f-45f04bdb49b3"
+                }
+            ],
+            "severity": "warning",
+            "type": "text_height"
+        },
+        {
+            "description": "텍스트 높이가 범위를 벗어남 (board setup constraints silk text height 최소 높이 0.8000 mm; 실제 0.6500 mm)",
+            "items": [
+                {
+                    "description": "풋프린트 텍스트 U1 (VCC)",
+                    "pos": {
+                        "x": 94.35,
+                        "y": 42.21
+                    },
+                    "uuid": "83bb0b20-d34e-41f7-9837-a91ea8309634"
+                }
+            ],
+            "severity": "warning",
+            "type": "text_height"
+        },
+        {
+            "description": "텍스트 높이가 범위를 벗어남 (board setup constraints silk text height 최소 높이 0.8000 mm; 실제 0.6500 mm)",
+            "items": [
+                {
+                    "description": "풋프린트 텍스트 U1 (D9)",
+                    "pos": {
+                        "x": 74.03,
+                        "y": 55.79
+                    },
+                    "uuid": "880d5a49-720d-42c7-a926-d94333c3133f"
+                }
+            ],
+            "severity": "warning",
+            "type": "text_height"
+        },
+        {
+            "description": "텍스트 높이가 범위를 벗어남 (board setup constraints silk text height 최소 높이 0.8000 mm; 실제 0.6500 mm)",
+            "items": [
+                {
+                    "description": "풋프린트 텍스트 U1 (D7)",
+                    "pos": {
+                        "x": 79.11,
+                        "y": 55.79
+                    },
+                    "uuid": "8eb51231-29ae-4fa7-ac87-d94255bb0d52"
+                }
+            ],
+            "severity": "warning",
+            "type": "text_height"
+        },
+        {
+            "description": "텍스트 높이가 범위를 벗어남 (board setup constraints silk text height 최소 높이 0.8000 mm; 실제 0.6500 mm)",
+            "items": [
+                {
+                    "description": "풋프린트 텍스트 U1 (D18)",
+                    "pos": {
+                        "x": 84.19,
+                        "y": 42.21
+                    },
+                    "uuid": "917da72e-215a-41a5-8a2d-fac711867df9"
+                }
+            ],
+            "severity": "warning",
+            "type": "text_height"
+        },
+        {
+            "description": "텍스트 높이가 범위를 벗어남 (board setup constraints silk text height 최소 높이 0.8000 mm; 실제 0.6500 mm)",
+            "items": [
+                {
+                    "description": "풋프린트 텍스트 U1 (D19)",
+                    "pos": {
+                        "x": 86.73,
+                        "y": 42.21
+                    },
+                    "uuid": "a789e3c7-2683-4349-9ef6-c521c280a891"
+                }
+            ],
+            "severity": "warning",
+            "type": "text_height"
+        },
+        {
+            "description": "텍스트 높이가 범위를 벗어남 (board setup constraints silk text height 최소 높이 0.8000 mm; 실제 0.6500 mm)",
+            "items": [
+                {
+                    "description": "풋프린트 텍스트 U1 (D16)",
+                    "pos": {
+                        "x": 76.57,
+                        "y": 42.21
+                    },
+                    "uuid": "b74bea0a-303a-4d56-9f3a-3cdd3b27618c"
+                }
+            ],
+            "severity": "warning",
+            "type": "text_height"
+        },
+        {
+            "description": "텍스트 높이가 범위를 벗어남 (board setup constraints silk text height 최소 높이 0.8000 mm; 실제 0.6500 mm)",
+            "items": [
+                {
+                    "description": "풋프린트 텍스트 U1 (RAW)",
+                    "pos": {
+                        "x": 101.97,
+                        "y": 42.21
+                    },
+                    "uuid": "bb695d6a-ee9a-44b4-a415-5d39cef6df41"
+                }
+            ],
+            "severity": "warning",
+            "type": "text_height"
+        },
+        {
+            "description": "텍스트 높이가 범위를 벗어남 (board setup constraints silk text height 최소 높이 0.8000 mm; 실제 0.6500 mm)",
+            "items": [
+                {
+                    "description": "풋프린트 텍스트 U1 (D2)",
+                    "pos": {
+                        "x": 91.81,
+                        "y": 55.79
+                    },
+                    "uuid": "d897299c-e233-4059-bd72-9091daf66b34"
+                }
+            ],
+            "severity": "warning",
+            "type": "text_height"
+        },
+        {
+            "description": "텍스트 높이가 범위를 벗어남 (board setup constraints silk text height 최소 높이 0.8000 mm; 실제 0.6500 mm)",
+            "items": [
+                {
+                    "description": "풋프린트 텍스트 U1 (D14)",
+                    "pos": {
+                        "x": 79.11,
+                        "y": 42.21
+                    },
+                    "uuid": "da750481-cb12-45c8-9fcc-98f7f150b8d6"
+                }
+            ],
+            "severity": "warning",
+            "type": "text_height"
+        },
+        {
+            "description": "텍스트 높이가 범위를 벗어남 (board setup constraints silk text height 최소 높이 0.8000 mm; 실제 0.6500 mm)",
+            "items": [
+                {
+                    "description": "풋프린트 텍스트 U1 (D4)",
+                    "pos": {
+                        "x": 86.73,
+                        "y": 55.79
+                    },
+                    "uuid": "ead22977-6e84-4de2-8ebe-9cf7a9f956c7"
+                }
+            ],
+            "severity": "warning",
+            "type": "text_height"
+        },
+        {
+            "description": "텍스트 높이가 범위를 벗어남 (board setup constraints silk text height 최소 높이 0.8000 mm; 실제 0.6500 mm)",
+            "items": [
+                {
+                    "description": "풋프린트 텍스트 U1 (D10)",
+                    "pos": {
+                        "x": 74.03,
+                        "y": 42.21
+                    },
+                    "uuid": "ec4947f0-a7b7-4c11-99c9-733f81c07ed8"
+                }
+            ],
+            "severity": "warning",
+            "type": "text_height"
+        },
+        {
+            "description": "텍스트 높이가 범위를 벗어남 (board setup constraints silk text height 최소 높이 0.8000 mm; 실제 0.6500 mm)",
+            "items": [
+                {
+                    "description": "풋프린트 텍스트 U1 (D8)",
+                    "pos": {
+                        "x": 76.57,
+                        "y": 55.79
+                    },
+                    "uuid": "ee3e21d1-8976-4a86-9421-cef62e28de5a"
+                }
+            ],
+            "severity": "warning",
+            "type": "text_height"
+        },
+        {
+            "description": "실크스크린 영역이 솔더 마스크 영역에 의해 잘림",
+            "items": [
+                {
+                    "description": "PCB 텍스트 'RCtrl' (F.Silkscreen)",
+                    "pos": {
+                        "x": 153.8625,
+                        "y": 144.525
+                    },
+                    "uuid": "21497f34-5a05-4ead-8486-50928c3aee68"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "실크스크린 영역이 솔더 마스크 영역에 의해 잘림",
+            "items": [
+                {
+                    "description": "PCB 텍스트 'Up' (F.Silkscreen)",
+                    "pos": {
+                        "x": 191.9625,
+                        "y": 125.475
+                    },
+                    "uuid": "8b00a11c-6191-4a4e-a422-ad7a1d0a671c"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "실크스크린 영역이 솔더 마스크 영역에 의해 잘림",
+            "items": [
+                {
+                    "description": "STAB31 의 참조 필드",
+                    "pos": {
+                        "x": 166.3875,
+                        "y": 134.675
+                    },
+                    "uuid": "e416d58d-2938-42e3-b98f-e8025f3c84e9"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "실크스크린 영역이 솔더 마스크 영역에 의해 잘림",
+            "items": [
+                {
+                    "description": "STAB35 의 참조 필드",
+                    "pos": {
+                        "x": 90.1875,
+                        "y": 153.725
+                    },
+                    "uuid": "4de685e9-50f1-4f02-8e67-6f3b185c9717"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "실크스크린 영역이 솔더 마스크 영역에 의해 잘림",
+            "items": [
+                {
+                    "description": "STAB24 의 참조 필드",
+                    "pos": {
+                        "x": 180.675,
+                        "y": 115.625
+                    },
+                    "uuid": "097fe164-9dac-442b-ba72-1f2bf557b735"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "실크스크린 영역이 솔더 마스크 영역에 의해 잘림",
+            "items": [
+                {
+                    "description": "STAB7 의 참조 필드",
+                    "pos": {
+                        "x": 183.0563,
+                        "y": 77.525
+                    },
+                    "uuid": "fbef45a8-965d-4b8f-99d9-8e51b48afac3"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "실크스크린 영역이 솔더 마스크 영역에 의해 잘림",
+            "items": [
+                {
+                    "description": "D32 의 참조 필드",
+                    "pos": {
+                        "x": 194.9625,
+                        "y": 125.875
+                    },
+                    "uuid": "c1723e69-5383-49f6-b21e-af650a8f8c45"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "실크스크린 영역이 솔더 마스크 영역에 의해 잘림",
+            "items": [
+                {
+                    "description": "D38 의 참조 필드",
+                    "pos": {
+                        "x": 156.8625,
+                        "y": 144.925
+                    },
+                    "uuid": "13bb23ff-6809-4c71-92db-f75099933e43"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "실크스크린 영역이 솔더 마스크 영역에 의해 잘림",
+            "items": [
+                {
+                    "description": "D31 의 참조 필드",
+                    "pos": {
+                        "x": 166.3875,
+                        "y": 125.875
+                    },
+                    "uuid": "95848638-98be-444c-97b2-1cdb0e50c908"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "실크스크린 영역이 솔더 마스크 영역에 의해 잘림",
+            "items": [
+                {
+                    "description": "D39 의 참조 필드",
+                    "pos": {
+                        "x": 175.9125,
+                        "y": 144.925
+                    },
+                    "uuid": "44ebcc68-23c8-4b03-b7c1-eb551d320235"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "실크스크린 겹침",
+            "items": [
+                {
+                    "description": "풋프린트 텍스트 J_PWR1 (NN_B-)",
+                    "pos": {
+                        "x": 119.0,
+                        "y": 50.1
+                    },
+                    "uuid": "8f2a5250-e8b9-4688-af8f-8e18a3add69c"
+                },
+                {
+                    "description": "J_PWR1 의 참조 필드",
+                    "pos": {
+                        "x": 116.0,
+                        "y": 50.0
+                    },
+                    "uuid": "d1aa715c-4836-4bdd-a151-500618d6e6a8"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_overlap"
+        },
+        {
+            "description": "실크스크린 겹침",
+            "items": [
+                {
+                    "description": "풋프린트 텍스트 J_PWR1 (BAT-)",
+                    "pos": {
+                        "x": 113.0,
+                        "y": 50.1
+                    },
+                    "uuid": "5d2fdd91-12e8-46d6-96dc-af95495db83e"
+                },
+                {
+                    "description": "J_PWR1 의 참조 필드",
+                    "pos": {
+                        "x": 116.0,
+                        "y": 50.0
+                    },
+                    "uuid": "d1aa715c-4836-4bdd-a151-500618d6e6a8"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_overlap"
+        },
+        {
+            "description": "후면 레이어에 미러링되지 않은 텍스트",
+            "items": [
+                {
+                    "description": "PCB 텍스트 'TW301525 80mAh' (B.Fab)",
+                    "pos": {
+                        "x": 88.0,
+                        "y": 51.0
+                    },
+                    "uuid": "f2a8111f-b923-4913-8fdd-5ff1bdf34ef9"
+                }
+            ],
+            "severity": "warning",
+            "type": "nonmirrored_text_on_back_layer"
+        }
+    ]
+}

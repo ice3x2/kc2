@@ -76,6 +76,49 @@ MCP/KiCad DRC summary after Freerouting/SES import and right-side pin-map adjust
 
 The boards have no KiCad DRC errors and no unrouted nets in the current draft. Remaining warnings are review items rather than hard connectivity/clearance blockers.
 
+## Hot-swap Variant - 2026-06-04
+
+Separate hot-swap KiCad projects were generated so the soldered KC2 draft remains unchanged.
+
+- Left KiCad project: `hardware/kicad/kc2_left-hotswap/kc2_left-hotswap.kicad_pro`
+- Left PCB: `hardware/kicad/kc2_left-hotswap/kc2_left-hotswap.kicad_pcb`
+- Right KiCad project: `hardware/kicad/kc2_right-hotswap/kc2_right-hotswap.kicad_pro`
+- Right PCB: `hardware/kicad/kc2_right-hotswap/kc2_right-hotswap.kicad_pcb`
+- Manifest: `hardware/kicad/kc2_hotswap_generation_manifest.json`
+- Autoroute files:
+  - `hardware/kicad/autoroute/kc2_left-hotswap.dsn`
+  - `hardware/kicad/autoroute/kc2_left-hotswap.ses`
+  - `hardware/kicad/autoroute/kc2_right-hotswap.dsn`
+  - `hardware/kicad/autoroute/kc2_right-hotswap.ses`
+- Render previews:
+  - `hardware/kicad/renders/kc2_left-hotswap_top.png`
+  - `hardware/kicad/renders/kc2_left-hotswap_bottom.png`
+  - `hardware/kicad/renders/kc2_right-hotswap_top.png`
+  - `hardware/kicad/renders/kc2_right-hotswap_bottom.png`
+
+Hot-swap footprint decision:
+
+- The applied footprint is `key-switches.pretty:SW_Kailh_Choc_V1V2_HotSwap_Hybrid`.
+- This is the Kailh Choc V1/V2 low-profile hot-swap socket variant, not the MX-only Kailh hot-swap socket family.
+- The target socket family is Kailh Choc/PG1350/PG1353, part-number family `CPG135001S30`.
+- The hotswap board assumes bottom-side socket soldering and requires physical orientation verification before fabrication.
+
+Freerouting v2.1.0 hotswap result:
+
+| Board | Incomplete Connections | Clearance Violations |
+| --- | ---: | ---: |
+| left-hotswap | 0 | 0 |
+| right-hotswap | 0 | 0 |
+
+KiCad DRC hotswap summary after SES import:
+
+| Board | Total | Errors | Warnings | Unconnected | Remaining Warning Rules |
+| --- | ---: | ---: | ---: | ---: | --- |
+| left-hotswap | 41 | 0 | 41 | 0 | `text_height`, `silk_over_copper`, `lib_footprint_issues`, `track_dangling`, `silk_overlap`, `nonmirrored_text_on_back_layer`, `silk_edge_clearance` |
+| right-hotswap | 51 | 0 | 51 | 0 | `text_height`, `silk_over_copper`, `track_dangling`, `lib_footprint_issues`, `silk_overlap`, `nonmirrored_text_on_back_layer` |
+
+The hot-swap variant is routed and DRC-clean for hard errors, with warning-only review items remaining. Because KC2 is plateless, hotswap socket retention, socket body clearance against the bottom plate, and stabilized-key behavior still need a 1:1 test coupon or physical print before ordering.
+
 ## Routing Notes
 
 - Manual lane routing was replaced by a Specctra DSN/Freerouting/SES flow.
@@ -88,7 +131,7 @@ The boards have no KiCad DRC errors and no unrouted nets in the current draft. R
 
 ## Main Remaining Problems
 
-- Remaining KiCad warnings include small silkscreen/text issues and library-footprint warnings from the third-party switch footprint.
+- Remaining KiCad warnings include small silkscreen/text issues and library-footprint warnings for generated KC2 placeholder/custom footprints that are embedded in the board but not yet saved as standalone `.kicad_mod` library entries.
 - `track_dangling` warnings should be visually reviewed in KiCad before fabrication output, even though KiCad reports 0 unrouted nets.
 - PCB-mounted stabilizer holes are present as MX-style 2u stabilizer NPTH markers, but low-profile stabilizer compatibility still needs real-part measurement.
 - The PCB outline, M2 holes, battery space, controller socket, and tact switch should be checked with a 1:1 print before ordering.

@@ -311,7 +311,11 @@ Row 5: Ctrl GUI Alt Fn Space     |  B  Space RAlt Fn RCtrl Left Down Right
 - DO-35 유지 실패 기준은 switch/stabilizer footprint와의 courtyard overlap, M2 hole 배치 실패, hole-to-hole clearance 위반, 결합 edge 2.5-3.0 mm 여백 침범, 하부 바닥판 지지점 간섭, lead bending 공간 부족 중 하나라도 발생하는 경우로 둔다.
 - 공간이 부족하면 diode 위치 재배치, PCB 반대면 배치, routing 재배치를 먼저 검토하되, compact outline이나 M2 고정 홀을 훼손해야 한다면 SMD `1N4148W`/SOD-123 전환을 우선한다. SOD-123으로도 부족하면 `1N4148WS`/SOD-323을 검토한다.
 - diode는 keycap, switch solder joint, controller socket, battery, M2 고정 홀, 하부 바닥판 지지점과 간섭하지 않아야 한다.
-- hotswap socket은 기본 요구사항이 아니다.
+- hotswap socket은 기본 납땜형 KC2의 요구사항이 아니다. 단, 별도 산출물 `kc2_left-hotswap.*`, `kc2_right-hotswap.*`에서는 Kailh Choc/PG1350/PG1353 low-profile hot-swap socket 변형을 검토한다.
+- hotswap 변형의 switch footprint는 `key-switches.pretty:SW_Kailh_Choc_V1V2_HotSwap_Hybrid`를 사용한다.
+- hotswap 변형은 Kailh Choc V1/V2 low-profile socket, `CPG135001S30` 계열을 전제로 한다. MX 전용 Kailh hot-swap socket, 예: `CPG151101S11` 계열은 이 변형에 사용하지 않는다.
+- hotswap socket은 bottom-side SMD pad를 갖는 부품이므로 PCB 하부면 soldering 방향, socket orientation, switch pin hole clearance를 1:1 출력물과 실물 소켓으로 확인한다.
+- 무보강판 구조에서는 hotswap socket만으로 switch/keycap 흔들림과 이탈을 충분히 억제하지 못할 수 있다. 하부 바닥판, keycap, stabilizer, socket body 간섭을 test coupon으로 검증한 뒤 발주한다.
 - 상부 하우징이 없으므로 PCB outline은 손에 노출되는 최종 상부 외형이다.
 - PCB 모서리는 라운드 처리한다.
 - nice!nano는 각 half의 숫자열 바로 위에 가로 배치한다.
@@ -360,6 +364,7 @@ Row 5: Ctrl GUI Alt Fn Space     |  B  Space RAlt Fn RCtrl Left Down Right
 - 결합 edge 하부를 지지하는 3D 프린터 바닥판 lip/rib 형상과 지지 위치
 - 실리콘 feet 위치
 - nice!nano 자체 USB-C 접근 방향과 cable clearance
+- hotswap 변형의 Kailh Choc socket orientation, solder fillet 공간, socket body와 하부 바닥판 간섭
 
 ## 구매처 링크
 
@@ -371,6 +376,15 @@ Row 5: Ctrl GUI Alt Fn Space     |  B  Space RAlt Fn RCtrl Left Down Right
 | Controller socket | 디바이스마트 상품번호 5494 `싱글라운드소켓(64핀)`, 2.54 mm pitch, 1열 round socket | https://www.devicemart.co.kr/goods/view?no=5494 |
 | Battery | 디바이스마트 상품번호 1376800 `TW301525`, 3.7 V, 80 mAh, A1251-02, 15 mm x 25 mm급 | https://www.devicemart.co.kr/goods/view?no=1376800 |
 | Programming tact switch | 디바이스마트 상품번호 1322056 `NW3-A06-B3`, SMD micro tact switch, 6.1 mm x 3.7 mm급 body, 2.55 mm급 높이 | https://www.devicemart.co.kr/goods/view?no=1322056 |
+| Hot-swap socket variant | Kailh Choc/PG1350 low-profile hot-swap socket, `CPG135001S30` 계열. `-hotswap` 변형에서만 사용 | https://ko.aliexpress.com/item/1005009187521124.html |
+
+Hot-swap 참고 자료:
+
+- AliExpress mirror 조사: Kailh low-profile 1350 Chocolate switch용 hot-swap socket으로 표시됨. https://alitools.io/en/showcase/kailh-hot-swap-socket-for-low-profile-1350-chocolate-switches-on-mechanical-keyboard-pcb-socket-diy-base-modification-33023283633
+- Kailh Choc hot-swap socket part number/source: `CPG135001S30`. https://www.flux.ai/whitelynx/kailh-choc-hot-swap-socket
+- Kailh `CPG135001S30` datasheet mirror. https://jonathan.rico.live/projects/split-keyboard/files/kailh-choc-sockets.pdf
+- `key-switches.pretty` compatibility table: `SW_Kailh_Choc_V1V2_HotSwap_Hybrid`는 Choc V1 조건부, Choc V2 compatible, Hot-Swap footprint로 분류됨. https://github.com/siderakb/key-switches.pretty
+- Kailh-style hot-swap socket은 일반 switch footprint가 아니라 별도 footprint와 socket 방향 검증이 필요함. https://docs.keeb.supply/basics/soldering/hotswap/
 
 ## 폐기된 부품 후보
 

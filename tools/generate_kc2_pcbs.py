@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import argparse
 import json
 import math
 import shutil
@@ -14,7 +15,8 @@ KICAD_ROOT = ROOT / "hardware" / "kicad"
 KICAD_SHARE = Path(r"C:\Program Files\KiCad\9.0\share\kicad")
 
 SWITCH_LIB = ROOT / "third_party" / "key-switches.pretty"
-SWITCH_FP = "SW_Kailh_Choc_V1V2_THT_Hybrid"
+SOLDERED_SWITCH_FP = "SW_Kailh_Choc_V1V2_THT_Hybrid"
+HOTSWAP_SWITCH_FP = "SW_Kailh_Choc_V1V2_HotSwap_Hybrid"
 KC2_FP_LIB = ROOT / "third_party" / "kc2.pretty"
 DIODE_LIB = KICAD_SHARE / "footprints" / "Diode_SMD.pretty"
 DIODE_FP = "D_SOD-123"
@@ -463,8 +465,8 @@ def make_project_file(project_dir: Path, name: str) -> None:
 
 
 def make_fp_lib_table(project_dir: Path) -> None:
-    switch_rel = SWITCH_LIB.resolve()
-    kc2_rel = KC2_FP_LIB.resolve()
+    switch_rel = SWITCH_LIB.resolve().as_posix()
+    kc2_rel = KC2_FP_LIB.resolve().as_posix()
     content = (
         "(fp_lib_table\n"
         f"\t(lib (name \"key-switches\")(type \"KiCad\")(uri \"{switch_rel}\")(options \"\")(descr \"Third-party keyboard switch footprints, CERN-OHL-P v2\"))\n"
@@ -675,8 +677,16 @@ def create_stabilizer(
     board.Add(fp)
 
 
-def make_board(side: str, keys: list[Key], out_dir: Path) -> tuple[Path, tuple[float, float, float, float]]:
-    name = f"kc2_{side}"
+def make_board(
+    side: str,
+    keys: list[Key],
+    out_dir: Path,
+    *,
+    project_suffix: str = "",
+    switch_fp: str = SOLDERED_SWITCH_FP,
+    variant: str = "soldered",
+) -> tuple[Path, tuple[float, float, float, float]]:
+    name = f"kc2_{side}{project_suffix}"
     project_dir = out_dir / name
     if project_dir.exists():
         for child in project_dir.iterdir():
@@ -703,7 +713,8 @@ def make_board(side: str, keys: list[Key], out_dir: Path) -> tuple[Path, tuple[f
     board = pcbnew.BOARD()
     board.SetCopperLayerCount(2)
     title = board.GetTitleBlock()
-    title.SetTitle(f"KC2 {side.capitalize()} PCB Draft")
+    variant_title = "" if variant == "soldered" else f" {variant.upper()}"
+    title.SetTitle(f"KC2 {side.capitalize()}{variant_title} PCB Draft")
     title.SetDate("2026-06-04")
     title.SetRevision("draft-1")
     add_polyline(board, shifted_outline, pcbnew.Edge_Cuts, EDGE_WIDTH, closed=True)
@@ -796,7 +807,7 @@ def make_board(side: str, keys: list[Key], out_dir: Path) -> tuple[Path, tuple[f
         row_net = add_net(board, nets, row_net_name)
         local_net = add_net(board, nets, local_net_name)
 
-        sw = load_footprint(board, SWITCH_LIB, SWITCH_FP, f"SW{idx}", f"KEY_{idx:02d}", key.cx, key.cy)
+        sw = load_footprint(board, SWITCH_LIB, switch_fp, f"SW{idx}", f"KEY_{idx:02d}", key.cx, key.cy)
         convert_empty_switch_pads_to_npth(sw)
         set_pad_net(sw, "1", col_net)
         set_pad_net(sw, "2", local_net)
@@ -864,9 +875,12 @@ def make_board(side: str, keys: list[Key], out_dir: Path) -> tuple[Path, tuple[f
     connect_tact_to_controller(board, nets, tact, controller_pads)
     connect_power_labels(board, nets, power_pads)
 
-    add_board_text(board, f"KC2 {side.upper()} - 71-key split successor to KC1", 35, 24, pcbnew.F_SilkS, 1.2)
+    variant_label = "" if variant == "soldered" else f" {variant.upper()}"
+    add_board_text(board, f"KC2 {side.upper()}{variant_label} - 71-key split successor to KC1", 35, 24, pcbnew.F_SilkS, 1.2)
     add_board_text(board, "No top housing / PCB is switch plate / bottom plate M2+adhesive", 35, 27, pcbnew.F_SilkS, 0.9)
     add_board_text(board, "Diode fallback: 1N4148W SOD-123 because DO-35 conflicts with compact hybrid footprint", 35, 30, pcbnew.Cmts_User, 0.9)
+    if variant == "hotswap":
+        add_board_text(board, "Hot-swap variant: Kailh Choc V1/V2 socket footprint, not MX-only socket", 35, 33, pcbnew.Cmts_User, 0.9)
 
     make_project_file(project_dir, name)
     make_fp_lib_table(project_dir)
@@ -1047,18 +1061,48 @@ def copy_license() -> None:
             shutil.copyfile(src, dest)
 
 
-def main() -> None:
-    if not SWITCH_LIB.exists():
-        raise SystemExit(f"Missing switch library: {SWITCH_LIB}")
-    if not KC2_FP_LIB.exists():
-        raise SystemExit(f"Missing KC2 footprint library: {KC2_FP_LIB}")
-    KICAD_ROOT.mkdir(parents=True, exist_ok=True)
-    copy_license()
+def generate_variant(variant: str) -> dict[str, object]:
+    if variant == "soldered":
+        project_suffix = ""
+        switch_fp = SOLDERED_SWITCH_FP
+        manifest_name = "kc2_generation_manifest.json"
+    elif variant == "hotswap":
+        project_suffix = "-hotswap"
+        switch_fp = HOTSWAP_SWITCH_FP
+        manifest_name = "kc2_hotswap_generation_manifest.json"
+    else:
+        raise ValueError(f"Unknown variant: {variant}")
 
-    left_path, left_keepout = make_board("left", make_left_keys(), KICAD_ROOT)
-    right_path, right_keepout = make_board("right", make_right_keys(), KICAD_ROOT)
-    manifest = {
+    left_path, left_keepout = make_board(
+        "left",
+        make_left_keys(),
+        KICAD_ROOT,
+        project_suffix=project_suffix,
+        switch_fp=switch_fp,
+        variant=variant,
+    )
+    right_path, right_keepout = make_board(
+        "right",
+        make_right_keys(),
+        KICAD_ROOT,
+        project_suffix=project_suffix,
+        switch_fp=switch_fp,
+        variant=variant,
+    )
+    notes = [
+        "SOD-123 1N4148W fallback is used because DO-35 conflicts with the compact hybrid switch footprint at 19.05 mm pitch.",
+        "Antenna keepout rule areas are generated directly in the board files.",
+        "Switch footprint values are sanitized as KEY_XX so Specctra DSN export does not expose legend characters such as backslash to Freerouting.",
+        "Right-half R_COL7 uses D21 and R_COL8 uses D20 to keep the longer outer column on the easier controller fanout pin.",
+        f"Controller protrusion tabs are aligned toward the inner joining edge: left recessed {LEFT_CONTROLLER_JOIN_EDGE_RECESS:g} mm, right recessed {RIGHT_CONTROLLER_JOIN_EDGE_RECESS:g} mm.",
+        f"Controller protrusion tab width is {CONTROLLER_TAB_W:g} mm and grows away from the inner joining edge.",
+        "Programming tact switch uses the smaller DeviceMart 1322056 NW3-A06-B3 SMD footprint.",
+    ]
+    if variant == "hotswap":
+        notes.append("Hot-swap variant uses the Kailh Choc V1/V2 low-profile socket footprint. MX-only Kailh sockets are not compatible with this variant.")
+    manifest: dict[str, object] = {
         "generated": "2026-06-04",
+        "variant": variant,
         "boards": {
             "left": str(left_path.relative_to(ROOT)),
             "right": str(right_path.relative_to(ROOT)),
@@ -1067,21 +1111,35 @@ def main() -> None:
             "left": left_keepout,
             "right": right_keepout,
         },
-        "switch_footprint": f"{SWITCH_LIB.name}:{SWITCH_FP}",
+        "switch_footprint": f"{SWITCH_LIB.name}:{switch_fp}",
         "diode_footprint": f"Diode_SMD:{DIODE_FP}",
         "tact_footprint": f"{KC2_FP_LIB.name}:{TACT_FP}",
-        "notes": [
-            "SOD-123 1N4148W fallback is used because DO-35 conflicts with the compact hybrid switch footprint at 19.05 mm pitch.",
-            "Antenna keepout rule areas are generated directly in the board files.",
-            "Switch footprint values are sanitized as KEY_XX so Specctra DSN export does not expose legend characters such as backslash to Freerouting.",
-            "Right-half R_COL7 uses D21 and R_COL8 uses D20 to keep the longer outer column on the easier controller fanout pin.",
-            f"Controller protrusion tabs are aligned toward the inner joining edge: left recessed {LEFT_CONTROLLER_JOIN_EDGE_RECESS:g} mm, right recessed {RIGHT_CONTROLLER_JOIN_EDGE_RECESS:g} mm.",
-            f"Controller protrusion tab width is {CONTROLLER_TAB_W:g} mm and grows away from the inner joining edge.",
-            "Programming tact switch uses the smaller DeviceMart 1322056 NW3-A06-B3 SMD footprint.",
-        ],
+        "notes": notes,
     }
-    (KICAD_ROOT / "kc2_generation_manifest.json").write_text(json.dumps(manifest, indent=2), encoding="utf-8")
-    print(json.dumps(manifest, indent=2))
+    (KICAD_ROOT / manifest_name).write_text(json.dumps(manifest, indent=2), encoding="utf-8")
+    return manifest
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(description="Generate KC2 KiCad PCB drafts.")
+    parser.add_argument(
+        "--variant",
+        choices=("soldered", "hotswap", "all"),
+        default="soldered",
+        help="PCB variant to generate. Default keeps the original soldered KC2 output.",
+    )
+    args = parser.parse_args()
+
+    if not SWITCH_LIB.exists():
+        raise SystemExit(f"Missing switch library: {SWITCH_LIB}")
+    if not KC2_FP_LIB.exists():
+        raise SystemExit(f"Missing KC2 footprint library: {KC2_FP_LIB}")
+    KICAD_ROOT.mkdir(parents=True, exist_ok=True)
+    copy_license()
+
+    variants = ("soldered", "hotswap") if args.variant == "all" else (args.variant,)
+    manifests = [generate_variant(variant) for variant in variants]
+    print(json.dumps(manifests[0] if len(manifests) == 1 else manifests, indent=2))
 
 
 if __name__ == "__main__":
