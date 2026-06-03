@@ -1,0 +1,1992 @@
+{
+    "$schema": "https://schemas.kicad.org/drc.v1.json",
+    "coordinate_units": "mm",
+    "date": "2026-06-04T08:18:53+0900",
+    "kicad_version": "9.0.7",
+    "schematic_parity": [],
+    "source": "kc2_right-x2.kicad_pcb",
+    "unconnected_items": [],
+    "violations": [
+        {
+            "description": "배선에 연결되지 않은 끝이 존재",
+            "items": [
+                {
+                    "description": "배선 [R_COL2] on F.Cu, 길이 1.3041 mm",
+                    "pos": {
+                        "x": 118.7625,
+                        "y": 150.5074
+                    },
+                    "uuid": "9f7045c0-d0c5-4b00-80b2-a687d6f715d6"
+                }
+            ],
+            "severity": "warning",
+            "type": "track_dangling"
+        },
+        {
+            "description": "배선에 연결되지 않은 끝이 존재",
+            "items": [
+                {
+                    "description": "배선 [R_COL2] on B.Cu, 길이 1.3041 mm",
+                    "pos": {
+                        "x": 118.7625,
+                        "y": 150.5074
+                    },
+                    "uuid": "d3eb23d9-4658-4901-b2f4-28e3ca815cad"
+                }
+            ],
+            "severity": "warning",
+            "type": "track_dangling"
+        },
+        {
+            "description": "배선에 연결되지 않은 끝이 존재",
+            "items": [
+                {
+                    "description": "배선 [R_COL6] on F.Cu, 길이 1.1203 mm",
+                    "pos": {
+                        "x": 158.9145,
+                        "y": 65.0335
+                    },
+                    "uuid": "e2fe5411-83e8-4ab9-9b71-75ba0a043dbe"
+                }
+            ],
+            "severity": "warning",
+            "type": "track_dangling"
+        },
+        {
+            "description": "배선에 연결되지 않은 끝이 존재",
+            "items": [
+                {
+                    "description": "배선 [R_COL6] on B.Cu, 길이 1.1203 mm",
+                    "pos": {
+                        "x": 158.9145,
+                        "y": 65.0335
+                    },
+                    "uuid": "7b1cbe19-c925-4b9c-8987-eb25997805b5"
+                }
+            ],
+            "severity": "warning",
+            "type": "track_dangling"
+        },
+        {
+            "description": "배선에 연결되지 않은 끝이 존재",
+            "items": [
+                {
+                    "description": "배선 [RK36_D] on F.Cu, 길이 0.8005 mm",
+                    "pos": {
+                        "x": 123.7625,
+                        "y": 143.5944
+                    },
+                    "uuid": "33747abb-3f3b-4564-a776-ee30477c56e5"
+                }
+            ],
+            "severity": "warning",
+            "type": "track_dangling"
+        },
+        {
+            "description": "배선에 연결되지 않은 끝이 존재",
+            "items": [
+                {
+                    "description": "배선 [RK36_D] on B.Cu, 길이 0.8005 mm",
+                    "pos": {
+                        "x": 123.7625,
+                        "y": 143.5944
+                    },
+                    "uuid": "66ecc0f0-871f-4347-b846-fc7bdb13bbc0"
+                }
+            ],
+            "severity": "warning",
+            "type": "track_dangling"
+        },
+        {
+            "description": "풋프린트 'NiceNanoV2_Socket_24Pin'이(가) 라이브러리 'KC2'에서 찾을 수 없습니다.",
+            "items": [
+                {
+                    "description": "풋프린트 U1",
+                    "pos": {
+                        "x": 88.0,
+                        "y": 49.0
+                    },
+                    "uuid": "0e5ad9d7-6fde-4232-9dcd-c8f4cb67a8e1"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "풋프린트 'DirectSolderPowerPads'이(가) 라이브러리 'KC2'에서 찾을 수 없습니다.",
+            "items": [
+                {
+                    "description": "풋프린트 J_PWR1",
+                    "pos": {
+                        "x": 116.0,
+                        "y": 50.0
+                    },
+                    "uuid": "52a6e8f7-b7b8-494c-a695-3af1f6fe18fe"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "풋프린트 'PCB_Mount_2u_Stabilizer_NPTH'이(가) 라이브러리 'KC2'에서 찾을 수 없습니다.",
+            "items": [
+                {
+                    "description": "풋프린트 STAB7",
+                    "pos": {
+                        "x": 183.0563,
+                        "y": 77.525
+                    },
+                    "uuid": "8b8f82dd-9364-4467-b68b-2ef612227bca"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "풋프린트 'PCB_Mount_2u_Stabilizer_NPTH'이(가) 라이브러리 'KC2'에서 찾을 수 없습니다.",
+            "items": [
+                {
+                    "description": "풋프린트 STAB35",
+                    "pos": {
+                        "x": 90.1875,
+                        "y": 153.725
+                    },
+                    "uuid": "dd6dc47a-7dbd-4243-8cda-3c4f83fe14b3"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "풋프린트 'PCB_Mount_2u_Stabilizer_NPTH'이(가) 라이브러리 'KC2'에서 찾을 수 없습니다.",
+            "items": [
+                {
+                    "description": "풋프린트 STAB31",
+                    "pos": {
+                        "x": 166.3875,
+                        "y": 134.675
+                    },
+                    "uuid": "e4325151-1e28-467a-aaed-d8dd626d903f"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "풋프린트 'PCB_Mount_2u_Stabilizer_NPTH'이(가) 라이브러리 'KC2'에서 찾을 수 없습니다.",
+            "items": [
+                {
+                    "description": "풋프린트 STAB24",
+                    "pos": {
+                        "x": 180.675,
+                        "y": 115.625
+                    },
+                    "uuid": "fb5e1122-082c-4e08-9f9f-dfd2ac1052f7"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "텍스트 높이가 범위를 벗어남 (board setup constraints silk text height 최소 높이 0.8000 mm; 실제 0.6500 mm)",
+            "items": [
+                {
+                    "description": "풋프린트 텍스트 U1 (RAW)",
+                    "pos": {
+                        "x": 101.97,
+                        "y": 42.21
+                    },
+                    "uuid": "0eb43cc7-8beb-4195-a6a9-e62a24998e7e"
+                }
+            ],
+            "severity": "warning",
+            "type": "text_height"
+        },
+        {
+            "description": "텍스트 높이가 범위를 벗어남 (board setup constraints silk text height 최소 높이 0.8000 mm; 실제 0.6500 mm)",
+            "items": [
+                {
+                    "description": "풋프린트 텍스트 U1 (RST)",
+                    "pos": {
+                        "x": 96.89,
+                        "y": 42.21
+                    },
+                    "uuid": "152f4a24-1db1-48e7-8884-bf0844786d54"
+                }
+            ],
+            "severity": "warning",
+            "type": "text_height"
+        },
+        {
+            "description": "텍스트 높이가 범위를 벗어남 (board setup constraints silk text height 최소 높이 0.8000 mm; 실제 0.6500 mm)",
+            "items": [
+                {
+                    "description": "풋프린트 텍스트 U1 (D1)",
+                    "pos": {
+                        "x": 101.97,
+                        "y": 55.79
+                    },
+                    "uuid": "1eb61bbb-bc2a-47e6-a4e1-4f50ed580be1"
+                }
+            ],
+            "severity": "warning",
+            "type": "text_height"
+        },
+        {
+            "description": "텍스트 높이가 범위를 벗어남 (board setup constraints silk text height 최소 높이 0.8000 mm; 실제 0.6500 mm)",
+            "items": [
+                {
+                    "description": "풋프린트 텍스트 U1 (D8)",
+                    "pos": {
+                        "x": 76.57,
+                        "y": 55.79
+                    },
+                    "uuid": "251140af-80a8-4311-b3df-698b77715d86"
+                }
+            ],
+            "severity": "warning",
+            "type": "text_height"
+        },
+        {
+            "description": "텍스트 높이가 범위를 벗어남 (board setup constraints silk text height 최소 높이 0.8000 mm; 실제 0.6500 mm)",
+            "items": [
+                {
+                    "description": "풋프린트 텍스트 U1 (D14)",
+                    "pos": {
+                        "x": 79.11,
+                        "y": 42.21
+                    },
+                    "uuid": "25b4a672-fb36-4155-8c6c-3e1162a6cac7"
+                }
+            ],
+            "severity": "warning",
+            "type": "text_height"
+        },
+        {
+            "description": "텍스트 높이가 범위를 벗어남 (board setup constraints silk text height 최소 높이 0.8000 mm; 실제 0.6500 mm)",
+            "items": [
+                {
+                    "description": "풋프린트 텍스트 U1 (D16)",
+                    "pos": {
+                        "x": 76.57,
+                        "y": 42.21
+                    },
+                    "uuid": "3d91170b-7aa3-4383-a244-931aff05af42"
+                }
+            ],
+            "severity": "warning",
+            "type": "text_height"
+        },
+        {
+            "description": "텍스트 높이가 범위를 벗어남 (board setup constraints silk text height 최소 높이 0.8000 mm; 실제 0.6500 mm)",
+            "items": [
+                {
+                    "description": "풋프린트 텍스트 U1 (D2)",
+                    "pos": {
+                        "x": 91.81,
+                        "y": 55.79
+                    },
+                    "uuid": "40ca0958-c882-4429-9709-2cbd5bc33365"
+                }
+            ],
+            "severity": "warning",
+            "type": "text_height"
+        },
+        {
+            "description": "텍스트 높이가 범위를 벗어남 (board setup constraints silk text height 최소 높이 0.8000 mm; 실제 0.6500 mm)",
+            "items": [
+                {
+                    "description": "풋프린트 텍스트 U1 (D5)",
+                    "pos": {
+                        "x": 84.19,
+                        "y": 55.79
+                    },
+                    "uuid": "4c679645-e557-497d-8f1e-9229b1be9b53"
+                }
+            ],
+            "severity": "warning",
+            "type": "text_height"
+        },
+        {
+            "description": "텍스트 높이가 범위를 벗어남 (board setup constraints silk text height 최소 높이 0.8000 mm; 실제 0.6500 mm)",
+            "items": [
+                {
+                    "description": "풋프린트 텍스트 U1 (D9)",
+                    "pos": {
+                        "x": 74.03,
+                        "y": 55.79
+                    },
+                    "uuid": "4e8fc976-4fc8-475a-9c80-59fd80c072b0"
+                }
+            ],
+            "severity": "warning",
+            "type": "text_height"
+        },
+        {
+            "description": "텍스트 높이가 범위를 벗어남 (board setup constraints silk text height 최소 높이 0.8000 mm; 실제 0.6500 mm)",
+            "items": [
+                {
+                    "description": "풋프린트 텍스트 U1 (D21)",
+                    "pos": {
+                        "x": 91.81,
+                        "y": 42.21
+                    },
+                    "uuid": "62bd2fcc-02ea-4955-9f84-e78ccb9d4537"
+                }
+            ],
+            "severity": "warning",
+            "type": "text_height"
+        },
+        {
+            "description": "텍스트 높이가 범위를 벗어남 (board setup constraints silk text height 최소 높이 0.8000 mm; 실제 0.6500 mm)",
+            "items": [
+                {
+                    "description": "풋프린트 텍스트 U1 (D10)",
+                    "pos": {
+                        "x": 74.03,
+                        "y": 42.21
+                    },
+                    "uuid": "7f7761d7-a951-4af9-817b-dcc78003e8fc"
+                }
+            ],
+            "severity": "warning",
+            "type": "text_height"
+        },
+        {
+            "description": "텍스트 높이가 범위를 벗어남 (board setup constraints silk text height 최소 높이 0.8000 mm; 실제 0.6500 mm)",
+            "items": [
+                {
+                    "description": "풋프린트 텍스트 U1 (D18)",
+                    "pos": {
+                        "x": 84.19,
+                        "y": 42.21
+                    },
+                    "uuid": "81041b3f-d57e-4c10-bf95-685e45f1701f"
+                }
+            ],
+            "severity": "warning",
+            "type": "text_height"
+        },
+        {
+            "description": "텍스트 높이가 범위를 벗어남 (board setup constraints silk text height 최소 높이 0.8000 mm; 실제 0.6500 mm)",
+            "items": [
+                {
+                    "description": "풋프린트 텍스트 U1 (D0)",
+                    "pos": {
+                        "x": 99.43,
+                        "y": 55.79
+                    },
+                    "uuid": "838ccfe5-788e-491e-ada7-05e33f30378d"
+                }
+            ],
+            "severity": "warning",
+            "type": "text_height"
+        },
+        {
+            "description": "텍스트 높이가 범위를 벗어남 (board setup constraints silk text height 최소 높이 0.8000 mm; 실제 0.6500 mm)",
+            "items": [
+                {
+                    "description": "풋프린트 텍스트 U1 (GNDC)",
+                    "pos": {
+                        "x": 99.43,
+                        "y": 42.21
+                    },
+                    "uuid": "966c5e1a-5ac5-4810-9acd-f5a20c36544a"
+                }
+            ],
+            "severity": "warning",
+            "type": "text_height"
+        },
+        {
+            "description": "텍스트 높이가 범위를 벗어남 (board setup constraints silk text height 최소 높이 0.8000 mm; 실제 0.6500 mm)",
+            "items": [
+                {
+                    "description": "풋프린트 텍스트 U1 (GNDA)",
+                    "pos": {
+                        "x": 96.89,
+                        "y": 55.79
+                    },
+                    "uuid": "9848ec1e-6a43-4d5d-be96-5531cc8c4aae"
+                }
+            ],
+            "severity": "warning",
+            "type": "text_height"
+        },
+        {
+            "description": "텍스트 높이가 범위를 벗어남 (board setup constraints silk text height 최소 높이 0.8000 mm; 실제 0.6500 mm)",
+            "items": [
+                {
+                    "description": "풋프린트 텍스트 U1 (D4)",
+                    "pos": {
+                        "x": 86.73,
+                        "y": 55.79
+                    },
+                    "uuid": "be5cfcf0-85cc-45d4-be53-6a1fa000b617"
+                }
+            ],
+            "severity": "warning",
+            "type": "text_height"
+        },
+        {
+            "description": "텍스트 높이가 범위를 벗어남 (board setup constraints silk text height 최소 높이 0.8000 mm; 실제 0.6500 mm)",
+            "items": [
+                {
+                    "description": "풋프린트 텍스트 U1 (D20)",
+                    "pos": {
+                        "x": 89.27,
+                        "y": 42.21
+                    },
+                    "uuid": "c84a3bfb-eb5a-4a4d-9262-0f52207dd4c0"
+                }
+            ],
+            "severity": "warning",
+            "type": "text_height"
+        },
+        {
+            "description": "텍스트 높이가 범위를 벗어남 (board setup constraints silk text height 최소 높이 0.8000 mm; 실제 0.6500 mm)",
+            "items": [
+                {
+                    "description": "풋프린트 텍스트 U1 (D15)",
+                    "pos": {
+                        "x": 81.65,
+                        "y": 42.21
+                    },
+                    "uuid": "c9bb5d6e-6493-483f-bbb0-09b2eafd8f2a"
+                }
+            ],
+            "severity": "warning",
+            "type": "text_height"
+        },
+        {
+            "description": "텍스트 높이가 범위를 벗어남 (board setup constraints silk text height 최소 높이 0.8000 mm; 실제 0.6500 mm)",
+            "items": [
+                {
+                    "description": "풋프린트 텍스트 U1 (VCC)",
+                    "pos": {
+                        "x": 94.35,
+                        "y": 42.21
+                    },
+                    "uuid": "cfa18e15-af81-4c16-b447-35f4c7f142e7"
+                }
+            ],
+            "severity": "warning",
+            "type": "text_height"
+        },
+        {
+            "description": "텍스트 높이가 범위를 벗어남 (board setup constraints silk text height 최소 높이 0.8000 mm; 실제 0.6500 mm)",
+            "items": [
+                {
+                    "description": "풋프린트 텍스트 U1 (GNDB)",
+                    "pos": {
+                        "x": 94.35,
+                        "y": 55.79
+                    },
+                    "uuid": "d0eea461-f30a-48ae-9811-4bd38e4d4a80"
+                }
+            ],
+            "severity": "warning",
+            "type": "text_height"
+        },
+        {
+            "description": "텍스트 높이가 범위를 벗어남 (board setup constraints silk text height 최소 높이 0.8000 mm; 실제 0.6500 mm)",
+            "items": [
+                {
+                    "description": "풋프린트 텍스트 U1 (D7)",
+                    "pos": {
+                        "x": 79.11,
+                        "y": 55.79
+                    },
+                    "uuid": "d3e47758-3307-4774-af2f-26fa65375e07"
+                }
+            ],
+            "severity": "warning",
+            "type": "text_height"
+        },
+        {
+            "description": "텍스트 높이가 범위를 벗어남 (board setup constraints silk text height 최소 높이 0.8000 mm; 실제 0.6500 mm)",
+            "items": [
+                {
+                    "description": "풋프린트 텍스트 U1 (D3)",
+                    "pos": {
+                        "x": 89.27,
+                        "y": 55.79
+                    },
+                    "uuid": "d6753d89-1a75-4efa-9074-af8bf1a3b706"
+                }
+            ],
+            "severity": "warning",
+            "type": "text_height"
+        },
+        {
+            "description": "텍스트 높이가 범위를 벗어남 (board setup constraints silk text height 최소 높이 0.8000 mm; 실제 0.6500 mm)",
+            "items": [
+                {
+                    "description": "풋프린트 텍스트 U1 (D19)",
+                    "pos": {
+                        "x": 86.73,
+                        "y": 42.21
+                    },
+                    "uuid": "e7e15df1-e82a-44d8-a62a-cac9dd1a5c78"
+                }
+            ],
+            "severity": "warning",
+            "type": "text_height"
+        },
+        {
+            "description": "텍스트 높이가 범위를 벗어남 (board setup constraints silk text height 최소 높이 0.8000 mm; 실제 0.6500 mm)",
+            "items": [
+                {
+                    "description": "풋프린트 텍스트 U1 (D6)",
+                    "pos": {
+                        "x": 81.65,
+                        "y": 55.79
+                    },
+                    "uuid": "f59c5dc8-1ec4-4111-a179-8335ca2942f3"
+                }
+            ],
+            "severity": "warning",
+            "type": "text_height"
+        },
+        {
+            "description": "실크스크린 영역이 솔더 마스크 영역에 의해 잘림",
+            "items": [
+                {
+                    "description": "PCB 텍스트 'Up' (F.Silkscreen)",
+                    "pos": {
+                        "x": 191.9625,
+                        "y": 125.475
+                    },
+                    "uuid": "52e08d74-2e96-44ac-b3a7-9f3522af9026"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "실크스크린 영역이 솔더 마스크 영역에 의해 잘림",
+            "items": [
+                {
+                    "description": "PCB 텍스트 'RCtrl' (F.Silkscreen)",
+                    "pos": {
+                        "x": 153.8625,
+                        "y": 144.525
+                    },
+                    "uuid": "916569ae-234e-4ee4-be76-0f175ec42353"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "실크스크린 영역이 솔더 마스크 영역에 의해 잘림",
+            "items": [
+                {
+                    "description": "STAB7 의 참조 필드",
+                    "pos": {
+                        "x": 183.0563,
+                        "y": 77.525
+                    },
+                    "uuid": "4e3cb89e-f1e3-426a-abc1-88ca336576f9"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "실크스크린 영역이 솔더 마스크 영역에 의해 잘림",
+            "items": [
+                {
+                    "description": "STAB35 의 참조 필드",
+                    "pos": {
+                        "x": 90.1875,
+                        "y": 153.725
+                    },
+                    "uuid": "7afd681a-9535-4034-8e35-9ab4cf11a4af"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "실크스크린 영역이 솔더 마스크 영역에 의해 잘림",
+            "items": [
+                {
+                    "description": "STAB31 의 참조 필드",
+                    "pos": {
+                        "x": 166.3875,
+                        "y": 134.675
+                    },
+                    "uuid": "c9357a55-0619-43e1-a654-ffa7a522002d"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "실크스크린 영역이 솔더 마스크 영역에 의해 잘림",
+            "items": [
+                {
+                    "description": "STAB24 의 참조 필드",
+                    "pos": {
+                        "x": 180.675,
+                        "y": 115.625
+                    },
+                    "uuid": "7bb451d4-553b-471a-8ba3-512e5eb3713d"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "실크스크린 영역이 솔더 마스크 영역에 의해 잘림",
+            "items": [
+                {
+                    "description": "세그먼트 of D17 on B.Silkscreen",
+                    "pos": {
+                        "x": 216.5625,
+                        "y": 87.825
+                    },
+                    "uuid": "73c81b68-aacd-4daa-b41b-19a9f3aa4e7e"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "실크스크린 영역이 솔더 마스크 영역에 의해 잘림",
+            "items": [
+                {
+                    "description": "세그먼트 of D17 on B.Silkscreen",
+                    "pos": {
+                        "x": 216.5625,
+                        "y": 90.125
+                    },
+                    "uuid": "3caf9560-d40f-4794-b310-caba25765597"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "실크스크린 영역이 솔더 마스크 영역에 의해 잘림",
+            "items": [
+                {
+                    "description": "세그먼트 of D12 on B.Silkscreen",
+                    "pos": {
+                        "x": 107.025,
+                        "y": 87.825
+                    },
+                    "uuid": "5aaba8ef-5734-43dd-b902-52af562faf08"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "실크스크린 영역이 솔더 마스크 영역에 의해 잘림",
+            "items": [
+                {
+                    "description": "세그먼트 of D12 on B.Silkscreen",
+                    "pos": {
+                        "x": 107.025,
+                        "y": 90.125
+                    },
+                    "uuid": "d24b5889-7b03-4286-88ce-c14024685698"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "실크스크린 영역이 솔더 마스크 영역에 의해 잘림",
+            "items": [
+                {
+                    "description": "세그먼트 of D29 on B.Silkscreen",
+                    "pos": {
+                        "x": 121.3125,
+                        "y": 125.925
+                    },
+                    "uuid": "8f8d8efd-e2b9-416c-9faa-1cf245bdf6fa"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "실크스크린 영역이 솔더 마스크 영역에 의해 잘림",
+            "items": [
+                {
+                    "description": "세그먼트 of D29 on B.Silkscreen",
+                    "pos": {
+                        "x": 121.3125,
+                        "y": 128.225
+                    },
+                    "uuid": "a1527028-fd6a-42f7-8c4e-8b299f0826d6"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "실크스크린 영역이 솔더 마스크 영역에 의해 잘림",
+            "items": [
+                {
+                    "description": "세그먼트 of D15 on B.Silkscreen",
+                    "pos": {
+                        "x": 164.175,
+                        "y": 87.825
+                    },
+                    "uuid": "74ced492-db5b-4391-916d-0656b2cafb40"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "실크스크린 영역이 솔더 마스크 영역에 의해 잘림",
+            "items": [
+                {
+                    "description": "세그먼트 of D15 on B.Silkscreen",
+                    "pos": {
+                        "x": 164.175,
+                        "y": 90.125
+                    },
+                    "uuid": "dbacdb70-c06c-4c3d-b06c-8f2dbb45f204"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "실크스크린 영역이 솔더 마스크 영역에 의해 잘림",
+            "items": [
+                {
+                    "description": "세그먼트 of D21 on B.Silkscreen",
+                    "pos": {
+                        "x": 111.7875,
+                        "y": 106.875
+                    },
+                    "uuid": "78dd733d-6211-429b-9b9d-e6f1674d9c37"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "실크스크린 영역이 솔더 마스크 영역에 의해 잘림",
+            "items": [
+                {
+                    "description": "세그먼트 of D21 on B.Silkscreen",
+                    "pos": {
+                        "x": 111.7875,
+                        "y": 109.175
+                    },
+                    "uuid": "66d8557d-a3d9-45b6-8dc0-d35bfbd3597b"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "실크스크린 영역이 솔더 마스크 영역에 의해 잘림",
+            "items": [
+                {
+                    "description": "세그먼트 of D10 on B.Silkscreen",
+                    "pos": {
+                        "x": 68.925,
+                        "y": 87.825
+                    },
+                    "uuid": "26fc0122-c1e6-454b-8b80-cdf9d76038b7"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "실크스크린 영역이 솔더 마스크 영역에 의해 잘림",
+            "items": [
+                {
+                    "description": "세그먼트 of D10 on B.Silkscreen",
+                    "pos": {
+                        "x": 68.925,
+                        "y": 90.125
+                    },
+                    "uuid": "95828883-e7a0-456f-a03d-2f2a8283e9e9"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "실크스크린 영역이 솔더 마스크 영역에 의해 잘림",
+            "items": [
+                {
+                    "description": "세그먼트 of D25 on B.Silkscreen",
+                    "pos": {
+                        "x": 216.5625,
+                        "y": 106.875
+                    },
+                    "uuid": "204ec956-dc7a-405f-a827-1e66994dac4d"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "실크스크린 영역이 솔더 마스크 영역에 의해 잘림",
+            "items": [
+                {
+                    "description": "세그먼트 of D25 on B.Silkscreen",
+                    "pos": {
+                        "x": 216.5625,
+                        "y": 109.175
+                    },
+                    "uuid": "d5261eaf-e4cb-4879-a78a-6370f588f6d0"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "실크스크린 영역이 솔더 마스크 영역에 의해 잘림",
+            "items": [
+                {
+                    "description": "세그먼트 of D5 on B.Silkscreen",
+                    "pos": {
+                        "x": 135.6,
+                        "y": 68.775
+                    },
+                    "uuid": "6b39e5df-7148-47af-a69b-32bfeaffe042"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "실크스크린 영역이 솔더 마스크 영역에 의해 잘림",
+            "items": [
+                {
+                    "description": "세그먼트 of D5 on B.Silkscreen",
+                    "pos": {
+                        "x": 135.6,
+                        "y": 71.075
+                    },
+                    "uuid": "9e4fe140-3ae4-45ad-80c5-2a911caed1ff"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "실크스크린 영역이 솔더 마스크 영역에 의해 잘림",
+            "items": [
+                {
+                    "description": "세그먼트 of D1 on B.Silkscreen",
+                    "pos": {
+                        "x": 59.4,
+                        "y": 68.775
+                    },
+                    "uuid": "83203e55-4e63-4318-8996-2baeb0bda527"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "실크스크린 영역이 솔더 마스크 영역에 의해 잘림",
+            "items": [
+                {
+                    "description": "세그먼트 of D1 on B.Silkscreen",
+                    "pos": {
+                        "x": 59.4,
+                        "y": 71.075
+                    },
+                    "uuid": "10273c10-9d1a-4fb3-950e-7644cc6f9216"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "실크스크린 영역이 솔더 마스크 영역에 의해 잘림",
+            "items": [
+                {
+                    "description": "세그먼트 of D37 on B.Silkscreen",
+                    "pos": {
+                        "x": 140.3625,
+                        "y": 144.975
+                    },
+                    "uuid": "dacf2346-9280-4101-b6ab-b622d2222c28"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "실크스크린 영역이 솔더 마스크 영역에 의해 잘림",
+            "items": [
+                {
+                    "description": "세그먼트 of D37 on B.Silkscreen",
+                    "pos": {
+                        "x": 140.3625,
+                        "y": 147.275
+                    },
+                    "uuid": "51863c3b-507e-4d1c-a0c8-ff4caf11633b"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "실크스크린 영역이 솔더 마스크 영역에 의해 잘림",
+            "items": [
+                {
+                    "description": "세그먼트 of D23 on B.Silkscreen",
+                    "pos": {
+                        "x": 149.8875,
+                        "y": 106.875
+                    },
+                    "uuid": "03e5ef85-bbbe-4e53-a6a1-61d072a8d296"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "실크스크린 영역이 솔더 마스크 영역에 의해 잘림",
+            "items": [
+                {
+                    "description": "세그먼트 of D23 on B.Silkscreen",
+                    "pos": {
+                        "x": 149.8875,
+                        "y": 109.175
+                    },
+                    "uuid": "a23e1257-62b8-40f9-b016-d025c5d6f74b"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "실크스크린 영역이 솔더 마스크 영역에 의해 잘림",
+            "items": [
+                {
+                    "description": "세그먼트 of D33 on B.Silkscreen",
+                    "pos": {
+                        "x": 216.5625,
+                        "y": 125.925
+                    },
+                    "uuid": "8af6a7f3-5254-4804-aa81-44d4d9c4eb67"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "실크스크린 영역이 솔더 마스크 영역에 의해 잘림",
+            "items": [
+                {
+                    "description": "세그먼트 of D33 on B.Silkscreen",
+                    "pos": {
+                        "x": 216.5625,
+                        "y": 128.225
+                    },
+                    "uuid": "a06cc892-a3b6-487a-a1d7-89397255b14a"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "실크스크린 영역이 솔더 마스크 영역에 의해 잘림",
+            "items": [
+                {
+                    "description": "세그먼트 of D14 on B.Silkscreen",
+                    "pos": {
+                        "x": 145.125,
+                        "y": 87.825
+                    },
+                    "uuid": "d621a028-36a6-4a84-8d20-8045f2924147"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "실크스크린 영역이 솔더 마스크 영역에 의해 잘림",
+            "items": [
+                {
+                    "description": "세그먼트 of D14 on B.Silkscreen",
+                    "pos": {
+                        "x": 145.125,
+                        "y": 90.125
+                    },
+                    "uuid": "da27adf2-6abb-4371-aa0e-2c00654b0385"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "실크스크린 영역이 솔더 마스크 영역에 의해 잘림",
+            "items": [
+                {
+                    "description": "세그먼트 of D36 on B.Silkscreen",
+                    "pos": {
+                        "x": 121.3125,
+                        "y": 144.975
+                    },
+                    "uuid": "39d89b6e-a4cd-47ae-be9d-b2bcd64a40a0"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "실크스크린 영역이 솔더 마스크 영역에 의해 잘림",
+            "items": [
+                {
+                    "description": "세그먼트 of D36 on B.Silkscreen",
+                    "pos": {
+                        "x": 121.3125,
+                        "y": 147.275
+                    },
+                    "uuid": "08361fad-2517-4d89-8ca0-c915736c379f"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "실크스크린 영역이 솔더 마스크 영역에 의해 잘림",
+            "items": [
+                {
+                    "description": "세그먼트 of D3 on B.Silkscreen",
+                    "pos": {
+                        "x": 97.5,
+                        "y": 68.775
+                    },
+                    "uuid": "3a8e21bf-29cd-4862-a16a-f5abbbd2e946"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "실크스크린 영역이 솔더 마스크 영역에 의해 잘림",
+            "items": [
+                {
+                    "description": "세그먼트 of D3 on B.Silkscreen",
+                    "pos": {
+                        "x": 97.5,
+                        "y": 71.075
+                    },
+                    "uuid": "a311fd8a-e512-409a-8c37-86d066719d26"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "실크스크린 영역이 솔더 마스크 영역에 의해 잘림",
+            "items": [
+                {
+                    "description": "세그먼트 of D6 on B.Silkscreen",
+                    "pos": {
+                        "x": 154.65,
+                        "y": 68.775
+                    },
+                    "uuid": "d1194704-618a-4672-a4b8-ef5787f45608"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "실크스크린 영역이 솔더 마스크 영역에 의해 잘림",
+            "items": [
+                {
+                    "description": "세그먼트 of D6 on B.Silkscreen",
+                    "pos": {
+                        "x": 154.65,
+                        "y": 71.075
+                    },
+                    "uuid": "a6cbd284-f697-4a6a-b7fa-e306e40afbac"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "실크스크린 영역이 솔더 마스크 영역에 의해 잘림",
+            "items": [
+                {
+                    "description": "세그먼트 of D18 on B.Silkscreen",
+                    "pos": {
+                        "x": 54.6375,
+                        "y": 106.875
+                    },
+                    "uuid": "9e8c7535-8ccc-4972-8e69-0594b2787a98"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "실크스크린 영역이 솔더 마스크 영역에 의해 잘림",
+            "items": [
+                {
+                    "description": "세그먼트 of D18 on B.Silkscreen",
+                    "pos": {
+                        "x": 54.6375,
+                        "y": 109.175
+                    },
+                    "uuid": "b733a322-d304-4217-8fc2-b759b7167342"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "실크스크린 영역이 솔더 마스크 영역에 의해 잘림",
+            "items": [
+                {
+                    "description": "세그먼트 of D16 on B.Silkscreen",
+                    "pos": {
+                        "x": 190.3688,
+                        "y": 87.825
+                    },
+                    "uuid": "26219d5d-bf1d-461b-a4c5-ee6dba74077e"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "실크스크린 영역이 솔더 마스크 영역에 의해 잘림",
+            "items": [
+                {
+                    "description": "세그먼트 of D16 on B.Silkscreen",
+                    "pos": {
+                        "x": 190.3688,
+                        "y": 90.125
+                    },
+                    "uuid": "3d602f7f-b7d2-435e-bfdd-ddcbb6876f0f"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "실크스크린 영역이 솔더 마스크 영역에 의해 잘림",
+            "items": [
+                {
+                    "description": "세그먼트 of D22 on B.Silkscreen",
+                    "pos": {
+                        "x": 130.8375,
+                        "y": 106.875
+                    },
+                    "uuid": "ad748a19-0580-4240-9f72-fa9ff15e4f98"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "실크스크린 영역이 솔더 마스크 영역에 의해 잘림",
+            "items": [
+                {
+                    "description": "세그먼트 of D22 on B.Silkscreen",
+                    "pos": {
+                        "x": 130.8375,
+                        "y": 109.175
+                    },
+                    "uuid": "b288c1c4-ce74-44d1-818e-62e0c8d34d52"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "실크스크린 영역이 솔더 마스크 영역에 의해 잘림",
+            "items": [
+                {
+                    "description": "세그먼트 of D20 on B.Silkscreen",
+                    "pos": {
+                        "x": 92.7375,
+                        "y": 106.875
+                    },
+                    "uuid": "a072b8c3-2658-4b22-b612-f8338bb7379a"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "실크스크린 영역이 솔더 마스크 영역에 의해 잘림",
+            "items": [
+                {
+                    "description": "세그먼트 of D20 on B.Silkscreen",
+                    "pos": {
+                        "x": 92.7375,
+                        "y": 109.175
+                    },
+                    "uuid": "e48a589a-6d54-4648-9599-5fac44254131"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "실크스크린 영역이 솔더 마스크 영역에 의해 잘림",
+            "items": [
+                {
+                    "description": "세그먼트 of D8 on B.Silkscreen",
+                    "pos": {
+                        "x": 216.5625,
+                        "y": 68.775
+                    },
+                    "uuid": "52594034-cbd1-4250-b51f-2472569ec4b2"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "실크스크린 영역이 솔더 마스크 영역에 의해 잘림",
+            "items": [
+                {
+                    "description": "세그먼트 of D8 on B.Silkscreen",
+                    "pos": {
+                        "x": 216.5625,
+                        "y": 71.075
+                    },
+                    "uuid": "6ec0e8a9-bbd1-4319-98c7-7e8de30efb3d"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "실크스크린 영역이 솔더 마스크 영역에 의해 잘림",
+            "items": [
+                {
+                    "description": "세그먼트 of D4 on B.Silkscreen",
+                    "pos": {
+                        "x": 116.55,
+                        "y": 68.775
+                    },
+                    "uuid": "9e853086-1fe4-46cb-b0c6-4eaaca082d13"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "실크스크린 영역이 솔더 마스크 영역에 의해 잘림",
+            "items": [
+                {
+                    "description": "세그먼트 of D4 on B.Silkscreen",
+                    "pos": {
+                        "x": 116.55,
+                        "y": 71.075
+                    },
+                    "uuid": "5d434f16-52df-4ebb-b471-c5a3cb389b13"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "실크스크린 영역이 솔더 마스크 영역에 의해 잘림",
+            "items": [
+                {
+                    "description": "D39 의 참조 필드",
+                    "pos": {
+                        "x": 175.9125,
+                        "y": 143.725
+                    },
+                    "uuid": "fbcf3a41-6fa8-43c8-8670-ab9f7acd7f19"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "실크스크린 영역이 솔더 마스크 영역에 의해 잘림",
+            "items": [
+                {
+                    "description": "세그먼트 of D39 on B.Silkscreen",
+                    "pos": {
+                        "x": 178.4625,
+                        "y": 144.975
+                    },
+                    "uuid": "c1b81a9a-9e91-4734-a1ce-36fbb7fe40e5"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "실크스크린 영역이 솔더 마스크 영역에 의해 잘림",
+            "items": [
+                {
+                    "description": "세그먼트 of D39 on B.Silkscreen",
+                    "pos": {
+                        "x": 178.4625,
+                        "y": 147.275
+                    },
+                    "uuid": "fefbb092-9a2a-4934-9829-6cd634d020e8"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "실크스크린 영역이 솔더 마스크 영역에 의해 잘림",
+            "items": [
+                {
+                    "description": "세그먼트 of D9 on B.Silkscreen",
+                    "pos": {
+                        "x": 49.875,
+                        "y": 87.825
+                    },
+                    "uuid": "1937c767-8b41-4da8-8481-2503e5698439"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "실크스크린 영역이 솔더 마스크 영역에 의해 잘림",
+            "items": [
+                {
+                    "description": "세그먼트 of D9 on B.Silkscreen",
+                    "pos": {
+                        "x": 49.875,
+                        "y": 90.125
+                    },
+                    "uuid": "d329117d-fece-4297-920e-38edd18c13bf"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "실크스크린 영역이 솔더 마스크 영역에 의해 잘림",
+            "items": [
+                {
+                    "description": "세그먼트 of D30 on B.Silkscreen",
+                    "pos": {
+                        "x": 140.3625,
+                        "y": 125.925
+                    },
+                    "uuid": "d8289c4f-9904-42b6-8077-fc84396f0073"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "실크스크린 영역이 솔더 마스크 영역에 의해 잘림",
+            "items": [
+                {
+                    "description": "세그먼트 of D30 on B.Silkscreen",
+                    "pos": {
+                        "x": 140.3625,
+                        "y": 128.225
+                    },
+                    "uuid": "62def4fa-dcc6-485c-8708-85ab6bf03cca"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "실크스크린 영역이 솔더 마스크 영역에 의해 잘림",
+            "items": [
+                {
+                    "description": "D38 의 참조 필드",
+                    "pos": {
+                        "x": 156.8625,
+                        "y": 143.725
+                    },
+                    "uuid": "a3d7d8a2-db4b-46d4-bfcb-b91f487a1d1b"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "실크스크린 영역이 솔더 마스크 영역에 의해 잘림",
+            "items": [
+                {
+                    "description": "세그먼트 of D38 on B.Silkscreen",
+                    "pos": {
+                        "x": 159.4125,
+                        "y": 144.975
+                    },
+                    "uuid": "1d079561-b4ee-46b3-9801-fb0793fc21bb"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "실크스크린 영역이 솔더 마스크 영역에 의해 잘림",
+            "items": [
+                {
+                    "description": "세그먼트 of D38 on B.Silkscreen",
+                    "pos": {
+                        "x": 159.4125,
+                        "y": 147.275
+                    },
+                    "uuid": "e21deee4-92d2-402f-b144-78b80a956508"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "실크스크린 영역이 솔더 마스크 영역에 의해 잘림",
+            "items": [
+                {
+                    "description": "세그먼트 of D26 on B.Silkscreen",
+                    "pos": {
+                        "x": 64.1625,
+                        "y": 125.925
+                    },
+                    "uuid": "ec7dd3a4-3b66-4490-94e1-6b4a9efc4c1f"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "실크스크린 영역이 솔더 마스크 영역에 의해 잘림",
+            "items": [
+                {
+                    "description": "세그먼트 of D26 on B.Silkscreen",
+                    "pos": {
+                        "x": 64.1625,
+                        "y": 128.225
+                    },
+                    "uuid": "0e9fcedd-012a-4a2f-960a-61654a595f72"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "실크스크린 영역이 솔더 마스크 영역에 의해 잘림",
+            "items": [
+                {
+                    "description": "세그먼트 of D13 on B.Silkscreen",
+                    "pos": {
+                        "x": 126.075,
+                        "y": 87.825
+                    },
+                    "uuid": "290afca6-016b-401c-a42b-33284b3fc634"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "실크스크린 영역이 솔더 마스크 영역에 의해 잘림",
+            "items": [
+                {
+                    "description": "세그먼트 of D13 on B.Silkscreen",
+                    "pos": {
+                        "x": 126.075,
+                        "y": 90.125
+                    },
+                    "uuid": "106e0f82-34f2-4b42-b941-308f970451e2"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "실크스크린 영역이 솔더 마스크 영역에 의해 잘림",
+            "items": [
+                {
+                    "description": "세그먼트 of D24 on B.Silkscreen",
+                    "pos": {
+                        "x": 183.225,
+                        "y": 106.875
+                    },
+                    "uuid": "23b84861-6820-4413-9141-6d64c00fd164"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "실크스크린 영역이 솔더 마스크 영역에 의해 잘림",
+            "items": [
+                {
+                    "description": "세그먼트 of D24 on B.Silkscreen",
+                    "pos": {
+                        "x": 183.225,
+                        "y": 109.175
+                    },
+                    "uuid": "57a675ad-bd8c-4c36-80ae-0d5c9cdfc6b6"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "실크스크린 영역이 솔더 마스크 영역에 의해 잘림",
+            "items": [
+                {
+                    "description": "세그먼트 of D27 on B.Silkscreen",
+                    "pos": {
+                        "x": 83.2125,
+                        "y": 125.925
+                    },
+                    "uuid": "91a61cc7-be80-496a-aaf0-49c39d99b5b9"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "실크스크린 영역이 솔더 마스크 영역에 의해 잘림",
+            "items": [
+                {
+                    "description": "세그먼트 of D27 on B.Silkscreen",
+                    "pos": {
+                        "x": 83.2125,
+                        "y": 128.225
+                    },
+                    "uuid": "9fa06882-6e0d-466e-8fa8-80260f238695"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "실크스크린 영역이 솔더 마스크 영역에 의해 잘림",
+            "items": [
+                {
+                    "description": "세그먼트 of D41 on B.Silkscreen",
+                    "pos": {
+                        "x": 216.5625,
+                        "y": 144.975
+                    },
+                    "uuid": "fc2cf0e7-8d78-4189-9812-e9f9c6b2e1aa"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "실크스크린 영역이 솔더 마스크 영역에 의해 잘림",
+            "items": [
+                {
+                    "description": "세그먼트 of D41 on B.Silkscreen",
+                    "pos": {
+                        "x": 216.5625,
+                        "y": 147.275
+                    },
+                    "uuid": "1210ae56-849c-49ea-a7f3-c84c371b8c82"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "실크스크린 영역이 솔더 마스크 영역에 의해 잘림",
+            "items": [
+                {
+                    "description": "세그먼트 of D2 on B.Silkscreen",
+                    "pos": {
+                        "x": 78.45,
+                        "y": 68.775
+                    },
+                    "uuid": "1c3b67db-7493-4b2f-9520-8fed53946089"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "실크스크린 영역이 솔더 마스크 영역에 의해 잘림",
+            "items": [
+                {
+                    "description": "세그먼트 of D2 on B.Silkscreen",
+                    "pos": {
+                        "x": 78.45,
+                        "y": 71.075
+                    },
+                    "uuid": "928d46df-eef3-45af-ab07-142d26ab0ff4"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "실크스크린 영역이 솔더 마스크 영역에 의해 잘림",
+            "items": [
+                {
+                    "description": "세그먼트 of D11 on B.Silkscreen",
+                    "pos": {
+                        "x": 87.975,
+                        "y": 87.825
+                    },
+                    "uuid": "a41df150-11c4-4ab9-8dbe-aadeefd9e33d"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "실크스크린 영역이 솔더 마스크 영역에 의해 잘림",
+            "items": [
+                {
+                    "description": "세그먼트 of D11 on B.Silkscreen",
+                    "pos": {
+                        "x": 87.975,
+                        "y": 90.125
+                    },
+                    "uuid": "81a32d39-9f2f-4096-ab5b-56c92c20f02d"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "실크스크린 영역이 솔더 마스크 영역에 의해 잘림",
+            "items": [
+                {
+                    "description": "세그먼트 of D35 on B.Silkscreen",
+                    "pos": {
+                        "x": 92.7375,
+                        "y": 144.975
+                    },
+                    "uuid": "c0d63532-d76f-46d3-989c-dd04815b03a9"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "실크스크린 영역이 솔더 마스크 영역에 의해 잘림",
+            "items": [
+                {
+                    "description": "세그먼트 of D35 on B.Silkscreen",
+                    "pos": {
+                        "x": 92.7375,
+                        "y": 147.275
+                    },
+                    "uuid": "adec3fc6-f304-4782-87bb-805db39847c7"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "실크스크린 영역이 솔더 마스크 영역에 의해 잘림",
+            "items": [
+                {
+                    "description": "세그먼트 of D34 on B.Silkscreen",
+                    "pos": {
+                        "x": 64.1625,
+                        "y": 144.975
+                    },
+                    "uuid": "957acb09-3ef7-4e3e-b84a-44afcb60d970"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "실크스크린 영역이 솔더 마스크 영역에 의해 잘림",
+            "items": [
+                {
+                    "description": "세그먼트 of D34 on B.Silkscreen",
+                    "pos": {
+                        "x": 64.1625,
+                        "y": 147.275
+                    },
+                    "uuid": "822083ab-667c-4aaf-b0e2-efa14109dd16"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "실크스크린 영역이 솔더 마스크 영역에 의해 잘림",
+            "items": [
+                {
+                    "description": "D32 의 참조 필드",
+                    "pos": {
+                        "x": 194.9625,
+                        "y": 124.675
+                    },
+                    "uuid": "fa8a1bd0-dcef-4d09-8364-cba189c0af4e"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "실크스크린 영역이 솔더 마스크 영역에 의해 잘림",
+            "items": [
+                {
+                    "description": "세그먼트 of D32 on B.Silkscreen",
+                    "pos": {
+                        "x": 197.5125,
+                        "y": 125.925
+                    },
+                    "uuid": "b2cde656-37cc-4e93-8e81-16b276195c80"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "실크스크린 영역이 솔더 마스크 영역에 의해 잘림",
+            "items": [
+                {
+                    "description": "세그먼트 of D32 on B.Silkscreen",
+                    "pos": {
+                        "x": 197.5125,
+                        "y": 128.225
+                    },
+                    "uuid": "912fd281-c9c6-4119-9f37-08a956e0df6e"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "실크스크린 영역이 솔더 마스크 영역에 의해 잘림",
+            "items": [
+                {
+                    "description": "세그먼트 of D40 on B.Silkscreen",
+                    "pos": {
+                        "x": 197.5125,
+                        "y": 144.975
+                    },
+                    "uuid": "f29b5529-cba3-4bda-a330-82c76f37ce65"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "실크스크린 영역이 솔더 마스크 영역에 의해 잘림",
+            "items": [
+                {
+                    "description": "세그먼트 of D40 on B.Silkscreen",
+                    "pos": {
+                        "x": 197.5125,
+                        "y": 147.275
+                    },
+                    "uuid": "b4d4d450-0534-4215-b314-f5ea67332ad9"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "실크스크린 영역이 솔더 마스크 영역에 의해 잘림",
+            "items": [
+                {
+                    "description": "세그먼트 of D19 on B.Silkscreen",
+                    "pos": {
+                        "x": 73.6875,
+                        "y": 106.875
+                    },
+                    "uuid": "f231e586-bc69-41ea-9b4d-5423b78c3183"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "실크스크린 영역이 솔더 마스크 영역에 의해 잘림",
+            "items": [
+                {
+                    "description": "세그먼트 of D19 on B.Silkscreen",
+                    "pos": {
+                        "x": 73.6875,
+                        "y": 109.175
+                    },
+                    "uuid": "dc18bb04-053f-4d5b-a398-57cf9a8fa88e"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "실크스크린 영역이 솔더 마스크 영역에 의해 잘림",
+            "items": [
+                {
+                    "description": "D31 의 참조 필드",
+                    "pos": {
+                        "x": 166.3875,
+                        "y": 124.675
+                    },
+                    "uuid": "fb708a5a-a15c-4e0a-8a8e-efce6add3974"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "실크스크린 영역이 솔더 마스크 영역에 의해 잘림",
+            "items": [
+                {
+                    "description": "세그먼트 of D31 on B.Silkscreen",
+                    "pos": {
+                        "x": 168.9375,
+                        "y": 125.925
+                    },
+                    "uuid": "64e25d36-59d3-448d-9fdc-9a50b45ba5f3"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "실크스크린 영역이 솔더 마스크 영역에 의해 잘림",
+            "items": [
+                {
+                    "description": "세그먼트 of D31 on B.Silkscreen",
+                    "pos": {
+                        "x": 168.9375,
+                        "y": 128.225
+                    },
+                    "uuid": "d35658ad-7608-4852-8474-3ba23f6a23f5"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "실크스크린 영역이 솔더 마스크 영역에 의해 잘림",
+            "items": [
+                {
+                    "description": "세그먼트 of D28 on B.Silkscreen",
+                    "pos": {
+                        "x": 102.2625,
+                        "y": 125.925
+                    },
+                    "uuid": "3d29d914-7aab-44bf-a1e6-8fd2eb33446e"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "실크스크린 영역이 솔더 마스크 영역에 의해 잘림",
+            "items": [
+                {
+                    "description": "세그먼트 of D28 on B.Silkscreen",
+                    "pos": {
+                        "x": 102.2625,
+                        "y": 128.225
+                    },
+                    "uuid": "1aac2b2c-8799-47b5-ab15-ac9f2e2e3b88"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "실크스크린 영역이 솔더 마스크 영역에 의해 잘림",
+            "items": [
+                {
+                    "description": "세그먼트 of D7 on B.Silkscreen",
+                    "pos": {
+                        "x": 185.6063,
+                        "y": 68.775
+                    },
+                    "uuid": "94957e53-1b05-41a6-9670-ee616d11587d"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "실크스크린 영역이 솔더 마스크 영역에 의해 잘림",
+            "items": [
+                {
+                    "description": "세그먼트 of D7 on B.Silkscreen",
+                    "pos": {
+                        "x": 185.6063,
+                        "y": 71.075
+                    },
+                    "uuid": "271eb147-6c26-4f05-8667-3d918c19a30e"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "실크스크린 겹침",
+            "items": [
+                {
+                    "description": "풋프린트 텍스트 J_PWR1 (NN_B-)",
+                    "pos": {
+                        "x": 119.0,
+                        "y": 50.1
+                    },
+                    "uuid": "67727657-7e84-46ae-bcee-3500f4b46d51"
+                },
+                {
+                    "description": "J_PWR1 의 참조 필드",
+                    "pos": {
+                        "x": 116.0,
+                        "y": 50.0
+                    },
+                    "uuid": "8c89d88b-6f02-414c-8738-48e576726e0c"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_overlap"
+        },
+        {
+            "description": "실크스크린 겹침",
+            "items": [
+                {
+                    "description": "풋프린트 텍스트 J_PWR1 (BAT-)",
+                    "pos": {
+                        "x": 113.0,
+                        "y": 50.1
+                    },
+                    "uuid": "221bc45f-75fc-4dbf-9e72-99cb794349f3"
+                },
+                {
+                    "description": "J_PWR1 의 참조 필드",
+                    "pos": {
+                        "x": 116.0,
+                        "y": 50.0
+                    },
+                    "uuid": "8c89d88b-6f02-414c-8738-48e576726e0c"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_overlap"
+        },
+        {
+            "description": "후면 레이어에 미러링되지 않은 텍스트",
+            "items": [
+                {
+                    "description": "PCB 텍스트 'TW301525 80mAh' (B.Fab)",
+                    "pos": {
+                        "x": 88.0,
+                        "y": 51.0
+                    },
+                    "uuid": "80474b02-8c0f-4975-a614-9b84e2e22e9b"
+                }
+            ],
+            "severity": "warning",
+            "type": "nonmirrored_text_on_back_layer"
+        }
+    ]
+}

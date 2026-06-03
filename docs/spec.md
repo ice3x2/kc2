@@ -320,6 +320,11 @@ Row 5: Ctrl GUI Alt Fn Space     |  B  Space RAlt Fn RCtrl Left Down Right
 - `x1` 변형의 diode는 디바이스마트 상품번호 14592018 `1N4148W`, SOD-123을 사용한다.
 - `x1` 변형의 diode footprint는 `kc2.pretty:D_SOD123_HandSolder_14592018`이며, KiCad 기본 `D_SOD-123`의 `0.9 mm x 1.2 mm` pad보다 큰 `1.4 mm x 1.55 mm` pad를 사용한다.
 - `x1` 오른쪽 half는 enlarged diode pad를 쓴 autoroute의 board-edge clearance를 확보하기 위해 상단 outline에 0.3 mm relief를 둔다.
+- `x2` 변형은 `x1`을 복사한 뒤 switch footprint를 `key-switches.pretty:SW_Kailh_Choc_V1_HotSwap_THT`로 바꾼다.
+- `x2` 변형은 Kailh Choc V1/PG1350 기준으로 hot-swap socket pad와 through-hole 직접 납땜 pad를 모두 제공한다.
+- `x2` 변형은 `x1`의 Choc V1/V2 hot-swap-only footprint를 유지하지 않는다. Choc V2까지 포함하는 socket+THT 통합 footprint는 현재 채택하지 않는다.
+- `x2` 변형은 추가된 switch THT pad와 diode 간섭을 피하기 위해 diode y offset을 switch center 기준 `-7.6 mm`로 둔다.
+- `x2` 오른쪽 half는 `x1`과 같은 상단 outline 0.3 mm relief를 유지한다.
 - 상부 하우징이 없으므로 PCB outline은 손에 노출되는 최종 상부 외형이다.
 - PCB 모서리는 라운드 처리한다.
 - nice!nano는 각 half의 숫자열 바로 위에 가로 배치한다.

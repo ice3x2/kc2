@@ -157,6 +157,49 @@ X1 render previews:
 
 The X1 boards have no KiCad DRC errors and no unrouted nets. Remaining warnings are review items, mostly silkscreen overlap/text height plus embedded generated KC2 placeholder footprints that are not yet standalone `.kicad_mod` library entries.
 
+## X2 Variant - 2026-06-04
+
+The `x2` variant copies X1's DeviceMart 14592018 hand-solder diode choice, then changes the switch footprint to support both a Kailh Choc V1 hot-swap socket and direct through-hole switch soldering.
+
+- Left KiCad project: `hardware/kicad/kc2_left-x2/kc2_left-x2.kicad_pro`
+- Left PCB: `hardware/kicad/kc2_left-x2/kc2_left-x2.kicad_pcb`
+- Right KiCad project: `hardware/kicad/kc2_right-x2/kc2_right-x2.kicad_pro`
+- Right PCB: `hardware/kicad/kc2_right-x2/kc2_right-x2.kicad_pcb`
+- Manifest: `hardware/kicad/kc2_x2_generation_manifest.json`
+- Switch footprint: `key-switches.pretty:SW_Kailh_Choc_V1_HotSwap_THT`
+- Diode footprint: `kc2.pretty:D_SOD123_HandSolder_14592018`
+- Diode y offset: `-7.6 mm`
+
+X2 switch-footprint research:
+
+- `SW_Kailh_Choc_V1_HotSwap_THT` describes itself as a Kailh Choc V1 / PG1350 low-profile switch footprint with both hot-swap socket pads and through-hole soldering.
+- The `key-switches.pretty` compatibility table marks `Kailh_Choc_V1_HotSwap_THT` as compatible with Kailh Choc V1, THT, and Hot-Swap.
+- This is a Choc V1 / PG1350-centered decision. X2 does not preserve X1's Choc V1/V2 hot-swap-only footprint because the existing library does not provide an equivalent Choc V1/V2 + Hot-Swap + THT footprint.
+- The first X2 DRC attempt showed clearance errors between the added switch THT pads and the original X1 diode position. Moving the X2 diodes from `-6.8 mm` to `-7.6 mm` from switch center cleared those hard errors.
+
+Freerouting v2.1.0 x2 result:
+
+| Board | Incomplete Connections | Clearance Violations |
+| --- | ---: | ---: |
+| left-x2 | 0 | 0 |
+| right-x2 | 0 | 0 |
+
+KiCad DRC x2 summary after SES import:
+
+| Board | Total | Errors | Warnings | Unconnected | Remaining Warning Rules |
+| --- | ---: | ---: | ---: | ---: | --- |
+| left-x2 | 100 | 0 | 100 | 0 | `silk_over_copper`, `text_height`, `lib_footprint_issues`, `silk_overlap`, `track_dangling`, `nonmirrored_text_on_back_layer`, `silk_edge_clearance` |
+| right-x2 | 131 | 0 | 131 | 0 | `silk_over_copper`, `text_height`, `track_dangling`, `lib_footprint_issues`, `silk_overlap`, `nonmirrored_text_on_back_layer` |
+
+X2 render previews:
+
+- `hardware/kicad/renders/kc2_left-x2_top.png`
+- `hardware/kicad/renders/kc2_left-x2_bottom.png`
+- `hardware/kicad/renders/kc2_right-x2_top.png`
+- `hardware/kicad/renders/kc2_right-x2_bottom.png`
+
+The X2 boards have no KiCad DRC errors and no unrouted nets. Remaining warnings are review items. The main tradeoff is that X2 solves socket-or-solder flexibility for Choc V1 / PG1350, not for the broader X1 Choc V1/V2 hot-swap-only footprint.
+
 ## Routing Notes
 
 - Manual lane routing was replaced by a Specctra DSN/Freerouting/SES flow.
