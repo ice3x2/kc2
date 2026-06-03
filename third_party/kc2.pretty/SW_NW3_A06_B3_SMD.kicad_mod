@@ -1,0 +1,201 @@
+(footprint "SW_NW3_A06_B3_SMD"
+	(version 20241229)
+	(generator "pcbnew")
+	(generator_version "9.0")
+	(layer "F.Cu")
+	(descr "Microstack NW3-A06-B3 micro tact switch, SMD, 6.1 x 3.7 mm body, 2.55 mm height, DeviceMart no.1322056")
+	(tags "switch tactile SPST SMD NW3-A06-B3")
+	(property "Reference" "REF**"
+		(at 0 -3.0 0)
+		(layer "F.SilkS")
+		(uuid "9ad80a0e-5c2c-4f11-9706-9282d8afc9bb")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "Value" "SW_NW3_A06_B3_SMD"
+		(at 0 3.0 0)
+		(layer "F.Fab")
+		(uuid "11e94022-05f9-4ce5-a268-7db99fdf5ba8")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "Datasheet" "https://www.devicemart.co.kr/goods/view?no=1322056"
+		(at 0 0 0)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "d1842f9a-9994-4b04-a01e-4501a6d2dbd0")
+		(effects
+			(font
+				(size 1.27 1.27)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "Description" "Micro tact switch, SMD, DC 12 V 50 mA, 6.1 x 3.7 mm body"
+		(at 0 0 0)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "df9c970f-629f-481c-ad1e-7f7e06df1828")
+		(effects
+			(font
+				(size 1.27 1.27)
+				(thickness 0.15)
+			)
+		)
+	)
+	(attr smd)
+	(fp_line
+		(start -3.25 -2.05)
+		(end 3.25 -2.05)
+		(stroke
+			(width 0.12)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(uuid "681944f6-44d7-42e3-a9a5-b38f4f38c3c2")
+	)
+	(fp_line
+		(start -3.25 2.05)
+		(end 3.25 2.05)
+		(stroke
+			(width 0.12)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(uuid "352d2dd1-9bc1-4821-b69c-78c77055976d")
+	)
+	(fp_line
+		(start -4.95 -2.15)
+		(end 4.95 -2.15)
+		(stroke
+			(width 0.05)
+			(type solid)
+		)
+		(layer "F.CrtYd")
+		(uuid "f77176dd-87a0-407e-af50-10572e00f6e8")
+	)
+	(fp_line
+		(start 4.95 -2.15)
+		(end 4.95 2.15)
+		(stroke
+			(width 0.05)
+			(type solid)
+		)
+		(layer "F.CrtYd")
+		(uuid "b3bdfc65-5909-4fe4-969f-04228fd234b6")
+	)
+	(fp_line
+		(start 4.95 2.15)
+		(end -4.95 2.15)
+		(stroke
+			(width 0.05)
+			(type solid)
+		)
+		(layer "F.CrtYd")
+		(uuid "25006f2a-8ba8-43af-a4c6-2837cc70a6ff")
+	)
+	(fp_line
+		(start -4.95 2.15)
+		(end -4.95 -2.15)
+		(stroke
+			(width 0.05)
+			(type solid)
+		)
+		(layer "F.CrtYd")
+		(uuid "19bf7d3b-ed88-4c52-9e5a-136d514adfc5")
+	)
+	(fp_rect
+		(start -3.05 -1.85)
+		(end 3.05 1.85)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(fill no)
+		(layer "F.Fab")
+		(uuid "cfd8365d-d2de-43f6-8692-804881f03a40")
+	)
+	(fp_rect
+		(start -1.35 -0.65)
+		(end 1.35 0.65)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(fill no)
+		(layer "F.Fab")
+		(uuid "b87c2393-1900-4b7b-9a84-9bd9658a4b57")
+	)
+	(fp_line
+		(start -4.0 -0.3)
+		(end -3.05 -0.3)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(layer "F.Fab")
+		(uuid "ac35ffb0-032d-4dd6-80c4-f12ca0de016f")
+	)
+	(fp_line
+		(start -4.0 0.3)
+		(end -3.05 0.3)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(layer "F.Fab")
+		(uuid "cd2f1087-150b-4441-a713-09b8257b0689")
+	)
+	(fp_line
+		(start 3.05 -0.3)
+		(end 4.0 -0.3)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(layer "F.Fab")
+		(uuid "1d2f4572-5729-4315-ad0d-6f1b0ec9d97b")
+	)
+	(fp_line
+		(start 3.05 0.3)
+		(end 4.0 0.3)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(layer "F.Fab")
+		(uuid "d0c679de-1fac-43f9-a839-0751957b373b")
+	)
+	(fp_text user "${REFERENCE}"
+		(at 0 0 0)
+		(layer "F.Fab")
+		(uuid "4d77878b-69f1-4be5-9389-32566d4491ce")
+		(effects
+			(font
+				(size 0.5 0.5)
+				(thickness 0.1)
+			)
+		)
+	)
+	(pad "1" smd rect
+		(at -3.875 0)
+		(size 1.75 1.0)
+		(layers "F.Cu" "F.Mask" "F.Paste")
+		(uuid "8945710b-7f85-482f-a3d6-cf3175923121")
+	)
+	(pad "2" smd rect
+		(at 3.875 0)
+		(size 1.75 1.0)
+		(layers "F.Cu" "F.Mask" "F.Paste")
+		(uuid "6d90f707-443d-4b7f-9902-058d3cc8f841")
+	)
+	(embedded_fonts no)
+)
