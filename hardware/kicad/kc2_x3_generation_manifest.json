@@ -23,9 +23,9 @@
       58.15
     ]
   },
-  "switch_footprint": "key-switches.pretty:SW_Kailh_Choc_V1_HotSwap_THT",
-  "switch_footprint_file_present": false,
-  "switch_footprint_fallback_source": "hardware\\kicad\\kc2_left-x2\\kc2_left-x2.kicad_pcb",
+  "switch_footprint": "kc2.pretty:SW_Kailh_Choc_V1_HotSwap_THT",
+  "switch_footprint_file_present": true,
+  "switch_footprint_fallback_source": null,
   "diode_footprint": "kc2.pretty:D_SOD123_HandSolder_14592018",
   "diode_value": "1N4148W_SOD123_DeviceMart_14592018",
   "diode_y_offset_mm": -7.6,

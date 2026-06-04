@@ -146,6 +146,14 @@ def pad_positions(fp: pcbnew.FOOTPRINT, pad_number: str) -> list[tuple[float, fl
     return [to_mm_vec(pad.GetPosition()) for pad in fp.Pads() if pad.GetNumber() == pad_number]
 
 
+def pad_positions_on_layer(fp: pcbnew.FOOTPRINT, pad_number: str, layer: int) -> list[tuple[float, float]]:
+    return [
+        to_mm_vec(pad.GetPosition())
+        for pad in fp.Pads()
+        if pad.GetNumber() == pad_number and pad.GetLayerSet().Contains(layer)
+    ]
+
+
 def pads_by_number(fp: pcbnew.FOOTPRINT, pad_number: str) -> list[pcbnew.PAD]:
     return [pad for pad in fp.Pads() if pad.GetNumber() == pad_number]
 
@@ -227,6 +235,7 @@ def add_board_text(
     size: float = 1.2,
     thickness: float = 0.15,
     angle_deg: float = 0.0,
+    mirrored: bool = False,
 ) -> None:
     item = pcbnew.PCB_TEXT(board)
     item.SetText(text)
@@ -235,6 +244,7 @@ def add_board_text(
     item.SetTextSize(pcbnew.VECTOR2I(mm(size), mm(size)))
     item.SetTextThickness(mm(thickness))
     item.SetTextAngleDegrees(angle_deg)
+    item.SetMirrored(mirrored)
     board.Add(item)
 
 
@@ -615,7 +625,8 @@ def create_controller(
     pin_net_map: dict[str, str],
 ) -> tuple[pcbnew.FOOTPRINT, dict[str, tuple[float, float]], tuple[float, float, float, float]]:
     fp = pcbnew.FOOTPRINT(board)
-    fp.SetFPIDAsString("KC2:NiceNanoV2_Socket_24Pin")
+    controller_fp = "NiceNanoV2_Socket_24Pin_USB_OUT_LEFT" if direction == 1 else "NiceNanoV2_Socket_24Pin_USB_OUT_RIGHT"
+    fp.SetFPIDAsString(f"KC2:{controller_fp}")
     fp.SetReference(ref)
     fp.SetValue("nice!nano_v2_socket_24pin")
     fp.SetPosition(vxy(cx, cy))
@@ -648,10 +659,11 @@ def create_controller(
             pad_pos[label] = (x, y)
 
             label_text = pcbnew.PCB_TEXT(fp)
-            label_text.SetText(label.replace("_", ""))
+            display_label = {"GND_A": "G", "GND_B": "G", "GND_C": "G"}.get(label, label.replace("_", ""))
+            label_text.SetText(display_label)
             label_text.SetPosition(vxy(x, y + (2.1 if row_index == 0 else -2.1)))
             label_text.SetLayer(pcbnew.F_SilkS)
-            label_text.SetTextSize(pcbnew.VECTOR2I(mm(0.65), mm(0.65)))
+            label_text.SetTextSize(pcbnew.VECTOR2I(mm(0.8), mm(0.8)))
             label_text.SetTextThickness(mm(0.10))
             fp.Add(label_text)
 
@@ -700,6 +712,7 @@ def create_power_pads(
     fp = pcbnew.FOOTPRINT(board)
     fp.SetFPIDAsString("KC2:DirectSolderPowerPads")
     fp.SetReference(ref)
+    fp.Reference().SetVisible(False)
     fp.SetValue("BAT_NN_direct_solder")
     fp.SetPosition(vxy(x, y))
 
@@ -786,6 +799,7 @@ def make_board(
     out_dir: Path,
     *,
     project_suffix: str = "",
+    switch_lib: Path = SWITCH_LIB,
     switch_fp: str = SOLDERED_SWITCH_FP,
     diode_lib: Path = DIODE_LIB,
     diode_fp: str = DIODE_FP,
@@ -892,13 +906,13 @@ def make_board(
     power_y = ctrl_cy + 1.0
     power_x = ctrl_cx - usb_direction * 28.0
     power_pads = create_power_pads(board, nets, "J_PWR1", power_x, power_y)
-    add_board_text(board, "B+/B- direct cable solder only", power_x - 12, power_y + 7.0, pcbnew.F_SilkS, 0.9)
+    add_board_text(board, "B+/B- direct cable solder only", power_x - 12, power_y + 7.0, pcbnew.Cmts_User, 0.9)
 
     batt_w, batt_h = 15.0, 25.0
     batt_cx = ctrl_cx - usb_direction * 7.0
     batt_cy = ctrl_cy + 2.0
     add_rect_lines(board, batt_cx - batt_w / 2, batt_cy - batt_h / 2, batt_cx + batt_w / 2, batt_cy + batt_h / 2, pcbnew.B_Fab, 0.10)
-    add_board_text(board, "TW301525 80mAh", batt_cx - 7.0, batt_cy, pcbnew.B_Fab, 0.9)
+    add_board_text(board, "TW301525 80mAh", batt_cx - 7.0, batt_cy, pcbnew.B_Fab, 0.9, mirrored=True)
 
     tact_x = ctrl_cx - usb_direction * (CONTROLLER_LEN / 2.0 - 7.0)
     tact_y = ctrl_cy + CONTROLLER_W / 2.0 + 4.0
@@ -922,7 +936,7 @@ def make_board(
         row_net = add_net(board, nets, row_net_name)
         local_net = add_net(board, nets, local_net_name)
 
-        sw = load_footprint(board, SWITCH_LIB, switch_fp, f"SW{idx}", f"KEY_{idx:02d}", key.cx, key.cy)
+        sw = load_footprint(board, switch_lib, switch_fp, f"SW{idx}", f"KEY_{idx:02d}", key.cx, key.cy)
         convert_empty_switch_pads_to_npth(sw)
         set_pad_net(sw, "1", col_net)
         set_pad_net(sw, "2", local_net)
@@ -954,8 +968,11 @@ def make_board(
         add_track(board, local_net, (local_lane_x, left_switch_pad2[1]), left_switch_pad2, pcbnew.B_Cu)
         add_track(board, local_net, left_switch_pad2, right_switch_pad2, pcbnew.B_Cu)
 
-        col_tap = (key.cx + 8.0, sw_p1[0][1])
-        add_track(board, col_net, sw_p1[0], col_tap, pcbnew.F_Cu)
+        sw_p1_fcu = pad_positions_on_layer(sw, "1", pcbnew.F_Cu)
+        col_anchor = sorted(sw_p1_fcu, key=lambda p: p[0])[0]
+        col_tap_dx = -1.5 if side == "left" else 1.5
+        col_tap = (col_anchor[0] + col_tap_dx, col_anchor[1])
+        add_track(board, col_net, col_anchor, col_tap, pcbnew.F_Cu)
         row_diodes.setdefault(key.row, []).append(row_tap)
         col_switches.setdefault(key.col, []).append(col_tap)
 
@@ -971,8 +988,8 @@ def make_board(
     for col, points in col_switches.items():
         net = add_net(board, nets, f"{col_prefix}{col}")
         points = sorted(points, key=lambda p: p[1])
-        for a, b in zip(points, points[1:]):
-            add_track(board, net, a, b, pcbnew.F_Cu)
+        spine_x = (min(x for x, _ in points) - 1.5) if side == "left" else (max(x for x, _ in points) + 1.5)
+        route_via_vertical_spine(board, net, points, pcbnew.F_Cu, spine_x)
 
     connect_matrix_to_controller(
         board,
@@ -1008,6 +1025,7 @@ def make_board(
     make_fp_lib_table(project_dir)
     board_path = project_dir / f"{name}.kicad_pcb"
     pcbnew.SaveBoard(str(board_path), board)
+    make_project_file(project_dir, name)
     return board_path, antenna_keepout
 
 
@@ -1074,20 +1092,12 @@ def connect_matrix_to_controller(
         if not pin:
             continue
         net = add_net(board, nets, net_name)
-        points = sorted(points, key=lambda p: p[0])
-        if side == "left":
-            src = points[0]
-            exit_x = min_outline_x + 3.5 + row * 0.8
-        else:
-            src = points[-1]
-            exit_x = max_outline_x - 3.5 - row * 0.8
-        exit_point = (exit_x, src[1])
-        add_track(board, net, src, exit_point, pcbnew.B_Cu)
         dst = controller_pads[pin]
+        src = min(points, key=lambda p: abs(p[0] - dst[0]) + abs(p[1] - dst[1]))
         route_to_controller(
             board,
             net,
-            exit_point,
+            src,
             dst,
             controller_pads,
             pcbnew.B_Cu,
@@ -1109,6 +1119,21 @@ def route_manhattan(
     add_track(board, net, src, p1, layer, width)
     add_track(board, net, p1, p2, layer, width)
     add_track(board, net, p2, dst, layer, width)
+
+
+def route_via_vertical_spine(
+    board: pcbnew.BOARD,
+    net: pcbnew.NETINFO_ITEM,
+    points: list[tuple[float, float]],
+    layer: int,
+    spine_x: float,
+) -> None:
+    for a, b in zip(points, points[1:]):
+        a_spine = (spine_x, a[1])
+        b_spine = (spine_x, b[1])
+        add_track(board, net, a, a_spine, layer)
+        add_track(board, net, a_spine, b_spine, layer)
+        add_track(board, net, b_spine, b, layer)
 
 
 def route_to_controller(
@@ -1186,6 +1211,7 @@ def copy_license() -> None:
 def generate_variant(variant: str) -> dict[str, object]:
     if variant == "soldered":
         project_suffix = ""
+        switch_lib = SWITCH_LIB
         switch_fp = SOLDERED_SWITCH_FP
         diode_lib = DIODE_LIB
         diode_fp = DIODE_FP
@@ -1194,6 +1220,7 @@ def generate_variant(variant: str) -> dict[str, object]:
         manifest_name = "kc2_generation_manifest.json"
     elif variant == "hotswap":
         project_suffix = "-hotswap"
+        switch_lib = SWITCH_LIB
         switch_fp = HOTSWAP_SWITCH_FP
         diode_lib = DIODE_LIB
         diode_fp = DIODE_FP
@@ -1202,6 +1229,7 @@ def generate_variant(variant: str) -> dict[str, object]:
         manifest_name = "kc2_hotswap_generation_manifest.json"
     elif variant == "x1":
         project_suffix = "-x1"
+        switch_lib = SWITCH_LIB
         switch_fp = HOTSWAP_SWITCH_FP
         diode_lib = X1_DIODE_LIB
         diode_fp = X1_DIODE_FP
@@ -1210,6 +1238,7 @@ def generate_variant(variant: str) -> dict[str, object]:
         manifest_name = "kc2_x1_generation_manifest.json"
     elif variant == "x2":
         project_suffix = "-x2"
+        switch_lib = KC2_FP_LIB
         switch_fp = X2_SWITCH_FP
         diode_lib = X1_DIODE_LIB
         diode_fp = X1_DIODE_FP
@@ -1220,6 +1249,7 @@ def generate_variant(variant: str) -> dict[str, object]:
         right_keys = make_right_keys()
     elif variant == "x3":
         project_suffix = "-x3"
+        switch_lib = KC2_FP_LIB
         switch_fp = X2_SWITCH_FP
         diode_lib = X1_DIODE_LIB
         diode_fp = X1_DIODE_FP
@@ -1242,6 +1272,7 @@ def generate_variant(variant: str) -> dict[str, object]:
         left_keys,
         KICAD_ROOT,
         project_suffix=project_suffix,
+        switch_lib=switch_lib,
         switch_fp=switch_fp,
         diode_lib=diode_lib,
         diode_fp=diode_fp,
@@ -1254,6 +1285,7 @@ def generate_variant(variant: str) -> dict[str, object]:
         right_keys,
         KICAD_ROOT,
         project_suffix=project_suffix,
+        switch_lib=switch_lib,
         switch_fp=switch_fp,
         diode_lib=diode_lib,
         diode_fp=diode_fp,
@@ -1287,6 +1319,7 @@ def generate_variant(variant: str) -> dict[str, object]:
         notes.append(f"X3 keeps X2's diode y offset of {X2_DIODE_Y_OFFSET:g} mm and the right-half 0.3 mm top outline relief.")
         notes.append("X3 right half uses nine columns in every row; R_COL8 remains on D20 and R_COL7 remains on D21.")
         notes.append("X3 adds 0.8 mm inner-edge routing relief on both halves for the denser 77-key matrix.")
+    switch_footprint_file_present = (switch_lib / f"{switch_fp}.kicad_mod").exists()
     manifest: dict[str, object] = {
         "generated": "2026-06-04",
         "variant": variant,
@@ -1302,11 +1335,13 @@ def generate_variant(variant: str) -> dict[str, object]:
             "left": left_keepout,
             "right": right_keepout,
         },
-        "switch_footprint": f"{SWITCH_LIB.name}:{switch_fp}",
-        "switch_footprint_file_present": (SWITCH_LIB / f"{switch_fp}.kicad_mod").exists(),
-        "switch_footprint_fallback_source": str(EMBEDDED_FOOTPRINT_SOURCES.get(switch_fp, Path("")).relative_to(ROOT))
-        if switch_fp in EMBEDDED_FOOTPRINT_SOURCES
-        else None,
+        "switch_footprint": f"{switch_lib.name}:{switch_fp}",
+        "switch_footprint_file_present": switch_footprint_file_present,
+        "switch_footprint_fallback_source": (
+            str(EMBEDDED_FOOTPRINT_SOURCES.get(switch_fp, Path("")).relative_to(ROOT))
+            if switch_fp in EMBEDDED_FOOTPRINT_SOURCES and not switch_footprint_file_present
+            else None
+        ),
         "diode_footprint": f"{diode_lib.name}:{diode_fp}",
         "diode_value": diode_value,
         "diode_y_offset_mm": diode_y_offset,
