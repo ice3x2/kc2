@@ -134,6 +134,8 @@ KC2는 상부 보강판이 없는 PCB 직접 납땜 구조이므로, 큰 키의 
 
 KC2의 PCB 설계에서는 물리 배열과 firmware 동작을 분리해서 본다. 사용자 제공 KLE와 실물 측정은 switch center, key size, stabilizer 위치의 기준이고, ZMK keymap은 각 물리 키의 동작 기준이다.
 
+무보강판 low-profile no-stabilizer 방향의 최종 split layout은 하위 문서 `docs/spec/20.kc2-no-stabilizer-layout.md`를 따른다. 이 하위 문서는 기존 `>=2u` 키를 모두 `2u` 미만의 물리 키로 분할한 77-key layout이며, 이 문서의 기존 71-key 배열 설명은 routed draft baseline으로 유지한다.
+
 왼쪽 half 기준 물리 배열:
 
 ```text
@@ -325,6 +327,12 @@ Row 5: Ctrl GUI Alt Fn Space     |  B  Space RAlt Fn RCtrl Left Down Right
 - `x2` 변형은 `x1`의 Choc V1/V2 hot-swap-only footprint를 유지하지 않는다. Choc V2까지 포함하는 socket+THT 통합 footprint는 현재 채택하지 않는다.
 - `x2` 변형은 추가된 switch THT pad와 diode 간섭을 피하기 위해 diode y offset을 switch center 기준 `-7.6 mm`로 둔다.
 - `x2` 오른쪽 half는 `x1`과 같은 상단 outline 0.3 mm relief를 유지한다.
+- `x3` 변형은 `x2`를 복사한 no-stabilizer layout 개선판이다.
+- `x3` 변형은 switch footprint, diode footprint, diode y offset, 오른쪽 half 상단 outline relief를 `x2`와 동일하게 유지한다.
+- `x3` 변형은 `docs/spec/20.kc2-no-stabilizer-layout.md`의 77-key layout을 사용하며, 물리 키 최대 폭은 `1.75u`이다.
+- `x3` 변형은 `2u 이상` 키가 없으므로 stabilizer footprint를 생성하지 않는다.
+- `x3` 오른쪽 half는 5개 row 모두 9개 matrix column을 사용한다. 기존 `R_COL8=D20`, `R_COL7=D21` pin mapping은 유지하되, firmware keymap에서는 duplicate legend physical key를 별도 위치로 구분해야 한다.
+- `x3` outline은 증가한 matrix 밀도 때문에 양쪽 half의 inner edge에 `0.8 mm` routing relief를 추가한다.
 - 상부 하우징이 없으므로 PCB outline은 손에 노출되는 최종 상부 외형이다.
 - PCB 모서리는 라운드 처리한다.
 - nice!nano는 각 half의 숫자열 바로 위에 가로 배치한다.

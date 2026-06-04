@@ -200,6 +200,42 @@ X2 render previews:
 
 The X2 boards have no KiCad DRC errors and no unrouted nets. Remaining warnings are review items. The main tradeoff is that X2 solves socket-or-solder flexibility for Choc V1 / PG1350, not for the broader X1 Choc V1/V2 hot-swap-only footprint.
 
+## X3 Variant - 2026-06-04
+
+The `x3` variant copies X2's switch/diode electrical stack, then applies the no-stabilizer 77-key split layout from `docs/spec/20.kc2-no-stabilizer-layout.md`.
+
+- Left KiCad project: `hardware/kicad/kc2_left-x3/kc2_left-x3.kicad_pro`
+- Left PCB: `hardware/kicad/kc2_left-x3/kc2_left-x3.kicad_pcb`
+- Right KiCad project: `hardware/kicad/kc2_right-x3/kc2_right-x3.kicad_pro`
+- Right PCB: `hardware/kicad/kc2_right-x3/kc2_right-x3.kicad_pcb`
+- Manifest: `hardware/kicad/kc2_x3_generation_manifest.json`
+- Switch footprint: `key-switches.pretty:SW_Kailh_Choc_V1_HotSwap_THT`
+- Diode footprint: `kc2.pretty:D_SOD123_HandSolder_14592018`
+- Diode y offset: `-7.6 mm`
+- Key count: left `32`, right `45`, total `77`
+- Maximum physical key width: `1.75u`
+- Stabilizer footprints: `0`
+
+Freerouting v2.1.0 x3 result:
+
+| Board | Incomplete Connections | Clearance Violations |
+| --- | ---: | ---: |
+| left-x3 | 0 | 0 |
+| right-x3 | 0 | 0 |
+
+KiCad DRC x3 summary after SES import and one left-side edge-clearance jog:
+
+| Board | Total | Errors | Warnings | Unconnected | Remaining Warning Rules |
+| --- | ---: | ---: | ---: | ---: | --- |
+| left-x3 | 101 | 0 | 101 | 0 | `silk_over_copper`, `text_height`, `track_dangling`, `lib_footprint_issues`, `silk_overlap`, `silk_edge_clearance`, `nonmirrored_text_on_back_layer` |
+| right-x3 | 140 | 0 | 140 | 0 | `silk_over_copper`, `text_height`, `track_dangling`, `lib_footprint_issues`, `silk_overlap`, `nonmirrored_text_on_back_layer` |
+
+X3 connection verification:
+
+- `tools/verify_kc2_connectivity.py` checks switch/diode pad nets, local diode nets, row/column buses, controller pin mapping, matrix key counts, and absence of stabilizer references.
+- The verifier is layer-aware: SMD pads only connect on their copper layer; PTH pads and vias bridge F.Cu/B.Cu.
+- Verification result: `PASS` for both `kc2_left-x3.kicad_pcb` and `kc2_right-x3.kicad_pcb`.
+
 ## Routing Notes
 
 - Manual lane routing was replaced by a Specctra DSN/Freerouting/SES flow.
@@ -214,7 +250,7 @@ The X2 boards have no KiCad DRC errors and no unrouted nets. Remaining warnings 
 
 - Remaining KiCad warnings include small silkscreen/text issues and library-footprint warnings for generated KC2 placeholder/custom footprints that are embedded in the board but not yet saved as standalone `.kicad_mod` library entries.
 - `track_dangling` warnings should be visually reviewed in KiCad before fabrication output, even though KiCad reports 0 unrouted nets.
-- PCB-mounted stabilizer holes are present as MX-style 2u stabilizer NPTH markers, but low-profile stabilizer compatibility still needs real-part measurement.
+- PCB-mounted stabilizer holes are present as MX-style 2u stabilizer NPTH markers in the 71-key baseline, hotswap, x1, and x2 variants; X3 removes the `>=2u` physical keys and has no stabilizer footprints.
 - The PCB outline, M2 holes, battery space, controller socket, and tact switch should be checked with a 1:1 print before ordering.
 
 ## Next Work

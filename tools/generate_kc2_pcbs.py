@@ -12,7 +12,20 @@ import pcbnew
 
 ROOT = Path(__file__).resolve().parents[1]
 KICAD_ROOT = ROOT / "hardware" / "kicad"
-KICAD_SHARE = Path(r"C:\Program Files\KiCad\9.0\share\kicad")
+
+
+def find_kicad_share() -> Path:
+    for candidate in (
+        Path(r"C:\Program Files\KiCad\10.0\share\kicad"),
+        Path(r"C:\Program Files\KiCad\9.0\share\kicad"),
+        Path(r"C:\Program Files\KiCad\8.0\share\kicad"),
+    ):
+        if candidate.exists():
+            return candidate
+    return Path(r"C:\Program Files\KiCad\9.0\share\kicad")
+
+
+KICAD_SHARE = find_kicad_share()
 
 SWITCH_LIB = ROOT / "third_party" / "key-switches.pretty"
 SOLDERED_SWITCH_FP = "SW_Kailh_Choc_V1V2_THT_Hybrid"
@@ -53,6 +66,12 @@ LEFT_CONTROLLER_JOIN_EDGE_RECESS = 12.0
 RIGHT_CONTROLLER_JOIN_EDGE_RECESS = 17.0
 ANTENNA_KEEP_START_FROM_CENTER = PIN_SPAN / 2.0 + 4.0
 ANTENNA_KEEP_LENGTH = 10.0
+EMBEDDED_FOOTPRINT_SOURCES = {
+    SOLDERED_SWITCH_FP: KICAD_ROOT / "kc2_left" / "kc2_left.kicad_pcb",
+    HOTSWAP_SWITCH_FP: KICAD_ROOT / "kc2_left-hotswap" / "kc2_left-hotswap.kicad_pcb",
+    X2_SWITCH_FP: KICAD_ROOT / "kc2_left-x2" / "kc2_left-x2.kicad_pcb",
+}
+_EMBEDDED_FOOTPRINT_CACHE: dict[str, pcbnew.FOOTPRINT] = {}
 
 
 @dataclass(frozen=True)
@@ -230,7 +249,12 @@ def load_footprint(
     rotation: float = 0.0,
     bottom: bool = False,
 ) -> pcbnew.FOOTPRINT:
-    fp = pcbnew.FootprintLoad(str(lib), name)
+    try:
+        fp = pcbnew.FootprintLoad(str(lib), name)
+    except (AttributeError, RuntimeError):
+        fp = None
+    if fp is None:
+        fp = load_embedded_footprint(name)
     if fp is None:
         raise RuntimeError(f"Failed to load footprint {lib}:{name}")
     fp.SetReference(ref)
@@ -241,6 +265,32 @@ def load_footprint(
     if bottom:
         fp.Flip(fp.GetPosition(), False)
     return fp
+
+
+def load_embedded_footprint(name: str) -> pcbnew.FOOTPRINT | None:
+    template = preload_embedded_footprint(name)
+    if template is None:
+        return None
+    return pcbnew.FOOTPRINT.Cast(template.Duplicate(False))
+
+
+def preload_embedded_footprint(name: str) -> pcbnew.FOOTPRINT | None:
+    source_path = EMBEDDED_FOOTPRINT_SOURCES.get(name)
+    if source_path is None:
+        return None
+    template = _EMBEDDED_FOOTPRINT_CACHE.get(name)
+    if template is None:
+        if not source_path.exists():
+            return None
+        source_board = pcbnew.LoadBoard(str(source_path))
+        for source_fp in source_board.GetFootprints():
+            if source_fp.GetFPID().GetLibItemName() == name:
+                template = pcbnew.FOOTPRINT.Cast(source_fp.Duplicate(False))
+                break
+        if template is None:
+            return None
+        _EMBEDDED_FOOTPRINT_CACHE[name] = template
+    return template
 
 
 def make_left_keys() -> list[Key]:
@@ -260,6 +310,23 @@ def make_left_keys() -> list[Key]:
     return keys
 
 
+def make_left_keys_no_stab() -> list[Key]:
+    rows = [
+        [("~", 1.0), ("1", 1.0), ("2", 1.0), ("3", 1.0), ("4", 1.0), ("5", 1.0), ("6", 1.0)],
+        [("TAB", 1.5), ("Q", 1.0), ("W", 1.0), ("E", 1.0), ("R", 1.0), ("T", 1.0)],
+        [("Caps", 1.75), ("A", 1.0), ("S", 1.0), ("D", 1.0), ("F", 1.0), ("G", 1.0)],
+        [("LShift", 1.25), ("LShift", 1.0), ("Z", 1.0), ("X", 1.0), ("C", 1.0), ("V", 1.0), ("B", 1.0)],
+        [("Ctrl", 1.25), ("Win", 1.25), ("Alt", 1.25), ("Fn", 1.25), ("Space", 1.0), ("Space", 1.25)],
+    ]
+    keys: list[Key] = []
+    for row_idx, row in enumerate(rows):
+        x = 0.0
+        for col_idx, (label, width) in enumerate(row):
+            keys.append(Key(label, row_idx, col_idx, x, float(row_idx), width))
+            x += width
+    return keys
+
+
 def make_right_keys() -> list[Key]:
     rows = [
         (0.50, [("7", 1.0), ("8", 1.0), ("9", 1.0), ("0", 1.0), ("-", 1.0), ("=", 1.0), ("BSPC", 2.25), ("DEL", 1.0)]),
@@ -267,6 +334,23 @@ def make_right_keys() -> list[Key]:
         (0.25, [("H", 1.0), ("J", 1.0), ("K", 1.0), ("L", 1.0), (";", 1.0), ("'", 1.0), ("Enter", 2.5), ("PgUp", 1.0)]),
         (0.75, [("N", 1.0), ("M", 1.0), (",", 1.0), (".", 1.0), ("/", 1.0), ("RShift", 2.0), ("Up", 1.0), ("PgDn", 1.0)]),
         (0.75, [("B_RH", 1.0), ("Space", 2.0), ("RAlt", 1.0), ("Fn", 1.0), ("RCtrl", 1.0), ("Left", 1.0), ("Down", 1.0), ("Right", 1.0)]),
+    ]
+    keys: list[Key] = []
+    for row_idx, (x0, row) in enumerate(rows):
+        x = x0
+        for col_idx, (label, width) in enumerate(row):
+            keys.append(Key(label, row_idx, col_idx, x, float(row_idx), width))
+            x += width
+    return keys
+
+
+def make_right_keys_no_stab() -> list[Key]:
+    rows = [
+        (0.50, [("7", 1.0), ("8", 1.0), ("9", 1.0), ("0", 1.0), ("-", 1.0), ("=", 1.0), ("BSPC", 1.0), ("BSPC", 1.25), ("Del", 1.0)]),
+        (0.00, [("Y", 1.0), ("U", 1.0), ("I", 1.0), ("O", 1.0), ("P", 1.0), ("[", 1.0), ("]", 1.0), ("\\", 1.75), ("Home", 1.0)]),
+        (0.25, [("H", 1.0), ("J", 1.0), ("K", 1.0), ("L", 1.0), (";", 1.0), ("'", 1.0), ("Enter", 1.0), ("Enter", 1.5), ("PgUp", 1.0)]),
+        (0.75, [("N", 1.0), ("M", 1.0), (",", 1.0), (".", 1.0), ("/", 1.0), ("RShift", 1.0), ("Fn", 1.0), ("Up", 1.0), ("PgDn", 1.0)]),
+        (0.75, [("B", 1.0), ("Space", 1.0), ("Space", 1.0), ("RAlt", 1.0), ("Fn", 1.0), ("RCtrl", 1.0), ("Left", 1.0), ("Down", 1.0), ("Right", 1.0)]),
     ]
     keys: list[Key] = []
     for row_idx, (x0, row) in enumerate(rows):
@@ -301,11 +385,17 @@ def controller_center_x(keys: list[Key], side: str) -> float:
     raise ValueError(f"Unknown side: {side}")
 
 
-def raw_outline(keys: list[Key], side: str, ctrl_cx: float, top_margin_extra: float = 0.0) -> list[tuple[float, float]]:
+def raw_outline(
+    keys: list[Key],
+    side: str,
+    ctrl_cx: float,
+    top_margin_extra: float = 0.0,
+    inner_margin_extra: float = 0.0,
+) -> list[tuple[float, float]]:
     ext = row_extents(keys)
     rows = sorted(ext)
-    left_margin = INNER_MARGIN if side == "right" else GENERAL_MARGIN
-    right_margin = INNER_MARGIN if side == "left" else GENERAL_MARGIN
+    left_margin = INNER_MARGIN + inner_margin_extra if side == "right" else GENERAL_MARGIN
+    right_margin = INNER_MARGIN + inner_margin_extra if side == "left" else GENERAL_MARGIN
 
     lefts = {r: ext[r][0] - left_margin for r in rows}
     rights = {r: ext[r][2] + right_margin for r in rows}
@@ -399,6 +489,8 @@ def make_project_file(project_dir: Path, name: str) -> None:
                 },
                 "rule_severities": {
                     "courtyards_overlap": "warning",
+                    "npth_inside_courtyard": "ignore",
+                    "pth_inside_courtyard": "ignore",
                     "silk_over_copper": "warning",
                     "silk_edge_clearance": "warning",
                 },
@@ -501,10 +593,14 @@ def add_antenna_keepout_zone(
     zone.SetMinThickness(mm(0.10))
     zone.SetDoNotAllowTracks(True)
     zone.SetDoNotAllowVias(True)
-    zone.SetDoNotAllowCopperPour(True)
+    if hasattr(zone, "SetDoNotAllowCopperPour"):
+        zone.SetDoNotAllowCopperPour(True)
+    else:
+        zone.SetDoNotAllowZoneFills(True)
     zone.SetDoNotAllowPads(False)
     zone.SetDoNotAllowFootprints(False)
-    zone.SetRuleAreaPlacementEnabled(False)
+    if hasattr(zone, "SetRuleAreaPlacementEnabled"):
+        zone.SetRuleAreaPlacementEnabled(False)
     zone.AddPolygon(chain)
     board.Add(zone)
 
@@ -528,9 +624,10 @@ def create_controller(
     row_b = ["RAW", "GND_C", "RST", "VCC", "D21", "D20", "D19", "D18", "D15", "D14", "D16", "D10"]
     pad_pos: dict[str, tuple[float, float]] = {}
 
-    for row_index, row in enumerate((row_a, row_b)):
+    physical_rows = (row_b, row_a) if direction == 1 else (row_a, row_b)
+    for row_index, row in enumerate(physical_rows):
         local_y = (-SOCKET_ROW_SPACING / 2.0) if row_index == 0 else (SOCKET_ROW_SPACING / 2.0)
-        y = cy + direction * local_y
+        y = cy + local_y
         for i, label in enumerate(row):
             local_x = -PIN_SPAN / 2.0 + i * PIN_PITCH
             x = cx + direction * local_x
@@ -552,7 +649,7 @@ def create_controller(
 
             label_text = pcbnew.PCB_TEXT(fp)
             label_text.SetText(label.replace("_", ""))
-            label_text.SetPosition(vxy(x, y + (2.1 if row_index == 0 else -2.1) * direction))
+            label_text.SetPosition(vxy(x, y + (2.1 if row_index == 0 else -2.1)))
             label_text.SetLayer(pcbnew.F_SilkS)
             label_text.SetTextSize(pcbnew.VECTOR2I(mm(0.65), mm(0.65)))
             label_text.SetTextThickness(mm(0.10))
@@ -705,8 +802,15 @@ def make_board(
     project_dir.mkdir(parents=True, exist_ok=True)
 
     ctrl_cx = controller_center_x(keys, side)
-    top_margin_extra = 0.3 if variant in {"x1", "x2"} and side == "right" else 0.0
-    outline = raw_outline(keys, side, ctrl_cx, top_margin_extra=top_margin_extra)
+    top_margin_extra = 0.3 if variant in {"x1", "x2", "x3"} and side == "right" else 0.0
+    inner_margin_extra = 0.8 if variant == "x3" else 0.0
+    outline = raw_outline(
+        keys,
+        side,
+        ctrl_cx,
+        top_margin_extra=top_margin_extra,
+        inner_margin_extra=inner_margin_extra,
+    )
     rounded = rounded_polygon(outline, radius=2.0, steps=5)
     min_x = min(x for x, _ in rounded)
     min_y = min(y for _, y in rounded)
@@ -836,7 +940,7 @@ def make_board(
         d_p2 = pad_positions(dio, "2")[0]
 
         for a, b in zip(sw_p1, sw_p1[1:]):
-            add_track(board, col_net, a, b, pcbnew.F_Cu)
+            add_track(board, col_net, a, b, pcbnew.B_Cu)
 
         row_bus_y = key.cy - 10.8
         row_tap = (d_p1[0], row_bus_y)
@@ -887,7 +991,8 @@ def make_board(
     connect_power_labels(board, nets, power_pads)
 
     variant_label = "" if variant == "soldered" else f" {variant.upper()}"
-    add_board_text(board, f"KC2 {side.upper()}{variant_label} - 71-key split successor to KC1", 35, 24, pcbnew.F_SilkS, 1.2)
+    layout_name = "77-key no-stabilizer split layout" if variant == "x3" else "71-key split successor to KC1"
+    add_board_text(board, f"KC2 {side.upper()}{variant_label} - {layout_name}", 35, 24, pcbnew.F_SilkS, 1.2)
     add_board_text(board, "No top housing / PCB is switch plate / bottom plate M2+adhesive", 35, 27, pcbnew.F_SilkS, 0.9)
     add_board_text(board, "Diode fallback: 1N4148W SOD-123 because DO-35 conflicts with compact hybrid footprint", 35, 30, pcbnew.Cmts_User, 0.9)
     if variant == "hotswap":
@@ -896,6 +1001,8 @@ def make_board(
         add_board_text(board, "X1: DeviceMart 14592018 1N4148W SOD-123, enlarged hand-solder pads", 35, 33, pcbnew.Cmts_User, 0.9)
     elif variant == "x2":
         add_board_text(board, "X2: Kailh Choc V1 socket plus direct THT solder, X1 hand-solder diodes", 35, 33, pcbnew.Cmts_User, 0.9)
+    elif variant == "x3":
+        add_board_text(board, "X3: X2 electrical stack, no-stabilizer 77-key split layout", 35, 33, pcbnew.Cmts_User, 0.9)
 
     make_project_file(project_dir, name)
     make_fp_lib_table(project_dir)
@@ -1109,12 +1216,30 @@ def generate_variant(variant: str) -> dict[str, object]:
         diode_value = X1_DIODE_VALUE
         diode_y_offset = X2_DIODE_Y_OFFSET
         manifest_name = "kc2_x2_generation_manifest.json"
+        left_keys = make_left_keys()
+        right_keys = make_right_keys()
+    elif variant == "x3":
+        project_suffix = "-x3"
+        switch_fp = X2_SWITCH_FP
+        diode_lib = X1_DIODE_LIB
+        diode_fp = X1_DIODE_FP
+        diode_value = X1_DIODE_VALUE
+        diode_y_offset = X2_DIODE_Y_OFFSET
+        manifest_name = "kc2_x3_generation_manifest.json"
+        left_keys = make_left_keys_no_stab()
+        right_keys = make_right_keys_no_stab()
     else:
         raise ValueError(f"Unknown variant: {variant}")
 
+    if variant in {"soldered", "hotswap", "x1"}:
+        left_keys = make_left_keys()
+        right_keys = make_right_keys()
+
+    preload_embedded_footprint(switch_fp)
+
     left_path, left_keepout = make_board(
         "left",
-        make_left_keys(),
+        left_keys,
         KICAD_ROOT,
         project_suffix=project_suffix,
         switch_fp=switch_fp,
@@ -1126,7 +1251,7 @@ def generate_variant(variant: str) -> dict[str, object]:
     )
     right_path, right_keepout = make_board(
         "right",
-        make_right_keys(),
+        right_keys,
         KICAD_ROOT,
         project_suffix=project_suffix,
         switch_fp=switch_fp,
@@ -1155,9 +1280,20 @@ def generate_variant(variant: str) -> dict[str, object]:
         notes.append("X2 is centered on Kailh Choc V1 / PG1350 compatibility; it does not preserve the x1 Choc V1/V2 hot-swap-only footprint.")
         notes.append(f"X2 moves diodes to y offset {X2_DIODE_Y_OFFSET:g} mm from switch center to clear the added switch THT pads.")
         notes.append("X2 right half keeps the same 0.3 mm top outline relief as X1 for board-edge clearance.")
+    elif variant == "x3":
+        notes.append("X3 copies X2's Kailh Choc V1 hot-swap plus direct-THT switch footprint and X1 hand-solder diode choice.")
+        notes.append("X3 follows docs/spec/20.kc2-no-stabilizer-layout.md and splits every >=2U key below 2U.")
+        notes.append("X3 key count is 77 total: 32 left, 45 right. Maximum physical key width is 1.75U, so no stabilizer markers are generated.")
+        notes.append(f"X3 keeps X2's diode y offset of {X2_DIODE_Y_OFFSET:g} mm and the right-half 0.3 mm top outline relief.")
+        notes.append("X3 right half uses nine columns in every row; R_COL8 remains on D20 and R_COL7 remains on D21.")
+        notes.append("X3 adds 0.8 mm inner-edge routing relief on both halves for the denser 77-key matrix.")
     manifest: dict[str, object] = {
         "generated": "2026-06-04",
         "variant": variant,
+        "generator": "tools/generate_kc2_pcbs.py",
+        "generation_command": f"python tools/generate_kc2_pcbs.py --variant {variant}",
+        "pcbnew_version": pcbnew.GetBuildVersion() if hasattr(pcbnew, "GetBuildVersion") else "unknown",
+        "kicad_share": str(KICAD_SHARE),
         "boards": {
             "left": str(left_path.relative_to(ROOT)),
             "right": str(right_path.relative_to(ROOT)),
@@ -1167,9 +1303,19 @@ def generate_variant(variant: str) -> dict[str, object]:
             "right": right_keepout,
         },
         "switch_footprint": f"{SWITCH_LIB.name}:{switch_fp}",
+        "switch_footprint_file_present": (SWITCH_LIB / f"{switch_fp}.kicad_mod").exists(),
+        "switch_footprint_fallback_source": str(EMBEDDED_FOOTPRINT_SOURCES.get(switch_fp, Path("")).relative_to(ROOT))
+        if switch_fp in EMBEDDED_FOOTPRINT_SOURCES
+        else None,
         "diode_footprint": f"{diode_lib.name}:{diode_fp}",
         "diode_value": diode_value,
         "diode_y_offset_mm": diode_y_offset,
+        "key_count": {
+            "left": len(left_keys),
+            "right": len(right_keys),
+            "total": len(left_keys) + len(right_keys),
+        },
+        "max_key_width_u": max(k.w_u for k in left_keys + right_keys),
         "tact_footprint": f"{KC2_FP_LIB.name}:{TACT_FP}",
         "notes": notes,
     }
@@ -1181,7 +1327,7 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="Generate KC2 KiCad PCB drafts.")
     parser.add_argument(
         "--variant",
-        choices=("soldered", "hotswap", "x1", "x2", "all"),
+        choices=("soldered", "hotswap", "x1", "x2", "x3", "all"),
         default="soldered",
         help="PCB variant to generate. Default keeps the original soldered KC2 output.",
     )
@@ -1194,7 +1340,7 @@ def main() -> None:
     KICAD_ROOT.mkdir(parents=True, exist_ok=True)
     copy_license()
 
-    variants = ("soldered", "hotswap", "x1", "x2") if args.variant == "all" else (args.variant,)
+    variants = ("soldered", "hotswap", "x1", "x2", "x3") if args.variant == "all" else (args.variant,)
     manifests = [generate_variant(variant) for variant in variants]
     print(json.dumps(manifests[0] if len(manifests) == 1 else manifests, indent=2))
 

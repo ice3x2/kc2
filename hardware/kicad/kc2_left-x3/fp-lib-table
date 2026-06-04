@@ -1,0 +1,4 @@
+(fp_lib_table
+	(lib (name "key-switches")(type "KiCad")(uri "C:/Work/git/_Snoworca/kc2/third_party/key-switches.pretty")(options "")(descr "Third-party keyboard switch footprints, CERN-OHL-P v2"))
+	(lib (name "KC2")(type "KiCad")(uri "C:/Work/git/_Snoworca/kc2/third_party/kc2.pretty")(options "")(descr "KC2 local footprints"))
+)
