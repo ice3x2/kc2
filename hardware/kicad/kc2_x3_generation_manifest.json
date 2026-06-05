@@ -49,6 +49,7 @@
     "X3 key count is 77 total: 32 left, 45 right. Maximum physical key width is 1.75U, so no stabilizer markers are generated.",
     "X3 keeps X2's diode y offset of -7.6 mm and the right-half 0.3 mm top outline relief.",
     "X3 right half uses nine columns in every row; R_COL8 remains on D20 and R_COL7 remains on D21.",
-    "X3 adds 0.8 mm inner-edge routing relief on both halves for the denser 77-key matrix."
+    "X3 adds 0.8 mm inner-edge routing relief on both halves for the denser 77-key matrix.",
+    "X3 right Y/H interlock protrusion keeps the vertical face at the 3.6 mm inner-edge margin and relieves the horizontal ledges inward by 0.8 mm."
   ]
 }

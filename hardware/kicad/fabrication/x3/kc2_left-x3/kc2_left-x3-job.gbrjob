@@ -5,7 +5,7 @@
       "Application": "Pcbnew",
       "Version": "10.0.3"
     },
-    "CreationDate": "2026-06-04T18:27:54+09:00"
+    "CreationDate": "2026-06-05T13:36:14+09:00"
   },
   "GeneralSpecs": {
     "ProjectId": {
@@ -32,47 +32,47 @@
   ],
   "FilesAttributes": [
     {
-      "Path": "kc2_left-x3-F_Cu.gtl",
+      "Path": "C:\\Work\\git\\_Snoworca\\kc2\\hardware\\kicad\\fabrication\\x3\\kc2_left-x3\\kc2_left-x3-F_Cu.gtl",
       "FileFunction": "Copper,L1,Top",
       "FilePolarity": "Positive"
     },
     {
-      "Path": "kc2_left-x3-B_Cu.gbl",
+      "Path": "C:\\Work\\git\\_Snoworca\\kc2\\hardware\\kicad\\fabrication\\x3\\kc2_left-x3\\kc2_left-x3-B_Cu.gbl",
       "FileFunction": "Copper,L2,Bot",
       "FilePolarity": "Positive"
     },
     {
-      "Path": "kc2_left-x3-F_Paste.gtp",
+      "Path": "C:\\Work\\git\\_Snoworca\\kc2\\hardware\\kicad\\fabrication\\x3\\kc2_left-x3\\kc2_left-x3-F_Paste.gtp",
       "FileFunction": "SolderPaste,Top",
       "FilePolarity": "Positive"
     },
     {
-      "Path": "kc2_left-x3-B_Paste.gbp",
+      "Path": "C:\\Work\\git\\_Snoworca\\kc2\\hardware\\kicad\\fabrication\\x3\\kc2_left-x3\\kc2_left-x3-B_Paste.gbp",
       "FileFunction": "SolderPaste,Bot",
       "FilePolarity": "Positive"
     },
     {
-      "Path": "kc2_left-x3-F_Silkscreen.gto",
+      "Path": "C:\\Work\\git\\_Snoworca\\kc2\\hardware\\kicad\\fabrication\\x3\\kc2_left-x3\\kc2_left-x3-F_Silkscreen.gto",
       "FileFunction": "Legend,Top",
       "FilePolarity": "Positive"
     },
     {
-      "Path": "kc2_left-x3-B_Silkscreen.gbo",
+      "Path": "C:\\Work\\git\\_Snoworca\\kc2\\hardware\\kicad\\fabrication\\x3\\kc2_left-x3\\kc2_left-x3-B_Silkscreen.gbo",
       "FileFunction": "Legend,Bot",
       "FilePolarity": "Positive"
     },
     {
-      "Path": "kc2_left-x3-F_Mask.gts",
+      "Path": "C:\\Work\\git\\_Snoworca\\kc2\\hardware\\kicad\\fabrication\\x3\\kc2_left-x3\\kc2_left-x3-F_Mask.gts",
       "FileFunction": "SolderMask,Top",
       "FilePolarity": "Negative"
     },
     {
-      "Path": "kc2_left-x3-B_Mask.gbs",
+      "Path": "C:\\Work\\git\\_Snoworca\\kc2\\hardware\\kicad\\fabrication\\x3\\kc2_left-x3\\kc2_left-x3-B_Mask.gbs",
       "FileFunction": "SolderMask,Bot",
       "FilePolarity": "Negative"
     },
     {
-      "Path": "kc2_left-x3-Edge_Cuts.gm1",
+      "Path": "C:\\Work\\git\\_Snoworca\\kc2\\hardware\\kicad\\fabrication\\x3\\kc2_left-x3\\kc2_left-x3-Edge_Cuts.gm1",
       "FileFunction": "Profile",
       "FilePolarity": "Positive"
     }

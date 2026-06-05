@@ -28,6 +28,19 @@ KC2는 KC1 핸드와이어링 키보드의 배열 철학과 결합/분리 사용
 - 하우징: 상부 하우징 없음. 3D 프린터 하부 바닥판을 사용한다.
 - PCB 수량: 좌우 독립 PCB 2장
 
+## 제조 파일 제출
+
+KC2 X3는 좌우 독립 PCB 2장이므로 PCB 제조사 제출 파일도 좌/우를 분리해서 다룬다. `hardware/kicad/fabrication/kc2_x3_fabrication.zip`처럼 좌/우 산출물을 함께 담은 합본 ZIP은 저장소 내부 검증/보관용 묶음이며, JLCPCB 같은 제조사에 단일 비패널 PCB 주문으로 그대로 제출하지 않는다.
+
+기본 주문 방식은 좌/우 fabrication directory를 각각 별도 ZIP으로 묶어 별도 PCB 주문으로 제출하는 것이다.
+
+- Left: `hardware/kicad/fabrication/x3/kc2_left-x3/`
+- Right: `hardware/kicad/fabrication/x3/kc2_right-x3/`
+
+각 ZIP에는 Gerber copper, solder mask, solder paste, silkscreen, Edge.Cuts, Gerber job 파일뿐 아니라 PTH/NPTH Excellon drill 파일과 drill map/report를 함께 포함해야 한다. "거버 파일"이라고 부르더라도 drill 파일을 빼면 발주용 패키지로 인정하지 않는다.
+
+좌우 PCB를 한 주문 안에 넣으려면 단순히 두 보드 파일 세트를 한 ZIP에 섞지 말고, 의도적인 customer panel Gerber를 별도로 생성한 뒤 서로 다른 디자인 2개를 포함한 panelized order로 제출한다. 이 경우 제조사의 different-design/panel 옵션, 추가 비용, V-cut/tab-route 분리 조건을 주문 전에 확인한다.
+
 ## 한국어 입력 요구사항
 
 KC2는 KC1의 한글 2벌식 입력 방식을 이어받아 `ㅠ` 입력을 자연스럽게 하기 위한 오른손 `B` 키를 가진다.
@@ -117,6 +130,10 @@ KC2는 상부 보강판이 없는 PCB 직접 납땜 구조이므로, 큰 키의 
 - 바깥쪽 edge, 손바닥 접촉부, controller 돌출부는 강도와 라운딩을 우선한다.
 - 일반 PCB 외곽 테두리는 keycap 외곽 기준 5.5 mm를 기본값으로 하며, 부품/배선 조건에 따라 5.0-6.0 mm 범위에서 조정한다.
 - 좌우 half가 맞닿는 결합 edge는 keycap 외곽 기준 2.8 mm를 기본값으로 하며, 허용 범위는 2.5-3.0 mm로 둔다. 2.5 mm 미만은 반복 결합/분리 시 파손 위험 때문에 사용하지 않는다.
+- X3를 결합 상태로 배치할 때는 오른쪽 `Y`/`H` 쪽 돌출부가 왼쪽 `T`/`G` 쪽 홈으로 들어가는 interlocked placement를 기본 reference로 둔다. 좌우 PCB Edge.Cuts 사이의 최소 joined placement clearance는 `1.0 mm`로 둔다.
+- X3 오른쪽 `Y`/`H` 돌출부의 세로 inner Edge.Cuts 면은 X3 inner-edge routing relief가 적용된 `3.6 mm` margin을 유지한다. X방향 끼임 여유는 세로면을 후퇴시키지 않고 돌출부의 가로 ledge 시작점만 안쪽으로 `0.8 mm` relief 처리해 확보한다.
+- 3D 프린터 하부 바닥판의 치수 팽창, 밀링 burr, 자석 정렬 오차를 흡수하기 위한 실사용 clearance 허용 범위는 `0.8-1.2 mm`이며, `0 mm` 접촉은 좌표 정렬 확인용으로만 사용한다.
+- joined placement clearance는 하부 바닥판/자석/정렬 구조의 배치 기준이며, PCB inner-edge routing relief 또는 copper-to-edge clearance를 줄이기 위한 값이 아니다.
 - 결합 edge의 얇은 영역에는 가능하면 pad, via, diode lead, wire strain relief, M2 홀을 두지 않는다.
 - PCB edge-to-copper clearance는 일반 edge에서 1.0 mm 이상, 결합 edge에서 최소 0.8 mm 이상을 유지하되 가능하면 1.0 mm를 목표로 한다.
 - PCB 외형은 단순 사각형이 아니라 키 배열 외곽을 따라 남는 공간을 최소화한다.
@@ -333,6 +350,7 @@ Row 5: Ctrl GUI Alt Fn Space     |  B  Space RAlt Fn RCtrl Left Down Right
 - `x3` 변형은 `2u 이상` 키가 없으므로 stabilizer footprint를 생성하지 않는다.
 - `x3` 오른쪽 half는 5개 row 모두 9개 matrix column을 사용한다. 기존 `R_COL8=D20`, `R_COL7=D21` pin mapping은 유지하되, firmware keymap에서는 duplicate legend physical key를 별도 위치로 구분해야 한다.
 - `x3` outline은 증가한 matrix 밀도 때문에 양쪽 half의 inner edge에 `0.8 mm` routing relief를 추가한다.
+- `x3` joined mechanical reference는 오른쪽 `Y`/`H` 돌출부를 왼쪽 `T`/`G` 홈으로 넣은 interlocked 배치에서 Edge.Cuts 간 최소 `1.0 mm` clearance를 유지한다. 오른쪽 `Y`/`H` 돌출부는 세로 inner Edge.Cuts 면을 `3.6 mm` margin으로 유지하고 가로 ledge만 `0.8 mm` 안쪽 relief 처리하되, 전기적 copper-to-edge clearance는 fabrication gate 기준을 계속 만족해야 한다.
 - 상부 하우징이 없으므로 PCB outline은 손에 노출되는 최종 상부 외형이다.
 - PCB 모서리는 라운드 처리한다.
 - nice!nano는 각 half의 숫자열 바로 위에 가로 배치한다.

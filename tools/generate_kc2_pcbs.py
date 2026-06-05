@@ -3,6 +3,7 @@ from __future__ import annotations
 import argparse
 import json
 import math
+import os
 import shutil
 from dataclasses import dataclass
 from pathlib import Path
@@ -45,6 +46,8 @@ MOUNT_FP = "MountingHole_2.2mm_M2"
 UNIT = 19.05
 GENERAL_MARGIN = 5.5
 INNER_MARGIN = 2.8
+X3_INNER_MARGIN_EXTRA = 0.8
+X3_RIGHT_YH_HORIZONTAL_LEDGE_RELIEF = 0.8
 EDGE_WIDTH = 0.10
 TRACK_WIDTH = 0.25
 POWER_TRACK_WIDTH = 0.75
@@ -480,6 +483,30 @@ def rounded_polygon(points: list[tuple[float, float]], radius: float = 2.0, step
     return remove_duplicate_points(rounded)
 
 
+def x3_right_horizontal_ledge_relief(
+    points: list[tuple[float, float]],
+    keys: list[Key],
+    radius: float = 2.0,
+) -> list[tuple[float, float]]:
+    ext = row_extents(keys)
+    left_margin = INNER_MARGIN + X3_INNER_MARGIN_EXTRA
+    lefts = {row: bounds[0] - left_margin for row, bounds in ext.items()}
+    target_points = {
+        (lefts[1] + radius, ext[0][3]),
+        (lefts[1] + radius, ext[1][3]),
+        (lefts[2] + radius, ext[1][3]),
+        (lefts[2] + radius, ext[2][3]),
+    }
+
+    relieved: list[tuple[float, float]] = []
+    for x, y in points:
+        nx = x
+        if any(abs(x - tx) < 0.001 and abs(y - ty) < 0.001 for tx, ty in target_points):
+            nx = x + X3_RIGHT_YH_HORIZONTAL_LEDGE_RELIEF
+        relieved.append((nx, y))
+    return remove_duplicate_points(relieved)
+
+
 def shift_points(points: list[tuple[float, float]], dx: float, dy: float) -> list[tuple[float, float]]:
     return [(x + dx, y + dy) for x, y in points]
 
@@ -572,15 +599,22 @@ def make_project_file(project_dir: Path, name: str) -> None:
     (project_dir / f"{name}.kicad_pro").write_text(json.dumps(data, indent=2), encoding="utf-8")
 
 
-def make_fp_lib_table(project_dir: Path) -> None:
-    switch_rel = SWITCH_LIB.resolve().as_posix()
-    kc2_rel = KC2_FP_LIB.resolve().as_posix()
-    content = (
-        "(fp_lib_table\n"
-        f"\t(lib (name \"key-switches\")(type \"KiCad\")(uri \"{switch_rel}\")(options \"\")(descr \"Third-party keyboard switch footprints, CERN-OHL-P v2\"))\n"
-        f"\t(lib (name \"KC2\")(type \"KiCad\")(uri \"{kc2_rel}\")(options \"\")(descr \"KC2 local footprints\"))\n"
-        ")\n"
-    )
+def footprint_lib_uri(project_dir: Path, lib_path: Path) -> str:
+    rel = Path(os.path.relpath(lib_path.resolve(), project_dir.resolve()))
+    return "${KIPRJMOD}/" + rel.as_posix()
+
+
+def make_fp_lib_table(project_dir: Path, include_switch_lib: bool = True) -> None:
+    switch_rel = footprint_lib_uri(project_dir, SWITCH_LIB)
+    kc2_rel = footprint_lib_uri(project_dir, KC2_FP_LIB)
+    lines = ["(fp_lib_table"]
+    if include_switch_lib:
+        lines.append(
+            f"\t(lib (name \"key-switches\")(type \"KiCad\")(uri \"{switch_rel}\")(options \"\")(descr \"Third-party keyboard switch footprints, CERN-OHL-P v2\"))"
+        )
+    lines.append(f"\t(lib (name \"KC2\")(type \"KiCad\")(uri \"{kc2_rel}\")(options \"\")(descr \"KC2 local footprints\"))")
+    lines.append(")")
+    content = "\n".join(lines) + "\n"
     (project_dir / "fp-lib-table").write_text(content, encoding="utf-8")
 
 
@@ -817,7 +851,7 @@ def make_board(
 
     ctrl_cx = controller_center_x(keys, side)
     top_margin_extra = 0.3 if variant in {"x1", "x2", "x3"} and side == "right" else 0.0
-    inner_margin_extra = 0.8 if variant == "x3" else 0.0
+    inner_margin_extra = X3_INNER_MARGIN_EXTRA if variant == "x3" else 0.0
     outline = raw_outline(
         keys,
         side,
@@ -826,6 +860,8 @@ def make_board(
         inner_margin_extra=inner_margin_extra,
     )
     rounded = rounded_polygon(outline, radius=2.0, steps=5)
+    if variant == "x3" and side == "right":
+        rounded = x3_right_horizontal_ledge_relief(rounded, keys, radius=2.0)
     min_x = min(x for x, _ in rounded)
     min_y = min(y for _, y in rounded)
     dx = 35.0 - min_x
@@ -1022,7 +1058,7 @@ def make_board(
         add_board_text(board, "X3: X2 electrical stack, no-stabilizer 77-key split layout", 35, 33, pcbnew.Cmts_User, 0.9)
 
     make_project_file(project_dir, name)
-    make_fp_lib_table(project_dir)
+    make_fp_lib_table(project_dir, include_switch_lib=switch_lib == SWITCH_LIB)
     board_path = project_dir / f"{name}.kicad_pcb"
     pcbnew.SaveBoard(str(board_path), board)
     make_project_file(project_dir, name)
@@ -1319,6 +1355,7 @@ def generate_variant(variant: str) -> dict[str, object]:
         notes.append(f"X3 keeps X2's diode y offset of {X2_DIODE_Y_OFFSET:g} mm and the right-half 0.3 mm top outline relief.")
         notes.append("X3 right half uses nine columns in every row; R_COL8 remains on D20 and R_COL7 remains on D21.")
         notes.append("X3 adds 0.8 mm inner-edge routing relief on both halves for the denser 77-key matrix.")
+        notes.append("X3 right Y/H interlock protrusion keeps the vertical face at the 3.6 mm inner-edge margin and relieves the horizontal ledges inward by 0.8 mm.")
     switch_footprint_file_present = (switch_lib / f"{switch_fp}.kicad_mod").exists()
     manifest: dict[str, object] = {
         "generated": "2026-06-04",
@@ -1368,14 +1405,14 @@ def main() -> None:
     )
     args = parser.parse_args()
 
-    if not SWITCH_LIB.exists():
-        raise SystemExit(f"Missing switch library: {SWITCH_LIB}")
     if not KC2_FP_LIB.exists():
         raise SystemExit(f"Missing KC2 footprint library: {KC2_FP_LIB}")
     KICAD_ROOT.mkdir(parents=True, exist_ok=True)
-    copy_license()
-
     variants = ("soldered", "hotswap", "x1", "x2", "x3") if args.variant == "all" else (args.variant,)
+    if any(variant in {"soldered", "hotswap", "x1"} for variant in variants):
+        if not SWITCH_LIB.exists():
+            raise SystemExit(f"Missing switch library: {SWITCH_LIB}")
+        copy_license()
     manifests = [generate_variant(variant) for variant in variants]
     print(json.dumps(manifests[0] if len(manifests) == 1 else manifests, indent=2))
 
