@@ -109,7 +109,7 @@ def main() -> None:
         "board",
         nargs="?",
         type=Path,
-        default=ROOT / "hardware" / "kicad" / "kc2_right-x3" / "kc2_right-x3.kicad_pcb",
+        default=ROOT / "hardware" / "kicad" / "kc2_right" / "kc2_right.kicad_pcb",
     )
     args = parser.parse_args()
 

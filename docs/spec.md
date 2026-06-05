@@ -30,16 +30,18 @@ KC2는 KC1 핸드와이어링 키보드의 배열 철학과 결합/분리 사용
 
 ## 제조 파일 제출
 
-KC2 X3는 좌우 독립 PCB 2장이므로 PCB 제조사 제출 파일도 좌/우를 분리해서 다룬다. `hardware/kicad/fabrication/kc2_x3_fabrication.zip`처럼 좌/우 산출물을 함께 담은 합본 ZIP은 저장소 내부 검증/보관용 묶음이며, JLCPCB 같은 제조사에 단일 비패널 PCB 주문으로 그대로 제출하지 않는다.
+KC2 main PCB는 검증된 X3 no-stabilizer 버전이며, 좌우 독립 PCB 2장이므로 PCB 제조사 제출 파일도 좌/우를 분리해서 다룬다. `hardware/kicad/fabrication/kc2_fabrication.zip`처럼 좌/우 산출물을 함께 담은 합본 ZIP은 저장소 내부 검증/보관용 묶음이며, JLCPCB 같은 제조사에 단일 비패널 PCB 주문으로 그대로 제출하지 않는다.
 
 기본 주문 방식은 좌/우 fabrication directory를 각각 별도 ZIP으로 묶어 별도 PCB 주문으로 제출하는 것이다.
 
-- Left: `hardware/kicad/fabrication/x3/kc2_left-x3/`
-- Right: `hardware/kicad/fabrication/x3/kc2_right-x3/`
+- Left: `hardware/kicad/fabrication/kc2_left/`
+- Right: `hardware/kicad/fabrication/kc2_right/`
 
 각 ZIP에는 Gerber copper, solder mask, solder paste, silkscreen, Edge.Cuts, Gerber job 파일뿐 아니라 PTH/NPTH Excellon drill 파일과 drill map/report를 함께 포함해야 한다. "거버 파일"이라고 부르더라도 drill 파일을 빼면 발주용 패키지로 인정하지 않는다.
 
 좌우 PCB를 한 주문 안에 넣으려면 단순히 두 보드 파일 세트를 한 ZIP에 섞지 말고, 의도적인 customer panel Gerber를 별도로 생성한 뒤 서로 다른 디자인 2개를 포함한 panelized order로 제출한다. 이 경우 제조사의 different-design/panel 옵션, 추가 비용, V-cut/tab-route 분리 조건을 주문 전에 확인한다.
+
+이전 soldered, hotswap, x1, x2 KiCad 산출물은 `hardware/kicad/draft/` 아래에 보관한다. 제조와 검증의 기본 진입점은 `hardware/kicad/kc2_left/`와 `hardware/kicad/kc2_right/`이다.
 
 ## 한국어 입력 요구사항
 
@@ -344,7 +346,7 @@ Row 5: Ctrl GUI Alt Fn Space     |  B  Space RAlt Fn RCtrl Left Down Right
 - `x2` 변형은 `x1`의 Choc V1/V2 hot-swap-only footprint를 유지하지 않는다. Choc V2까지 포함하는 socket+THT 통합 footprint는 현재 채택하지 않는다.
 - `x2` 변형은 추가된 switch THT pad와 diode 간섭을 피하기 위해 diode y offset을 switch center 기준 `-7.6 mm`로 둔다.
 - `x2` 오른쪽 half는 `x1`과 같은 상단 outline 0.3 mm relief를 유지한다.
-- `x3` 변형은 `x2`를 복사한 no-stabilizer layout 개선판이다.
+- 현재 main PCB는 기존 `x3` 변형을 승격한 no-stabilizer layout 개선판이다.
 - `x3` 변형은 switch footprint, diode footprint, diode y offset, 오른쪽 half 상단 outline relief를 `x2`와 동일하게 유지한다.
 - `x3` 변형은 `docs/spec/20.kc2-no-stabilizer-layout.md`의 77-key layout을 사용하며, 물리 키 최대 폭은 `1.75u`이다.
 - `x3` 변형은 `2u 이상` 키가 없으므로 stabilizer footprint를 생성하지 않는다.

@@ -13,6 +13,7 @@ import pcbnew
 
 ROOT = Path(__file__).resolve().parents[1]
 KICAD_ROOT = ROOT / "hardware" / "kicad"
+DRAFT_ROOT = KICAD_ROOT / "draft"
 
 
 def find_kicad_share() -> Path:
@@ -70,9 +71,9 @@ RIGHT_CONTROLLER_JOIN_EDGE_RECESS = 17.0
 ANTENNA_KEEP_START_FROM_CENTER = PIN_SPAN / 2.0 + 4.0
 ANTENNA_KEEP_LENGTH = 10.0
 EMBEDDED_FOOTPRINT_SOURCES = {
-    SOLDERED_SWITCH_FP: KICAD_ROOT / "kc2_left" / "kc2_left.kicad_pcb",
-    HOTSWAP_SWITCH_FP: KICAD_ROOT / "kc2_left-hotswap" / "kc2_left-hotswap.kicad_pcb",
-    X2_SWITCH_FP: KICAD_ROOT / "kc2_left-x2" / "kc2_left-x2.kicad_pcb",
+    SOLDERED_SWITCH_FP: DRAFT_ROOT / "soldered" / "kc2_left" / "kc2_left.kicad_pcb",
+    HOTSWAP_SWITCH_FP: DRAFT_ROOT / "hotswap" / "kc2_left-hotswap" / "kc2_left-hotswap.kicad_pcb",
+    X2_SWITCH_FP: DRAFT_ROOT / "x2" / "kc2_left-x2" / "kc2_left-x2.kicad_pcb",
 }
 _EMBEDDED_FOOTPRINT_CACHE: dict[str, pcbnew.FOOTPRINT] = {}
 
@@ -1246,6 +1247,7 @@ def copy_license() -> None:
 
 def generate_variant(variant: str) -> dict[str, object]:
     if variant == "soldered":
+        out_dir = DRAFT_ROOT / "soldered"
         project_suffix = ""
         switch_lib = SWITCH_LIB
         switch_fp = SOLDERED_SWITCH_FP
@@ -1255,6 +1257,7 @@ def generate_variant(variant: str) -> dict[str, object]:
         diode_y_offset = DEFAULT_DIODE_Y_OFFSET
         manifest_name = "kc2_generation_manifest.json"
     elif variant == "hotswap":
+        out_dir = DRAFT_ROOT / "hotswap"
         project_suffix = "-hotswap"
         switch_lib = SWITCH_LIB
         switch_fp = HOTSWAP_SWITCH_FP
@@ -1264,6 +1267,7 @@ def generate_variant(variant: str) -> dict[str, object]:
         diode_y_offset = DEFAULT_DIODE_Y_OFFSET
         manifest_name = "kc2_hotswap_generation_manifest.json"
     elif variant == "x1":
+        out_dir = DRAFT_ROOT / "x1"
         project_suffix = "-x1"
         switch_lib = SWITCH_LIB
         switch_fp = HOTSWAP_SWITCH_FP
@@ -1273,6 +1277,7 @@ def generate_variant(variant: str) -> dict[str, object]:
         diode_y_offset = DEFAULT_DIODE_Y_OFFSET
         manifest_name = "kc2_x1_generation_manifest.json"
     elif variant == "x2":
+        out_dir = DRAFT_ROOT / "x2"
         project_suffix = "-x2"
         switch_lib = KC2_FP_LIB
         switch_fp = X2_SWITCH_FP
@@ -1284,14 +1289,15 @@ def generate_variant(variant: str) -> dict[str, object]:
         left_keys = make_left_keys()
         right_keys = make_right_keys()
     elif variant == "x3":
-        project_suffix = "-x3"
+        out_dir = KICAD_ROOT
+        project_suffix = ""
         switch_lib = KC2_FP_LIB
         switch_fp = X2_SWITCH_FP
         diode_lib = X1_DIODE_LIB
         diode_fp = X1_DIODE_FP
         diode_value = X1_DIODE_VALUE
         diode_y_offset = X2_DIODE_Y_OFFSET
-        manifest_name = "kc2_x3_generation_manifest.json"
+        manifest_name = "kc2_generation_manifest.json"
         left_keys = make_left_keys_no_stab()
         right_keys = make_right_keys_no_stab()
     else:
@@ -1306,7 +1312,7 @@ def generate_variant(variant: str) -> dict[str, object]:
     left_path, left_keepout = make_board(
         "left",
         left_keys,
-        KICAD_ROOT,
+        out_dir,
         project_suffix=project_suffix,
         switch_lib=switch_lib,
         switch_fp=switch_fp,
@@ -1319,7 +1325,7 @@ def generate_variant(variant: str) -> dict[str, object]:
     right_path, right_keepout = make_board(
         "right",
         right_keys,
-        KICAD_ROOT,
+        out_dir,
         project_suffix=project_suffix,
         switch_lib=switch_lib,
         switch_fp=switch_fp,
@@ -1391,17 +1397,18 @@ def generate_variant(variant: str) -> dict[str, object]:
         "tact_footprint": f"{KC2_FP_LIB.name}:{TACT_FP}",
         "notes": notes,
     }
-    (KICAD_ROOT / manifest_name).write_text(json.dumps(manifest, indent=2), encoding="utf-8")
+    out_dir.mkdir(parents=True, exist_ok=True)
+    (out_dir / manifest_name).write_text(json.dumps(manifest, indent=2), encoding="utf-8")
     return manifest
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Generate KC2 KiCad PCB drafts.")
+    parser = argparse.ArgumentParser(description="Generate KC2 KiCad PCB outputs.")
     parser.add_argument(
         "--variant",
         choices=("soldered", "hotswap", "x1", "x2", "x3", "all"),
-        default="soldered",
-        help="PCB variant to generate. Default keeps the original soldered KC2 output.",
+        default="x3",
+        help="PCB variant to generate. Default writes the promoted X3 main KC2 output.",
     )
     args = parser.parse_args()
 

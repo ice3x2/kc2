@@ -276,12 +276,12 @@ def key_horizontal_clearance(left: BoardRenderData, right: BoardRenderData, righ
 def build_context(repo: Path, clearance_mm: float, scale: float, placement_mode: str) -> RenderContext:
     left = load_board_data(
         "left",
-        repo / "hardware" / "kicad" / "kc2_left-x3" / "kc2_left-x3.kicad_pcb",
+        repo / "hardware" / "kicad" / "kc2_left" / "kc2_left.kicad_pcb",
         make_left_keys_no_stab(),
     )
     right = load_board_data(
         "right",
-        repo / "hardware" / "kicad" / "kc2_right-x3" / "kc2_right-x3.kicad_pcb",
+        repo / "hardware" / "kicad" / "kc2_right" / "kc2_right.kicad_pcb",
         make_right_keys_no_stab(),
     )
 
@@ -564,10 +564,10 @@ def main() -> int:
     ctx = build_context(args.repo.resolve(), args.clearance_mm, args.scale, args.placement_mode)
     args.output_dir.mkdir(parents=True, exist_ok=True)
     outputs = [
-        (args.output_dir / "kc2_x3_joined_top.svg", False, render_svg),
-        (args.output_dir / "kc2_x3_joined_top.png", False, render_png),
-        (args.output_dir / "kc2_x3_join_seam_zoom.svg", True, render_svg),
-        (args.output_dir / "kc2_x3_join_seam_zoom.png", True, render_png),
+        (args.output_dir / "kc2_joined_top.svg", False, render_svg),
+        (args.output_dir / "kc2_joined_top.png", False, render_png),
+        (args.output_dir / "kc2_join_seam_zoom.svg", True, render_svg),
+        (args.output_dir / "kc2_join_seam_zoom.png", True, render_png),
     ]
     for path, zoom, renderer in outputs:
         width, height = renderer(ctx, path, zoom=zoom)

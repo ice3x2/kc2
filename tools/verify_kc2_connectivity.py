@@ -283,8 +283,8 @@ def main() -> None:
         nargs="*",
         type=Path,
         default=[
-            ROOT / "hardware" / "kicad" / "kc2_left-x3" / "kc2_left-x3.kicad_pcb",
-            ROOT / "hardware" / "kicad" / "kc2_right-x3" / "kc2_right-x3.kicad_pcb",
+            ROOT / "hardware" / "kicad" / "kc2_left" / "kc2_left.kicad_pcb",
+            ROOT / "hardware" / "kicad" / "kc2_right" / "kc2_right.kicad_pcb",
         ],
     )
     args = parser.parse_args()

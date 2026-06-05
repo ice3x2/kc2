@@ -9,8 +9,8 @@ from PIL import Image
 ROOT = Path(__file__).resolve().parents[1]
 RENDERS = ROOT / "hardware" / "kicad" / "renders"
 EXPECTED = {
-    "kc2_x3_joined_top": (1724, 749),
-    "kc2_x3_join_seam_zoom": (320, 749),
+    "kc2_joined_top": (1724, 749),
+    "kc2_join_seam_zoom": (320, 749),
 }
 
 

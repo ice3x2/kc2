@@ -1,5 +1,10 @@
 {
   "generated": "2026-06-04",
+  "variant": "x3",
+  "generator": "tools/generate_kc2_pcbs.py",
+  "generation_command": "python tools/generate_kc2_pcbs.py --variant x3",
+  "pcbnew_version": "10.0.3",
+  "kicad_share": "C:\\Program Files\\KiCad\\10.0\\share\\kicad",
   "boards": {
     "left": "hardware\\kicad\\kc2_left\\kc2_left.kicad_pcb",
     "right": "hardware\\kicad\\kc2_right\\kc2_right.kicad_pcb"
@@ -12,14 +17,24 @@
       58.15
     ],
     "right": [
-      60.03,
+      60.83000000000001,
       39.85,
-      70.03,
+      70.83000000000001,
       58.15
     ]
   },
-  "switch_footprint": "key-switches.pretty:SW_Kailh_Choc_V1V2_THT_Hybrid",
-  "diode_footprint": "Diode_SMD:D_SOD-123",
+  "switch_footprint": "kc2.pretty:SW_Kailh_Choc_V1_HotSwap_THT",
+  "switch_footprint_file_present": true,
+  "switch_footprint_fallback_source": null,
+  "diode_footprint": "kc2.pretty:D_SOD123_HandSolder_14592018",
+  "diode_value": "1N4148W_SOD123_DeviceMart_14592018",
+  "diode_y_offset_mm": -7.6,
+  "key_count": {
+    "left": 32,
+    "right": 45,
+    "total": 77
+  },
+  "max_key_width_u": 1.75,
   "tact_footprint": "kc2.pretty:SW_NW3_A06_B3_SMD",
   "notes": [
     "SOD-123 1N4148W fallback is used because DO-35 conflicts with the compact hybrid switch footprint at 19.05 mm pitch.",
@@ -28,6 +43,13 @@
     "Right-half R_COL7 uses D21 and R_COL8 uses D20 to keep the longer outer column on the easier controller fanout pin.",
     "Controller protrusion tabs are aligned toward the inner joining edge: left recessed 12 mm, right recessed 17 mm.",
     "Controller protrusion tab width is 72 mm and grows away from the inner joining edge.",
-    "Programming tact switch uses the smaller DeviceMart 1322056 NW3-A06-B3 SMD footprint."
+    "Programming tact switch uses the smaller DeviceMart 1322056 NW3-A06-B3 SMD footprint.",
+    "X3 copies X2's Kailh Choc V1 hot-swap plus direct-THT switch footprint and X1 hand-solder diode choice.",
+    "X3 follows docs/spec/20.kc2-no-stabilizer-layout.md and splits every >=2U key below 2U.",
+    "X3 key count is 77 total: 32 left, 45 right. Maximum physical key width is 1.75U, so no stabilizer markers are generated.",
+    "X3 keeps X2's diode y offset of -7.6 mm and the right-half 0.3 mm top outline relief.",
+    "X3 right half uses nine columns in every row; R_COL8 remains on D20 and R_COL7 remains on D21.",
+    "X3 adds 0.8 mm inner-edge routing relief on both halves for the denser 77-key matrix.",
+    "X3 right Y/H interlock protrusion keeps the vertical face at the 3.6 mm inner-edge margin and relieves the horizontal ledges inward by 0.8 mm."
   ]
 }
