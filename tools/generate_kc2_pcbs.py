@@ -68,8 +68,14 @@ CONTROLLER_TAB_H = 28.0
 CONTROLLER_CENTER_Y = -19.0
 LEFT_CONTROLLER_JOIN_EDGE_RECESS = 12.0
 RIGHT_CONTROLLER_JOIN_EDGE_RECESS = 17.0
+X3_CONTROLLER_TAB_W = 54.0
+X3_CONTROLLER_TAB_INNER_SPAN = 30.5
+X3_CONTROLLER_TAB_OUTER_SPAN = X3_CONTROLLER_TAB_W - X3_CONTROLLER_TAB_INNER_SPAN
+X3_TACT_USB_EDGE_OFFSET = 2.7
+X3_BATTERY_CENTER_OFFSET_FROM_CONTROLLER = 0.5
 ANTENNA_KEEP_START_FROM_CENTER = PIN_SPAN / 2.0 + 4.0
 ANTENNA_KEEP_LENGTH = 10.0
+MOUNT_HOLE_DIAMETER = 2.2
 EMBEDDED_FOOTPRINT_SOURCES = {
     SOLDERED_SWITCH_FP: DRAFT_ROOT / "soldered" / "kc2_left" / "kc2_left.kicad_pcb",
     HOTSWAP_SWITCH_FP: DRAFT_ROOT / "hotswap" / "kc2_left-hotswap" / "kc2_left-hotswap.kicad_pcb",
@@ -388,14 +394,28 @@ def row_extents(keys: list[Key]) -> dict[int, tuple[float, float, float, float]]
     return out
 
 
-def controller_center_x(keys: list[Key], side: str) -> float:
+def controller_tab_spans(side: str, variant: str) -> tuple[float, float]:
+    if variant == "x3":
+        if side == "left":
+            return X3_CONTROLLER_TAB_OUTER_SPAN, X3_CONTROLLER_TAB_INNER_SPAN
+        if side == "right":
+            return X3_CONTROLLER_TAB_INNER_SPAN, X3_CONTROLLER_TAB_OUTER_SPAN
+    half = CONTROLLER_TAB_W / 2.0
+    return half, half
+
+
+def controller_center_x(keys: list[Key], side: str, variant: str = "soldered") -> float:
     ext = row_extents(keys)
+    inner_margin = INNER_MARGIN + (X3_INNER_MARGIN_EXTRA if variant == "x3" else 0.0)
+    left_span, right_span = controller_tab_spans(side, variant)
     if side == "left":
-        inner_edge = max(r[2] for r in ext.values()) + INNER_MARGIN
-        return inner_edge - LEFT_CONTROLLER_JOIN_EDGE_RECESS - CONTROLLER_TAB_W / 2.0
+        inner_edge = max(r[2] for r in ext.values()) + inner_margin
+        tab_right = inner_edge - LEFT_CONTROLLER_JOIN_EDGE_RECESS
+        return tab_right - right_span
     if side == "right":
-        inner_edge = min(r[0] for r in ext.values()) - INNER_MARGIN
-        return inner_edge + RIGHT_CONTROLLER_JOIN_EDGE_RECESS + CONTROLLER_TAB_W / 2.0
+        inner_edge = min(r[0] for r in ext.values()) - inner_margin
+        tab_left = inner_edge + RIGHT_CONTROLLER_JOIN_EDGE_RECESS
+        return tab_left + left_span
     raise ValueError(f"Unknown side: {side}")
 
 
@@ -403,6 +423,7 @@ def raw_outline(
     keys: list[Key],
     side: str,
     ctrl_cx: float,
+    variant: str = "soldered",
     top_margin_extra: float = 0.0,
     inner_margin_extra: float = 0.0,
 ) -> list[tuple[float, float]]:
@@ -416,8 +437,9 @@ def raw_outline(
     top_y = min(ext[r][1] for r in rows) - GENERAL_MARGIN - top_margin_extra
     bottom_y = max(ext[r][3] for r in rows) + GENERAL_MARGIN
 
-    tab_left = ctrl_cx - CONTROLLER_TAB_W / 2.0
-    tab_right = ctrl_cx + CONTROLLER_TAB_W / 2.0
+    tab_left_span, tab_right_span = controller_tab_spans(side, variant)
+    tab_left = ctrl_cx - tab_left_span
+    tab_right = ctrl_cx + tab_right_span
     tab_top = CONTROLLER_CENTER_Y - CONTROLLER_TAB_H / 2.0
 
     r0 = rows[0]
@@ -512,7 +534,53 @@ def shift_points(points: list[tuple[float, float]], dx: float, dy: float) -> lis
     return [(x + dx, y + dy) for x, y in points]
 
 
-def make_project_file(project_dir: Path, name: str) -> None:
+def make_project_file(project_dir: Path, name: str, variant: str = "soldered") -> None:
+    net_classes = [
+        {
+            "name": "Default",
+            "bus_width": 12.0,
+            "clearance": 0.20,
+            "diff_pair_gap": 0.25,
+            "diff_pair_via_gap": 0.25,
+            "diff_pair_width": 0.20,
+            "line_style": 0,
+            "microvia_diameter": 0.30,
+            "microvia_drill": 0.10,
+            "pcb_color": "rgba(0, 0, 0, 0.000)",
+            "schematic_color": "rgba(0, 0, 0, 0.000)",
+            "track_width": TRACK_WIDTH,
+            "via_diameter": VIA_SIZE,
+            "via_drill": VIA_DRILL,
+            "wire_width": 6.0,
+        },
+    ]
+    netclass_assignments: list[dict[str, str]] = []
+    if variant != "x3":
+        net_classes.append(
+            {
+                "name": "Power",
+                "bus_width": 12.0,
+                "clearance": 0.20,
+                "diff_pair_gap": 0.25,
+                "diff_pair_via_gap": 0.25,
+                "diff_pair_width": 0.20,
+                "line_style": 0,
+                "microvia_diameter": 0.30,
+                "microvia_drill": 0.10,
+                "pcb_color": "rgba(0, 0, 0, 0.000)",
+                "schematic_color": "rgba(0, 0, 0, 0.000)",
+                "track_width": POWER_TRACK_WIDTH,
+                "via_diameter": 0.8,
+                "via_drill": 0.4,
+                "wire_width": 6.0,
+            }
+        )
+        netclass_assignments = [
+            {"netclass": "Power", "pattern": "BAT+"},
+            {"netclass": "Power", "pattern": "BAT-"},
+            {"netclass": "Power", "pattern": "NN_B+"},
+            {"netclass": "Power", "pattern": "NN_B-"},
+        ]
     data = {
         "board": {
             "design_settings": {
@@ -546,50 +614,10 @@ def make_project_file(project_dir: Path, name: str) -> None:
         "libraries": {"pinned_footprint_libs": [], "pinned_symbol_libs": []},
         "meta": {"filename": f"{name}.kicad_pro", "version": 1},
         "net_settings": {
-            "classes": [
-                {
-                    "name": "Default",
-                    "bus_width": 12.0,
-                    "clearance": 0.20,
-                    "diff_pair_gap": 0.25,
-                    "diff_pair_via_gap": 0.25,
-                    "diff_pair_width": 0.20,
-                    "line_style": 0,
-                    "microvia_diameter": 0.30,
-                    "microvia_drill": 0.10,
-                    "pcb_color": "rgba(0, 0, 0, 0.000)",
-                    "schematic_color": "rgba(0, 0, 0, 0.000)",
-                    "track_width": TRACK_WIDTH,
-                    "via_diameter": VIA_SIZE,
-                    "via_drill": VIA_DRILL,
-                    "wire_width": 6.0,
-                },
-                {
-                    "name": "Power",
-                    "bus_width": 12.0,
-                    "clearance": 0.20,
-                    "diff_pair_gap": 0.25,
-                    "diff_pair_via_gap": 0.25,
-                    "diff_pair_width": 0.20,
-                    "line_style": 0,
-                    "microvia_diameter": 0.30,
-                    "microvia_drill": 0.10,
-                    "pcb_color": "rgba(0, 0, 0, 0.000)",
-                    "schematic_color": "rgba(0, 0, 0, 0.000)",
-                    "track_width": POWER_TRACK_WIDTH,
-                    "via_diameter": 0.8,
-                    "via_drill": 0.4,
-                    "wire_width": 6.0,
-                },
-            ],
+            "classes": net_classes,
             "meta": {"version": 3},
             "net_colors": None,
-            "netclass_assignments": [
-                {"netclass": "Power", "pattern": "BAT+"},
-                {"netclass": "Power", "pattern": "BAT-"},
-                {"netclass": "Power", "pattern": "NN_B+"},
-                {"netclass": "Power", "pattern": "NN_B-"},
-            ],
+            "netclass_assignments": netclass_assignments,
         },
         "project": {"files": []},
         "schematic": {},
@@ -850,13 +878,14 @@ def make_board(
                 child.unlink()
     project_dir.mkdir(parents=True, exist_ok=True)
 
-    ctrl_cx = controller_center_x(keys, side)
+    ctrl_cx = controller_center_x(keys, side, variant=variant)
     top_margin_extra = 0.3 if variant in {"x1", "x2", "x3"} and side == "right" else 0.0
     inner_margin_extra = X3_INNER_MARGIN_EXTRA if variant == "x3" else 0.0
     outline = raw_outline(
         keys,
         side,
         ctrl_cx,
+        variant=variant,
         top_margin_extra=top_margin_extra,
         inner_margin_extra=inner_margin_extra,
     )
@@ -888,8 +917,9 @@ def make_board(
     nets: dict[str, pcbnew.NETINFO_ITEM] = {"": board.GetNetInfo().GetNetItem(0)}
     add_net(board, nets, "GND")
     add_net(board, nets, "RST")
-    for pwr in ("BAT+", "BAT-"):
-        add_net(board, nets, pwr)
+    if variant != "x3":
+        for pwr in ("BAT+", "BAT-"):
+            add_net(board, nets, pwr)
 
     if side == "left":
         pin_map = {
@@ -940,22 +970,33 @@ def make_board(
     )
     add_antenna_keepout_zone(board, side, antenna_keepout)
 
-    power_y = ctrl_cy + 1.0
-    power_x = ctrl_cx - usb_direction * 28.0
-    power_pads = create_power_pads(board, nets, "J_PWR1", power_x, power_y)
-    add_board_text(board, "B+/B- direct cable solder only", power_x - 12, power_y + 7.0, pcbnew.Cmts_User, 0.9)
+    power_pads: dict[str, tuple[float, float]] | None = None
+    if variant != "x3":
+        power_y = ctrl_cy + 1.0
+        power_x = ctrl_cx - usb_direction * 28.0
+        power_pads = create_power_pads(board, nets, "J_PWR1", power_x, power_y)
+        add_board_text(board, "B+/B- direct cable solder only", power_x - 12, power_y + 7.0, pcbnew.Cmts_User, 0.9)
+    else:
+        add_board_text(board, "Battery solders directly to nice!nano B+/B-; no carrier power pads", ctrl_cx - 23.0, ctrl_cy + 15.0, pcbnew.Cmts_User, 0.8)
 
     batt_w, batt_h = 15.0, 25.0
-    batt_cx = ctrl_cx - usb_direction * 7.0
+    batt_cx = ctrl_cx + (usb_direction * X3_BATTERY_CENTER_OFFSET_FROM_CONTROLLER if variant == "x3" else -usb_direction * 7.0)
     batt_cy = ctrl_cy + 2.0
     add_rect_lines(board, batt_cx - batt_w / 2, batt_cy - batt_h / 2, batt_cx + batt_w / 2, batt_cy + batt_h / 2, pcbnew.B_Fab, 0.10)
     add_board_text(board, "TW301525 80mAh", batt_cx - 7.0, batt_cy, pcbnew.B_Fab, 0.9, mirrored=True)
 
-    tact_x = ctrl_cx - usb_direction * (CONTROLLER_LEN / 2.0 - 7.0)
+    tact_offset_from_center = CONTROLLER_LEN / 2.0 - (X3_TACT_USB_EDGE_OFFSET if variant == "x3" else 7.0)
+    tact_x = ctrl_cx - usb_direction * tact_offset_from_center
     tact_y = ctrl_cy + CONTROLLER_W / 2.0 + 4.0
     tact = load_footprint(board, TACT_LIB, TACT_FP, "SW_RST1", "NW3-A06-B3 RST", tact_x, tact_y, 0)
 
     mount_points = mounting_points(side, shifted_keys, shifted_outline, ctrl_cx, ctrl_cy)
+    if variant == "x3":
+        mount_points = [
+            point
+            for point in mount_points
+            if not circle_intersects_rect(point[0], point[1], MOUNT_HOLE_DIAMETER / 2.0, antenna_keepout)
+        ]
     for idx, (mx, my) in enumerate(mount_points, start=1):
         fp = load_footprint(board, MOUNT_LIB, MOUNT_FP, f"H{idx}", "M2_NPTH_2.2", mx, my)
         add_rect_lines(board, mx - 2.5, my - 2.5, mx + 2.5, my + 2.5, pcbnew.Cmts_User, 0.08)
@@ -1042,7 +1083,8 @@ def make_board(
     )
     connect_controller_ground_pads(board, nets, controller_pads)
     connect_tact_to_controller(board, nets, tact, controller_pads)
-    connect_power_labels(board, nets, power_pads)
+    if power_pads is not None:
+        connect_power_labels(board, nets, power_pads)
 
     variant_label = "" if variant == "soldered" else f" {variant.upper()}"
     layout_name = "77-key no-stabilizer split layout" if variant == "x3" else "71-key split successor to KC1"
@@ -1058,11 +1100,11 @@ def make_board(
     elif variant == "x3":
         add_board_text(board, "X3: X2 electrical stack, no-stabilizer 77-key split layout", 35, 33, pcbnew.Cmts_User, 0.9)
 
-    make_project_file(project_dir, name)
+    make_project_file(project_dir, name, variant=variant)
     make_fp_lib_table(project_dir, include_switch_lib=switch_lib == SWITCH_LIB)
     board_path = project_dir / f"{name}.kicad_pcb"
     pcbnew.SaveBoard(str(board_path), board)
-    make_project_file(project_dir, name)
+    make_project_file(project_dir, name, variant=variant)
     return board_path, antenna_keepout
 
 
@@ -1087,6 +1129,17 @@ def mounting_points(
     else:
         points.append((min_x + 4.5, max_y - 42.0))
     return points
+
+
+def circle_intersects_rect(
+    x: float,
+    y: float,
+    radius: float,
+    rect: tuple[float, float, float, float],
+) -> bool:
+    nearest_x = min(max(x, rect[0]), rect[2])
+    nearest_y = min(max(y, rect[1]), rect[3])
+    return (x - nearest_x) ** 2 + (y - nearest_y) ** 2 <= radius**2
 
 
 def connect_matrix_to_controller(
@@ -1341,7 +1394,6 @@ def generate_variant(variant: str) -> dict[str, object]:
         "Switch footprint values are sanitized as KEY_XX so Specctra DSN export does not expose legend characters such as backslash to Freerouting.",
         "Right-half R_COL7 uses D21 and R_COL8 uses D20 to keep the longer outer column on the easier controller fanout pin.",
         f"Controller protrusion tabs are aligned toward the inner joining edge: left recessed {LEFT_CONTROLLER_JOIN_EDGE_RECESS:g} mm, right recessed {RIGHT_CONTROLLER_JOIN_EDGE_RECESS:g} mm.",
-        f"Controller protrusion tab width is {CONTROLLER_TAB_W:g} mm and grows away from the inner joining edge.",
         "Programming tact switch uses the smaller DeviceMart 1322056 NW3-A06-B3 SMD footprint.",
     ]
     if variant == "hotswap":
@@ -1362,6 +1414,10 @@ def generate_variant(variant: str) -> dict[str, object]:
         notes.append("X3 right half uses nine columns in every row; R_COL8 remains on D20 and R_COL7 remains on D21.")
         notes.append("X3 adds 0.8 mm inner-edge routing relief on both halves for the denser 77-key matrix.")
         notes.append("X3 right Y/H interlock protrusion keeps the vertical face at the 3.6 mm inner-edge margin and relieves the horizontal ledges inward by 0.8 mm.")
+        notes.append(f"X3 compact controller tab removes J_PWR1 and carrier BAT+/BAT- nets, uses a {X3_CONTROLLER_TAB_W:g} mm asymmetric tab, and places SW_RST1 {X3_TACT_USB_EDGE_OFFSET:g} mm inboard of the USB-side controller edge.")
+        notes.append("X3 omits any M2 mounting hole whose drill circle intersects the nice!nano antenna keepout.")
+    else:
+        notes.append(f"Controller protrusion tab width is {CONTROLLER_TAB_W:g} mm and grows away from the inner joining edge.")
     switch_footprint_file_present = (switch_lib / f"{switch_fp}.kicad_mod").exists()
     manifest: dict[str, object] = {
         "generated": "2026-06-04",
@@ -1388,6 +1444,11 @@ def generate_variant(variant: str) -> dict[str, object]:
         "diode_footprint": f"{diode_lib.name}:{diode_fp}",
         "diode_value": diode_value,
         "diode_y_offset_mm": diode_y_offset,
+        "carrier_power_pads": variant != "x3",
+        "controller_tab_width_mm": X3_CONTROLLER_TAB_W if variant == "x3" else CONTROLLER_TAB_W,
+        "x3_controller_tab_inner_span_mm": X3_CONTROLLER_TAB_INNER_SPAN if variant == "x3" else None,
+        "x3_controller_tab_outer_span_mm": X3_CONTROLLER_TAB_OUTER_SPAN if variant == "x3" else None,
+        "x3_tact_usb_edge_offset_mm": X3_TACT_USB_EDGE_OFFSET if variant == "x3" else None,
         "key_count": {
             "left": len(left_keys),
             "right": len(right_keys),
