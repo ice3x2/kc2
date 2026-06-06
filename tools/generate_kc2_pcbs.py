@@ -43,6 +43,11 @@ TACT_LIB = KC2_FP_LIB
 TACT_FP = "SW_NW3_A06_B3_SMD"
 MOUNT_LIB = KICAD_SHARE / "footprints" / "MountingHole.pretty"
 MOUNT_FP = "MountingHole_2.2mm_M2"
+SIDE_MOUNT_UPPER_OFFSET_FROM_BOTTOM = 61.0
+X3_H2_ADJACENT_UPPER_MOUNT_POINTS = {
+    "left": (173.45, 66.50),
+    "right": (225.8375, 66.20),
+}
 
 UNIT = 19.05
 GENERAL_MARGIN = 5.5
@@ -997,6 +1002,7 @@ def make_board(
             for point in mount_points
             if not circle_intersects_rect(point[0], point[1], MOUNT_HOLE_DIAMETER / 2.0, antenna_keepout)
         ]
+        mount_points.append(X3_H2_ADJACENT_UPPER_MOUNT_POINTS[side])
     for idx, (mx, my) in enumerate(mount_points, start=1):
         fp = load_footprint(board, MOUNT_LIB, MOUNT_FP, f"H{idx}", "M2_NPTH_2.2", mx, my)
         add_rect_lines(board, mx - 2.5, my - 2.5, mx + 2.5, my + 2.5, pcbnew.Cmts_User, 0.08)
@@ -1125,9 +1131,9 @@ def mounting_points(
         (ctrl_cx + 18.0, ctrl_cy - 5.0),
     ]
     if side == "right":
-        points.append((max_x - 4.0, max_y - 45.0))
+        points.append((max_x - 4.0, max_y - SIDE_MOUNT_UPPER_OFFSET_FROM_BOTTOM))
     else:
-        points.append((min_x + 4.5, max_y - 42.0))
+        points.append((min_x + 4.5, max_y - SIDE_MOUNT_UPPER_OFFSET_FROM_BOTTOM))
     return points
 
 

@@ -330,7 +330,8 @@
 <text x="563.56" y="57.05" text-anchor="middle" font-family="Arial" font-size="9" fill="#222">U1</text>
 <circle cx="756.06" cy="688.75" r="7" fill="white" stroke="#555" stroke-width="1"/>
 <circle cx="473.56" cy="85.00" r="7" fill="white" stroke="#555" stroke-width="1"/>
-<circle cx="62.50" cy="498.75" r="7" fill="white" stroke="#555" stroke-width="1"/>
+<circle cx="62.50" cy="403.75" r="7" fill="white" stroke="#555" stroke-width="1"/>
+<circle cx="732.25" cy="197.50" r="7" fill="white" stroke="#555" stroke-width="1"/>
 <circle cx="60.00" cy="688.75" r="7" fill="white" stroke="#555" stroke-width="1"/>
 <rect x="777.75" y="207.50" width="90.25" height="90.25" rx="2" ry="2" fill="#eef5ff" stroke="#467cc0" stroke-width="1" fill-opacity="0.86"/>
 <text x="822.88" y="256.09" text-anchor="middle" font-family="Arial" font-size="10" fill="#101010">7</text>
@@ -424,9 +425,10 @@
 <text x="1608.69" y="637.09" text-anchor="middle" font-family="Arial" font-size="10" fill="#101010">Right</text>
 <rect x="872.78" y="61.05" width="148.70" height="97.90" fill="none" stroke="#252525" stroke-width="1.5" stroke-dasharray="4 3"/>
 <text x="947.12" y="57.05" text-anchor="middle" font-family="Arial" font-size="9" fill="#222">U1</text>
+<circle cx="1663.81" cy="196.00" r="7" fill="white" stroke="#555" stroke-width="1"/>
 <circle cx="1037.12" cy="85.00" r="7" fill="white" stroke="#555" stroke-width="1"/>
 <circle cx="1663.81" cy="688.75" r="7" fill="white" stroke="#555" stroke-width="1"/>
-<circle cx="1663.81" cy="483.75" r="7" fill="white" stroke="#555" stroke-width="1"/>
+<circle cx="1663.81" cy="403.75" r="7" fill="white" stroke="#555" stroke-width="1"/>
 <circle cx="729.62" cy="688.75" r="7" fill="white" stroke="#555" stroke-width="1"/>
 <g id="key-horizontal-clearance" data-key-horizontal-clearance-mm="1.8000" data-left-key="6" data-right-key="Y">
 <line x1="714.62" y1="300.25" x2="723.62" y2="300.25" stroke="#1c5fb8" stroke-width="2.4"/>

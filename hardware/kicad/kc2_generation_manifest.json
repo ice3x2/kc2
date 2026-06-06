@@ -56,6 +56,7 @@
     "X3 adds 0.8 mm inner-edge routing relief on both halves for the denser 77-key matrix.",
     "X3 right Y/H interlock protrusion keeps the vertical face at the 3.6 mm inner-edge margin and relieves the horizontal ledges inward by 0.8 mm.",
     "X3 compact controller tab removes J_PWR1 and carrier BAT+/BAT- nets, uses a 54 mm asymmetric tab, and places SW_RST1 2.7 mm inboard of the USB-side controller edge.",
-    "X3 omits any M2 mounting hole whose drill circle intersects the nice!nano antenna keepout."
+    "X3 omits any M2 mounting hole whose drill circle intersects the nice!nano antenna keepout.",
+    "X3 adds H2-adjacent upper-corner H5 M2 holes: left at (173.45, 66.50) because exact H2.x is outside the upper outline, and right at (225.8375, 66.20)."
   ]
 }
