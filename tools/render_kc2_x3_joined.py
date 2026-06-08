@@ -127,7 +127,7 @@ def switch_centers(board: pcbnew.BOARD) -> dict[int, tuple[float, float]]:
 def mount_centers(board: pcbnew.BOARD) -> list[tuple[float, float]]:
     centers: list[tuple[float, float]] = []
     for fp in board.GetFootprints():
-        if fp.GetValue() == "M2_NPTH_2.2":
+        if fp.GetValue() in {"M2_NPTH_2.2", "REG_NPTH_3.0"}:
             centers.append(mm_vec(fp.GetPosition()))
     return centers
 

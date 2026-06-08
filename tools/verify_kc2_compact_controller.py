@@ -18,11 +18,23 @@ CONTROLLER_LEN = 33.8
 CONTROLLER_W = 18.3
 TACT_BODY_W = 6.1
 TACT_BODY_H = 3.7
-COMPACT_TOP_STRAIGHT_SPAN_MAX = 52.5
-USB_SIDE_CENTER_MAX_FROM_USB_EDGE = 4.5
+PIN_PITCH = 2.54
+PIN_COUNT = 12
+PIN_SPAN = PIN_PITCH * (PIN_COUNT - 1)
+ANTENNA_KEEP_START_FROM_CENTER = PIN_SPAN / 2.0 + 4.0
+BATTERY_LEAD_SLOT_REF = "BAT_LEAD_SLOT1"
+BATTERY_LEAD_SLOT_VALUE = "BAT_LEAD_NPTH_SLOT_3.6x2.2"
+BATTERY_LEAD_SLOT_LEN = 3.6
+BATTERY_LEAD_SLOT_W = 2.2
+BATTERY_LEAD_SLOT_KEEP_OUT_GAP = 0.3
+COMPACT_TOP_STRAIGHT_SPAN_MAX = 39.0
+ANTENNA_SIDE_CENTER_MAX_FROM_ANTENNA_EDGE = 8.0
 KEY_SIDE_MIN_GAP = 1.0
 KEY_SIDE_MAX_GAP = 7.0
 BATTERY_CLEARANCE = 0.75
+SLOT_POSITION_TOLERANCE = 0.03
+SLOT_DIMENSION_TOLERANCE = 0.02
+SLOT_EDGE_CLEARANCE_MIN = 1.0
 FORBIDDEN_POWER_NETS = {"BAT+", "BAT-", "NN_B+", "NN_B-"}
 
 
@@ -84,6 +96,51 @@ def rects_overlap(a: tuple[float, float, float, float], b: tuple[float, float, f
     return not (a[2] <= b[0] or b[2] <= a[0] or a[3] <= b[1] or b[3] <= a[1])
 
 
+def dist_point_segment(
+    px: float,
+    py: float,
+    ax: float,
+    ay: float,
+    bx: float,
+    by: float,
+) -> float:
+    dx = bx - ax
+    dy = by - ay
+    if abs(dx) < 1e-9 and abs(dy) < 1e-9:
+        return ((px - ax) ** 2 + (py - ay) ** 2) ** 0.5
+    t = max(0.0, min(1.0, ((px - ax) * dx + (py - ay) * dy) / (dx * dx + dy * dy)))
+    nearest_x = ax + t * dx
+    nearest_y = ay + t * dy
+    return ((px - nearest_x) ** 2 + (py - nearest_y) ** 2) ** 0.5
+
+
+def edge_segments(board: pcbnew.BOARD) -> list[tuple[tuple[float, float], tuple[float, float]]]:
+    segments: list[tuple[tuple[float, float], tuple[float, float]]] = []
+    for drawing in board.GetDrawings():
+        if not hasattr(drawing, "GetLayer") or drawing.GetLayer() != pcbnew.Edge_Cuts:
+            continue
+        if not hasattr(drawing, "GetStart") or not hasattr(drawing, "GetEnd"):
+            continue
+        segments.append((to_mm_vec(drawing.GetStart()), to_mm_vec(drawing.GetEnd())))
+    return segments
+
+
+def slot_edge_clearance(board: pcbnew.BOARD, x: float, y: float) -> float:
+    segments = edge_segments(board)
+    if not segments:
+        return -999.0
+    radius = max(BATTERY_LEAD_SLOT_LEN, BATTERY_LEAD_SLOT_W) / 2.0
+    center_to_edge = min(dist_point_segment(x, y, a[0], a[1], b[0], b[1]) for a, b in segments)
+    return center_to_edge - radius
+
+
+def expected_slot_center(side: str, u1_x: float, u1_y: float) -> tuple[float, float]:
+    usb_direction = 1 if side == "left" else -1
+    keepout_near_edge_x = u1_x + usb_direction * ANTENNA_KEEP_START_FROM_CENTER
+    slot_x = keepout_near_edge_x - usb_direction * (BATTERY_LEAD_SLOT_LEN / 2.0 + BATTERY_LEAD_SLOT_KEEP_OUT_GAP)
+    return slot_x, u1_y
+
+
 def text_contains_power_net_declaration(board_path: Path) -> list[str]:
     text = board_path.read_text(encoding="utf-8")
     found: list[str] = []
@@ -138,15 +195,15 @@ def check_side(side: str, board_path: Path) -> list[str]:
     u1_x, u1_y = fp_center(u1)
     tact_x, tact_y = fp_center(tact)
     usb_direction = 1 if side == "left" else -1
-    usb_edge_x = u1_x - usb_direction * (CONTROLLER_LEN / 2.0)
-    usb_side_distance = abs(tact_x - usb_edge_x)
-    if usb_side_distance > USB_SIDE_CENTER_MAX_FROM_USB_EDGE:
+    antenna_edge_x = u1_x + usb_direction * (CONTROLLER_LEN / 2.0)
+    antenna_side_distance = abs(tact_x - antenna_edge_x)
+    if antenna_side_distance > ANTENNA_SIDE_CENTER_MAX_FROM_ANTENNA_EDGE:
         errors.append(
-            f"{side}: SW_RST1 center is {usb_side_distance:.3f} mm from USB-side edge, "
-            f"expected <= {USB_SIDE_CENTER_MAX_FROM_USB_EDGE:.3f} mm"
+            f"{side}: SW_RST1 center is {antenna_side_distance:.3f} mm from antenna-side edge, "
+            f"expected <= {ANTENNA_SIDE_CENTER_MAX_FROM_ANTENNA_EDGE:.3f} mm"
         )
-    if (tact_x - u1_x) * usb_direction >= 0:
-        errors.append(f"{side}: SW_RST1 is not on the USB-side half of U1")
+    if (tact_x - u1_x) * usb_direction <= 0:
+        errors.append(f"{side}: SW_RST1 is not on the antenna-side half of U1")
 
     key_side_gap = tact_y - (u1_y + CONTROLLER_W / 2.0)
     if key_side_gap < KEY_SIDE_MIN_GAP or key_side_gap > KEY_SIDE_MAX_GAP:
@@ -178,11 +235,76 @@ def check_side(side: str, board_path: Path) -> list[str]:
             f"battery={tuple(round(v, 3) for v in battery_rect)}"
         )
 
+    slot = fps.get(BATTERY_LEAD_SLOT_REF)
+    if not slot:
+        errors.append(f"{side}: missing {BATTERY_LEAD_SLOT_REF} battery lead pass-through slot")
+        return errors
+    if slot.GetValue() != BATTERY_LEAD_SLOT_VALUE:
+        errors.append(f"{side}: {BATTERY_LEAD_SLOT_REF} value is {slot.GetValue()!r}")
+    slot_x, slot_y = fp_center(slot)
+    expected_x, expected_y = expected_slot_center(side, u1_x, u1_y)
+    if abs(slot_x - expected_x) > SLOT_POSITION_TOLERANCE or abs(slot_y - expected_y) > SLOT_POSITION_TOLERANCE:
+        errors.append(
+            f"{side}: {BATTERY_LEAD_SLOT_REF} at ({slot_x:.3f}, {slot_y:.3f}) mm, "
+            f"expected ({expected_x:.3f}, {expected_y:.3f}) mm"
+        )
+    slot_pads = list(slot.Pads())
+    if len(slot_pads) != 1:
+        errors.append(f"{side}: {BATTERY_LEAD_SLOT_REF} expected exactly one NPTH pad, got {len(slot_pads)}")
+    else:
+        pad = slot_pads[0]
+        layers = pad.GetLayerSet()
+        size = pad.GetSize()
+        drill = pad.GetDrillSize()
+        if pad.GetAttribute() != pcbnew.PAD_ATTRIB_NPTH:
+            errors.append(f"{side}: {BATTERY_LEAD_SLOT_REF} pad is not NPTH")
+        if pad.GetDrillShape() != pcbnew.PAD_DRILL_SHAPE_OBLONG:
+            errors.append(f"{side}: {BATTERY_LEAD_SLOT_REF} drill is not oblong")
+        if layers.Contains(pcbnew.F_Cu) or layers.Contains(pcbnew.B_Cu):
+            errors.append(f"{side}: {BATTERY_LEAD_SLOT_REF} pad has copper layers")
+        if pad.GetNetname():
+            errors.append(f"{side}: {BATTERY_LEAD_SLOT_REF} pad is electrically netted to {pad.GetNetname()}")
+        if abs(pcbnew.ToMM(size.x) - BATTERY_LEAD_SLOT_LEN) > SLOT_DIMENSION_TOLERANCE:
+            errors.append(f"{side}: {BATTERY_LEAD_SLOT_REF} pad length is {pcbnew.ToMM(size.x):.3f} mm")
+        if abs(pcbnew.ToMM(size.y) - BATTERY_LEAD_SLOT_W) > SLOT_DIMENSION_TOLERANCE:
+            errors.append(f"{side}: {BATTERY_LEAD_SLOT_REF} pad width is {pcbnew.ToMM(size.y):.3f} mm")
+        if abs(pcbnew.ToMM(drill.x) - BATTERY_LEAD_SLOT_LEN) > SLOT_DIMENSION_TOLERANCE:
+            errors.append(f"{side}: {BATTERY_LEAD_SLOT_REF} drill length is {pcbnew.ToMM(drill.x):.3f} mm")
+        if abs(pcbnew.ToMM(drill.y) - BATTERY_LEAD_SLOT_W) > SLOT_DIMENSION_TOLERANCE:
+            errors.append(f"{side}: {BATTERY_LEAD_SLOT_REF} drill width is {pcbnew.ToMM(drill.y):.3f} mm")
+
+    keepout_x1 = u1_x + usb_direction * ANTENNA_KEEP_START_FROM_CENTER
+    keepout_x2 = keepout_x1 + usb_direction * 10.0
+    antenna_keepout = (
+        min(keepout_x1, keepout_x2),
+        u1_y - CONTROLLER_W / 2.0,
+        max(keepout_x1, keepout_x2),
+        u1_y + CONTROLLER_W / 2.0,
+    )
+    slot_rect = (
+        slot_x - BATTERY_LEAD_SLOT_LEN / 2.0,
+        slot_y - BATTERY_LEAD_SLOT_W / 2.0,
+        slot_x + BATTERY_LEAD_SLOT_LEN / 2.0,
+        slot_y + BATTERY_LEAD_SLOT_W / 2.0,
+    )
+    if rects_overlap(slot_rect, antenna_keepout):
+        errors.append(f"{side}: {BATTERY_LEAD_SLOT_REF} overlaps antenna keepout")
+    if battery_rect is not None and rects_overlap(slot_rect, expanded(battery_rect, BATTERY_CLEARANCE)):
+        errors.append(f"{side}: {BATTERY_LEAD_SLOT_REF} overlaps battery reference clearance")
+    if rects_overlap(slot_rect, tact_rect):
+        errors.append(f"{side}: {BATTERY_LEAD_SLOT_REF} overlaps SW_RST1 body")
+    clearance = slot_edge_clearance(board, slot_x, slot_y)
+    if clearance < SLOT_EDGE_CLEARANCE_MIN:
+        errors.append(
+            f"{side}: {BATTERY_LEAD_SLOT_REF} edge clearance is {clearance:.3f} mm, "
+            f"expected >= {SLOT_EDGE_CLEARANCE_MIN:.3f} mm"
+        )
+
     return errors
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Verify KC2 X3 compact controller tab and no carrier battery pads.")
+    parser = argparse.ArgumentParser(description="Verify KC2 X3 compact controller tab, no carrier battery pads, and battery lead pass-through slot.")
     parser.add_argument(
         "boards",
         nargs="*",

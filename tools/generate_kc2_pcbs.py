@@ -43,14 +43,31 @@ TACT_LIB = KC2_FP_LIB
 TACT_FP = "SW_NW3_A06_B3_SMD"
 MOUNT_LIB = KICAD_SHARE / "footprints" / "MountingHole.pretty"
 MOUNT_FP = "MountingHole_2.2mm_M2"
+REGISTRATION_LIB = KC2_FP_LIB
+REGISTRATION_FP = "REG_NPTH_3.0"
+BATTERY_LEAD_SLOT_LIB = KC2_FP_LIB
+BATTERY_LEAD_SLOT_FP = "BAT_LEAD_NPTH_SLOT_3.6x2.2"
+BATTERY_LEAD_SLOT_VALUE = "BAT_LEAD_NPTH_SLOT_3.6x2.2"
 SIDE_MOUNT_UPPER_OFFSET_FROM_BOTTOM = 61.0
 X3_H2_ADJACENT_UPPER_MOUNT_POINTS = {
     "left": (173.45, 66.50),
     "right": (225.8375, 66.20),
 }
+X3_BALANCED_SIDE_MOUNT_POINTS = {
+    "left": [
+        (39.50, 66.50),
+        (170.50, 108.25),
+    ],
+    "right": [
+        (39.00, 66.20),
+        (42.00, 107.75),
+        (39.00, 136.00),
+    ],
+}
 
 UNIT = 19.05
 GENERAL_MARGIN = 5.5
+X3_GENERAL_MARGIN = 4.0
 INNER_MARGIN = 2.8
 X3_INNER_MARGIN_EXTRA = 0.8
 X3_RIGHT_YH_HORIZONTAL_LEDGE_RELIEF = 0.8
@@ -73,14 +90,26 @@ CONTROLLER_TAB_H = 28.0
 CONTROLLER_CENTER_Y = -19.0
 LEFT_CONTROLLER_JOIN_EDGE_RECESS = 12.0
 RIGHT_CONTROLLER_JOIN_EDGE_RECESS = 17.0
-X3_CONTROLLER_TAB_W = 54.0
-X3_CONTROLLER_TAB_INNER_SPAN = 30.5
-X3_CONTROLLER_TAB_OUTER_SPAN = X3_CONTROLLER_TAB_W - X3_CONTROLLER_TAB_INNER_SPAN
-X3_TACT_USB_EDGE_OFFSET = 2.7
+X3_CONTROLLER_TAB_USB_SPAN = 23.5
+X3_CONTROLLER_TAB_ANTENNA_SPAN = 19.0
+X3_CONTROLLER_TAB_W = X3_CONTROLLER_TAB_USB_SPAN + X3_CONTROLLER_TAB_ANTENNA_SPAN
+X3_CONTROLLER_TAB_INNER_SPAN = X3_CONTROLLER_TAB_ANTENNA_SPAN
+X3_CONTROLLER_TAB_OUTER_SPAN = X3_CONTROLLER_TAB_USB_SPAN
+X3_CONTROLLER_ANCHOR_INNER_SPAN = 30.5
+X3_CONTROLLER_ANCHOR_OUTER_SPAN = X3_CONTROLLER_TAB_USB_SPAN
+X3_TACT_BODY_W = 6.1
+X3_TACT_BATTERY_CLEARANCE = 1.0
 X3_BATTERY_CENTER_OFFSET_FROM_CONTROLLER = 0.5
 ANTENNA_KEEP_START_FROM_CENTER = PIN_SPAN / 2.0 + 4.0
 ANTENNA_KEEP_LENGTH = 10.0
 MOUNT_HOLE_DIAMETER = 2.2
+REGISTRATION_HOLE_DIAMETER = 3.0
+REGISTRATION_TRACE_KEEP_OUT_RADIUS = 1.90
+REGISTRATION_VALUE = "REG_NPTH_3.0"
+BATTERY_LEAD_SLOT_LEN = 3.6
+BATTERY_LEAD_SLOT_W = 2.2
+BATTERY_LEAD_SLOT_KEEP_OUT_GAP = 0.30
+ACTIVE_TRACE_KEEP_OUTS: list[tuple[float, float]] = []
 EMBEDDED_FOOTPRINT_SOURCES = {
     SOLDERED_SWITCH_FP: DRAFT_ROOT / "soldered" / "kc2_left" / "kc2_left.kicad_pcb",
     HOTSWAP_SWITCH_FP: DRAFT_ROOT / "hotswap" / "kc2_left-hotswap" / "kc2_left-hotswap.kicad_pcb",
@@ -191,6 +220,20 @@ def add_track(
 ) -> None:
     if abs(start[0] - end[0]) < 0.001 and abs(start[1] - end[1]) < 0.001:
         return
+    for seg_start, seg_end in split_segment_around_registration_keepouts(start, end):
+        add_track_segment(board, net, seg_start, seg_end, layer, width)
+
+
+def add_track_segment(
+    board: pcbnew.BOARD,
+    net: pcbnew.NETINFO_ITEM,
+    start: tuple[float, float],
+    end: tuple[float, float],
+    layer: int,
+    width: float = TRACK_WIDTH,
+) -> None:
+    if abs(start[0] - end[0]) < 0.001 and abs(start[1] - end[1]) < 0.001:
+        return
     track = pcbnew.PCB_TRACK(board)
     track.SetStart(vxy(*start))
     track.SetEnd(vxy(*end))
@@ -208,6 +251,57 @@ def add_via(board: pcbnew.BOARD, net: pcbnew.NETINFO_ITEM, at: tuple[float, floa
     via.SetLayerPair(pcbnew.F_Cu, pcbnew.B_Cu)
     via.SetNet(net)
     board.Add(via)
+
+
+def split_segment_around_registration_keepouts(
+    start: tuple[float, float],
+    end: tuple[float, float],
+) -> list[tuple[tuple[float, float], tuple[float, float]]]:
+    if not ACTIVE_TRACE_KEEP_OUTS:
+        return [(start, end)]
+
+    radius = REGISTRATION_TRACE_KEEP_OUT_RADIUS
+    segments = [(start, end)]
+    for hole_x, hole_y in ACTIVE_TRACE_KEEP_OUTS:
+        next_segments: list[tuple[tuple[float, float], tuple[float, float]]] = []
+        for seg_start, seg_end in segments:
+            sx, sy = seg_start
+            ex, ey = seg_end
+            if abs(sy - ey) < 0.001:
+                y = sy
+                min_x, max_x = sorted((sx, ex))
+                if abs(y - hole_y) >= radius or max_x <= hole_x - radius or min_x >= hole_x + radius:
+                    next_segments.append((seg_start, seg_end))
+                    continue
+                direction = 1.0 if ex >= sx else -1.0
+                entry_x = hole_x - direction * radius
+                exit_x = hole_x + direction * radius
+                jog_y = hole_y - radius if y <= hole_y else hole_y + radius
+                entry = (entry_x, y)
+                exit = (exit_x, y)
+                entry_jog = (entry_x, jog_y)
+                exit_jog = (exit_x, jog_y)
+                next_segments.extend([(seg_start, entry), (entry, entry_jog), (entry_jog, exit_jog), (exit_jog, exit), (exit, seg_end)])
+                continue
+            if abs(sx - ex) < 0.001:
+                x = sx
+                min_y, max_y = sorted((sy, ey))
+                if abs(x - hole_x) >= radius or max_y <= hole_y - radius or min_y >= hole_y + radius:
+                    next_segments.append((seg_start, seg_end))
+                    continue
+                direction = 1.0 if ey >= sy else -1.0
+                entry_y = hole_y - direction * radius
+                exit_y = hole_y + direction * radius
+                jog_x = hole_x - radius if x <= hole_x else hole_x + radius
+                entry = (x, entry_y)
+                exit = (x, exit_y)
+                entry_jog = (jog_x, entry_y)
+                exit_jog = (jog_x, exit_y)
+                next_segments.extend([(seg_start, entry), (entry, entry_jog), (entry_jog, exit_jog), (exit_jog, exit), (exit, seg_end)])
+                continue
+            next_segments.append((seg_start, seg_end))
+        segments = next_segments
+    return segments
 
 
 def add_polyline(
@@ -261,6 +355,29 @@ def add_board_text(
     item.SetTextAngleDegrees(angle_deg)
     item.SetMirrored(mirrored)
     board.Add(item)
+
+
+def add_product_identity_text(
+    board: pcbnew.BOARD,
+    side: str,
+    outline: list[tuple[float, float]],
+    variant: str,
+) -> None:
+    if variant != "x3":
+        return
+    min_x = min(x for x, _ in outline)
+    max_x = max(x for x, _ in outline)
+    max_y = max(y for _, y in outline)
+    add_board_text(
+        board,
+        f"KC2 v1.0 {side[0].upper()}",
+        (min_x + max_x) / 2.0,
+        max_y - 4.25,
+        pcbnew.B_SilkS,
+        1.4,
+        0.16,
+        mirrored=True,
+    )
 
 
 def load_footprint(
@@ -409,10 +526,19 @@ def controller_tab_spans(side: str, variant: str) -> tuple[float, float]:
     return half, half
 
 
+def controller_anchor_spans(side: str, variant: str) -> tuple[float, float]:
+    if variant == "x3":
+        if side == "left":
+            return X3_CONTROLLER_ANCHOR_OUTER_SPAN, X3_CONTROLLER_ANCHOR_INNER_SPAN
+        if side == "right":
+            return X3_CONTROLLER_ANCHOR_INNER_SPAN, X3_CONTROLLER_ANCHOR_OUTER_SPAN
+    return controller_tab_spans(side, variant)
+
+
 def controller_center_x(keys: list[Key], side: str, variant: str = "soldered") -> float:
     ext = row_extents(keys)
     inner_margin = INNER_MARGIN + (X3_INNER_MARGIN_EXTRA if variant == "x3" else 0.0)
-    left_span, right_span = controller_tab_spans(side, variant)
+    left_span, right_span = controller_anchor_spans(side, variant)
     if side == "left":
         inner_edge = max(r[2] for r in ext.values()) + inner_margin
         tab_right = inner_edge - LEFT_CONTROLLER_JOIN_EDGE_RECESS
@@ -431,16 +557,17 @@ def raw_outline(
     variant: str = "soldered",
     top_margin_extra: float = 0.0,
     inner_margin_extra: float = 0.0,
+    general_margin: float = GENERAL_MARGIN,
 ) -> list[tuple[float, float]]:
     ext = row_extents(keys)
     rows = sorted(ext)
-    left_margin = INNER_MARGIN + inner_margin_extra if side == "right" else GENERAL_MARGIN
-    right_margin = INNER_MARGIN + inner_margin_extra if side == "left" else GENERAL_MARGIN
+    left_margin = INNER_MARGIN + inner_margin_extra if side == "right" else general_margin
+    right_margin = INNER_MARGIN + inner_margin_extra if side == "left" else general_margin
 
     lefts = {r: ext[r][0] - left_margin for r in rows}
     rights = {r: ext[r][2] + right_margin for r in rows}
-    top_y = min(ext[r][1] for r in rows) - GENERAL_MARGIN - top_margin_extra
-    bottom_y = max(ext[r][3] for r in rows) + GENERAL_MARGIN
+    top_y = min(ext[r][1] for r in rows) - general_margin - top_margin_extra
+    bottom_y = max(ext[r][3] for r in rows) + general_margin
 
     tab_left_span, tab_right_span = controller_tab_spans(side, variant)
     tab_left = ctrl_cx - tab_left_span
@@ -683,6 +810,42 @@ def add_antenna_keepout_zone(
     board.Add(zone)
 
 
+def add_battery_lead_slot_keepout_zone(
+    board: pcbnew.BOARD,
+    side: str,
+    slot_center: tuple[float, float],
+) -> None:
+    slot_x, slot_y = slot_center
+    margin = 0.80
+    x1 = slot_x - BATTERY_LEAD_SLOT_LEN / 2.0 - margin
+    y1 = slot_y - BATTERY_LEAD_SLOT_W / 2.0 - margin
+    x2 = slot_x + BATTERY_LEAD_SLOT_LEN / 2.0 + margin
+    y2 = slot_y + BATTERY_LEAD_SLOT_W / 2.0 + margin
+    chain = pcbnew.SHAPE_LINE_CHAIN()
+    for x, y in ((x1, y1), (x2, y1), (x2, y2), (x1, y2)):
+        chain.Append(vxy(x, y))
+    chain.SetClosed(True)
+
+    zone = pcbnew.ZONE(board)
+    zone.SetZoneName(f"{side.upper()}_BATTERY_LEAD_SLOT_NO_COPPER_TRACE_VIA")
+    zone.SetNetCode(0)
+    zone.SetLayerSet(copper_layers())
+    zone.SetIsRuleArea(True)
+    zone.SetMinThickness(mm(0.10))
+    zone.SetDoNotAllowTracks(True)
+    zone.SetDoNotAllowVias(True)
+    if hasattr(zone, "SetDoNotAllowCopperPour"):
+        zone.SetDoNotAllowCopperPour(True)
+    else:
+        zone.SetDoNotAllowZoneFills(True)
+    zone.SetDoNotAllowPads(False)
+    zone.SetDoNotAllowFootprints(False)
+    if hasattr(zone, "SetRuleAreaPlacementEnabled"):
+        zone.SetRuleAreaPlacementEnabled(False)
+    zone.AddPolygon(chain)
+    board.Add(zone)
+
+
 def create_controller(
     board: pcbnew.BOARD,
     nets: dict[str, pcbnew.NETINFO_ITEM],
@@ -747,8 +910,8 @@ def create_controller(
     )
     usb_x = cx - direction * CONTROLLER_LEN / 2.0
     ant_x = cx + direction * CONTROLLER_LEN / 2.0
-    add_board_text(board, "USB_OUT_LEFT" if direction == 1 else "USB_OUT_RIGHT", usb_x, cy - 12.5, pcbnew.F_SilkS, 1.0)
-    add_board_text(board, "ANTENNA_INWARD", ant_x, cy - 12.5, pcbnew.F_SilkS, 1.0)
+    add_board_text(board, "USB_OUT_LEFT" if direction == 1 else "USB_OUT_RIGHT", usb_x, cy - 10.5, pcbnew.F_SilkS, 1.0)
+    add_board_text(board, "ANTENNA_INWARD", ant_x, cy - 10.5, pcbnew.F_SilkS, 1.0)
 
     keepout_start = cx + direction * ANTENNA_KEEP_START_FROM_CENTER
     keepout_x1 = keepout_start
@@ -884,8 +1047,13 @@ def make_board(
     project_dir.mkdir(parents=True, exist_ok=True)
 
     ctrl_cx = controller_center_x(keys, side, variant=variant)
-    top_margin_extra = 0.3 if variant in {"x1", "x2", "x3"} and side == "right" else 0.0
+    top_margin_extra = 0.0
+    if variant in {"x1", "x2"} and side == "right":
+        top_margin_extra = 0.3
+    elif variant == "x3":
+        top_margin_extra = 2.5 if side == "right" else 2.0
     inner_margin_extra = X3_INNER_MARGIN_EXTRA if variant == "x3" else 0.0
+    general_margin = X3_GENERAL_MARGIN if variant == "x3" else GENERAL_MARGIN
     outline = raw_outline(
         keys,
         side,
@@ -893,6 +1061,7 @@ def make_board(
         variant=variant,
         top_margin_extra=top_margin_extra,
         inner_margin_extra=inner_margin_extra,
+        general_margin=general_margin,
     )
     rounded = rounded_polygon(outline, radius=2.0, steps=5)
     if variant == "x3" and side == "right":
@@ -990,22 +1159,58 @@ def make_board(
     add_rect_lines(board, batt_cx - batt_w / 2, batt_cy - batt_h / 2, batt_cx + batt_w / 2, batt_cy + batt_h / 2, pcbnew.B_Fab, 0.10)
     add_board_text(board, "TW301525 80mAh", batt_cx - 7.0, batt_cy, pcbnew.B_Fab, 0.9, mirrored=True)
 
-    tact_offset_from_center = CONTROLLER_LEN / 2.0 - (X3_TACT_USB_EDGE_OFFSET if variant == "x3" else 7.0)
-    tact_x = ctrl_cx - usb_direction * tact_offset_from_center
+    battery_lead_slot_points: list[tuple[float, float]] = []
+    if variant == "x3":
+        slot_x, slot_y = x3_battery_lead_slot_point(ctrl_cx, ctrl_cy, usb_direction)
+        battery_lead_slot_points.append((slot_x, slot_y))
+        slot_fp = load_footprint(
+            board,
+            BATTERY_LEAD_SLOT_LIB,
+            BATTERY_LEAD_SLOT_FP,
+            "BAT_LEAD_SLOT1",
+            BATTERY_LEAD_SLOT_VALUE,
+            slot_x,
+            slot_y,
+        )
+        slot_fp.Reference().SetVisible(False)
+        slot_fp.Value().SetVisible(False)
+        add_battery_lead_slot_keepout_zone(board, side, (slot_x, slot_y))
+        add_rect_lines(
+            board,
+            slot_x - BATTERY_LEAD_SLOT_LEN / 2.0,
+            slot_y - BATTERY_LEAD_SLOT_W / 2.0,
+            slot_x + BATTERY_LEAD_SLOT_LEN / 2.0,
+            slot_y + BATTERY_LEAD_SLOT_W / 2.0,
+            pcbnew.Cmts_User,
+            0.08,
+        )
+        add_board_text(board, "BAT LEAD EXIT", slot_x - 4.5, slot_y + 3.2, pcbnew.Cmts_User, 0.7)
+
+    if variant == "x3":
+        tact_x = batt_cx + usb_direction * (batt_w / 2.0 + X3_TACT_BATTERY_CLEARANCE + X3_TACT_BODY_W / 2.0)
+    else:
+        tact_offset_from_center = CONTROLLER_LEN / 2.0 - 7.0
+        tact_x = ctrl_cx - usb_direction * tact_offset_from_center
     tact_y = ctrl_cy + CONTROLLER_W / 2.0 + 4.0
     tact = load_footprint(board, TACT_LIB, TACT_FP, "SW_RST1", "NW3-A06-B3 RST", tact_x, tact_y, 0)
 
+    registration_points = x3_registration_points(side, shifted_keys) if variant == "x3" else []
+    global ACTIVE_TRACE_KEEP_OUTS
+    previous_trace_keep_outs = ACTIVE_TRACE_KEEP_OUTS
+    ACTIVE_TRACE_KEEP_OUTS = registration_points + battery_lead_slot_points
+
     mount_points = mounting_points(side, shifted_keys, shifted_outline, ctrl_cx, ctrl_cy)
     if variant == "x3":
-        mount_points = [
-            point
-            for point in mount_points
-            if not circle_intersects_rect(point[0], point[1], MOUNT_HOLE_DIAMETER / 2.0, antenna_keepout)
-        ]
-        mount_points.append(X3_H2_ADJACENT_UPPER_MOUNT_POINTS[side])
+        mount_points = []
     for idx, (mx, my) in enumerate(mount_points, start=1):
         fp = load_footprint(board, MOUNT_LIB, MOUNT_FP, f"H{idx}", "M2_NPTH_2.2", mx, my)
         add_rect_lines(board, mx - 2.5, my - 2.5, mx + 2.5, my + 2.5, pcbnew.Cmts_User, 0.08)
+    for idx, (rx, ry) in enumerate(registration_points, start=1):
+        fp = load_footprint(board, REGISTRATION_LIB, REGISTRATION_FP, f"REG{idx}", REGISTRATION_VALUE, rx, ry)
+        fp.Reference().SetVisible(False)
+        fp.Value().SetVisible(False)
+        add_rect_lines(board, rx - 2.0, ry - 2.0, rx + 2.0, ry + 2.0, pcbnew.Cmts_User, 0.08)
+        add_board_text(board, f"H{idx}", rx + 2.6, ry - 2.6, pcbnew.B_SilkS, 0.8, 0.10, mirrored=True)
 
     switch_refs: dict[str, pcbnew.FOOTPRINT] = {}
     diode_refs: dict[str, pcbnew.FOOTPRINT] = {}
@@ -1095,7 +1300,8 @@ def make_board(
     variant_label = "" if variant == "soldered" else f" {variant.upper()}"
     layout_name = "77-key no-stabilizer split layout" if variant == "x3" else "71-key split successor to KC1"
     add_board_text(board, f"KC2 {side.upper()}{variant_label} - {layout_name}", 35, 24, pcbnew.F_SilkS, 1.2)
-    add_board_text(board, "No top housing / PCB is switch plate / bottom plate M2+adhesive", 35, 27, pcbnew.F_SilkS, 0.9)
+    housing_note = "No top housing / screwless PLA+ rail tray / REG holes" if variant == "x3" else "No top housing / PCB is switch plate / bottom plate M2+adhesive"
+    add_board_text(board, housing_note, 35, 27, pcbnew.F_SilkS, 0.9)
     add_board_text(board, "Diode fallback: 1N4148W SOD-123 because DO-35 conflicts with compact hybrid footprint", 35, 30, pcbnew.Cmts_User, 0.9)
     if variant == "hotswap":
         add_board_text(board, "Hot-swap variant: Kailh Choc V1/V2 socket footprint, not MX-only socket", 35, 33, pcbnew.Cmts_User, 0.9)
@@ -1105,12 +1311,14 @@ def make_board(
         add_board_text(board, "X2: Kailh Choc V1 socket plus direct THT solder, X1 hand-solder diodes", 35, 33, pcbnew.Cmts_User, 0.9)
     elif variant == "x3":
         add_board_text(board, "X3: X2 electrical stack, no-stabilizer 77-key split layout", 35, 33, pcbnew.Cmts_User, 0.9)
+    add_product_identity_text(board, side, shifted_outline, variant)
 
     make_project_file(project_dir, name, variant=variant)
     make_fp_lib_table(project_dir, include_switch_lib=switch_lib == SWITCH_LIB)
     board_path = project_dir / f"{name}.kicad_pcb"
     pcbnew.SaveBoard(str(board_path), board)
     make_project_file(project_dir, name, variant=variant)
+    ACTIVE_TRACE_KEEP_OUTS = previous_trace_keep_outs
     return board_path, antenna_keepout
 
 
@@ -1135,6 +1343,44 @@ def mounting_points(
     else:
         points.append((min_x + 4.5, max_y - SIDE_MOUNT_UPPER_OFFSET_FROM_BOTTOM))
     return points
+
+
+def x3_registration_points(side: str, keys: list[Key]) -> list[tuple[float, float]]:
+    min_x = min(key.cx for key in keys)
+    min_y = min(key.cy for key in keys)
+    if side == "left":
+        offsets = (
+            (14.505, 24.505),
+            (76.185, 13.505),
+            (96.875, 13.005),
+            (18.005, 45.405),
+            (60.685, 45.405),
+            (98.375, 45.405),
+            (12.995, 73.795),
+            (60.685, 73.795),
+            (88.875, 64.795),
+        )
+    elif side == "right":
+        offsets = (
+            (54.995, 7.005),
+            (93.565, 6.505),
+            (152.625, 18.005),
+            (6.255, 49.645),
+            (83.565, 48.405),
+            (152.125, 44.405),
+            (6.755, 67.045),
+            (98.065, 64.295),
+            (157.625, 52.795),
+        )
+    else:
+        raise ValueError(f"Unknown side: {side}")
+    return [(min_x + dx, min_y + dy) for dx, dy in offsets]
+
+
+def x3_battery_lead_slot_point(ctrl_cx: float, ctrl_cy: float, usb_direction: int) -> tuple[float, float]:
+    keepout_near_edge_x = ctrl_cx + usb_direction * ANTENNA_KEEP_START_FROM_CENTER
+    slot_x = keepout_near_edge_x - usb_direction * (BATTERY_LEAD_SLOT_LEN / 2.0 + BATTERY_LEAD_SLOT_KEEP_OUT_GAP)
+    return slot_x, ctrl_cy
 
 
 def circle_intersects_rect(
@@ -1416,17 +1662,27 @@ def generate_variant(variant: str) -> dict[str, object]:
         notes.append("X3 copies X2's Kailh Choc V1 hot-swap plus direct-THT switch footprint and X1 hand-solder diode choice.")
         notes.append("X3 follows docs/spec/20.kc2-no-stabilizer-layout.md and splits every >=2U key below 2U.")
         notes.append("X3 key count is 77 total: 32 left, 45 right. Maximum physical key width is 1.75U, so no stabilizer markers are generated.")
-        notes.append(f"X3 keeps X2's diode y offset of {X2_DIODE_Y_OFFSET:g} mm and the right-half 0.3 mm top outline relief.")
+        notes.append(f"X3 keeps X2's diode y offset of {X2_DIODE_Y_OFFSET:g} mm and uses top outline relief of 2.0 mm left / 2.5 mm right for preflight copper-edge clearance.")
         notes.append("X3 right half uses nine columns in every row; R_COL8 remains on D20 and R_COL7 remains on D21.")
         notes.append("X3 adds 0.8 mm inner-edge routing relief on both halves for the denser 77-key matrix.")
         notes.append("X3 right Y/H interlock protrusion keeps the vertical face at the 3.6 mm inner-edge margin and relieves the horizontal ledges inward by 0.8 mm.")
-        notes.append(f"X3 compact controller tab removes J_PWR1 and carrier BAT+/BAT- nets, uses a {X3_CONTROLLER_TAB_W:g} mm asymmetric tab, and places SW_RST1 {X3_TACT_USB_EDGE_OFFSET:g} mm inboard of the USB-side controller edge.")
-        notes.append("X3 omits any M2 mounting hole whose drill circle intersects the nice!nano antenna keepout.")
+        notes.append(
+            f"X3 compact controller tab removes J_PWR1 and carrier BAT+/BAT- nets, "
+            f"trims the antenna-side tab to {X3_CONTROLLER_TAB_ANTENNA_SPAN:g} mm from U1 center, "
+            f"and places SW_RST1 on the antenna side outside the TW301525 battery reference clearance."
+        )
+        notes.append(
+            f"X3 adds one {BATTERY_LEAD_SLOT_LEN:g} x {BATTERY_LEAD_SLOT_W:g} mm mask-only NPTH "
+            f"battery lead pass-through slot per half below the nice!nano B+/B- top-pin area."
+        )
+        notes.append("X3 screwless housing direction removes all M2 screw holes from both halves.")
+        notes.append(f"X3 adds nine {REGISTRATION_HOLE_DIAMETER:g} mm NPTH REG_NPTH_3.0 registration holes per half for a PLA+ rail/capture lower tray, with visible H1-H9 support labels.")
+        notes.append(f"X3 uses a {X3_GENERAL_MARGIN:g} mm nominal outer rail land, with 3.6 mm as the verified hard lower bound where local clearance requires it.")
     else:
         notes.append(f"Controller protrusion tab width is {CONTROLLER_TAB_W:g} mm and grows away from the inner joining edge.")
     switch_footprint_file_present = (switch_lib / f"{switch_fp}.kicad_mod").exists()
     manifest: dict[str, object] = {
-        "generated": "2026-06-04",
+        "generated": "2026-06-08",
         "variant": variant,
         "generator": "tools/generate_kc2_pcbs.py",
         "generation_command": f"python tools/generate_kc2_pcbs.py --variant {variant}",
@@ -1451,10 +1707,46 @@ def generate_variant(variant: str) -> dict[str, object]:
         "diode_value": diode_value,
         "diode_y_offset_mm": diode_y_offset,
         "carrier_power_pads": variant != "x3",
+        "battery_lead_pass_through_slot": (
+            {
+                "footprint": f"{BATTERY_LEAD_SLOT_LIB.name}:{BATTERY_LEAD_SLOT_FP}",
+                "value": BATTERY_LEAD_SLOT_VALUE,
+                "size_mm": [BATTERY_LEAD_SLOT_LEN, BATTERY_LEAD_SLOT_W],
+                "count_per_half": 1,
+                "layers": "mask-only NPTH, no carrier power copper",
+                "purpose": "optional bottom-side battery lead exit below nice!nano B+/B- top-pin area",
+            }
+            if variant == "x3"
+            else None
+        ),
+        "pcb_thickness_mm": 1.6 if variant == "x3" else None,
+        "housing_assumption": "FDM PLA+ screwless lower tray with printed rail/capture lips" if variant == "x3" else None,
+        "screwless_registration_holes": (
+            {
+                "footprint": f"{REGISTRATION_LIB.name}:{REGISTRATION_FP}",
+                "diameter_mm": REGISTRATION_HOLE_DIAMETER,
+                "count_per_half": 9,
+                "total_count": 18,
+                "purpose": "non-screw housing registration, center anti-flex support, and auxiliary capture",
+                "visible_labels": "H1-H9 on B.SilkS",
+            }
+            if variant == "x3"
+            else None
+        ),
+        "rail_land_mm": (
+            {
+                "nominal": X3_GENERAL_MARGIN,
+                "hard_lower_bound": 3.6,
+                "local_max_when_required": 5.0,
+            }
+            if variant == "x3"
+            else None
+        ),
         "controller_tab_width_mm": X3_CONTROLLER_TAB_W if variant == "x3" else CONTROLLER_TAB_W,
         "x3_controller_tab_inner_span_mm": X3_CONTROLLER_TAB_INNER_SPAN if variant == "x3" else None,
         "x3_controller_tab_outer_span_mm": X3_CONTROLLER_TAB_OUTER_SPAN if variant == "x3" else None,
-        "x3_tact_usb_edge_offset_mm": X3_TACT_USB_EDGE_OFFSET if variant == "x3" else None,
+        "x3_controller_anchor_inner_span_mm": X3_CONTROLLER_ANCHOR_INNER_SPAN if variant == "x3" else None,
+        "x3_tact_battery_clearance_mm": X3_TACT_BATTERY_CLEARANCE if variant == "x3" else None,
         "key_count": {
             "left": len(left_keys),
             "right": len(right_keys),

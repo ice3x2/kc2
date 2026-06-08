@@ -55,4 +55,8 @@ Agents MUST NOT approve PCB fabrication when any physical pinout, footprint, pow
 
 For KC2 specifically, agents MUST use the `kc2-pcb-preflight` skill when available for any X-series fabrication review or verify-fix-repeat loop, and MUST treat nice!nano v2 socket orientation, B+/B- wiring, RST/GND behavior, switch socket pad tying, and no-stabilizer layout invariants as hard gates.
 
+## Process Safety
+
+Agents MUST NOT kill Java processes in bulk. Before stopping Freerouting, identify the exact target process by command line, and stop only a process that is clearly running the KC2 Freerouting jar or the specific Freerouting command launched by the agent. Gradle daemons, test workers, IDE helpers, and Java processes with unknown or empty command lines must be left running unless the user explicitly authorizes stopping them.
+
 <!-- /SpecKiwi SRS 워크플로 -->

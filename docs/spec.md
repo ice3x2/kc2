@@ -16,7 +16,7 @@ KC2는 KC1 핸드와이어링 키보드의 배열 철학과 결합/분리 사용
 - 백라이트/RGB: 없음
 - 컨트롤러 소켓: 디바이스마트 상품번호 5494 `싱글라운드소켓(64핀)`, 2.54 mm pitch, 1열, round socket을 절단해 사용
 - 배터리: 디바이스마트 상품번호 1376800 `TW301525`, 3.7 V, 80 mAh, Li-Po, A1251-02 출력단자, 15 mm x 25 mm급
-- 배터리/컨트롤러 전원 연결: X3 compact controller tab에서는 A2506 PCB 커넥터와 carrier-PCB 전원 solder pad를 모두 사용하지 않고, 배터리 lead를 nice!nano v2 `B+`/`B-` pad에 직접 납땜한다.
+- 배터리/컨트롤러 전원 연결: X3 compact controller tab에서는 A2506 PCB 커넥터와 carrier-PCB 전원 solder pad를 모두 사용하지 않고, 배터리 lead를 nice!nano v2 `B+`/`B-` pad에 직접 납땜한다. Plan B로 각 half의 B+/B- top-pin 영역 아래에 mask-only NPTH battery-lead pass-through slot을 1개 두되, 이 slot은 전원 pad/trace/net이 아니라 하부로 케이블을 빼는 기계 구멍이다.
 - PCB 전원 커넥터/패드: 사용하지 않는다. X3 carrier PCB에는 `BAT+`, `BAT-`, `NN_B+`, `NN_B-` pad, trace, exposed copper를 두지 않는다.
 - 키스위치: 특정 모델을 문서에 고정하지 않는다.
 - 스위치 실장: PCB 직접 납땜
@@ -44,6 +44,8 @@ JLCPCB 제출용 개별 ZIP은 다음 두 파일을 사용한다.
 
 각 ZIP에는 Gerber copper, solder mask, solder paste, silkscreen, Edge.Cuts, Gerber job 파일뿐 아니라 PTH/NPTH Excellon drill 파일과 drill map/report를 함께 포함해야 한다. "거버 파일"이라고 부르더라도 drill 파일을 빼면 발주용 패키지로 인정하지 않는다.
 
+현재 주문 가능한 X3 좌우 PCB에는 하단면 `B.Silkscreen`에 각각 `KC2 v1.0 L` 및 `KC2 v1.0 R` 제품/버전 식별자를 넣는다.
+
 좌우 PCB를 한 주문 안에 넣으려면 단순히 두 보드 파일 세트를 한 ZIP에 섞지 말고, 의도적인 customer panel Gerber를 별도로 생성한 뒤 서로 다른 디자인 2개를 포함한 panelized order로 제출한다. 이 경우 제조사의 different-design/panel 옵션, 추가 비용, V-cut/tab-route 분리 조건을 주문 전에 확인한다.
 
 이전 soldered, hotswap, x1, x2 KiCad 산출물은 `hardware/kicad/draft/` 아래에 보관한다. 제조와 검증의 기본 진입점은 `hardware/kicad/kc2_left/`와 `hardware/kicad/kc2_right/`이다.
@@ -69,8 +71,11 @@ KC1과의 관계는 배열 철학과 사용성의 계승이며, KC2의 하드웨
 - 큰 키 stabilizer는 plate-mounted가 아니라, 무보강판에서 실제로 고정되는 PCB-mounted/PCB-retained 방식을 사용한다.
 - PCB 외곽선은 키 배열, 결합부, controller 돌출부, USB-C 접근 방향을 따라 최대한 타이트하게 잡는다.
 - 실리콘 feet는 PCB가 아니라 3D 프린터 하부 바닥판 아래에 부착한다.
-- PCB와 하부 바닥판은 가능하면 M2 나사로 고정한다.
-- M2 고정 홀을 둘 공간이 부족하면 접착제 고정을 대안으로 허용한다.
+- 기존 M2 고정 방향은 routed draft baseline 기록으로 유지한다.
+- X3 screwless rail housing 방향에서는 PCB의 모든 M2 나사 구멍을 제거하고, FDM PLA+ 하부 트레이의 레일/턱과 3.0 mm NPTH 등록 구멍으로 위치를 잡는다.
+- X3 screwless rail housing의 PCB 두께는 1.6 mm로 주문한다.
+- X3 screwless rail housing의 일반 외곽 rail land는 4.0 mm nominal로 두며, 검증된 국소 구간에 한해 3.6 mm hard lower bound를 허용하고 강도/공차/배선 때문에 필요한 구간은 5.0 mm까지 허용한다.
+- X3의 접착제는 1차 고정 수단이 아니라 필요 시 보조 수단으로만 검토한다.
 - 배터리, 납땜부, diode lead/pad, controller pin이 하부 바닥판 또는 책상과 직접 닿아 쇼트되지 않도록 한다.
 
 ## 무보강판 스테빌라이저
@@ -148,11 +153,9 @@ KC2는 상부 보강판이 없는 PCB 직접 납땜 구조이므로, 큰 키의 
 - controller 돌출 탭의 X 위치는 결합 edge 쪽에 가깝게 두되, 탭의 결합면 쪽 끝은 실제 결합 edge보다 안쪽으로 들어가게 한다. 현재 draft 기준 왼쪽 half는 약 12 mm, 오른쪽 half는 약 17 mm recessed 배치로 둔다. 왼쪽 half는 오른쪽 결합 edge 쪽, 오른쪽 half는 왼쪽 결합 edge 쪽에 탭을 배치하되, 맞붙임을 방해하지 않아야 한다.
 - controller 돌출 탭은 요철처럼 튀어나오되, 모서리는 둥글게 처리한다.
 - controller 돌출 탭은 전기적 배치뿐 아니라 손가락/케이블/하부 바닥판 간섭을 함께 고려한다.
-- M2 나사 홀은 키 스위치, stabilizer, diode, controller socket, battery, wire strain relief와 간섭하지 않는 중간 지점에 우선 배치한다.
-- M2 나사 홀 배치가 불가능한 영역은 하부 바닥판과 접착 고정하는 후보 영역으로 둔다.
-- M2 고정 홀은 NPTH 2.2 mm를 기본값으로 하고, screw head와 3D 프린터 boss를 위한 keepout은 지름 5.0 mm 이상으로 둔다.
-- M2 홀 중심은 PCB 외곽에서 최소 4.0 mm, 가능하면 4.5 mm 이상 떨어뜨린다.
-- 결합 edge의 2.8 mm 얇은 테두리 구간에는 M2 홀을 배치하지 않고, 하부 바닥판의 연속 지지 리브로 보강한다.
+- X3 screwless rail housing에서는 M2 홀을 배치하지 않는다.
+- X3에는 나사 체결이 아닌 하우징 등록/보조 포획용 3.0 mm NPTH `REG_NPTH_3.0` 홀을 각 half당 9개 배치한다. 중간 지지 홀은 PCB 중앙부 anti-flex 지점에 더 가깝게 배치하고, 실물 조립 식별을 위해 각 홀 주변에 `H1`-`H9` label을 둔다.
+- 결합 edge의 2.8 mm 얇은 테두리 구간은 하부 바닥판의 연속 지지 리브로 보강한다.
 
 ## 배열
 
@@ -351,7 +354,7 @@ Row 5: Ctrl GUI Alt Fn Space     |  B  Space RAlt Fn RCtrl Left Down Right
 - `x2` 변형은 추가된 switch THT pad와 diode 간섭을 피하기 위해 diode y offset을 switch center 기준 `-7.6 mm`로 둔다.
 - `x2` 오른쪽 half는 `x1`과 같은 상단 outline 0.3 mm relief를 유지한다.
 - 현재 main PCB는 기존 `x3` 변형을 승격한 no-stabilizer layout 개선판이다.
-- `x3` 변형은 switch footprint, diode footprint, diode y offset, 오른쪽 half 상단 outline relief를 `x2`와 동일하게 유지한다.
+- `x3` 변형은 switch footprint, diode footprint, diode y offset을 `x2`와 동일하게 유지하되, preflight copper-edge clearance를 위해 상단 outline relief는 왼쪽 half 0.3 mm, 오른쪽 half 0.6 mm를 사용한다.
 - `x3` 변형은 `docs/spec/20.kc2-no-stabilizer-layout.md`의 77-key layout을 사용하며, 물리 키 최대 폭은 `1.75u`이다.
 - `x3` 변형은 `2u 이상` 키가 없으므로 stabilizer footprint를 생성하지 않는다.
 - `x3` 오른쪽 half는 5개 row 모두 9개 matrix column을 사용한다. 기존 `R_COL8=D20`, `R_COL7=D21` pin mapping은 유지하되, firmware keymap에서는 duplicate legend physical key를 별도 위치로 구분해야 한다.
@@ -372,7 +375,7 @@ Row 5: Ctrl GUI Alt Fn Space     |  B  Space RAlt Fn RCtrl Left Down Right
 - 왼쪽 half는 USB-C가 왼쪽 바깥쪽을 향하고, antenna end는 오른쪽 결합 edge 쪽을 향한다.
 - 오른쪽 half는 USB-C가 오른쪽 바깥쪽을 향하고, antenna end는 왼쪽 결합 edge 쪽을 향한다.
 - KiCad 배치에는 `USB_OUT_LEFT`, `USB_OUT_RIGHT`, `ANTENNA_INWARD` silkscreen 또는 Dwgs.User 표시를 넣어 footprint 회전 오류를 검증한다.
-- USB-C 포트 아래쪽은 각 half의 key-side, 즉 숫자열을 향한 쪽으로 정의한다. 프로그래밍용 tact switch는 USB-C 포트의 key-side 아래쪽에 상면 배치하며, 누를 수 있는 공간을 반드시 확보한다.
+- USB-C 포트 아래쪽은 각 half의 key-side, 즉 숫자열을 향한 쪽으로 정의한다. X3 compact controller tab의 프로그래밍용 tact switch는 antenna-side controller-tab edge 쪽 상면에 두며, nice!nano socket과 TW301525 battery reference area 안쪽으로 들어가지 않고 누를 수 있는 공간을 반드시 확보한다.
 - 핸드와이어링 버전의 배열은 유지하되, PCB outline과 controller/USB 주변 외형은 PCB화에 맞춰 조정할 수 있다.
 - USB는 nice!nano v2 자체 USB-C만 사용한다. 기존 USB-C guide/extension/외부 USB board 구조는 유지하지 않는다.
 - USB-C 포트는 결합 상태와 분리 상태 모두에서 케이블을 꽂기 쉬운 방향으로 둔다.
@@ -381,7 +384,7 @@ Row 5: Ctrl GUI Alt Fn Space     |  B  Space RAlt Fn RCtrl Left Down Right
 - 이 keepout 값은 공식 pinout/schematic과 실물 측정 후 조정할 수 있으나, 1차 PCB 초안에서는 10 mm keepout을 기본값으로 둔다.
 - 배터리를 controller 아래에 둘 수는 있지만, 안테나 바로 아래에는 두지 않는다.
 - Li-Po pouch와 배선은 2.4 GHz 안테나를 detune하거나 감쇠시킬 수 있으므로, 배터리는 MCU/USB 쪽 아래로 치우치게 배치하고 안테나 아래는 비워 둔다.
-- 프로그래밍용 tact switch는 USB-C에 더 가깝게 이동하되, top-side tact switch body와 bottom-side battery reference/하부 바닥판 고정 구조가 간섭하지 않도록 한다.
+- 프로그래밍용 tact switch는 antenna-side controller-tab edge 쪽으로 이동하되, top-side tact switch body가 nice!nano socket, bottom-side battery reference, 하부 바닥판 고정 구조와 간섭하지 않도록 한다.
 - controller와 tact switch는 손에 노출되는 상부 조건으로 배치하고, battery와 nice!nano 직접 납땜부는 하부 바닥판과 간섭하지 않게 배치한다.
 - keycap 간섭, USB 삽입 간섭, 바닥면 쇼트 가능성을 1:1 출력물로 확인한다.
 
@@ -400,9 +403,9 @@ Row 5: Ctrl GUI Alt Fn Space     |  B  Space RAlt Fn RCtrl Left Down Right
 - nice!nano v2 `B+`/`B-` 직접 납땜부의 service loop, strain relief, 절연 방식
 - 전원 차단이 필요한 정비 상황에서 사용할 배터리 lead desolder 또는 외부 lead 분리 방식
 - controller 아래 배터리 배치 시 antenna keepout 확보 방식
-- `NW3-A06-B3` SMD tact switch의 key-side 상면 위치와 1:1 출력물 기반 조작 검증
-- 하부 바닥판용 M2 고정 홀 위치
-- M2 고정 홀을 둘 수 없는 영역의 접착 고정 방식
+- `NW3-A06-B3` SMD tact switch의 antenna-side 상면 위치와 1:1 출력물 기반 조작 검증
+- X3 screwless rail/capture 하부 바닥판의 실제 레일, 턱, peg, rib 치수
+- X3 screwless 구조에서 접착제가 필요한 경우의 보조 적용 위치와 서비스성
 - 3D 프린터 하부 바닥판 형상과 PCB 지지점
 - 결합 edge 하부를 지지하는 3D 프린터 바닥판 lip/rib 형상과 지지 위치
 - 실리콘 feet 위치

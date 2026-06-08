@@ -58,7 +58,12 @@ def check_board(side: str, board_path: Path, keepout: Rect) -> list[str]:
     for fp in board.GetFootprints():
         ref = fp.GetReference()
         value = fp.GetValue()
-        is_mount = ref.startswith("H") or "MountingHole" in fp.GetFPIDAsString() or value.startswith("M2_")
+        is_mount = (
+            ref.startswith("H")
+            or "MountingHole" in fp.GetFPIDAsString()
+            or value.startswith("M2_")
+            or value == "REG_NPTH_3.0"
+        )
         if not is_mount:
             continue
         fx, fy = to_mm_vec(fp.GetPosition())

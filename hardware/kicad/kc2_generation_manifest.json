@@ -1,5 +1,5 @@
 {
-  "generated": "2026-06-04",
+  "generated": "2026-06-08",
   "variant": "x3",
   "generator": "tools/generate_kc2_pcbs.py",
   "generation_command": "python tools/generate_kc2_pcbs.py --variant x3",
@@ -11,9 +11,9 @@
   },
   "antenna_keepout_mm": {
     "left": [
-      157.6825,
+      156.1825,
       39.85,
-      167.6825,
+      166.1825,
       58.15
     ],
     "right": [
@@ -30,10 +30,37 @@
   "diode_value": "1N4148W_SOD123_DeviceMart_14592018",
   "diode_y_offset_mm": -7.6,
   "carrier_power_pads": false,
-  "controller_tab_width_mm": 54.0,
-  "x3_controller_tab_inner_span_mm": 30.5,
+  "battery_lead_pass_through_slot": {
+    "footprint": "kc2.pretty:BAT_LEAD_NPTH_SLOT_3.6x2.2",
+    "value": "BAT_LEAD_NPTH_SLOT_3.6x2.2",
+    "size_mm": [
+      3.6,
+      2.2
+    ],
+    "count_per_half": 1,
+    "layers": "mask-only NPTH, no carrier power copper",
+    "purpose": "optional bottom-side battery lead exit below nice!nano B+/B- top-pin area"
+  },
+  "pcb_thickness_mm": 1.6,
+  "housing_assumption": "FDM PLA+ screwless lower tray with printed rail/capture lips",
+  "screwless_registration_holes": {
+    "footprint": "kc2.pretty:REG_NPTH_3.0",
+    "diameter_mm": 3.0,
+    "count_per_half": 9,
+    "total_count": 18,
+    "purpose": "non-screw housing registration, center anti-flex support, and auxiliary capture",
+    "visible_labels": "H1-H9 on B.SilkS"
+  },
+  "rail_land_mm": {
+    "nominal": 4.0,
+    "hard_lower_bound": 3.6,
+    "local_max_when_required": 5.0
+  },
+  "controller_tab_width_mm": 42.5,
+  "x3_controller_tab_inner_span_mm": 19.0,
   "x3_controller_tab_outer_span_mm": 23.5,
-  "x3_tact_usb_edge_offset_mm": 2.7,
+  "x3_controller_anchor_inner_span_mm": 30.5,
+  "x3_tact_battery_clearance_mm": 1.0,
   "key_count": {
     "left": 32,
     "right": 45,
@@ -51,12 +78,14 @@
     "X3 copies X2's Kailh Choc V1 hot-swap plus direct-THT switch footprint and X1 hand-solder diode choice.",
     "X3 follows docs/spec/20.kc2-no-stabilizer-layout.md and splits every >=2U key below 2U.",
     "X3 key count is 77 total: 32 left, 45 right. Maximum physical key width is 1.75U, so no stabilizer markers are generated.",
-    "X3 keeps X2's diode y offset of -7.6 mm and the right-half 0.3 mm top outline relief.",
+    "X3 keeps X2's diode y offset of -7.6 mm and uses top outline relief of 2.0 mm left / 2.5 mm right for preflight copper-edge clearance.",
     "X3 right half uses nine columns in every row; R_COL8 remains on D20 and R_COL7 remains on D21.",
     "X3 adds 0.8 mm inner-edge routing relief on both halves for the denser 77-key matrix.",
     "X3 right Y/H interlock protrusion keeps the vertical face at the 3.6 mm inner-edge margin and relieves the horizontal ledges inward by 0.8 mm.",
-    "X3 compact controller tab removes J_PWR1 and carrier BAT+/BAT- nets, uses a 54 mm asymmetric tab, and places SW_RST1 2.7 mm inboard of the USB-side controller edge.",
-    "X3 omits any M2 mounting hole whose drill circle intersects the nice!nano antenna keepout.",
-    "X3 adds H2-adjacent upper-corner H5 M2 holes: left at (173.45, 66.50) because exact H2.x is outside the upper outline, and right at (225.8375, 66.20)."
+    "X3 compact controller tab removes J_PWR1 and carrier BAT+/BAT- nets, trims the antenna-side tab to 19 mm from U1 center, and places SW_RST1 on the antenna side outside the TW301525 battery reference clearance.",
+    "X3 adds one 3.6 x 2.2 mm mask-only NPTH battery lead pass-through slot per half below the nice!nano B+/B- top-pin area.",
+    "X3 screwless housing direction removes all M2 screw holes from both halves.",
+    "X3 adds nine 3 mm NPTH REG_NPTH_3.0 registration holes per half for a PLA+ rail/capture lower tray, with visible H1-H9 support labels.",
+    "X3 uses a 4 mm nominal outer rail land, with 3.6 mm as the verified hard lower bound where local clearance requires it."
   ]
 }
