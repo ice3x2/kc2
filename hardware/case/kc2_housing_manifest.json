@@ -16,7 +16,7 @@
     "battery_slot_clearance_mm": 0.7,
     "battery_floor_cutout_enabled": false,
     "bottom_corner_radius_mm": 0.8,
-    "bottom_edge_radius_mm": 0.8,
+    "bottom_edge_radius_mm": 0.0,
     "front_height_mm": 4.4,
     "rear_height_mm": 7.48,
     "rear_height_ratio": 1.7,
@@ -32,7 +32,7 @@
     "The controller/USB side height is 1.70x the front edge height.",
     "Front height is 4.40 mm and controller-side height is 7.48 mm.",
     "The bottom outline uses an explicit 0.80 mm rounded-corner smoothing pass.",
-    "The lower outside edge uses an explicit 0.80 mm rounded bevel from the bottom face to the side wall.",
+    "The underside is kept flat by disabling the previous lower-edge roundover loft.",
     "Bottom component cavity is 3.20 mm from floor top to PCB underside, covering Choc hot-swap sockets and SOD-123 diodes as a first-pass clearance."
   ],
   "outputs": {
@@ -138,7 +138,7 @@
         "open_area_ratio": 0.916046770711354,
         "external_step_mm": 0.0
       },
-      "facet_count": 14030
+      "facet_count": 6360
     },
     "right": {
       "stl": "hardware\\case\\kc2_right_lower_housing.stl",
@@ -242,7 +242,7 @@
         "open_area_ratio": 0.9264932012022663,
         "external_step_mm": 0.0
       },
-      "facet_count": 14134
+      "facet_count": 6464
     }
   }
 }

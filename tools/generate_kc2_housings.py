@@ -36,7 +36,7 @@ class HousingParams:
     battery_slot_clearance_mm: float = 0.70
     battery_floor_cutout_enabled: bool = False
     bottom_corner_radius_mm: float = 0.80
-    bottom_edge_radius_mm: float = 0.80
+    bottom_edge_radius_mm: float = 0.00
     rear_height_ratio: float = 1.70
     cylinder_segments: int = 32
 
@@ -64,6 +64,8 @@ class HousingParams:
 Point3 = tuple[float, float, float]
 Point = tuple[float, float]
 Facet = tuple[Point3, Point3, Point3]
+TRIANGLE_AREA_TOLERANCE_MM2 = 1e-8
+TRIANGLE_OUTSIDE_AREA_TOLERANCE_MM2 = 1e-7
 
 
 def locate_kicad_python() -> Path:
@@ -278,11 +280,18 @@ def polygon_parts(shp: dict[str, Any], geom: Any) -> list[Any]:
     raise RuntimeError(f"Unsupported geometry type: {geom.geom_type}")
 
 
+def triangle_is_inside_polygon(poly: Any, tri: Any) -> bool:
+    if tri.area <= TRIANGLE_AREA_TOLERANCE_MM2:
+        return False
+    allowed_outside_area = max(TRIANGLE_OUTSIDE_AREA_TOLERANCE_MM2, tri.area * 1e-9)
+    return tri.difference(poly).area <= allowed_outside_area
+
+
 def add_extrusion(shp: dict[str, Any], facets: list[Facet], geom: Any, z0: float, z1: float) -> None:
     for poly in polygon_parts(shp, geom):
         triangles = shp["constrained_delaunay_triangles"](poly)
         for tri in triangles.geoms:
-            if tri.area <= 1e-8 or not poly.covers(tri.representative_point()):
+            if not triangle_is_inside_polygon(poly, tri):
                 continue
             coords = ring_points(tri.exterior.coords)
             if len(coords) != 3:
@@ -322,7 +331,7 @@ def add_variable_extrusion(shp: dict[str, Any], facets: list[Facet], geom: Any, 
     for poly in polygon_parts(shp, geom):
         triangles = shp["constrained_delaunay_triangles"](poly)
         for tri in triangles.geoms:
-            if tri.area <= 1e-8 or not poly.covers(tri.representative_point()):
+            if not triangle_is_inside_polygon(poly, tri):
                 continue
             coords = ring_points(tri.exterior.coords)
             if len(coords) != 3:
@@ -357,7 +366,7 @@ def add_variable_cap(shp: dict[str, Any], facets: list[Facet], geom: Any, z_fn: 
     for poly in polygon_parts(shp, geom):
         triangles = shp["constrained_delaunay_triangles"](poly)
         for tri in triangles.geoms:
-            if tri.area <= 1e-8 or not poly.covers(tri.representative_point()):
+            if not triangle_is_inside_polygon(poly, tri):
                 continue
             coords = ring_points(tri.exterior.coords)
             if len(coords) != 3:
@@ -683,7 +692,7 @@ def main() -> int:
             "The controller/USB side height is 1.70x the front edge height.",
             f"Front height is {params.front_height_mm:.2f} mm and controller-side height is {params.rear_height_mm:.2f} mm.",
             "The bottom outline uses an explicit 0.80 mm rounded-corner smoothing pass.",
-            "The lower outside edge uses an explicit 0.80 mm rounded bevel from the bottom face to the side wall.",
+            "The underside is kept flat by disabling the previous lower-edge roundover loft.",
             "Bottom component cavity is 3.20 mm from floor top to PCB underside, covering Choc hot-swap sockets and SOD-123 diodes as a first-pass clearance.",
         ],
         "outputs": {},

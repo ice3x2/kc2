@@ -31,8 +31,8 @@ Design assumptions:
   housing floor below the controller is closed.
 - The controller/USB side height is 1.7x the front edge height.
 - The bottom outline uses a 0.8 mm rounded-corner smoothing pass.
-- The lower outside edge uses a 0.8 mm rounded bevel from the bottom face to
-  the side wall.
+- The underside is flat; the previous lower-edge roundover loft is disabled to
+  avoid stray low-Z mesh layers and slicer-visible protrusion artifacts.
 
 This is a fit-check draft. Print one half first before committing to the full
 pair, then tune peg diameter and floor clearance for the actual printer and

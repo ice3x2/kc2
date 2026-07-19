@@ -13,14 +13,17 @@ VERTEX_RE = re.compile(r"\s*vertex\s+([-+0-9.eE]+)\s+([-+0-9.eE]+)\s+([-+0-9.eE]
 
 MIN_REAR_RISE_MM = 3.0
 MIN_BOTTOM_CORNER_RADIUS_MM = 0.5
-MIN_BOTTOM_EDGE_RADIUS_MM = 0.5
 MIN_OBSERVED_REAR_RISE_MM = 2.0
-MIN_OBSERVED_BOTTOM_EDGE_INSET_MM = 0.25
+MAX_BOTTOM_EDGE_RADIUS_MM = 0.05
+LOW_BOTTOM_LAYER_SCAN_MM = 1.0
+MAX_PROJECTED_MESH_OUTSIDE_FOOTPRINT_AREA_MM2 = 0.10
 TARGET_REAR_HEIGHT_RATIO = 1.70
 HEIGHT_RATIO_TOLERANCE = 0.03
 MIN_CAVITY_OPEN_AREA_RATIO = 0.45
 MAX_EXTERNAL_STEP_MM = 0.05
 EDGE_SAMPLE_FRACTION = 0.10
+FACET_RE = re.compile(r"\s*facet\s+normal\s+([-+0-9.eE]+)\s+([-+0-9.eE]+)\s+([-+0-9.eE]+)\s*$")
+Facet = tuple[tuple[float, float, float], tuple[tuple[float, float, float], ...]]
 
 
 def load_manifest(path: Path) -> dict[str, Any]:
@@ -30,13 +33,107 @@ def load_manifest(path: Path) -> dict[str, Any]:
 
 
 def stl_vertices(path: Path) -> list[tuple[float, float, float]]:
+    return [vertex for _normal, tri in stl_facets(path) for vertex in tri]
+
+
+def stl_facets(path: Path) -> list[Facet]:
+    facets: list[Facet] = []
+    normal = (0.0, 0.0, 0.0)
     vertices: list[tuple[float, float, float]] = []
     for line in path.read_text(encoding="ascii", errors="strict").splitlines():
-        match = VERTEX_RE.match(line)
-        if not match:
+        facet_match = FACET_RE.match(line)
+        if facet_match:
+            normal = tuple(float(facet_match.group(idx)) for idx in range(1, 4))
+            vertices = []
             continue
-        vertices.append(tuple(float(match.group(idx)) for idx in range(1, 4)))
-    return vertices
+        vertex_match = VERTEX_RE.match(line)
+        if not vertex_match:
+            continue
+        vertices.append(tuple(float(vertex_match.group(idx)) for idx in range(1, 4)))
+        if len(vertices) == 3:
+            facets.append((normal, tuple(vertices)))
+    return facets
+
+
+def low_bottom_layers(vertices: list[tuple[float, float, float]]) -> list[float]:
+    if not vertices:
+        return []
+    min_z = min(z for _x, _y, z in vertices)
+    return sorted(
+        {
+            round(z - min_z, 3)
+            for _x, _y, z in vertices
+            if 0.001 <= z - min_z <= LOW_BOTTOM_LAYER_SCAN_MM
+        }
+    )
+
+
+def intended_outer_footprints(manifest: dict[str, Any]) -> dict[str, Any]:
+    import generate_kc2_housings as generator
+
+    shp = generator.require_shapely()
+    raw_params = manifest.get("parameters", {})
+    field_names = set(generator.HousingParams.__dataclass_fields__)
+    params = generator.HousingParams(**{key: value for key, value in raw_params.items() if key in field_names})
+    kicad_python = Path(manifest.get("kicad_python") or "")
+    if not kicad_python.exists():
+        kicad_python = generator.locate_kicad_python()
+    geometry = generator.run_extractor(kicad_python)
+
+    footprints = {}
+    for side in ("left", "right"):
+        raw_poly = generator.board_polygon(shp, geometry["boards"][side]["edge_segments"])
+        minx, miny, _maxx, _maxy = raw_poly.bounds
+        board = shp["affinity"].translate(raw_poly, xoff=-minx, yoff=-miny)
+        outer = board.buffer(-params.outline_inset_mm, join_style="round", resolution=16)
+        if params.bottom_corner_radius_mm > 0:
+            outer = outer.buffer(-params.bottom_corner_radius_mm / 2.0, join_style="round", resolution=16).buffer(
+                params.bottom_corner_radius_mm / 2.0,
+                join_style="round",
+                resolution=16,
+            )
+        footprints[side] = outer
+    return footprints
+
+
+def max_projected_outside_area(shp: dict[str, Any], facets: list[Facet], footprint: Any) -> float:
+    max_area = 0.0
+    for _normal, tri in facets:
+        projected = shp["Polygon"]([(x, y) for x, y, _z in tri])
+        if projected.area <= 1e-8:
+            continue
+        max_area = max(max_area, projected.difference(footprint).area)
+    return max_area
+
+
+def verify_stl_mesh(manifest: dict[str, Any], outputs: dict[str, Any]) -> list[str]:
+    import generate_kc2_housings as generator
+
+    errors: list[str] = []
+    shp = generator.require_shapely()
+    footprints = intended_outer_footprints(manifest)
+    for side in ("left", "right"):
+        output = outputs.get(side)
+        if not output or not output.get("stl"):
+            continue
+        stl_path = ROOT / output["stl"]
+        if not stl_path.exists():
+            continue
+        facets = stl_facets(stl_path)
+        vertices = [vertex for _normal, tri in facets for vertex in tri]
+        extra_layers = low_bottom_layers(vertices)
+        if extra_layers:
+            errors.append(
+                f"{side}: bottom mesh has intermediate low-Z layers below "
+                f"{LOW_BOTTOM_LAYER_SCAN_MM:.1f} mm: {extra_layers}"
+            )
+        outside_area = max_projected_outside_area(shp, facets, footprints[side])
+        if outside_area > MAX_PROJECTED_MESH_OUTSIDE_FOOTPRINT_AREA_MM2:
+            errors.append(
+                f"{side}: STL triangle projection extends {outside_area:.3f} mm^2 outside "
+                "the intended housing footprint"
+            )
+    return errors
 
 
 def observed_rear_rise(vertices: list[tuple[float, float, float]]) -> float:
@@ -56,26 +153,6 @@ def observed_rear_rise(vertices: list[tuple[float, float, float]]) -> float:
     if not rear_z or not front_z:
         return -999.0
     return max(rear_z) - max(front_z)
-
-
-def observed_bottom_edge_inset(vertices: list[tuple[float, float, float]], edge_radius: float) -> float:
-    if not vertices or edge_radius <= 0.0:
-        return -999.0
-    min_z = min(z for _x, _y, z in vertices)
-    bottom = [(x, y) for x, y, z in vertices if z <= min_z + 0.02]
-    shoulder = [
-        (x, y)
-        for x, y, z in vertices
-        if min_z + edge_radius * 0.90 <= z <= min_z + edge_radius * 1.10
-    ]
-    if not bottom or not shoulder:
-        return -999.0
-
-    bottom_x = max(x for x, _y in bottom) - min(x for x, _y in bottom)
-    bottom_y = max(y for _x, y in bottom) - min(y for _x, y in bottom)
-    shoulder_x = max(x for x, _y in shoulder) - min(x for x, _y in shoulder)
-    shoulder_y = max(y for _x, y in shoulder) - min(y for _x, y in shoulder)
-    return min((shoulder_x - bottom_x) / 2.0, (shoulder_y - bottom_y) / 2.0)
 
 
 def verify_manifest(manifest: dict[str, Any], manifest_path: Path) -> list[str]:
@@ -106,10 +183,10 @@ def verify_manifest(manifest: dict[str, Any], manifest_path: Path) -> list[str]:
         )
 
     bottom_edge_radius = float(params.get("bottom_edge_radius_mm", 0.0))
-    if bottom_edge_radius < MIN_BOTTOM_EDGE_RADIUS_MM:
+    if bottom_edge_radius > MAX_BOTTOM_EDGE_RADIUS_MM:
         errors.append(
-            f"bottom_edge_radius_mm {bottom_edge_radius:.3f} is below "
-            f"{MIN_BOTTOM_EDGE_RADIUS_MM:.3f} mm"
+            f"bottom_edge_radius_mm {bottom_edge_radius:.3f} should be disabled or <= "
+            f"{MAX_BOTTOM_EDGE_RADIUS_MM:.3f} mm for a clean flat underside"
         )
 
     outputs = manifest.get("outputs", {})
@@ -163,15 +240,10 @@ def verify_manifest(manifest: dict[str, Any], manifest_path: Path) -> list[str]:
                 f"{side}: observed rear/top-edge rise is {rise:.3f} mm, "
                 f"expected >= {MIN_OBSERVED_REAR_RISE_MM:.3f} mm"
             )
-        bottom_inset = observed_bottom_edge_inset(vertices, bottom_edge_radius)
-        if bottom_inset < MIN_OBSERVED_BOTTOM_EDGE_INSET_MM:
-            errors.append(
-                f"{side}: observed bottom-edge inset is {bottom_inset:.3f} mm, "
-                f"expected >= {MIN_OBSERVED_BOTTOM_EDGE_INSET_MM:.3f} mm"
-            )
 
     if manifest_path != DEFAULT_MANIFEST and not manifest_path.is_absolute():
         errors.append("internal error: manifest path should be absolute")
+    errors.extend(verify_stl_mesh(manifest, outputs))
     return errors
 
 
@@ -194,7 +266,7 @@ def main() -> int:
     print("- controller-side floor is closed below the PCB battery lead slot")
     print("- one-piece tray metadata reports a hollow interior cavity")
     print("- bottom outline has an explicit rounded-corner radius")
-    print("- bottom edge has a measurable bevel/roundover inset")
+    print("- underside has no rounded-edge loft layers or mesh projected outside the footprint")
     print("- controller/rear edge height is 1.7x the front edge height")
     return 0
 
