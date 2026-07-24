@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import math
 import re
 from pathlib import Path
 from typing import Any
@@ -11,17 +12,30 @@ ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_MANIFEST = ROOT / "hardware" / "case" / "kc2_housing_manifest.json"
 VERTEX_RE = re.compile(r"\s*vertex\s+([-+0-9.eE]+)\s+([-+0-9.eE]+)\s+([-+0-9.eE]+)\s*$")
 
-MIN_REAR_RISE_MM = 3.0
 MIN_BOTTOM_CORNER_RADIUS_MM = 0.5
-MIN_OBSERVED_REAR_RISE_MM = 2.0
+MAX_REAR_RISE_MM = 0.001
+MAX_OBSERVED_REAR_RISE_MM = 0.02
 MAX_BOTTOM_EDGE_RADIUS_MM = 0.05
 LOW_BOTTOM_LAYER_SCAN_MM = 1.0
 MAX_PROJECTED_MESH_OUTSIDE_FOOTPRINT_AREA_MM2 = 0.10
-TARGET_REAR_HEIGHT_RATIO = 1.70
-HEIGHT_RATIO_TOLERANCE = 0.03
+TARGET_REAR_HEIGHT_RATIO = 1.00
+HEIGHT_RATIO_TOLERANCE = 0.001
+EXPECTED_FLOOR_THICKNESS_MM = 1.20
+EXPECTED_SOCKET_BODY_HEIGHT_MM = 2.20
+EXPECTED_SOCKET_SAFETY_CLEARANCE_MM = 0.40
+EXPECTED_BOTTOM_COMPONENT_CLEARANCE_MM = 2.60
+EXPECTED_PCB_SUPPORT_HEIGHT_MM = 3.80
+DIMENSION_TOLERANCE_MM = 0.001
+EXPECTED_SOCKET_COUNTS = {"left": 32, "right": 45}
+MIN_SOCKET_LATERAL_CLEARANCE_MM = 0.30
 MIN_CAVITY_OPEN_AREA_RATIO = 0.45
 MAX_EXTERNAL_STEP_MM = 0.05
 EDGE_SAMPLE_FRACTION = 0.10
+EXPECTED_PILOT_HOLE_DIAMETER_MM = 1.60
+EXPECTED_REGISTRATION_PEG_DIAMETER_MM = 2.55
+CYLINDER_RADIUS_TOLERANCE_MM = 0.03
+MIN_CYLINDER_VERTEX_COUNT = 16
+MESH_VERTEX_QUANTIZATION_DIGITS = 5
 FACET_RE = re.compile(r"\s*facet\s+normal\s+([-+0-9.eE]+)\s+([-+0-9.eE]+)\s+([-+0-9.eE]+)\s*$")
 Facet = tuple[tuple[float, float, float], tuple[tuple[float, float, float], ...]]
 
@@ -85,6 +99,7 @@ def intended_outer_footprints(manifest: dict[str, Any]) -> dict[str, Any]:
         raw_poly = generator.board_polygon(shp, geometry["boards"][side]["edge_segments"])
         minx, miny, _maxx, _maxy = raw_poly.bounds
         board = shp["affinity"].translate(raw_poly, xoff=-minx, yoff=-miny)
+        board = shp["affinity"].scale(board, xfact=-1.0, yfact=1.0, origin="center")
         outer = board.buffer(-params.outline_inset_mm, join_style="round", resolution=16)
         if params.bottom_corner_radius_mm > 0:
             outer = outer.buffer(-params.bottom_corner_radius_mm / 2.0, join_style="round", resolution=16).buffer(
@@ -106,6 +121,31 @@ def max_projected_outside_area(shp: dict[str, Any], facets: list[Facet], footpri
     return max_area
 
 
+def non_manifold_edge_count(facets: list[Facet]) -> int:
+    edge_counts: dict[tuple[tuple[float, float, float], tuple[float, float, float]], int] = {}
+    for _normal, triangle in facets:
+        vertices = [
+            tuple(round(value, MESH_VERTEX_QUANTIZATION_DIGITS) for value in vertex)
+            for vertex in triangle
+        ]
+        for start, end in zip(vertices, vertices[1:] + vertices[:1]):
+            edge = tuple(sorted((start, end)))
+            edge_counts[edge] = edge_counts.get(edge, 0) + 1
+    return sum(count != 2 for count in edge_counts.values())
+
+
+def cylinder_vertex_count(
+    vertices: list[tuple[float, float, float]],
+    center_x: float,
+    center_y: float,
+    radius: float,
+) -> int:
+    return sum(
+        abs(math.hypot(x - center_x, y - center_y) - radius) <= CYLINDER_RADIUS_TOLERANCE_MM
+        for x, y, _z in vertices
+    )
+
+
 def verify_stl_mesh(manifest: dict[str, Any], outputs: dict[str, Any]) -> list[str]:
     import generate_kc2_housings as generator
 
@@ -121,6 +161,9 @@ def verify_stl_mesh(manifest: dict[str, Any], outputs: dict[str, Any]) -> list[s
             continue
         facets = stl_facets(stl_path)
         vertices = [vertex for _normal, tri in facets for vertex in tri]
+        bad_edges = non_manifold_edge_count(facets)
+        if bad_edges:
+            errors.append(f"{side}: STL mesh has {bad_edges} non-manifold boundary/internal edges")
         extra_layers = low_bottom_layers(vertices)
         if extra_layers:
             errors.append(
@@ -133,6 +176,27 @@ def verify_stl_mesh(manifest: dict[str, Any], outputs: dict[str, Any]) -> list[s
                 f"{side}: STL triangle projection extends {outside_area:.3f} mm^2 outside "
                 "the intended housing footprint"
             )
+
+        peg_radius = EXPECTED_REGISTRATION_PEG_DIAMETER_MM / 2.0
+        pilot_radius = EXPECTED_PILOT_HOLE_DIAMETER_MM / 2.0
+        for hole in output.get("registration_holes", []):
+            peg_vertices = cylinder_vertex_count(vertices, float(hole["x"]), float(hole["y"]), peg_radius)
+            if peg_vertices < MIN_CYLINDER_VERTEX_COUNT:
+                errors.append(
+                    f"{side}: {hole['ref']} has {peg_vertices} vertices at the "
+                    f"{peg_radius:.3f} mm registration-peg radius"
+                )
+            pilot_vertices = cylinder_vertex_count(
+                vertices,
+                float(hole["x"]),
+                float(hole["y"]),
+                pilot_radius,
+            )
+            if pilot_vertices < MIN_CYLINDER_VERTEX_COUNT:
+                errors.append(
+                    f"{side}: {hole['ref']} has {pilot_vertices} vertices at the "
+                    f"{pilot_radius:.3f} mm pilot-bore radius"
+                )
     return errors
 
 
@@ -164,9 +228,72 @@ def verify_manifest(manifest: dict[str, Any], manifest_path: Path) -> list[str]:
     if params.get("battery_floor_cutout_enabled") is not False:
         errors.append("housing manifest must set battery_floor_cutout_enabled=false")
 
-    rear_rise = float(params.get("rear_rise_mm", 0.0))
-    if rear_rise < MIN_REAR_RISE_MM:
-        errors.append(f"rear_rise_mm {rear_rise:.3f} is below {MIN_REAR_RISE_MM:.3f} mm")
+    pilot_diameter = float(params.get("screw_pilot_hole_diameter_mm", 0.0))
+    if abs(pilot_diameter - EXPECTED_PILOT_HOLE_DIAMETER_MM) > 1e-6:
+        errors.append(
+            f"screw_pilot_hole_diameter_mm {pilot_diameter:.3f} is not "
+            f"{EXPECTED_PILOT_HOLE_DIAMETER_MM:.3f} mm"
+        )
+
+    peg_diameter = float(params.get("registration_peg_diameter_mm", 0.0))
+    if abs(peg_diameter - EXPECTED_REGISTRATION_PEG_DIAMETER_MM) > 1e-6:
+        errors.append(
+            f"registration_peg_diameter_mm {peg_diameter:.3f} is not "
+            f"{EXPECTED_REGISTRATION_PEG_DIAMETER_MM:.3f} mm"
+        )
+
+    floor_thickness = float(params.get("floor_thickness_mm", 0.0))
+    if abs(floor_thickness - EXPECTED_FLOOR_THICKNESS_MM) > DIMENSION_TOLERANCE_MM:
+        errors.append(
+            f"floor_thickness_mm {floor_thickness:.3f} is not "
+            f"{EXPECTED_FLOOR_THICKNESS_MM:.3f} mm"
+        )
+
+    socket_body_height = float(params.get("socket_body_height_mm", 0.0))
+    if abs(socket_body_height - EXPECTED_SOCKET_BODY_HEIGHT_MM) > DIMENSION_TOLERANCE_MM:
+        errors.append(
+            f"socket_body_height_mm {socket_body_height:.3f} is not "
+            f"{EXPECTED_SOCKET_BODY_HEIGHT_MM:.3f} mm"
+        )
+
+    socket_safety_clearance = float(params.get("socket_safety_clearance_mm", 0.0))
+    if (
+        abs(socket_safety_clearance - EXPECTED_SOCKET_SAFETY_CLEARANCE_MM)
+        > DIMENSION_TOLERANCE_MM
+    ):
+        errors.append(
+            f"socket_safety_clearance_mm {socket_safety_clearance:.3f} is not "
+            f"{EXPECTED_SOCKET_SAFETY_CLEARANCE_MM:.3f} mm"
+        )
+
+    component_clearance = float(params.get("bottom_component_clearance_mm", 0.0))
+    if (
+        abs(component_clearance - EXPECTED_BOTTOM_COMPONENT_CLEARANCE_MM)
+        > DIMENSION_TOLERANCE_MM
+    ):
+        errors.append(
+            f"bottom_component_clearance_mm {component_clearance:.3f} is not "
+            f"{EXPECTED_BOTTOM_COMPONENT_CLEARANCE_MM:.3f} mm"
+        )
+    if socket_body_height + socket_safety_clearance > component_clearance + DIMENSION_TOLERANCE_MM:
+        errors.append(
+            "socket body envelope plus safety clearance exceeds the available "
+            "bottom-component clearance"
+        )
+
+    support_height = float(params.get("front_height_mm", 0.0))
+    if abs(support_height - EXPECTED_PCB_SUPPORT_HEIGHT_MM) > DIMENSION_TOLERANCE_MM:
+        errors.append(
+            f"front_height_mm {support_height:.3f} is not the minimum flat "
+            f"{EXPECTED_PCB_SUPPORT_HEIGHT_MM:.3f} mm support height"
+        )
+
+    rear_rise = abs(float(params.get("rear_rise_mm", 999.0)))
+    if rear_rise > MAX_REAR_RISE_MM:
+        errors.append(
+            f"rear_rise_mm {rear_rise:.3f} exceeds the flatness limit "
+            f"{MAX_REAR_RISE_MM:.3f} mm"
+        )
 
     rear_height_ratio = float(params.get("rear_height_ratio", 0.0))
     if abs(rear_height_ratio - TARGET_REAR_HEIGHT_RATIO) > HEIGHT_RATIO_TOLERANCE:
@@ -198,10 +325,24 @@ def verify_manifest(manifest: dict[str, Any], manifest_path: Path) -> list[str]:
         battery_slot = output.get("battery_slot")
         if battery_slot and battery_slot.get("housing_floor_cutout") is not False:
             errors.append(f"{side}: battery slot metadata must report housing_floor_cutout=false")
+        if output.get("orientation") != "x_reflected_for_physical_assembly":
+            errors.append(f"{side}: output must declare corrected X-reflected orientation")
+        pilot_holes = output.get("pilot_holes", [])
+        if len(pilot_holes) != 9:
+            errors.append(f"{side}: expected 9 pilot-hole metadata entries, found {len(pilot_holes)}")
+        for pilot in pilot_holes:
+            if abs(float(pilot.get("diameter_mm", 0.0)) - EXPECTED_PILOT_HOLE_DIAMETER_MM) > 1e-6:
+                errors.append(f"{side}: {pilot.get('ref')} pilot diameter is incorrect")
+            if pilot.get("blind_to_floor_top") is not True:
+                errors.append(f"{side}: {pilot.get('ref')} pilot hole is not declared blind")
 
         height_profile = output.get("height_profile", {})
-        if float(height_profile.get("rear_rise_mm", 0.0)) < MIN_REAR_RISE_MM:
-            errors.append(f"{side}: height_profile rear_rise_mm is missing or too small")
+        profile_rise = abs(float(height_profile.get("rear_rise_mm", 999.0)))
+        if profile_rise > MAX_REAR_RISE_MM:
+            errors.append(
+                f"{side}: height_profile rear_rise_mm {profile_rise:.3f} exceeds "
+                f"{MAX_REAR_RISE_MM:.3f} mm"
+            )
         observed_ratio = float(height_profile.get("rear_height_ratio", 0.0))
         if abs(observed_ratio - TARGET_REAR_HEIGHT_RATIO) > HEIGHT_RATIO_TOLERANCE:
             errors.append(
@@ -225,6 +366,38 @@ def verify_manifest(manifest: dict[str, Any], manifest_path: Path) -> list[str]:
                 f"{MAX_EXTERNAL_STEP_MM:.3f} mm"
             )
 
+        socket_clearance = output.get("socket_clearance", {})
+        socket_count = int(socket_clearance.get("socket_count", -1))
+        if socket_count != EXPECTED_SOCKET_COUNTS[side]:
+            errors.append(
+                f"{side}: socket-clearance metadata reports {socket_count} sockets, "
+                f"expected {EXPECTED_SOCKET_COUNTS[side]}"
+            )
+        collision_count = int(socket_clearance.get("wall_collision_count", -1))
+        if collision_count != 0:
+            errors.append(
+                f"{side}: socket-clearance metadata reports {collision_count} wall collisions"
+            )
+        lateral_clearance = float(
+            socket_clearance.get("minimum_lateral_clearance_to_wall_mm", -1.0)
+        )
+        if lateral_clearance < MIN_SOCKET_LATERAL_CLEARANCE_MM:
+            errors.append(
+                f"{side}: minimum socket-to-wall clearance {lateral_clearance:.3f} mm "
+                f"is below {MIN_SOCKET_LATERAL_CLEARANCE_MM:.3f} mm"
+            )
+        vertical_clearance = float(
+            socket_clearance.get("vertical_clearance_to_floor_mm", -1.0)
+        )
+        if (
+            abs(vertical_clearance - EXPECTED_SOCKET_SAFETY_CLEARANCE_MM)
+            > DIMENSION_TOLERANCE_MM
+        ):
+            errors.append(
+                f"{side}: vertical socket-to-floor clearance {vertical_clearance:.3f} mm "
+                f"is not {EXPECTED_SOCKET_SAFETY_CLEARANCE_MM:.3f} mm"
+            )
+
         stl_value = output.get("stl")
         if not stl_value:
             errors.append(f"{side}: missing STL path")
@@ -234,11 +407,11 @@ def verify_manifest(manifest: dict[str, Any], manifest_path: Path) -> list[str]:
             errors.append(f"{side}: STL not found: {stl_path.relative_to(ROOT)}")
             continue
         vertices = stl_vertices(stl_path)
-        rise = observed_rear_rise(vertices)
-        if rise < MIN_OBSERVED_REAR_RISE_MM:
+        rise = abs(observed_rear_rise(vertices))
+        if rise > MAX_OBSERVED_REAR_RISE_MM:
             errors.append(
                 f"{side}: observed rear/top-edge rise is {rise:.3f} mm, "
-                f"expected >= {MIN_OBSERVED_REAR_RISE_MM:.3f} mm"
+                f"expected <= {MAX_OBSERVED_REAR_RISE_MM:.3f} mm"
             )
 
     if manifest_path != DEFAULT_MANIFEST and not manifest_path.is_absolute():
@@ -267,7 +440,11 @@ def main() -> int:
     print("- one-piece tray metadata reports a hollow interior cavity")
     print("- bottom outline has an explicit rounded-corner radius")
     print("- underside has no rounded-edge loft layers or mesh projected outside the footprint")
-    print("- controller/rear edge height is 1.7x the front edge height")
+    print("- exterior floor, interior floor, PCB support, and post tops are flat")
+    print("- 2.60 mm bottom-component clearance covers a 2.20 mm socket plus 0.40 mm tolerance")
+    print("- all 77 bottom-side socket envelopes clear the housing walls")
+    print("- uniform PCB support height is 3.80 mm over a 1.20 mm closed floor")
+    print("- each half has nine 2.55 mm pegs with centered 1.60 mm blind pilot bores")
     return 0
 
 

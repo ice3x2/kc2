@@ -1,0 +1,10 @@
+{
+  "autodeskProduct": "Fusion360",
+  "type": "script",
+  "author": "OpenAI Codex",
+  "description": {
+    "": "Import the KC2 left/right housing STEP files and export native F3D archives."
+  },
+  "supportedOS": "windows",
+  "editEnabled": true
+}

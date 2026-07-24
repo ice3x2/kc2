@@ -1,0 +1,57 @@
+{
+  "status": "pass",
+  "fusion_version": "2603.1.52",
+  "requirement": "CON-ARCH-003",
+  "outputs": {
+    "left": {
+      "source_step": "hardware\\case\\kc2_left_lower_housing.step",
+      "f3d": "hardware\\case\\kc2_left_lower_housing.f3d",
+      "body_count": 1,
+      "bounding_box_mm": [
+        0.10000000000000002,
+        0.10000000000000002,
+        0.0,
+        145.6125,
+        132.15,
+        5.1
+      ],
+      "export_ok": true,
+      "archive_size_bytes": 471254,
+      "archive_reimport_body_count": 1,
+      "archive_reimport_bounding_box_mm": [
+        0.10000000000000002,
+        0.10000000000000002,
+        0.0,
+        145.6125,
+        132.15,
+        5.1
+      ],
+      "archive_reimport_body_name": "KC2 Left Lower Housing"
+    },
+    "right": {
+      "source_step": "hardware\\case\\kc2_right_lower_housing.step",
+      "f3d": "hardware\\case\\kc2_right_lower_housing.f3d",
+      "body_count": 1,
+      "bounding_box_mm": [
+        0.10000000000000002,
+        0.10000000000000002,
+        0.0,
+        193.23750000000004,
+        132.15,
+        5.1
+      ],
+      "export_ok": true,
+      "archive_size_bytes": 465868,
+      "archive_reimport_body_count": 1,
+      "archive_reimport_bounding_box_mm": [
+        0.10000000000000002,
+        0.10000000000000002,
+        0.0,
+        193.23750000000004,
+        132.15,
+        5.1
+      ],
+      "archive_reimport_body_name": "KC2 Right Lower Housing"
+    }
+  }
+}

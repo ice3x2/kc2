@@ -16,6 +16,7 @@ BOARD_PATHS = {
     "left": ROOT / "hardware" / "kicad" / "kc2_left" / "kc2_left.kicad_pcb",
     "right": ROOT / "hardware" / "kicad" / "kc2_right" / "kc2_right.kicad_pcb",
 }
+HOTSWAP_SOCKET_FOOTPRINT = "SW_Kailh_Choc_V1_HotSwap_THT"
 
 
 @dataclass(frozen=True)
@@ -28,17 +29,25 @@ class HousingParams:
     rail_width_mm: float = 2.00
     outer_wall_width_mm: float = 2.40
     floor_thickness_mm: float = 1.20
-    bottom_component_clearance_mm: float = 3.20
+    socket_body_height_mm: float = 2.20
+    socket_safety_clearance_mm: float = 0.40
+    # Add 0.01 mm so tessellated/offset geometry still verifies at >= 0.30 mm.
+    socket_lateral_clearance_mm: float = 0.31
     pcb_thickness_mm: float = 1.60
     support_post_diameter_mm: float = 4.80
-    registration_peg_diameter_mm: float = 2.70
+    registration_peg_diameter_mm: float = 2.55
+    screw_pilot_hole_diameter_mm: float = 1.60
     peg_top_below_pcb_top_mm: float = 0.30
     battery_slot_clearance_mm: float = 0.70
     battery_floor_cutout_enabled: bool = False
     bottom_corner_radius_mm: float = 0.80
     bottom_edge_radius_mm: float = 0.00
-    rear_height_ratio: float = 1.70
+    rear_height_ratio: float = 1.00
     cylinder_segments: int = 32
+
+    @property
+    def bottom_component_clearance_mm(self) -> float:
+        return self.socket_body_height_mm + self.socket_safety_clearance_mm
 
     @property
     def pcb_bottom_z(self) -> float:
@@ -94,6 +103,7 @@ def extract_geometry() -> None:
 
         edge_segments = []
         registration_holes = []
+        socket_keepouts = []
         battery_slot = None
         for item in board.GetDrawings():
             if not hasattr(item, "GetLayer") or item.GetLayer() != pcbnew.Edge_Cuts:
@@ -136,11 +146,38 @@ def extract_geometry() -> None:
                     "size_y_mm": size_y,
                     "angle_deg": angle_deg,
                 }
+            if str(fp.GetFPID().GetLibItemName()) == HOTSWAP_SOCKET_FOOTPRINT:
+                bounds = []
+                for item in fp.GraphicalItems():
+                    if item.GetLayer() == pcbnew.B_SilkS:
+                        bounds.append(item.GetBoundingBox())
+                for pad in fp.Pads():
+                    if (
+                        pad.GetAttribute() == pcbnew.PAD_ATTRIB_SMD
+                        and pad.IsOnLayer(pcbnew.B_Cu)
+                    ):
+                        bounds.append(pad.GetBoundingBox())
+                if not bounds:
+                    raise RuntimeError(f"{side} {ref}: no bottom socket envelope geometry")
+                min_x = min(pcbnew.ToMM(box.GetX()) for box in bounds)
+                min_y = min(pcbnew.ToMM(box.GetY()) for box in bounds)
+                max_x = max(pcbnew.ToMM(box.GetX() + box.GetWidth()) for box in bounds)
+                max_y = max(pcbnew.ToMM(box.GetY() + box.GetHeight()) for box in bounds)
+                socket_keepouts.append(
+                    {
+                        "ref": ref,
+                        "min_x": min_x,
+                        "min_y": min_y,
+                        "max_x": max_x,
+                        "max_y": max_y,
+                    }
+                )
 
         out["boards"][side] = {
             "path": str(board_path.relative_to(ROOT)),
             "edge_segments": edge_segments,
             "registration_holes": sorted(registration_holes, key=lambda h: h["ref"]),
+            "socket_keepouts": sorted(socket_keepouts, key=lambda item: item["ref"]),
             "battery_slot": battery_slot,
         }
     print(json.dumps(out, ensure_ascii=False))
@@ -644,10 +681,14 @@ def params_to_dict(params: HousingParams) -> dict[str, Any]:
         "rail_width_mm": params.rail_width_mm,
         "outer_wall_width_mm": params.outer_wall_width_mm,
         "floor_thickness_mm": params.floor_thickness_mm,
+        "socket_body_height_mm": params.socket_body_height_mm,
+        "socket_safety_clearance_mm": params.socket_safety_clearance_mm,
+        "socket_lateral_clearance_mm": params.socket_lateral_clearance_mm,
         "bottom_component_clearance_mm": params.bottom_component_clearance_mm,
         "pcb_thickness_mm": params.pcb_thickness_mm,
         "support_post_diameter_mm": params.support_post_diameter_mm,
         "registration_peg_diameter_mm": params.registration_peg_diameter_mm,
+        "screw_pilot_hole_diameter_mm": params.screw_pilot_hole_diameter_mm,
         "peg_top_below_pcb_top_mm": params.peg_top_below_pcb_top_mm,
         "battery_slot_clearance_mm": params.battery_slot_clearance_mm,
         "battery_floor_cutout_enabled": params.battery_floor_cutout_enabled,
@@ -661,7 +702,7 @@ def params_to_dict(params: HousingParams) -> dict[str, Any]:
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Generate KC2 screwless lower housing STL drafts from KiCad Edge.Cuts.")
+    parser = argparse.ArgumentParser(description="Generate KC2 rail-capture lower housing CAD from KiCad Edge.Cuts.")
     parser.add_argument("--extract-geometry", action="store_true", help=argparse.SUPPRESS)
     parser.add_argument("--kicad-python", type=Path, default=None)
     parser.add_argument("--output-dir", type=Path, default=DEFAULT_OUTPUT_DIR)
@@ -671,47 +712,10 @@ def main() -> int:
         extract_geometry()
         return 0
 
-    shp = require_shapely()
     kicad_python = args.kicad_python or locate_kicad_python()
-    geometry = run_extractor(kicad_python)
-    output_dir = args.output_dir
-    output_dir.mkdir(parents=True, exist_ok=True)
+    import generate_kc2_housing_step as cad_generator
 
-    params = HousingParams()
-    manifest: dict[str, Any] = {
-        "generated_by": "tools/generate_kc2_housings.py",
-        "kicad_python": str(kicad_python),
-        "parameters": params_to_dict(params),
-        "assumptions": [
-            "FDM PLA+ screwless lower housing using a hollow one-piece tray shell.",
-            "Housing perimeter is kept inside the PCB outline to avoid joined-edge interference.",
-            "The outside wall is continuous from the bottom face to the PCB support height without an external stacked step.",
-            "PCB bottom is supported by a 2.4 mm continuous outer wall ledge and nine REG_NPTH posts.",
-            "2.70 mm registration pegs fit into 3.0 mm PCB NPTH holes with FDM clearance.",
-            "The lower housing floor stays closed below the PCB battery-lead slot; the PCB slot remains available inside the tray.",
-            "The controller/USB side height is 1.70x the front edge height.",
-            f"Front height is {params.front_height_mm:.2f} mm and controller-side height is {params.rear_height_mm:.2f} mm.",
-            "The bottom outline uses an explicit 0.80 mm rounded-corner smoothing pass.",
-            "The underside is kept flat by disabling the previous lower-edge roundover loft.",
-            "Bottom component cavity is 3.20 mm from floor top to PCB underside, covering Choc hot-swap sockets and SOD-123 diodes as a first-pass clearance.",
-        ],
-        "outputs": {},
-    }
-    for side in ("left", "right"):
-        facets, metadata = build_housing(shp, geometry["boards"][side], params)
-        stl_path = output_dir / f"kc2_{side}_lower_housing.stl"
-        write_stl(stl_path, f"kc2_{side}_lower_housing", facets)
-        manifest["outputs"][side] = {
-            "stl": str(stl_path.relative_to(ROOT)),
-            **metadata,
-        }
-
-    manifest_path = output_dir / "kc2_housing_manifest.json"
-    manifest_path.write_text(json.dumps(manifest, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
-    for side, output in manifest["outputs"].items():
-        print(f"{side}: wrote {output['stl']} facets={output['facet_count']}")
-    print(f"manifest: {manifest_path.relative_to(ROOT)}")
-    return 0
+    return cad_generator.generate_outputs(args.output_dir, kicad_python)
 
 
 if __name__ == "__main__":
