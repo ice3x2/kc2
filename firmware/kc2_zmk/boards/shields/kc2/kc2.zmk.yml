@@ -1,0 +1,11 @@
+file_format: "1"
+id: kc2
+name: KC2
+type: shield
+url: https://github.com/ice3x/kc2
+requires: [pro_micro]
+features:
+  - keys
+siblings:
+  - kc2_left
+  - kc2_right

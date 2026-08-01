@@ -11,3 +11,7 @@ hardware/kicad/autoroute_*/
 hardware/kicad/backups/*.zip
 tmp_*/
 tools/cache/freerouting-userdata/
+
+# Reproducible ZMK build outputs
+firmware/build/
+firmware/out/
