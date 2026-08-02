@@ -248,10 +248,11 @@ Row 5: Ctrl GUI Alt Fn Space     |  B  Space RAlt Fn RCtrl Left Down Right
 - mapped positions: 77 for current X3 no-stabilizer; planned `kc2-x3-v2` preserves this 77-key layout unless a later SRS requirement changes it; 71 is historical routed-draft baseline only
 - transform row별 key 수: current X3 no-stabilizer physical rows 16 / 15 / 15 / 16 / 15; historical 71-key routed draft used 15 / 15 / 14 / 14 / 13
 - diode direction: `col2row`
-- diode: current X3 no-stabilizer uses 디바이스마트 상품번호 25 `1N4148`, SOD-27(DO-35), 75V, 450mA, 총 77개; planned `kc2-x3-v2` starts from the same 77-diode baseline unless CON-ARCH-004 verification changes diode package or placement; historical 71-key routed draft used 71개
+- diode: current X3 no-stabilizer main boards use 디바이스마트 상품번호 14592018 `1N4148W`, SOD-123, 총 77개; planned `kc2-x3-v2` preserves the same 77-diode count baseline unless CON-ARCH-004 verification changes diode package or placement; historical 71-key routed draft used 디바이스마트 상품번호 25 `1N4148`, SOD-27(DO-35), 71개
 - `col2row` 기준 diode의 cathode, 즉 표시선 쪽은 row net으로 둔다.
+- X3 SOD-123 diode assembly orientation: solder side/B.Cu가 보이게 PCB를 뒤집고 controller tab이 위로 가게 놓으면, 좌우 half 모두 diode의 흰색 cathode band를 왼쪽으로 둔다. KiCad top/front view에서는 pad 1(row net, cathode)이 오른쪽(+X)에 있지만, bottom-side soldering view에서는 좌우가 mirror되어 왼쪽으로 보인다. PCB를 손에서 돌린 경우에는 left/right보다 `pad 1 = row net = cathode band`를 기준으로 맞춘다.
 - planned `kc2-x3-v2`에서 `CON-ARCH-004` switch footprint를 적용할 때 diode 공간 확보는 주요 재검증 리스크다.
-- SOD-27(DO-35) 배치 공간이 실제로 부족하면 SMD diode로 전환한다.
+- historical 또는 future variant에서 SOD-27(DO-35) 배치 공간이 실제로 부족하면 SMD diode로 전환한다.
 - SMD 전환 1순위 후보는 `1N4148W` / `SOD-123`이다. 손납땜성과 공간 절약의 균형이 가장 좋다.
 - SMD 전환 2순위 후보는 `1N4148WS` / `SOD-323`이다. 공간은 더 작지만 current X3 no-stabilizer 및 planned `kc2-x3-v2` baseline의 77개 수동 납땜 난도가 높으므로 SOD-123으로도 outline, screwless registration hole, routing이 성립하지 않을 때 사용한다. historical/separate M2 layout에서는 M2 hole도 같은 기준으로 본다.
 
@@ -337,7 +338,7 @@ Row 5: Ctrl GUI Alt Fn Space     |  B  Space RAlt Fn RCtrl Left Down Right
 - 보강판에 의존하는 plate-mounted stabilizer는 KC2 기본 구조와 맞지 않으므로 final footprint로 사용하지 않는다.
 - 현 draft의 MX-style `KC2:PCB_Mount_2u_Stabilizer_NPTH`는 위치/공간 확인용 placeholder이며, low-profile 무보강판 실물 체결 검증 전에는 fabrication footprint로 사용하지 않는다.
 - 현재 주문 가능한 X3 77-key layout 및 planned `kc2-x3-v2`는 switch/diode 77개 배치를 기준으로 검증한다. 기존 71-key routed draft의 diode 공간 검토는 historical baseline으로만 유지한다.
-- 이 다이오드는 through-hole axial 부품이므로 SMD diode보다 차지하는 면적과 lead bending 공간이 크다.
+- Historical 또는 future variant에서 DO-35 axial diode를 검토할 경우, through-hole axial 부품은 SMD diode보다 차지하는 면적과 lead bending 공간이 크다.
 - DO-35 유지 실패 기준은 switch footprint 또는 stabilizer가 필요한 별도 layout의 stabilizer footprint와의 courtyard overlap, screwless registration hole 배치 실패, historical/separate M2 layout의 M2 hole 배치 실패, hole-to-hole clearance 위반, 결합 edge 2.5-3.0 mm 여백 침범, 하부 바닥판 지지점 간섭, lead bending 공간 부족 중 하나라도 발생하는 경우로 둔다.
 - 공간이 부족하면 diode 위치 재배치, PCB 반대면 배치, routing 재배치를 먼저 검토하되, compact outline이나 screwless registration hole을 훼손해야 한다면 SMD `1N4148W`/SOD-123 전환을 우선한다. historical/separate M2 layout에서는 M2 고정 홀도 같은 기준으로 보호한다. SOD-123으로도 부족하면 `1N4148WS`/SOD-323을 검토한다.
 - diode는 keycap, switch/socket solder joint, Choc socket body/pad/solder fillet, MX switch pin/solder joint, controller socket, battery, screwless registration hole, 하부 바닥판 지지점과 간섭하지 않아야 한다. historical/separate M2 layout에서는 M2 고정 홀 간섭도 금지한다.

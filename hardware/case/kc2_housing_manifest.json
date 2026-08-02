@@ -3,7 +3,7 @@
   "kicad_python": "C:\\Program Files\\KiCad\\10.0\\bin\\python.exe",
   "requirement": "CON-ARCH-003",
   "parameters": {
-    "design_style": "hollow_one_piece_tray",
+    "design_style": "hollow_rail_capture_tray",
     "outline_inset_mm": 0.1,
     "rail_inset_mm": 0.3,
     "rail_width_mm": 2.0,
@@ -25,17 +25,25 @@
     "front_height_mm": 3.8,
     "rear_height_mm": 3.8,
     "rear_height_ratio": 1.0,
-    "rear_rise_mm": 0.0
+    "rear_rise_mm": 0.0,
+    "print_volume_limit_mm": 150.0,
+    "right_split_center_x_mm": 112.0,
+    "right_split_zigzag_amplitude_mm": 5.0,
+    "right_split_zigzag_pitch_mm": 8.0,
+    "right_split_face_setback_mm": 0.2
   },
   "assumptions": [
-    "FDM PLA+ lower housing using a hollow one-piece rail-capture tray shell.",
+    "FDM PLA+ lower housing using a hollow rail-capture tray shell.",
     "The housing is flat with a uniform 3.80 mm PCB support height and no front-to-rear slope.",
     "A 2.60 mm cavity below the PCB covers the 2.20 mm Kailh CPG135001S30 socket envelope plus 0.40 mm assembly and FDM tolerance.",
     "The interior wall is relieved around extracted bottom-socket envelopes with at least 0.30 mm lateral clearance.",
     "Nine 2.55 mm registration pegs fit the PCB 3.0 mm NPTH holes with PLA expansion clearance.",
     "Each registration post has a centered 1.60 mm blind pilot bore for optional M2 self-tapping retention.",
     "Pilot bores terminate at the flat 1.20 mm floor top and do not penetrate the exterior bottom.",
-    "The corrected physical left/right orientation is X-reflected from the raw PCB projection."
+    "The corrected physical left/right orientation is X-reflected from the raw PCB projection.",
+    "Every printable STL fits a 150 mm cube build envelope.",
+    "The right housing is split into two single-solid STLs by a post-avoiding zigzag seam.",
+    "Each right mating face is recessed 0.20 mm for a 0.40 mm nominal assembled gap."
   ],
   "outputs": {
     "left": {
@@ -235,7 +243,46 @@
       "volume_mm3": 22954.512440563867
     },
     "right": {
-      "stl": "hardware\\case\\kc2_right_lower_housing.stl",
+      "stl_parts": [
+        {
+          "name": "part_a",
+          "stl": "hardware\\case\\kc2_right_lower_housing_part_a.stl",
+          "solid_count": 1,
+          "volume_mm3": 16531.42486243071,
+          "bounds_mm": [
+            0.0999998999999699,
+            25.99999989999997,
+            -1.0000003177643716e-07,
+            116.6798438881284,
+            132.15000010000003,
+            5.1000991770867765
+          ],
+          "size_mm": [
+            116.57984398812843,
+            106.15000020000005,
+            5.100099277086808
+          ]
+        },
+        {
+          "name": "part_b",
+          "stl": "hardware\\case\\kc2_right_lower_housing_part_b.stl",
+          "solid_count": 1,
+          "volume_mm3": 12482.928313460761,
+          "bounds_mm": [
+            107.32015611187157,
+            0.09999989999993113,
+            -1.0000004019498026e-07,
+            193.2375001000001,
+            132.15000010000009,
+            5.100099177086786
+          ],
+          "size_mm": [
+            85.91734398812852,
+            132.05000020000014,
+            5.1000992770868265
+          ]
+        }
+      ],
       "source_board": "hardware\\kicad\\kc2_right\\kc2_right.kicad_pcb",
       "source_bounds_mm": [
         35.0,
@@ -427,8 +474,26 @@
         "minimum_lateral_clearance_to_wall_mm": 0.3093362662039596,
         "vertical_clearance_to_floor_mm": 0.4
       },
-      "solid_count": 1,
-      "volume_mm3": 29103.90727147628
+      "solid_count": 2,
+      "volume_mm3": 29014.353175891472,
+      "split": {
+        "style": "post_avoiding_zigzag",
+        "part_count": 2,
+        "seam_center_x_mm": 112.0,
+        "zigzag_amplitude_mm": 5.0,
+        "zigzag_pitch_mm": 8.0,
+        "face_setback_mm": 0.2,
+        "assembled_gap_mm": 0.4,
+        "floor_bond_face_lengths_mm": {
+          "part_a": 169.92290945087422,
+          "part_b": 169.92290945087424
+        },
+        "minimum_floor_bond_length_mm": 169.92290945087422,
+        "straight_floor_bond_length_mm": 106.15,
+        "minimum_floor_bond_length_ratio": 1.600781059358212,
+        "minimum_registration_post_clearance_mm": 6.304617131016921,
+        "print_volume_limit_mm": 150.0
+      }
     }
   }
 }

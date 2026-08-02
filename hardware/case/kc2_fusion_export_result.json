@@ -5,7 +5,9 @@
   "outputs": {
     "left": {
       "source_step": "hardware\\case\\kc2_left_lower_housing.step",
+      "source_step_sha256": "8cbf925ce45363d9aac982e57944b40ab36f83c2e71e4e2d49c20e910597b433",
       "f3d": "hardware\\case\\kc2_left_lower_housing.f3d",
+      "f3d_sha256": "5287c7a40c99854e57b6931b12742a6bc4c8a5aec8914617479e075d665b2aae",
       "body_count": 1,
       "bounding_box_mm": [
         0.10000000000000002,
@@ -15,8 +17,18 @@
         132.15,
         5.1
       ],
+      "body_bounding_boxes_mm": [
+        [
+          0.10000000000000002,
+          0.10000000000000002,
+          0.0,
+          145.6125,
+          132.15,
+          5.1
+        ]
+      ],
       "export_ok": true,
-      "archive_size_bytes": 471254,
+      "archive_size_bytes": 471338,
       "archive_reimport_body_count": 1,
       "archive_reimport_bounding_box_mm": [
         0.10000000000000002,
@@ -26,12 +38,26 @@
         132.15,
         5.1
       ],
-      "archive_reimport_body_name": "KC2 Left Lower Housing"
+      "archive_reimport_body_bounding_boxes_mm": [
+        [
+          0.10000000000000002,
+          0.10000000000000002,
+          0.0,
+          145.6125,
+          132.15,
+          5.1
+        ]
+      ],
+      "archive_reimport_body_names": [
+        "KC2 Left Lower Housing"
+      ]
     },
     "right": {
       "source_step": "hardware\\case\\kc2_right_lower_housing.step",
+      "source_step_sha256": "e04d44742f740065b9a16710d17c01b75a2cb644ede4ed440dfa419ad93950ed",
       "f3d": "hardware\\case\\kc2_right_lower_housing.f3d",
-      "body_count": 1,
+      "f3d_sha256": "999a33045251a813f42925fcc29c7147942f3c3b0eb69651ea8932972ada408a",
+      "body_count": 2,
       "bounding_box_mm": [
         0.10000000000000002,
         0.10000000000000002,
@@ -40,9 +66,27 @@
         132.15,
         5.1
       ],
+      "body_bounding_boxes_mm": [
+        [
+          0.10000000000000002,
+          26.0,
+          0.0,
+          116.67984378812001,
+          132.15,
+          5.1
+        ],
+        [
+          107.32015621187001,
+          0.10000000000000002,
+          0.0,
+          193.23750000000004,
+          132.15,
+          5.1
+        ]
+      ],
       "export_ok": true,
-      "archive_size_bytes": 465868,
-      "archive_reimport_body_count": 1,
+      "archive_size_bytes": 495689,
+      "archive_reimport_body_count": 2,
       "archive_reimport_bounding_box_mm": [
         0.10000000000000002,
         0.10000000000000002,
@@ -51,7 +95,28 @@
         132.15,
         5.1
       ],
-      "archive_reimport_body_name": "KC2 Right Lower Housing"
+      "archive_reimport_body_bounding_boxes_mm": [
+        [
+          0.10000000000000002,
+          26.0,
+          0.0,
+          116.67984378812001,
+          132.15,
+          5.1
+        ],
+        [
+          107.32015621187001,
+          0.10000000000000002,
+          0.0,
+          193.23750000000004,
+          132.15,
+          5.1
+        ]
+      ],
+      "archive_reimport_body_names": [
+        "KC2 Right Lower Housing Part 1",
+        "KC2 Right Lower Housing Part 2"
+      ]
     }
   }
 }

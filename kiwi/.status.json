@@ -1,0 +1,41 @@
+{
+  "schemaVersion": "1.0.0",
+  "generatedAt": "2026-08-01T04:30:04.459Z",
+  "source": "speckiwi",
+  "specFingerprint": {
+    "algorithm": "sha256",
+    "value": "4bf3b21072167c58e5588a3a820648e4b929c2c32155b610cece5303564fe826",
+    "files": [
+      {
+        "path": "docs/spec/00.index.md",
+        "sha256": "e784a6cca8d33efee3e7807a7f8e68fa0d3685b44f407760b2887cbb0fb2691e",
+        "size": 1876,
+        "mtimeMs": 1785558296799.5786
+      },
+      {
+        "path": "docs/spec/10.product-architecture.srs.md",
+        "sha256": "95762fb489080f543016f48fd64c65ebc4b819439ce257d2ced210dddc487078",
+        "size": 69626,
+        "mtimeMs": 1785558604451.7842
+      },
+      {
+        "path": "docs/spec/90.appendix.md",
+        "sha256": "0874cdd7af91ea44b3e403d7d4824be0aea4f6f1095ebcd89eae563abe05c5d7",
+        "size": 990,
+        "mtimeMs": 1780946612639.9185
+      }
+    ]
+  },
+  "idCounters": {
+    "constraint": {
+      "ARCH": 5
+    },
+    "operational": {
+      "ARCH": 2
+    }
+  },
+  "lock": {
+    "active": false,
+    "metadata": null
+  }
+}

@@ -33,6 +33,11 @@ MAX_EXTERNAL_STEP_MM = 0.05
 EDGE_SAMPLE_FRACTION = 0.10
 EXPECTED_PILOT_HOLE_DIAMETER_MM = 1.60
 EXPECTED_REGISTRATION_PEG_DIAMETER_MM = 2.55
+PRINT_VOLUME_LIMIT_MM = 150.0
+EXPECTED_RIGHT_PART_COUNT = 2
+EXPECTED_SPLIT_FACE_SETBACK_MM = 0.20
+EXPECTED_SPLIT_ASSEMBLED_GAP_MM = 0.40
+MIN_ZIGZAG_LENGTH_RATIO = 1.40
 CYLINDER_RADIUS_TOLERANCE_MM = 0.03
 MIN_CYLINDER_VERTEX_COUNT = 16
 MESH_VERTEX_QUANTIZATION_DIGITS = 5
@@ -134,6 +139,49 @@ def non_manifold_edge_count(facets: list[Facet]) -> int:
     return sum(count != 2 for count in edge_counts.values())
 
 
+def mesh_shell_count(facets: list[Facet]) -> int:
+    edge_facets: dict[
+        tuple[tuple[float, float, float], tuple[float, float, float]],
+        list[int],
+    ] = {}
+    for index, (_normal, triangle) in enumerate(facets):
+        vertices = [
+            tuple(round(value, MESH_VERTEX_QUANTIZATION_DIGITS) for value in vertex)
+            for vertex in triangle
+        ]
+        for start, end in zip(vertices, vertices[1:] + vertices[:1]):
+            edge = tuple(sorted((start, end)))
+            edge_facets.setdefault(edge, []).append(index)
+
+    adjacency = [set() for _facet in facets]
+    for indexes in edge_facets.values():
+        for index in indexes:
+            adjacency[index].update(other for other in indexes if other != index)
+
+    remaining = set(range(len(facets)))
+    shell_count = 0
+    while remaining:
+        shell_count += 1
+        stack = [remaining.pop()]
+        while stack:
+            current = stack.pop()
+            connected = adjacency[current] & remaining
+            remaining.difference_update(connected)
+            stack.extend(connected)
+    return shell_count
+
+
+def output_stl_paths(side: str, output: dict[str, Any]) -> list[Path]:
+    if side == "left":
+        value = output.get("stl")
+        return [ROOT / value] if value else []
+    return [
+        ROOT / part["stl"]
+        for part in output.get("stl_parts", [])
+        if isinstance(part, dict) and part.get("stl")
+    ]
+
+
 def cylinder_vertex_count(
     vertices: list[tuple[float, float, float]],
     center_x: float,
@@ -154,40 +202,66 @@ def verify_stl_mesh(manifest: dict[str, Any], outputs: dict[str, Any]) -> list[s
     footprints = intended_outer_footprints(manifest)
     for side in ("left", "right"):
         output = outputs.get(side)
-        if not output or not output.get("stl"):
+        if not output:
             continue
-        stl_path = ROOT / output["stl"]
-        if not stl_path.exists():
-            continue
-        facets = stl_facets(stl_path)
-        vertices = [vertex for _normal, tri in facets for vertex in tri]
-        bad_edges = non_manifold_edge_count(facets)
-        if bad_edges:
-            errors.append(f"{side}: STL mesh has {bad_edges} non-manifold boundary/internal edges")
-        extra_layers = low_bottom_layers(vertices)
-        if extra_layers:
-            errors.append(
-                f"{side}: bottom mesh has intermediate low-Z layers below "
-                f"{LOW_BOTTOM_LAYER_SCAN_MM:.1f} mm: {extra_layers}"
-            )
-        outside_area = max_projected_outside_area(shp, facets, footprints[side])
-        if outside_area > MAX_PROJECTED_MESH_OUTSIDE_FOOTPRINT_AREA_MM2:
-            errors.append(
-                f"{side}: STL triangle projection extends {outside_area:.3f} mm^2 outside "
-                "the intended housing footprint"
-            )
+        combined_vertices = []
+        for stl_path in output_stl_paths(side, output):
+            if not stl_path.exists():
+                continue
+            facets = stl_facets(stl_path)
+            vertices = [vertex for _normal, tri in facets for vertex in tri]
+            combined_vertices.extend(vertices)
+            bad_edges = non_manifold_edge_count(facets)
+            if bad_edges:
+                errors.append(
+                    f"{side}: {stl_path.name} has {bad_edges} "
+                    "non-manifold boundary/internal edges"
+                )
+            shell_count = mesh_shell_count(facets)
+            if shell_count != 1:
+                errors.append(
+                    f"{side}: {stl_path.name} contains {shell_count} mesh shells, expected 1"
+                )
+            extra_layers = low_bottom_layers(vertices)
+            if extra_layers:
+                errors.append(
+                    f"{side}: {stl_path.name} has intermediate low-Z layers below "
+                    f"{LOW_BOTTOM_LAYER_SCAN_MM:.1f} mm: {extra_layers}"
+                )
+            outside_area = max_projected_outside_area(shp, facets, footprints[side])
+            if outside_area > MAX_PROJECTED_MESH_OUTSIDE_FOOTPRINT_AREA_MM2:
+                errors.append(
+                    f"{side}: {stl_path.name} triangle projection extends "
+                    f"{outside_area:.3f} mm^2 outside the intended housing footprint"
+                )
+            dimensions = [
+                max(vertex[axis] for vertex in vertices)
+                - min(vertex[axis] for vertex in vertices)
+                for axis in range(3)
+            ]
+            for axis, dimension in zip("XYZ", dimensions):
+                if dimension > PRINT_VOLUME_LIMIT_MM + DIMENSION_TOLERANCE_MM:
+                    errors.append(
+                        f"{side}: {stl_path.name} {axis} size {dimension:.3f} mm "
+                        f"exceeds the {PRINT_VOLUME_LIMIT_MM:.1f} mm print limit"
+                    )
 
         peg_radius = EXPECTED_REGISTRATION_PEG_DIAMETER_MM / 2.0
         pilot_radius = EXPECTED_PILOT_HOLE_DIAMETER_MM / 2.0
         for hole in output.get("registration_holes", []):
-            peg_vertices = cylinder_vertex_count(vertices, float(hole["x"]), float(hole["y"]), peg_radius)
+            peg_vertices = cylinder_vertex_count(
+                combined_vertices,
+                float(hole["x"]),
+                float(hole["y"]),
+                peg_radius,
+            )
             if peg_vertices < MIN_CYLINDER_VERTEX_COUNT:
                 errors.append(
                     f"{side}: {hole['ref']} has {peg_vertices} vertices at the "
                     f"{peg_radius:.3f} mm registration-peg radius"
                 )
             pilot_vertices = cylinder_vertex_count(
-                vertices,
+                combined_vertices,
                 float(hole["x"]),
                 float(hole["y"]),
                 pilot_radius,
@@ -222,8 +296,8 @@ def observed_rear_rise(vertices: list[tuple[float, float, float]]) -> float:
 def verify_manifest(manifest: dict[str, Any], manifest_path: Path) -> list[str]:
     errors: list[str] = []
     params = manifest.get("parameters", {})
-    if params.get("design_style") != "hollow_one_piece_tray":
-        errors.append("housing manifest must set design_style=hollow_one_piece_tray")
+    if params.get("design_style") != "hollow_rail_capture_tray":
+        errors.append("housing manifest must set design_style=hollow_rail_capture_tray")
 
     if params.get("battery_floor_cutout_enabled") is not False:
         errors.append("housing manifest must set battery_floor_cutout_enabled=false")
@@ -240,6 +314,22 @@ def verify_manifest(manifest: dict[str, Any], manifest_path: Path) -> list[str]:
         errors.append(
             f"registration_peg_diameter_mm {peg_diameter:.3f} is not "
             f"{EXPECTED_REGISTRATION_PEG_DIAMETER_MM:.3f} mm"
+        )
+
+    print_limit = float(params.get("print_volume_limit_mm", 0.0))
+    if abs(print_limit - PRINT_VOLUME_LIMIT_MM) > DIMENSION_TOLERANCE_MM:
+        errors.append(
+            f"print_volume_limit_mm {print_limit:.3f} is not "
+            f"{PRINT_VOLUME_LIMIT_MM:.1f} mm"
+        )
+    split_setback = float(params.get("right_split_face_setback_mm", 0.0))
+    if (
+        abs(split_setback - EXPECTED_SPLIT_FACE_SETBACK_MM)
+        > DIMENSION_TOLERANCE_MM
+    ):
+        errors.append(
+            f"right_split_face_setback_mm {split_setback:.3f} is not "
+            f"{EXPECTED_SPLIT_FACE_SETBACK_MM:.2f} mm"
         )
 
     floor_thickness = float(params.get("floor_thickness_mm", 0.0))
@@ -398,21 +488,68 @@ def verify_manifest(manifest: dict[str, Any], manifest_path: Path) -> list[str]:
                 f"is not {EXPECTED_SOCKET_SAFETY_CLEARANCE_MM:.3f} mm"
             )
 
-        stl_value = output.get("stl")
-        if not stl_value:
-            errors.append(f"{side}: missing STL path")
-            continue
-        stl_path = ROOT / stl_value
-        if not stl_path.exists():
-            errors.append(f"{side}: STL not found: {stl_path.relative_to(ROOT)}")
-            continue
-        vertices = stl_vertices(stl_path)
-        rise = abs(observed_rear_rise(vertices))
-        if rise > MAX_OBSERVED_REAR_RISE_MM:
-            errors.append(
-                f"{side}: observed rear/top-edge rise is {rise:.3f} mm, "
-                f"expected <= {MAX_OBSERVED_REAR_RISE_MM:.3f} mm"
-            )
+        stl_paths = output_stl_paths(side, output)
+        if side == "left":
+            if len(stl_paths) != 1:
+                errors.append("left: expected one printable STL")
+        else:
+            if output.get("stl"):
+                errors.append("right: monolithic STL metadata must not be present")
+            if len(stl_paths) != EXPECTED_RIGHT_PART_COUNT:
+                errors.append(
+                    f"right: expected {EXPECTED_RIGHT_PART_COUNT} printable STL parts, "
+                    f"found {len(stl_paths)}"
+                )
+        for stl_path in stl_paths:
+            if not stl_path.exists():
+                errors.append(f"{side}: STL not found: {stl_path.relative_to(ROOT)}")
+                continue
+            rise = abs(observed_rear_rise(stl_vertices(stl_path)))
+            if rise > MAX_OBSERVED_REAR_RISE_MM:
+                errors.append(
+                    f"{side}: {stl_path.name} observed rear/top-edge rise is "
+                    f"{rise:.3f} mm, expected <= {MAX_OBSERVED_REAR_RISE_MM:.3f} mm"
+                )
+
+    right = outputs.get("right", {})
+    split = right.get("split", {})
+    if split.get("style") != "post_avoiding_zigzag":
+        errors.append("right: split style must be post_avoiding_zigzag")
+    if int(split.get("part_count", 0)) != EXPECTED_RIGHT_PART_COUNT:
+        errors.append(f"right: split metadata must declare {EXPECTED_RIGHT_PART_COUNT} parts")
+    face_setback = float(split.get("face_setback_mm", 0.0))
+    if abs(face_setback - EXPECTED_SPLIT_FACE_SETBACK_MM) > DIMENSION_TOLERANCE_MM:
+        errors.append(
+            f"right: split face setback {face_setback:.3f} mm is not "
+            f"{EXPECTED_SPLIT_FACE_SETBACK_MM:.2f} mm"
+        )
+    assembled_gap = float(split.get("assembled_gap_mm", 0.0))
+    if abs(assembled_gap - EXPECTED_SPLIT_ASSEMBLED_GAP_MM) > DIMENSION_TOLERANCE_MM:
+        errors.append(
+            f"right: assembled split gap {assembled_gap:.3f} mm is not "
+            f"{EXPECTED_SPLIT_ASSEMBLED_GAP_MM:.2f} mm"
+        )
+    face_lengths = split.get("floor_bond_face_lengths_mm", {})
+    if set(face_lengths) != {"part_a", "part_b"}:
+        errors.append("right: split metadata must include both floor-bond face lengths")
+    elif abs(
+        float(split.get("minimum_floor_bond_length_mm", 0.0))
+        - min(float(length) for length in face_lengths.values())
+    ) > DIMENSION_TOLERANCE_MM:
+        errors.append("right: minimum floor-bond length is not the shorter mating face")
+    length_ratio = float(split.get("minimum_floor_bond_length_ratio", 0.0))
+    if length_ratio < MIN_ZIGZAG_LENGTH_RATIO:
+        errors.append(
+            f"right: zigzag floor-bond length ratio {length_ratio:.3f} is below "
+            f"{MIN_ZIGZAG_LENGTH_RATIO:.2f}"
+        )
+    if float(split.get("minimum_registration_post_clearance_mm", -1.0)) <= 0.0:
+        errors.append("right: zigzag seam collides with a registration post")
+    stale_right_stl = ROOT / "hardware" / "case" / "kc2_right_lower_housing.stl"
+    if stale_right_stl.exists():
+        errors.append(
+            "right: stale monolithic hardware/case/kc2_right_lower_housing.stl exists"
+        )
 
     if manifest_path != DEFAULT_MANIFEST and not manifest_path.is_absolute():
         errors.append("internal error: manifest path should be absolute")
@@ -437,14 +574,17 @@ def main() -> int:
         return 1
     print("PASS: KC2 lower housing geometry verification")
     print("- controller-side floor is closed below the PCB battery lead slot")
-    print("- one-piece tray metadata reports a hollow interior cavity")
+    print("- rail-capture tray metadata reports a hollow interior cavity")
     print("- bottom outline has an explicit rounded-corner radius")
     print("- underside has no rounded-edge loft layers or mesh projected outside the footprint")
     print("- exterior floor, interior floor, PCB support, and post tops are flat")
     print("- 2.60 mm bottom-component clearance covers a 2.20 mm socket plus 0.40 mm tolerance")
     print("- all 77 bottom-side socket envelopes clear the housing walls")
     print("- uniform PCB support height is 3.80 mm over a 1.20 mm closed floor")
-    print("- each half has nine 2.55 mm pegs with centered 1.60 mm blind pilot bores")
+    print("- left is one printable STL and right is two single-shell printable STLs")
+    print("- every STL fits the 150 mm cube print envelope")
+    print("- right zigzag seam has 0.20 mm setback per face and a 0.40 mm assembled gap")
+    print("- each housing has nine 2.55 mm pegs with centered 1.60 mm blind pilot bores")
     return 0
 
 

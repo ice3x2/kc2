@@ -5,7 +5,7 @@
   "orientation": "X-reflected to match the physical assembled left/right keyboard orientation.",
   "generator": "tools/generate_kc2_housing_step.py",
   "parameters": {
-    "design_style": "hollow_one_piece_tray",
+    "design_style": "hollow_rail_capture_tray",
     "outline_inset_mm": 0.1,
     "rail_inset_mm": 0.3,
     "rail_width_mm": 2.0,
@@ -28,6 +28,11 @@
     "rear_height_mm": 3.8,
     "rear_height_ratio": 1.0,
     "rear_rise_mm": 0.0,
+    "print_volume_limit_mm": 150.0,
+    "right_split_center_x_mm": 112.0,
+    "right_split_zigzag_amplitude_mm": 5.0,
+    "right_split_zigzag_pitch_mm": 8.0,
+    "right_split_face_setback_mm": 0.2,
     "cylinder_segments": 32
   },
   "outputs": {
@@ -420,8 +425,26 @@
         "minimum_lateral_clearance_to_wall_mm": 0.3093362662039596,
         "vertical_clearance_to_floor_mm": 0.4
       },
-      "solid_count": 1,
-      "volume_mm3": 29103.90727147628
+      "solid_count": 2,
+      "volume_mm3": 29014.353175891472,
+      "split": {
+        "style": "post_avoiding_zigzag",
+        "part_count": 2,
+        "seam_center_x_mm": 112.0,
+        "zigzag_amplitude_mm": 5.0,
+        "zigzag_pitch_mm": 8.0,
+        "face_setback_mm": 0.2,
+        "assembled_gap_mm": 0.4,
+        "floor_bond_face_lengths_mm": {
+          "part_a": 169.92290945087422,
+          "part_b": 169.92290945087424
+        },
+        "minimum_floor_bond_length_mm": 169.92290945087422,
+        "straight_floor_bond_length_mm": 106.15,
+        "minimum_floor_bond_length_ratio": 1.600781059358212,
+        "minimum_registration_post_clearance_mm": 6.304617131016921,
+        "print_volume_limit_mm": 150.0
+      }
     }
   }
 }
