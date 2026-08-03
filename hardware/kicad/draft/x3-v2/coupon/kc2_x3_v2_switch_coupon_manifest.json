@@ -1,0 +1,42 @@
+{
+  "requirement": "CON-ARCH-004",
+  "purpose": "1:1 physical fit coupon; fabrication and populated fit results are required before orderable status",
+  "orientation_scope": "SW_L 0-degree and SW_R 180-degree conservatively exercise both representative bottom-socket orientations required by CON-ARCH-004 AC-8",
+  "board": "hardware\\kicad\\draft\\x3-v2\\coupon\\kc2_x3_v2_switch_coupon.kicad_pcb",
+  "samples": [
+    {
+      "reference": "SW_L",
+      "diode_reference": "D_L",
+      "center_mm": [
+        28.0,
+        40.0
+      ],
+      "rotation_deg": 0.0,
+      "intended_assembly": "choc_v2_bottom_socket"
+    },
+    {
+      "reference": "SW_MX",
+      "diode_reference": "D_MX",
+      "center_mm": [
+        47.05,
+        40.0
+      ],
+      "rotation_deg": 0.0,
+      "intended_assembly": "mx_5pin_top_direct_solder"
+    },
+    {
+      "reference": "SW_R",
+      "diode_reference": "D_R",
+      "center_mm": [
+        66.1,
+        40.0
+      ],
+      "rotation_deg": 180.0,
+      "intended_assembly": "choc_v2_bottom_socket"
+    }
+  ],
+  "key_pitch_mm": 19.05,
+  "switch_footprint": "kc2.pretty:SW_Choc_V2_Socket_MX_THT",
+  "assembly_modes_mutually_exclusive": true,
+  "physical_evidence_status": "pending_fabrication_and_populated_fit_test"
+}

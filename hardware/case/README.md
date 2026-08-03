@@ -1,12 +1,13 @@
 # KC2 lower housing draft
 
-This directory contains first-pass STL drafts generated from the current KC2 X3
-KiCad PCB Edge.Cuts.
+This directory contains printable STL and editable CAD housings generated from
+the current KC2 X3 KiCad PCB Edge.Cuts.
 
 Generated files:
 
 - `kc2_left_lower_housing.stl`
-- `kc2_right_lower_housing.stl`
+- `kc2_right_lower_housing_part_a.stl`
+- `kc2_right_lower_housing_part_b.stl`
 - `kc2_housing_manifest.json`
 - `kc2_left_lower_housing.step`
 - `kc2_right_lower_housing.step`
@@ -23,6 +24,9 @@ Fusion 360 design files:
 - Printable STL files are tessellated from the same BRep solids as the STEP
   files so the post, pilot-bore, and corrected orientation geometry stays
   consistent across formats.
+- The right STEP and F3D contain two separate bodies. The two right STL files
+  are the corresponding printable single-solid parts; no monolithic right STL
+  is generated.
 - The STEP export keeps the corrected physical left/right orientation and the
   nine registration post locations. Fusion import does not preserve a native
   feature timeline; the CadQuery generator is the reproducible parametric
@@ -47,9 +51,14 @@ Design assumptions:
 - No top housing.
 - The housing perimeter stays slightly inside the PCB outline so joined left/right
   edges are not blocked by printed plastic.
-- A hollow one-piece tray shell is generated per half. The outside wall is
-  continuous from the bottom face to the PCB support height, without an
-  external stacked ledge.
+- A hollow rail-capture tray shell is generated. The outside wall is continuous
+  from the bottom face to the PCB support height, without an external stacked
+  ledge.
+- Every STL fits a 150 x 150 x 150 mm print envelope. The oversized right
+  housing is split into exactly two parts by a post-avoiding zigzag glue seam.
+- The zigzag seam provides about 1.60 times the minimum floor bonding length of
+  a straight seam. Each mating face is recessed 0.20 mm, leaving a nominal
+  0.40 mm assembled gap for PLA expansion and adhesive.
 - A uniform 1.2 mm floor, 2.6 mm bottom component cavity, 2.4 mm continuous
   outer wall ledge, and nine registration support posts are generated per half.
 - The 2.6 mm cavity consists of the Kailh CPG135001S30 socket's 2.2 mm body
@@ -71,5 +80,6 @@ Design assumptions:
 - The underside is flat; the previous lower-edge roundover loft is disabled to
   avoid stray low-Z mesh layers and slicer-visible protrusion artifacts.
 
-Print one half first before committing to the full pair and confirm the
-approved 2.55 mm peg and 1.60 mm pilot-bore fit on the actual printer and PLA.
+Print one right part first before committing to the full set and confirm the
+approved 2.55 mm peg, 1.60 mm pilot-bore, and 0.40 mm glue-gap fit on the actual
+printer and PLA.

@@ -33,6 +33,7 @@ SWITCH_LIB = ROOT / "third_party" / "key-switches.pretty"
 SOLDERED_SWITCH_FP = "SW_Kailh_Choc_V1V2_THT_Hybrid"
 HOTSWAP_SWITCH_FP = "SW_Kailh_Choc_V1V2_HotSwap_Hybrid"
 X2_SWITCH_FP = "SW_Kailh_Choc_V1_HotSwap_THT"
+X3_V2_SWITCH_FP = "SW_Choc_V2_Socket_MX_THT"
 KC2_FP_LIB = ROOT / "third_party" / "kc2.pretty"
 DIODE_LIB = KICAD_SHARE / "footprints" / "Diode_SMD.pretty"
 DIODE_FP = "D_SOD-123"
@@ -116,6 +117,32 @@ EMBEDDED_FOOTPRINT_SOURCES = {
     X2_SWITCH_FP: DRAFT_ROOT / "x2" / "kc2_left-x2" / "kc2_left-x2.kicad_pcb",
 }
 _EMBEDDED_FOOTPRINT_CACHE: dict[str, pcbnew.FOOTPRINT] = {}
+SUPPORTED_VARIANTS = ("soldered", "hotswap", "x1", "x2", "x3", "x3-v2")
+X3_FAMILY_VARIANTS = frozenset({"x3", "x3-v2"})
+
+
+def is_x3_family(variant: str) -> bool:
+    return variant in X3_FAMILY_VARIANTS
+
+
+def variant_output_dir(variant: str) -> Path:
+    return KICAD_ROOT if variant == "x3" else DRAFT_ROOT / variant
+
+
+def variant_project_suffix(variant: str) -> str:
+    return "" if variant in {"soldered", "x3"} else f"-{variant}"
+
+
+def variant_switch_footprint(variant: str) -> str:
+    if variant == "x3-v2":
+        return X3_V2_SWITCH_FP
+    if variant in {"x2", "x3"}:
+        return X2_SWITCH_FP
+    if variant in {"hotswap", "x1"}:
+        return HOTSWAP_SWITCH_FP
+    if variant == "soldered":
+        return SOLDERED_SWITCH_FP
+    raise ValueError(f"Unknown variant: {variant}")
 
 
 @dataclass(frozen=True)
@@ -357,20 +384,57 @@ def add_board_text(
     board.Add(item)
 
 
+def registration_label_position(
+    board: pcbnew.BOARD,
+    hole_x: float,
+    hole_y: float,
+) -> tuple[float, float]:
+    candidates = (
+        (2.7, -2.7),
+        (2.7, 2.7),
+        (-2.7, -2.7),
+        (-2.7, 2.7),
+        (0.0, -3.4),
+        (0.0, 3.4),
+        (3.4, 0.0),
+        (-3.4, 0.0),
+    )
+    mask_boxes = [
+        pad.GetBoundingBox()
+        for footprint in board.GetFootprints()
+        for pad in footprint.Pads()
+        if pad.IsOnLayer(pcbnew.B_Mask)
+    ]
+    for dx, dy in candidates:
+        x = hole_x + dx
+        y = hole_y + dy
+        left, top, right, bottom = x - 0.95, y - 0.55, x + 0.95, y + 0.55
+        blocked = any(
+            left < pcbnew.ToMM(box.GetX() + box.GetWidth()) + 0.10
+            and right > pcbnew.ToMM(box.GetX()) - 0.10
+            and top < pcbnew.ToMM(box.GetY() + box.GetHeight()) + 0.10
+            and bottom > pcbnew.ToMM(box.GetY()) - 0.10
+            for box in mask_boxes
+        )
+        if not blocked:
+            return x, y
+    raise RuntimeError(f"No B.Silkscreen label position near REG hole ({hole_x}, {hole_y})")
+
+
 def add_product_identity_text(
     board: pcbnew.BOARD,
     side: str,
     outline: list[tuple[float, float]],
     variant: str,
 ) -> None:
-    if variant != "x3":
+    if not is_x3_family(variant):
         return
     min_x = min(x for x, _ in outline)
     max_x = max(x for x, _ in outline)
     max_y = max(y for _, y in outline)
     add_board_text(
         board,
-        f"KC2 v1.0 {side[0].upper()}",
+        f"KC2 {'X3 V2' if variant == 'x3-v2' else 'v1.0'} {side[0].upper()}",
         (min_x + max_x) / 2.0,
         max_y - 4.25,
         pcbnew.B_SilkS,
@@ -517,7 +581,7 @@ def row_extents(keys: list[Key]) -> dict[int, tuple[float, float, float, float]]
 
 
 def controller_tab_spans(side: str, variant: str) -> tuple[float, float]:
-    if variant == "x3":
+    if is_x3_family(variant):
         if side == "left":
             return X3_CONTROLLER_TAB_OUTER_SPAN, X3_CONTROLLER_TAB_INNER_SPAN
         if side == "right":
@@ -527,7 +591,7 @@ def controller_tab_spans(side: str, variant: str) -> tuple[float, float]:
 
 
 def controller_anchor_spans(side: str, variant: str) -> tuple[float, float]:
-    if variant == "x3":
+    if is_x3_family(variant):
         if side == "left":
             return X3_CONTROLLER_ANCHOR_OUTER_SPAN, X3_CONTROLLER_ANCHOR_INNER_SPAN
         if side == "right":
@@ -537,7 +601,7 @@ def controller_anchor_spans(side: str, variant: str) -> tuple[float, float]:
 
 def controller_center_x(keys: list[Key], side: str, variant: str = "soldered") -> float:
     ext = row_extents(keys)
-    inner_margin = INNER_MARGIN + (X3_INNER_MARGIN_EXTRA if variant == "x3" else 0.0)
+    inner_margin = INNER_MARGIN + (X3_INNER_MARGIN_EXTRA if is_x3_family(variant) else 0.0)
     left_span, right_span = controller_anchor_spans(side, variant)
     if side == "left":
         inner_edge = max(r[2] for r in ext.values()) + inner_margin
@@ -687,7 +751,7 @@ def make_project_file(project_dir: Path, name: str, variant: str = "soldered") -
         },
     ]
     netclass_assignments: list[dict[str, str]] = []
-    if variant != "x3":
+    if not is_x3_family(variant):
         net_classes.append(
             {
                 "name": "Power",
@@ -854,6 +918,7 @@ def create_controller(
     cy: float,
     direction: int,
     pin_net_map: dict[str, str],
+    variant: str,
 ) -> tuple[pcbnew.FOOTPRINT, dict[str, tuple[float, float]], tuple[float, float, float, float]]:
     fp = pcbnew.FOOTPRINT(board)
     controller_fp = "NiceNanoV2_Socket_24Pin_USB_OUT_LEFT" if direction == 1 else "NiceNanoV2_Socket_24Pin_USB_OUT_RIGHT"
@@ -911,7 +976,14 @@ def create_controller(
     usb_x = cx - direction * CONTROLLER_LEN / 2.0
     ant_x = cx + direction * CONTROLLER_LEN / 2.0
     add_board_text(board, "USB_OUT_LEFT" if direction == 1 else "USB_OUT_RIGHT", usb_x, cy - 10.5, pcbnew.F_SilkS, 1.0)
-    add_board_text(board, "ANTENNA_INWARD", ant_x, cy - 10.5, pcbnew.F_SilkS, 1.0)
+    add_board_text(
+        board,
+        "ANTENNA_INWARD",
+        ant_x,
+        cy - 10.5,
+        pcbnew.F_Fab if variant == "x3-v2" else pcbnew.F_SilkS,
+        1.0,
+    )
 
     keepout_start = cx + direction * ANTENNA_KEEP_START_FROM_CENTER
     keepout_x1 = keepout_start
@@ -1050,10 +1122,10 @@ def make_board(
     top_margin_extra = 0.0
     if variant in {"x1", "x2"} and side == "right":
         top_margin_extra = 0.3
-    elif variant == "x3":
+    elif is_x3_family(variant):
         top_margin_extra = 2.5 if side == "right" else 2.0
-    inner_margin_extra = X3_INNER_MARGIN_EXTRA if variant == "x3" else 0.0
-    general_margin = X3_GENERAL_MARGIN if variant == "x3" else GENERAL_MARGIN
+    inner_margin_extra = X3_INNER_MARGIN_EXTRA if is_x3_family(variant) else 0.0
+    general_margin = X3_GENERAL_MARGIN if is_x3_family(variant) else GENERAL_MARGIN
     outline = raw_outline(
         keys,
         side,
@@ -1064,7 +1136,7 @@ def make_board(
         general_margin=general_margin,
     )
     rounded = rounded_polygon(outline, radius=2.0, steps=5)
-    if variant == "x3" and side == "right":
+    if is_x3_family(variant) and side == "right":
         rounded = x3_right_horizontal_ledge_relief(rounded, keys, radius=2.0)
     min_x = min(x for x, _ in rounded)
     min_y = min(y for _, y in rounded)
@@ -1084,14 +1156,14 @@ def make_board(
     title = board.GetTitleBlock()
     variant_title = "" if variant == "soldered" else f" {variant.upper()}"
     title.SetTitle(f"KC2 {side.capitalize()}{variant_title} PCB Draft")
-    title.SetDate("2026-06-04")
-    title.SetRevision("draft-1")
+    title.SetDate("2026-08-03" if variant == "x3-v2" else "2026-06-04")
+    title.SetRevision("draft-v2" if variant == "x3-v2" else "draft-1")
     add_polyline(board, shifted_outline, pcbnew.Edge_Cuts, EDGE_WIDTH, closed=True)
 
     nets: dict[str, pcbnew.NETINFO_ITEM] = {"": board.GetNetInfo().GetNetItem(0)}
     add_net(board, nets, "GND")
     add_net(board, nets, "RST")
-    if variant != "x3":
+    if not is_x3_family(variant):
         for pwr in ("BAT+", "BAT-"):
             add_net(board, nets, pwr)
 
@@ -1140,12 +1212,12 @@ def make_board(
         add_net(board, nets, net_name)
 
     _, controller_pads, antenna_keepout = create_controller(
-        board, nets, "U1", ctrl_cx, ctrl_cy, usb_direction, pin_map
+        board, nets, "U1", ctrl_cx, ctrl_cy, usb_direction, pin_map, variant
     )
     add_antenna_keepout_zone(board, side, antenna_keepout)
 
     power_pads: dict[str, tuple[float, float]] | None = None
-    if variant != "x3":
+    if not is_x3_family(variant):
         power_y = ctrl_cy + 1.0
         power_x = ctrl_cx - usb_direction * 28.0
         power_pads = create_power_pads(board, nets, "J_PWR1", power_x, power_y)
@@ -1154,14 +1226,16 @@ def make_board(
         add_board_text(board, "Battery solders directly to nice!nano B+/B-; no carrier power pads", ctrl_cx - 23.0, ctrl_cy + 15.0, pcbnew.Cmts_User, 0.8)
 
     batt_w, batt_h = 15.0, 25.0
-    batt_cx = ctrl_cx + (usb_direction * X3_BATTERY_CENTER_OFFSET_FROM_CONTROLLER if variant == "x3" else -usb_direction * 7.0)
+    batt_cx = ctrl_cx + (usb_direction * X3_BATTERY_CENTER_OFFSET_FROM_CONTROLLER if is_x3_family(variant) else -usb_direction * 7.0)
     batt_cy = ctrl_cy + 2.0
     add_rect_lines(board, batt_cx - batt_w / 2, batt_cy - batt_h / 2, batt_cx + batt_w / 2, batt_cy + batt_h / 2, pcbnew.B_Fab, 0.10)
     add_board_text(board, "TW301525 80mAh", batt_cx - 7.0, batt_cy, pcbnew.B_Fab, 0.9, mirrored=True)
 
     battery_lead_slot_points: list[tuple[float, float]] = []
-    if variant == "x3":
-        slot_x, slot_y = x3_battery_lead_slot_point(ctrl_cx, ctrl_cy, usb_direction)
+    if is_x3_family(variant):
+        slot_x, slot_y = x3_battery_lead_slot_point(
+            ctrl_cx, ctrl_cy, usb_direction, variant
+        )
         battery_lead_slot_points.append((slot_x, slot_y))
         slot_fp = load_footprint(
             board,
@@ -1186,7 +1260,7 @@ def make_board(
         )
         add_board_text(board, "BAT LEAD EXIT", slot_x - 4.5, slot_y + 3.2, pcbnew.Cmts_User, 0.7)
 
-    if variant == "x3":
+    if is_x3_family(variant):
         tact_x = batt_cx + usb_direction * (batt_w / 2.0 + X3_TACT_BATTERY_CLEARANCE + X3_TACT_BODY_W / 2.0)
     else:
         tact_offset_from_center = CONTROLLER_LEN / 2.0 - 7.0
@@ -1194,13 +1268,13 @@ def make_board(
     tact_y = ctrl_cy + CONTROLLER_W / 2.0 + 4.0
     tact = load_footprint(board, TACT_LIB, TACT_FP, "SW_RST1", "NW3-A06-B3 RST", tact_x, tact_y, 0)
 
-    registration_points = x3_registration_points(side, shifted_keys) if variant == "x3" else []
+    registration_points = x3_registration_points(side, shifted_keys) if is_x3_family(variant) else []
     global ACTIVE_TRACE_KEEP_OUTS
     previous_trace_keep_outs = ACTIVE_TRACE_KEEP_OUTS
     ACTIVE_TRACE_KEEP_OUTS = registration_points + battery_lead_slot_points
 
     mount_points = mounting_points(side, shifted_keys, shifted_outline, ctrl_cx, ctrl_cy)
-    if variant == "x3":
+    if is_x3_family(variant):
         mount_points = []
     for idx, (mx, my) in enumerate(mount_points, start=1):
         fp = load_footprint(board, MOUNT_LIB, MOUNT_FP, f"H{idx}", "M2_NPTH_2.2", mx, my)
@@ -1210,7 +1284,6 @@ def make_board(
         fp.Reference().SetVisible(False)
         fp.Value().SetVisible(False)
         add_rect_lines(board, rx - 2.0, ry - 2.0, rx + 2.0, ry + 2.0, pcbnew.Cmts_User, 0.08)
-        add_board_text(board, f"H{idx}", rx + 2.6, ry - 2.6, pcbnew.B_SilkS, 0.8, 0.10, mirrored=True)
 
     switch_refs: dict[str, pcbnew.FOOTPRINT] = {}
     diode_refs: dict[str, pcbnew.FOOTPRINT] = {}
@@ -1233,6 +1306,8 @@ def make_board(
         add_board_text(board, key.label, key.cx - 3.0, key.cy - 9.2, pcbnew.F_SilkS, 0.9)
 
         dio = load_footprint(board, diode_lib, diode_fp, f"D{idx}", diode_value, key.cx, key.cy + diode_y_offset, bottom=True)
+        if variant == "x3-v2":
+            dio.Reference().SetLayer(pcbnew.B_Fab)
         set_pad_net(dio, "1", row_net)
         set_pad_net(dio, "2", local_net)
         diode_refs[key.label + str(idx)] = dio
@@ -1268,6 +1343,19 @@ def make_board(
         if key.w_u >= 2.0:
             create_stabilizer(board, f"STAB{idx}", key, 0, 0)
 
+    for idx, (rx, ry) in enumerate(registration_points, start=1):
+        label_x, label_y = registration_label_position(board, rx, ry)
+        add_board_text(
+            board,
+            f"H{idx}",
+            label_x,
+            label_y,
+            pcbnew.B_SilkS,
+            0.8,
+            0.10,
+            mirrored=True,
+        )
+
     for row, points in row_diodes.items():
         net = add_net(board, nets, f"{row_prefix}{row}")
         points = sorted(points, key=lambda p: p[0])
@@ -1298,9 +1386,9 @@ def make_board(
         connect_power_labels(board, nets, power_pads)
 
     variant_label = "" if variant == "soldered" else f" {variant.upper()}"
-    layout_name = "77-key no-stabilizer split layout" if variant == "x3" else "71-key split successor to KC1"
+    layout_name = "77-key no-stabilizer split layout" if is_x3_family(variant) else "71-key split successor to KC1"
     add_board_text(board, f"KC2 {side.upper()}{variant_label} - {layout_name}", 35, 24, pcbnew.F_SilkS, 1.2)
-    housing_note = "No top housing / screwless PLA+ rail tray / REG holes" if variant == "x3" else "No top housing / PCB is switch plate / bottom plate M2+adhesive"
+    housing_note = "No top housing / screwless PLA+ rail tray / REG holes" if is_x3_family(variant) else "No top housing / PCB is switch plate / bottom plate M2+adhesive"
     add_board_text(board, housing_note, 35, 27, pcbnew.F_SilkS, 0.9)
     add_board_text(board, "Diode fallback: 1N4148W SOD-123 because DO-35 conflicts with compact hybrid footprint", 35, 30, pcbnew.Cmts_User, 0.9)
     if variant == "hotswap":
@@ -1311,6 +1399,8 @@ def make_board(
         add_board_text(board, "X2: Kailh Choc V1 socket plus direct THT solder, X1 hand-solder diodes", 35, 33, pcbnew.Cmts_User, 0.9)
     elif variant == "x3":
         add_board_text(board, "X3: X2 electrical stack, no-stabilizer 77-key split layout", 35, 33, pcbnew.Cmts_User, 0.9)
+    elif variant == "x3-v2":
+        add_board_text(board, "X3 V2: Choc V2 socket OR rotated MX 5-pin direct solder; Choc V1 unsupported", 35, 33, pcbnew.Cmts_User, 0.9)
     add_product_identity_text(board, side, shifted_outline, variant)
 
     make_project_file(project_dir, name, variant=variant)
@@ -1377,7 +1467,18 @@ def x3_registration_points(side: str, keys: list[Key]) -> list[tuple[float, floa
     return [(min_x + dx, min_y + dy) for dx, dy in offsets]
 
 
-def x3_battery_lead_slot_point(ctrl_cx: float, ctrl_cy: float, usb_direction: int) -> tuple[float, float]:
+def x3_battery_lead_slot_point(
+    ctrl_cx: float,
+    ctrl_cy: float,
+    usb_direction: int,
+    variant: str = "x3",
+) -> tuple[float, float]:
+    if variant == "x3-v2":
+        usb_edge_x = ctrl_cx - usb_direction * CONTROLLER_LEN / 2.0
+        slot_x = usb_edge_x + usb_direction * (
+            BATTERY_LEAD_SLOT_LEN / 2.0 + BATTERY_LEAD_SLOT_KEEP_OUT_GAP
+        )
+        return slot_x, ctrl_cy
     keepout_near_edge_x = ctrl_cx + usb_direction * ANTENNA_KEEP_START_FROM_CENTER
     slot_x = keepout_near_edge_x - usb_direction * (BATTERY_LEAD_SLOT_LEN / 2.0 + BATTERY_LEAD_SLOT_KEEP_OUT_GAP)
     return slot_x, ctrl_cy
@@ -1550,7 +1651,7 @@ def copy_license() -> None:
             shutil.copyfile(src, dest)
 
 
-def generate_variant(variant: str) -> dict[str, object]:
+def generate_variant(variant: str, output_dir: Path | None = None) -> dict[str, object]:
     if variant == "soldered":
         out_dir = DRAFT_ROOT / "soldered"
         project_suffix = ""
@@ -1593,20 +1694,23 @@ def generate_variant(variant: str) -> dict[str, object]:
         manifest_name = "kc2_x2_generation_manifest.json"
         left_keys = make_left_keys()
         right_keys = make_right_keys()
-    elif variant == "x3":
-        out_dir = KICAD_ROOT
-        project_suffix = ""
+    elif is_x3_family(variant):
+        out_dir = variant_output_dir(variant)
+        project_suffix = variant_project_suffix(variant)
         switch_lib = KC2_FP_LIB
-        switch_fp = X2_SWITCH_FP
+        switch_fp = variant_switch_footprint(variant)
         diode_lib = X1_DIODE_LIB
         diode_fp = X1_DIODE_FP
         diode_value = X1_DIODE_VALUE
         diode_y_offset = X2_DIODE_Y_OFFSET
-        manifest_name = "kc2_generation_manifest.json"
+        manifest_name = "kc2_generation_manifest.json" if variant == "x3" else "kc2_x3_v2_generation_manifest.json"
         left_keys = make_left_keys_no_stab()
         right_keys = make_right_keys_no_stab()
     else:
         raise ValueError(f"Unknown variant: {variant}")
+
+    if output_dir is not None:
+        out_dir = output_dir.resolve()
 
     if variant in {"soldered", "hotswap", "x1"}:
         left_keys = make_left_keys()
@@ -1678,11 +1782,18 @@ def generate_variant(variant: str) -> dict[str, object]:
         notes.append("X3 screwless housing direction removes all M2 screw holes from both halves.")
         notes.append(f"X3 adds nine {REGISTRATION_HOLE_DIAMETER:g} mm NPTH REG_NPTH_3.0 registration holes per half for a PLA+ rail/capture lower tray, with visible H1-H9 support labels.")
         notes.append(f"X3 uses a {X3_GENERAL_MARGIN:g} mm nominal outer rail land, with 3.6 mm as the verified hard lower bound where local clearance requires it.")
+    elif variant == "x3-v2":
+        notes.append("X3 V2 uses the KC2-owned Choc V2/PG1353 bottom-side hot-swap socket plus Cherry MX 5-pin direct-solder geometry.")
+        notes.append("Choc V1 switch geometry, Choc V2 direct-solder pads, and MX hot-swap socket pads are intentionally excluded.")
+        notes.append("The Choc socket and MX switch are mutually exclusive assembly options at every key position.")
+        notes.append("X3 V2 preserves the X3 77-key no-stabilizer outline, compact nice!nano tab, direct battery leads, and nine screwless registration holes per half.")
+        notes.append("The netless battery-lead slot is at the nice!nano USB/B+ end; insulated B+ and GND/B- leads must use strain relief and remain outside the antenna keepout.")
+        notes.append(f"X3 V2 keeps the hand-solder SOD-123 diode at y offset {X2_DIODE_Y_OFFSET:g} mm and requires renewed socket/MX solder-joint housing clearance verification.")
     else:
         notes.append(f"Controller protrusion tab width is {CONTROLLER_TAB_W:g} mm and grows away from the inner joining edge.")
     switch_footprint_file_present = (switch_lib / f"{switch_fp}.kicad_mod").exists()
     manifest: dict[str, object] = {
-        "generated": "2026-06-08",
+        "generated": "2026-08-03" if variant == "x3-v2" else "2026-06-08",
         "variant": variant,
         "generator": "tools/generate_kc2_pcbs.py",
         "generation_command": f"python tools/generate_kc2_pcbs.py --variant {variant}",
@@ -1697,6 +1808,17 @@ def generate_variant(variant: str) -> dict[str, object]:
             "right": right_keepout,
         },
         "switch_footprint": f"{switch_lib.name}:{switch_fp}",
+        "assembly_modes": (
+            ["choc_v2_bottom_socket", "mx_5pin_top_direct_solder"]
+            if variant == "x3-v2"
+            else None
+        ),
+        "assembly_modes_mutually_exclusive": variant == "x3-v2",
+        "unsupported_switch_geometry": (
+            ["choc_v1", "choc_v2_direct_solder", "mx_hotswap"]
+            if variant == "x3-v2"
+            else None
+        ),
         "switch_footprint_file_present": switch_footprint_file_present,
         "switch_footprint_fallback_source": (
             str(EMBEDDED_FOOTPRINT_SOURCES.get(switch_fp, Path("")).relative_to(ROOT))
@@ -1706,7 +1828,7 @@ def generate_variant(variant: str) -> dict[str, object]:
         "diode_footprint": f"{diode_lib.name}:{diode_fp}",
         "diode_value": diode_value,
         "diode_y_offset_mm": diode_y_offset,
-        "carrier_power_pads": variant != "x3",
+        "carrier_power_pads": not is_x3_family(variant),
         "battery_lead_pass_through_slot": (
             {
                 "footprint": f"{BATTERY_LEAD_SLOT_LIB.name}:{BATTERY_LEAD_SLOT_FP}",
@@ -1714,13 +1836,18 @@ def generate_variant(variant: str) -> dict[str, object]:
                 "size_mm": [BATTERY_LEAD_SLOT_LEN, BATTERY_LEAD_SLOT_W],
                 "count_per_half": 1,
                 "layers": "mask-only NPTH, no carrier power copper",
-                "purpose": "optional bottom-side battery lead exit below nice!nano B+/B- top-pin area",
+                "purpose": (
+                    "USB-end lead exit below the nice!nano battery-pad end; route insulated "
+                    "B+ and GND/B- leads between the socket rows and provide strain relief"
+                    if variant == "x3-v2"
+                    else "optional bottom-side battery lead exit"
+                ),
             }
-            if variant == "x3"
+            if is_x3_family(variant)
             else None
         ),
-        "pcb_thickness_mm": 1.6 if variant == "x3" else None,
-        "housing_assumption": "FDM PLA+ screwless lower tray with printed rail/capture lips" if variant == "x3" else None,
+        "pcb_thickness_mm": 1.6 if is_x3_family(variant) else None,
+        "housing_assumption": "FDM PLA+ screwless lower tray with printed rail/capture lips" if is_x3_family(variant) else None,
         "screwless_registration_holes": (
             {
                 "footprint": f"{REGISTRATION_LIB.name}:{REGISTRATION_FP}",
@@ -1730,7 +1857,7 @@ def generate_variant(variant: str) -> dict[str, object]:
                 "purpose": "non-screw housing registration, center anti-flex support, and auxiliary capture",
                 "visible_labels": "H1-H9 on B.SilkS",
             }
-            if variant == "x3"
+            if is_x3_family(variant)
             else None
         ),
         "rail_land_mm": (
@@ -1739,14 +1866,14 @@ def generate_variant(variant: str) -> dict[str, object]:
                 "hard_lower_bound": 3.6,
                 "local_max_when_required": 5.0,
             }
-            if variant == "x3"
+            if is_x3_family(variant)
             else None
         ),
-        "controller_tab_width_mm": X3_CONTROLLER_TAB_W if variant == "x3" else CONTROLLER_TAB_W,
-        "x3_controller_tab_inner_span_mm": X3_CONTROLLER_TAB_INNER_SPAN if variant == "x3" else None,
-        "x3_controller_tab_outer_span_mm": X3_CONTROLLER_TAB_OUTER_SPAN if variant == "x3" else None,
-        "x3_controller_anchor_inner_span_mm": X3_CONTROLLER_ANCHOR_INNER_SPAN if variant == "x3" else None,
-        "x3_tact_battery_clearance_mm": X3_TACT_BATTERY_CLEARANCE if variant == "x3" else None,
+        "controller_tab_width_mm": X3_CONTROLLER_TAB_W if is_x3_family(variant) else CONTROLLER_TAB_W,
+        "x3_controller_tab_inner_span_mm": X3_CONTROLLER_TAB_INNER_SPAN if is_x3_family(variant) else None,
+        "x3_controller_tab_outer_span_mm": X3_CONTROLLER_TAB_OUTER_SPAN if is_x3_family(variant) else None,
+        "x3_controller_anchor_inner_span_mm": X3_CONTROLLER_ANCHOR_INNER_SPAN if is_x3_family(variant) else None,
+        "x3_tact_battery_clearance_mm": X3_TACT_BATTERY_CLEARANCE if is_x3_family(variant) else None,
         "key_count": {
             "left": len(left_keys),
             "right": len(right_keys),
@@ -1765,21 +1892,29 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="Generate KC2 KiCad PCB outputs.")
     parser.add_argument(
         "--variant",
-        choices=("soldered", "hotswap", "x1", "x2", "x3", "all"),
+        choices=(*SUPPORTED_VARIANTS, "all"),
         default="x3",
         help="PCB variant to generate. Default writes the promoted X3 main KC2 output.",
     )
+    parser.add_argument(
+        "--output-dir",
+        type=Path,
+        help="Optional isolated output directory; valid only when generating one variant.",
+    )
     args = parser.parse_args()
+
+    if args.variant == "all" and args.output_dir is not None:
+        parser.error("--output-dir cannot be combined with --variant all")
 
     if not KC2_FP_LIB.exists():
         raise SystemExit(f"Missing KC2 footprint library: {KC2_FP_LIB}")
     KICAD_ROOT.mkdir(parents=True, exist_ok=True)
-    variants = ("soldered", "hotswap", "x1", "x2", "x3") if args.variant == "all" else (args.variant,)
+    variants = SUPPORTED_VARIANTS if args.variant == "all" else (args.variant,)
     if any(variant in {"soldered", "hotswap", "x1"} for variant in variants):
         if not SWITCH_LIB.exists():
             raise SystemExit(f"Missing switch library: {SWITCH_LIB}")
         copy_license()
-    manifests = [generate_variant(variant) for variant in variants]
+    manifests = [generate_variant(variant, output_dir=args.output_dir) for variant in variants]
     print(json.dumps(manifests[0] if len(manifests) == 1 else manifests, indent=2))
 
 

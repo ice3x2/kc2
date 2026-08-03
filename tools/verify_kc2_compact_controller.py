@@ -134,8 +134,21 @@ def slot_edge_clearance(board: pcbnew.BOARD, x: float, y: float) -> float:
     return center_to_edge - radius
 
 
-def expected_slot_center(side: str, u1_x: float, u1_y: float) -> tuple[float, float]:
+def expected_slot_center(
+    side: str,
+    u1_x: float,
+    u1_y: float,
+    board_path: Path | None = None,
+) -> tuple[float, float]:
     usb_direction = 1 if side == "left" else -1
+    if board_path is not None and "x3-v2" in str(board_path).lower():
+        usb_edge_x = u1_x - usb_direction * CONTROLLER_LEN / 2.0
+        return (
+            usb_edge_x
+            + usb_direction
+            * (BATTERY_LEAD_SLOT_LEN / 2.0 + BATTERY_LEAD_SLOT_KEEP_OUT_GAP),
+            u1_y,
+        )
     keepout_near_edge_x = u1_x + usb_direction * ANTENNA_KEEP_START_FROM_CENTER
     slot_x = keepout_near_edge_x - usb_direction * (BATTERY_LEAD_SLOT_LEN / 2.0 + BATTERY_LEAD_SLOT_KEEP_OUT_GAP)
     return slot_x, u1_y
@@ -242,7 +255,7 @@ def check_side(side: str, board_path: Path) -> list[str]:
     if slot.GetValue() != BATTERY_LEAD_SLOT_VALUE:
         errors.append(f"{side}: {BATTERY_LEAD_SLOT_REF} value is {slot.GetValue()!r}")
     slot_x, slot_y = fp_center(slot)
-    expected_x, expected_y = expected_slot_center(side, u1_x, u1_y)
+    expected_x, expected_y = expected_slot_center(side, u1_x, u1_y, board_path)
     if abs(slot_x - expected_x) > SLOT_POSITION_TOLERANCE or abs(slot_y - expected_y) > SLOT_POSITION_TOLERANCE:
         errors.append(
             f"{side}: {BATTERY_LEAD_SLOT_REF} at ({slot_x:.3f}, {slot_y:.3f}) mm, "

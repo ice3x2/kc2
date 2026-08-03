@@ -1,0 +1,95 @@
+{
+  "generated": "2026-08-03",
+  "variant": "x3-v2",
+  "generator": "tools/generate_kc2_pcbs.py",
+  "generation_command": "python tools/generate_kc2_pcbs.py --variant x3-v2",
+  "pcbnew_version": "10.0.3",
+  "kicad_share": "C:\\Program Files\\KiCad\\10.0\\share\\kicad",
+  "boards": {
+    "left": "hardware\\kicad\\draft\\x3-v2\\kc2_left-x3-v2\\kc2_left-x3-v2.kicad_pcb",
+    "right": "hardware\\kicad\\draft\\x3-v2\\kc2_right-x3-v2\\kc2_right-x3-v2.kicad_pcb"
+  },
+  "antenna_keepout_mm": {
+    "left": [
+      156.1825,
+      39.85,
+      166.1825,
+      58.15
+    ],
+    "right": [
+      54.53,
+      39.85,
+      64.53,
+      58.15
+    ]
+  },
+  "switch_footprint": "kc2.pretty:SW_Choc_V2_Socket_MX_THT",
+  "assembly_modes": [
+    "choc_v2_bottom_socket",
+    "mx_5pin_top_direct_solder"
+  ],
+  "assembly_modes_mutually_exclusive": true,
+  "unsupported_switch_geometry": [
+    "choc_v1",
+    "choc_v2_direct_solder",
+    "mx_hotswap"
+  ],
+  "switch_footprint_file_present": true,
+  "switch_footprint_fallback_source": null,
+  "diode_footprint": "kc2.pretty:D_SOD123_HandSolder_14592018",
+  "diode_value": "1N4148W_SOD123_DeviceMart_14592018",
+  "diode_y_offset_mm": -7.6,
+  "carrier_power_pads": false,
+  "battery_lead_pass_through_slot": {
+    "footprint": "kc2.pretty:BAT_LEAD_NPTH_SLOT_3.6x2.2",
+    "value": "BAT_LEAD_NPTH_SLOT_3.6x2.2",
+    "size_mm": [
+      3.6,
+      2.2
+    ],
+    "count_per_half": 1,
+    "layers": "mask-only NPTH, no carrier power copper",
+    "purpose": "USB-end lead exit below the nice!nano battery-pad end; route insulated B+ and GND/B- leads between the socket rows and provide strain relief"
+  },
+  "pcb_thickness_mm": 1.6,
+  "housing_assumption": "FDM PLA+ screwless lower tray with printed rail/capture lips",
+  "screwless_registration_holes": {
+    "footprint": "kc2.pretty:REG_NPTH_3.0",
+    "diameter_mm": 3.0,
+    "count_per_half": 9,
+    "total_count": 18,
+    "purpose": "non-screw housing registration, center anti-flex support, and auxiliary capture",
+    "visible_labels": "H1-H9 on B.SilkS"
+  },
+  "rail_land_mm": {
+    "nominal": 4.0,
+    "hard_lower_bound": 3.6,
+    "local_max_when_required": 5.0
+  },
+  "controller_tab_width_mm": 42.5,
+  "x3_controller_tab_inner_span_mm": 19.0,
+  "x3_controller_tab_outer_span_mm": 23.5,
+  "x3_controller_anchor_inner_span_mm": 30.5,
+  "x3_tact_battery_clearance_mm": 1.0,
+  "key_count": {
+    "left": 32,
+    "right": 45,
+    "total": 77
+  },
+  "max_key_width_u": 1.75,
+  "tact_footprint": "kc2.pretty:SW_NW3_A06_B3_SMD",
+  "notes": [
+    "SOD-123 1N4148W fallback is used because DO-35 conflicts with the compact hybrid switch footprint at 19.05 mm pitch.",
+    "Antenna keepout rule areas are generated directly in the board files.",
+    "Switch footprint values are sanitized as KEY_XX so Specctra DSN export does not expose legend characters such as backslash to Freerouting.",
+    "Right-half R_COL7 uses D21 and R_COL8 uses D20 to keep the longer outer column on the easier controller fanout pin.",
+    "Controller protrusion tabs are aligned toward the inner joining edge: left recessed 12 mm, right recessed 17 mm.",
+    "Programming tact switch uses the smaller DeviceMart 1322056 NW3-A06-B3 SMD footprint.",
+    "X3 V2 uses the KC2-owned Choc V2/PG1353 bottom-side hot-swap socket plus Cherry MX 5-pin direct-solder geometry.",
+    "Choc V1 switch geometry, Choc V2 direct-solder pads, and MX hot-swap socket pads are intentionally excluded.",
+    "The Choc socket and MX switch are mutually exclusive assembly options at every key position.",
+    "X3 V2 preserves the X3 77-key no-stabilizer outline, compact nice!nano tab, direct battery leads, and nine screwless registration holes per half.",
+    "The netless battery-lead slot is at the nice!nano USB/B+ end; insulated B+ and GND/B- leads must use strain relief and remain outside the antenna keepout.",
+    "X3 V2 keeps the hand-solder SOD-123 diode at y offset -7.6 mm and requires renewed socket/MX solder-joint housing clearance verification."
+  ]
+}

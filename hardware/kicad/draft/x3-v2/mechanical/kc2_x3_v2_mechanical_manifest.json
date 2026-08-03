@@ -1,0 +1,66 @@
+{
+  "requirement": "CON-ARCH-004",
+  "status": "draft_not_orderable_pending_physical_coupon",
+  "scale": 1.0,
+  "units": "mm",
+  "kicad_cli": "C:\\Program Files\\KiCad\\10.0\\bin\\kicad-cli.exe",
+  "products": {
+    "left": {
+      "board": "hardware\\kicad\\draft\\x3-v2\\kc2_left-x3-v2\\kc2_left-x3-v2.kicad_pcb",
+      "drawings": {
+        "top": {
+          "path": "hardware\\kicad\\draft\\x3-v2\\mechanical\\left_top_1to1.pdf",
+          "layer": "F.Fab",
+          "mirrored": false,
+          "size": 90562,
+          "sha256": "2d09979a17080feee0cd71b0d54ccf0856896096d276f55612f2e59162ab87c3"
+        },
+        "bottom": {
+          "path": "hardware\\kicad\\draft\\x3-v2\\mechanical\\left_bottom_1to1.pdf",
+          "layer": "B.Fab",
+          "mirrored": true,
+          "size": 103979,
+          "sha256": "94ab2f9626cb84bb814019ff18cd58d3ac018e0198fe1f566498bbf5b15da9cc"
+        }
+      }
+    },
+    "right": {
+      "board": "hardware\\kicad\\draft\\x3-v2\\kc2_right-x3-v2\\kc2_right-x3-v2.kicad_pcb",
+      "drawings": {
+        "top": {
+          "path": "hardware\\kicad\\draft\\x3-v2\\mechanical\\right_top_1to1.pdf",
+          "layer": "F.Fab",
+          "mirrored": false,
+          "size": 114333,
+          "sha256": "920c2e8aa41a995c42c9da3943f7843949b28e3ccbafb081d5f2482fcda56be5"
+        },
+        "bottom": {
+          "path": "hardware\\kicad\\draft\\x3-v2\\mechanical\\right_bottom_1to1.pdf",
+          "layer": "B.Fab",
+          "mirrored": true,
+          "size": 134553,
+          "sha256": "d8855dcc89e97df86222231521eff92ee8d683a0dbf900f17244ca00c6470db5"
+        }
+      }
+    },
+    "coupon": {
+      "board": "hardware\\kicad\\draft\\x3-v2\\coupon\\kc2_x3_v2_switch_coupon.kicad_pcb",
+      "drawings": {
+        "top": {
+          "path": "hardware\\kicad\\draft\\x3-v2\\mechanical\\coupon_top_1to1.pdf",
+          "layer": "F.Fab",
+          "mirrored": false,
+          "size": 18398,
+          "sha256": "4722a5b021e1e0e2e7b35eb2bb39f2dc1f9eb1c6f6583cfe4accea1fb03232b8"
+        },
+        "bottom": {
+          "path": "hardware\\kicad\\draft\\x3-v2\\mechanical\\coupon_bottom_1to1.pdf",
+          "layer": "B.Fab",
+          "mirrored": true,
+          "size": 19854,
+          "sha256": "aa0c0843eb92fcfcc26faf23c07e29fb4327bc3482de2c862cf48aab3808014c"
+        }
+      }
+    }
+  }
+}

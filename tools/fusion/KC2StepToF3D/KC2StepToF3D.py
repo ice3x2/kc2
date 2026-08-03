@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import hashlib
 import os
 import traceback
 from pathlib import Path
@@ -42,8 +43,30 @@ def bounding_box_mm(bodies: list[adsk.fusion.BRepBody]) -> list[float]:
     ]
 
 
+def body_bounding_boxes_mm(bodies: list[adsk.fusion.BRepBody]) -> list[list[float]]:
+    return [
+        [
+            body.boundingBox.minPoint.x * 10.0,
+            body.boundingBox.minPoint.y * 10.0,
+            body.boundingBox.minPoint.z * 10.0,
+            body.boundingBox.maxPoint.x * 10.0,
+            body.boundingBox.maxPoint.y * 10.0,
+            body.boundingBox.maxPoint.z * 10.0,
+        ]
+        for body in bodies
+    ]
+
+
 def write_result(path: Path, result: dict) -> None:
     path.write_text(json.dumps(result, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+
+
+def sha256(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as stream:
+        for chunk in iter(lambda: stream.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
 
 
 def run(_context: str) -> None:
@@ -65,6 +88,7 @@ def run(_context: str) -> None:
             "left": case_dir / "kc2_left_lower_housing.step",
             "right": case_dir / "kc2_right_lower_housing.step",
         }
+        expected_body_counts = {"left": 1, "right": 2}
         for side, step_path in jobs.items():
             if not step_path.exists():
                 raise FileNotFoundError(step_path)
@@ -82,9 +106,15 @@ def run(_context: str) -> None:
                     raise RuntimeError(f"Imported document has no Fusion design: {step_path}")
                 root = design.rootComponent
                 bodies = component_bodies(root)
-                if len(bodies) != 1:
-                    raise RuntimeError(f"Expected one imported body for {side}, found {len(bodies)}")
-                bodies[0].name = f"KC2 {side.capitalize()} Lower Housing"
+                expected_body_count = expected_body_counts[side]
+                if len(bodies) != expected_body_count:
+                    raise RuntimeError(
+                        f"Expected {expected_body_count} imported bodies for {side}, "
+                        f"found {len(bodies)}"
+                    )
+                for index, body in enumerate(bodies, start=1):
+                    suffix = f" Part {index}" if expected_body_count > 1 else ""
+                    body.name = f"KC2 {side.capitalize()} Lower Housing{suffix}"
 
                 export_manager = design.exportManager
                 export_options = export_manager.createFusionArchiveExportOptions(str(f3d_path))
@@ -103,26 +133,32 @@ def run(_context: str) -> None:
                     if not archive_design:
                         raise RuntimeError(f"Re-imported archive has no Fusion design: {f3d_path}")
                     archive_bodies = component_bodies(archive_design.rootComponent)
-                    if len(archive_bodies) != 1:
+                    if len(archive_bodies) != expected_body_count:
                         raise RuntimeError(
-                            f"Expected one re-imported body for {side}, found {len(archive_bodies)}"
+                            f"Expected {expected_body_count} re-imported bodies for {side}, "
+                            f"found {len(archive_bodies)}"
                         )
                     archive_bounding_box = bounding_box_mm(archive_bodies)
-                    archive_body_name = archive_bodies[0].name
+                    archive_body_bounding_boxes = body_bounding_boxes_mm(archive_bodies)
+                    archive_body_names = [body.name for body in archive_bodies]
                 finally:
                     if archive_document:
                         archive_document.close(False)
 
                 result["outputs"][side] = {
                     "source_step": str(step_path.relative_to(repo_root)),
+                    "source_step_sha256": sha256(step_path),
                     "f3d": str(f3d_path.relative_to(repo_root)),
+                    "f3d_sha256": sha256(f3d_path),
                     "body_count": len(bodies),
                     "bounding_box_mm": bounding_box_mm(bodies),
+                    "body_bounding_boxes_mm": body_bounding_boxes_mm(bodies),
                     "export_ok": export_ok,
                     "archive_size_bytes": f3d_path.stat().st_size,
                     "archive_reimport_body_count": len(archive_bodies),
                     "archive_reimport_bounding_box_mm": archive_bounding_box,
-                    "archive_reimport_body_name": archive_body_name,
+                    "archive_reimport_body_bounding_boxes_mm": archive_body_bounding_boxes,
+                    "archive_reimport_body_names": archive_body_names,
                 }
             finally:
                 document.close(False)

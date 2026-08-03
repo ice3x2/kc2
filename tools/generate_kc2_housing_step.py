@@ -155,7 +155,116 @@ def name_ascii_stl(path: Path, solid_name: str) -> None:
     path.write_text("\n".join(lines) + "\n", encoding="ascii", newline="\n")
 
 
-def build_housing(cq: Any, shp: dict[str, Any], side_data: dict[str, Any], params: Any) -> tuple[Any, dict[str, Any]]:
+def model_bounds(model: Any) -> dict[str, list[float]]:
+    bbox = model.val().BoundingBox()
+    return {
+        "bounds_mm": [
+            float(bbox.xmin),
+            float(bbox.ymin),
+            float(bbox.zmin),
+            float(bbox.xmax),
+            float(bbox.ymax),
+            float(bbox.zmax),
+        ],
+        "size_mm": [float(bbox.xlen), float(bbox.ylen), float(bbox.zlen)],
+    }
+
+
+def right_split_parts(
+    cq: Any,
+    shp: dict[str, Any],
+    housing: Any,
+    outer: Any,
+    registration_holes: list[dict[str, Any]],
+    params: Any,
+) -> tuple[list[Any], dict[str, Any]]:
+    min_x, min_y, max_x, max_y = (float(value) for value in outer.bounds)
+    center_x = params.right_split_center_x_mm
+    amplitude = params.right_split_zigzag_amplitude_mm
+    pitch = params.right_split_zigzag_pitch_mm
+    setback = params.right_split_face_setback_mm
+    margin = max(10.0, pitch)
+    path_y_min = min_y - margin
+    path_y_max = max_y + margin
+    path_points = []
+    y = path_y_min
+    point_index = 0
+    while y < path_y_max:
+        x = center_x + (-amplitude if point_index % 2 == 0 else amplitude)
+        path_points.append((x, y))
+        y += pitch
+        point_index += 1
+    x = center_x + (-amplitude if point_index % 2 == 0 else amplitude)
+    path_points.append((x, path_y_max))
+
+    seam_line = shp["LineString"](path_points)
+    seam_band = seam_line.buffer(setback, cap_style="flat", join_style="mitre")
+    low_region = shp["Polygon"](
+        [(min_x - margin, path_y_min), *path_points, (min_x - margin, path_y_max)]
+    ).difference(seam_band)
+    high_region = shp["Polygon"](
+        [
+            path_points[0],
+            (max_x + margin, path_y_min),
+            (max_x + margin, path_y_max),
+            *reversed(path_points),
+        ]
+    ).difference(seam_band)
+
+    cutter_height = float(housing.val().BoundingBox().zmax) + 1.0
+    parts = []
+    for name, region in (("part_a", low_region), ("part_b", high_region)):
+        regions = polygon_parts(shp, region)
+        if len(regions) != 1:
+            raise RuntimeError(f"Right split {name} produced {len(regions)} cutter regions")
+        cutter = polygon_workplane(cq, regions[0]).extrude(cutter_height)
+        part = housing.intersect(cutter).clean()
+        solids = part.solids().vals()
+        if len(solids) != 1:
+            raise RuntimeError(f"Right split {name} produced {len(solids)} solids")
+        parts.append(part)
+
+    floor_bond_face_lengths = {
+        "part_a": float(
+            low_region.boundary.intersection(seam_band.boundary).intersection(outer).length
+        ),
+        "part_b": float(
+            high_region.boundary.intersection(seam_band.boundary).intersection(outer).length
+        ),
+    }
+    minimum_floor_bond_length = min(floor_bond_face_lengths.values())
+    straight_line = shp["LineString"]([(center_x, path_y_min), (center_x, path_y_max)])
+    straight_length = float(straight_line.intersection(outer).length)
+    minimum_post_clearance = min(
+        seam_line.distance(shp["Point"](float(hole["x"]), float(hole["y"])))
+        - params.support_post_diameter_mm / 2.0
+        - setback
+        for hole in registration_holes
+    )
+    split_metadata = {
+        "style": "post_avoiding_zigzag",
+        "part_count": 2,
+        "seam_center_x_mm": center_x,
+        "zigzag_amplitude_mm": amplitude,
+        "zigzag_pitch_mm": pitch,
+        "face_setback_mm": setback,
+        "assembled_gap_mm": 2.0 * setback,
+        "floor_bond_face_lengths_mm": floor_bond_face_lengths,
+        "minimum_floor_bond_length_mm": minimum_floor_bond_length,
+        "straight_floor_bond_length_mm": straight_length,
+        "minimum_floor_bond_length_ratio": minimum_floor_bond_length / straight_length,
+        "minimum_registration_post_clearance_mm": minimum_post_clearance,
+        "print_volume_limit_mm": params.print_volume_limit_mm,
+    }
+    return parts, split_metadata
+
+
+def build_housing(
+    cq: Any,
+    shp: dict[str, Any],
+    side_data: dict[str, Any],
+    params: Any,
+) -> tuple[Any, dict[str, Any], Any]:
     source_board = stl_generator.board_polygon(shp, side_data["edge_segments"])
     source_bounds = tuple(float(value) for value in source_board.bounds)
     board, reg_holes = reflected_board_geometry(shp, side_data)
@@ -343,7 +452,7 @@ def build_housing(cq: Any, shp: dict[str, Any], side_data: dict[str, Any], param
         "solid_count": len(housing.solids().vals()),
         "volume_mm3": housing.val().Volume(),
     }
-    return housing, metadata
+    return housing, metadata, outer
 
 
 def generate_outputs(output_dir: Path, kicad_python: Path) -> int:
@@ -371,7 +480,7 @@ def generate_outputs(output_dir: Path, kicad_python: Path) -> int:
         "requirement": "CON-ARCH-003",
         "parameters": stl_generator.params_to_dict(params),
         "assumptions": [
-            "FDM PLA+ lower housing using a hollow one-piece rail-capture tray shell.",
+            "FDM PLA+ lower housing using a hollow rail-capture tray shell.",
             "The housing is flat with a uniform 3.80 mm PCB support height and no front-to-rear slope.",
             "A 2.60 mm cavity below the PCB covers the 2.20 mm Kailh CPG135001S30 socket envelope plus 0.40 mm assembly and FDM tolerance.",
             "The interior wall is relieved around extracted bottom-socket envelopes with at least 0.30 mm lateral clearance.",
@@ -379,41 +488,103 @@ def generate_outputs(output_dir: Path, kicad_python: Path) -> int:
             "Each registration post has a centered 1.60 mm blind pilot bore for optional M2 self-tapping retention.",
             "Pilot bores terminate at the flat 1.20 mm floor top and do not penetrate the exterior bottom.",
             "The corrected physical left/right orientation is X-reflected from the raw PCB projection.",
+            "Every printable STL fits a 150 mm cube build envelope.",
+            "The right housing is split into two single-solid STLs by a post-avoiding zigzag seam.",
+            "Each right mating face is recessed 0.20 mm for a 0.40 mm nominal assembled gap.",
         ],
         "outputs": {},
     }
 
     for side in ("left", "right"):
-        housing, metadata = build_housing(cq, shp, geometry["boards"][side], params)
+        housing, metadata, outer = build_housing(
+            cq,
+            shp,
+            geometry["boards"][side],
+            params,
+        )
         path = output_dir / f"kc2_{side}_lower_housing.step"
-        stl_path = output_dir / f"kc2_{side}_lower_housing.stl"
+        export_model = housing
+        stl_parts = []
+        if side == "right":
+            split_parts, split_metadata = right_split_parts(
+                cq,
+                shp,
+                housing,
+                outer,
+                metadata["registration_holes"],
+                params,
+            )
+            compound = cq.Compound.makeCompound([part.val() for part in split_parts])
+            export_model = cq.Workplane(obj=compound)
+            metadata = {
+                **metadata,
+                "solid_count": len(split_parts),
+                "volume_mm3": sum(part.val().Volume() for part in split_parts),
+                "split": split_metadata,
+            }
+            for index, part in enumerate(split_parts):
+                part_name = f"part_{chr(ord('a') + index)}"
+                stl_path = output_dir / f"kc2_right_lower_housing_{part_name}.stl"
+                cq.exporters.export(
+                    part,
+                    str(stl_path),
+                    exportType="STL",
+                    tolerance=0.02,
+                    angularTolerance=0.05,
+                    opt={"ascii": True},
+                )
+                name_ascii_stl(stl_path, f"kc2_right_lower_housing_{part_name}")
+                stl_parts.append(
+                    {
+                        "name": part_name,
+                        "stl": str(stl_path.relative_to(ROOT)),
+                        "solid_count": 1,
+                        "volume_mm3": float(part.val().Volume()),
+                        **model_bounds(part),
+                    }
+                )
+            stale_stl_path = output_dir / "kc2_right_lower_housing.stl"
+            if stale_stl_path.exists():
+                stale_stl_path.unlink()
+        else:
+            stl_path = output_dir / "kc2_left_lower_housing.stl"
+            cq.exporters.export(
+                housing,
+                str(stl_path),
+                exportType="STL",
+                tolerance=0.02,
+                angularTolerance=0.05,
+                opt={"ascii": True},
+            )
+            name_ascii_stl(stl_path, "kc2_left_lower_housing")
         cq.exporters.export(
-            housing,
+            export_model,
             str(path),
             exportType="STEP",
             tolerance=0.001,
             angularTolerance=0.1,
             unit="MM",
         )
-        cq.exporters.export(
-            housing,
-            str(stl_path),
-            exportType="STL",
-            tolerance=0.02,
-            angularTolerance=0.05,
-            opt={"ascii": True},
-        )
-        name_ascii_stl(stl_path, f"kc2_{side}_lower_housing")
         manifest["outputs"][side] = {
             "step": str(path.relative_to(ROOT)),
             **metadata,
         }
-        stl_manifest["outputs"][side] = {
-            "stl": str(stl_path.relative_to(ROOT)),
-            **metadata,
-        }
+        if side == "right":
+            stl_manifest["outputs"][side] = {
+                "stl_parts": stl_parts,
+                **metadata,
+            }
+        else:
+            stl_manifest["outputs"][side] = {
+                "stl": str(stl_path.relative_to(ROOT)),
+                **metadata,
+            }
         print(f"{side}: wrote {path.relative_to(ROOT)} solids={metadata['solid_count']} volume={metadata['volume_mm3']:.3f} mm3")
-        print(f"{side}: wrote {stl_path.relative_to(ROOT)} from the same BRep solid")
+        if side == "right":
+            for part in stl_parts:
+                print(f"{side}: wrote {part['stl']} as one printable BRep solid")
+        else:
+            print(f"{side}: wrote {stl_path.relative_to(ROOT)} from the same BRep solid")
 
     manifest_path = output_dir / CAD_MANIFEST_NAME
     manifest_path.write_text(json.dumps(manifest, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")

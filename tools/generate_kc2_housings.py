@@ -21,7 +21,7 @@ HOTSWAP_SOCKET_FOOTPRINT = "SW_Kailh_Choc_V1_HotSwap_THT"
 
 @dataclass(frozen=True)
 class HousingParams:
-    design_style: str = "hollow_one_piece_tray"
+    design_style: str = "hollow_rail_capture_tray"
     # The housing stays slightly inside the PCB outline so the joined inner
     # edges cannot be blocked by printed plastic swelling.
     outline_inset_mm: float = 0.10
@@ -43,6 +43,11 @@ class HousingParams:
     bottom_corner_radius_mm: float = 0.80
     bottom_edge_radius_mm: float = 0.00
     rear_height_ratio: float = 1.00
+    print_volume_limit_mm: float = 150.0
+    right_split_center_x_mm: float = 112.0
+    right_split_zigzag_amplitude_mm: float = 5.0
+    right_split_zigzag_pitch_mm: float = 8.0
+    right_split_face_setback_mm: float = 0.20
     cylinder_segments: int = 32
 
     @property
@@ -698,6 +703,11 @@ def params_to_dict(params: HousingParams) -> dict[str, Any]:
         "rear_height_mm": params.rear_height_mm,
         "rear_height_ratio": params.rear_height_ratio,
         "rear_rise_mm": params.rear_rise_mm,
+        "print_volume_limit_mm": params.print_volume_limit_mm,
+        "right_split_center_x_mm": params.right_split_center_x_mm,
+        "right_split_zigzag_amplitude_mm": params.right_split_zigzag_amplitude_mm,
+        "right_split_zigzag_pitch_mm": params.right_split_zigzag_pitch_mm,
+        "right_split_face_setback_mm": params.right_split_face_setback_mm,
     }
 
 
