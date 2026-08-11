@@ -41,7 +41,7 @@ DEFAULT_BINDINGS = [
     "&kp CAPS", "&kp A", "&kp S", "&kp D", "&kp F", "&kp G",
     "&kp H", "&kp J", "&kp K", "&kp L", "&kp SEMI", "&kp SQT", "&kp RET", "&kp RET", "&kp PG_UP",
     "&kp LSHFT", "&kp LSHFT", "&kp Z", "&kp X", "&kp C", "&kp V", "&kp B",
-    "&kp N", "&kp M", "&kp COMMA", "&kp DOT", "&kp FSLH", "&kp RSHFT", "&mo 1", "&kp UP", "&kp PG_DN",
+    "&kp N", "&kp M", "&kp COMMA", "&kp DOT", "&kp FSLH", "&kp RSHFT", "&kp RSHFT", "&kp RSHFT", "&kp PG_DN",
     "&kp LCTRL", "&kp LGUI", "&kp LALT", "&mo 1", "&kp SPACE", "&kp SPACE",
     "&kp B", "&kp SPACE", "&kp SPACE", "&kp RALT", "&mo 1", "&kp RCTRL", "&kp LEFT", "&kp DOWN", "&kp RIGHT",
 ]
@@ -75,6 +75,7 @@ EXPECTED_LAYERS = {
     "fn_layer2": FN2_BINDINGS,
 }
 SOFT_OFF_SWITCHES = {"left": 31, "right": 9}
+RIGHT_DEFAULT_SWITCH_BINDINGS = {34: "&kp RSHFT", 35: "&kp RSHFT"}
 
 
 def parse_bindings(source: str) -> list[str]:
@@ -318,6 +319,17 @@ def verify(kicad_python: Path) -> list[str]:
                 errors.append(f"{side} D{switch_number} is not the LED-confirmed power-off behavior on Fn2")
             if side == "right" and actual_layers.get("default_layer", [])[soft_off_index:soft_off_index + 1] != ["&kp DEL"]:
                 errors.append("right D9 is not the default-layer Delete position")
+            if side == "right":
+                default_bindings = actual_layers.get("default_layer", [])
+                for switch_number, expected_binding in RIGHT_DEFAULT_SWITCH_BINDINGS.items():
+                    binding_index = transform_index_for_switch(
+                        transform, board_positions, side, switch_number
+                    )
+                    actual_binding = default_bindings[binding_index : binding_index + 1]
+                    if actual_binding != [expected_binding]:
+                        errors.append(
+                            f"right D{switch_number} default binding is not {expected_binding}"
+                        )
         except (OSError, RuntimeError, ValueError, FileNotFoundError) as error:
             errors.append(f"Cannot verify {side} matrix: {error}")
     return errors

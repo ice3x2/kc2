@@ -98,5 +98,13 @@ class SoftOffTests(unittest.TestCase):
         self.assertFalse(verifier.has_status_led_implementation(source))
 
 
+class PhysicalKeyCorrectionTests(unittest.TestCase):
+    def test_requires_right_d34_and_d35_as_right_shift(self) -> None:
+        self.assertEqual(
+            verifier.RIGHT_DEFAULT_SWITCH_BINDINGS,
+            {34: "&kp RSHFT", 35: "&kp RSHFT"},
+        )
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)
