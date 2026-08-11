@@ -16,7 +16,8 @@ from typing import Iterable
 
 
 ROOT = Path(__file__).resolve().parents[1]
-SHIELD_DIR = ROOT / "firmware" / "kc2_zmk" / "boards" / "shields" / "kc2"
+MODULE_DIR = ROOT / "firmware" / "kc2_zmk"
+SHIELD_DIR = MODULE_DIR / "boards" / "shields" / "kc2"
 BOARD_PATHS = {
     "left": ROOT / "hardware" / "kicad" / "kc2_left" / "kc2_left.kicad_pcb",
     "right": ROOT / "hardware" / "kicad" / "kc2_right" / "kc2_right.kicad_pcb",
@@ -58,14 +59,14 @@ FN_BINDINGS = [
 ]
 FN2_BINDINGS = [
     "&out OUT_TOG", "&bt BT_SEL 0", "&bt BT_SEL 1", "&bt BT_SEL 2", "&bt BT_SEL 3", "&bt BT_SEL 4", "&trans",
-    *(["&trans"] * 9),
+    *(["&trans"] * 8), "&kc2_power",
     "&out OUT_USB", "&out OUT_BLE", "&trans", "&trans", "&trans", "&trans",
     *(["&trans"] * 9),
     *(["&trans"] * 6),
     *(["&trans"] * 9),
     "&bt BT_CLR", "&trans", "&trans", "&trans", "&trans", "&trans", "&trans",
     *(["&trans"] * 9),
-    *(["&trans"] * 6),
+    *(["&trans"] * 4), "&kc2_power", "&trans",
     *(["&trans"] * 9),
 ]
 EXPECTED_LAYERS = {
@@ -73,6 +74,7 @@ EXPECTED_LAYERS = {
     "fn_layer": FN_BINDINGS,
     "fn_layer2": FN2_BINDINGS,
 }
+SOFT_OFF_SWITCHES = {"left": 31, "right": 9}
 
 
 def parse_bindings(source: str) -> list[str]:
@@ -103,6 +105,47 @@ def parse_gpio_list(source: str, property_name: str) -> list[tuple[int, int]]:
     if match is None:
         raise ValueError(f"Missing {property_name} property")
     return [(int(port), int(pin)) for port, pin in re.findall(r"<&gpio(\d+)\s+(\d+)", match.group(1))]
+
+
+def has_matrix_soft_off_waker(source: str) -> bool:
+    """Return whether an overlay registers kscan0 as a soft-off wake source."""
+    match = re.search(
+        r"\bsoft_off_wakers\s*:\s*soft_off_wakers\s*\{(.*?)\};",
+        source,
+        re.DOTALL,
+    )
+    if match is None:
+        return False
+    node = match.group(1)
+    return (
+        re.search(r'compatible\s*=\s*"zmk,soft-off-wakeup-sources"\s*;', node) is not None
+        and re.search(r"wakeup-sources\s*=\s*<&kscan0>\s*;", node) is not None
+    )
+
+
+def has_soft_off_config(source: str) -> bool:
+    """Return whether the shield enables ZMK soft-off for both halves."""
+    return re.search(
+        r"config\s+ZMK_PM_SOFT_OFF\s+default\s+y",
+        source,
+        re.DOTALL,
+    ) is not None
+
+
+def has_status_led_implementation(source: str) -> bool:
+    """Return whether the KC2 status LED source covers power and pairing feedback."""
+    required_tokens = (
+        "GPIO_DT_SPEC_GET(DT_NODELABEL(blue_led), gpios)",
+        "KC2_POWER_FLASH_MS 150",
+        "KC2_PAIRING_BLINK_MS 100",
+        "zmk_pm_soft_off()",
+        "zmk_ble_active_profile_is_open()",
+        "zmk_ble_active_profile_is_connected()",
+        "CONFIG_ZMK_SPLIT_ROLE_CENTRAL",
+        "BEHAVIOR_LOCALITY_GLOBAL",
+        "ZMK_SUBSCRIPTION(kc2_status_led, zmk_ble_active_profile_changed)",
+    )
+    return all(token in source for token in required_tokens)
 
 
 def kicad_python_path(requested: str | None) -> Path:
@@ -187,8 +230,21 @@ def expected_transform_positions(transform: Iterable[tuple[int, int]], side: str
     return [(row, col - 7) for row, col in transform if col >= 7]
 
 
+def transform_index_for_switch(
+    transform: list[tuple[int, int]],
+    board_positions: list[tuple[int, int]],
+    side: str,
+    switch_number: int,
+) -> int:
+    """Return the global keymap index for a side-local numbered switch."""
+    row, col = board_positions[switch_number - 1]
+    global_position = (row, col if side == "left" else col + 7)
+    return transform.index(global_position)
+
+
 def verify(kicad_python: Path) -> list[str]:
     errors: list[str] = []
+    actual_layers: dict[str, list[str]] = {}
     dtsi_path = SHIELD_DIR / "kc2.dtsi"
     keymap_path = SHIELD_DIR / "kc2.keymap"
     try:
@@ -199,9 +255,40 @@ def verify(kicad_python: Path) -> list[str]:
         errors.append(f"Matrix transform contains {len(transform)} positions, expected 77")
 
     try:
+        kconfig_source = (SHIELD_DIR / "Kconfig.defconfig").read_text(encoding="utf-8")
+        if not has_soft_off_config(kconfig_source):
+            errors.append("shield Kconfig does not enable ZMK_PM_SOFT_OFF")
+    except OSError as error:
+        errors.append(f"Cannot read shield Kconfig: {error}")
+
+    try:
+        status_led_source = (SHIELD_DIR / "src" / "kc2_status_led.c").read_text(encoding="utf-8")
+        if not has_status_led_implementation(status_led_source):
+            errors.append("KC2 status LED source does not cover power-off and Bluetooth registration feedback")
+    except OSError as error:
+        errors.append(f"Cannot read KC2 status LED source: {error}")
+
+    try:
+        shield_cmake = (SHIELD_DIR / "CMakeLists.txt").read_text(encoding="utf-8")
+        if "src/kc2_status_led.c" not in shield_cmake:
+            errors.append("shield CMake does not compile kc2_status_led.c")
+        module_manifest = (MODULE_DIR / "zephyr" / "module.yml").read_text(encoding="utf-8")
+        if "dts_root: ." not in module_manifest:
+            errors.append("KC2 module manifest does not expose its devicetree bindings")
+        binding_source = (MODULE_DIR / "dts" / "bindings" / "behaviors" / "kc2,behavior-power-off.yaml").read_text(encoding="utf-8")
+        if 'compatible: "kc2,behavior-power-off"' not in binding_source:
+            errors.append("KC2 power-off behavior binding has the wrong compatible")
+        vendor_prefixes = (MODULE_DIR / "dts" / "bindings" / "vendor-prefixes.txt").read_text(encoding="utf-8")
+        if re.search(r"^kc2\tKC2 Project$", vendor_prefixes, re.MULTILINE) is None:
+            errors.append("KC2 devicetree vendor prefix is not registered")
+    except OSError as error:
+        errors.append(f"Cannot read KC2 status LED build metadata: {error}")
+
+    try:
         keymap_source = keymap_path.read_text(encoding="utf-8")
         for layer_name, expected in EXPECTED_LAYERS.items():
             actual = parse_layer_bindings(keymap_source, layer_name)
+            actual_layers[layer_name] = actual
             if actual != expected:
                 errors.append(f"{layer_name} bindings do not match the KC2 X3 behavior model")
             if len(actual) != 77:
@@ -219,10 +306,18 @@ def verify(kicad_python: Path) -> list[str]:
             }
             if actual_pins != EXPECTED_PINS[side]:
                 errors.append(f"{side} overlay GPIO matrix does not match the KC2 board pin assignment")
+            if not has_matrix_soft_off_waker(overlay):
+                errors.append(f"{side} overlay does not register kscan0 as a soft-off wake source")
             board_positions = extract_board_positions(BOARD_PATHS[side], kicad_python, side)
             transform_positions = expected_transform_positions(transform, side)
             if transform_positions != board_positions:
                 errors.append(f"{side} matrix-transform order does not match KiCad switch row/column order")
+            switch_number = SOFT_OFF_SWITCHES[side]
+            soft_off_index = transform_index_for_switch(transform, board_positions, side, switch_number)
+            if actual_layers.get("fn_layer2", [])[soft_off_index:soft_off_index + 1] != ["&kc2_power"]:
+                errors.append(f"{side} D{switch_number} is not the LED-confirmed power-off behavior on Fn2")
+            if side == "right" and actual_layers.get("default_layer", [])[soft_off_index:soft_off_index + 1] != ["&kp DEL"]:
+                errors.append("right D9 is not the default-layer Delete position")
         except (OSError, RuntimeError, ValueError, FileNotFoundError) as error:
             errors.append(f"Cannot verify {side} matrix: {error}")
     return errors

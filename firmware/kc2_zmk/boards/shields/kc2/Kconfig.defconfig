@@ -13,4 +13,7 @@ if SHIELD_KC2_LEFT || SHIELD_KC2_RIGHT
 config ZMK_SPLIT
     default y
 
+config ZMK_PM_SOFT_OFF
+    default y
+
 endif

@@ -1,0 +1,3 @@
+# KC2 module devicetree vendor prefix registry.
+
+kc2	KC2 Project
