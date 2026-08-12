@@ -93,24 +93,36 @@ install_zephyr_sdk() {
     test -x "$SDK_DIR/arm-zephyr-eabi/bin/arm-zephyr-eabi-gcc"
 }
 
-build_firmware() {
+# Shared workspace paths, resolved by bootstrap_workspace for every mode.
+KC2_REPO_ROOT=""
+MODULE_DIR=""
+BUILD_DIR=""
+OUTPUT_DIR=""
+CACHE_BASE=""
+ZMK_DIR=""
+SDK_DIR=""
+BOOTSTRAP_MARKER=""
+
+# Prepare the pinned ZMK workspace, Zephyr modules, Python tools, and SDK.
+# Downloads happen only once; a completed cache is reused as-is.
+bootstrap_workspace() {
     if [ "$#" -ne 1 ]; then
-        echo "Usage: $0 --build WSL_REPOSITORY_PATH" >&2
+        echo "Usage: $0 --setup|--build WSL_REPOSITORY_PATH" >&2
         return 2
     fi
 
-    local KC2_REPO_ROOT=$1
-    local MODULE_DIR="$KC2_REPO_ROOT/firmware/kc2_zmk"
-    local BUILD_DIR="$KC2_REPO_ROOT/firmware/build"
-    local OUTPUT_DIR="$KC2_REPO_ROOT/firmware/out"
-    local CACHE_BASE="${XDG_CACHE_HOME:-$HOME/.cache}"
-    local ZMK_DIR="$CACHE_BASE/kc2-zmk"
-    local SDK_DIR="$HOME/zephyr-sdk-$ZEPHYR_SDK_VERSION"
-    local BOOTSTRAP_MARKER="$ZMK_DIR/.kc2-bootstrap-$ZMK_REVISION-sdk-$ZEPHYR_SDK_VERSION-complete"
+    KC2_REPO_ROOT=$1
+    MODULE_DIR="$KC2_REPO_ROOT/firmware/kc2_zmk"
+    BUILD_DIR="$KC2_REPO_ROOT/firmware/build"
+    OUTPUT_DIR="$KC2_REPO_ROOT/firmware/out"
+    CACHE_BASE="${XDG_CACHE_HOME:-$HOME/.cache}"
+    ZMK_DIR="$CACHE_BASE/kc2-zmk"
+    SDK_DIR="$HOME/zephyr-sdk-$ZEPHYR_SDK_VERSION"
+    BOOTSTRAP_MARKER="$ZMK_DIR/.kc2-bootstrap-$ZMK_REVISION-sdk-$ZEPHYR_SDK_VERSION-complete"
     local actual_commit
 
     test -f "$MODULE_DIR/zephyr/module.yml"
-    mkdir -p "$BUILD_DIR" "$OUTPUT_DIR" "$CACHE_BASE"
+    mkdir -p "$CACHE_BASE"
 
     if [ ! -d "$ZMK_DIR/.git" ]; then
         echo "Downloading pinned ZMK $ZMK_REVISION once into $ZMK_DIR"
@@ -153,6 +165,18 @@ build_firmware() {
     fi
 
     export ZEPHYR_SDK_INSTALL_DIR="$SDK_DIR"
+}
+
+setup_workspace() {
+    bootstrap_workspace "$@"
+    echo "Zephyr workspace ready: $ZMK_DIR"
+    echo "Zephyr SDK ready: $SDK_DIR"
+}
+
+build_firmware() {
+    bootstrap_workspace "$@"
+    mkdir -p "$BUILD_DIR" "$OUTPUT_DIR"
+
     cd "$ZMK_DIR/app"
     echo "Building kc2_left"
     west build -d "$BUILD_DIR/left" -p always -b nice_nano_v2 -- -DSHIELD=kc2_left -DZMK_EXTRA_MODULES="$MODULE_DIR"
@@ -175,12 +199,16 @@ case "${1:-}" in
     --install-dependencies)
         install_dependencies
         ;;
+    --setup)
+        shift
+        setup_workspace "$@"
+        ;;
     --build)
         shift
         build_firmware "$@"
         ;;
     *)
-        echo "Usage: $0 --install-dependencies | --build WSL_REPOSITORY_PATH" >&2
+        echo "Usage: $0 --install-dependencies | --setup REPOSITORY_PATH | --build REPOSITORY_PATH" >&2
         exit 2
         ;;
 esac
