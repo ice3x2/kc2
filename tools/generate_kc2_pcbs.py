@@ -10,6 +10,11 @@ from pathlib import Path
 
 import pcbnew
 
+from tools.inset_specctra_boundary import (
+    DEFAULT_INSET_MM as X3_V2_AUTOROUTE_BOUNDARY_INSET_MM,
+    DEFAULT_PRESERVE_CONTROLLER_ABOVE_MM as X3_V2_AUTOROUTE_PRESERVE_CONTROLLER_ABOVE_MM,
+)
+
 
 ROOT = Path(__file__).resolve().parents[1]
 KICAD_ROOT = ROOT / "hardware" / "kicad"
@@ -72,6 +77,8 @@ X3_GENERAL_MARGIN = 4.0
 INNER_MARGIN = 2.8
 X3_INNER_MARGIN_EXTRA = 0.8
 X3_RIGHT_YH_HORIZONTAL_LEDGE_RELIEF = 0.8
+X3_V2_JOIN_MANUFACTURING_SETBACK = 0.8
+X3_V2_OUTLINE_POLICY = "keycap_concealed_except_controller_service"
 EDGE_WIDTH = 0.10
 TRACK_WIDTH = 0.25
 POWER_TRACK_WIDTH = 0.75
@@ -82,7 +89,9 @@ X2_DIODE_Y_OFFSET = -7.6
 
 CONTROLLER_LEN = 33.8
 CONTROLLER_W = 18.3
-SOCKET_ROW_SPACING = 17.78
+# Pro Micro / nice!nano physical socket-row center spacing is 0.600 inch.
+# 17.78 mm is the nominal controller board width and must not be used here.
+SOCKET_ROW_SPACING = 15.24
 PIN_PITCH = 2.54
 PIN_COUNT = 12
 PIN_SPAN = PIN_PITCH * (PIN_COUNT - 1)
@@ -143,6 +152,25 @@ def variant_switch_footprint(variant: str) -> str:
     if variant == "soldered":
         return SOLDERED_SWITCH_FP
     raise ValueError(f"Unknown variant: {variant}")
+
+
+def variant_outline_margins(variant: str) -> dict[str, float]:
+    if variant == "x3-v2":
+        keycap_inset = -0.5
+        return {
+            "outer_mm": keycap_inset,
+            "top_mm": keycap_inset,
+            "bottom_mm": keycap_inset,
+            "inner_mm": keycap_inset - X3_V2_JOIN_MANUFACTURING_SETBACK,
+        }
+    margin = X3_GENERAL_MARGIN if variant == "x3" else GENERAL_MARGIN
+    inner = INNER_MARGIN + (X3_INNER_MARGIN_EXTRA if variant == "x3" else 0.0)
+    return {
+        "outer_mm": margin,
+        "top_mm": margin,
+        "bottom_mm": margin,
+        "inner_mm": inner,
+    }
 
 
 @dataclass(frozen=True)
@@ -437,7 +465,7 @@ def add_product_identity_text(
         f"KC2 {'X3 V2' if variant == 'x3-v2' else 'v1.0'} {side[0].upper()}",
         (min_x + max_x) / 2.0,
         max_y - 4.25,
-        pcbnew.B_SilkS,
+        pcbnew.B_Fab if variant == "x3-v2" else pcbnew.B_SilkS,
         1.4,
         0.16,
         mirrored=True,
@@ -533,6 +561,23 @@ def make_left_keys_no_stab() -> list[Key]:
     return keys
 
 
+def make_left_keys_x3_v2() -> list[Key]:
+    rows = [
+        [("~", 1.0), ("1", 1.0), ("2", 1.0), ("3", 1.0), ("4", 1.0), ("5", 1.0), ("6", 1.0)],
+        [("TAB", 1.5), ("Q", 1.0), ("W", 1.0), ("E", 1.0), ("R", 1.0), ("T", 1.0)],
+        [("Caps", 1.75), ("A", 1.0), ("S", 1.0), ("D", 1.0), ("F", 1.0), ("G", 1.0)],
+        [("LShift", 1.25), ("LShift", 1.0), ("Z", 1.0), ("X", 1.0), ("C", 1.0), ("V", 1.0), ("B", 1.0)],
+        [("Ctrl", 1.25), ("Win", 1.25), ("Alt", 1.25), ("Fn", 1.0), ("Space", 1.25), ("Space", 1.25)],
+    ]
+    keys: list[Key] = []
+    for row_idx, row in enumerate(rows):
+        x = 0.0
+        for col_idx, (label, width) in enumerate(row):
+            keys.append(Key(label, row_idx, col_idx, x, float(row_idx), width))
+            x += width
+    return keys
+
+
 def make_right_keys() -> list[Key]:
     rows = [
         (0.50, [("7", 1.0), ("8", 1.0), ("9", 1.0), ("0", 1.0), ("-", 1.0), ("=", 1.0), ("BSPC", 2.25), ("DEL", 1.0)]),
@@ -567,6 +612,23 @@ def make_right_keys_no_stab() -> list[Key]:
     return keys
 
 
+def make_right_keys_x3_v2() -> list[Key]:
+    rows = [
+        (0.50, [("7", 1.0), ("8", 1.0), ("9", 1.0), ("0", 1.0), ("-", 1.0), ("=", 1.0), ("BSPC", 1.25), ("Del", 1.0)]),
+        (0.00, [("Y", 1.0), ("U", 1.0), ("I", 1.0), ("O", 1.0), ("P", 1.0), ("[", 1.0), ("]", 1.0), ("\\", 1.75)]),
+        (0.25, [("H", 1.0), ("J", 1.0), ("K", 1.0), ("L", 1.0), (";", 1.0), ("'", 1.0), ("Enter", 1.5), ("Enter", 1.0)]),
+        (0.75, [("N", 1.0), ("M", 1.0), (",", 1.0), (".", 1.0), ("/", 1.0), ("RShift", 1.0), ("Up", 1.0), ("Fn", 1.0)]),
+        (0.75, [("B", 1.0), ("Space", 1.75), ("RAlt", 1.25), ("RCtrl", 1.0), ("Left", 1.0), ("Down", 1.0), ("Right", 1.0)]),
+    ]
+    keys: list[Key] = []
+    for row_idx, (x0, row) in enumerate(rows):
+        x = x0
+        for col_idx, (label, width) in enumerate(row):
+            keys.append(Key(label, row_idx, col_idx, x, float(row_idx), width))
+            x += width
+    return keys
+
+
 def row_extents(keys: list[Key]) -> dict[int, tuple[float, float, float, float]]:
     out: dict[int, tuple[float, float, float, float]] = {}
     for row in sorted({k.row for k in keys}):
@@ -578,6 +640,33 @@ def row_extents(keys: list[Key]) -> dict[int, tuple[float, float, float, float]]
             max(r[3] for r in rects),
         )
     return out
+
+
+def switch_rotation_for_key(key: Key, keys: list[Key], variant: str) -> float:
+    """Turn V2's asymmetric Choc socket pad away from each left board edge."""
+    if variant != "x3-v2":
+        return 0.0
+    row_left = min(candidate.cx for candidate in keys if candidate.row == key.row)
+    return 180.0 if abs(key.cx - row_left) < 0.001 else 0.0
+
+
+def diode_placement_for_key(
+    key: Key,
+    keys: list[Key],
+    variant: str,
+    default_y_offset: float = DEFAULT_DIODE_Y_OFFSET,
+) -> tuple[float, float, float]:
+    """Return a diode offset/rotation with an open hand-solder approach.
+
+    V2 puts the diode in the corner opposite the bottom-side Choc socket body.
+    This also moves both enlarged SOD-123 pads away from the hybrid footprint's
+    unused NPTH features and MX solder pins.
+    """
+    if variant != "x3-v2":
+        return 0.0, default_y_offset, 0.0
+    if switch_rotation_for_key(key, keys, variant) == 180.0:
+        return 7.0, 7.0, 0.0
+    return -7.0, -7.0, 0.0
 
 
 def controller_tab_spans(side: str, variant: str) -> tuple[float, float]:
@@ -649,7 +738,11 @@ def raw_outline(
     pts.append((rights[r0], top_y))
 
     for r in rows:
-        y_bottom = ext[r][3]
+        # A negative bezel margin intentionally moves the perimeter under the
+        # keycap.  Clamp the first/last row transitions to that inset instead
+        # of walking out to the switch-cell boundary and then reversing back;
+        # the latter creates a self-intersecting Edge.Cuts contour.
+        y_bottom = min(ext[r][3], bottom_y)
         pts.append((rights[r], y_bottom))
         nxt = r + 1
         if nxt in rights:
@@ -658,7 +751,7 @@ def raw_outline(
     pts.append((lefts[rows[-1]], bottom_y))
 
     for r in reversed(rows):
-        y_top = ext[r][1]
+        y_top = max(ext[r][1], top_y)
         pts.append((lefts[r], y_top))
         prv = r - 1
         if prv in lefts:
@@ -1122,10 +1215,12 @@ def make_board(
     top_margin_extra = 0.0
     if variant in {"x1", "x2"} and side == "right":
         top_margin_extra = 0.3
-    elif is_x3_family(variant):
+    elif variant == "x3":
         top_margin_extra = 2.5 if side == "right" else 2.0
-    inner_margin_extra = X3_INNER_MARGIN_EXTRA if is_x3_family(variant) else 0.0
-    general_margin = X3_GENERAL_MARGIN if is_x3_family(variant) else GENERAL_MARGIN
+    outline_margins = variant_outline_margins(variant)
+    inner_margin_extra = outline_margins["inner_mm"] - INNER_MARGIN
+    general_margin = outline_margins["outer_mm"]
+    top_margin_extra += outline_margins["top_mm"] - general_margin
     outline = raw_outline(
         keys,
         side,
@@ -1136,7 +1231,7 @@ def make_board(
         general_margin=general_margin,
     )
     rounded = rounded_polygon(outline, radius=2.0, steps=5)
-    if is_x3_family(variant) and side == "right":
+    if variant == "x3" and side == "right":
         rounded = x3_right_horizontal_ledge_relief(rounded, keys, radius=2.0)
     min_x = min(x for x, _ in rounded)
     min_y = min(y for _, y in rounded)
@@ -1156,7 +1251,7 @@ def make_board(
     title = board.GetTitleBlock()
     variant_title = "" if variant == "soldered" else f" {variant.upper()}"
     title.SetTitle(f"KC2 {side.capitalize()}{variant_title} PCB Draft")
-    title.SetDate("2026-08-03" if variant == "x3-v2" else "2026-06-04")
+    title.SetDate("2026-08-20" if variant == "x3-v2" else "2026-06-04")
     title.SetRevision("draft-v2" if variant == "x3-v2" else "draft-1")
     add_polyline(board, shifted_outline, pcbnew.Edge_Cuts, EDGE_WIDTH, closed=True)
 
@@ -1268,7 +1363,10 @@ def make_board(
     tact_y = ctrl_cy + CONTROLLER_W / 2.0 + 4.0
     tact = load_footprint(board, TACT_LIB, TACT_FP, "SW_RST1", "NW3-A06-B3 RST", tact_x, tact_y, 0)
 
-    registration_points = x3_registration_points(side, shifted_keys) if is_x3_family(variant) else []
+    # V2 removes the old key-field H1-H9 through-holes.  The revised lower
+    # housing captures the perimeter and supports the PCB from below, so a
+    # driver never has to fit between populated switches.
+    registration_points = x3_registration_points(side, shifted_keys) if variant == "x3" else []
     global ACTIVE_TRACE_KEEP_OUTS
     previous_trace_keep_outs = ACTIVE_TRACE_KEEP_OUTS
     ACTIVE_TRACE_KEEP_OUTS = registration_points + battery_lead_slot_points
@@ -1298,14 +1396,40 @@ def make_board(
         row_net = add_net(board, nets, row_net_name)
         local_net = add_net(board, nets, local_net_name)
 
-        sw = load_footprint(board, switch_lib, switch_fp, f"SW{idx}", f"KEY_{idx:02d}", key.cx, key.cy)
+        sw = load_footprint(
+            board,
+            switch_lib,
+            switch_fp,
+            f"SW{idx}",
+            f"KEY_{idx:02d}",
+            key.cx,
+            key.cy,
+            switch_rotation_for_key(key, shifted_keys, variant),
+        )
         convert_empty_switch_pads_to_npth(sw)
         set_pad_net(sw, "1", col_net)
         set_pad_net(sw, "2", local_net)
         switch_refs[key.label + str(idx)] = sw
-        add_board_text(board, key.label, key.cx - 3.0, key.cy - 9.2, pcbnew.F_SilkS, 0.9)
+        key_label_layer = pcbnew.F_Fab if variant == "x3-v2" else pcbnew.F_SilkS
+        add_board_text(board, key.label, key.cx - 3.0, key.cy - 9.2, key_label_layer, 0.9)
 
-        dio = load_footprint(board, diode_lib, diode_fp, f"D{idx}", diode_value, key.cx, key.cy + diode_y_offset, bottom=True)
+        diode_dx, diode_dy, diode_rotation = diode_placement_for_key(
+            key,
+            shifted_keys,
+            variant,
+            diode_y_offset,
+        )
+        dio = load_footprint(
+            board,
+            diode_lib,
+            diode_fp,
+            f"D{idx}",
+            diode_value,
+            key.cx + diode_dx,
+            key.cy + diode_dy,
+            diode_rotation,
+            bottom=True,
+        )
         if variant == "x3-v2":
             dio.Reference().SetLayer(pcbnew.B_Fab)
         set_pad_net(dio, "1", row_net)
@@ -1386,9 +1510,21 @@ def make_board(
         connect_power_labels(board, nets, power_pads)
 
     variant_label = "" if variant == "soldered" else f" {variant.upper()}"
-    layout_name = "77-key no-stabilizer split layout" if is_x3_family(variant) else "71-key split successor to KC1"
+    layout_name = (
+        "71-key v4 no-stabilizer split layout"
+        if variant == "x3-v2"
+        else "77-key no-stabilizer split layout"
+        if variant == "x3"
+        else "71-key split successor to KC1"
+    )
     add_board_text(board, f"KC2 {side.upper()}{variant_label} - {layout_name}", 35, 24, pcbnew.F_SilkS, 1.2)
-    housing_note = "No top housing / screwless PLA+ rail tray / REG holes" if is_x3_family(variant) else "No top housing / PCB is switch plate / bottom plate M2+adhesive"
+    housing_note = (
+        "No top housing / external capture + independent underside supports / no key-field holes"
+        if variant == "x3-v2"
+        else "No top housing / screwless PLA+ rail tray / REG holes"
+        if variant == "x3"
+        else "No top housing / PCB is switch plate / bottom plate M2+adhesive"
+    )
     add_board_text(board, housing_note, 35, 27, pcbnew.F_SilkS, 0.9)
     add_board_text(board, "Diode fallback: 1N4148W SOD-123 because DO-35 conflicts with compact hybrid footprint", 35, 30, pcbnew.Cmts_User, 0.9)
     if variant == "hotswap":
@@ -1704,8 +1840,12 @@ def generate_variant(variant: str, output_dir: Path | None = None) -> dict[str, 
         diode_value = X1_DIODE_VALUE
         diode_y_offset = X2_DIODE_Y_OFFSET
         manifest_name = "kc2_generation_manifest.json" if variant == "x3" else "kc2_x3_v2_generation_manifest.json"
-        left_keys = make_left_keys_no_stab()
-        right_keys = make_right_keys_no_stab()
+        if variant == "x3-v2":
+            left_keys = make_left_keys_x3_v2()
+            right_keys = make_right_keys_x3_v2()
+        else:
+            left_keys = make_left_keys_no_stab()
+            right_keys = make_right_keys_no_stab()
     else:
         raise ValueError(f"Unknown variant: {variant}")
 
@@ -1786,14 +1926,15 @@ def generate_variant(variant: str, output_dir: Path | None = None) -> dict[str, 
         notes.append("X3 V2 uses the KC2-owned Choc V2/PG1353 bottom-side hot-swap socket plus Cherry MX 5-pin direct-solder geometry.")
         notes.append("Choc V1 switch geometry, Choc V2 direct-solder pads, and MX hot-swap socket pads are intentionally excluded.")
         notes.append("The Choc socket and MX switch are mutually exclusive assembly options at every key position.")
-        notes.append("X3 V2 preserves the X3 77-key no-stabilizer outline, compact nice!nano tab, direct battery leads, and nine screwless registration holes per half.")
+        notes.append("X3 V2 uses the fixed 71-key v4 no-stabilizer layout: 32 left keys and 39 right keys, with no key wider than 1.75U.")
+        notes.append(f"X3 V2 applies {X3_V2_JOIN_MANUFACTURING_SETBACK:g} mm manufacturing-tolerance setback to mating interlock ledges and uses the {X3_V2_OUTLINE_POLICY} outline policy.")
         notes.append("The netless battery-lead slot is at the nice!nano USB/B+ end; insulated B+ and GND/B- leads must use strain relief and remain outside the antenna keepout.")
-        notes.append(f"X3 V2 keeps the hand-solder SOD-123 diode at y offset {X2_DIODE_Y_OFFSET:g} mm and requires renewed socket/MX solder-joint housing clearance verification.")
+        notes.append("X3 V2 keeps each hand-solder SOD-123 diode at the socket-opposite 7.0 mm corner offset and requires renewed socket/MX solder-joint housing clearance verification.")
     else:
         notes.append(f"Controller protrusion tab width is {CONTROLLER_TAB_W:g} mm and grows away from the inner joining edge.")
     switch_footprint_file_present = (switch_lib / f"{switch_fp}.kicad_mod").exists()
     manifest: dict[str, object] = {
-        "generated": "2026-08-03" if variant == "x3-v2" else "2026-06-08",
+        "generated": "2026-08-20" if variant == "x3-v2" else "2026-06-08",
         "variant": variant,
         "generator": "tools/generate_kc2_pcbs.py",
         "generation_command": f"python tools/generate_kc2_pcbs.py --variant {variant}",
@@ -1827,7 +1968,27 @@ def generate_variant(variant: str, output_dir: Path | None = None) -> dict[str, 
         ),
         "diode_footprint": f"{diode_lib.name}:{diode_fp}",
         "diode_value": diode_value,
-        "diode_y_offset_mm": diode_y_offset,
+        "diode_y_offset_mm": None if variant == "x3-v2" else diode_y_offset,
+        "diode_placement_policy": (
+            {
+                "unrotated_switch_offset_mm": [-7.0, -7.0],
+                "rotated_switch_offset_mm": [7.0, 7.0],
+                "minimum_unused_feature_clearance_mm": 1.0,
+                "purpose": "hand-solder approach opposite the bottom-side Choc socket body",
+            }
+            if variant == "x3-v2"
+            else None
+        ),
+        "controller_socket_geometry_mm": (
+            {
+                "longitudinal_pin_pitch": PIN_PITCH,
+                "row_center_spacing": SOCKET_ROW_SPACING,
+                "row_count": 2,
+                "pins_per_row": 12,
+            }
+            if variant == "x3-v2"
+            else None
+        ),
         "carrier_power_pads": not is_x3_family(variant),
         "battery_lead_pass_through_slot": (
             {
@@ -1847,7 +2008,18 @@ def generate_variant(variant: str, output_dir: Path | None = None) -> dict[str, 
             else None
         ),
         "pcb_thickness_mm": 1.6 if is_x3_family(variant) else None,
-        "housing_assumption": "FDM PLA+ screwless lower tray with printed rail/capture lips" if is_x3_family(variant) else None,
+        "housing_assumption": (
+            "FDM PLA+ lower tray with external perimeter capture and independent underside supports"
+            if variant == "x3-v2"
+            else "FDM PLA+ screwless lower tray with printed rail/capture lips"
+            if variant == "x3"
+            else None
+        ),
+        "pcb_fastener_holes": (
+            {"count_per_half": 0, "strategy": "external housing capture"}
+            if variant == "x3-v2"
+            else None
+        ),
         "screwless_registration_holes": (
             {
                 "footprint": f"{REGISTRATION_LIB.name}:{REGISTRATION_FP}",
@@ -1857,7 +2029,7 @@ def generate_variant(variant: str, output_dir: Path | None = None) -> dict[str, 
                 "purpose": "non-screw housing registration, center anti-flex support, and auxiliary capture",
                 "visible_labels": "H1-H9 on B.SilkS",
             }
-            if is_x3_family(variant)
+            if variant == "x3"
             else None
         ),
         "rail_land_mm": (
@@ -1866,7 +2038,7 @@ def generate_variant(variant: str, output_dir: Path | None = None) -> dict[str, 
                 "hard_lower_bound": 3.6,
                 "local_max_when_required": 5.0,
             }
-            if is_x3_family(variant)
+            if variant == "x3"
             else None
         ),
         "controller_tab_width_mm": X3_CONTROLLER_TAB_W if is_x3_family(variant) else CONTROLLER_TAB_W,
@@ -1880,6 +2052,19 @@ def generate_variant(variant: str, output_dir: Path | None = None) -> dict[str, 
             "total": len(left_keys) + len(right_keys),
         },
         "max_key_width_u": max(k.w_u for k in left_keys + right_keys),
+        "join_manufacturing_setback_mm": (
+            X3_V2_JOIN_MANUFACTURING_SETBACK if variant == "x3-v2" else None
+        ),
+        "outline_policy": X3_V2_OUTLINE_POLICY if variant == "x3-v2" else None,
+        "autoroute_boundary_policy": (
+            {
+                "inset_mm": X3_V2_AUTOROUTE_BOUNDARY_INSET_MM,
+                "preserve_controller_above_y_mm": X3_V2_AUTOROUTE_PRESERVE_CONTROLLER_ABOVE_MM,
+                "edge_cuts_unchanged": True,
+            }
+            if variant == "x3-v2"
+            else None
+        ),
         "tact_footprint": f"{KC2_FP_LIB.name}:{TACT_FP}",
         "notes": notes,
     }

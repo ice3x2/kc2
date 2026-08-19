@@ -3,6 +3,7 @@ from __future__ import annotations
 import argparse
 import json
 from collections import Counter
+import math
 from pathlib import Path
 from typing import Sequence
 
@@ -21,8 +22,6 @@ EXPECTED_IGNORED_DRC_CHECKS = [
     "footprint_filters_mismatch",
     "footprint_type_mismatch",
     "missing_courtyard",
-    "npth_inside_courtyard",
-    "pth_inside_courtyard",
     "track_not_centered_on_via",
     "tuning_profile_track_geometries",
 ]
@@ -40,6 +39,27 @@ def pad_position(pad: pcbnew.PAD) -> tuple[float, float]:
 def pad_size(pad: pcbnew.PAD) -> tuple[float, float]:
     size = pad.GetSize()
     return mm(size.x), mm(size.y)
+
+
+def bounding_box_mm(item: object) -> tuple[float, float, float, float]:
+    box = item.GetBoundingBox()
+    left = pcbnew.ToMM(box.GetX())
+    top = pcbnew.ToMM(box.GetY())
+    return (
+        left,
+        top,
+        left + pcbnew.ToMM(box.GetWidth()),
+        top + pcbnew.ToMM(box.GetHeight()),
+    )
+
+
+def bounding_box_clearance_mm(
+    first: tuple[float, float, float, float],
+    second: tuple[float, float, float, float],
+) -> float:
+    dx = max(first[0] - second[2], second[0] - first[2], 0.0)
+    dy = max(first[1] - second[3], second[1] - first[3], 0.0)
+    return math.hypot(dx, dy)
 
 
 def load_footprint(path: Path) -> pcbnew.FOOTPRINT:
@@ -171,6 +191,60 @@ def analyze_v2_board(path: Path) -> dict[str, object]:
                 f"{footprint.GetReference()}: attr={pad.GetAttribute()} drill={drill} net={pad.GetNetname()!r}"
             )
     u1 = next((footprint for footprint in footprints if footprint.GetReference() == "U1"), None)
+    controller_rows = sorted(
+        {
+            round(pcbnew.ToMM(pad.GetPosition().y), 3)
+            for pad in (u1.Pads() if u1 is not None else [])
+        }
+    )
+    controller_socket_row_spacing_mm = (
+        round(controller_rows[1] - controller_rows[0], 3)
+        if len(controller_rows) == 2
+        else None
+    )
+
+    unused_npth_boxes = [
+        bounding_box_mm(pad)
+        for switch in switches
+        for pad in switch.Pads()
+        if pad.GetAttribute() == pcbnew.PAD_ATTRIB_NPTH
+    ]
+    switch_pad_boxes = [
+        bounding_box_mm(pad)
+        for switch in switches
+        for pad in switch.Pads()
+        if pad.GetNumber()
+    ]
+    socket_body_boxes = [
+        bounding_box_mm(item)
+        for switch in switches
+        for item in switch.GraphicalItems()
+        if item.GetLayer() == pcbnew.B_Fab
+    ]
+    diode_clearances: list[dict[str, object]] = []
+    diode_hand_solder_clearance_errors: list[str] = []
+    for diode in diodes:
+        diode_boxes = [bounding_box_mm(pad) for pad in diode.Pads()]
+
+        def clearance_to(targets: list[tuple[float, float, float, float]]) -> float:
+            return min(
+                bounding_box_clearance_mm(diode_box, target)
+                for diode_box in diode_boxes
+                for target in targets
+            )
+
+        clearances = {
+            "reference": diode.GetReference(),
+            "unused_npth_mm": clearance_to(unused_npth_boxes),
+            "switch_pad_mm": clearance_to(switch_pad_boxes),
+            "socket_body_mm": clearance_to(socket_body_boxes),
+        }
+        diode_clearances.append(clearances)
+        for label in ("unused_npth_mm", "switch_pad_mm", "socket_body_mm"):
+            if float(clearances[label]) < 1.0 - 1e-6:
+                diode_hand_solder_clearance_errors.append(
+                    f"{diode.GetReference()} {label}={float(clearances[label]):.3f} mm"
+                )
     side = "left" if "left" in path.name.lower() else "right"
     antenna_direction = 1 if side == "left" else -1
     battery_lead_slot_on_usb_side = bool(
@@ -237,6 +311,17 @@ def analyze_v2_board(path: Path) -> dict[str, object]:
         "battery_lead_slot_errors": battery_lead_slot_errors,
         "battery_lead_slot_on_usb_side": battery_lead_slot_on_usb_side,
         "forbidden_carrier_power_nets": forbidden_carrier_power_nets,
+        "controller_socket_row_spacing_mm": controller_socket_row_spacing_mm,
+        "minimum_diode_to_unused_npth_clearance_mm": round(
+            min(float(item["unused_npth_mm"]) for item in diode_clearances), 3
+        ),
+        "minimum_diode_to_unrelated_pad_clearance_mm": round(
+            min(float(item["switch_pad_mm"]) for item in diode_clearances), 3
+        ),
+        "minimum_diode_to_socket_body_clearance_mm": round(
+            min(float(item["socket_body_mm"]) for item in diode_clearances), 3
+        ),
+        "diode_hand_solder_clearance_errors": diode_hand_solder_clearance_errors,
         "board_text": board_text,
         "drc_violation_count": len(drc.get("violations", [])),
         "drc_unconnected_count": len(drc.get("unconnected_items", [])),
@@ -286,12 +371,41 @@ def verify_v2_release_candidate(
         errors.append("manifest: assembly modes are incomplete or out of order")
     if not manifest.get("assembly_modes_mutually_exclusive"):
         errors.append("manifest: switch assembly modes must be mutually exclusive")
+    if manifest.get("key_count") != {"left": 32, "right": 39, "total": 71}:
+        errors.append(f"manifest: unexpected key count {manifest.get('key_count')!r}")
+    if manifest.get("join_manufacturing_setback_mm") != 0.8:
+        errors.append("manifest: V2 join manufacturing setback must be 0.8 mm")
+    if manifest.get("outline_policy") != "keycap_concealed_except_controller_service":
+        errors.append("manifest: V2 compact outline policy is missing")
+    if manifest.get("autoroute_boundary_policy") != {
+        "inset_mm": 0.35,
+        "preserve_controller_above_y_mm": 67.5,
+        "edge_cuts_unchanged": True,
+    }:
+        errors.append("manifest: V2 autoroute edge-clearance boundary policy is missing")
+    if manifest.get("pcb_fastener_holes") != {
+        "count_per_half": 0,
+        "strategy": "external housing capture",
+    }:
+        errors.append("manifest: V2 must not use inaccessible key-field fastener holes")
+    if manifest.get("screwless_registration_holes") is not None:
+        errors.append("manifest: legacy H1-H9 registration holes are forbidden on V2")
+    if manifest.get("controller_socket_geometry_mm") != {
+        "longitudinal_pin_pitch": 2.54,
+        "row_center_spacing": 15.24,
+        "row_count": 2,
+        "pins_per_row": 12,
+    }:
+        errors.append("manifest: nice!nano socket geometry must use 15.24 mm row spacing")
+    diode_policy = manifest.get("diode_placement_policy") or {}
+    if diode_policy.get("minimum_unused_feature_clearance_mm") != 1.0:
+        errors.append("manifest: diode hand-solder clearance policy is missing")
 
     board_reports: dict[str, object] = {}
     connectivity_errors: dict[str, list[str]] = {}
     for board_path in board_paths:
         side = detect_side(board_path)
-        expected_keys = 32 if side == "left" else 45
+        expected_keys = 32 if side == "left" else 39
         report = analyze_v2_board(board_path)
         board_reports[side] = report
         checks = {
@@ -301,10 +415,8 @@ def verify_v2_release_candidate(
             == {"SW_Choc_V2_Socket_MX_THT"},
             "alternate contact nets": not report["alternate_contact_net_mismatches"],
             "no stabilizers": not report["stabilizer_refs"],
-            "nine registration holes": report["registration_hole_count"] == 9,
-            "copper-free registration holes": not report["registration_hole_errors"],
-            "visible registration labels": report["registration_label_layers"]
-            == {f"H{index}": "B.Silkscreen" for index in range(1, 10)},
+            "no legacy key-field registration holes": report["registration_hole_count"] == 0,
+            "registration hole safety": not report["registration_hole_errors"],
             "no carrier power pads": not report["carrier_power_pad_refs"],
             "one battery lead slot": report["battery_lead_slot_count"] == 1,
             "copper-free battery lead slot": not report["battery_lead_slot_errors"],

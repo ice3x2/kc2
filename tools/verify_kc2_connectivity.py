@@ -102,11 +102,12 @@ def detect_side(board_path: Path) -> str:
     raise ValueError(f"Cannot detect side from board path: {board_path}")
 
 
-def expected_keys(side: str) -> list[gen.Key]:
+def expected_keys(side: str, board_path: Path) -> list[gen.Key]:
+    is_v2 = "x3-v2" in str(board_path).lower()
     if side == "left":
-        return gen.make_left_keys_no_stab()
+        return gen.make_left_keys_x3_v2() if is_v2 else gen.make_left_keys_no_stab()
     if side == "right":
-        return gen.make_right_keys_no_stab()
+        return gen.make_right_keys_x3_v2() if is_v2 else gen.make_right_keys_no_stab()
     raise ValueError(f"Unknown side: {side}")
 
 
@@ -186,13 +187,13 @@ def require_connected(
 
 def verify_board(board_path: Path) -> list[str]:
     side = detect_side(board_path)
-    keys = expected_keys(side)
+    keys = expected_keys(side, board_path)
     board = pcbnew.LoadBoard(str(board_path))
     fps = footprints_by_ref(board)
     graphs = build_connectivity(board)
     errors: list[str] = []
 
-    expected_count = 32 if side == "left" else 45
+    expected_count = len(keys)
     if len(keys) != expected_count:
         errors.append(f"{side} expected key model count is {len(keys)}, expected {expected_count}")
     if max(key.w_u for key in keys) >= 2.0:

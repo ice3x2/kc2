@@ -1,5 +1,5 @@
 {
-  "generated": "2026-08-03",
+  "generated": "2026-08-20",
   "variant": "x3-v2",
   "generator": "tools/generate_kc2_pcbs.py",
   "generation_command": "python tools/generate_kc2_pcbs.py --variant x3-v2",
@@ -11,15 +11,15 @@
   },
   "antenna_keepout_mm": {
     "left": [
-      156.1825,
+      151.6825,
       39.85,
-      166.1825,
+      161.6825,
       58.15
     ],
     "right": [
-      54.53,
+      49.629999999999995,
       39.85,
-      64.53,
+      59.629999999999995,
       58.15
     ]
   },
@@ -38,7 +38,25 @@
   "switch_footprint_fallback_source": null,
   "diode_footprint": "kc2.pretty:D_SOD123_HandSolder_14592018",
   "diode_value": "1N4148W_SOD123_DeviceMart_14592018",
-  "diode_y_offset_mm": -7.6,
+  "diode_y_offset_mm": null,
+  "diode_placement_policy": {
+    "unrotated_switch_offset_mm": [
+      -7.0,
+      -7.0
+    ],
+    "rotated_switch_offset_mm": [
+      7.0,
+      7.0
+    ],
+    "minimum_unused_feature_clearance_mm": 1.0,
+    "purpose": "hand-solder approach opposite the bottom-side Choc socket body"
+  },
+  "controller_socket_geometry_mm": {
+    "longitudinal_pin_pitch": 2.54,
+    "row_center_spacing": 15.24,
+    "row_count": 2,
+    "pins_per_row": 12
+  },
   "carrier_power_pads": false,
   "battery_lead_pass_through_slot": {
     "footprint": "kc2.pretty:BAT_LEAD_NPTH_SLOT_3.6x2.2",
@@ -52,20 +70,13 @@
     "purpose": "USB-end lead exit below the nice!nano battery-pad end; route insulated B+ and GND/B- leads between the socket rows and provide strain relief"
   },
   "pcb_thickness_mm": 1.6,
-  "housing_assumption": "FDM PLA+ screwless lower tray with printed rail/capture lips",
-  "screwless_registration_holes": {
-    "footprint": "kc2.pretty:REG_NPTH_3.0",
-    "diameter_mm": 3.0,
-    "count_per_half": 9,
-    "total_count": 18,
-    "purpose": "non-screw housing registration, center anti-flex support, and auxiliary capture",
-    "visible_labels": "H1-H9 on B.SilkS"
+  "housing_assumption": "FDM PLA+ lower tray with external perimeter capture and independent underside supports",
+  "pcb_fastener_holes": {
+    "count_per_half": 0,
+    "strategy": "external housing capture"
   },
-  "rail_land_mm": {
-    "nominal": 4.0,
-    "hard_lower_bound": 3.6,
-    "local_max_when_required": 5.0
-  },
+  "screwless_registration_holes": null,
+  "rail_land_mm": null,
   "controller_tab_width_mm": 42.5,
   "x3_controller_tab_inner_span_mm": 19.0,
   "x3_controller_tab_outer_span_mm": 23.5,
@@ -73,10 +84,17 @@
   "x3_tact_battery_clearance_mm": 1.0,
   "key_count": {
     "left": 32,
-    "right": 45,
-    "total": 77
+    "right": 39,
+    "total": 71
   },
   "max_key_width_u": 1.75,
+  "join_manufacturing_setback_mm": 0.8,
+  "outline_policy": "keycap_concealed_except_controller_service",
+  "autoroute_boundary_policy": {
+    "inset_mm": 0.35,
+    "preserve_controller_above_y_mm": 67.5,
+    "edge_cuts_unchanged": true
+  },
   "tact_footprint": "kc2.pretty:SW_NW3_A06_B3_SMD",
   "notes": [
     "SOD-123 1N4148W fallback is used because DO-35 conflicts with the compact hybrid switch footprint at 19.05 mm pitch.",
@@ -88,8 +106,9 @@
     "X3 V2 uses the KC2-owned Choc V2/PG1353 bottom-side hot-swap socket plus Cherry MX 5-pin direct-solder geometry.",
     "Choc V1 switch geometry, Choc V2 direct-solder pads, and MX hot-swap socket pads are intentionally excluded.",
     "The Choc socket and MX switch are mutually exclusive assembly options at every key position.",
-    "X3 V2 preserves the X3 77-key no-stabilizer outline, compact nice!nano tab, direct battery leads, and nine screwless registration holes per half.",
+    "X3 V2 uses the fixed 71-key v4 no-stabilizer layout: 32 left keys and 39 right keys, with no key wider than 1.75U.",
+    "X3 V2 applies 0.8 mm manufacturing-tolerance setback to mating interlock ledges and uses the keycap_concealed_except_controller_service outline policy.",
     "The netless battery-lead slot is at the nice!nano USB/B+ end; insulated B+ and GND/B- leads must use strain relief and remain outside the antenna keepout.",
-    "X3 V2 keeps the hand-solder SOD-123 diode at y offset -7.6 mm and requires renewed socket/MX solder-joint housing clearance verification."
+    "X3 V2 keeps each hand-solder SOD-123 diode at the socket-opposite 7.0 mm corner offset and requires renewed socket/MX solder-joint housing clearance verification."
   ]
 }

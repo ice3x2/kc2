@@ -9,7 +9,6 @@ from pathlib import Path
 from typing import Callable
 
 import pcbnew
-from PIL import Image, ImageDraw, ImageFont
 
 ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
@@ -19,7 +18,9 @@ from tools.generate_kc2_pcbs import (  # noqa: E402
     UNIT,
     Key,
     make_left_keys_no_stab,
+    make_left_keys_x3_v2,
     make_right_keys_no_stab,
+    make_right_keys_x3_v2,
 )
 
 DEFAULT_CLEARANCE_MM = 1.0
@@ -65,6 +66,7 @@ class KeyHorizontalClearance:
 
 @dataclass(frozen=True)
 class RenderContext:
+    variant: str
     scale: float
     clearance_mm: float
     placement_mode: str
@@ -257,32 +259,57 @@ def keycap_rect_by_label(
     return matches[0]
 
 
-def key_horizontal_clearance(left: BoardRenderData, right: BoardRenderData, right_dx: float, right_dy: float) -> KeyHorizontalClearance:
+def key_horizontal_clearance(
+    left: BoardRenderData,
+    right: BoardRenderData,
+    right_dx: float,
+    right_dy: float,
+    right_label: str,
+) -> KeyHorizontalClearance:
     left_rect = keycap_rect_by_label(left, "6")
-    right_rect = keycap_rect_by_label(right, "Y", dx=right_dx, dy=right_dy)
+    right_rect = keycap_rect_by_label(right, right_label, dx=right_dx, dy=right_dy)
     y = (left_rect[3] + right_rect[1]) / 2.0
-    sample = opposing_sample(left, right, right_dx, right_dy, y)
-    if sample is None:
-        raise RuntimeError("No opposing Edge.Cuts sample found between 6 and Y")
     return KeyHorizontalClearance(
         left_label="6",
-        right_label="Y",
-        start=(sample.left_x, sample.y),
-        end=(sample.right_x, sample.y),
-        clearance=sample.clearance,
+        right_label=right_label,
+        start=(left_rect[2], y),
+        end=(right_rect[0], y),
+        clearance=right_rect[0] - left_rect[2],
     )
 
 
-def build_context(repo: Path, clearance_mm: float, scale: float, placement_mode: str) -> RenderContext:
+def build_context(
+    repo: Path,
+    clearance_mm: float,
+    scale: float,
+    placement_mode: str,
+    *,
+    variant: str = "x3",
+) -> RenderContext:
+    if variant == "x3-v2":
+        board_root = repo / "hardware" / "kicad" / "draft" / "x3-v2"
+        left_path = board_root / "kc2_left-x3-v2" / "kc2_left-x3-v2.kicad_pcb"
+        right_path = board_root / "kc2_right-x3-v2" / "kc2_right-x3-v2.kicad_pcb"
+        left_keys = make_left_keys_x3_v2()
+        right_keys = make_right_keys_x3_v2()
+        right_seam_label = "7"
+    elif variant == "x3":
+        left_path = repo / "hardware" / "kicad" / "kc2_left" / "kc2_left.kicad_pcb"
+        right_path = repo / "hardware" / "kicad" / "kc2_right" / "kc2_right.kicad_pcb"
+        left_keys = make_left_keys_no_stab()
+        right_keys = make_right_keys_no_stab()
+        right_seam_label = "Y"
+    else:
+        raise ValueError(f"Unknown variant: {variant}")
     left = load_board_data(
         "left",
-        repo / "hardware" / "kicad" / "kc2_left" / "kc2_left.kicad_pcb",
-        make_left_keys_no_stab(),
+        left_path,
+        left_keys,
     )
     right = load_board_data(
         "right",
-        repo / "hardware" / "kicad" / "kc2_right" / "kc2_right.kicad_pcb",
-        make_right_keys_no_stab(),
+        right_path,
+        right_keys,
     )
 
     right_dy = left.bounds[1] - right.bounds[1]
@@ -290,6 +317,12 @@ def build_context(repo: Path, clearance_mm: float, scale: float, placement_mode:
         right_dx = left.bounds[2] + clearance_mm - right.bounds[0]
     elif placement_mode == "interlock-clearance":
         right_dx = compute_interlocked_dx(left, right, right_dy, clearance_mm)
+    elif placement_mode == "key-pitch":
+        left_six = keycap_rect_by_label(left, "6")
+        right_seam = keycap_rect_by_label(right, right_seam_label)
+        left_center_x = (left_six[0] + left_six[2]) / 2.0
+        right_center_x = (right_seam[0] + right_seam[2]) / 2.0
+        right_dx = left_center_x + UNIT - right_center_x
     else:
         raise ValueError(f"Unknown placement mode: {placement_mode}")
 
@@ -304,10 +337,17 @@ def build_context(repo: Path, clearance_mm: float, scale: float, placement_mode:
     min_sample = min(fine_samples, key=lambda sample: sample.clearance)
     corridor_samples = scan_clearances(left, right, right_dx, right_dy, CORRIDOR_STEP_MM)
     measurement = opposing_sample(left, right, right_dx, right_dy, TY_ROW_CENTER_Y_MM) or min_sample
-    key_clearance = key_horizontal_clearance(left, right, right_dx, right_dy)
+    key_clearance = key_horizontal_clearance(
+        left,
+        right,
+        right_dx,
+        right_dy,
+        right_seam_label,
+    )
     interlock_overlap = max(0.0, left.bounds[2] - joined_right_bounds[0])
 
     return RenderContext(
+        variant=variant,
         scale=scale,
         clearance_mm=clearance_mm,
         placement_mode=placement_mode,
@@ -424,7 +464,7 @@ def render_svg(ctx: RenderContext, path: Path, *, zoom: bool) -> tuple[int, int]
         f'<polygon points="{polygon_points}" fill="#f6b8a9" fill-opacity="0.55" stroke="none"/>',
         "</g>",
         '<rect x="8" y="8" width="{:.0f}" height="48" fill="#f7f5ee" fill-opacity="0.94" stroke="none"/>'.format(title_width),
-        '<text x="16" y="24" font-family="Arial" font-size="15" fill="#222">KC2 X3 interlocked joined top view, board-coordinate composite</text>',
+        f'<text x="16" y="24" font-family="Arial" font-size="15" fill="#222">KC2 {html.escape(ctx.variant.upper())} joined top view, board-coordinate composite</text>',
         (
             f'<text x="16" y="44" font-family="Arial" font-size="11" fill="#555">'
             f'Scale: {ctx.scale:g} px/mm. Min Edge.Cuts clearance: {ctx.min_edge_clearance_mm:.2f} mm. '
@@ -482,6 +522,8 @@ def render_svg(ctx: RenderContext, path: Path, *, zoom: bool) -> tuple[int, int]
 
 
 def render_png(ctx: RenderContext, path: Path, *, zoom: bool) -> tuple[int, int]:
+    from PIL import Image, ImageDraw, ImageFont
+
     if zoom:
         center = zoom_center_x(ctx)
         tx, width, height = make_transform(ctx, crop_min_x=center - ZOOM_WIDTH_MM / 2.0, crop_width_mm=ZOOM_WIDTH_MM)
@@ -494,7 +536,7 @@ def render_png(ctx: RenderContext, path: Path, *, zoom: bool) -> tuple[int, int]
     draw.polygon([tx(point) for point in clearance_polygon(ctx)], fill="#f6d2ca")
     title_width = 760 if not zoom else min(width, 360)
     draw.rectangle((8, 8, title_width, 56), fill="#f7f5ee")
-    draw.text((16, 14), "KC2 X3 interlocked joined top view, board-coordinate composite", fill="#222222", font=font)
+    draw.text((16, 14), f"KC2 {ctx.variant.upper()} joined top view, board-coordinate composite", fill="#222222", font=font)
     draw.text(
         (16, 34),
         f"Scale: {ctx.scale:g} px/mm. Min Edge.Cuts clearance: {ctx.min_edge_clearance_mm:.2f} mm. Interlock overlap: {ctx.interlock_overlap_mm:.2f} mm.",
@@ -555,20 +597,44 @@ def render_png(ctx: RenderContext, path: Path, *, zoom: bool) -> tuple[int, int]
 def main() -> int:
     parser = argparse.ArgumentParser(description="Render KC2 X3 joined left/right board-coordinate composite.")
     parser.add_argument("--repo", type=Path, default=ROOT)
+    parser.add_argument("--variant", choices=("x3", "x3-v2"), default="x3")
     parser.add_argument("--clearance-mm", "--gap-mm", dest="clearance_mm", type=float, default=DEFAULT_CLEARANCE_MM)
-    parser.add_argument("--placement-mode", choices=("interlock-clearance", "bounding-gap"), default="interlock-clearance")
+    parser.add_argument(
+        "--placement-mode",
+        choices=("interlock-clearance", "bounding-gap", "key-pitch"),
+        default=None,
+    )
     parser.add_argument("--scale", type=float, default=DEFAULT_SCALE)
-    parser.add_argument("--output-dir", type=Path, default=ROOT / "hardware" / "kicad" / "renders")
+    parser.add_argument("--output-dir", type=Path)
+    parser.add_argument("--svg-only", action="store_true")
     args = parser.parse_args()
 
-    ctx = build_context(args.repo.resolve(), args.clearance_mm, args.scale, args.placement_mode)
-    args.output_dir.mkdir(parents=True, exist_ok=True)
+    placement_mode = args.placement_mode or ("key-pitch" if args.variant == "x3-v2" else "interlock-clearance")
+    ctx = build_context(
+        args.repo.resolve(),
+        args.clearance_mm,
+        args.scale,
+        placement_mode,
+        variant=args.variant,
+    )
+    output_dir = args.output_dir or (
+        ROOT / "hardware" / "kicad" / "draft" / "x3-v2" / "renders"
+        if args.variant == "x3-v2"
+        else ROOT / "hardware" / "kicad" / "renders"
+    )
+    output_dir.mkdir(parents=True, exist_ok=True)
+    stem = "kc2_x3_v2" if args.variant == "x3-v2" else "kc2"
     outputs = [
-        (args.output_dir / "kc2_joined_top.svg", False, render_svg),
-        (args.output_dir / "kc2_joined_top.png", False, render_png),
-        (args.output_dir / "kc2_join_seam_zoom.svg", True, render_svg),
-        (args.output_dir / "kc2_join_seam_zoom.png", True, render_png),
+        (output_dir / f"{stem}_joined_top.svg", False, render_svg),
+        (output_dir / f"{stem}_join_seam_zoom.svg", True, render_svg),
     ]
+    if not args.svg_only:
+        outputs.extend(
+            [
+                (output_dir / f"{stem}_joined_top.png", False, render_png),
+                (output_dir / f"{stem}_join_seam_zoom.png", True, render_png),
+            ]
+        )
     for path, zoom, renderer in outputs:
         width, height = renderer(ctx, path, zoom=zoom)
         print(f"{path} {width}x{height}")

@@ -58,6 +58,158 @@ class V2FootprintTests(unittest.TestCase):
 
 
 class V2GeneratorTests(unittest.TestCase):
+    def test_generator_uses_the_fixed_71_key_v4_layout(self) -> None:
+        from tools import generate_kc2_pcbs as generator
+
+        left = generator.make_left_keys_x3_v2()
+        right = generator.make_right_keys_x3_v2()
+
+        self.assertEqual((len(left), len(right)), (32, 39))
+        self.assertEqual(
+            [(key.label, key.w_u) for key in left if key.row == 4],
+            [
+                ("Ctrl", 1.25),
+                ("Win", 1.25),
+                ("Alt", 1.25),
+                ("Fn", 1.0),
+                ("Space", 1.25),
+                ("Space", 1.25),
+            ],
+        )
+        self.assertEqual(
+            [[(key.label, key.w_u) for key in right if key.row == row] for row in range(5)],
+            [
+                [("7", 1.0), ("8", 1.0), ("9", 1.0), ("0", 1.0), ("-", 1.0), ("=", 1.0), ("BSPC", 1.25), ("Del", 1.0)],
+                [("Y", 1.0), ("U", 1.0), ("I", 1.0), ("O", 1.0), ("P", 1.0), ("[", 1.0), ("]", 1.0), ("\\", 1.75)],
+                [("H", 1.0), ("J", 1.0), ("K", 1.0), ("L", 1.0), (";", 1.0), ("'", 1.0), ("Enter", 1.5), ("Enter", 1.0)],
+                [("N", 1.0), ("M", 1.0), (",", 1.0), (".", 1.0), ("/", 1.0), ("RShift", 1.0), ("Up", 1.0), ("Fn", 1.0)],
+                [("B", 1.0), ("Space", 1.75), ("RAlt", 1.25), ("RCtrl", 1.0), ("Left", 1.0), ("Down", 1.0), ("Right", 1.0)],
+            ],
+        )
+        self.assertEqual(
+            [round(max(key.x_u + key.w_u for key in right if key.row == row), 2) for row in range(5)],
+            [8.75] * 5,
+        )
+        self.assertLessEqual(max(key.w_u for key in left + right), 1.75)
+
+    def test_v2_declares_compact_outline_and_join_manufacturing_setback(self) -> None:
+        from tools import generate_kc2_pcbs as generator
+
+        self.assertEqual(generator.X3_V2_JOIN_MANUFACTURING_SETBACK, 0.8)
+        self.assertEqual(generator.X3_V2_OUTLINE_POLICY, "keycap_concealed_except_controller_service")
+        self.assertEqual(
+            generator.variant_outline_margins("x3-v2"),
+            {
+                "outer_mm": -0.5,
+                "top_mm": -0.5,
+                "bottom_mm": -0.5,
+                "inner_mm": -1.3,
+            },
+        )
+
+    def test_v2_raw_outline_never_reverses_past_the_concealed_top_or_bottom_edge(self) -> None:
+        from tools import generate_kc2_pcbs as generator
+
+        for side, keys in (
+            ("left", generator.make_left_keys_x3_v2()),
+            ("right", generator.make_right_keys_x3_v2()),
+        ):
+            with self.subTest(side=side):
+                controller_x = generator.controller_center_x(keys, side, "x3-v2")
+                margins = generator.variant_outline_margins("x3-v2")
+                outline = generator.raw_outline(
+                    keys,
+                    side,
+                    controller_x,
+                    variant="x3-v2",
+                    inner_margin_extra=margins["inner_mm"] - generator.INNER_MARGIN,
+                    general_margin=margins["outer_mm"],
+                )
+                extents = generator.row_extents(keys)
+                concealed_top = min(bounds[1] for bounds in extents.values()) - margins["top_mm"]
+                concealed_bottom = max(bounds[3] for bounds in extents.values()) + margins["bottom_mm"]
+
+                key_field_points = [(x, y) for x, y in outline if y >= 0.0]
+                self.assertTrue(key_field_points)
+                self.assertGreaterEqual(min(y for _, y in key_field_points), concealed_top)
+                self.assertLessEqual(max(y for _, y in key_field_points), concealed_bottom)
+
+    def test_v2_rotates_each_left_edge_socket_inward(self) -> None:
+        from tools import generate_kc2_pcbs as generator
+
+        for side, keys in (
+            ("left", generator.make_left_keys_x3_v2()),
+            ("right", generator.make_right_keys_x3_v2()),
+        ):
+            with self.subTest(side=side):
+                leftmost_by_row = {
+                    row: min(key.cx for key in keys if key.row == row)
+                    for row in range(5)
+                }
+                self.assertEqual(
+                    [
+                        generator.switch_rotation_for_key(key, keys, "x3-v2")
+                        for key in keys
+                    ],
+                    [
+                        180.0 if key.cx == leftmost_by_row[key.row] else 0.0
+                        for key in keys
+                    ],
+                )
+
+    def test_v2_uses_physical_nice_nano_pin_row_spacing(self) -> None:
+        from tools import generate_kc2_pcbs as generator
+        import pcbnew
+
+        self.assertEqual(generator.PIN_PITCH, 2.54)
+        self.assertEqual(generator.SOCKET_ROW_SPACING, 15.24)
+        for name in (
+            "NiceNanoV2_Socket_24Pin_USB_OUT_LEFT",
+            "NiceNanoV2_Socket_24Pin_USB_OUT_RIGHT",
+        ):
+            footprint = pcbnew.FootprintLoad(str(ROOT / "third_party" / "kc2.pretty"), name)
+            self.assertIsNotNone(footprint)
+            rows = sorted(
+                {
+                    round(pcbnew.ToMM(pad.GetPosition().y), 3)
+                    for pad in footprint.Pads()
+                }
+            )
+            self.assertEqual(rows, [-7.62, 7.62])
+
+    def test_v2_moves_diodes_to_a_hand_solderable_corner(self) -> None:
+        from tools import generate_kc2_pcbs as generator
+
+        for keys in (
+            generator.make_left_keys_x3_v2(),
+            generator.make_right_keys_x3_v2(),
+        ):
+            for key in keys:
+                rotated = generator.switch_rotation_for_key(key, keys, "x3-v2") == 180.0
+                self.assertEqual(
+                    generator.diode_placement_for_key(key, keys, "x3-v2"),
+                    ((7.0, 7.0, 0.0) if rotated else (-7.0, -7.0, 0.0)),
+                )
+
+    def test_specctra_routing_boundary_can_be_inset_without_changing_edge_cuts(self) -> None:
+        from tools.inset_specctra_boundary import (
+            DEFAULT_INSET_MM,
+            DEFAULT_PRESERVE_CONTROLLER_ABOVE_MM,
+            inset_polygon,
+        )
+
+        self.assertEqual(DEFAULT_INSET_MM, 0.35)
+        self.assertEqual(DEFAULT_PRESERVE_CONTROLLER_ABOVE_MM, 67.5)
+
+        result = inset_polygon(
+            [(0, 0), (10_000, 0), (10_000, 10_000), (0, 10_000)],
+            400,
+        )
+        self.assertEqual(
+            (min(x for x, _ in result), min(y for _, y in result), max(x for x, _ in result), max(y for _, y in result)),
+            (400, 400, 9_600, 9_600),
+        )
+
     def test_generator_keeps_x3_v2_in_a_dedicated_draft_output(self) -> None:
         from tools import generate_kc2_pcbs as generator
 
@@ -65,6 +217,41 @@ class V2GeneratorTests(unittest.TestCase):
         self.assertEqual(generator.variant_output_dir("x3-v2"), generator.DRAFT_ROOT / "x3-v2")
         self.assertEqual(generator.variant_project_suffix("x3-v2"), "-x3-v2")
         self.assertEqual(generator.variant_switch_footprint("x3-v2"), "SW_Choc_V2_Socket_MX_THT")
+
+    def test_joined_v2_render_uses_nominal_cross_seam_key_pitch(self) -> None:
+        from tools.render_kc2_x3_joined import build_context
+
+        context = build_context(ROOT, 1.0, 5.0, "key-pitch", variant="x3-v2")
+
+        self.assertEqual((len(context.left.keys), len(context.right.keys)), (32, 39))
+        self.assertEqual(context.key_horizontal_clearance.left_label, "6")
+        self.assertEqual(context.key_horizontal_clearance.right_label, "7")
+        self.assertAlmostEqual(context.key_horizontal_clearance.clearance, 1.0, places=3)
+        self.assertGreaterEqual(context.min_edge_clearance_mm, 0.0)
+
+    def test_actual_v2_edge_cuts_are_keycap_concealed_and_recessed_at_join(self) -> None:
+        from tools.verify_kc2_x3_v2_outline import analyze_outline
+
+        report = analyze_outline(ROOT)
+
+        self.assertEqual(report["requirement"], "CON-ARCH-006")
+        self.assertEqual(report["errors"], [])
+        self.assertAlmostEqual(report["cross_seam_key_pitch_mm"], 19.05, places=3)
+        self.assertAlmostEqual(report["cross_seam_keycap_gap_mm"], 1.0, places=3)
+        self.assertAlmostEqual(report["minimum_joined_pcb_gap_mm"], 2.6, places=3)
+        for side in ("left", "right"):
+            self.assertLessEqual(report["boards"][side]["maximum_outer_overhang_mm"], 0.001)
+            self.assertLessEqual(report["boards"][side]["maximum_top_bottom_overhang_mm"], 0.001)
+            self.assertLessEqual(
+                report["boards"][side]["maximum_keyfield_perimeter_overhang_mm"],
+                0.001,
+            )
+            for setback in report["boards"][side]["join_setback_by_row_mm"]:
+                self.assertAlmostEqual(setback, 0.8, places=3)
+            self.assertLessEqual(
+                report["one_to_one_exports"][side]["maximum_dimension_error_mm"],
+                0.05,
+            )
 
     def test_generator_accepts_an_isolated_output_override(self) -> None:
         from tools import generate_kc2_pcbs as generator
@@ -76,12 +263,22 @@ class V2GeneratorTests(unittest.TestCase):
             self.assertTrue((output_dir / "kc2_left-x3-v2" / "kc2_left-x3-v2.kicad_pcb").is_file())
             self.assertTrue((output_dir / "kc2_right-x3-v2" / "kc2_right-x3-v2.kicad_pcb").is_file())
             self.assertEqual(manifest["variant"], "x3-v2")
-            self.assertEqual(manifest["key_count"]["total"], 77)
+            self.assertEqual(manifest["key_count"], {"left": 32, "right": 39, "total": 71})
+            self.assertEqual(manifest["join_manufacturing_setback_mm"], 0.8)
+            self.assertEqual(manifest["outline_policy"], "keycap_concealed_except_controller_service")
+            self.assertEqual(
+                manifest["autoroute_boundary_policy"],
+                {
+                    "inset_mm": 0.35,
+                    "preserve_controller_above_y_mm": 67.5,
+                    "edge_cuts_unchanged": True,
+                },
+            )
 
     def test_generated_boards_preserve_x3_and_dual_contact_invariants(self) -> None:
         for side, board_path, expected_keys in (
             ("left", LEFT_BOARD, 32),
-            ("right", RIGHT_BOARD, 45),
+            ("right", RIGHT_BOARD, 39),
         ):
             with self.subTest(side=side):
                 report = analyze_v2_board(board_path)
@@ -90,17 +287,18 @@ class V2GeneratorTests(unittest.TestCase):
                 self.assertEqual(report["switch_footprint_names"], {"SW_Choc_V2_Socket_MX_THT"})
                 self.assertEqual(report["alternate_contact_net_mismatches"], [])
                 self.assertEqual(report["stabilizer_refs"], [])
-                self.assertEqual(report["registration_hole_count"], 9)
+                self.assertEqual(report["registration_hole_count"], 0)
                 self.assertEqual(report["registration_hole_errors"], [])
-                self.assertEqual(
-                    report["registration_label_layers"],
-                    {f"H{index}": "B.Silkscreen" for index in range(1, 10)},
-                )
                 self.assertEqual(report["carrier_power_pad_refs"], [])
                 self.assertEqual(report["battery_lead_slot_count"], 1)
                 self.assertEqual(report["battery_lead_slot_errors"], [])
                 self.assertTrue(report["battery_lead_slot_on_usb_side"])
                 self.assertEqual(report["forbidden_carrier_power_nets"], [])
+                self.assertEqual(report["controller_socket_row_spacing_mm"], 15.24)
+                self.assertGreaterEqual(report["minimum_diode_to_unused_npth_clearance_mm"], 1.0)
+                self.assertGreaterEqual(report["minimum_diode_to_unrelated_pad_clearance_mm"], 1.0)
+                self.assertGreaterEqual(report["minimum_diode_to_socket_body_clearance_mm"], 1.0)
+                self.assertEqual(report["diode_hand_solder_clearance_errors"], [])
                 self.assertTrue(
                     any("CHOC V1 UNSUPPORTED" in text.upper() for text in report["board_text"])
                 )
@@ -112,8 +310,6 @@ class V2GeneratorTests(unittest.TestCase):
                         "footprint_filters_mismatch",
                         "footprint_type_mismatch",
                         "missing_courtyard",
-                        "npth_inside_courtyard",
-                        "pth_inside_courtyard",
                         "track_not_centered_on_via",
                         "tuning_profile_track_geometries",
                     ],
@@ -122,8 +318,30 @@ class V2GeneratorTests(unittest.TestCase):
     def test_manifest_identifies_mutually_exclusive_v2_modes(self) -> None:
         report = analyze_v2_manifest(MANIFEST)
         self.assertEqual(report["variant"], "x3-v2")
-        self.assertEqual(report["key_count"], {"left": 32, "right": 45, "total": 77})
+        self.assertEqual(report["key_count"], {"left": 32, "right": 39, "total": 71})
         self.assertEqual(report["max_key_width_u"], 1.75)
+        self.assertEqual(report["join_manufacturing_setback_mm"], 0.8)
+        self.assertEqual(report["outline_policy"], "keycap_concealed_except_controller_service")
+        self.assertEqual(
+            report["autoroute_boundary_policy"],
+            {
+                "inset_mm": 0.35,
+                "preserve_controller_above_y_mm": 67.5,
+                "edge_cuts_unchanged": True,
+            },
+        )
+        self.assertEqual(report["pcb_fastener_holes"], {"count_per_half": 0, "strategy": "external housing capture"})
+        self.assertIsNone(report["screwless_registration_holes"])
+        self.assertEqual(
+            report["controller_socket_geometry_mm"],
+            {
+                "longitudinal_pin_pitch": 2.54,
+                "row_center_spacing": 15.24,
+                "row_count": 2,
+                "pins_per_row": 12,
+            },
+        )
+        self.assertEqual(report["diode_placement_policy"]["minimum_unused_feature_clearance_mm"], 1.0)
         self.assertEqual(report["switch_footprint"], "kc2.pretty:SW_Choc_V2_Socket_MX_THT")
         self.assertEqual(report["assembly_modes"], ["choc_v2_bottom_socket", "mx_5pin_top_direct_solder"])
         self.assertTrue(report["assembly_modes_mutually_exclusive"])
@@ -143,18 +361,24 @@ class V2GeneratorTests(unittest.TestCase):
         self.assertEqual(report["errors"], [])
         self.assertEqual(report["connectivity_errors"], {"left": [], "right": []})
 
-    def test_route_postprocessor_is_idempotent_on_committed_route(self) -> None:
-        from tools.postprocess_kc2_x3_v2_routes import process_board
+    def test_route_finalizer_is_idempotent_on_committed_route(self) -> None:
+        import pcbnew
+
+        from tools.finalize_kc2_x3_v2_routes import apply_reviewed_cleanup, load_reviewed_drc
 
         with TemporaryDirectory(dir=ROOT) as temporary:
             copy = Path(temporary) / "kc2_right-x3-v2.kicad_pcb"
             shutil.copy2(RIGHT_BOARD, copy)
+            report = load_reviewed_drc(RIGHT_BOARD.with_suffix(".drc.json"))
+            board = pcbnew.LoadBoard(str(copy))
 
-            first = process_board(copy)
-            second = process_board(copy)
+            first = apply_reviewed_cleanup(board, report, "right")
+            second = apply_reviewed_cleanup(board, report, "right")
 
-            self.assertEqual(first["r_col7_bridge_segments"], 0)
-            self.assertEqual(second["r_col7_bridge_segments"], 0)
+            self.assertEqual(first["dangling_tracks_removed"], 0)
+            self.assertEqual(first["warning_silkscreen_texts_moved_to_fab"], 0)
+            self.assertEqual(first["v2_key_labels_moved_to_fab"], 0)
+            self.assertEqual(second, first)
 
 
 if __name__ == "__main__":

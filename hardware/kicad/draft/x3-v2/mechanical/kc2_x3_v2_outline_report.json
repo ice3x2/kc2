@@ -1,0 +1,54 @@
+{
+  "requirement": "CON-ARCH-006",
+  "boards": {
+    "left": {
+      "maximum_outer_overhang_mm": 0.0001,
+      "maximum_top_bottom_overhang_mm": 0.0,
+      "maximum_keyfield_perimeter_overhang_mm": 0.0001,
+      "perimeter_sample_step_mm": 0.05,
+      "join_setback_by_row_mm": [
+        0.8,
+        0.8,
+        0.8,
+        0.8,
+        0.8
+      ]
+    },
+    "right": {
+      "maximum_outer_overhang_mm": 0.0,
+      "maximum_top_bottom_overhang_mm": 0.0,
+      "maximum_keyfield_perimeter_overhang_mm": 0.0,
+      "perimeter_sample_step_mm": 0.05,
+      "join_setback_by_row_mm": [
+        0.8,
+        0.8,
+        0.8,
+        0.8,
+        0.8
+      ]
+    }
+  },
+  "cross_seam_key_pitch_mm": 19.05,
+  "cross_seam_keycap_gap_mm": 1.0,
+  "minimum_joined_pcb_gap_mm": 2.6,
+  "interlock_overlap_mm": 11.6875,
+  "one_to_one_exports": {
+    "left": {
+      "path": "C:\\Work\\git\\kc2\\hardware\\kicad\\draft\\x3-v2\\mechanical\\kc2_left_x3_v2_1to1.svg",
+      "declared_width_mm": 136.2964,
+      "declared_height_mm": 127.7366,
+      "edge_cuts_width_mm": 136.3125,
+      "edge_cuts_height_mm": 127.75,
+      "maximum_dimension_error_mm": 0.0161
+    },
+    "right": {
+      "path": "C:\\Work\\git\\kc2\\hardware\\kicad\\draft\\x3-v2\\mechanical\\kc2_right_x3_v2_1to1.svg",
+      "declared_width_mm": 164.8714,
+      "declared_height_mm": 127.7366,
+      "edge_cuts_width_mm": 164.8875,
+      "edge_cuts_height_mm": 127.75,
+      "maximum_dimension_error_mm": 0.0161
+    }
+  },
+  "errors": []
+}
