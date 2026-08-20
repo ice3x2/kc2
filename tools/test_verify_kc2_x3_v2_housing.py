@@ -22,9 +22,13 @@ class V2LoadBearingHousingTests(unittest.TestCase):
             self.assertEqual(board["key_count"], 32 if side == "left" else 39)
             self.assertEqual(board["legacy_registration_refs"], [])
 
-    def test_rails_and_posts_are_zero_gap_load_paths(self) -> None:
+    def test_nominal_2_5mm_plate_and_support_regions_are_zero_gap_load_paths(self) -> None:
         for side in ("left", "right"):
             housing = self.report["sides"][side]
+            self.assertEqual(housing["exterior_bottom_z_mm"], 0.0)
+            self.assertEqual(housing["housing_height_mm"], 2.50)
+            self.assertEqual(housing["pcb_bottom_z_mm"], 2.50)
+            self.assertFalse(housing["raised_key_field_bezel_present"])
             self.assertAlmostEqual(housing["rail_top_z_mm"], housing["pcb_bottom_z_mm"], places=6)
             self.assertAlmostEqual(housing["maximum_rail_vertical_gap_mm"], 0.0, places=6)
             self.assertAlmostEqual(housing["maximum_support_vertical_gap_mm"], 0.0, places=6)
@@ -32,14 +36,56 @@ class V2LoadBearingHousingTests(unittest.TestCase):
             self.assertTrue(housing["rail_plan_area_matches_manifest"])
             self.assertTrue(housing["support_plan_matches_generator"])
             categories = {post["category"] for post in housing["support_posts"]}
-            self.assertTrue({"seam", "thumb", "span"}.issubset(categories))
-            self.assertGreaterEqual(len(housing["support_posts"]), 8)
+            self.assertTrue({"thumb", "span"}.issubset(categories))
+            self.assertGreaterEqual(len(housing["support_posts"]), 6)
             self.assertLessEqual(housing["maximum_load_point_to_support_mm"], 24.0)
+            self.assertLessEqual(housing["maximum_seam_load_point_to_support_mm"], 10.0)
             for post in housing["support_posts"]:
-                self.assertEqual(post["diameter_mm"], 3.20)
-                self.assertEqual(post["bottom_z_mm"], 1.20)
+                self.assertEqual(post["diameter_mm"], 2.00)
+                self.assertEqual(post["bottom_z_mm"], 0.00)
                 self.assertEqual(post["top_z_mm"], housing["pcb_bottom_z_mm"])
                 self.assertEqual(post["nominal_vertical_gap_mm"], 0.0)
+
+    def test_bottom_component_cutouts_are_exterior_open_and_3d_clear(self) -> None:
+        required = {
+            "choc_socket_body_fillets",
+            "switch_mechanical_pins",
+            "mx_pins_pads_fillets",
+            "diode_body_pads_fillets",
+            "controller_reset",
+            "battery_slot",
+        }
+        for side in ("left", "right"):
+            housing = self.report["sides"][side]
+            cutouts = housing["component_cutouts"]
+            self.assertEqual(set(cutouts), required)
+            key_count = 32 if side == "left" else 39
+            for name in (
+                "choc_socket_body_fillets",
+                "switch_mechanical_pins",
+                "mx_pins_pads_fillets",
+                "diode_body_pads_fillets",
+            ):
+                self.assertEqual(cutouts[name]["opening_count"], key_count, name)
+            self.assertEqual(cutouts["controller_reset"]["opening_count"], 1)
+            self.assertEqual(cutouts["battery_slot"]["opening_count"], 1)
+            for name, result in cutouts.items():
+                self.assertGreater(result["opening_count"], 0, name)
+                self.assertTrue(result["exterior_open"], name)
+                self.assertEqual(result["through_opening_z_mm"], [0.0, 2.5], name)
+                self.assertGreaterEqual(result["minimum_xy_clearance_mm"], 0.30, name)
+                self.assertEqual(result["residual_collision_volume_mm3"], 0.0, name)
+            self.assertEqual(cutouts["choc_socket_body_fillets"]["official_body_depth_max_mm"], 2.30)
+            self.assertGreaterEqual(
+                cutouts["choc_socket_body_fillets"]["minimum_exterior_bottom_clearance_mm"],
+                0.10,
+            )
+            self.assertEqual(cutouts["diode_body_pads_fillets"]["official_body_depth_max_mm"], 1.35)
+            self.assertEqual(cutouts["diode_body_pads_fillets"]["solder_fillet_allowance_mm"], 0.30)
+            self.assertGreaterEqual(
+                cutouts["diode_body_pads_fillets"]["minimum_exterior_bottom_clearance_mm"],
+                0.50,
+            )
 
     def test_supports_do_not_reintroduce_legacy_fasteners(self) -> None:
         for side in ("left", "right"):
@@ -69,76 +115,28 @@ class V2LoadBearingHousingTests(unittest.TestCase):
             any("STEP has trailing whitespace" in error for error in verify_report(report))
         )
 
-    def test_right_split_has_glueless_mechanical_lap_joint(self) -> None:
+    def test_right_split_has_full_depth_glueless_keyed_puzzle_joint(self) -> None:
         joint = self.report["sides"]["right"]["split_joint"]
-        self.assertEqual(joint["type"], "overlap_lap_with_m2_case_join")
+        self.assertEqual(joint["type"], "full_depth_vertical_keyed_puzzle")
         self.assertFalse(joint["glue_assumed"])
         self.assertEqual(joint["part_count"], 2)
-        self.assertGreaterEqual(joint["lap_overlap_mm"], 6.0)
-        self.assertGreaterEqual(joint["case_join_fastener_count"], 2)
+        self.assertEqual(joint["fastener_count"], 0)
+        self.assertEqual(joint["assembly_direction"], "vertical")
+        self.assertEqual(joint["joint_height_mm"], 2.50)
+        self.assertGreaterEqual(joint["capture_feature_count"], 2)
+        self.assertGreater(joint["head_width_mm"], joint["neck_width_mm"])
+        self.assertGreaterEqual(joint["minimum_in_plane_capture_per_side_mm"], 1.0)
+        self.assertEqual(joint["nominal_plan_clearance_mm"], 0.20)
+        self.assertTrue(joint["positive_x_capture"])
         self.assertEqual(joint["feature_collision_count"], 0)
         self.assertEqual(joint["support_collision_count"], 0)
         self.assertTrue(joint["support_load_path_preserved"])
-        self.assertGreater(joint["head_recess_depth_mm"], 0.0)
-        self.assertLess(joint["receiving_pilot_top_z_mm"], joint["case_join_boss_top_z_mm"])
-        self.assertEqual(joint["assembly_direction"], "bottom_up")
-        self.assertLessEqual(joint["head_exterior_protrusion_max_mm"], 0.0)
-        self.assertGreater(joint["screw_tip_to_pcb_clearance_mm"], 0.0)
-        self.assertEqual(joint["head_driver_vertical_collision_count"], 0)
-        self.assertTrue(joint["driver_access_from_exterior_bottom"])
-        fastener = joint["fastener_spec"]
-        self.assertEqual(fastener["part_number"], "SUNCO CSPSL-ST3W-M2-3")
-        self.assertEqual(fastener["thread"], "M2 x 0.4")
-        self.assertEqual(fastener["under_head_length_mm"], 3.0)
-        self.assertEqual(fastener["official_under_head_length_min_mm"], 2.7)
-        self.assertEqual(fastener["official_under_head_length_max_mm"], 3.0)
-        self.assertEqual(fastener["official_head_diameter_min_mm"], 3.5)
-        self.assertEqual(fastener["official_head_diameter_max_mm"], 4.0)
-        self.assertEqual(fastener["official_head_height_min_mm"], 0.4)
-        self.assertEqual(fastener["official_head_height_max_mm"], 0.6)
-        self.assertGreaterEqual(fastener["shank_clearance_hole_diameter_mm"], 2.4)
-        self.assertLessEqual(fastener["shank_clearance_hole_diameter_mm"], 2.6)
-        self.assertEqual(fastener["head_recess_diameter_mm"], 4.4)
-        self.assertGreaterEqual(fastener["head_recess_radial_print_clearance_mm"], 0.2)
-        self.assertGreaterEqual(fastener["minimum_radial_head_bearing_mm"], 0.4)
-        self.assertGreaterEqual(fastener["minimum_radial_collar_wall_mm"], 0.5)
-        self.assertEqual(fastener["drive"], "Phillips #0")
-        self.assertEqual(fastener["driver_shaft_diameter_mm"], 3.0)
-        self.assertEqual(fastener["official_length_lower_tolerance_mm"], -0.3)
-        self.assertEqual(fastener["official_length_upper_tolerance_mm"], 0.0)
-        self.assertEqual(fastener["fdm_z_tolerance_mm"], 0.05)
-        self.assertEqual(fastener["part_a_seat_fdm_tolerance_mm"], 0.05)
-        self.assertEqual(fastener["part_b_boss_fdm_tolerance_mm"], 0.05)
-        self.assertEqual(fastener["support_plane_fdm_tolerance_mm"], 0.05)
-        self.assertIn(
-            "boss_top_nominal - part_b_boss_fdm_tolerance",
-            fastener["installed_screw_tip_to_boss_top_clearance_formula"],
-        )
-        self.assertIn(
-            "pcb_bottom_nominal - support_plane_fdm_tolerance",
-            fastener["installed_screw_tip_to_pcb_clearance_formula"],
-        )
-        self.assertEqual(fastener["driver_access_direction"], "bottom_downward")
-        worst = fastener["worst_case"]
-        self.assertGreaterEqual(
-            worst["usable_pilot_depth_mm"],
-            worst["maximum_threaded_penetration_into_pilot_mm"],
-        )
-        self.assertGreaterEqual(
-            worst["effective_thread_engagement_mm"],
-            fastener["minimum_effective_thread_engagement_mm"],
-        )
-        self.assertGreater(worst["receiving_pilot_blind_cap_mm"], 0.0)
-        self.assertGreater(worst["head_exterior_face_z_mm"], 0.0)
-        self.assertGreaterEqual(worst["installed_screw_tip_to_boss_top_clearance_mm"], 0.05)
-        self.assertGreaterEqual(worst["installed_screw_tip_to_pcb_clearance_mm"], 0.05)
-        self.assertEqual(joint["head_case_collision_volume_mm3"], 0.0)
-        self.assertEqual(joint["driver_shaft_case_collision_volume_mm3"], 0.0)
 
     def test_all_required_collision_classes_are_clear(self) -> None:
         required = {
             "choc_socket_body",
             "choc_socket_fillets",
+            "switch_mechanical_pins",
             "mx_pins_pads_fillets",
             "diode_body_pads_fillets",
             "bottom_copper_tracks",
@@ -153,26 +151,28 @@ class V2LoadBearingHousingTests(unittest.TestCase):
             for feature_class, result in collisions.items():
                 self.assertEqual(result["collision_count"], 0, feature_class)
 
-    def test_verifier_rejects_fastener_tolerance_regression(self) -> None:
+    def test_verifier_rejects_missing_diode_cutout_or_vertical_clearance(self) -> None:
         report = copy.deepcopy(self.report)
-        fastener = report["sides"]["right"]["split_joint"]["fastener_spec"]
-        fastener["shank_clearance_hole_diameter_mm"] = 3.5
-        fastener["minimum_radial_head_bearing_mm"] = 0.0
+        diode = report["sides"]["left"]["component_cutouts"]["diode_body_pads_fillets"]
+        diode["opening_count"] = 1
+        diode["exterior_open"] = False
+        diode["residual_collision_volume_mm3"] = 0.1
+        diode["minimum_exterior_bottom_clearance_mm"] = 0.4
         errors = verify_report(report)
-        self.assertTrue(any("shank clearance" in error for error in errors))
-        self.assertTrue(any("bearing annulus" in error for error in errors))
+        self.assertTrue(any("diode_body_pads_fillets opening count" in error for error in errors))
+        self.assertTrue(any("diode_body_pads_fillets is not exterior-open" in error for error in errors))
+        self.assertTrue(any("diode_body_pads_fillets 3D collision" in error for error in errors))
+        self.assertTrue(any("diode exterior clearance" in error for error in errors))
 
-    def test_verifier_rejects_independent_z_tolerance_clearance_regression(self) -> None:
+    def test_verifier_rejects_puzzle_capture_regression(self) -> None:
         report = copy.deepcopy(self.report)
         joint = report["sides"]["right"]["split_joint"]
-        worst = joint["fastener_spec"]["worst_case"]
-        joint["case_join_boss_top_z_mm"] = 3.84
-        joint["pcb_bottom_z_mm"] = 3.84
-        worst["installed_screw_tip_to_boss_top_clearance_mm"] = 0.04
-        worst["installed_screw_tip_to_pcb_clearance_mm"] = 0.04
+        joint["type"] = "overlap_lap_with_m2_case_join"
+        joint["minimum_in_plane_capture_per_side_mm"] = 0.0
+        joint["positive_x_capture"] = False
         errors = verify_report(report)
-        self.assertTrue(any("boss-top clearance" in error for error in errors))
-        self.assertTrue(any("support-plane clearance" in error for error in errors))
+        self.assertTrue(any("split-joint type" in error for error in errors))
+        self.assertTrue(any("puzzle capture" in error for error in errors))
 
     def test_generated_artifacts_are_current_and_physical_gate_stays_pending(self) -> None:
         for side in ("left", "right"):
@@ -181,7 +181,7 @@ class V2LoadBearingHousingTests(unittest.TestCase):
             self.assertTrue(housing["stl_sha256_matches"])
             self.assertEqual(housing["step_solid_count"], 1 if side == "left" else 2)
             self.assertAlmostEqual(housing["step_bounds_z_mm"][0], 0.0, places=4)
-            self.assertAlmostEqual(housing["step_bounds_z_mm"][1], housing["pcb_bottom_z_mm"], places=4)
+            self.assertAlmostEqual(housing["step_bounds_z_mm"][1], 2.50, places=4)
             self.assertTrue(housing["step_top_contact_area_matches_plan"])
             self.assertLessEqual(housing["step_top_contact_area_error_mm2"], 0.20)
         self.assertEqual(self.report["physical_deflection_test"]["status"], "pending")

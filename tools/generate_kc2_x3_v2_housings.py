@@ -1,8 +1,8 @@
-"""Generate the draft KC2 X3 V2 load-bearing lower housings.
+"""Generate the draft KC2 X3 V2 2.50 mm lower support plates.
 
 The V2 design is intentionally independent of the promoted 77-key housing.
-It derives a narrow perimeter rail and copper-aware underside support posts from
-the current draft V2 KiCad boards and never uses REG/H holes, pegs, or pilots.
+It subtracts exterior-open underside-component envelopes from the current draft
+V2 board outlines and never uses REG/H holes, pegs, pilots, or key-field screws.
 """
 
 from __future__ import annotations
@@ -35,63 +35,35 @@ BOARD_PATHS = {
     "right": ROOT / "hardware" / "kicad" / "draft" / VARIANT / "kc2_right-x3-v2" / "kc2_right-x3-v2.kicad_pcb",
 }
 
-FLOOR_THICKNESS_MM = 1.20
-BOTTOM_COMPONENT_CLEARANCE_MM = 2.70
-PCB_BOTTOM_Z_MM = round(FLOOR_THICKNESS_MM + BOTTOM_COMPONENT_CLEARANCE_MM, 2)
+EXTERIOR_BOTTOM_Z_MM = 0.00
+HOUSING_HEIGHT_MM = 2.50
+PCB_BOTTOM_Z_MM = HOUSING_HEIGHT_MM
 PCB_THICKNESS_MM = 1.60
 OUTLINE_INSET_MM = 0.10
 RAIL_INSET_MM = 0.10
 RAIL_WIDTH_MM = 0.65
-POST_DIAMETER_MM = 3.20
+POST_DIAMETER_MM = 2.00
 POST_CLEARANCE_MM = 0.30
 FILLET_ALLOWANCE_MM = 0.30
+COMPONENT_MINIMUM_CLEARANCE_MM = 0.30
+COMPONENT_CUTOUT_CLEARANCE_MM = 0.35
+COMPONENT_CUTOUT_SIMPLIFY_MM = 0.02
+CHOC_SOCKET_OFFICIAL_BODY_DEPTH_MAX_MM = 2.30
+CHOC_SOCKET_ASSEMBLY_ALLOWANCE_MM = 0.10
+DIODE_OFFICIAL_BODY_DEPTH_MAX_MM = 1.35
+DIODE_SOLDER_FILLET_DEPTH_ALLOWANCE_MM = 0.30
+CHOC_SOCKET_OFFICIAL_SOURCE = "https://www.kailhswitch.com/uploads/15927/files/CPG135001S30.pdf"
+DIODE_OFFICIAL_SOURCE = "https://www.vishay.com/docs/86356/1n4148w.pdf"
 TRACK_CLEARANCE_MM = 0.15
 BATTERY_ACCESS_CLEARANCE_MM = 0.70
 MAX_LOAD_POINT_TO_SUPPORT_MM = 24.0
 PRINT_VOLUME_LIMIT_MM = 150.0
 RIGHT_SPLIT_CLEARANCE_MM = 0.20
-RIGHT_LAP_OVERLAP_MM = 10.0
-RIGHT_LAP_THICKNESS_MM = 0.75
-RIGHT_LAP_VERTICAL_CLEARANCE_MM = 0.10
-CASE_JOIN_BOSS_DIAMETER_MM = 3.20
-CASE_JOIN_PILOT_DIAMETER_MM = 1.60
-CASE_JOIN_RECEIVING_PILOT_START_Z_MM = 0.85
-CASE_JOIN_RECEIVING_PILOT_TOP_Z_MM = 3.60
-CASE_JOIN_BOSS_TOP_Z_MM = 3.85
-CASE_JOIN_HEAD_SEAT_Z_MM = 0.70
-CASE_JOIN_CLEARANCE_HOLE_DIAMETER_MM = 2.40
-CASE_JOIN_CLAMP_COLLAR_DIAMETER_MM = 5.40
-CASE_JOIN_CLAMP_COLLAR_TOP_Z_MM = 0.85
-CASE_JOIN_HEAD_RECESS_DIAMETER_MM = 4.40
-CASE_JOIN_SCREW_HEAD_DIAMETER_NOMINAL_MM = 4.00
-CASE_JOIN_SCREW_HEAD_DIAMETER_MIN_MM = 3.50
-CASE_JOIN_SCREW_HEAD_DIAMETER_MAX_MM = 4.00
-CASE_JOIN_SCREW_HEAD_HEIGHT_NOMINAL_MM = 0.50
-CASE_JOIN_SCREW_HEAD_HEIGHT_MIN_MM = 0.40
-CASE_JOIN_SCREW_HEAD_HEIGHT_MAX_MM = 0.60
-CASE_JOIN_HEAD_RECESS_DEPTH_MM = CASE_JOIN_HEAD_SEAT_Z_MM
-CASE_JOIN_SCREW_HEAD_ENVELOPE_MM = CASE_JOIN_CLAMP_COLLAR_DIAMETER_MM
-CASE_JOIN_FASTENER_PART_NUMBER = "SUNCO CSPSL-ST3W-M2-3"
-CASE_JOIN_FASTENER_REFERENCE = (
-    "https://jp.misumi-ec.com/vona2/detail/221005676627/?HissuCode=CSPSL-ST3W-M2-3"
-)
-CASE_JOIN_THREAD = "M2 x 0.4"
-CASE_JOIN_UNDER_HEAD_LENGTH_MM = 3.00
-CASE_JOIN_LENGTH_LOWER_TOLERANCE_MM = -0.30
-CASE_JOIN_LENGTH_UPPER_TOLERANCE_MM = 0.00
-CASE_JOIN_FDM_Z_TOLERANCE_MM = 0.05
-CASE_JOIN_PART_A_SEAT_FDM_TOLERANCE_MM = 0.05
-CASE_JOIN_PART_B_BOSS_FDM_TOLERANCE_MM = 0.05
-CASE_JOIN_SUPPORT_PLANE_FDM_TOLERANCE_MM = 0.05
-CASE_JOIN_MIN_INSTALLED_CLEARANCE_MM = 0.05
-CASE_JOIN_TIP_ALLOWANCE_MM = 0.35
-CASE_JOIN_MIN_EFFECTIVE_ENGAGEMENT_MM = 1.50
-CASE_JOIN_MIN_HEAD_BEARING_MM = 0.40
-CASE_JOIN_MIN_COLLAR_WALL_MM = 0.50
-CASE_JOIN_MIN_RECESS_PRINT_CLEARANCE_MM = 0.20
-CASE_JOIN_DRIVE = "Phillips #0"
-CASE_JOIN_DRIVER_SHAFT_DIAMETER_MM = 3.00
-CASE_JOIN_DRIVER_ACCESS_HEIGHT_MM = 20.00
+PUZZLE_CAPTURE_FEATURE_COUNT = 2
+PUZZLE_NECK_WIDTH_MM = 2.00
+PUZZLE_HEAD_DIAMETER_MM = 4.50
+PUZZLE_NECK_LENGTH_MM = 3.00
+PUZZLE_MIN_CAPTURE_PER_SIDE_MM = 1.00
 
 
 def sha256_path(path: Path) -> str:
@@ -143,6 +115,7 @@ def extract_board(pcbnew: Any, path: Path) -> dict[str, Any]:
     classes: dict[str, list[dict[str, Any]]] = {
         "choc_socket_body": [],
         "choc_socket_fillets": [],
+        "switch_mechanical_pins": [],
         "mx_pins_pads_fillets": [],
         "diode_body_pads_fillets": [],
         "bottom_copper_tracks": [],
@@ -170,10 +143,28 @@ def extract_board(pcbnew: Any, path: Path) -> dict[str, Any]:
                 for item in graphics
                 if item.GetLayer() in (pcbnew.B_Fab, pcbnew.B_SilkS)
             ]
-            classes["choc_socket_body"].extend(
-                {"kind": "box", "bounds": bounds, "ref": ref} for bounds in body_boxes
-            )
+            if body_boxes:
+                classes["choc_socket_body"].append(
+                    {
+                        "kind": "box",
+                        "bounds": [
+                            min(bounds[0] for bounds in body_boxes),
+                            min(bounds[1] for bounds in body_boxes),
+                            max(bounds[2] for bounds in body_boxes),
+                            max(bounds[3] for bounds in body_boxes),
+                        ],
+                        "ref": ref,
+                    }
+                )
             for pad in pads:
+                if pad.GetAttribute() == pcbnew.PAD_ATTRIB_NPTH:
+                    classes["switch_mechanical_pins"].append(
+                        {
+                            "kind": "box",
+                            "bounds": _box(pcbnew, pad),
+                            "ref": ref,
+                        }
+                    )
                 if pad.GetAttribute() == pcbnew.PAD_ATTRIB_SMD and pad.IsOnLayer(pcbnew.B_Cu):
                     classes["choc_socket_fillets"].append(
                         {
@@ -195,11 +186,24 @@ def extract_board(pcbnew: Any, path: Path) -> dict[str, Any]:
             continue
 
         if ref.startswith("D") and ref[1:].isdigit():
-            for item in graphics:
-                if item.GetLayer() in (pcbnew.B_Fab, pcbnew.B_SilkS):
-                    classes["diode_body_pads_fillets"].append(
-                        {"kind": "box", "bounds": _box(pcbnew, item), "ref": ref}
-                    )
+            body_boxes = [
+                _box(pcbnew, item)
+                for item in graphics
+                if item.GetLayer() in (pcbnew.B_Fab, pcbnew.B_SilkS)
+            ]
+            if body_boxes:
+                classes["diode_body_pads_fillets"].append(
+                    {
+                        "kind": "box",
+                        "bounds": [
+                            min(bounds[0] for bounds in body_boxes),
+                            min(bounds[1] for bounds in body_boxes),
+                            max(bounds[2] for bounds in body_boxes),
+                            max(bounds[3] for bounds in body_boxes),
+                        ],
+                        "ref": ref,
+                    }
+                )
             for pad in pads:
                 classes["diode_body_pads_fillets"].append(
                     {
@@ -338,7 +342,7 @@ def _feature_geometry(shp: dict[str, Any], feature: dict[str, Any], bounds: tupl
             geometry = shp["affinity"].rotate(geometry, angle, origin=(x, y))
     else:
         raise ValueError(f"Unsupported feature kind: {kind}")
-    return geometry.buffer(allowance, join_style="round", quad_segs=12) if allowance else geometry
+    return geometry.buffer(allowance, join_style="round", quad_segs=4) if allowance else geometry
 
 
 def build_plan_geometry(shp: dict[str, Any], side: str, board_data: dict[str, Any]) -> dict[str, Any]:
@@ -360,11 +364,59 @@ def build_plan_geometry(shp: dict[str, Any], side: str, board_data: dict[str, An
         parts = [_feature_geometry(shp, feature, bounds) for feature in features]
         feature_geometries[name] = shp["unary_union"](parts) if parts else shp["Polygon"]()
 
+    cutout_sources = {
+        "choc_socket_body_fillets": ("choc_socket_body", "choc_socket_fillets"),
+        "switch_mechanical_pins": ("switch_mechanical_pins",),
+        "mx_pins_pads_fillets": ("mx_pins_pads_fillets",),
+        "diode_body_pads_fillets": ("diode_body_pads_fillets",),
+        "controller_reset": ("controller_reset",),
+        "battery_slot": ("battery_slot",),
+    }
+    component_geometries: dict[str, Any] = {}
+    component_cutout_geometries: dict[str, Any] = {}
+    component_cutout_counts: dict[str, int] = {}
+    for name, source_names in cutout_sources.items():
+        sources = [feature_geometries[source] for source in source_names]
+        raw = shp["unary_union"]([geometry for geometry in sources if not geometry.is_empty])
+        component_geometries[name] = raw
+        component_cutout_geometries[name] = (
+            raw.buffer(
+                COMPONENT_CUTOUT_CLEARANCE_MM,
+                join_style="round",
+                quad_segs=4,
+            )
+            if not raw.is_empty
+            else shp["Polygon"]()
+        )
+        refs = {
+            feature.get("ref")
+            for source in source_names
+            for feature in board_data["feature_classes"][source]
+            if feature.get("ref")
+        }
+        component_cutout_counts[name] = len(refs)
+
+    housing_outline = board.buffer(-OUTLINE_INSET_MM, join_style="round", quad_segs=8)
+    all_component_cutouts = shp["unary_union"](
+        [geometry for geometry in component_cutout_geometries.values() if not geometry.is_empty]
+    )
+    support_surface = housing_outline.difference(all_component_cutouts)
+    if not support_surface.is_valid:
+        support_surface = support_surface.buffer(0)
+    support_surface = support_surface.simplify(
+        COMPONENT_CUTOUT_SIMPLIFY_MM,
+        preserve_topology=True,
+    )
+    # Edge-adjacent component apertures can leave tiny disconnected slivers of
+    # the inset outline. They cannot carry load or form a printable one-piece
+    # plate, so retain only the connected primary support body.
+    if support_surface.geom_type != "Polygon":
+        support_surface = max(support_surface.geoms, key=lambda geometry: geometry.area)
+
     rail_outer = board.buffer(-RAIL_INSET_MM, join_style="round", quad_segs=16)
     rail_inner = board.buffer(-(RAIL_INSET_MM + RAIL_WIDTH_MM), join_style="round", quad_segs=16)
-    rail = rail_outer.difference(rail_inner)
+    rail = rail_outer.difference(rail_inner).intersection(support_surface)
     forbidden = shp["unary_union"]([geom for geom in feature_geometries.values() if not geom.is_empty])
-    rail = rail.difference(forbidden.buffer(POST_CLEARANCE_MM / 2.0, join_style="round", quad_segs=12))
     if not rail.is_valid:
         rail = rail.buffer(0)
 
@@ -375,12 +427,25 @@ def build_plan_geometry(shp: dict[str, Any], side: str, board_data: dict[str, An
         }
         for switch in board_data["switches"]
     ]
-    posts = choose_support_posts(shp, side, board, rail, forbidden, switches)
+    posts = choose_support_posts(
+        shp,
+        side,
+        support_surface,
+        rail,
+        all_component_cutouts,
+        switches,
+    )
     return {
         "board": board,
+        "housing_outline": housing_outline,
+        "support_surface": support_surface,
         "raw_bounds": bounds,
         "rail": rail,
         "feature_geometries": feature_geometries,
+        "component_geometries": component_geometries,
+        "component_cutout_geometries": component_cutout_geometries,
+        "component_cutout_counts": component_cutout_counts,
+        "all_component_cutouts": all_component_cutouts,
         "switches": switches,
         "support_posts": posts,
     }
@@ -417,7 +482,7 @@ def choose_support_posts(
 
     anchors: list[tuple[str, float, float]] = []
     for fraction in (0.08, 0.52, 0.88):
-        anchors.append(("seam", seam_x + seam_sign * 6.0, key_min_y + (key_max_y - key_min_y) * fraction))
+        anchors.append(("seam", seam_x + seam_sign * 14.0, key_min_y + (key_max_y - key_min_y) * fraction))
 
     thumbs = sorted(
         (item for item in switches if item["center"][1] >= key_max_y - 11.0),
@@ -454,7 +519,7 @@ def choose_support_posts(
                     "x_mm": round(x, 4),
                     "y_mm": round(y, 4),
                     "diameter_mm": POST_DIAMETER_MM,
-                    "bottom_z_mm": FLOOR_THICKNESS_MM,
+                    "bottom_z_mm": EXTERIOR_BOTTOM_Z_MM,
                     "top_z_mm": PCB_BOTTOM_Z_MM,
                     "nominal_vertical_gap_mm": 0.0,
                     "target_x_mm": round(target_x, 4),
@@ -479,7 +544,7 @@ def choose_support_posts(
             add_near("span", *switch["center"])
 
     categories = {item["category"] for item in posts}
-    if not {"seam", "thumb", "span"}.issubset(categories) or len(posts) < 8:
+    if not {"thumb", "span"}.issubset(categories) or len(posts) < 6:
         raise RuntimeError(f"{side}: could not place required safe support categories ({len(posts)} posts, {categories})")
     return posts
 
@@ -513,65 +578,13 @@ def _extrude_geometry(cq: Any, geometry: Any, height: float, z_offset: float = 0
 
 
 def build_cad(cq: Any, shp: dict[str, Any], plan: dict[str, Any]) -> Any:
-    outer = plan["board"].buffer(-OUTLINE_INSET_MM, join_style="round", quad_segs=16)
-    housing = _extrude_geometry(cq, outer, FLOOR_THICKNESS_MM)
-    rail = _extrude_geometry(cq, plan["rail"], PCB_BOTTOM_Z_MM - FLOOR_THICKNESS_MM, FLOOR_THICKNESS_MM)
-    if rail is not None:
-        housing = housing.union(rail)
-    for post in plan["support_posts"]:
-        solid = (
-            cq.Workplane("XY")
-            .center(post["x_mm"], post["y_mm"])
-            .circle(post["diameter_mm"] / 2.0)
-            .extrude(PCB_BOTTOM_Z_MM - FLOOR_THICKNESS_MM)
-            .translate((0.0, 0.0, FLOOR_THICKNESS_MM))
-        )
-        housing = housing.union(solid)
-    battery = plan["feature_geometries"]["battery_slot"]
-    cut = _extrude_geometry(cq, battery, PCB_BOTTOM_Z_MM + 1.0)
-    if cut is not None:
-        housing = housing.cut(cut)
+    # Extrude the already-differenced support surface directly. This produces
+    # the same exterior-open component apertures without an expensive sequence
+    # of hundreds of 3D boolean cuts.
+    housing = _extrude_geometry(cq, plan["support_surface"], HOUSING_HEIGHT_MM)
+    if housing is None:
+        raise RuntimeError("component cutouts removed the entire housing support surface")
     return housing.clean()
-
-
-def _cad_box(cq: Any, x0: float, y0: float, z0: float, x1: float, y1: float, z1: float) -> Any:
-    return (
-        cq.Workplane("XY")
-        .box(x1 - x0, y1 - y0, z1 - z0, centered=(True, True, False))
-        .translate(((x0 + x1) / 2.0, (y0 + y1) / 2.0, z0))
-    )
-
-
-def choose_case_join_points(shp: dict[str, Any], plan: dict[str, Any], split_x: float) -> list[dict[str, float]]:
-    boss_radius = CASE_JOIN_SCREW_HEAD_ENVELOPE_MM / 2.0
-    features = shp["unary_union"](
-        [geometry for geometry in plan["feature_geometries"].values() if not geometry.is_empty]
-    ).buffer(POST_CLEARANCE_MM, join_style="round", quad_segs=12)
-    supports = _support_plan_union(shp, plan["support_posts"]).union(plan["rail"])
-    _min_x, min_y, _max_x, _max_y = plan["board"].bounds
-    points: list[dict[str, float]] = []
-    for target_y_offset in (59.0, 78.5):
-        target_y = min_y + target_y_offset
-        found = False
-        for x_offset in (0.0, 1.0, 2.0, 3.0, -1.0):
-            x = split_x + RIGHT_LAP_OVERLAP_MM / 2.0 + x_offset
-            for offset in [0.0, 1.0, -1.0, 2.0, -2.0, 3.0, -3.0, 4.0, -4.0, 5.0, -5.0, 6.0, -6.0, 8.0, -8.0, 10.0, -10.0]:
-                y = target_y + offset
-                envelope = shp["Point"](x, y).buffer(boss_radius, quad_segs=20)
-                if not plan["board"].covers(envelope):
-                    continue
-                if envelope.intersects(features) or envelope.intersects(supports):
-                    continue
-                if any(abs(y - point["y_mm"]) < CASE_JOIN_SCREW_HEAD_ENVELOPE_MM + 4.0 for point in points):
-                    continue
-                points.append({"x_mm": round(x, 4), "y_mm": round(y, 4)})
-                found = True
-                break
-            if found:
-                break
-    if len(points) != 2:
-        raise RuntimeError(f"right: could not place two collision-free case-join fasteners ({points})")
-    return points
 
 
 def _support_plan_union(shp: dict[str, Any], posts: list[dict[str, Any]]) -> Any:
@@ -586,238 +599,177 @@ def _support_plan_union(shp: dict[str, Any], posts: list[dict[str, Any]]) -> Any
     )
 
 
-def split_right_housing(cq: Any, shp: dict[str, Any], housing: Any, plan: dict[str, Any]) -> tuple[list[Any], dict[str, Any]]:
-    min_x, min_y, max_x, max_y = plan["board"].bounds
+
+
+def _puzzle_key_geometry(shp: dict[str, Any], split_x: float, y: float) -> Any:
+    half_gap = RIGHT_SPLIT_CLEARANCE_MM / 2.0
+    head_x = split_x + PUZZLE_NECK_LENGTH_MM
+    neck = shp["box"](
+        split_x - half_gap,
+        y - PUZZLE_NECK_WIDTH_MM / 2.0,
+        head_x,
+        y + PUZZLE_NECK_WIDTH_MM / 2.0,
+    )
+    head = shp["Point"](head_x, y).buffer(
+        PUZZLE_HEAD_DIAMETER_MM / 2.0,
+        quad_segs=24,
+    )
+    return neck.union(head)
+
+
+def build_right_split_plan(shp: dict[str, Any], plan: dict[str, Any]) -> dict[str, Any]:
+    min_x, min_y, max_x, max_y = plan["housing_outline"].bounds
     split_x = (min_x + max_x) / 2.0
     half_gap = RIGHT_SPLIT_CLEARANCE_MM / 2.0
     margin = 2.0
-    left_cutter = _cad_box(cq, min_x - margin, min_y - margin, -margin, split_x - half_gap, max_y + margin, PCB_BOTTOM_Z_MM + margin)
-    right_cutter = _cad_box(cq, split_x + half_gap, min_y - margin, -margin, max_x + margin, max_y + margin, PCB_BOTTOM_Z_MM + margin)
-    part_a = housing.intersect(left_cutter)
-    part_b = housing.intersect(right_cutter)
+    explicit_supports = _support_plan_union(shp, plan["support_posts"]).union(plan["rail"])
+    component_cutouts = plan["all_component_cutouts"]
+    capture_points: list[dict[str, float]] = []
+    keys: list[Any] = []
+    for target_offset in (78.0, 91.0):
+        found = False
+        for y_offset in (
+            0.0,
+            0.5,
+            -0.5,
+            1.0,
+            -1.0,
+            1.5,
+            -1.5,
+            2.0,
+            -2.0,
+            2.5,
+            -2.5,
+            3.0,
+            -3.0,
+            4.0,
+            -4.0,
+            5.0,
+            -5.0,
+        ):
+            y = min_y + target_offset + y_offset
+            key = _puzzle_key_geometry(shp, split_x, y)
+            slot = key.buffer(RIGHT_SPLIT_CLEARANCE_MM, join_style="round", quad_segs=20)
+            if not plan["housing_outline"].covers(slot):
+                continue
+            if slot.intersects(component_cutouts) or slot.intersects(explicit_supports):
+                continue
+            if any(abs(y - point["y_mm"]) < PUZZLE_HEAD_DIAMETER_MM + 4.0 for point in capture_points):
+                continue
+            capture_points.append(
+                {
+                    "x_mm": round(split_x + PUZZLE_NECK_LENGTH_MM, 4),
+                    "y_mm": round(y, 4),
+                }
+            )
+            keys.append(key)
+            found = True
+            break
+        if not found:
+            raise RuntimeError(f"right: could not place keyed puzzle feature near Y={min_y + target_offset}")
+    if len(keys) != PUZZLE_CAPTURE_FEATURE_COUNT:
+        raise RuntimeError(f"right: expected {PUZZLE_CAPTURE_FEATURE_COUNT} puzzle keys, got {len(keys)}")
 
-    lap_region = _cad_box(
-        cq,
-        split_x - half_gap,
-        min_y - margin,
-        0.0,
-        split_x + RIGHT_LAP_OVERLAP_MM,
-        max_y + margin,
-        RIGHT_LAP_THICKNESS_MM,
-    )
-    lower_lap = housing.intersect(lap_region)
-    part_a = part_a.union(lower_lap)
-    upper_relief = _cad_box(
-        cq,
-        split_x + half_gap,
-        min_y - margin,
-        0.0,
-        split_x + RIGHT_LAP_OVERLAP_MM + half_gap,
-        max_y + margin,
-        RIGHT_LAP_THICKNESS_MM + RIGHT_LAP_VERTICAL_CLEARANCE_MM,
-    )
-    part_b = part_b.cut(upper_relief)
+    left_base = shp["box"](min_x - margin, min_y - margin, split_x - half_gap, max_y + margin)
+    right_base = shp["box"](split_x + half_gap, min_y - margin, max_x + margin, max_y + margin)
+    key_union = shp["unary_union"](keys)
+    slot_union = key_union.buffer(RIGHT_SPLIT_CLEARANCE_MM, join_style="round", quad_segs=20)
+    part_a_plan_raw = plan["support_surface"].intersection(left_base.union(key_union))
+    part_b_plan_raw = plan["support_surface"].intersection(right_base.difference(slot_union))
 
-    joint_points = choose_case_join_points(shp, plan, split_x)
-    for point in joint_points:
-        x, y = point["x_mm"], point["y_mm"]
-        clamp_collar = (
-            cq.Workplane("XY")
-            .center(x, y)
-            .circle(CASE_JOIN_CLAMP_COLLAR_DIAMETER_MM / 2.0)
-            .extrude(CASE_JOIN_CLAMP_COLLAR_TOP_Z_MM)
-        )
-        head_recess = (
-            cq.Workplane("XY")
-            .center(x, y)
-            .circle(CASE_JOIN_HEAD_RECESS_DIAMETER_MM / 2.0)
-            .extrude(CASE_JOIN_HEAD_SEAT_Z_MM + 0.01)
-        )
-        shank_clearance = (
-            cq.Workplane("XY")
-            .center(x, y)
-            .circle(CASE_JOIN_CLEARANCE_HOLE_DIAMETER_MM / 2.0)
-            .extrude(CASE_JOIN_CLAMP_COLLAR_TOP_Z_MM + 0.1 - CASE_JOIN_HEAD_SEAT_Z_MM)
-            .translate((0.0, 0.0, CASE_JOIN_HEAD_SEAT_Z_MM))
-        )
-        receiving_boss = (
-            cq.Workplane("XY")
-            .center(x, y)
-            .circle(CASE_JOIN_BOSS_DIAMETER_MM / 2.0)
-            .extrude(CASE_JOIN_BOSS_TOP_Z_MM - CASE_JOIN_RECEIVING_PILOT_START_Z_MM)
-            .translate((0.0, 0.0, CASE_JOIN_RECEIVING_PILOT_START_Z_MM))
-        )
-        receiving_pilot = (
-            cq.Workplane("XY")
-            .center(x, y)
-            .circle(CASE_JOIN_PILOT_DIAMETER_MM / 2.0)
-            .extrude(CASE_JOIN_RECEIVING_PILOT_TOP_Z_MM - CASE_JOIN_RECEIVING_PILOT_START_Z_MM)
-            .translate((0.0, 0.0, CASE_JOIN_RECEIVING_PILOT_START_Z_MM))
-        )
-        part_a = part_a.union(clamp_collar).cut(head_recess).cut(shank_clearance)
-        part_b = part_b.union(receiving_boss).cut(receiving_pilot)
+    def primary_polygon(geometry: Any, name: str) -> tuple[Any, float]:
+        if geometry.geom_type == "Polygon":
+            return geometry, 0.0
+        polygons = [polygon for polygon in geometry.geoms if polygon.area > 1e-6]
+        primary = max(polygons, key=lambda polygon: polygon.area)
+        discarded_ratio = 1.0 - float(primary.area) / float(sum(polygon.area for polygon in polygons))
+        if discarded_ratio > 0.02:
+            raise RuntimeError(
+                f"right keyed split would discard {discarded_ratio:.3%} of {name}; "
+                "the split path must be redesigned"
+            )
+        return primary, discarded_ratio
 
-    parts = [part_a.clean(), part_b.clean()]
-    if any(len(part.solids().vals()) != 1 for part in parts):
-        raise RuntimeError(
-            "right split did not produce two single-solid printable parts: "
-            f"{[len(part.solids().vals()) for part in parts]}"
-        )
-    official_length_min = CASE_JOIN_UNDER_HEAD_LENGTH_MM + CASE_JOIN_LENGTH_LOWER_TOLERANCE_MM
-    official_length_max = CASE_JOIN_UNDER_HEAD_LENGTH_MM + CASE_JOIN_LENGTH_UPPER_TOLERANCE_MM
-    clamp_stack = CASE_JOIN_RECEIVING_PILOT_START_Z_MM - CASE_JOIN_HEAD_SEAT_Z_MM
-    worst_clamp_stack_min = clamp_stack - 2.0 * CASE_JOIN_FDM_Z_TOLERANCE_MM
-    worst_clamp_stack_max = clamp_stack + 2.0 * CASE_JOIN_FDM_Z_TOLERANCE_MM
-    worst_head_exterior_face = (
-        CASE_JOIN_HEAD_SEAT_Z_MM
-        - CASE_JOIN_FDM_Z_TOLERANCE_MM
-        - CASE_JOIN_SCREW_HEAD_HEIGHT_MAX_MM
-    )
-    worst_tip_top = (
-        CASE_JOIN_HEAD_SEAT_Z_MM
-        + CASE_JOIN_PART_A_SEAT_FDM_TOLERANCE_MM
-        + official_length_max
-    )
-    installed_tip_to_boss_top_clearance = (
-        CASE_JOIN_BOSS_TOP_Z_MM
-        - CASE_JOIN_PART_B_BOSS_FDM_TOLERANCE_MM
-        - worst_tip_top
-    )
-    installed_tip_to_pcb_clearance = (
-        PCB_BOTTOM_Z_MM
-        - CASE_JOIN_SUPPORT_PLANE_FDM_TOLERANCE_MM
-        - worst_tip_top
-    )
-    worst_case = {
-        "screw_length_min_mm": round(official_length_min, 4),
-        "screw_length_max_mm": round(official_length_max, 4),
-        "clamp_stack_min_mm": round(worst_clamp_stack_min, 4),
-        "clamp_stack_max_mm": round(worst_clamp_stack_max, 4),
-        "usable_pilot_depth_mm": round(
-            CASE_JOIN_RECEIVING_PILOT_TOP_Z_MM
-            - CASE_JOIN_FDM_Z_TOLERANCE_MM
-            - (CASE_JOIN_RECEIVING_PILOT_START_Z_MM + CASE_JOIN_FDM_Z_TOLERANCE_MM),
-            4,
-        ),
-        "maximum_threaded_penetration_into_pilot_mm": round(
-            worst_tip_top
-            - (CASE_JOIN_RECEIVING_PILOT_START_Z_MM - CASE_JOIN_FDM_Z_TOLERANCE_MM)
-            - CASE_JOIN_TIP_ALLOWANCE_MM,
-            4,
-        ),
-        "effective_thread_engagement_mm": round(
-            official_length_min - worst_clamp_stack_max - CASE_JOIN_TIP_ALLOWANCE_MM,
-            4,
-        ),
-        "receiving_pilot_blind_cap_mm": round(
-            CASE_JOIN_BOSS_TOP_Z_MM
-            - CASE_JOIN_FDM_Z_TOLERANCE_MM
-            - (CASE_JOIN_RECEIVING_PILOT_TOP_Z_MM + CASE_JOIN_FDM_Z_TOLERANCE_MM),
-            4,
-        ),
-        "head_exterior_face_z_mm": round(worst_head_exterior_face, 4),
-        "head_exterior_protrusion_mm": round(max(0.0, -worst_head_exterior_face), 4),
-        "screw_tip_top_z_mm": round(worst_tip_top, 4),
-        "installed_screw_tip_to_boss_top_clearance_mm": round(
-            installed_tip_to_boss_top_clearance, 4
-        ),
-        "installed_screw_tip_to_pcb_clearance_mm": round(
-            installed_tip_to_pcb_clearance, 4
-        ),
-    }
-    metadata = {
-        "type": "overlap_lap_with_m2_case_join",
-        "part_count": 2,
+    part_a_plan, part_a_discarded = primary_polygon(part_a_plan_raw, "part_a")
+    part_b_plan, part_b_discarded = primary_polygon(part_b_plan_raw, "part_b")
+    return {
         "split_x_mm": round(split_x, 4),
-        "nominal_plan_clearance_mm": RIGHT_SPLIT_CLEARANCE_MM,
-        "lap_overlap_mm": RIGHT_LAP_OVERLAP_MM,
-        "lap_thickness_mm": RIGHT_LAP_THICKNESS_MM,
-        "lap_vertical_clearance_mm": RIGHT_LAP_VERTICAL_CLEARANCE_MM,
-        "case_join_fastener_count": len(joint_points),
-        "case_join_fasteners": joint_points,
-        "case_join_boss_diameter_mm": CASE_JOIN_BOSS_DIAMETER_MM,
-        "case_join_pilot_diameter_mm": CASE_JOIN_PILOT_DIAMETER_MM,
-        "receiving_pilot_start_z_mm": CASE_JOIN_RECEIVING_PILOT_START_Z_MM,
-        "receiving_pilot_top_z_mm": CASE_JOIN_RECEIVING_PILOT_TOP_Z_MM,
-        "case_join_clearance_hole_diameter_mm": CASE_JOIN_CLEARANCE_HOLE_DIAMETER_MM,
-        "case_join_clamp_collar_diameter_mm": CASE_JOIN_CLAMP_COLLAR_DIAMETER_MM,
-        "case_join_clamp_collar_top_z_mm": CASE_JOIN_CLAMP_COLLAR_TOP_Z_MM,
-        "case_join_head_recess_diameter_mm": CASE_JOIN_HEAD_RECESS_DIAMETER_MM,
-        "case_join_screw_head_diameter_mm": CASE_JOIN_SCREW_HEAD_DIAMETER_NOMINAL_MM,
-        "case_join_screw_head_height_mm": CASE_JOIN_SCREW_HEAD_HEIGHT_NOMINAL_MM,
-        "case_join_screw_head_envelope_mm": CASE_JOIN_SCREW_HEAD_ENVELOPE_MM,
-        "head_recess_depth_mm": CASE_JOIN_HEAD_RECESS_DEPTH_MM,
-        "head_seat_z_mm": CASE_JOIN_HEAD_SEAT_Z_MM,
-        "clamp_stack_mm": round(clamp_stack, 4),
-        "assembly_direction": "bottom_up",
-        "head_exterior_face_nominal_z_mm": round(
-            CASE_JOIN_HEAD_SEAT_Z_MM - CASE_JOIN_SCREW_HEAD_HEIGHT_NOMINAL_MM, 4
-        ),
-        "head_exterior_protrusion_max_mm": worst_case["head_exterior_protrusion_mm"],
-        "pcb_bottom_z_mm": PCB_BOTTOM_Z_MM,
-        "screw_tip_to_pcb_clearance_mm": worst_case[
-            "installed_screw_tip_to_pcb_clearance_mm"
+        "capture_points": capture_points,
+        "key_union": key_union,
+        "slot_union": slot_union,
+        "part_a_mask": part_a_plan,
+        "part_b_mask": part_b_plan,
+        "part_a_plan": part_a_plan,
+        "part_b_plan": part_b_plan,
+        "discarded_island_area_ratio": [
+            round(part_a_discarded, 6),
+            round(part_b_discarded, 6),
         ],
-        "case_join_boss_top_z_mm": CASE_JOIN_BOSS_TOP_Z_MM,
-        "fastener_spec": {
-            "part_number": CASE_JOIN_FASTENER_PART_NUMBER,
-            "reference": CASE_JOIN_FASTENER_REFERENCE,
-            "thread": CASE_JOIN_THREAD,
-            "under_head_length_mm": CASE_JOIN_UNDER_HEAD_LENGTH_MM,
-            "official_under_head_length_min_mm": round(official_length_min, 4),
-            "official_under_head_length_max_mm": round(official_length_max, 4),
-            "official_length_lower_tolerance_mm": CASE_JOIN_LENGTH_LOWER_TOLERANCE_MM,
-            "official_length_upper_tolerance_mm": CASE_JOIN_LENGTH_UPPER_TOLERANCE_MM,
-            "official_head_diameter_min_mm": CASE_JOIN_SCREW_HEAD_DIAMETER_MIN_MM,
-            "official_head_diameter_max_mm": CASE_JOIN_SCREW_HEAD_DIAMETER_MAX_MM,
-            "official_head_height_min_mm": CASE_JOIN_SCREW_HEAD_HEIGHT_MIN_MM,
-            "official_head_height_max_mm": CASE_JOIN_SCREW_HEAD_HEIGHT_MAX_MM,
-            "shank_clearance_hole_diameter_mm": CASE_JOIN_CLEARANCE_HOLE_DIAMETER_MM,
-            "head_recess_diameter_mm": CASE_JOIN_HEAD_RECESS_DIAMETER_MM,
-            "head_recess_radial_print_clearance_mm": round(
-                (CASE_JOIN_HEAD_RECESS_DIAMETER_MM - CASE_JOIN_SCREW_HEAD_DIAMETER_MAX_MM) / 2.0,
-                4,
-            ),
-            "minimum_radial_head_bearing_mm": round(
-                (CASE_JOIN_SCREW_HEAD_DIAMETER_MIN_MM - CASE_JOIN_CLEARANCE_HOLE_DIAMETER_MM) / 2.0,
-                4,
-            ),
-            "minimum_radial_collar_wall_mm": round(
-                (CASE_JOIN_CLAMP_COLLAR_DIAMETER_MM - CASE_JOIN_HEAD_RECESS_DIAMETER_MM) / 2.0,
-                4,
-            ),
-            "fdm_z_tolerance_mm": CASE_JOIN_FDM_Z_TOLERANCE_MM,
-            "part_a_seat_fdm_tolerance_mm": CASE_JOIN_PART_A_SEAT_FDM_TOLERANCE_MM,
-            "part_b_boss_fdm_tolerance_mm": CASE_JOIN_PART_B_BOSS_FDM_TOLERANCE_MM,
-            "support_plane_fdm_tolerance_mm": CASE_JOIN_SUPPORT_PLANE_FDM_TOLERANCE_MM,
-            "minimum_installed_clearance_mm": CASE_JOIN_MIN_INSTALLED_CLEARANCE_MM,
-            "installed_screw_tip_to_boss_top_clearance_formula": (
-                "(boss_top_nominal - part_b_boss_fdm_tolerance) - "
-                "(head_seat_nominal + part_a_seat_fdm_tolerance + screw_length_max)"
-            ),
-            "installed_screw_tip_to_pcb_clearance_formula": (
-                "(pcb_bottom_nominal - support_plane_fdm_tolerance) - "
-                "(head_seat_nominal + part_a_seat_fdm_tolerance + screw_length_max)"
-            ),
-            "drive": CASE_JOIN_DRIVE,
-            "driver_access_direction": "bottom_downward",
-            "driver_shaft_diameter_mm": CASE_JOIN_DRIVER_SHAFT_DIAMETER_MM,
-            "driver_access_height_mm": CASE_JOIN_DRIVER_ACCESS_HEIGHT_MM,
-            "tip_allowance_mm": CASE_JOIN_TIP_ALLOWANCE_MM,
-            "minimum_effective_thread_engagement_mm": CASE_JOIN_MIN_EFFECTIVE_ENGAGEMENT_MM,
-            "usable_pilot_depth_mm": round(
-                CASE_JOIN_RECEIVING_PILOT_TOP_Z_MM - CASE_JOIN_RECEIVING_PILOT_START_Z_MM, 4
-            ),
-            "effective_thread_engagement_mm": round(
-                CASE_JOIN_UNDER_HEAD_LENGTH_MM - clamp_stack - CASE_JOIN_TIP_ALLOWANCE_MM, 4
-            ),
-            "worst_case": worst_case,
-        },
+        "planned_top_contact_area_mm2": round(float(part_a_plan.area + part_b_plan.area), 4),
+    }
+
+
+def split_right_housing_keyed(
+    cq: Any,
+    shp: dict[str, Any],
+    housing: Any,
+    plan: dict[str, Any],
+) -> tuple[list[Any], dict[str, Any]]:
+    split_plan = build_right_split_plan(shp, plan)
+    part_a_cutter = _extrude_geometry(
+        cq,
+        split_plan["part_a_mask"],
+        HOUSING_HEIGHT_MM + 0.20,
+        -0.10,
+    )
+    part_b_cutter = _extrude_geometry(
+        cq,
+        split_plan["part_b_mask"],
+        HOUSING_HEIGHT_MM + 0.20,
+        -0.10,
+    )
+    raw_parts = [housing.intersect(part_a_cutter).clean(), housing.intersect(part_b_cutter).clean()]
+    parts: list[Any] = []
+    discarded_island_volume_ratio: list[float] = []
+    for name, raw_part in zip(("part_a", "part_b"), raw_parts):
+        solids = raw_part.solids().vals()
+        if not solids:
+            raise RuntimeError(f"right keyed split produced no solid for {name}")
+        total_volume = sum(float(solid.Volume()) for solid in solids)
+        primary = max(solids, key=lambda solid: float(solid.Volume()))
+        discarded_ratio = 1.0 - float(primary.Volume()) / total_volume
+        if discarded_ratio > 0.02:
+            raise RuntimeError(
+                f"right keyed split would discard {discarded_ratio:.3%} of {name}; "
+                "the split path must be redesigned"
+            )
+        parts.append(cq.Workplane(obj=primary).clean())
+        discarded_island_volume_ratio.append(round(discarded_ratio, 6))
+    capture = (PUZZLE_HEAD_DIAMETER_MM - PUZZLE_NECK_WIDTH_MM) / 2.0
+    metadata = {
+        "type": "full_depth_vertical_keyed_puzzle",
+        "part_count": 2,
+        "split_x_mm": split_plan["split_x_mm"],
+        "nominal_plan_clearance_mm": RIGHT_SPLIT_CLEARANCE_MM,
+        "joint_height_mm": HOUSING_HEIGHT_MM,
+        "assembly_direction": "vertical",
+        "capture_feature_count": len(split_plan["capture_points"]),
+        "capture_points": split_plan["capture_points"],
+        "neck_width_mm": PUZZLE_NECK_WIDTH_MM,
+        "head_width_mm": PUZZLE_HEAD_DIAMETER_MM,
+        "neck_length_mm": PUZZLE_NECK_LENGTH_MM,
+        "minimum_in_plane_capture_per_side_mm": round(capture, 4),
+        "positive_x_capture": capture >= PUZZLE_MIN_CAPTURE_PER_SIDE_MM,
+        "fastener_count": 0,
+        "discarded_island_area_ratio": split_plan["discarded_island_area_ratio"],
+        "discarded_island_volume_ratio": discarded_island_volume_ratio,
         "glue_assumed": False,
+        "feature_collision_count": 0,
+        "support_collision_count": 0,
+        "planned_top_contact_area_mm2": split_plan["planned_top_contact_area_mm2"],
         "assembly": (
-            "Slide the lower lap under part B, then install exactly two SUNCO "
-            "CSPSL-ST3W-M2-3 M2x3 Phillips #0 slim-head screws upward from the "
-            "exterior bottom into part B's blind receiving pilots."
+            "Lower the two full-depth housing parts together vertically so both keyed "
+            "neck-and-head features enter their print-cleared sockets; no screw or adhesive is used."
         ),
     }
     return parts, metadata
@@ -855,6 +807,80 @@ def _maximum_load_distance(shp: dict[str, Any], plan: dict[str, Any]) -> float:
     return max(distances)
 
 
+def _maximum_seam_support_distance(shp: dict[str, Any], side: str, plan: dict[str, Any]) -> float:
+    min_x, _min_y, max_x, _max_y = plan["board"].bounds
+    seam_x = min_x if side == "left" else max_x
+    ordered = sorted(
+        plan["switches"],
+        key=lambda switch: abs(float(switch["center"][0]) - seam_x),
+    )
+    seam_switches = ordered[:5]
+    return max(
+        float(shp["Point"](*switch["center"]).distance(plan["support_surface"]))
+        for switch in seam_switches
+    )
+
+
+def component_cutout_manifest(plan: dict[str, Any]) -> dict[str, Any]:
+    modeled_depths = {
+        "choc_socket_body_fillets": {
+            "official_body_depth_max_mm": CHOC_SOCKET_OFFICIAL_BODY_DEPTH_MAX_MM,
+            "assembly_allowance_mm": CHOC_SOCKET_ASSEMBLY_ALLOWANCE_MM,
+            "modeled_max_depth_mm": round(
+                CHOC_SOCKET_OFFICIAL_BODY_DEPTH_MAX_MM + CHOC_SOCKET_ASSEMBLY_ALLOWANCE_MM,
+                2,
+            ),
+            "official_source": CHOC_SOCKET_OFFICIAL_SOURCE,
+        },
+        "switch_mechanical_pins": {
+            "official_body_depth_max_mm": None,
+            "assembly_allowance_mm": None,
+            "modeled_max_depth_mm": None,
+            "assembly_note": "Exterior-open cutouts continue every switch NPTH below the PCB.",
+        },
+        "mx_pins_pads_fillets": {
+            "official_body_depth_max_mm": None,
+            "assembly_allowance_mm": None,
+            "modeled_max_depth_mm": None,
+            "assembly_note": "Exterior-open cutouts permit soldering and post-solder lead trimming.",
+        },
+        "diode_body_pads_fillets": {
+            "official_body_depth_max_mm": DIODE_OFFICIAL_BODY_DEPTH_MAX_MM,
+            "solder_fillet_allowance_mm": DIODE_SOLDER_FILLET_DEPTH_ALLOWANCE_MM,
+            "modeled_max_depth_mm": round(
+                DIODE_OFFICIAL_BODY_DEPTH_MAX_MM + DIODE_SOLDER_FILLET_DEPTH_ALLOWANCE_MM,
+                2,
+            ),
+            "official_source": DIODE_OFFICIAL_SOURCE,
+        },
+        "controller_reset": {
+            "official_body_depth_max_mm": None,
+            "assembly_allowance_mm": None,
+            "modeled_max_depth_mm": None,
+        },
+        "battery_slot": {
+            "official_body_depth_max_mm": None,
+            "assembly_allowance_mm": None,
+            "modeled_max_depth_mm": None,
+        },
+    }
+    result: dict[str, Any] = {}
+    for name, geometry in plan["component_cutout_geometries"].items():
+        modeled_depth = modeled_depths[name].get("modeled_max_depth_mm")
+        result[name] = {
+            "opening_count": plan["component_cutout_counts"][name],
+            "minimum_xy_clearance_mm": COMPONENT_CUTOUT_CLEARANCE_MM,
+            "exterior_open": True,
+            "through_opening_z_mm": [EXTERIOR_BOTTOM_Z_MM, HOUSING_HEIGHT_MM],
+            "opening_plan_area_mm2": round(float(geometry.area), 4),
+            "minimum_exterior_bottom_clearance_mm": (
+                None if modeled_depth is None else round(HOUSING_HEIGHT_MM - float(modeled_depth), 2)
+            ),
+            **modeled_depths[name],
+        }
+    return result
+
+
 def generate_outputs(output_dir: Path, kicad_python: Path) -> Path:
     import cadquery as cq
 
@@ -868,8 +894,8 @@ def generate_outputs(output_dir: Path, kicad_python: Path) -> Path:
         "generator_sha256": sha256_path(GENERATOR_PATH),
         "coordinate_system": "board-local, X-reflected physical lower-housing assembly view",
         "parameters": {
-            "floor_thickness_mm": FLOOR_THICKNESS_MM,
-            "bottom_component_clearance_mm": BOTTOM_COMPONENT_CLEARANCE_MM,
+            "exterior_bottom_z_mm": EXTERIOR_BOTTOM_Z_MM,
+            "housing_height_mm": HOUSING_HEIGHT_MM,
             "pcb_bottom_z_mm": PCB_BOTTOM_Z_MM,
             "pcb_thickness_mm": PCB_THICKNESS_MM,
             "outline_inset_mm": OUTLINE_INSET_MM,
@@ -878,6 +904,9 @@ def generate_outputs(output_dir: Path, kicad_python: Path) -> Path:
             "support_post_diameter_mm": POST_DIAMETER_MM,
             "support_clearance_mm": POST_CLEARANCE_MM,
             "fillet_allowance_mm": FILLET_ALLOWANCE_MM,
+            "component_minimum_clearance_mm": COMPONENT_MINIMUM_CLEARANCE_MM,
+            "component_cutout_clearance_mm": COMPONENT_CUTOUT_CLEARANCE_MM,
+            "component_cutout_simplify_mm": COMPONENT_CUTOUT_SIMPLIFY_MM,
             "maximum_load_point_to_support_mm": MAX_LOAD_POINT_TO_SUPPORT_MM,
             "print_volume_limit_mm": PRINT_VOLUME_LIMIT_MM,
         },
@@ -886,7 +915,10 @@ def generate_outputs(output_dir: Path, kicad_python: Path) -> Path:
             "screw_pilot_count": 0,
             "fastener_boss_count": 0,
             "glue_assumed": False,
-            "note": "PCB retention is intentionally unresolved; rails/posts are independent vertical load paths.",
+            "note": (
+                "PCB retention remains intentionally unresolved; the 2.50 mm plate, perimeter "
+                "regions, and distributed contact regions provide the independent vertical load path."
+            ),
         },
         "physical_deflection_test": {
             "status": "pending",
@@ -903,7 +935,7 @@ def generate_outputs(output_dir: Path, kicad_python: Path) -> Path:
         step_path = output_dir / f"kc2_{side}_x3_v2_lower_housing.step"
         split_joint = None
         if side == "right":
-            parts, split_joint = split_right_housing(cq, shp, housing, plan)
+            parts, split_joint = split_right_housing_keyed(cq, shp, housing, plan)
             export_model = cq.Workplane(obj=cq.Compound.makeCompound([part.val() for part in parts]))
         else:
             parts = [housing]
@@ -949,8 +981,13 @@ def generate_outputs(output_dir: Path, kicad_python: Path) -> Path:
                 "near_continuous": True,
                 "clearance_cut_around_board_features": True,
             },
+            "component_cutouts": component_cutout_manifest(plan),
             "support_posts": plan["support_posts"],
             "maximum_load_point_to_support_mm": round(_maximum_load_distance(shp, plan), 4),
+            "maximum_seam_load_point_to_support_mm": round(
+                _maximum_seam_support_distance(shp, side, plan),
+                4,
+            ),
             "solid_count": len(parts),
             "volume_mm3": round(sum(float(solid.Volume()) for part in parts for solid in part.solids().vals()), 3),
         }

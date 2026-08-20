@@ -9,58 +9,61 @@
       "source_board_sha256_matches": true,
       "key_count": 32,
       "legacy_registration_refs": [],
-      "rail_top_z_mm": 3.9,
-      "pcb_bottom_z_mm": 3.9,
+      "exterior_bottom_z_mm": 0.0,
+      "housing_height_mm": 2.5,
+      "raised_key_field_bezel_present": false,
+      "rail_top_z_mm": 2.5,
+      "pcb_bottom_z_mm": 2.5,
       "maximum_rail_vertical_gap_mm": 0.0,
       "maximum_support_vertical_gap_mm": 0.0,
-      "rail_plan_area_mm2": 276.6096,
+      "rail_plan_area_mm2": 275.5454,
       "rail_plan_area_matches_manifest": true,
-      "rail_segment_count": 6,
+      "rail_segment_count": 10,
       "support_posts": [
         {
           "id": "LEFT-SUP-01",
           "category": "seam",
-          "x_mm": 11.5,
-          "y_mm": 41.621,
-          "diameter_mm": 3.2,
-          "bottom_z_mm": 1.2,
-          "top_z_mm": 3.9,
+          "x_mm": 22.6,
+          "y_mm": 52.121,
+          "diameter_mm": 2.0,
+          "bottom_z_mm": 0.0,
+          "top_z_mm": 2.5,
           "nominal_vertical_gap_mm": 0.0,
-          "target_x_mm": 6.0,
+          "target_x_mm": 14.1,
           "target_y_mm": 48.621
         },
         {
           "id": "LEFT-SUP-02",
           "category": "seam",
-          "x_mm": 17.0,
-          "y_mm": 79.649,
-          "diameter_mm": 3.2,
-          "bottom_z_mm": 1.2,
-          "top_z_mm": 3.9,
+          "x_mm": 19.1,
+          "y_mm": 73.149,
+          "diameter_mm": 2.0,
+          "bottom_z_mm": 0.0,
+          "top_z_mm": 2.5,
           "nominal_vertical_gap_mm": 0.0,
-          "target_x_mm": 6.0,
+          "target_x_mm": 14.1,
           "target_y_mm": 82.149
         },
         {
           "id": "LEFT-SUP-03",
           "category": "seam",
-          "x_mm": 6.0,
-          "y_mm": 110.081,
-          "diameter_mm": 3.2,
-          "bottom_z_mm": 1.2,
-          "top_z_mm": 3.9,
+          "x_mm": 19.1,
+          "y_mm": 107.581,
+          "diameter_mm": 2.0,
+          "bottom_z_mm": 0.0,
+          "top_z_mm": 2.5,
           "nominal_vertical_gap_mm": 0.0,
-          "target_x_mm": 6.0,
+          "target_x_mm": 14.1,
           "target_y_mm": 109.581
         },
         {
           "id": "LEFT-SUP-04",
           "category": "thumb",
-          "x_mm": 11.4062,
-          "y_mm": 113.225,
-          "diameter_mm": 3.2,
-          "bottom_z_mm": 1.2,
-          "top_z_mm": 3.9,
+          "x_mm": 11.9062,
+          "y_mm": 111.225,
+          "diameter_mm": 2.0,
+          "bottom_z_mm": 0.0,
+          "top_z_mm": 2.5,
           "nominal_vertical_gap_mm": 0.0,
           "target_x_mm": 10.4062,
           "target_y_mm": 112.725
@@ -68,11 +71,11 @@
         {
           "id": "LEFT-SUP-05",
           "category": "thumb",
-          "x_mm": 78.0812,
-          "y_mm": 113.225,
-          "diameter_mm": 3.2,
-          "bottom_z_mm": 1.2,
-          "top_z_mm": 3.9,
+          "x_mm": 78.5812,
+          "y_mm": 111.225,
+          "diameter_mm": 2.0,
+          "bottom_z_mm": 0.0,
+          "top_z_mm": 2.5,
           "nominal_vertical_gap_mm": 0.0,
           "target_x_mm": 77.0812,
           "target_y_mm": 112.725
@@ -80,11 +83,11 @@
         {
           "id": "LEFT-SUP-06",
           "category": "thumb",
-          "x_mm": 124.7062,
-          "y_mm": 108.225,
-          "diameter_mm": 3.2,
-          "bottom_z_mm": 1.2,
-          "top_z_mm": 3.9,
+          "x_mm": 123.2062,
+          "y_mm": 107.725,
+          "diameter_mm": 2.0,
+          "bottom_z_mm": 0.0,
+          "top_z_mm": 2.5,
           "nominal_vertical_gap_mm": 0.0,
           "target_x_mm": 124.7062,
           "target_y_mm": 112.725
@@ -92,11 +95,11 @@
         {
           "id": "LEFT-SUP-07",
           "category": "span",
-          "x_mm": 36.3375,
-          "y_mm": 63.099,
-          "diameter_mm": 3.2,
-          "bottom_z_mm": 1.2,
-          "top_z_mm": 3.9,
+          "x_mm": 31.8375,
+          "y_mm": 61.099,
+          "diameter_mm": 2.0,
+          "bottom_z_mm": 0.0,
+          "top_z_mm": 2.5,
           "nominal_vertical_gap_mm": 0.0,
           "target_x_mm": 31.8375,
           "target_y_mm": 63.099
@@ -104,11 +107,11 @@
         {
           "id": "LEFT-SUP-08",
           "category": "span",
-          "x_mm": 28.3375,
-          "y_mm": 94.031,
-          "diameter_mm": 3.2,
-          "bottom_z_mm": 1.2,
-          "top_z_mm": 3.9,
+          "x_mm": 28.8375,
+          "y_mm": 90.531,
+          "diameter_mm": 2.0,
+          "bottom_z_mm": 0.0,
+          "top_z_mm": 2.5,
           "nominal_vertical_gap_mm": 0.0,
           "target_x_mm": 31.8375,
           "target_y_mm": 90.531
@@ -116,11 +119,11 @@
         {
           "id": "LEFT-SUP-09",
           "category": "span",
-          "x_mm": 59.5313,
-          "y_mm": 60.599,
-          "diameter_mm": 3.2,
-          "bottom_z_mm": 1.2,
-          "top_z_mm": 3.9,
+          "x_mm": 51.5313,
+          "y_mm": 61.099,
+          "diameter_mm": 2.0,
+          "bottom_z_mm": 0.0,
+          "top_z_mm": 2.5,
           "nominal_vertical_gap_mm": 0.0,
           "target_x_mm": 58.0313,
           "target_y_mm": 63.099
@@ -129,10 +132,10 @@
           "id": "LEFT-SUP-10",
           "category": "span",
           "x_mm": 56.5313,
-          "y_mm": 96.031,
-          "diameter_mm": 3.2,
-          "bottom_z_mm": 1.2,
-          "top_z_mm": 3.9,
+          "y_mm": 96.531,
+          "diameter_mm": 2.0,
+          "bottom_z_mm": 0.0,
+          "top_z_mm": 2.5,
           "nominal_vertical_gap_mm": 0.0,
           "target_x_mm": 58.0313,
           "target_y_mm": 90.531
@@ -140,11 +143,11 @@
         {
           "id": "LEFT-SUP-11",
           "category": "span",
-          "x_mm": 79.725,
+          "x_mm": 88.225,
           "y_mm": 60.599,
-          "diameter_mm": 3.2,
-          "bottom_z_mm": 1.2,
-          "top_z_mm": 3.9,
+          "diameter_mm": 2.0,
+          "bottom_z_mm": 0.0,
+          "top_z_mm": 2.5,
           "nominal_vertical_gap_mm": 0.0,
           "target_x_mm": 84.225,
           "target_y_mm": 63.099
@@ -154,9 +157,9 @@
           "category": "span",
           "x_mm": 84.225,
           "y_mm": 90.531,
-          "diameter_mm": 3.2,
-          "bottom_z_mm": 1.2,
-          "top_z_mm": 3.9,
+          "diameter_mm": 2.0,
+          "bottom_z_mm": 0.0,
+          "top_z_mm": 2.5,
           "nominal_vertical_gap_mm": 0.0,
           "target_x_mm": 84.225,
           "target_y_mm": 90.531
@@ -164,11 +167,11 @@
         {
           "id": "LEFT-SUP-13",
           "category": "span",
-          "x_mm": 111.0375,
-          "y_mm": 65.099,
-          "diameter_mm": 3.2,
-          "bottom_z_mm": 1.2,
-          "top_z_mm": 3.9,
+          "x_mm": 108.0375,
+          "y_mm": 61.099,
+          "diameter_mm": 2.0,
+          "bottom_z_mm": 0.0,
+          "top_z_mm": 2.5,
           "nominal_vertical_gap_mm": 0.0,
           "target_x_mm": 108.0375,
           "target_y_mm": 63.099
@@ -176,52 +179,166 @@
         {
           "id": "LEFT-SUP-14",
           "category": "span",
-          "x_mm": 108.5375,
-          "y_mm": 89.531,
-          "diameter_mm": 3.2,
-          "bottom_z_mm": 1.2,
-          "top_z_mm": 3.9,
+          "x_mm": 107.0375,
+          "y_mm": 89.031,
+          "diameter_mm": 2.0,
+          "bottom_z_mm": 0.0,
+          "top_z_mm": 2.5,
           "nominal_vertical_gap_mm": 0.0,
           "target_x_mm": 108.0375,
           "target_y_mm": 90.531
         }
       ],
       "support_plan_matches_generator": true,
-      "maximum_load_point_to_support_mm": 15.552,
+      "maximum_load_point_to_support_mm": 14.9304,
+      "maximum_seam_load_point_to_support_mm": 2.85,
       "registration_peg_count": 0,
       "screw_pilot_count": 0,
       "fastener_boss_count": 0,
       "glue_assumed": false,
+      "component_cutouts": {
+        "choc_socket_body_fillets": {
+          "opening_count": 32,
+          "minimum_xy_clearance_mm": 0.3311,
+          "exterior_open": true,
+          "through_opening_z_mm": [
+            0.0,
+            2.5
+          ],
+          "opening_plan_area_mm2": 3243.7738,
+          "minimum_exterior_bottom_clearance_mm": 0.1,
+          "official_body_depth_max_mm": 2.3,
+          "assembly_allowance_mm": 0.1,
+          "modeled_max_depth_mm": 2.4,
+          "official_source": "https://www.kailhswitch.com/uploads/15927/files/CPG135001S30.pdf",
+          "residual_collision_volume_mm3": 0.0,
+          "three_dimensional_proof": "source-hash-bound constant-Z STEP extrusion; imported STEP volume/height matches the cutout-differenced support plan",
+          "opening_plan_area_matches_manifest": true
+        },
+        "switch_mechanical_pins": {
+          "opening_count": 32,
+          "minimum_xy_clearance_mm": 0.3299,
+          "exterior_open": true,
+          "through_opening_z_mm": [
+            0.0,
+            2.5
+          ],
+          "opening_plan_area_mm2": 2439.1257,
+          "minimum_exterior_bottom_clearance_mm": null,
+          "official_body_depth_max_mm": null,
+          "assembly_allowance_mm": null,
+          "modeled_max_depth_mm": null,
+          "assembly_note": "Exterior-open cutouts continue every switch NPTH below the PCB.",
+          "residual_collision_volume_mm3": 0.0,
+          "three_dimensional_proof": "source-hash-bound constant-Z STEP extrusion; imported STEP volume/height matches the cutout-differenced support plan",
+          "opening_plan_area_matches_manifest": true
+        },
+        "mx_pins_pads_fillets": {
+          "opening_count": 32,
+          "minimum_xy_clearance_mm": 0.3311,
+          "exterior_open": true,
+          "through_opening_z_mm": [
+            0.0,
+            2.5
+          ],
+          "opening_plan_area_mm2": 899.7057,
+          "minimum_exterior_bottom_clearance_mm": null,
+          "official_body_depth_max_mm": null,
+          "assembly_allowance_mm": null,
+          "modeled_max_depth_mm": null,
+          "assembly_note": "Exterior-open cutouts permit soldering and post-solder lead trimming.",
+          "residual_collision_volume_mm3": 0.0,
+          "three_dimensional_proof": "source-hash-bound constant-Z STEP extrusion; imported STEP volume/height matches the cutout-differenced support plan",
+          "opening_plan_area_matches_manifest": true
+        },
+        "diode_body_pads_fillets": {
+          "opening_count": 32,
+          "minimum_xy_clearance_mm": 0.3311,
+          "exterior_open": true,
+          "through_opening_z_mm": [
+            0.0,
+            2.5
+          ],
+          "opening_plan_area_mm2": 548.6641,
+          "minimum_exterior_bottom_clearance_mm": 0.85,
+          "official_body_depth_max_mm": 1.35,
+          "solder_fillet_allowance_mm": 0.3,
+          "modeled_max_depth_mm": 1.65,
+          "official_source": "https://www.vishay.com/docs/86356/1n4148w.pdf",
+          "residual_collision_volume_mm3": 0.0,
+          "three_dimensional_proof": "source-hash-bound constant-Z STEP extrusion; imported STEP volume/height matches the cutout-differenced support plan",
+          "opening_plan_area_matches_manifest": true
+        },
+        "controller_reset": {
+          "opening_count": 1,
+          "minimum_xy_clearance_mm": 0.3311,
+          "exterior_open": true,
+          "through_opening_z_mm": [
+            0.0,
+            2.5
+          ],
+          "opening_plan_area_mm2": 279.8723,
+          "minimum_exterior_bottom_clearance_mm": null,
+          "official_body_depth_max_mm": null,
+          "assembly_allowance_mm": null,
+          "modeled_max_depth_mm": null,
+          "residual_collision_volume_mm3": 0.0,
+          "three_dimensional_proof": "source-hash-bound constant-Z STEP extrusion; imported STEP volume/height matches the cutout-differenced support plan",
+          "opening_plan_area_matches_manifest": true
+        },
+        "battery_slot": {
+          "opening_count": 1,
+          "minimum_xy_clearance_mm": 0.3299,
+          "exterior_open": true,
+          "through_opening_z_mm": [
+            0.0,
+            2.5
+          ],
+          "opening_plan_area_mm2": 20.5204,
+          "minimum_exterior_bottom_clearance_mm": null,
+          "official_body_depth_max_mm": null,
+          "assembly_allowance_mm": null,
+          "modeled_max_depth_mm": null,
+          "residual_collision_volume_mm3": 0.0,
+          "three_dimensional_proof": "source-hash-bound constant-Z STEP extrusion; imported STEP volume/height matches the cutout-differenced support plan",
+          "opening_plan_area_matches_manifest": true
+        }
+      },
       "collision_checks": {
         "choc_socket_body": {
           "collision_count": 0,
           "intersection_area_mm2": 0.0,
-          "minimum_plan_clearance_mm": 0.15
+          "minimum_plan_clearance_mm": 0.35
         },
         "choc_socket_fillets": {
           "collision_count": 0,
           "intersection_area_mm2": 0.0,
-          "minimum_plan_clearance_mm": 0.1497
+          "minimum_plan_clearance_mm": 0.3357
+        },
+        "switch_mechanical_pins": {
+          "collision_count": 0,
+          "intersection_area_mm2": 0.0,
+          "minimum_plan_clearance_mm": 1.2582
         },
         "mx_pins_pads_fillets": {
           "collision_count": 0,
           "intersection_area_mm2": 0.0,
-          "minimum_plan_clearance_mm": 0.3643
+          "minimum_plan_clearance_mm": 0.645
         },
         "diode_body_pads_fillets": {
           "collision_count": 0,
           "intersection_area_mm2": 0.0,
-          "minimum_plan_clearance_mm": 0.1497
+          "minimum_plan_clearance_mm": 0.3357
         },
         "bottom_copper_tracks": {
           "collision_count": 0,
-          "intersection_area_mm2": 0.0,
-          "minimum_plan_clearance_mm": 0.1498
+          "reason": "support terminates at the PCB underside; routed copper is inside the PCB stack or protected by bottom solder mask and has no negative-Z body envelope",
+          "support_top_z_mm": 2.5
         },
         "vias": {
           "collision_count": 0,
-          "intersection_area_mm2": 0.0,
-          "minimum_plan_clearance_mm": 0.1562
+          "reason": "support terminates at the PCB underside; routed copper is inside the PCB stack or protected by bottom solder mask and has no negative-Z body envelope",
+          "support_top_z_mm": 2.5
         },
         "controller_reset": {
           "collision_count": 0,
@@ -236,8 +353,8 @@
         "switch_key_travel": {
           "collision_count": 0,
           "reason": "support_top_z <= pcb_bottom_z < pcb_top_z <= switch/key travel",
-          "support_top_z_mm": 3.9,
-          "switch_travel_min_z_mm": 5.5
+          "support_top_z_mm": 2.5,
+          "switch_travel_min_z_mm": 4.1
         }
       },
       "step": "hardware/case/draft/x3-v2/kc2_left_x3_v2_lower_housing.step",
@@ -247,11 +364,13 @@
       "step_solid_count": 1,
       "step_bounds_z_mm": [
         0.0,
-        3.9
+        2.5
       ],
-      "step_top_contact_area_mm2": 389.2043,
-      "planned_top_contact_area_mm2": 389.0886,
-      "step_top_contact_area_error_mm2": 0.1157,
+      "step_volume_mm3": 18070.5222,
+      "planned_step_volume_mm3": 18070.5222,
+      "step_top_contact_area_mm2": 7228.2089,
+      "planned_top_contact_area_mm2": 7228.2089,
+      "step_top_contact_area_error_mm2": 0.0,
       "step_top_contact_area_matches_plan": true,
       "printable_parts": [
         {
@@ -267,12 +386,12 @@
             0.0,
             135.0125,
             126.65,
-            3.9
+            2.5
           ],
           "size_xyz_mm": [
             134.9125,
             126.55,
-            3.9
+            2.5
           ],
           "bounds_match_manifest": true
         }
@@ -284,46 +403,49 @@
       "source_board_sha256_matches": true,
       "key_count": 39,
       "legacy_registration_refs": [],
-      "rail_top_z_mm": 3.9,
-      "pcb_bottom_z_mm": 3.9,
+      "exterior_bottom_z_mm": 0.0,
+      "housing_height_mm": 2.5,
+      "raised_key_field_bezel_present": false,
+      "rail_top_z_mm": 2.5,
+      "pcb_bottom_z_mm": 2.5,
       "maximum_rail_vertical_gap_mm": 0.0,
       "maximum_support_vertical_gap_mm": 0.0,
-      "rail_plan_area_mm2": 290.0515,
+      "rail_plan_area_mm2": 288.3605,
       "rail_plan_area_matches_manifest": true,
-      "rail_segment_count": 7,
+      "rail_segment_count": 13,
       "support_posts": [
         {
           "id": "RIGHT-SUP-01",
           "category": "seam",
-          "x_mm": 146.6875,
-          "y_mm": 51.121,
-          "diameter_mm": 3.2,
-          "bottom_z_mm": 1.2,
-          "top_z_mm": 3.9,
+          "x_mm": 144.5875,
+          "y_mm": 49.621,
+          "diameter_mm": 2.0,
+          "bottom_z_mm": 0.0,
+          "top_z_mm": 2.5,
           "nominal_vertical_gap_mm": 0.0,
-          "target_x_mm": 157.6875,
+          "target_x_mm": 149.5875,
           "target_y_mm": 48.621
         },
         {
           "id": "RIGHT-SUP-02",
           "category": "seam",
-          "x_mm": 155.1875,
-          "y_mm": 80.649,
-          "diameter_mm": 3.2,
-          "bottom_z_mm": 1.2,
-          "top_z_mm": 3.9,
+          "x_mm": 140.0875,
+          "y_mm": 107.581,
+          "diameter_mm": 2.0,
+          "bottom_z_mm": 0.0,
+          "top_z_mm": 2.5,
           "nominal_vertical_gap_mm": 0.0,
-          "target_x_mm": 157.6875,
-          "target_y_mm": 82.149
+          "target_x_mm": 149.5875,
+          "target_y_mm": 109.581
         },
         {
           "id": "RIGHT-SUP-03",
           "category": "thumb",
-          "x_mm": 9.025,
-          "y_mm": 113.225,
-          "diameter_mm": 3.2,
-          "bottom_z_mm": 1.2,
-          "top_z_mm": 3.9,
+          "x_mm": 9.525,
+          "y_mm": 111.225,
+          "diameter_mm": 2.0,
+          "bottom_z_mm": 0.0,
+          "top_z_mm": 2.5,
           "nominal_vertical_gap_mm": 0.0,
           "target_x_mm": 8.025,
           "target_y_mm": 112.725
@@ -331,11 +453,11 @@
         {
           "id": "RIGHT-SUP-04",
           "category": "thumb",
-          "x_mm": 66.175,
-          "y_mm": 113.225,
-          "diameter_mm": 3.2,
-          "bottom_z_mm": 1.2,
-          "top_z_mm": 3.9,
+          "x_mm": 66.675,
+          "y_mm": 111.225,
+          "diameter_mm": 2.0,
+          "bottom_z_mm": 0.0,
+          "top_z_mm": 2.5,
           "nominal_vertical_gap_mm": 0.0,
           "target_x_mm": 65.175,
           "target_y_mm": 112.725
@@ -343,11 +465,11 @@
         {
           "id": "RIGHT-SUP-05",
           "category": "thumb",
-          "x_mm": 141.375,
-          "y_mm": 108.225,
-          "diameter_mm": 3.2,
-          "bottom_z_mm": 1.2,
-          "top_z_mm": 3.9,
+          "x_mm": 130.375,
+          "y_mm": 110.725,
+          "diameter_mm": 2.0,
+          "bottom_z_mm": 0.0,
+          "top_z_mm": 2.5,
           "nominal_vertical_gap_mm": 0.0,
           "target_x_mm": 141.375,
           "target_y_mm": 112.725
@@ -355,11 +477,11 @@
         {
           "id": "RIGHT-SUP-06",
           "category": "span",
-          "x_mm": 37.0525,
-          "y_mm": 63.099,
-          "diameter_mm": 3.2,
-          "bottom_z_mm": 1.2,
-          "top_z_mm": 3.9,
+          "x_mm": 33.5525,
+          "y_mm": 64.599,
+          "diameter_mm": 2.0,
+          "bottom_z_mm": 0.0,
+          "top_z_mm": 2.5,
           "nominal_vertical_gap_mm": 0.0,
           "target_x_mm": 37.5525,
           "target_y_mm": 63.099
@@ -367,11 +489,11 @@
         {
           "id": "RIGHT-SUP-07",
           "category": "span",
-          "x_mm": 39.0525,
-          "y_mm": 94.031,
-          "diameter_mm": 3.2,
-          "bottom_z_mm": 1.2,
-          "top_z_mm": 3.9,
+          "x_mm": 42.0525,
+          "y_mm": 90.031,
+          "diameter_mm": 2.0,
+          "bottom_z_mm": 0.0,
+          "top_z_mm": 2.5,
           "nominal_vertical_gap_mm": 0.0,
           "target_x_mm": 37.5525,
           "target_y_mm": 90.531
@@ -379,11 +501,11 @@
         {
           "id": "RIGHT-SUP-08",
           "category": "span",
-          "x_mm": 71.5327,
-          "y_mm": 62.099,
-          "diameter_mm": 3.2,
-          "bottom_z_mm": 1.2,
-          "top_z_mm": 3.9,
+          "x_mm": 70.0327,
+          "y_mm": 61.099,
+          "diameter_mm": 2.0,
+          "bottom_z_mm": 0.0,
+          "top_z_mm": 2.5,
           "nominal_vertical_gap_mm": 0.0,
           "target_x_mm": 70.0327,
           "target_y_mm": 63.099
@@ -391,11 +513,11 @@
         {
           "id": "RIGHT-SUP-09",
           "category": "span",
-          "x_mm": 66.5327,
-          "y_mm": 94.031,
-          "diameter_mm": 3.2,
-          "bottom_z_mm": 1.2,
-          "top_z_mm": 3.9,
+          "x_mm": 67.0327,
+          "y_mm": 90.531,
+          "diameter_mm": 2.0,
+          "bottom_z_mm": 0.0,
+          "top_z_mm": 2.5,
           "nominal_vertical_gap_mm": 0.0,
           "target_x_mm": 70.0327,
           "target_y_mm": 90.531
@@ -403,11 +525,11 @@
         {
           "id": "RIGHT-SUP-10",
           "category": "span",
-          "x_mm": 98.513,
-          "y_mm": 60.599,
-          "diameter_mm": 3.2,
-          "bottom_z_mm": 1.2,
-          "top_z_mm": 3.9,
+          "x_mm": 107.013,
+          "y_mm": 60.099,
+          "diameter_mm": 2.0,
+          "bottom_z_mm": 0.0,
+          "top_z_mm": 2.5,
           "nominal_vertical_gap_mm": 0.0,
           "target_x_mm": 102.513,
           "target_y_mm": 63.099
@@ -415,11 +537,11 @@
         {
           "id": "RIGHT-SUP-11",
           "category": "span",
-          "x_mm": 103.013,
-          "y_mm": 88.531,
-          "diameter_mm": 3.2,
-          "bottom_z_mm": 1.2,
-          "top_z_mm": 3.9,
+          "x_mm": 103.513,
+          "y_mm": 90.531,
+          "diameter_mm": 2.0,
+          "bottom_z_mm": 0.0,
+          "top_z_mm": 2.5,
           "nominal_vertical_gap_mm": 0.0,
           "target_x_mm": 102.513,
           "target_y_mm": 90.531
@@ -427,11 +549,11 @@
         {
           "id": "RIGHT-SUP-12",
           "category": "span",
-          "x_mm": 136.0405,
-          "y_mm": 60.599,
-          "diameter_mm": 3.2,
-          "bottom_z_mm": 1.2,
-          "top_z_mm": 3.9,
+          "x_mm": 127.5405,
+          "y_mm": 61.099,
+          "diameter_mm": 2.0,
+          "bottom_z_mm": 0.0,
+          "top_z_mm": 2.5,
           "nominal_vertical_gap_mm": 0.0,
           "target_x_mm": 132.0405,
           "target_y_mm": 63.099
@@ -439,52 +561,166 @@
         {
           "id": "RIGHT-SUP-13",
           "category": "span",
-          "x_mm": 123.0405,
-          "y_mm": 88.031,
-          "diameter_mm": 3.2,
-          "bottom_z_mm": 1.2,
-          "top_z_mm": 3.9,
+          "x_mm": 124.5405,
+          "y_mm": 90.031,
+          "diameter_mm": 2.0,
+          "bottom_z_mm": 0.0,
+          "top_z_mm": 2.5,
           "nominal_vertical_gap_mm": 0.0,
           "target_x_mm": 132.0405,
           "target_y_mm": 90.531
         }
       ],
       "support_plan_matches_generator": true,
-      "maximum_load_point_to_support_mm": 16.9707,
+      "maximum_load_point_to_support_mm": 18.4727,
+      "maximum_seam_load_point_to_support_mm": 2.85,
       "registration_peg_count": 0,
       "screw_pilot_count": 0,
       "fastener_boss_count": 0,
       "glue_assumed": false,
+      "component_cutouts": {
+        "choc_socket_body_fillets": {
+          "opening_count": 39,
+          "minimum_xy_clearance_mm": 0.3311,
+          "exterior_open": true,
+          "through_opening_z_mm": [
+            0.0,
+            2.5
+          ],
+          "opening_plan_area_mm2": 3953.3493,
+          "minimum_exterior_bottom_clearance_mm": 0.1,
+          "official_body_depth_max_mm": 2.3,
+          "assembly_allowance_mm": 0.1,
+          "modeled_max_depth_mm": 2.4,
+          "official_source": "https://www.kailhswitch.com/uploads/15927/files/CPG135001S30.pdf",
+          "residual_collision_volume_mm3": 0.0,
+          "three_dimensional_proof": "source-hash-bound constant-Z STEP extrusion; imported STEP volume/height matches the cutout-differenced support plan",
+          "opening_plan_area_matches_manifest": true
+        },
+        "switch_mechanical_pins": {
+          "opening_count": 39,
+          "minimum_xy_clearance_mm": 0.3299,
+          "exterior_open": true,
+          "through_opening_z_mm": [
+            0.0,
+            2.5
+          ],
+          "opening_plan_area_mm2": 2972.6845,
+          "minimum_exterior_bottom_clearance_mm": null,
+          "official_body_depth_max_mm": null,
+          "assembly_allowance_mm": null,
+          "modeled_max_depth_mm": null,
+          "assembly_note": "Exterior-open cutouts continue every switch NPTH below the PCB.",
+          "residual_collision_volume_mm3": 0.0,
+          "three_dimensional_proof": "source-hash-bound constant-Z STEP extrusion; imported STEP volume/height matches the cutout-differenced support plan",
+          "opening_plan_area_matches_manifest": true
+        },
+        "mx_pins_pads_fillets": {
+          "opening_count": 39,
+          "minimum_xy_clearance_mm": 0.3311,
+          "exterior_open": true,
+          "through_opening_z_mm": [
+            0.0,
+            2.5
+          ],
+          "opening_plan_area_mm2": 1096.5164,
+          "minimum_exterior_bottom_clearance_mm": null,
+          "official_body_depth_max_mm": null,
+          "assembly_allowance_mm": null,
+          "modeled_max_depth_mm": null,
+          "assembly_note": "Exterior-open cutouts permit soldering and post-solder lead trimming.",
+          "residual_collision_volume_mm3": 0.0,
+          "three_dimensional_proof": "source-hash-bound constant-Z STEP extrusion; imported STEP volume/height matches the cutout-differenced support plan",
+          "opening_plan_area_matches_manifest": true
+        },
+        "diode_body_pads_fillets": {
+          "opening_count": 39,
+          "minimum_xy_clearance_mm": 0.3279,
+          "exterior_open": true,
+          "through_opening_z_mm": [
+            0.0,
+            2.5
+          ],
+          "opening_plan_area_mm2": 668.6844,
+          "minimum_exterior_bottom_clearance_mm": 0.85,
+          "official_body_depth_max_mm": 1.35,
+          "solder_fillet_allowance_mm": 0.3,
+          "modeled_max_depth_mm": 1.65,
+          "official_source": "https://www.vishay.com/docs/86356/1n4148w.pdf",
+          "residual_collision_volume_mm3": 0.0,
+          "three_dimensional_proof": "source-hash-bound constant-Z STEP extrusion; imported STEP volume/height matches the cutout-differenced support plan",
+          "opening_plan_area_matches_manifest": true
+        },
+        "controller_reset": {
+          "opening_count": 1,
+          "minimum_xy_clearance_mm": 0.3311,
+          "exterior_open": true,
+          "through_opening_z_mm": [
+            0.0,
+            2.5
+          ],
+          "opening_plan_area_mm2": 279.8723,
+          "minimum_exterior_bottom_clearance_mm": null,
+          "official_body_depth_max_mm": null,
+          "assembly_allowance_mm": null,
+          "modeled_max_depth_mm": null,
+          "residual_collision_volume_mm3": 0.0,
+          "three_dimensional_proof": "source-hash-bound constant-Z STEP extrusion; imported STEP volume/height matches the cutout-differenced support plan",
+          "opening_plan_area_matches_manifest": true
+        },
+        "battery_slot": {
+          "opening_count": 1,
+          "minimum_xy_clearance_mm": 0.3299,
+          "exterior_open": true,
+          "through_opening_z_mm": [
+            0.0,
+            2.5
+          ],
+          "opening_plan_area_mm2": 20.5204,
+          "minimum_exterior_bottom_clearance_mm": null,
+          "official_body_depth_max_mm": null,
+          "assembly_allowance_mm": null,
+          "modeled_max_depth_mm": null,
+          "residual_collision_volume_mm3": 0.0,
+          "three_dimensional_proof": "source-hash-bound constant-Z STEP extrusion; imported STEP volume/height matches the cutout-differenced support plan",
+          "opening_plan_area_matches_manifest": true
+        }
+      },
       "collision_checks": {
         "choc_socket_body": {
           "collision_count": 0,
           "intersection_area_mm2": 0.0,
-          "minimum_plan_clearance_mm": 0.15
+          "minimum_plan_clearance_mm": 0.35
         },
         "choc_socket_fillets": {
           "collision_count": 0,
           "intersection_area_mm2": 0.0,
-          "minimum_plan_clearance_mm": 0.1497
+          "minimum_plan_clearance_mm": 0.3357
+        },
+        "switch_mechanical_pins": {
+          "collision_count": 0,
+          "intersection_area_mm2": 0.0,
+          "minimum_plan_clearance_mm": 1.2582
         },
         "mx_pins_pads_fillets": {
           "collision_count": 0,
           "intersection_area_mm2": 0.0,
-          "minimum_plan_clearance_mm": 0.3114
+          "minimum_plan_clearance_mm": 0.645
         },
         "diode_body_pads_fillets": {
           "collision_count": 0,
           "intersection_area_mm2": 0.0,
-          "minimum_plan_clearance_mm": 0.1497
+          "minimum_plan_clearance_mm": 0.3357
         },
         "bottom_copper_tracks": {
           "collision_count": 0,
-          "intersection_area_mm2": 0.0,
-          "minimum_plan_clearance_mm": 0.1498
+          "reason": "support terminates at the PCB underside; routed copper is inside the PCB stack or protected by bottom solder mask and has no negative-Z body envelope",
+          "support_top_z_mm": 2.5
         },
         "vias": {
           "collision_count": 0,
-          "intersection_area_mm2": 0.0,
-          "minimum_plan_clearance_mm": 0.3781
+          "reason": "support terminates at the PCB underside; routed copper is inside the PCB stack or protected by bottom solder mask and has no negative-Z body envelope",
+          "support_top_z_mm": 2.5
         },
         "controller_reset": {
           "collision_count": 0,
@@ -499,8 +735,8 @@
         "switch_key_travel": {
           "collision_count": 0,
           "reason": "support_top_z <= pcb_bottom_z < pcb_top_z <= switch/key travel",
-          "support_top_z_mm": 3.9,
-          "switch_travel_min_z_mm": 5.5
+          "support_top_z_mm": 2.5,
+          "switch_travel_min_z_mm": 4.1
         }
       },
       "step": "hardware/case/draft/x3-v2/kc2_right_x3_v2_lower_housing.step",
@@ -509,12 +745,14 @@
       "step_whitespace_contract_matches_manifest": true,
       "step_solid_count": 2,
       "step_bounds_z_mm": [
-        0.0,
-        3.9
+        -0.0,
+        2.5
       ],
-      "step_top_contact_area_mm2": 394.4187,
-      "planned_top_contact_area_mm2": 394.3112,
-      "step_top_contact_area_error_mm2": 0.1075,
+      "step_volume_mm3": 20838.5677,
+      "planned_step_volume_mm3": 20838.5677,
+      "step_top_contact_area_mm2": 8335.4271,
+      "planned_top_contact_area_mm2": 8335.4271,
+      "step_top_contact_area_error_mm2": 0.0,
       "step_top_contact_area_matches_plan": true,
       "printable_parts": [
         {
@@ -527,15 +765,15 @@
           "bounds_xyz_mm": [
             0.1,
             34.6,
-            0.0,
-            91.8438,
+            -0.0,
+            87.0938,
             126.65,
-            3.9
+            2.5
           ],
           "size_xyz_mm": [
-            91.7438,
+            86.9938,
             92.05,
-            3.9
+            2.5
           ],
           "bounds_match_manifest": true
         },
@@ -552,113 +790,54 @@
             0.0,
             163.5875,
             126.65,
-            3.9
+            2.5
           ],
           "size_xyz_mm": [
             81.6438,
             126.55,
-            3.9
+            2.5
           ],
           "bounds_match_manifest": true
         }
       ],
       "stl_sha256_matches": true,
       "split_joint": {
-        "type": "overlap_lap_with_m2_case_join",
+        "type": "full_depth_vertical_keyed_puzzle",
         "part_count": 2,
         "split_x_mm": 81.8438,
         "nominal_plan_clearance_mm": 0.2,
-        "lap_overlap_mm": 10.0,
-        "lap_thickness_mm": 0.75,
-        "lap_vertical_clearance_mm": 0.1,
-        "case_join_fastener_count": 2,
-        "case_join_fasteners": [
+        "joint_height_mm": 2.5,
+        "assembly_direction": "vertical",
+        "capture_feature_count": 2,
+        "capture_points": [
           {
-            "x_mm": 88.8438,
-            "y_mm": 59.0
+            "x_mm": 84.8438,
+            "y_mm": 78.1
           },
           {
-            "x_mm": 86.8438,
-            "y_mm": 78.5
+            "x_mm": 84.8438,
+            "y_mm": 90.6
           }
         ],
-        "case_join_boss_diameter_mm": 3.2,
-        "case_join_pilot_diameter_mm": 1.6,
-        "receiving_pilot_start_z_mm": 0.85,
-        "receiving_pilot_top_z_mm": 3.6,
-        "case_join_clearance_hole_diameter_mm": 2.4,
-        "case_join_clamp_collar_diameter_mm": 5.4,
-        "case_join_clamp_collar_top_z_mm": 0.85,
-        "case_join_head_recess_diameter_mm": 4.4,
-        "case_join_screw_head_diameter_mm": 4.0,
-        "case_join_screw_head_height_mm": 0.5,
-        "case_join_screw_head_envelope_mm": 5.4,
-        "head_recess_depth_mm": 0.7,
-        "head_seat_z_mm": 0.7,
-        "clamp_stack_mm": 0.15,
-        "assembly_direction": "bottom_up",
-        "head_exterior_face_nominal_z_mm": 0.2,
-        "head_exterior_protrusion_max_mm": 0.0,
-        "pcb_bottom_z_mm": 3.9,
-        "screw_tip_to_pcb_clearance_mm": 0.1,
-        "case_join_boss_top_z_mm": 3.85,
-        "fastener_spec": {
-          "part_number": "SUNCO CSPSL-ST3W-M2-3",
-          "reference": "https://jp.misumi-ec.com/vona2/detail/221005676627/?HissuCode=CSPSL-ST3W-M2-3",
-          "thread": "M2 x 0.4",
-          "under_head_length_mm": 3.0,
-          "official_under_head_length_min_mm": 2.7,
-          "official_under_head_length_max_mm": 3.0,
-          "official_length_lower_tolerance_mm": -0.3,
-          "official_length_upper_tolerance_mm": 0.0,
-          "official_head_diameter_min_mm": 3.5,
-          "official_head_diameter_max_mm": 4.0,
-          "official_head_height_min_mm": 0.4,
-          "official_head_height_max_mm": 0.6,
-          "shank_clearance_hole_diameter_mm": 2.4,
-          "head_recess_diameter_mm": 4.4,
-          "head_recess_radial_print_clearance_mm": 0.2,
-          "minimum_radial_head_bearing_mm": 0.55,
-          "minimum_radial_collar_wall_mm": 0.5,
-          "fdm_z_tolerance_mm": 0.05,
-          "part_a_seat_fdm_tolerance_mm": 0.05,
-          "part_b_boss_fdm_tolerance_mm": 0.05,
-          "support_plane_fdm_tolerance_mm": 0.05,
-          "minimum_installed_clearance_mm": 0.05,
-          "installed_screw_tip_to_boss_top_clearance_formula": "(boss_top_nominal - part_b_boss_fdm_tolerance) - (head_seat_nominal + part_a_seat_fdm_tolerance + screw_length_max)",
-          "installed_screw_tip_to_pcb_clearance_formula": "(pcb_bottom_nominal - support_plane_fdm_tolerance) - (head_seat_nominal + part_a_seat_fdm_tolerance + screw_length_max)",
-          "drive": "Phillips #0",
-          "driver_access_direction": "bottom_downward",
-          "driver_shaft_diameter_mm": 3.0,
-          "driver_access_height_mm": 20.0,
-          "tip_allowance_mm": 0.35,
-          "minimum_effective_thread_engagement_mm": 1.5,
-          "usable_pilot_depth_mm": 2.75,
-          "effective_thread_engagement_mm": 2.5,
-          "worst_case": {
-            "screw_length_min_mm": 2.7,
-            "screw_length_max_mm": 3.0,
-            "clamp_stack_min_mm": 0.05,
-            "clamp_stack_max_mm": 0.25,
-            "usable_pilot_depth_mm": 2.65,
-            "maximum_threaded_penetration_into_pilot_mm": 2.6,
-            "effective_thread_engagement_mm": 2.1,
-            "receiving_pilot_blind_cap_mm": 0.15,
-            "head_exterior_face_z_mm": 0.05,
-            "head_exterior_protrusion_mm": 0.0,
-            "screw_tip_top_z_mm": 3.75,
-            "installed_screw_tip_to_boss_top_clearance_mm": 0.05,
-            "installed_screw_tip_to_pcb_clearance_mm": 0.1
-          }
-        },
+        "neck_width_mm": 2.0,
+        "head_width_mm": 4.5,
+        "neck_length_mm": 3.0,
+        "minimum_in_plane_capture_per_side_mm": 1.25,
+        "positive_x_capture": true,
+        "fastener_count": 0,
+        "discarded_island_area_ratio": [
+          0.0,
+          3.4e-05
+        ],
+        "discarded_island_volume_ratio": [
+          0.0,
+          0.0
+        ],
         "glue_assumed": false,
-        "assembly": "Slide the lower lap under part B, then install exactly two SUNCO CSPSL-ST3W-M2-3 M2x3 Phillips #0 slim-head screws upward from the exterior bottom into part B's blind receiving pilots.",
         "feature_collision_count": 0,
         "support_collision_count": 0,
-        "head_case_collision_volume_mm3": 0.0,
-        "driver_shaft_case_collision_volume_mm3": 0.0,
-        "head_driver_vertical_collision_count": 0,
-        "driver_access_from_exterior_bottom": true,
+        "planned_top_contact_area_mm2": 8335.4271,
+        "assembly": "Lower the two full-depth housing parts together vertically so both keyed neck-and-head features enter their print-cleared sockets; no screw or adhesive is used.",
         "support_load_path_preserved": true
       }
     }
