@@ -5,6 +5,7 @@ import json
 from collections import Counter
 import math
 from pathlib import Path
+import re
 from typing import Sequence
 
 import pcbnew
@@ -60,6 +61,24 @@ def bounding_box_clearance_mm(
     dx = max(first[0] - second[2], second[0] - first[2], 0.0)
     dy = max(first[1] - second[3], second[1] - first[3], 0.0)
     return math.hypot(dx, dy)
+
+
+def inflate_box_mm(
+    box: tuple[float, float, float, float],
+    amount: float,
+) -> tuple[float, float, float, float]:
+    return (box[0] - amount, box[1] - amount, box[2] + amount, box[3] + amount)
+
+
+def boxes_overlap_mm(
+    first: tuple[float, float, float, float],
+    second: tuple[float, float, float, float],
+    tolerance: float = 1e-6,
+) -> bool:
+    return (
+        min(first[2], second[2]) - max(first[0], second[0]) > tolerance
+        and min(first[3], second[3]) - max(first[1], second[1]) > tolerance
+    )
 
 
 def load_footprint(path: Path) -> pcbnew.FOOTPRINT:
@@ -133,12 +152,69 @@ def matrix_footprints(board: pcbnew.BOARD, prefix: str) -> list[pcbnew.FOOTPRINT
     )
 
 
+def verify_switch_layout_against_generator(
+    switches: Sequence[pcbnew.FOOTPRINT],
+) -> tuple[list[str], float]:
+    """Compare the committed switch pattern after removing one rigid translation."""
+    from tools.generate_kc2_pcbs import (
+        make_left_keys_x3_v2,
+        make_right_keys_x3_v2,
+        switch_rotation_for_key,
+    )
+
+    if len(switches) == 32:
+        keys = make_left_keys_x3_v2()
+    elif len(switches) == 39:
+        keys = make_right_keys_x3_v2()
+    else:
+        return [f"cannot select generator layout for {len(switches)} switches"], math.inf
+
+    errors: list[str] = []
+    actual_anchor = switches[0].GetPosition()
+    expected_anchor = keys[0]
+    maximum_position_error = 0.0
+    for index, (switch, key) in enumerate(zip(switches, keys, strict=True), start=1):
+        expected_reference = f"SW{index}"
+        if switch.GetReference() != expected_reference:
+            errors.append(
+                f"switch sequence mismatch: expected {expected_reference}, found {switch.GetReference()}"
+            )
+
+        position = switch.GetPosition()
+        actual_dx = pcbnew.ToMM(position.x - actual_anchor.x)
+        actual_dy = pcbnew.ToMM(position.y - actual_anchor.y)
+        expected_dx = key.cx - expected_anchor.cx
+        expected_dy = key.cy - expected_anchor.cy
+        position_error = math.hypot(actual_dx - expected_dx, actual_dy - expected_dy)
+        maximum_position_error = max(maximum_position_error, position_error)
+        if position_error > 0.001:
+            errors.append(
+                f"{expected_reference} relative position drift: "
+                f"expected ({expected_dx:.4f}, {expected_dy:.4f}) mm, "
+                f"found ({actual_dx:.4f}, {actual_dy:.4f}) mm"
+            )
+
+        expected_rotation = switch_rotation_for_key(key, keys, "x3-v2") % 360.0
+        actual_rotation = float(switch.GetOrientationDegrees()) % 360.0
+        rotation_error = abs((actual_rotation - expected_rotation + 180.0) % 360.0 - 180.0)
+        if rotation_error > 0.001:
+            errors.append(
+                f"{expected_reference} rotation drift: expected {expected_rotation:.3f} deg, "
+                f"found {actual_rotation:.3f} deg"
+            )
+
+    return errors, round(maximum_position_error, 4)
+
+
 def analyze_v2_board(path: Path) -> dict[str, object]:
     if not path.is_file():
         raise FileNotFoundError(path)
     board = pcbnew.LoadBoard(str(path))
     switches = matrix_footprints(board, "SW")
     diodes = matrix_footprints(board, "D")
+    switch_layout_errors, switch_layout_max_position_error_mm = (
+        verify_switch_layout_against_generator(switches)
+    )
     mismatches: list[str] = []
     for switch in switches:
         for number in ("1", "2"):
@@ -209,12 +285,18 @@ def analyze_v2_board(path: Path) -> dict[str, object]:
         for pad in switch.Pads()
         if pad.GetAttribute() == pcbnew.PAD_ATTRIB_NPTH
     ]
-    switch_pad_boxes = [
-        bounding_box_mm(pad)
+    legacy_mount_hole_refs = sorted(
+        footprint.GetReference()
+        for footprint in footprints
+        if re.fullmatch(r"H\d+", footprint.GetReference())
+    )
+    switch_pad_items = [
+        (switch.GetReference(), pad.GetNetname(), bounding_box_mm(pad), pad)
         for switch in switches
         for pad in switch.Pads()
         if pad.GetNumber()
     ]
+    switch_pad_boxes = [item[2] for item in switch_pad_items]
     socket_body_boxes = [
         bounding_box_mm(item)
         for switch in switches
@@ -223,8 +305,35 @@ def analyze_v2_board(path: Path) -> dict[str, object]:
     ]
     diode_clearances: list[dict[str, object]] = []
     diode_hand_solder_clearance_errors: list[str] = []
+    diode_tool_approach_errors: list[str] = []
+    bottom_exposed_pad_items = [
+        (footprint.GetReference(), pad.GetNetname(), bounding_box_mm(pad))
+        for footprint in footprints
+        for pad in footprint.Pads()
+        if pad.GetNumber() and pad.IsOnLayer(pcbnew.B_Mask)
+    ]
+    untented_bottom_vias = [
+        track
+        for track in board.GetTracks()
+        if isinstance(track, pcbnew.PCB_VIA) and not track.IsTented(pcbnew.B_Mask)
+    ]
+    bottom_exposed_pad_items.extend(
+        ("VIA", via.GetNetname(), bounding_box_mm(via))
+        for via in untented_bottom_vias
+    )
+    switch_assembly_boxes = [
+        inflate_box_mm(box, 0.30)
+        for _, _, box, _ in switch_pad_items
+    ] + unused_npth_boxes + socket_body_boxes
+    all_diode_pad_items = [
+        (diode.GetReference(), bounding_box_mm(pad))
+        for diode in diodes
+        for pad in diode.Pads()
+    ]
     for diode in diodes:
-        diode_boxes = [bounding_box_mm(pad) for pad in diode.Pads()]
+        diode_pads = list(diode.Pads())
+        diode_boxes = [bounding_box_mm(pad) for pad in diode_pads]
+        diode_nets = {pad.GetNetname() for pad in diode_pads if pad.GetNetname()}
 
         def clearance_to(targets: list[tuple[float, float, float, float]]) -> float:
             return min(
@@ -233,18 +342,73 @@ def analyze_v2_board(path: Path) -> dict[str, object]:
                 for target in targets
             )
 
+        unrelated_exposed_boxes = [
+            box
+            for reference, net, box in bottom_exposed_pad_items
+            if reference != diode.GetReference() and net not in diode_nets
+        ]
+        fillet_boxes = [inflate_box_mm(box, 0.30) for box in diode_boxes]
+        fillet_to_switch_assembly = min(
+            bounding_box_clearance_mm(diode_box, target)
+            for diode_box in fillet_boxes
+            for target in switch_assembly_boxes
+        )
         clearances = {
             "reference": diode.GetReference(),
             "unused_npth_mm": clearance_to(unused_npth_boxes),
             "switch_pad_mm": clearance_to(switch_pad_boxes),
             "socket_body_mm": clearance_to(socket_body_boxes),
+            "unrelated_exposed_copper_mm": clearance_to(unrelated_exposed_boxes),
+            "fillet_to_switch_assembly_mm": fillet_to_switch_assembly,
         }
         diode_clearances.append(clearances)
-        for label in ("unused_npth_mm", "switch_pad_mm", "socket_body_mm"):
+        for label in ("unused_npth_mm", "unrelated_exposed_copper_mm"):
             if float(clearances[label]) < 1.0 - 1e-6:
                 diode_hand_solder_clearance_errors.append(
                     f"{diode.GetReference()} {label}={float(clearances[label]):.3f} mm"
                 )
+        if fillet_to_switch_assembly <= 1e-6:
+            diode_hand_solder_clearance_errors.append(
+                f"{diode.GetReference()} solder-fillet envelope intersects switch assembly"
+            )
+
+        switch = board.FindFootprintByReference(
+            "SW" + diode.GetReference()[1:]
+        )
+        if switch is None:
+            diode_tool_approach_errors.append(
+                f"{diode.GetReference()}: matching switch is missing"
+            )
+            continue
+        diode_y = pcbnew.ToMM(diode.GetPosition().y)
+        switch_y = pcbnew.ToMM(switch.GetPosition().y)
+        approach_obstacles = switch_assembly_boxes + [
+            inflate_box_mm(box, 0.30)
+            for reference, box in all_diode_pad_items
+            if reference != diode.GetReference()
+        ]
+        for pad, pad_box in zip(diode_pads, diode_boxes):
+            if diode_y < switch_y:
+                corridor = (
+                    pad_box[0] - 0.40,
+                    pad_box[1] - 1.50,
+                    pad_box[2] + 0.40,
+                    pad_box[1],
+                )
+                direction = "north"
+            else:
+                corridor = (
+                    pad_box[0] - 0.40,
+                    pad_box[3],
+                    pad_box[2] + 0.40,
+                    pad_box[3] + 1.50,
+                )
+                direction = "south"
+            if any(boxes_overlap_mm(corridor, obstacle) for obstacle in approach_obstacles):
+                diode_tool_approach_errors.append(
+                    f"{diode.GetReference()} pad {pad.GetNumber()}: {direction} tool corridor obstructed"
+                )
+    diode_hand_solder_clearance_errors.extend(diode_tool_approach_errors)
     side = "left" if "left" in path.name.lower() else "right"
     antenna_direction = 1 if side == "left" else -1
     battery_lead_slot_on_usb_side = bool(
@@ -294,6 +458,8 @@ def analyze_v2_board(path: Path) -> dict[str, object]:
             for switch in switches
         },
         "alternate_contact_net_mismatches": mismatches,
+        "switch_layout_errors": switch_layout_errors,
+        "switch_layout_max_position_error_mm": switch_layout_max_position_error_mm,
         "stabilizer_refs": sorted(
             footprint.GetReference()
             for footprint in footprints
@@ -301,6 +467,7 @@ def analyze_v2_board(path: Path) -> dict[str, object]:
         ),
         "registration_hole_count": len(registration_holes),
         "registration_hole_errors": registration_hole_errors,
+        "legacy_mount_hole_refs": legacy_mount_hole_refs,
         "registration_label_layers": registration_label_layers,
         "carrier_power_pad_refs": sorted(
             footprint.GetReference()
@@ -318,9 +485,17 @@ def analyze_v2_board(path: Path) -> dict[str, object]:
         "minimum_diode_to_unrelated_pad_clearance_mm": round(
             min(float(item["switch_pad_mm"]) for item in diode_clearances), 3
         ),
+        "minimum_diode_to_unrelated_exposed_copper_clearance_mm": round(
+            min(float(item["unrelated_exposed_copper_mm"]) for item in diode_clearances), 3
+        ),
         "minimum_diode_to_socket_body_clearance_mm": round(
             min(float(item["socket_body_mm"]) for item in diode_clearances), 3
         ),
+        "minimum_diode_fillet_to_switch_assembly_clearance_mm": round(
+            min(float(item["fillet_to_switch_assembly_mm"]) for item in diode_clearances), 3
+        ),
+        "untented_bottom_via_count": len(untented_bottom_vias),
+        "diode_tool_approach_errors": diode_tool_approach_errors,
         "diode_hand_solder_clearance_errors": diode_hand_solder_clearance_errors,
         "board_text": board_text,
         "drc_violation_count": len(drc.get("violations", [])),
@@ -373,8 +548,12 @@ def verify_v2_release_candidate(
         errors.append("manifest: switch assembly modes must be mutually exclusive")
     if manifest.get("key_count") != {"left": 32, "right": 39, "total": 71}:
         errors.append(f"manifest: unexpected key count {manifest.get('key_count')!r}")
-    if manifest.get("join_manufacturing_setback_mm") != 0.8:
-        errors.append("manifest: V2 join manufacturing setback must be 0.8 mm")
+    if manifest.get("keycell_edge_inset_mm") != 1.5:
+        errors.append("manifest: V2 key-field edge inset must be 1.5 mm")
+    if manifest.get("join_center_to_edge_mm") != 8.025:
+        errors.append("manifest: V2 join center-to-edge distance must be 8.025 mm")
+    if manifest.get("join_keycap_setback_mm") != 1.0:
+        errors.append("manifest: V2 join keycap-relative setback must be 1.0 mm")
     if manifest.get("outline_policy") != "keycap_concealed_except_controller_service":
         errors.append("manifest: V2 compact outline policy is missing")
     if manifest.get("autoroute_boundary_policy") != {
@@ -400,6 +579,10 @@ def verify_v2_release_candidate(
     diode_policy = manifest.get("diode_placement_policy") or {}
     if diode_policy.get("minimum_unused_feature_clearance_mm") != 1.0:
         errors.append("manifest: diode hand-solder clearance policy is missing")
+    if diode_policy.get("perimeter_inward_adjustment_mm") != 0.35:
+        errors.append("manifest: perimeter diodes must move inward by 0.35 mm")
+    if diode_policy.get("top_second_diode_lateral_adjustment_mm") != 1.1:
+        errors.append("manifest: D2 must move laterally by 1.10 mm for hand-solder clearance")
 
     board_reports: dict[str, object] = {}
     connectivity_errors: dict[str, list[str]] = {}
@@ -414,14 +597,17 @@ def verify_v2_release_candidate(
             "owned switch footprint": report["switch_footprint_names"]
             == {"SW_Choc_V2_Socket_MX_THT"},
             "alternate contact nets": not report["alternate_contact_net_mismatches"],
+            "switch placement matches generator": not report["switch_layout_errors"],
             "no stabilizers": not report["stabilizer_refs"],
             "no legacy key-field registration holes": report["registration_hole_count"] == 0,
             "registration hole safety": not report["registration_hole_errors"],
+            "no legacy H-series mounting holes": not report["legacy_mount_hole_refs"],
             "no carrier power pads": not report["carrier_power_pad_refs"],
             "one battery lead slot": report["battery_lead_slot_count"] == 1,
             "copper-free battery lead slot": not report["battery_lead_slot_errors"],
             "battery slot on USB/B+ side": report["battery_lead_slot_on_usb_side"],
             "no carrier power nets": not report["forbidden_carrier_power_nets"],
+            "diode hand-solder clearance": not report["diode_hand_solder_clearance_errors"],
             "V2 assembly warning": any(
                 "CHOC V1 UNSUPPORTED" in text.upper() for text in report["board_text"]
             ),

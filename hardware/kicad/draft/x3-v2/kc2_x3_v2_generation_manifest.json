@@ -48,6 +48,8 @@
       7.0,
       7.0
     ],
+    "perimeter_inward_adjustment_mm": 0.35,
+    "top_second_diode_lateral_adjustment_mm": 1.1,
     "minimum_unused_feature_clearance_mm": 1.0,
     "purpose": "hand-solder approach opposite the bottom-side Choc socket body"
   },
@@ -88,7 +90,9 @@
     "total": 71
   },
   "max_key_width_u": 1.75,
-  "join_manufacturing_setback_mm": 0.8,
+  "keycell_edge_inset_mm": 1.5,
+  "join_center_to_edge_mm": 8.025,
+  "join_keycap_setback_mm": 1.0,
   "outline_policy": "keycap_concealed_except_controller_service",
   "autoroute_boundary_policy": {
     "inset_mm": 0.35,
@@ -107,7 +111,8 @@
     "Choc V1 switch geometry, Choc V2 direct-solder pads, and MX hot-swap socket pads are intentionally excluded.",
     "The Choc socket and MX switch are mutually exclusive assembly options at every key position.",
     "X3 V2 uses the fixed 71-key v4 no-stabilizer layout: 32 left keys and 39 right keys, with no key wider than 1.75U.",
-    "X3 V2 applies 0.8 mm manufacturing-tolerance setback to mating interlock ledges and uses the keycap_concealed_except_controller_service outline policy.",
+    "X3 V2 insets every non-controller key-field edge 1.5 mm from the nominal switch-cell perimeter; each mating edge is 8.025 mm from its adjacent switch center.",
+    "X3 V2 contains no legacy H1-H9 or REG1-REG9 key-field through-holes.",
     "The netless battery-lead slot is at the nice!nano USB/B+ end; insulated B+ and GND/B- leads must use strain relief and remain outside the antenna keepout.",
     "X3 V2 keeps each hand-solder SOD-123 diode at the socket-opposite 7.0 mm corner offset and requires renewed socket/MX solder-joint housing clearance verification."
   ]

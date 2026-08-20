@@ -23,6 +23,15 @@ def sha256(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
+def normalize_svg(path: Path) -> None:
+    source = path.read_text(encoding="utf-8")
+    path.write_text(
+        "\n".join(line.rstrip() for line in source.splitlines()) + "\n",
+        encoding="utf-8",
+        newline="\n",
+    )
+
+
 def export_mechanical(kicad_cli: Path = DEFAULT_KICAD_CLI) -> dict[str, object]:
     if not kicad_cli.is_file():
         raise FileNotFoundError(kicad_cli)
@@ -63,8 +72,40 @@ def export_mechanical(kicad_cli: Path = DEFAULT_KICAD_CLI) -> dict[str, object]:
             }
         products[product] = {
             "board": str(board.relative_to(ROOT)),
+            "source_board_sha256": sha256(board),
             "drawings": drawings,
         }
+        if product in {"left", "right"}:
+            outline_svg = OUTPUT_DIR / f"kc2_{product}_x3_v2_1to1.svg"
+            subprocess.run(
+                [
+                    str(kicad_cli),
+                    "pcb",
+                    "export",
+                    "svg",
+                    "--mode-single",
+                    "--output",
+                    str(outline_svg),
+                    "--layers",
+                    "F.Cu,F.Mask,F.Silkscreen,Edge.Cuts",
+                    "--scale",
+                    "1",
+                    "--page-size-mode",
+                    "2",
+                    "--exclude-drawing-sheet",
+                    str(board),
+                ],
+                cwd=ROOT,
+                check=True,
+            )
+            normalize_svg(outline_svg)
+            products[product]["outline_svg"] = {
+                "path": str(outline_svg.relative_to(ROOT)),
+                "scale": 1.0,
+                "layers": ["F.Cu", "F.Mask", "F.Silkscreen", "Edge.Cuts"],
+                "size": outline_svg.stat().st_size,
+                "sha256": sha256(outline_svg),
+            }
     manifest = {
         "requirement": "CON-ARCH-004",
         "status": "draft_not_orderable_pending_physical_coupon",

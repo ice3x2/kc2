@@ -1,0 +1,11 @@
+file_format: "1"
+id: kc2_x3_v2
+name: KC2 X3 V2 71-key
+type: shield
+url: https://github.com/ice3x/kc2
+requires: [pro_micro]
+features:
+  - keys
+siblings:
+  - kc2_x3_v2_left
+  - kc2_x3_v2_right

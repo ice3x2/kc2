@@ -77,7 +77,11 @@ X3_GENERAL_MARGIN = 4.0
 INNER_MARGIN = 2.8
 X3_INNER_MARGIN_EXTRA = 0.8
 X3_RIGHT_YH_HORIZONTAL_LEDGE_RELIEF = 0.8
-X3_V2_JOIN_MANUFACTURING_SETBACK = 0.8
+X3_V2_KEYCELL_EDGE_INSET = 1.5
+X3_V2_JOIN_CENTER_TO_EDGE = UNIT / 2.0 - X3_V2_KEYCELL_EDGE_INSET
+X3_V2_JOIN_KEYCAP_SETBACK = X3_V2_KEYCELL_EDGE_INSET - 0.5
+X3_V2_PERIMETER_DIODE_INSET = 0.35
+X3_V2_D2_SOLDER_RELIEF_X = 1.10
 X3_V2_OUTLINE_POLICY = "keycap_concealed_except_controller_service"
 EDGE_WIDTH = 0.10
 TRACK_WIDTH = 0.25
@@ -156,12 +160,12 @@ def variant_switch_footprint(variant: str) -> str:
 
 def variant_outline_margins(variant: str) -> dict[str, float]:
     if variant == "x3-v2":
-        keycap_inset = -0.5
+        keycell_inset = -X3_V2_KEYCELL_EDGE_INSET
         return {
-            "outer_mm": keycap_inset,
-            "top_mm": keycap_inset,
-            "bottom_mm": keycap_inset,
-            "inner_mm": keycap_inset - X3_V2_JOIN_MANUFACTURING_SETBACK,
+            "outer_mm": keycell_inset,
+            "top_mm": keycell_inset,
+            "bottom_mm": keycell_inset,
+            "inner_mm": keycell_inset,
         }
     margin = X3_GENERAL_MARGIN if variant == "x3" else GENERAL_MARGIN
     inner = INNER_MARGIN + (X3_INNER_MARGIN_EXTRA if variant == "x3" else 0.0)
@@ -664,9 +668,18 @@ def diode_placement_for_key(
     """
     if variant != "x3-v2":
         return 0.0, default_y_offset, 0.0
-    if switch_rotation_for_key(key, keys, variant) == 180.0:
-        return 7.0, 7.0, 0.0
-    return -7.0, -7.0, 0.0
+    dx, dy = (
+        (7.0, 7.0)
+        if switch_rotation_for_key(key, keys, variant) == 180.0
+        else (-7.0, -7.0)
+    )
+    if key.row == 0 and dy < 0:
+        dy += X3_V2_PERIMETER_DIODE_INSET
+        if keys.index(key) == 1:
+            dx += X3_V2_D2_SOLDER_RELIEF_X
+    if key.row == max(candidate.row for candidate in keys) and dy > 0:
+        dy -= X3_V2_PERIMETER_DIODE_INSET
+    return dx, dy, 0.0
 
 
 def controller_tab_spans(side: str, variant: str) -> tuple[float, float]:
@@ -1927,7 +1940,12 @@ def generate_variant(variant: str, output_dir: Path | None = None) -> dict[str, 
         notes.append("Choc V1 switch geometry, Choc V2 direct-solder pads, and MX hot-swap socket pads are intentionally excluded.")
         notes.append("The Choc socket and MX switch are mutually exclusive assembly options at every key position.")
         notes.append("X3 V2 uses the fixed 71-key v4 no-stabilizer layout: 32 left keys and 39 right keys, with no key wider than 1.75U.")
-        notes.append(f"X3 V2 applies {X3_V2_JOIN_MANUFACTURING_SETBACK:g} mm manufacturing-tolerance setback to mating interlock ledges and uses the {X3_V2_OUTLINE_POLICY} outline policy.")
+        notes.append(
+            f"X3 V2 insets every non-controller key-field edge {X3_V2_KEYCELL_EDGE_INSET:g} mm "
+            f"from the nominal switch-cell perimeter; each mating edge is "
+            f"{X3_V2_JOIN_CENTER_TO_EDGE:g} mm from its adjacent switch center."
+        )
+        notes.append("X3 V2 contains no legacy H1-H9 or REG1-REG9 key-field through-holes.")
         notes.append("The netless battery-lead slot is at the nice!nano USB/B+ end; insulated B+ and GND/B- leads must use strain relief and remain outside the antenna keepout.")
         notes.append("X3 V2 keeps each hand-solder SOD-123 diode at the socket-opposite 7.0 mm corner offset and requires renewed socket/MX solder-joint housing clearance verification.")
     else:
@@ -1973,6 +1991,8 @@ def generate_variant(variant: str, output_dir: Path | None = None) -> dict[str, 
             {
                 "unrotated_switch_offset_mm": [-7.0, -7.0],
                 "rotated_switch_offset_mm": [7.0, 7.0],
+                "perimeter_inward_adjustment_mm": X3_V2_PERIMETER_DIODE_INSET,
+                "top_second_diode_lateral_adjustment_mm": X3_V2_D2_SOLDER_RELIEF_X,
                 "minimum_unused_feature_clearance_mm": 1.0,
                 "purpose": "hand-solder approach opposite the bottom-side Choc socket body",
             }
@@ -2052,9 +2072,9 @@ def generate_variant(variant: str, output_dir: Path | None = None) -> dict[str, 
             "total": len(left_keys) + len(right_keys),
         },
         "max_key_width_u": max(k.w_u for k in left_keys + right_keys),
-        "join_manufacturing_setback_mm": (
-            X3_V2_JOIN_MANUFACTURING_SETBACK if variant == "x3-v2" else None
-        ),
+        "keycell_edge_inset_mm": X3_V2_KEYCELL_EDGE_INSET if variant == "x3-v2" else None,
+        "join_center_to_edge_mm": X3_V2_JOIN_CENTER_TO_EDGE if variant == "x3-v2" else None,
+        "join_keycap_setback_mm": X3_V2_JOIN_KEYCAP_SETBACK if variant == "x3-v2" else None,
         "outline_policy": X3_V2_OUTLINE_POLICY if variant == "x3-v2" else None,
         "autoroute_boundary_policy": (
             {

@@ -82,7 +82,10 @@ def main() -> None:
     if errors:
         raise SystemExit("FAIL: KC2 X3 V2 coupon\n- " + "\n- ".join(errors))
     print(json.dumps(report, indent=2, default=list))
-    print("PASS: CON-ARCH-004 coupon CAD is ready for fabrication validation")
+    print(
+        "PASS: CON-ARCH-004 coupon CAD is structurally complete; "
+        "fabrication/population evidence remains pending"
+    )
 
 
 if __name__ == "__main__":

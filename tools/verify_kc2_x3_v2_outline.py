@@ -17,7 +17,9 @@ from tools.render_kc2_x3_joined import (
 
 ROOT = Path(__file__).resolve().parents[1]
 KEYCAP_EDGE_INSET_MM = 0.5
-EXPECTED_JOIN_SETBACK_MM = 0.8
+KEYCELL_EDGE_INSET_MM = 1.5
+EXPECTED_CAP_RELATIVE_SETBACK_MM = KEYCELL_EDGE_INSET_MM - KEYCAP_EDGE_INSET_MM
+EXPECTED_JOIN_CENTER_TO_EDGE_MM = UNIT / 2.0 - KEYCELL_EDGE_INSET_MM
 TOLERANCE_MM = 0.02
 ONE_TO_ONE_TOLERANCE_MM = 0.05
 PERIMETER_SAMPLE_STEP_MM = 0.05
@@ -55,6 +57,7 @@ def intervals_at_x(
 def analyze_board(data: BoardRenderData) -> tuple[dict[str, object], list[str]]:
     errors: list[str] = []
     outer_overhangs: list[float] = []
+    outer_setbacks: list[float] = []
     join_setbacks: list[float] = []
 
     for row in range(5):
@@ -68,24 +71,35 @@ def analyze_board(data: BoardRenderData) -> tuple[dict[str, object], list[str]]:
         )
         if data.side == "left":
             outer_overhang = max(0.0, cap_left - interval[0])
+            outer_setback = interval[0] - cap_left
             join_setback = cap_right - interval[1]
         else:
             outer_overhang = max(0.0, interval[1] - cap_right)
+            outer_setback = cap_right - interval[1]
             join_setback = interval[0] - cap_left
         outer_overhangs.append(outer_overhang)
+        outer_setbacks.append(outer_setback)
         join_setbacks.append(join_setback)
         if outer_overhang > TOLERANCE_MM:
             errors.append(
                 f"{data.side} row {row}: PCB outer edge exceeds keycap envelope by "
                 f"{outer_overhang:.3f} mm"
             )
-        if abs(join_setback - EXPECTED_JOIN_SETBACK_MM) > TOLERANCE_MM:
+        if abs(outer_setback - EXPECTED_CAP_RELATIVE_SETBACK_MM) > TOLERANCE_MM:
+            errors.append(
+                f"{data.side} row {row}: actual outer cap-relative setback is "
+                f"{outer_setback:.3f} mm, expected "
+                f"{EXPECTED_CAP_RELATIVE_SETBACK_MM:.3f}+/-{TOLERANCE_MM:.3f} mm"
+            )
+        if abs(join_setback - EXPECTED_CAP_RELATIVE_SETBACK_MM) > TOLERANCE_MM:
             errors.append(
                 f"{data.side} row {row}: actual mating-edge setback is {join_setback:.3f} mm, "
-                f"expected {EXPECTED_JOIN_SETBACK_MM:.3f}+/-{TOLERANCE_MM:.3f} mm"
+                f"expected {EXPECTED_CAP_RELATIVE_SETBACK_MM:.3f}+/-{TOLERANCE_MM:.3f} mm"
             )
 
     vertical_overhangs: list[float] = []
+    top_bottom_setbacks: list[float] = []
+    permitted_exceptions: list[dict[str, object]] = []
     controller_left, _controller_top, controller_right, _controller_bottom = data.controller_bounds
     for row, use_top in ((0, True), (4, False)):
         for index, key in enumerate(data.keys, start=1):
@@ -93,6 +107,22 @@ def analyze_board(data: BoardRenderData) -> tuple[dict[str, object], list[str]]:
                 continue
             cx, cy = data.switch_centers[index]
             if use_top and controller_left - TOLERANCE_MM <= cx <= controller_right + TOLERANCE_MM:
+                permitted_exceptions.append(
+                    {
+                        "edge": "top",
+                        "key_index": index,
+                        "key_label": key.label,
+                        "clearance_driving_features": [
+                            "U1 nice!nano socket",
+                            "USB connector access",
+                            "reset/service access",
+                        ],
+                        "controller_span_mm": [
+                            round(controller_left, 4),
+                            round(controller_right, 4),
+                        ],
+                    }
+                )
                 continue
             intervals = intervals_at_x(data.edge_segments, cx)
             if not intervals:
@@ -101,12 +131,21 @@ def analyze_board(data: BoardRenderData) -> tuple[dict[str, object], list[str]]:
             top, bottom = interval_containing(intervals, cy)
             cap = keycap_bounds(data, index)
             overhang = max(0.0, cap[1] - top) if use_top else max(0.0, bottom - cap[3])
+            setback = top - cap[1] if use_top else cap[3] - bottom
             vertical_overhangs.append(overhang)
+            top_bottom_setbacks.append(setback)
             if overhang > TOLERANCE_MM:
                 edge_name = "top" if use_top else "bottom"
                 errors.append(
                     f"{data.side} {key.label}: PCB {edge_name} exceeds keycap envelope by "
                     f"{overhang:.3f} mm"
+                )
+            if abs(setback - EXPECTED_CAP_RELATIVE_SETBACK_MM) > TOLERANCE_MM:
+                edge_name = "top" if use_top else "bottom"
+                errors.append(
+                    f"{data.side} {key.label}: actual {edge_name} cap-relative setback is "
+                    f"{setback:.3f} mm, expected "
+                    f"{EXPECTED_CAP_RELATIVE_SETBACK_MM:.3f}+/-{TOLERANCE_MM:.3f} mm"
                 )
 
     row_x_bounds: dict[int, tuple[float, float]] = {}
@@ -163,6 +202,13 @@ def analyze_board(data: BoardRenderData) -> tuple[dict[str, object], list[str]]:
                 maximum_perimeter_overhang,
                 4,
             ),
+            "outer_cap_relative_setback_by_row_mm": [
+                round(value, 4) for value in outer_setbacks
+            ],
+            "top_bottom_setback_mm": [
+                round(value, 4) for value in top_bottom_setbacks
+            ],
+            "permitted_exceptions": permitted_exceptions,
             "perimeter_sample_step_mm": PERIMETER_SAMPLE_STEP_MM,
             "join_setback_by_row_mm": [round(value, 4) for value in join_setbacks],
         },
@@ -181,17 +227,25 @@ def unique_key_center(data: BoardRenderData, label: str) -> tuple[float, float]:
     return matches[0]
 
 
-def analyze_one_to_one_svg(path: Path, data: BoardRenderData) -> tuple[dict[str, object], list[str]]:
+def analyze_one_to_one_svg(
+    path: Path,
+    data: BoardRenderData,
+    repo: Path = ROOT,
+) -> tuple[dict[str, object], list[str]]:
     errors: list[str] = []
+    try:
+        display_path = path.resolve().relative_to(repo.resolve()).as_posix()
+    except ValueError:
+        display_path = path.name
     if not path.is_file():
-        return ({"path": str(path), "missing": True}, [f"missing 1:1 SVG: {path}"])
+        return ({"path": display_path, "missing": True}, [f"missing 1:1 SVG: {display_path}"])
     source = path.read_text(encoding="utf-8")
     width_match = re.search(r'width="([0-9.]+)mm"', source)
     height_match = re.search(r'height="([0-9.]+)mm"', source)
     if width_match is None or height_match is None:
         return (
-            {"path": str(path), "missing_physical_mm_dimensions": True},
-            [f"{path}: SVG does not declare physical width/height in mm"],
+            {"path": display_path, "missing_physical_mm_dimensions": True},
+            [f"{display_path}: SVG does not declare physical width/height in mm"],
         )
     width = float(width_match.group(1))
     height = float(height_match.group(1))
@@ -202,12 +256,12 @@ def analyze_one_to_one_svg(path: Path, data: BoardRenderData) -> tuple[dict[str,
     maximum_error = max(width_error, height_error)
     if maximum_error > ONE_TO_ONE_TOLERANCE_MM:
         errors.append(
-            f"{path}: physical SVG dimension error {maximum_error:.4f} mm exceeds "
+            f"{display_path}: physical SVG dimension error {maximum_error:.4f} mm exceeds "
             f"{ONE_TO_ONE_TOLERANCE_MM:.3f} mm"
         )
     return (
         {
-            "path": str(path),
+            "path": display_path,
             "declared_width_mm": round(width, 4),
             "declared_height_mm": round(height, 4),
             "edge_cuts_width_mm": round(expected_width, 4),
@@ -226,10 +280,12 @@ def analyze_outline(repo: Path = ROOT) -> dict[str, object]:
     left_svg, left_svg_errors = analyze_one_to_one_svg(
         mechanical / "kc2_left_x3_v2_1to1.svg",
         context.left,
+        repo,
     )
     right_svg, right_svg_errors = analyze_one_to_one_svg(
         mechanical / "kc2_right_x3_v2_1to1.svg",
         context.right,
+        repo,
     )
     left_center = unique_key_center(context.left, "6")
     right_center = unique_key_center(context.right, "7")
@@ -251,6 +307,8 @@ def analyze_outline(repo: Path = ROOT) -> dict[str, object]:
         "boards": {"left": left_report, "right": right_report},
         "cross_seam_key_pitch_mm": round(pitch, 4),
         "cross_seam_keycap_gap_mm": round(context.key_horizontal_clearance.clearance, 4),
+        "keycell_edge_inset_mm": KEYCELL_EDGE_INSET_MM,
+        "join_center_to_edge_mm": round(EXPECTED_JOIN_CENTER_TO_EDGE_MM, 4),
         "minimum_joined_pcb_gap_mm": round(context.min_edge_clearance_mm, 4),
         "interlock_overlap_mm": round(context.interlock_overlap_mm, 4),
         "one_to_one_exports": {"left": left_svg, "right": right_svg},
@@ -260,7 +318,7 @@ def analyze_outline(repo: Path = ROOT) -> dict[str, object]:
 
 def main() -> None:
     parser = argparse.ArgumentParser(
-        description="Verify actual KC2 X3 V2 Edge.Cuts concealment and 0.8 mm mating setback."
+        description="Verify actual KC2 X3 V2 1.5 mm key-cell inset and 8.025 mm mating edge."
     )
     parser.add_argument("--repo", type=Path, default=ROOT)
     parser.add_argument(

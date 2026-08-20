@@ -9,10 +9,14 @@ class V2FabricationTests(unittest.TestCase):
     def test_all_draft_fabrication_archives_are_complete(self) -> None:
         report = analyze_fabrication()
 
+        self.assertEqual(report["variant"], "x3-v2")
         self.assertEqual(set(report["products"]), {"left", "right", "coupon"})
         for product, product_report in report["products"].items():
             with self.subTest(product=product):
                 self.assertTrue(product_report["archive_exists"])
+                self.assertTrue(product_report["source_board_exists"])
+                self.assertTrue(product_report["source_board_sha256_matches"])
+                self.assertTrue(product_report["key_count_matches"])
                 self.assertEqual(product_report["missing_required_layers"], [])
                 self.assertEqual(product_report["missing_drill_types"], [])
                 self.assertEqual(product_report["nested_archive_entries"], [])
@@ -25,21 +29,21 @@ class V2FabricationTests(unittest.TestCase):
                 self.assertGreaterEqual(product_report["archive_entry_count"], 13)
 
         self.assertEqual(report["products"]["left"]["bottom_paste_flash_count"], 128)
-        self.assertEqual(report["products"]["right"]["bottom_paste_flash_count"], 180)
+        self.assertEqual(report["products"]["right"]["bottom_paste_flash_count"], 156)
         self.assertEqual(report["products"]["coupon"]["bottom_paste_flash_count"], 12)
 
         self.assertEqual(
             report["products"]["left"]["drill_tools_mm"],
             {
-                "PTH": {"0.300": 18, "0.950": 24, "1.500": 64},
-                "NPTH": {"1.650": 32, "1.700": 64, "2.200": 1, "3.000": 73, "5.000": 32},
+                "PTH": {"0.300": 27, "0.950": 24, "1.500": 64},
+                "NPTH": {"1.650": 32, "1.700": 64, "2.200": 1, "3.000": 64, "5.000": 32},
             },
         )
         self.assertEqual(
             report["products"]["right"]["drill_tools_mm"],
             {
-                "PTH": {"0.300": 29, "0.950": 24, "1.500": 90},
-                "NPTH": {"1.650": 45, "1.700": 90, "2.200": 1, "3.000": 99, "5.000": 45},
+                "PTH": {"0.300": 28, "0.950": 24, "1.500": 78},
+                "NPTH": {"1.650": 39, "1.700": 78, "2.200": 1, "3.000": 78, "5.000": 39},
             },
         )
         self.assertEqual(

@@ -35,19 +35,20 @@ EXPECTED_FILE_FUNCTIONS = {
 }
 EXPECTED_DRILL_TOOLS = {
     "left": {
-        "PTH": {"0.300": 18, "0.950": 24, "1.500": 64},
-        "NPTH": {"1.650": 32, "1.700": 64, "2.200": 1, "3.000": 73, "5.000": 32},
+        "PTH": {"0.300": 27, "0.950": 24, "1.500": 64},
+        "NPTH": {"1.650": 32, "1.700": 64, "2.200": 1, "3.000": 64, "5.000": 32},
     },
     "right": {
-        "PTH": {"0.300": 29, "0.950": 24, "1.500": 90},
-        "NPTH": {"1.650": 45, "1.700": 90, "2.200": 1, "3.000": 99, "5.000": 45},
+        "PTH": {"0.300": 28, "0.950": 24, "1.500": 78},
+        "NPTH": {"1.650": 39, "1.700": 78, "2.200": 1, "3.000": 78, "5.000": 39},
     },
     "coupon": {
         "PTH": {"1.500": 6},
         "NPTH": {"1.650": 3, "1.700": 6, "3.000": 6, "5.000": 3},
     },
 }
-EXPECTED_BOTTOM_PASTE_FLASHES = {"left": 128, "right": 180, "coupon": 12}
+EXPECTED_BOTTOM_PASTE_FLASHES = {"left": 128, "right": 156, "coupon": 12}
+EXPECTED_KEY_COUNTS = {"left": 32, "right": 39, "coupon": 3}
 GERBER_OPERATION_RE = re.compile(r"(?:X-?\d+)?(?:Y-?\d+)?D0[123]\*")
 
 
@@ -83,6 +84,7 @@ def analyze_fabrication(manifest_path: Path = MANIFEST) -> dict[str, object]:
     products: dict[str, object] = {}
     for product, details in manifest["products"].items():
         archive = ROOT / details["archive"]
+        source_board = ROOT / details["board"]
         entries: list[str] = []
         archive_digest = ""
         file_hash_mismatches: list[str] = []
@@ -132,6 +134,11 @@ def analyze_fabrication(manifest_path: Path = MANIFEST) -> dict[str, object]:
             "NPTH": any(entry.endswith("-NPTH.drl") for entry in entries),
         }
         products[product] = {
+            "source_board_exists": source_board.is_file(),
+            "source_board_sha256_matches": source_board.is_file()
+            and hashlib.sha256(source_board.read_bytes()).hexdigest()
+            == details.get("source_board_sha256"),
+            "key_count_matches": details.get("key_count") == EXPECTED_KEY_COUNTS[product],
             "archive_exists": archive.is_file(),
             "archive_entry_count": len(entries),
             "missing_required_layers": missing_layers,
@@ -154,7 +161,11 @@ def analyze_fabrication(manifest_path: Path = MANIFEST) -> dict[str, object]:
             )
             == EXPECTED_BOTTOM_PASTE_FLASHES[product],
         }
-    return {"requirement": manifest["requirement"], "products": products}
+    return {
+        "requirement": manifest["requirement"],
+        "variant": manifest.get("variant"),
+        "products": products,
+    }
 
 
 def main() -> None:
@@ -163,9 +174,17 @@ def main() -> None:
     args = parser.parse_args()
     report = analyze_fabrication(args.manifest)
     errors: list[str] = []
+    if report["variant"] != "x3-v2":
+        errors.append(f"unexpected variant {report['variant']!r}")
     for product, details in report["products"].items():
         if not details["archive_exists"]:
             errors.append(f"{product}: archive missing")
+        if not details["source_board_exists"]:
+            errors.append(f"{product}: source board missing")
+        if not details["source_board_sha256_matches"]:
+            errors.append(f"{product}: source board SHA-256 mismatch")
+        if not details["key_count_matches"]:
+            errors.append(f"{product}: manifest key count mismatch")
         if details["missing_required_layers"]:
             errors.append(f"{product}: layers {details['missing_required_layers']}")
         if details["missing_drill_types"]:

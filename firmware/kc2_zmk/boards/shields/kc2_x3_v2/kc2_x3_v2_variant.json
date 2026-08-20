@@ -1,0 +1,31 @@
+{
+  "variant": "kc2-x3-v2",
+  "requirement_id": "CON-ARCH-004",
+  "layout": "71-key-v4-no-stabilizer",
+  "key_count": {
+    "left": 32,
+    "right": 39,
+    "total": 71
+  },
+  "matrix": {
+    "rows": 5,
+    "left_columns": 7,
+    "right_columns": 8,
+    "transform_columns": 15
+  },
+  "supported_assembly": [
+    "choc-v2-bottom-socket",
+    "mx-direct-solder"
+  ],
+  "unsupported_assembly": [
+    "choc-v1",
+    "choc-v2-direct-solder",
+    "mx-hotswap"
+  ],
+  "controller": "nice-nano-v2-socket-15.24-mm-row-spacing",
+  "compact_controller": true,
+  "carrier_battery_nets": false,
+  "battery_leads": "direct-to-nice-nano-b-plus-b-minus",
+  "fn_position": "immediately-right-of-up",
+  "bottom_row_right_fn": false
+}

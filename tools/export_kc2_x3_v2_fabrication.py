@@ -91,6 +91,8 @@ def export_product(product: str, board: Path) -> dict[str, object]:
             package.write(path, arcname=path.name)
     return {
         "board": str(board.relative_to(ROOT)),
+        "source_board_sha256": sha256(board),
+        "key_count": {"left": 32, "right": 39, "coupon": 3}[product],
         "output_dir": str(output_dir.relative_to(ROOT)),
         "archive": str(archive.relative_to(ROOT)),
         "archive_sha256": sha256(archive),
@@ -115,6 +117,7 @@ def main() -> None:
     }
     manifest = {
         "requirement": "CON-ARCH-004",
+        "variant": "x3-v2",
         "status": "draft_not_orderable_pending_physical_coupon",
         "kicad_cli": str(KICAD_CLI),
         "layers": LAYERS.split(","),

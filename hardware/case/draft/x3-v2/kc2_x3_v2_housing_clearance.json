@@ -1,35 +1,674 @@
 {
-  "requirement": "CON-ARCH-004",
-  "housing_source_requirement": "CON-ARCH-003",
-  "switch_center_mismatches": [],
-  "registration_center_mismatches": [],
-  "socket_envelope_mismatches": [],
-  "socket_wall_collision_count": 0,
-  "minimum_socket_wall_clearance_mm": 0.309,
-  "mx_solder_wall_collision_count": 0,
-  "minimum_mx_solder_wall_clearance_mm": 1.031,
-  "mx_solder_post_collision_count": 0,
-  "minimum_mx_solder_post_clearance_mm": 1.439,
-  "socket_diode_collision_count": 0,
-  "minimum_socket_diode_clearance_mm": 8.05,
-  "choc_solder_fillet_wall_collision_count": 0,
-  "minimum_choc_solder_fillet_wall_clearance_mm": 0.01,
-  "choc_solder_fillet_diode_collision_count": 0,
-  "minimum_choc_solder_fillet_diode_clearance_mm": 10.234,
-  "choc_solder_fillet_lateral_allowance_mm": 0.3,
-  "mx_solder_diode_body_collision_count": 0,
-  "minimum_mx_solder_diode_body_clearance_mm": 0.362,
-  "mx_solder_diode_pad_collision_count": 0,
-  "minimum_mx_solder_diode_pad_clearance_mm": 0.197,
-  "mx_solder_fillets_lateral_allowance_mm": 0.3,
-  "bottom_component_clearance_mm": 2.6,
-  "maximum_trimmed_mx_projection_mm": 2.2,
-  "minimum_vertical_clearance_mm": 0.4,
-  "floor_thickness_mm": 1.2,
-  "rear_rise_mm": 0.0,
-  "largest_printable_part_dimension_mm": 145.513,
-  "right_split_part_count": 2,
-  "right_split_bond_length_ratio": 1.601,
-  "right_split_assembled_gap_mm": 0.4,
-  "assembly_constraint": "Trim both MX electrical terminals to no more than 2.20 mm below the PCB after soldering; do not install a Choc socket and MX switch at the same key."
+  "requirement": "CON-ARCH-006",
+  "variant": "x3-v2",
+  "manifest": "hardware/case/draft/x3-v2/kc2_x3_v2_housing_manifest.json",
+  "generator_sha256_matches": true,
+  "sides": {
+    "left": {
+      "source_board": "hardware/kicad/draft/x3-v2/kc2_left-x3-v2/kc2_left-x3-v2.kicad_pcb",
+      "source_board_sha256_matches": true,
+      "key_count": 32,
+      "legacy_registration_refs": [],
+      "rail_top_z_mm": 3.9,
+      "pcb_bottom_z_mm": 3.9,
+      "maximum_rail_vertical_gap_mm": 0.0,
+      "maximum_support_vertical_gap_mm": 0.0,
+      "rail_plan_area_mm2": 276.6096,
+      "rail_plan_area_matches_manifest": true,
+      "rail_segment_count": 6,
+      "support_posts": [
+        {
+          "id": "LEFT-SUP-01",
+          "category": "seam",
+          "x_mm": 11.5,
+          "y_mm": 41.621,
+          "diameter_mm": 3.2,
+          "bottom_z_mm": 1.2,
+          "top_z_mm": 3.9,
+          "nominal_vertical_gap_mm": 0.0,
+          "target_x_mm": 6.0,
+          "target_y_mm": 48.621
+        },
+        {
+          "id": "LEFT-SUP-02",
+          "category": "seam",
+          "x_mm": 17.0,
+          "y_mm": 79.649,
+          "diameter_mm": 3.2,
+          "bottom_z_mm": 1.2,
+          "top_z_mm": 3.9,
+          "nominal_vertical_gap_mm": 0.0,
+          "target_x_mm": 6.0,
+          "target_y_mm": 82.149
+        },
+        {
+          "id": "LEFT-SUP-03",
+          "category": "seam",
+          "x_mm": 6.0,
+          "y_mm": 110.081,
+          "diameter_mm": 3.2,
+          "bottom_z_mm": 1.2,
+          "top_z_mm": 3.9,
+          "nominal_vertical_gap_mm": 0.0,
+          "target_x_mm": 6.0,
+          "target_y_mm": 109.581
+        },
+        {
+          "id": "LEFT-SUP-04",
+          "category": "thumb",
+          "x_mm": 11.4062,
+          "y_mm": 113.225,
+          "diameter_mm": 3.2,
+          "bottom_z_mm": 1.2,
+          "top_z_mm": 3.9,
+          "nominal_vertical_gap_mm": 0.0,
+          "target_x_mm": 10.4062,
+          "target_y_mm": 112.725
+        },
+        {
+          "id": "LEFT-SUP-05",
+          "category": "thumb",
+          "x_mm": 78.0812,
+          "y_mm": 113.225,
+          "diameter_mm": 3.2,
+          "bottom_z_mm": 1.2,
+          "top_z_mm": 3.9,
+          "nominal_vertical_gap_mm": 0.0,
+          "target_x_mm": 77.0812,
+          "target_y_mm": 112.725
+        },
+        {
+          "id": "LEFT-SUP-06",
+          "category": "thumb",
+          "x_mm": 124.7062,
+          "y_mm": 108.225,
+          "diameter_mm": 3.2,
+          "bottom_z_mm": 1.2,
+          "top_z_mm": 3.9,
+          "nominal_vertical_gap_mm": 0.0,
+          "target_x_mm": 124.7062,
+          "target_y_mm": 112.725
+        },
+        {
+          "id": "LEFT-SUP-07",
+          "category": "span",
+          "x_mm": 36.3375,
+          "y_mm": 63.099,
+          "diameter_mm": 3.2,
+          "bottom_z_mm": 1.2,
+          "top_z_mm": 3.9,
+          "nominal_vertical_gap_mm": 0.0,
+          "target_x_mm": 31.8375,
+          "target_y_mm": 63.099
+        },
+        {
+          "id": "LEFT-SUP-08",
+          "category": "span",
+          "x_mm": 28.3375,
+          "y_mm": 94.031,
+          "diameter_mm": 3.2,
+          "bottom_z_mm": 1.2,
+          "top_z_mm": 3.9,
+          "nominal_vertical_gap_mm": 0.0,
+          "target_x_mm": 31.8375,
+          "target_y_mm": 90.531
+        },
+        {
+          "id": "LEFT-SUP-09",
+          "category": "span",
+          "x_mm": 59.5313,
+          "y_mm": 60.599,
+          "diameter_mm": 3.2,
+          "bottom_z_mm": 1.2,
+          "top_z_mm": 3.9,
+          "nominal_vertical_gap_mm": 0.0,
+          "target_x_mm": 58.0313,
+          "target_y_mm": 63.099
+        },
+        {
+          "id": "LEFT-SUP-10",
+          "category": "span",
+          "x_mm": 56.5313,
+          "y_mm": 96.031,
+          "diameter_mm": 3.2,
+          "bottom_z_mm": 1.2,
+          "top_z_mm": 3.9,
+          "nominal_vertical_gap_mm": 0.0,
+          "target_x_mm": 58.0313,
+          "target_y_mm": 90.531
+        },
+        {
+          "id": "LEFT-SUP-11",
+          "category": "span",
+          "x_mm": 79.725,
+          "y_mm": 60.599,
+          "diameter_mm": 3.2,
+          "bottom_z_mm": 1.2,
+          "top_z_mm": 3.9,
+          "nominal_vertical_gap_mm": 0.0,
+          "target_x_mm": 84.225,
+          "target_y_mm": 63.099
+        },
+        {
+          "id": "LEFT-SUP-12",
+          "category": "span",
+          "x_mm": 84.225,
+          "y_mm": 90.531,
+          "diameter_mm": 3.2,
+          "bottom_z_mm": 1.2,
+          "top_z_mm": 3.9,
+          "nominal_vertical_gap_mm": 0.0,
+          "target_x_mm": 84.225,
+          "target_y_mm": 90.531
+        },
+        {
+          "id": "LEFT-SUP-13",
+          "category": "span",
+          "x_mm": 111.0375,
+          "y_mm": 65.099,
+          "diameter_mm": 3.2,
+          "bottom_z_mm": 1.2,
+          "top_z_mm": 3.9,
+          "nominal_vertical_gap_mm": 0.0,
+          "target_x_mm": 108.0375,
+          "target_y_mm": 63.099
+        },
+        {
+          "id": "LEFT-SUP-14",
+          "category": "span",
+          "x_mm": 108.5375,
+          "y_mm": 89.531,
+          "diameter_mm": 3.2,
+          "bottom_z_mm": 1.2,
+          "top_z_mm": 3.9,
+          "nominal_vertical_gap_mm": 0.0,
+          "target_x_mm": 108.0375,
+          "target_y_mm": 90.531
+        }
+      ],
+      "support_plan_matches_generator": true,
+      "maximum_load_point_to_support_mm": 15.552,
+      "registration_peg_count": 0,
+      "screw_pilot_count": 0,
+      "fastener_boss_count": 0,
+      "glue_assumed": false,
+      "collision_checks": {
+        "choc_socket_body": {
+          "collision_count": 0,
+          "intersection_area_mm2": 0.0,
+          "minimum_plan_clearance_mm": 0.15
+        },
+        "choc_socket_fillets": {
+          "collision_count": 0,
+          "intersection_area_mm2": 0.0,
+          "minimum_plan_clearance_mm": 0.1497
+        },
+        "mx_pins_pads_fillets": {
+          "collision_count": 0,
+          "intersection_area_mm2": 0.0,
+          "minimum_plan_clearance_mm": 0.3643
+        },
+        "diode_body_pads_fillets": {
+          "collision_count": 0,
+          "intersection_area_mm2": 0.0,
+          "minimum_plan_clearance_mm": 0.1497
+        },
+        "bottom_copper_tracks": {
+          "collision_count": 0,
+          "intersection_area_mm2": 0.0,
+          "minimum_plan_clearance_mm": 0.1498
+        },
+        "vias": {
+          "collision_count": 0,
+          "intersection_area_mm2": 0.0,
+          "minimum_plan_clearance_mm": 0.1562
+        },
+        "controller_reset": {
+          "collision_count": 0,
+          "intersection_area_mm2": 0.0,
+          "minimum_plan_clearance_mm": 3.0481
+        },
+        "battery_slot": {
+          "collision_count": 0,
+          "intersection_area_mm2": 0.0,
+          "minimum_plan_clearance_mm": 5.4515
+        },
+        "switch_key_travel": {
+          "collision_count": 0,
+          "reason": "support_top_z <= pcb_bottom_z < pcb_top_z <= switch/key travel",
+          "support_top_z_mm": 3.9,
+          "switch_travel_min_z_mm": 5.5
+        }
+      },
+      "step": "hardware/case/draft/x3-v2/kc2_left_x3_v2_lower_housing.step",
+      "step_sha256_matches": true,
+      "step_has_trailing_whitespace": false,
+      "step_whitespace_contract_matches_manifest": true,
+      "step_solid_count": 1,
+      "step_bounds_z_mm": [
+        0.0,
+        3.9
+      ],
+      "step_top_contact_area_mm2": 389.2043,
+      "planned_top_contact_area_mm2": 389.0886,
+      "step_top_contact_area_error_mm2": 0.1157,
+      "step_top_contact_area_matches_plan": true,
+      "printable_parts": [
+        {
+          "name": "whole",
+          "stl": "hardware/case/draft/x3-v2/kc2_left_x3_v2_lower_housing.stl",
+          "sha256_matches": true,
+          "solid_count": 1,
+          "watertight": true,
+          "shell_count": 1,
+          "bounds_xyz_mm": [
+            0.1,
+            0.1,
+            0.0,
+            135.0125,
+            126.65,
+            3.9
+          ],
+          "size_xyz_mm": [
+            134.9125,
+            126.55,
+            3.9
+          ],
+          "bounds_match_manifest": true
+        }
+      ],
+      "stl_sha256_matches": true
+    },
+    "right": {
+      "source_board": "hardware/kicad/draft/x3-v2/kc2_right-x3-v2/kc2_right-x3-v2.kicad_pcb",
+      "source_board_sha256_matches": true,
+      "key_count": 39,
+      "legacy_registration_refs": [],
+      "rail_top_z_mm": 3.9,
+      "pcb_bottom_z_mm": 3.9,
+      "maximum_rail_vertical_gap_mm": 0.0,
+      "maximum_support_vertical_gap_mm": 0.0,
+      "rail_plan_area_mm2": 290.0515,
+      "rail_plan_area_matches_manifest": true,
+      "rail_segment_count": 7,
+      "support_posts": [
+        {
+          "id": "RIGHT-SUP-01",
+          "category": "seam",
+          "x_mm": 146.6875,
+          "y_mm": 51.121,
+          "diameter_mm": 3.2,
+          "bottom_z_mm": 1.2,
+          "top_z_mm": 3.9,
+          "nominal_vertical_gap_mm": 0.0,
+          "target_x_mm": 157.6875,
+          "target_y_mm": 48.621
+        },
+        {
+          "id": "RIGHT-SUP-02",
+          "category": "seam",
+          "x_mm": 155.1875,
+          "y_mm": 80.649,
+          "diameter_mm": 3.2,
+          "bottom_z_mm": 1.2,
+          "top_z_mm": 3.9,
+          "nominal_vertical_gap_mm": 0.0,
+          "target_x_mm": 157.6875,
+          "target_y_mm": 82.149
+        },
+        {
+          "id": "RIGHT-SUP-03",
+          "category": "thumb",
+          "x_mm": 9.025,
+          "y_mm": 113.225,
+          "diameter_mm": 3.2,
+          "bottom_z_mm": 1.2,
+          "top_z_mm": 3.9,
+          "nominal_vertical_gap_mm": 0.0,
+          "target_x_mm": 8.025,
+          "target_y_mm": 112.725
+        },
+        {
+          "id": "RIGHT-SUP-04",
+          "category": "thumb",
+          "x_mm": 66.175,
+          "y_mm": 113.225,
+          "diameter_mm": 3.2,
+          "bottom_z_mm": 1.2,
+          "top_z_mm": 3.9,
+          "nominal_vertical_gap_mm": 0.0,
+          "target_x_mm": 65.175,
+          "target_y_mm": 112.725
+        },
+        {
+          "id": "RIGHT-SUP-05",
+          "category": "thumb",
+          "x_mm": 141.375,
+          "y_mm": 108.225,
+          "diameter_mm": 3.2,
+          "bottom_z_mm": 1.2,
+          "top_z_mm": 3.9,
+          "nominal_vertical_gap_mm": 0.0,
+          "target_x_mm": 141.375,
+          "target_y_mm": 112.725
+        },
+        {
+          "id": "RIGHT-SUP-06",
+          "category": "span",
+          "x_mm": 37.0525,
+          "y_mm": 63.099,
+          "diameter_mm": 3.2,
+          "bottom_z_mm": 1.2,
+          "top_z_mm": 3.9,
+          "nominal_vertical_gap_mm": 0.0,
+          "target_x_mm": 37.5525,
+          "target_y_mm": 63.099
+        },
+        {
+          "id": "RIGHT-SUP-07",
+          "category": "span",
+          "x_mm": 39.0525,
+          "y_mm": 94.031,
+          "diameter_mm": 3.2,
+          "bottom_z_mm": 1.2,
+          "top_z_mm": 3.9,
+          "nominal_vertical_gap_mm": 0.0,
+          "target_x_mm": 37.5525,
+          "target_y_mm": 90.531
+        },
+        {
+          "id": "RIGHT-SUP-08",
+          "category": "span",
+          "x_mm": 71.5327,
+          "y_mm": 62.099,
+          "diameter_mm": 3.2,
+          "bottom_z_mm": 1.2,
+          "top_z_mm": 3.9,
+          "nominal_vertical_gap_mm": 0.0,
+          "target_x_mm": 70.0327,
+          "target_y_mm": 63.099
+        },
+        {
+          "id": "RIGHT-SUP-09",
+          "category": "span",
+          "x_mm": 66.5327,
+          "y_mm": 94.031,
+          "diameter_mm": 3.2,
+          "bottom_z_mm": 1.2,
+          "top_z_mm": 3.9,
+          "nominal_vertical_gap_mm": 0.0,
+          "target_x_mm": 70.0327,
+          "target_y_mm": 90.531
+        },
+        {
+          "id": "RIGHT-SUP-10",
+          "category": "span",
+          "x_mm": 98.513,
+          "y_mm": 60.599,
+          "diameter_mm": 3.2,
+          "bottom_z_mm": 1.2,
+          "top_z_mm": 3.9,
+          "nominal_vertical_gap_mm": 0.0,
+          "target_x_mm": 102.513,
+          "target_y_mm": 63.099
+        },
+        {
+          "id": "RIGHT-SUP-11",
+          "category": "span",
+          "x_mm": 103.013,
+          "y_mm": 88.531,
+          "diameter_mm": 3.2,
+          "bottom_z_mm": 1.2,
+          "top_z_mm": 3.9,
+          "nominal_vertical_gap_mm": 0.0,
+          "target_x_mm": 102.513,
+          "target_y_mm": 90.531
+        },
+        {
+          "id": "RIGHT-SUP-12",
+          "category": "span",
+          "x_mm": 136.0405,
+          "y_mm": 60.599,
+          "diameter_mm": 3.2,
+          "bottom_z_mm": 1.2,
+          "top_z_mm": 3.9,
+          "nominal_vertical_gap_mm": 0.0,
+          "target_x_mm": 132.0405,
+          "target_y_mm": 63.099
+        },
+        {
+          "id": "RIGHT-SUP-13",
+          "category": "span",
+          "x_mm": 123.0405,
+          "y_mm": 88.031,
+          "diameter_mm": 3.2,
+          "bottom_z_mm": 1.2,
+          "top_z_mm": 3.9,
+          "nominal_vertical_gap_mm": 0.0,
+          "target_x_mm": 132.0405,
+          "target_y_mm": 90.531
+        }
+      ],
+      "support_plan_matches_generator": true,
+      "maximum_load_point_to_support_mm": 16.9707,
+      "registration_peg_count": 0,
+      "screw_pilot_count": 0,
+      "fastener_boss_count": 0,
+      "glue_assumed": false,
+      "collision_checks": {
+        "choc_socket_body": {
+          "collision_count": 0,
+          "intersection_area_mm2": 0.0,
+          "minimum_plan_clearance_mm": 0.15
+        },
+        "choc_socket_fillets": {
+          "collision_count": 0,
+          "intersection_area_mm2": 0.0,
+          "minimum_plan_clearance_mm": 0.1497
+        },
+        "mx_pins_pads_fillets": {
+          "collision_count": 0,
+          "intersection_area_mm2": 0.0,
+          "minimum_plan_clearance_mm": 0.3114
+        },
+        "diode_body_pads_fillets": {
+          "collision_count": 0,
+          "intersection_area_mm2": 0.0,
+          "minimum_plan_clearance_mm": 0.1497
+        },
+        "bottom_copper_tracks": {
+          "collision_count": 0,
+          "intersection_area_mm2": 0.0,
+          "minimum_plan_clearance_mm": 0.1498
+        },
+        "vias": {
+          "collision_count": 0,
+          "intersection_area_mm2": 0.0,
+          "minimum_plan_clearance_mm": 0.3781
+        },
+        "controller_reset": {
+          "collision_count": 0,
+          "intersection_area_mm2": 0.0,
+          "minimum_plan_clearance_mm": 3.0481
+        },
+        "battery_slot": {
+          "collision_count": 0,
+          "intersection_area_mm2": 0.0,
+          "minimum_plan_clearance_mm": 5.4515
+        },
+        "switch_key_travel": {
+          "collision_count": 0,
+          "reason": "support_top_z <= pcb_bottom_z < pcb_top_z <= switch/key travel",
+          "support_top_z_mm": 3.9,
+          "switch_travel_min_z_mm": 5.5
+        }
+      },
+      "step": "hardware/case/draft/x3-v2/kc2_right_x3_v2_lower_housing.step",
+      "step_sha256_matches": true,
+      "step_has_trailing_whitespace": false,
+      "step_whitespace_contract_matches_manifest": true,
+      "step_solid_count": 2,
+      "step_bounds_z_mm": [
+        0.0,
+        3.9
+      ],
+      "step_top_contact_area_mm2": 394.4187,
+      "planned_top_contact_area_mm2": 394.3112,
+      "step_top_contact_area_error_mm2": 0.1075,
+      "step_top_contact_area_matches_plan": true,
+      "printable_parts": [
+        {
+          "name": "part_a",
+          "stl": "hardware/case/draft/x3-v2/kc2_right_x3_v2_lower_housing_part_a.stl",
+          "sha256_matches": true,
+          "solid_count": 1,
+          "watertight": true,
+          "shell_count": 1,
+          "bounds_xyz_mm": [
+            0.1,
+            34.6,
+            0.0,
+            91.8438,
+            126.65,
+            3.9
+          ],
+          "size_xyz_mm": [
+            91.7438,
+            92.05,
+            3.9
+          ],
+          "bounds_match_manifest": true
+        },
+        {
+          "name": "part_b",
+          "stl": "hardware/case/draft/x3-v2/kc2_right_x3_v2_lower_housing_part_b.stl",
+          "sha256_matches": true,
+          "solid_count": 1,
+          "watertight": true,
+          "shell_count": 1,
+          "bounds_xyz_mm": [
+            81.9437,
+            0.1,
+            0.0,
+            163.5875,
+            126.65,
+            3.9
+          ],
+          "size_xyz_mm": [
+            81.6438,
+            126.55,
+            3.9
+          ],
+          "bounds_match_manifest": true
+        }
+      ],
+      "stl_sha256_matches": true,
+      "split_joint": {
+        "type": "overlap_lap_with_m2_case_join",
+        "part_count": 2,
+        "split_x_mm": 81.8438,
+        "nominal_plan_clearance_mm": 0.2,
+        "lap_overlap_mm": 10.0,
+        "lap_thickness_mm": 0.75,
+        "lap_vertical_clearance_mm": 0.1,
+        "case_join_fastener_count": 2,
+        "case_join_fasteners": [
+          {
+            "x_mm": 88.8438,
+            "y_mm": 59.0
+          },
+          {
+            "x_mm": 86.8438,
+            "y_mm": 78.5
+          }
+        ],
+        "case_join_boss_diameter_mm": 3.2,
+        "case_join_pilot_diameter_mm": 1.6,
+        "receiving_pilot_start_z_mm": 0.85,
+        "receiving_pilot_top_z_mm": 3.6,
+        "case_join_clearance_hole_diameter_mm": 2.4,
+        "case_join_clamp_collar_diameter_mm": 5.4,
+        "case_join_clamp_collar_top_z_mm": 0.85,
+        "case_join_head_recess_diameter_mm": 4.4,
+        "case_join_screw_head_diameter_mm": 4.0,
+        "case_join_screw_head_height_mm": 0.5,
+        "case_join_screw_head_envelope_mm": 5.4,
+        "head_recess_depth_mm": 0.7,
+        "head_seat_z_mm": 0.7,
+        "clamp_stack_mm": 0.15,
+        "assembly_direction": "bottom_up",
+        "head_exterior_face_nominal_z_mm": 0.2,
+        "head_exterior_protrusion_max_mm": 0.0,
+        "pcb_bottom_z_mm": 3.9,
+        "screw_tip_to_pcb_clearance_mm": 0.1,
+        "case_join_boss_top_z_mm": 3.85,
+        "fastener_spec": {
+          "part_number": "SUNCO CSPSL-ST3W-M2-3",
+          "reference": "https://jp.misumi-ec.com/vona2/detail/221005676627/?HissuCode=CSPSL-ST3W-M2-3",
+          "thread": "M2 x 0.4",
+          "under_head_length_mm": 3.0,
+          "official_under_head_length_min_mm": 2.7,
+          "official_under_head_length_max_mm": 3.0,
+          "official_length_lower_tolerance_mm": -0.3,
+          "official_length_upper_tolerance_mm": 0.0,
+          "official_head_diameter_min_mm": 3.5,
+          "official_head_diameter_max_mm": 4.0,
+          "official_head_height_min_mm": 0.4,
+          "official_head_height_max_mm": 0.6,
+          "shank_clearance_hole_diameter_mm": 2.4,
+          "head_recess_diameter_mm": 4.4,
+          "head_recess_radial_print_clearance_mm": 0.2,
+          "minimum_radial_head_bearing_mm": 0.55,
+          "minimum_radial_collar_wall_mm": 0.5,
+          "fdm_z_tolerance_mm": 0.05,
+          "part_a_seat_fdm_tolerance_mm": 0.05,
+          "part_b_boss_fdm_tolerance_mm": 0.05,
+          "support_plane_fdm_tolerance_mm": 0.05,
+          "minimum_installed_clearance_mm": 0.05,
+          "installed_screw_tip_to_boss_top_clearance_formula": "(boss_top_nominal - part_b_boss_fdm_tolerance) - (head_seat_nominal + part_a_seat_fdm_tolerance + screw_length_max)",
+          "installed_screw_tip_to_pcb_clearance_formula": "(pcb_bottom_nominal - support_plane_fdm_tolerance) - (head_seat_nominal + part_a_seat_fdm_tolerance + screw_length_max)",
+          "drive": "Phillips #0",
+          "driver_access_direction": "bottom_downward",
+          "driver_shaft_diameter_mm": 3.0,
+          "driver_access_height_mm": 20.0,
+          "tip_allowance_mm": 0.35,
+          "minimum_effective_thread_engagement_mm": 1.5,
+          "usable_pilot_depth_mm": 2.75,
+          "effective_thread_engagement_mm": 2.5,
+          "worst_case": {
+            "screw_length_min_mm": 2.7,
+            "screw_length_max_mm": 3.0,
+            "clamp_stack_min_mm": 0.05,
+            "clamp_stack_max_mm": 0.25,
+            "usable_pilot_depth_mm": 2.65,
+            "maximum_threaded_penetration_into_pilot_mm": 2.6,
+            "effective_thread_engagement_mm": 2.1,
+            "receiving_pilot_blind_cap_mm": 0.15,
+            "head_exterior_face_z_mm": 0.05,
+            "head_exterior_protrusion_mm": 0.0,
+            "screw_tip_top_z_mm": 3.75,
+            "installed_screw_tip_to_boss_top_clearance_mm": 0.05,
+            "installed_screw_tip_to_pcb_clearance_mm": 0.1
+          }
+        },
+        "glue_assumed": false,
+        "assembly": "Slide the lower lap under part B, then install exactly two SUNCO CSPSL-ST3W-M2-3 M2x3 Phillips #0 slim-head screws upward from the exterior bottom into part B's blind receiving pilots.",
+        "feature_collision_count": 0,
+        "support_collision_count": 0,
+        "head_case_collision_volume_mm3": 0.0,
+        "driver_shaft_case_collision_volume_mm3": 0.0,
+        "head_driver_vertical_collision_count": 0,
+        "driver_access_from_exterior_bottom": true,
+        "support_load_path_preserved": true
+      }
+    }
+  },
+  "physical_deflection_test": {
+    "status": "pending",
+    "load_n": 2.0,
+    "maximum_displacement_mm": 0.3
+  },
+  "fabrication_or_order_ready": false,
+  "order_readiness_blocker": "CON-ARCH-006 AC-7 physical 2.0 N deflection evidence is pending.",
+  "stale_monolithic_right_stl_present": false
 }

@@ -1,0 +1,16 @@
+if SHIELD_KC2_X3_V2_LEFT
+
+config ZMK_KEYBOARD_NAME
+    default "KC2 X3 V2"
+
+config ZMK_SPLIT_ROLE_CENTRAL
+    default y
+
+endif
+
+if SHIELD_KC2_X3_V2_LEFT || SHIELD_KC2_X3_V2_RIGHT
+
+config ZMK_SPLIT
+    default y
+
+endif

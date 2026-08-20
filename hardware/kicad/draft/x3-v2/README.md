@@ -1,10 +1,14 @@
 # KC2 X3 V2 routed draft
 
-Requirement: `CON-ARCH-004`
+Requirements: `CON-ARCH-004`, `CON-ARCH-006`
 
 Status: **DRAFT - NOT ORDERABLE** until the physical coupon is fabricated,
 populated, and checked with the intended switches, socket, keycaps, diode, and
-lower housing.
+lower housing, and the printed housing passes the 2.0 N deflection test.
+
+These V2 files live only under `hardware/kicad/draft/x3-v2/`. The promoted
+`hardware/kicad/kc2_left/` and `hardware/kicad/kc2_right/` projects are the
+older verified X3 variant and are not V2 implementation evidence.
 
 ## Assembly modes
 
@@ -27,9 +31,9 @@ the flat lower housing's 2.60 mm component cavity. The lateral solder-fillet
 model includes a 0.30 mm allowance.
 
 The Choc socket SMD solder-fillet model also includes a 0.30 mm lateral
-allowance. It has no housing or diode collision; the minimum residual
-fillet-to-wall clearance is 0.010 mm, preserving the minimum-thickness housing
-without a modeled interference.
+allowance. The V2-specific rail/post verifier reports zero socket, MX, diode,
+track, via, controller/reset, battery-access, and key-travel intersections;
+the smallest modeled support-to-feature plan clearance is 0.1497 mm.
 
 ## Battery service path
 
@@ -63,20 +67,22 @@ $kpy = 'C:\Program Files\KiCad\10.0\bin\python.exe'
 & $kpy -m tools.generate_kc2_pcbs --variant x3-v2 --output-dir tmp_x3_v2_clean
 & $kpy -m tools.verify_kc2_x3_v2
 & $kpy -m tools.verify_kc2_x3_v2_coupon
+& $kpy -m tools.verify_kc2_x3_v2_outline
+& $kpy -m tools.verify_kc2_x3_v2_fabrication
+& $kpy -m tools.verify_kc2_x3_v2_mechanical
+& $kpy -m tools.verify_kc2_x3_v2_zmk_firmware
 python -m tools.verify_kc2_x3_v2_housing
-python -m tools.verify_kc2_x3_v2_fabrication
-python -m tools.verify_kc2_x3_v2_mechanical
 ```
 
 The isolated generator output is intentionally unrouted. The committed board
 files include the reviewed route completion and must retain KiCad DRC results
 of zero violations and zero unconnected items.
 
-The project explicitly ignores seven KiCad diagnostic classes: missing
-courtyard, non-centered track endpoint on via, tuning-profile geometry,
-symbol-footprint filter mismatch, PTH inside courtyard, NPTH inside courtyard,
-and footprint component-type mismatch. These are generated-board metadata,
-custom hybrid-footprint courtyard, or non-applicable tuning diagnostics. The
+The project explicitly ignores five KiCad diagnostic classes: missing
+courtyard, track-not-centered-on-via, tuning-profile track geometry,
+symbol/footprint-filter mismatch, and footprint component-type mismatch.
+These are generated-board metadata, custom hybrid-footprint library, or
+non-applicable tuning diagnostics. The
 electrical implications remain covered by exact footprint geometry checks,
 matrix-island connectivity checks, NPTH copper-free checks, Gerber/Excellon
 inspection, and zero DRC violations/unconnected items.

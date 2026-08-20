@@ -2,52 +2,156 @@
   "requirement": "CON-ARCH-006",
   "boards": {
     "left": {
-      "maximum_outer_overhang_mm": 0.0001,
+      "maximum_outer_overhang_mm": 0.0,
       "maximum_top_bottom_overhang_mm": 0.0,
-      "maximum_keyfield_perimeter_overhang_mm": 0.0001,
+      "maximum_keyfield_perimeter_overhang_mm": 0.0,
+      "outer_cap_relative_setback_by_row_mm": [
+        1.0,
+        1.0,
+        0.9999,
+        0.9999,
+        0.9999
+      ],
+      "top_bottom_setback_mm": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "permitted_exceptions": [
+        {
+          "edge": "top",
+          "key_index": 5,
+          "key_label": "4",
+          "clearance_driving_features": [
+            "U1 nice!nano socket",
+            "USB connector access",
+            "reset/service access"
+          ],
+          "controller_span_mm": [
+            118.8425,
+            148.5825
+          ]
+        },
+        {
+          "edge": "top",
+          "key_index": 6,
+          "key_label": "5",
+          "clearance_driving_features": [
+            "U1 nice!nano socket",
+            "USB connector access",
+            "reset/service access"
+          ],
+          "controller_span_mm": [
+            118.8425,
+            148.5825
+          ]
+        }
+      ],
       "perimeter_sample_step_mm": 0.05,
       "join_setback_by_row_mm": [
-        0.8,
-        0.8,
-        0.8,
-        0.8,
-        0.8
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
       ]
     },
     "right": {
       "maximum_outer_overhang_mm": 0.0,
       "maximum_top_bottom_overhang_mm": 0.0,
       "maximum_keyfield_perimeter_overhang_mm": 0.0,
+      "outer_cap_relative_setback_by_row_mm": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "top_bottom_setback_mm": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "permitted_exceptions": [
+        {
+          "edge": "top",
+          "key_index": 2,
+          "key_label": "8",
+          "clearance_driving_features": [
+            "U1 nice!nano socket",
+            "USB connector access",
+            "reset/service access"
+          ],
+          "controller_span_mm": [
+            62.73,
+            92.47
+          ]
+        },
+        {
+          "edge": "top",
+          "key_index": 3,
+          "key_label": "9",
+          "clearance_driving_features": [
+            "U1 nice!nano socket",
+            "USB connector access",
+            "reset/service access"
+          ],
+          "controller_span_mm": [
+            62.73,
+            92.47
+          ]
+        }
+      ],
       "perimeter_sample_step_mm": 0.05,
       "join_setback_by_row_mm": [
-        0.8,
-        0.8,
-        0.8,
-        0.8,
-        0.8
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
       ]
     }
   },
   "cross_seam_key_pitch_mm": 19.05,
   "cross_seam_keycap_gap_mm": 1.0,
-  "minimum_joined_pcb_gap_mm": 2.6,
-  "interlock_overlap_mm": 11.6875,
+  "keycell_edge_inset_mm": 1.5,
+  "join_center_to_edge_mm": 8.025,
+  "minimum_joined_pcb_gap_mm": 3.0,
+  "interlock_overlap_mm": 11.2875,
   "one_to_one_exports": {
     "left": {
-      "path": "C:\\Work\\git\\kc2\\hardware\\kicad\\draft\\x3-v2\\mechanical\\kc2_left_x3_v2_1to1.svg",
-      "declared_width_mm": 136.2964,
-      "declared_height_mm": 127.7366,
-      "edge_cuts_width_mm": 136.3125,
-      "edge_cuts_height_mm": 127.75,
-      "maximum_dimension_error_mm": 0.0161
+      "path": "hardware/kicad/draft/x3-v2/mechanical/kc2_left_x3_v2_1to1.svg",
+      "declared_width_mm": 135.1026,
+      "declared_height_mm": 126.746,
+      "edge_cuts_width_mm": 135.1125,
+      "edge_cuts_height_mm": 126.75,
+      "maximum_dimension_error_mm": 0.0099
     },
     "right": {
-      "path": "C:\\Work\\git\\kc2\\hardware\\kicad\\draft\\x3-v2\\mechanical\\kc2_right_x3_v2_1to1.svg",
-      "declared_width_mm": 164.8714,
-      "declared_height_mm": 127.7366,
-      "edge_cuts_width_mm": 164.8875,
-      "edge_cuts_height_mm": 127.75,
-      "maximum_dimension_error_mm": 0.0161
+      "path": "hardware/kicad/draft/x3-v2/mechanical/kc2_right_x3_v2_1to1.svg",
+      "declared_width_mm": 163.6776,
+      "declared_height_mm": 126.746,
+      "edge_cuts_width_mm": 163.6875,
+      "edge_cuts_height_mm": 126.75,
+      "maximum_dimension_error_mm": 0.0099
     }
   },
   "errors": []
