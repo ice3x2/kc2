@@ -2,6 +2,9 @@ from __future__ import annotations
 
 import unittest
 import shutil
+import struct
+import subprocess
+import sys
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
@@ -96,7 +99,10 @@ class V2GeneratorTests(unittest.TestCase):
         from tools import generate_kc2_pcbs as generator
 
         self.assertEqual(generator.X3_V2_KEYCELL_EDGE_INSET, 1.5)
-        self.assertEqual(generator.X3_V2_JOIN_CENTER_TO_EDGE, 8.025)
+        self.assertEqual(generator.X3_V2_ONE_UNIT_JOIN_CENTER_TO_EDGE, 8.025)
+        self.assertEqual(generator.X3_V2_JOIN_KEYCAP_GAP, 1.8)
+        self.assertEqual(generator.X3_V2_JOIN_CENTER_PITCH, 19.85)
+        self.assertEqual(generator.X3_V2_MIN_JOINED_EDGE_CLEARANCE, 1.0)
         self.assertEqual(generator.X3_V2_OUTLINE_POLICY, "keycap_concealed_except_controller_service")
         self.assertEqual(
             generator.variant_outline_margins("x3-v2"),
@@ -226,7 +232,8 @@ class V2GeneratorTests(unittest.TestCase):
         self.assertEqual(generator.variant_project_suffix("x3-v2"), "-x3-v2")
         self.assertEqual(generator.variant_switch_footprint("x3-v2"), "SW_Choc_V2_Socket_MX_THT")
 
-    def test_joined_v2_render_uses_nominal_cross_seam_key_pitch(self) -> None:
+    def test_joined_v2_render_uses_safe_cross_seam_key_pitch(self) -> None:
+        from tools import generate_kc2_pcbs as generator
         from tools.render_kc2_x3_joined import build_context
 
         context = build_context(ROOT, 1.0, 5.0, "key-pitch", variant="x3-v2")
@@ -234,8 +241,145 @@ class V2GeneratorTests(unittest.TestCase):
         self.assertEqual((len(context.left.keys), len(context.right.keys)), (32, 39))
         self.assertEqual(context.key_horizontal_clearance.left_label, "6")
         self.assertEqual(context.key_horizontal_clearance.right_label, "7")
-        self.assertAlmostEqual(context.key_horizontal_clearance.clearance, 1.0, places=3)
-        self.assertGreaterEqual(context.min_edge_clearance_mm, 0.0)
+        self.assertAlmostEqual(
+            context.key_horizontal_clearance.clearance,
+            generator.X3_V2_JOIN_KEYCAP_GAP,
+            places=3,
+        )
+        self.assertGreaterEqual(
+            context.min_edge_clearance_mm,
+            generator.X3_V2_MIN_JOINED_EDGE_CLEARANCE,
+        )
+
+        expected_pairs = [
+            (0, "6", "7", 18.05, 18.05, 19.85, 8.025, 8.025),
+            (1, "T", "Y", 18.05, 18.05, 19.85, 8.025, 8.025),
+            (2, "G", "H", 18.05, 18.05, 19.85, 8.025, 8.025),
+            (3, "B", "N", 18.05, 18.05, 19.85, 8.025, 8.025),
+            (4, "Space", "B", 22.8125, 18.05, 22.23125, 10.40625, 8.025),
+        ]
+        self.assertEqual(len(context.seam_key_clearances), len(expected_pairs))
+        for clearance, expected in zip(context.seam_key_clearances, expected_pairs):
+            row, left_label, right_label, left_width, right_width, pitch, left_edge, right_edge = expected
+            with self.subTest(row=row):
+                self.assertEqual(clearance.row, row)
+                self.assertEqual((clearance.left_label, clearance.right_label), (left_label, right_label))
+                self.assertAlmostEqual(clearance.left_cap_width_mm, left_width, places=4)
+                self.assertAlmostEqual(clearance.right_cap_width_mm, right_width, places=4)
+                self.assertAlmostEqual(clearance.center_pitch_mm, pitch, places=4)
+                self.assertAlmostEqual(clearance.cap_gap_mm, generator.X3_V2_JOIN_KEYCAP_GAP, places=3)
+                self.assertAlmostEqual(clearance.left_center_to_pcb_edge_mm, left_edge, places=4)
+                self.assertAlmostEqual(clearance.right_center_to_pcb_edge_mm, right_edge, places=4)
+                self.assertAlmostEqual(clearance.pcb_gap_mm, generator.X3_V2_ROW_CENTER_PCB_GAP, places=3)
+
+        for row in range(5):
+            left_candidates = [
+                (index, key)
+                for index, key in enumerate(context.left.keys, start=1)
+                if key.row == row
+            ]
+            right_candidates = [
+                (index, key)
+                for index, key in enumerate(context.right.keys, start=1)
+                if key.row == row
+            ]
+            left_index, left_key = max(
+                left_candidates,
+                key=lambda item: context.left.switch_centers[item[0]][0]
+                + item[1].w_u * generator.UNIT / 2.0,
+            )
+            right_index, right_key = min(
+                right_candidates,
+                key=lambda item: context.right.switch_centers[item[0]][0]
+                - item[1].w_u * generator.UNIT / 2.0,
+            )
+            left_center = context.left.switch_centers[left_index][0]
+            right_center = context.right.switch_centers[right_index][0] + context.right_dx
+            cap_gap = (
+                right_center
+                - right_key.w_u * generator.UNIT / 2.0
+                + 0.5
+                - left_center
+                - left_key.w_u * generator.UNIT / 2.0
+                + 0.5
+            )
+            with self.subTest(row=row):
+                self.assertAlmostEqual(cap_gap, generator.X3_V2_JOIN_KEYCAP_GAP, places=3)
+
+    def test_exact_joined_clearance_detects_horizontal_contact(self) -> None:
+        from tools.render_kc2_x3_joined import minimum_segment_clearance
+
+        touching = minimum_segment_clearance(
+            [((0.0, 0.0), (2.0, 0.0))],
+            [((1.0, 0.0), (3.0, 0.0))],
+        )
+        separated = minimum_segment_clearance(
+            [((0.0, 0.0), (2.0, 0.0))],
+            [((0.0, 1.0), (2.0, 1.0))],
+        )
+
+        self.assertAlmostEqual(touching.clearance, 0.0, places=6)
+        self.assertAlmostEqual(separated.clearance, 1.0, places=6)
+
+    def test_joined_v2_render_explains_clearance_corridor_without_calling_it_overlap(self) -> None:
+        from tools.render_kc2_x3_joined import build_context, render_svg
+
+        context = build_context(ROOT, 1.0, 5.0, "key-pitch", variant="x3-v2")
+        with TemporaryDirectory(dir=ROOT) as temporary:
+            output = Path(temporary) / "joined.svg"
+            render_svg(context, output, zoom=False)
+            svg = output.read_text(encoding="utf-8")
+
+        self.assertIn("Empty PCB clearance corridor", svg)
+        self.assertIn("Outline X-range nesting", svg)
+        self.assertIn("Row-center PCB gap", svg)
+        self.assertIn('data-seam-pair-count="5"', svg)
+        for pair in ("6-7", "T-Y", "G-H", "B-N", "Space-B"):
+            self.assertIn(f'data-pair="{pair}"', svg)
+        self.assertNotIn("Interlock overlap:", svg)
+        self.assertIn('data-outline-x-range-nesting-mm="', svg)
+        self.assertNotIn("data-interlock-overlap-mm", svg)
+        self.assertGreater(
+            svg.rfind('<rect x="8" y="8"'),
+            svg.rfind('id="key-horizontal-clearance"'),
+        )
+
+    def test_joined_v2_renderer_cli_produces_fresh_pngs_with_kicad_python(self) -> None:
+        with TemporaryDirectory(dir=ROOT) as temporary:
+            output_dir = Path(temporary) / "render"
+            completed = subprocess.run(
+                [
+                    sys.executable,
+                    "-m",
+                    "tools.render_kc2_x3_joined",
+                    "--repo",
+                    str(ROOT),
+                    "--variant",
+                    "x3-v2",
+                    "--placement-mode",
+                    "key-pitch",
+                    "--scale",
+                    "2",
+                    "--output-dir",
+                    str(output_dir),
+                ],
+                cwd=ROOT,
+                capture_output=True,
+                text=True,
+                timeout=60,
+            )
+
+            self.assertEqual(completed.returncode, 0, completed.stdout + completed.stderr)
+            self.assertIn("outline_x_range_nesting_mm=", completed.stdout)
+            self.assertNotIn("interlock_overlap_mm=", completed.stdout)
+            for stem in ("kc2_x3_v2_joined_top", "kc2_x3_v2_join_seam_zoom"):
+                self.assertTrue((output_dir / f"{stem}.svg").is_file())
+                png = output_dir / f"{stem}.png"
+                payload = png.read_bytes()
+                self.assertEqual(payload[:8], b"\x89PNG\r\n\x1a\n")
+                width, height = struct.unpack(">II", payload[16:24])
+                self.assertGreater(width, 0)
+                self.assertGreater(height, 0)
 
     def test_actual_v2_edge_cuts_are_keycap_concealed_and_recessed_at_join(self) -> None:
         from tools.verify_kc2_x3_v2_outline import analyze_outline
@@ -244,9 +388,23 @@ class V2GeneratorTests(unittest.TestCase):
 
         self.assertEqual(report["requirement"], "CON-ARCH-006")
         self.assertEqual(report["errors"], [])
-        self.assertAlmostEqual(report["cross_seam_key_pitch_mm"], 19.05, places=3)
-        self.assertAlmostEqual(report["cross_seam_keycap_gap_mm"], 1.0, places=3)
-        self.assertAlmostEqual(report["minimum_joined_pcb_gap_mm"], 3.0, places=3)
+        self.assertAlmostEqual(report["one_unit_cross_seam_center_pitch_mm"], 19.85, places=3)
+        self.assertNotIn("cross_seam_key_pitch_mm", report)
+        self.assertAlmostEqual(report["cross_seam_keycap_gap_mm"], 1.8, places=3)
+        self.assertAlmostEqual(report["row_center_joined_pcb_gap_mm"], 3.8, places=3)
+        self.assertGreaterEqual(report["minimum_joined_pcb_gap_mm"], 1.0)
+        self.assertAlmostEqual(report["outline_x_range_nesting_mm"], 10.4875, places=4)
+        self.assertNotIn("interlock_overlap_mm", report)
+        self.assertEqual(len(report["cross_seam_pairs"]), 5)
+        self.assertEqual(
+            [(pair["left_key"], pair["right_key"]) for pair in report["cross_seam_pairs"]],
+            [("6", "7"), ("T", "Y"), ("G", "H"), ("B", "N"), ("Space", "B")],
+        )
+        self.assertEqual(report["cross_seam_pairs"][4]["left_cap_width_mm"], 22.8125)
+        self.assertEqual(report["cross_seam_pairs"][4]["left_center_to_pcb_edge_mm"], 10.4062)
+        for pair in report["cross_seam_pairs"]:
+            self.assertAlmostEqual(pair["cap_gap_mm"], 1.8, places=3)
+            self.assertAlmostEqual(pair["pcb_gap_mm"], 3.8, places=3)
         for side in ("left", "right"):
             self.assertLessEqual(report["boards"][side]["maximum_outer_overhang_mm"], 0.001)
             self.assertLessEqual(report["boards"][side]["maximum_top_bottom_overhang_mm"], 0.001)
@@ -267,6 +425,26 @@ class V2GeneratorTests(unittest.TestCase):
             )
             self.assertFalse(Path(report["one_to_one_exports"][side]["path"]).is_absolute())
 
+    def test_layout_spec_uses_current_v2_safe_joined_geometry(self) -> None:
+        layout_spec = (ROOT / "docs" / "spec" / "20.kc2-no-stabilizer-layout.md").read_text(
+            encoding="utf-8"
+        )
+        product_srs = (ROOT / "docs" / "spec" / "10.product-architecture.srs.md").read_text(
+            encoding="utf-8"
+        )
+        v2_readme = (V2_ROOT / "README.md").read_text(encoding="utf-8")
+
+        self.assertIn("`19.85 mm` one-unit seam pitch", layout_spec)
+        self.assertIn("`1.80 mm` nominal gap", layout_spec)
+        self.assertIn("`3.80 mm` nominal joined PCB gap", layout_spec)
+        self.assertIn("`22.8125 mm` / `18.05 mm`", layout_spec)
+        self.assertNotIn("nominal `19.05 mm` one-unit pitch", layout_spec)
+        self.assertNotIn("same `18.05 mm` MX-envelope keycaps", product_srs)
+        self.assertNotIn("each row-center seam edge is 8.025 mm", product_srs)
+        self.assertIn("actual selected keycap envelope for each corresponding physical key", product_srs)
+        self.assertIn("-m tools.render_kc2_x3_joined", v2_readme)
+        self.assertIn("KC2_HEADLESS_BROWSER", v2_readme)
+
     def test_generator_accepts_an_isolated_output_override(self) -> None:
         from tools import generate_kc2_pcbs as generator
 
@@ -279,7 +457,24 @@ class V2GeneratorTests(unittest.TestCase):
             self.assertEqual(manifest["variant"], "x3-v2")
             self.assertEqual(manifest["key_count"], {"left": 32, "right": 39, "total": 71})
             self.assertEqual(manifest["keycell_edge_inset_mm"], 1.5)
-            self.assertEqual(manifest["join_center_to_edge_mm"], 8.025)
+            self.assertEqual(manifest["one_unit_join_center_to_edge_mm"], 8.025)
+            self.assertEqual(
+                manifest["join_geometry_by_row"],
+                [
+                    {"row": 0, "left_key": "6", "right_key": "7", "left_cap_width_mm": 18.05, "right_cap_width_mm": 18.05, "left_center_to_edge_mm": 8.025, "right_center_to_edge_mm": 8.025, "center_pitch_mm": 19.85, "cap_gap_mm": 1.8, "pcb_gap_mm": 3.8},
+                    {"row": 1, "left_key": "T", "right_key": "Y", "left_cap_width_mm": 18.05, "right_cap_width_mm": 18.05, "left_center_to_edge_mm": 8.025, "right_center_to_edge_mm": 8.025, "center_pitch_mm": 19.85, "cap_gap_mm": 1.8, "pcb_gap_mm": 3.8},
+                    {"row": 2, "left_key": "G", "right_key": "H", "left_cap_width_mm": 18.05, "right_cap_width_mm": 18.05, "left_center_to_edge_mm": 8.025, "right_center_to_edge_mm": 8.025, "center_pitch_mm": 19.85, "cap_gap_mm": 1.8, "pcb_gap_mm": 3.8},
+                    {"row": 3, "left_key": "B", "right_key": "N", "left_cap_width_mm": 18.05, "right_cap_width_mm": 18.05, "left_center_to_edge_mm": 8.025, "right_center_to_edge_mm": 8.025, "center_pitch_mm": 19.85, "cap_gap_mm": 1.8, "pcb_gap_mm": 3.8},
+                    {"row": 4, "left_key": "Space", "right_key": "B", "left_cap_width_mm": 22.8125, "right_cap_width_mm": 18.05, "left_center_to_edge_mm": 10.40625, "right_center_to_edge_mm": 8.025, "center_pitch_mm": 22.23125, "cap_gap_mm": 1.8, "pcb_gap_mm": 3.8},
+                ],
+            )
+            self.assertEqual(manifest["join_keycap_gap_mm"], 1.8)
+            self.assertEqual(manifest["one_unit_join_center_pitch_mm"], 19.85)
+            self.assertNotIn("join_center_pitch_mm", manifest)
+            self.assertEqual(manifest["join_placement_offset_mm"], 0.8)
+            self.assertEqual(manifest["row_center_joined_pcb_gap_mm"], 3.8)
+            self.assertEqual(manifest["minimum_joined_edge_clearance_mm"], 1.0)
+            self.assertEqual(manifest["seam_transition_stagger_mm"], 0.55)
             self.assertEqual(manifest["outline_policy"], "keycap_concealed_except_controller_service")
             self.assertEqual(
                 manifest["autoroute_boundary_policy"],
@@ -341,6 +536,63 @@ class V2GeneratorTests(unittest.TestCase):
 
             self.assertEqual(remove_dangling_tracks(board), 1)
             self.assertNotIn(stub, list(board.GetTracks()))
+
+    def test_edge_cut_sync_preserves_routes_and_footprints_and_is_idempotent(self) -> None:
+        import pcbnew
+
+        from tools import generate_kc2_pcbs as generator
+        from tools.finalize_kc2_x3_v2_routes import _route_signature
+        from tools.repair_kc2_x3_v2_compact_edge import sync_edge_cuts_from_generated
+
+        with TemporaryDirectory(dir=ROOT) as temporary:
+            output_dir = Path(temporary) / "generated"
+            generator.generate_variant("x3-v2", output_dir=output_dir)
+            for side, actual_path in (("left", LEFT_BOARD), ("right", RIGHT_BOARD)):
+                target = pcbnew.LoadBoard(str(actual_path))
+                source_path = (
+                    output_dir
+                    / f"kc2_{side}-x3-v2"
+                    / f"kc2_{side}-x3-v2.kicad_pcb"
+                )
+                source = pcbnew.LoadBoard(str(source_path))
+                route_before = sorted(_route_signature(item) for item in target.GetTracks())
+                footprint_before = sorted(
+                    (
+                        footprint.GetReference(),
+                        footprint.GetPosition().x,
+                        footprint.GetPosition().y,
+                        round(footprint.GetOrientation().AsDegrees(), 3),
+                    )
+                    for footprint in target.GetFootprints()
+                )
+                edge = next(
+                    drawing
+                    for drawing in target.GetDrawings()
+                    if drawing.GetLayer() == pcbnew.Edge_Cuts
+                )
+                edge.Move(pcbnew.VECTOR2I(pcbnew.FromMM(0.1), 0))
+
+                first = sync_edge_cuts_from_generated(target, source)
+                second = sync_edge_cuts_from_generated(target, source)
+
+                self.assertGreater(first["edge_drawings_replaced"], 0)
+                self.assertEqual(second["edge_drawings_replaced"], 0)
+                self.assertEqual(
+                    sorted(_route_signature(item) for item in target.GetTracks()),
+                    route_before,
+                )
+                self.assertEqual(
+                    sorted(
+                        (
+                            footprint.GetReference(),
+                            footprint.GetPosition().x,
+                            footprint.GetPosition().y,
+                            round(footprint.GetOrientation().AsDegrees(), 3),
+                        )
+                        for footprint in target.GetFootprints()
+                    ),
+                    footprint_before,
+                )
 
     def test_generated_boards_preserve_x3_and_dual_contact_invariants(self) -> None:
         for side, board_path, expected_keys in (
@@ -481,8 +733,13 @@ class V2GeneratorTests(unittest.TestCase):
         self.assertEqual(report["key_count"], {"left": 32, "right": 39, "total": 71})
         self.assertEqual(report["max_key_width_u"], 1.75)
         self.assertEqual(report["keycell_edge_inset_mm"], 1.5)
-        self.assertEqual(report["join_center_to_edge_mm"], 8.025)
+        self.assertEqual(report["one_unit_join_center_to_edge_mm"], 8.025)
+        self.assertNotIn("join_center_to_edge_mm", report)
         self.assertEqual(report["join_keycap_setback_mm"], 1.0)
+        self.assertEqual(report["join_keycap_gap_mm"], 1.8)
+        self.assertEqual(report["one_unit_join_center_pitch_mm"], 19.85)
+        self.assertNotIn("join_center_pitch_mm", report)
+        self.assertEqual(report["minimum_joined_edge_clearance_mm"], 1.0)
         self.assertEqual(report["outline_policy"], "keycap_concealed_except_controller_service")
         self.assertEqual(
             report["autoroute_boundary_policy"],

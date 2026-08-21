@@ -6,6 +6,12 @@ import math
 import re
 from pathlib import Path
 
+from tools.generate_kc2_pcbs import (
+    X3_V2_JOIN_CENTER_PITCH,
+    X3_V2_JOIN_KEYCAP_GAP,
+    X3_V2_MIN_JOINED_EDGE_CLEARANCE,
+    X3_V2_ROW_CENTER_PCB_GAP,
+)
 from tools.render_kc2_x3_joined import (
     UNIT,
     BoardRenderData,
@@ -19,7 +25,7 @@ ROOT = Path(__file__).resolve().parents[1]
 KEYCAP_EDGE_INSET_MM = 0.5
 KEYCELL_EDGE_INSET_MM = 1.5
 EXPECTED_CAP_RELATIVE_SETBACK_MM = KEYCELL_EDGE_INSET_MM - KEYCAP_EDGE_INSET_MM
-EXPECTED_JOIN_CENTER_TO_EDGE_MM = UNIT / 2.0 - KEYCELL_EDGE_INSET_MM
+EXPECTED_ONE_UNIT_JOIN_CENTER_TO_EDGE_MM = UNIT / 2.0 - KEYCELL_EDGE_INSET_MM
 TOLERANCE_MM = 0.02
 ONE_TO_ONE_TOLERANCE_MM = 0.05
 PERIMETER_SAMPLE_STEP_MM = 0.05
@@ -291,26 +297,76 @@ def analyze_outline(repo: Path = ROOT) -> dict[str, object]:
     right_center = unique_key_center(context.right, "7")
     pitch = right_center[0] + context.right_dx - left_center[0]
     errors = left_errors + right_errors + left_svg_errors + right_svg_errors
-    if abs(pitch - UNIT) > TOLERANCE_MM:
-        errors.append(f"cross-seam key pitch is {pitch:.3f} mm, expected {UNIT:.3f} mm")
-    if abs(context.key_horizontal_clearance.clearance - 1.0) > TOLERANCE_MM:
+    if abs(pitch - X3_V2_JOIN_CENTER_PITCH) > TOLERANCE_MM:
         errors.append(
-            f"cross-seam keycap gap is {context.key_horizontal_clearance.clearance:.3f} mm, "
-            "expected 1.000 mm"
+            f"cross-seam key pitch is {pitch:.3f} mm, "
+            f"expected {X3_V2_JOIN_CENTER_PITCH:.3f} mm"
         )
-    if context.min_edge_clearance_mm < 0.0:
+    seam_pair_reports = []
+    for clearance in context.seam_key_clearances:
+        expected_pitch = (
+            clearance.left_cap_width_mm / 2.0
+            + clearance.right_cap_width_mm / 2.0
+            + X3_V2_JOIN_KEYCAP_GAP
+        )
+        expected_left_edge = clearance.left_cap_width_mm / 2.0 - EXPECTED_CAP_RELATIVE_SETBACK_MM
+        expected_right_edge = clearance.right_cap_width_mm / 2.0 - EXPECTED_CAP_RELATIVE_SETBACK_MM
+        pair_name = f"{clearance.left_label}-{clearance.right_label}"
+        if abs(clearance.center_pitch_mm - expected_pitch) > TOLERANCE_MM:
+            errors.append(
+                f"row {clearance.row} {pair_name} center pitch is "
+                f"{clearance.center_pitch_mm:.3f} mm, expected {expected_pitch:.3f} mm"
+            )
+        if abs(clearance.cap_gap_mm - X3_V2_JOIN_KEYCAP_GAP) > TOLERANCE_MM:
+            errors.append(
+                f"row {clearance.row} {pair_name} keycap gap is "
+                f"{clearance.cap_gap_mm:.3f} mm, expected {X3_V2_JOIN_KEYCAP_GAP:.3f} mm"
+            )
+        if abs(clearance.left_center_to_pcb_edge_mm - expected_left_edge) > TOLERANCE_MM:
+            errors.append(
+                f"row {clearance.row} {pair_name} left center-to-PCB-edge is "
+                f"{clearance.left_center_to_pcb_edge_mm:.3f} mm, expected {expected_left_edge:.3f} mm"
+            )
+        if abs(clearance.right_center_to_pcb_edge_mm - expected_right_edge) > TOLERANCE_MM:
+            errors.append(
+                f"row {clearance.row} {pair_name} right center-to-PCB-edge is "
+                f"{clearance.right_center_to_pcb_edge_mm:.3f} mm, expected {expected_right_edge:.3f} mm"
+            )
+        if abs(clearance.pcb_gap_mm - X3_V2_ROW_CENTER_PCB_GAP) > TOLERANCE_MM:
+            errors.append(
+                f"row {clearance.row} {pair_name} PCB gap is "
+                f"{clearance.pcb_gap_mm:.3f} mm, expected {X3_V2_ROW_CENTER_PCB_GAP:.3f} mm"
+            )
+        seam_pair_reports.append(
+            {
+                "row": clearance.row,
+                "left_key": clearance.left_label,
+                "right_key": clearance.right_label,
+                "left_cap_width_mm": round(clearance.left_cap_width_mm, 4),
+                "right_cap_width_mm": round(clearance.right_cap_width_mm, 4),
+                "center_pitch_mm": round(clearance.center_pitch_mm, 4),
+                "cap_gap_mm": round(clearance.cap_gap_mm, 4),
+                "left_center_to_pcb_edge_mm": round(clearance.left_center_to_pcb_edge_mm, 4),
+                "right_center_to_pcb_edge_mm": round(clearance.right_center_to_pcb_edge_mm, 4),
+                "pcb_gap_mm": round(clearance.pcb_gap_mm, 4),
+            }
+        )
+    if context.min_edge_clearance_mm + 1e-6 < X3_V2_MIN_JOINED_EDGE_CLEARANCE:
         errors.append(
-            f"joined PCB Edge.Cuts overlap by {-context.min_edge_clearance_mm:.3f} mm"
+            f"exact joined PCB Edge.Cuts clearance is {context.min_edge_clearance_mm:.3f} mm, "
+            f"below {X3_V2_MIN_JOINED_EDGE_CLEARANCE:.3f} mm"
         )
     return {
         "requirement": "CON-ARCH-006",
         "boards": {"left": left_report, "right": right_report},
-        "cross_seam_key_pitch_mm": round(pitch, 4),
+        "one_unit_cross_seam_center_pitch_mm": round(pitch, 4),
         "cross_seam_keycap_gap_mm": round(context.key_horizontal_clearance.clearance, 4),
+        "row_center_joined_pcb_gap_mm": round(context.measurement.clearance, 4),
+        "cross_seam_pairs": seam_pair_reports,
         "keycell_edge_inset_mm": KEYCELL_EDGE_INSET_MM,
-        "join_center_to_edge_mm": round(EXPECTED_JOIN_CENTER_TO_EDGE_MM, 4),
+        "one_unit_join_center_to_edge_mm": round(EXPECTED_ONE_UNIT_JOIN_CENTER_TO_EDGE_MM, 4),
         "minimum_joined_pcb_gap_mm": round(context.min_edge_clearance_mm, 4),
-        "interlock_overlap_mm": round(context.interlock_overlap_mm, 4),
+        "outline_x_range_nesting_mm": round(context.outline_x_range_nesting_mm, 4),
         "one_to_one_exports": {"left": left_svg, "right": right_svg},
         "errors": errors,
     }
@@ -318,7 +374,10 @@ def analyze_outline(repo: Path = ROOT) -> dict[str, object]:
 
 def main() -> None:
     parser = argparse.ArgumentParser(
-        description="Verify actual KC2 X3 V2 1.5 mm key-cell inset and 8.025 mm mating edge."
+        description=(
+            "Verify actual KC2 X3 V2 concealed outline, safe 1.80 mm joined keycap gap, "
+            "and exact full-outline PCB clearance."
+        )
     )
     parser.add_argument("--repo", type=Path, default=ROOT)
     parser.add_argument(

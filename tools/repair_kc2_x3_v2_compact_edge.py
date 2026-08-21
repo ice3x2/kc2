@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+from collections import Counter
 import json
 import shutil
 from pathlib import Path
@@ -14,6 +15,111 @@ POSITION_TOLERANCE_IU = pcbnew.FromMM(0.001)
 TOP_ROUTE_MIN_Y_MM = 68.2
 TOP_ROUTE_MAX_Y_MM = 69.95
 TOP_ROUTE_TARGET_Y_MM = 70.25
+
+
+def _edge_drawings(board: pcbnew.BOARD) -> list[pcbnew.PCB_SHAPE]:
+    drawings = [
+        drawing
+        for drawing in board.GetDrawings()
+        if drawing.GetLayer() == pcbnew.Edge_Cuts
+    ]
+    if not drawings:
+        raise RuntimeError("board has no Edge.Cuts drawings")
+    if any(not isinstance(drawing, pcbnew.PCB_SHAPE) for drawing in drawings):
+        raise RuntimeError("Edge.Cuts contains an unsupported non-shape item")
+    return drawings
+
+
+def _edge_signature(
+    drawing: pcbnew.PCB_SHAPE,
+    delta: pcbnew.VECTOR2I | None = None,
+) -> tuple[int, int, int, int, int, int]:
+    if drawing.GetShape() != pcbnew.SHAPE_T_SEGMENT:
+        raise RuntimeError("X3 V2 generated Edge.Cuts must contain only line segments")
+    offset = delta or pcbnew.VECTOR2I(0, 0)
+    start = drawing.GetStart() + offset
+    end = drawing.GetEnd() + offset
+    first, second = sorted(((start.x, start.y), (end.x, end.y)))
+    return (
+        int(drawing.GetShape()),
+        first[0],
+        first[1],
+        second[0],
+        second[1],
+        drawing.GetWidth(),
+    )
+
+
+def _generated_to_target_translation(
+    target: pcbnew.BOARD,
+    generated: pcbnew.BOARD,
+) -> pcbnew.VECTOR2I:
+    target_switches = {
+        footprint.GetReference(): footprint
+        for footprint in target.GetFootprints()
+        if footprint.GetReference().startswith("SW")
+        and footprint.GetReference()[2:].isdigit()
+    }
+    generated_switches = {
+        footprint.GetReference(): footprint
+        for footprint in generated.GetFootprints()
+        if footprint.GetReference().startswith("SW")
+        and footprint.GetReference()[2:].isdigit()
+    }
+    if not target_switches or target_switches.keys() != generated_switches.keys():
+        raise RuntimeError("generated and routed boards do not have the same switch references")
+    anchor = min(target_switches, key=lambda reference: int(reference[2:]))
+    delta = target_switches[anchor].GetPosition() - generated_switches[anchor].GetPosition()
+    for reference in sorted(target_switches):
+        target_footprint = target_switches[reference]
+        generated_footprint = generated_switches[reference]
+        if not same_position(target_footprint.GetPosition(), generated_footprint.GetPosition() + delta):
+            raise RuntimeError(f"{reference}: routed board is not a rigid translation of the generator")
+        if abs(
+            target_footprint.GetOrientation().AsDegrees()
+            - generated_footprint.GetOrientation().AsDegrees()
+        ) > 0.001:
+            raise RuntimeError(f"{reference}: routed board rotation differs from the generator")
+    return delta
+
+
+def sync_edge_cuts_from_generated(
+    target: pcbnew.BOARD,
+    generated: pcbnew.BOARD,
+) -> dict[str, object]:
+    """Replace only Edge.Cuts using the generator's rigidly translated outline."""
+
+    delta = _generated_to_target_translation(target, generated)
+    target_edges = _edge_drawings(target)
+    generated_edges = _edge_drawings(generated)
+    target_signatures = Counter(_edge_signature(drawing) for drawing in target_edges)
+    generated_signatures = Counter(
+        _edge_signature(drawing, delta) for drawing in generated_edges
+    )
+    if target_signatures == generated_signatures:
+        return {
+            "edge_drawings_replaced": 0,
+            "edge_drawing_count": len(target_edges),
+            "translation_mm": [
+                round(pcbnew.ToMM(delta.x), 4),
+                round(pcbnew.ToMM(delta.y), 4),
+            ],
+        }
+
+    for drawing in target_edges:
+        target.Delete(drawing)
+    for drawing in generated_edges:
+        clone = drawing.Duplicate()
+        clone.Move(delta)
+        target.Add(clone)
+    return {
+        "edge_drawings_replaced": len(target_edges),
+        "edge_drawing_count": len(generated_edges),
+        "translation_mm": [
+            round(pcbnew.ToMM(delta.x), 4),
+            round(pcbnew.ToMM(delta.y), 4),
+        ],
+    }
 
 
 def same_position(a: pcbnew.VECTOR2I, b: pcbnew.VECTOR2I) -> bool:
@@ -112,8 +218,14 @@ def repair_board(
     dry_run: bool = False,
     lift_top_route: bool = False,
     cleanup_dangling_tracks: bool = False,
+    sync_edge_cuts_from: Path | None = None,
 ) -> dict[str, object]:
     board = pcbnew.LoadBoard(str(board_path))
+    outline_result = (
+        sync_edge_cuts_from_generated(board, pcbnew.LoadBoard(str(sync_edge_cuts_from)))
+        if sync_edge_cuts_from is not None
+        else None
+    )
     side = "left" if "left" in board_path.name.lower() else "right"
     keys = gen.make_left_keys_x3_v2() if side == "left" else gen.make_right_keys_x3_v2()
     final_row = max(key.row for key in keys)
@@ -178,6 +290,7 @@ def repair_board(
         "lift_top_route": lift_top_route,
         "top_row_route": row_result,
         "dangling_tracks_removed": dangling_tracks_removed,
+        "edge_cuts_sync": outline_result,
     }
 
 
@@ -193,6 +306,11 @@ def main() -> None:
     parser.add_argument("--dry-run", action="store_true")
     parser.add_argument("--lift-top-route", action="store_true")
     parser.add_argument("--cleanup-dangling-tracks", action="store_true")
+    parser.add_argument(
+        "--sync-edge-cuts-from",
+        type=Path,
+        help="fresh generated board whose Edge.Cuts will be rigidly translated onto the routed board",
+    )
     args = parser.parse_args()
     result = repair_board(
         args.board.resolve(),
@@ -200,6 +318,7 @@ def main() -> None:
         dry_run=args.dry_run,
         lift_top_route=args.lift_top_route,
         cleanup_dangling_tracks=args.cleanup_dangling_tracks,
+        sync_edge_cuts_from=(args.sync_edge_cuts_from.resolve() if args.sync_edge_cuts_from else None),
     )
     print(json.dumps(result, indent=2))
 

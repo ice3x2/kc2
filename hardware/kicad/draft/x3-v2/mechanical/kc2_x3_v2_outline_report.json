@@ -130,12 +130,75 @@
       ]
     }
   },
-  "cross_seam_key_pitch_mm": 19.05,
-  "cross_seam_keycap_gap_mm": 1.0,
+  "one_unit_cross_seam_center_pitch_mm": 19.85,
+  "cross_seam_keycap_gap_mm": 1.8,
+  "row_center_joined_pcb_gap_mm": 3.8,
+  "cross_seam_pairs": [
+    {
+      "row": 0,
+      "left_key": "6",
+      "right_key": "7",
+      "left_cap_width_mm": 18.05,
+      "right_cap_width_mm": 18.05,
+      "center_pitch_mm": 19.85,
+      "cap_gap_mm": 1.8,
+      "left_center_to_pcb_edge_mm": 8.025,
+      "right_center_to_pcb_edge_mm": 8.025,
+      "pcb_gap_mm": 3.8
+    },
+    {
+      "row": 1,
+      "left_key": "T",
+      "right_key": "Y",
+      "left_cap_width_mm": 18.05,
+      "right_cap_width_mm": 18.05,
+      "center_pitch_mm": 19.85,
+      "cap_gap_mm": 1.8,
+      "left_center_to_pcb_edge_mm": 8.025,
+      "right_center_to_pcb_edge_mm": 8.025,
+      "pcb_gap_mm": 3.8
+    },
+    {
+      "row": 2,
+      "left_key": "G",
+      "right_key": "H",
+      "left_cap_width_mm": 18.05,
+      "right_cap_width_mm": 18.05,
+      "center_pitch_mm": 19.85,
+      "cap_gap_mm": 1.8,
+      "left_center_to_pcb_edge_mm": 8.025,
+      "right_center_to_pcb_edge_mm": 8.025,
+      "pcb_gap_mm": 3.8
+    },
+    {
+      "row": 3,
+      "left_key": "B",
+      "right_key": "N",
+      "left_cap_width_mm": 18.05,
+      "right_cap_width_mm": 18.05,
+      "center_pitch_mm": 19.85,
+      "cap_gap_mm": 1.8,
+      "left_center_to_pcb_edge_mm": 8.025,
+      "right_center_to_pcb_edge_mm": 8.025,
+      "pcb_gap_mm": 3.8
+    },
+    {
+      "row": 4,
+      "left_key": "Space",
+      "right_key": "B",
+      "left_cap_width_mm": 22.8125,
+      "right_cap_width_mm": 18.05,
+      "center_pitch_mm": 22.2312,
+      "cap_gap_mm": 1.7999,
+      "left_center_to_pcb_edge_mm": 10.4062,
+      "right_center_to_pcb_edge_mm": 8.025,
+      "pcb_gap_mm": 3.8
+    }
+  ],
   "keycell_edge_inset_mm": 1.5,
-  "join_center_to_edge_mm": 8.025,
-  "minimum_joined_pcb_gap_mm": 3.0,
-  "interlock_overlap_mm": 11.2875,
+  "one_unit_join_center_to_edge_mm": 8.025,
+  "minimum_joined_pcb_gap_mm": 1.1,
+  "outline_x_range_nesting_mm": 10.4875,
   "one_to_one_exports": {
     "left": {
       "path": "hardware/kicad/draft/x3-v2/mechanical/kc2_left_x3_v2_1to1.svg",

@@ -1,5 +1,5 @@
 {
-  "generated": "2026-08-21",
+  "generated": "2026-08-22",
   "variant": "x3-v2",
   "generator": "tools/generate_kc2_pcbs.py",
   "generation_command": "python tools/generate_kc2_pcbs.py --variant x3-v2",
@@ -11,15 +11,15 @@
   },
   "antenna_keepout_mm": {
     "left": [
-      151.6825,
+      150.6825,
       39.85,
-      161.6825,
+      160.6825,
       58.15
     ],
     "right": [
-      49.629999999999995,
+      49.43000000000001,
       39.85,
-      59.629999999999995,
+      59.43000000000001,
       58.15
     ]
   },
@@ -104,8 +104,76 @@
   },
   "max_key_width_u": 1.75,
   "keycell_edge_inset_mm": 1.5,
-  "join_center_to_edge_mm": 8.025,
+  "one_unit_join_center_to_edge_mm": 8.025,
+  "join_geometry_by_row": [
+    {
+      "row": 0,
+      "left_key": "6",
+      "right_key": "7",
+      "left_cap_width_mm": 18.05,
+      "right_cap_width_mm": 18.05,
+      "left_center_to_edge_mm": 8.025,
+      "right_center_to_edge_mm": 8.025,
+      "center_pitch_mm": 19.85,
+      "cap_gap_mm": 1.8,
+      "pcb_gap_mm": 3.8
+    },
+    {
+      "row": 1,
+      "left_key": "T",
+      "right_key": "Y",
+      "left_cap_width_mm": 18.05,
+      "right_cap_width_mm": 18.05,
+      "left_center_to_edge_mm": 8.025,
+      "right_center_to_edge_mm": 8.025,
+      "center_pitch_mm": 19.85,
+      "cap_gap_mm": 1.8,
+      "pcb_gap_mm": 3.8
+    },
+    {
+      "row": 2,
+      "left_key": "G",
+      "right_key": "H",
+      "left_cap_width_mm": 18.05,
+      "right_cap_width_mm": 18.05,
+      "left_center_to_edge_mm": 8.025,
+      "right_center_to_edge_mm": 8.025,
+      "center_pitch_mm": 19.85,
+      "cap_gap_mm": 1.8,
+      "pcb_gap_mm": 3.8
+    },
+    {
+      "row": 3,
+      "left_key": "B",
+      "right_key": "N",
+      "left_cap_width_mm": 18.05,
+      "right_cap_width_mm": 18.05,
+      "left_center_to_edge_mm": 8.025,
+      "right_center_to_edge_mm": 8.025,
+      "center_pitch_mm": 19.85,
+      "cap_gap_mm": 1.8,
+      "pcb_gap_mm": 3.8
+    },
+    {
+      "row": 4,
+      "left_key": "Space",
+      "right_key": "B",
+      "left_cap_width_mm": 22.8125,
+      "right_cap_width_mm": 18.05,
+      "left_center_to_edge_mm": 10.40625,
+      "right_center_to_edge_mm": 8.025,
+      "center_pitch_mm": 22.23125,
+      "cap_gap_mm": 1.8,
+      "pcb_gap_mm": 3.8
+    }
+  ],
   "join_keycap_setback_mm": 1.0,
+  "join_keycap_gap_mm": 1.8,
+  "one_unit_join_center_pitch_mm": 19.85,
+  "join_placement_offset_mm": 0.8,
+  "row_center_joined_pcb_gap_mm": 3.8,
+  "minimum_joined_edge_clearance_mm": 1.0,
+  "seam_transition_stagger_mm": 0.55,
   "outline_policy": "keycap_concealed_except_controller_service",
   "autoroute_boundary_policy": {
     "inset_mm": 0.35,
@@ -124,7 +192,7 @@
     "Choc V1 switch geometry, Choc V2 direct-solder pads, and MX hot-swap socket pads are intentionally excluded.",
     "The Choc socket and MX switch are mutually exclusive assembly options at every key position.",
     "X3 V2 uses the fixed 71-key v4 no-stabilizer layout: 32 left keys and 39 right keys, with no key wider than 1.75U.",
-    "X3 V2 insets every non-controller key-field edge 1.5 mm from the nominal switch-cell perimeter; each mating edge is 8.025 mm from its adjacent switch center.",
+    "X3 V2 insets every non-controller key-field edge 1.5 mm from the nominal switch-cell perimeter. Rows 0-3 use 8.025 mm center-to-edge offsets on both sides; bottom Space-B uses 10.40625 mm left / 8.025 mm right.",
     "X3 V2 contains no legacy H1-H9 or REG1-REG9 key-field through-holes.",
     "The netless battery-lead slot is at the nice!nano USB/B+ end; insulated B+ and GND/B- leads must use strain relief and remain outside the antenna keepout.",
     "X3 V2 uses verified edge-safe SOD-123 offsets at perimeter keys; the limiting D2 envelope is nominally 1.35 mm inside Edge.Cuts while retaining hybrid-switch assembly and hand-solder clearance."

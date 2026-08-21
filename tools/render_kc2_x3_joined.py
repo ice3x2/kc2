@@ -2,8 +2,14 @@ from __future__ import annotations
 
 import argparse
 import html
+import math
+import os
 import re
+import shutil
+import struct
+import subprocess
 import sys
+import tempfile
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Callable
@@ -17,6 +23,7 @@ if str(ROOT) not in sys.path:
 from tools.generate_kc2_pcbs import (  # noqa: E402
     UNIT,
     Key,
+    X3_V2_JOIN_CENTER_PITCH,
     make_left_keys_no_stab,
     make_left_keys_x3_v2,
     make_right_keys_no_stab,
@@ -56,12 +63,35 @@ class ClearanceSample:
 
 
 @dataclass(frozen=True)
+class SegmentClearance:
+    left_point: tuple[float, float]
+    right_point: tuple[float, float]
+    clearance: float
+
+
+@dataclass(frozen=True)
 class KeyHorizontalClearance:
     left_label: str
     right_label: str
     start: tuple[float, float]
     end: tuple[float, float]
     clearance: float
+
+
+@dataclass(frozen=True)
+class SeamKeyClearance:
+    row: int
+    left_label: str
+    right_label: str
+    left_cap_width_mm: float
+    right_cap_width_mm: float
+    center_pitch_mm: float
+    cap_gap_mm: float
+    left_center_to_pcb_edge_mm: float
+    right_center_to_pcb_edge_mm: float
+    pcb_gap_mm: float
+    start: tuple[float, float]
+    end: tuple[float, float]
 
 
 @dataclass(frozen=True)
@@ -80,7 +110,8 @@ class RenderContext:
     measurement: ClearanceSample
     clearance_samples: list[ClearanceSample]
     key_horizontal_clearance: KeyHorizontalClearance
-    interlock_overlap_mm: float
+    seam_key_clearances: list[SeamKeyClearance]
+    outline_x_range_nesting_mm: float
 
 
 def mm_vec(vec: pcbnew.VECTOR2I) -> tuple[float, float]:
@@ -190,6 +221,129 @@ def x_crossings(segments: list[Segment], y: float) -> list[float]:
     return merged
 
 
+def _cross(first: tuple[float, float], second: tuple[float, float]) -> float:
+    return first[0] * second[1] - first[1] * second[0]
+
+
+def _subtract(first: tuple[float, float], second: tuple[float, float]) -> tuple[float, float]:
+    return first[0] - second[0], first[1] - second[1]
+
+
+def _orientation(
+    first: tuple[float, float],
+    second: tuple[float, float],
+    third: tuple[float, float],
+) -> float:
+    return _cross(_subtract(second, first), _subtract(third, first))
+
+
+def _point_on_segment(
+    point: tuple[float, float],
+    start: tuple[float, float],
+    end: tuple[float, float],
+    tolerance: float = 1e-9,
+) -> bool:
+    return abs(_orientation(start, end, point)) <= tolerance and (
+        min(start[0], end[0]) - tolerance <= point[0] <= max(start[0], end[0]) + tolerance
+        and min(start[1], end[1]) - tolerance <= point[1] <= max(start[1], end[1]) + tolerance
+    )
+
+
+def _segments_intersect(first: Segment, second: Segment, tolerance: float = 1e-9) -> bool:
+    a, b = first
+    c, d = second
+    orientations = (
+        _orientation(a, b, c),
+        _orientation(a, b, d),
+        _orientation(c, d, a),
+        _orientation(c, d, b),
+    )
+    if orientations[0] * orientations[1] < -tolerance and orientations[2] * orientations[3] < -tolerance:
+        return True
+    return any(
+        abs(orientation) <= tolerance and _point_on_segment(point, start, end, tolerance)
+        for point, start, end, orientation in (
+            (c, a, b, orientations[0]),
+            (d, a, b, orientations[1]),
+            (a, c, d, orientations[2]),
+            (b, c, d, orientations[3]),
+        )
+    )
+
+
+def _closest_point_on_segment(
+    point: tuple[float, float],
+    start: tuple[float, float],
+    end: tuple[float, float],
+) -> tuple[tuple[float, float], float]:
+    dx = end[0] - start[0]
+    dy = end[1] - start[1]
+    length_squared = dx * dx + dy * dy
+    if length_squared <= 1e-18:
+        closest = start
+    else:
+        projection = ((point[0] - start[0]) * dx + (point[1] - start[1]) * dy) / length_squared
+        projection = min(1.0, max(0.0, projection))
+        closest = start[0] + projection * dx, start[1] + projection * dy
+    return closest, math.hypot(point[0] - closest[0], point[1] - closest[1])
+
+
+def _segment_pair_clearance(left: Segment, right: Segment) -> SegmentClearance:
+    if _segments_intersect(left, right):
+        left_start, left_end = left
+        right_start, right_end = right
+        for point, start, end in (
+            (left_start, right_start, right_end),
+            (left_end, right_start, right_end),
+            (right_start, left_start, left_end),
+            (right_end, left_start, left_end),
+        ):
+            if _point_on_segment(point, start, end):
+                return SegmentClearance(point, point, 0.0)
+        left_vector = _subtract(left_end, left_start)
+        right_vector = _subtract(right_end, right_start)
+        denominator = _cross(left_vector, right_vector)
+        if abs(denominator) > 1e-12:
+            offset = _subtract(right_start, left_start)
+            ratio = _cross(offset, right_vector) / denominator
+            intersection = (
+                left_start[0] + ratio * left_vector[0],
+                left_start[1] + ratio * left_vector[1],
+            )
+            return SegmentClearance(intersection, intersection, 0.0)
+        return SegmentClearance(left_start, left_start, 0.0)
+
+    candidates: list[SegmentClearance] = []
+    for point in left:
+        closest, distance = _closest_point_on_segment(point, right[0], right[1])
+        candidates.append(SegmentClearance(point, closest, distance))
+    for point in right:
+        closest, distance = _closest_point_on_segment(point, left[0], left[1])
+        candidates.append(SegmentClearance(closest, point, distance))
+    return min(candidates, key=lambda candidate: candidate.clearance)
+
+
+def minimum_segment_clearance(
+    left_segments: list[Segment],
+    right_segments: list[Segment],
+    right_dx: float = 0.0,
+    right_dy: float = 0.0,
+) -> SegmentClearance:
+    shifted_right = [
+        (
+            (start[0] + right_dx, start[1] + right_dy),
+            (end[0] + right_dx, end[1] + right_dy),
+        )
+        for start, end in right_segments
+    ]
+    if not left_segments or not shifted_right:
+        raise RuntimeError("Both joined Edge.Cuts segment lists must be non-empty")
+    return min(
+        (_segment_pair_clearance(left, right) for left in left_segments for right in shifted_right),
+        key=lambda candidate: candidate.clearance,
+    )
+
+
 def intervals_at_y(segments: list[Segment], y: float) -> list[tuple[float, float]]:
     xs = x_crossings(segments, y)
     if len(xs) % 2 != 0:
@@ -278,6 +432,63 @@ def key_horizontal_clearance(
     )
 
 
+def seam_key_clearances(
+    left: BoardRenderData,
+    right: BoardRenderData,
+    right_dx: float,
+    right_dy: float,
+) -> list[SeamKeyClearance]:
+    clearances: list[SeamKeyClearance] = []
+    rows = sorted({key.row for key in left.keys} & {key.row for key in right.keys})
+    for row in rows:
+        left_candidates = [
+            (index, key)
+            for index, key in enumerate(left.keys, start=1)
+            if key.row == row
+        ]
+        right_candidates = [
+            (index, key)
+            for index, key in enumerate(right.keys, start=1)
+            if key.row == row
+        ]
+        left_index, left_key = max(
+            left_candidates,
+            key=lambda item: left.switch_centers[item[0]][0] + item[1].w_u * UNIT / 2.0,
+        )
+        right_index, right_key = min(
+            right_candidates,
+            key=lambda item: right.switch_centers[item[0]][0] - item[1].w_u * UNIT / 2.0,
+        )
+        left_center = left.switch_centers[left_index]
+        right_local_center = right.switch_centers[right_index]
+        right_center = (right_local_center[0] + right_dx, right_local_center[1] + right_dy)
+        y = (left_center[1] + right_center[1]) / 2.0
+        edge_sample = opposing_sample(left, right, right_dx, right_dy, y)
+        if edge_sample is None:
+            raise RuntimeError(f"No joined Edge.Cuts interval at seam row {row}")
+        left_cap_width = left_key.w_u * UNIT - 1.0
+        right_cap_width = right_key.w_u * UNIT - 1.0
+        left_cap_edge = left_center[0] + left_cap_width / 2.0
+        right_cap_edge = right_center[0] - right_cap_width / 2.0
+        clearances.append(
+            SeamKeyClearance(
+                row=row,
+                left_label=left_key.label,
+                right_label=right_key.label,
+                left_cap_width_mm=left_cap_width,
+                right_cap_width_mm=right_cap_width,
+                center_pitch_mm=right_center[0] - left_center[0],
+                cap_gap_mm=right_cap_edge - left_cap_edge,
+                left_center_to_pcb_edge_mm=edge_sample.left_x - left_center[0],
+                right_center_to_pcb_edge_mm=right_center[0] - edge_sample.right_x,
+                pcb_gap_mm=edge_sample.clearance,
+                start=(left_cap_edge, y),
+                end=(right_cap_edge, y),
+            )
+        )
+    return clearances
+
+
 def build_context(
     repo: Path,
     clearance_mm: float,
@@ -322,7 +533,8 @@ def build_context(
         right_seam = keycap_rect_by_label(right, right_seam_label)
         left_center_x = (left_six[0] + left_six[2]) / 2.0
         right_center_x = (right_seam[0] + right_seam[2]) / 2.0
-        right_dx = left_center_x + UNIT - right_center_x
+        joined_pitch = X3_V2_JOIN_CENTER_PITCH if variant == "x3-v2" else UNIT
+        right_dx = left_center_x + joined_pitch - right_center_x
     else:
         raise ValueError(f"Unknown placement mode: {placement_mode}")
 
@@ -335,16 +547,33 @@ def build_context(
     )
     fine_samples = scan_clearances(left, right, right_dx, right_dy, SCAN_STEP_MM)
     min_sample = min(fine_samples, key=lambda sample: sample.clearance)
-    corridor_samples = scan_clearances(left, right, right_dx, right_dy, CORRIDOR_STEP_MM)
-    measurement = opposing_sample(left, right, right_dx, right_dy, TY_ROW_CENTER_Y_MM) or min_sample
-    key_clearance = key_horizontal_clearance(
-        left,
-        right,
+    exact_clearance = minimum_segment_clearance(
+        left.edge_segments,
+        right.edge_segments,
         right_dx,
         right_dy,
-        right_seam_label,
     )
-    interlock_overlap = max(0.0, left.bounds[2] - joined_right_bounds[0])
+    corridor_samples = scan_clearances(left, right, right_dx, right_dy, CORRIDOR_STEP_MM)
+    measurement = opposing_sample(left, right, right_dx, right_dy, TY_ROW_CENTER_Y_MM) or min_sample
+    seam_clearances = seam_key_clearances(left, right, right_dx, right_dy)
+    if variant == "x3-v2":
+        first_seam = seam_clearances[0]
+        key_clearance = KeyHorizontalClearance(
+            left_label=first_seam.left_label,
+            right_label=first_seam.right_label,
+            start=first_seam.start,
+            end=first_seam.end,
+            clearance=first_seam.cap_gap_mm,
+        )
+    else:
+        key_clearance = key_horizontal_clearance(
+            left,
+            right,
+            right_dx,
+            right_dy,
+            right_seam_label,
+        )
+    outline_x_range_nesting = max(0.0, left.bounds[2] - joined_right_bounds[0])
 
     return RenderContext(
         variant=variant,
@@ -356,12 +585,13 @@ def build_context(
         right_dx=right_dx,
         right_dy=right_dy,
         bounds=bounds,
-        min_edge_clearance_mm=min_sample.clearance,
-        min_clearance_y=min_sample.y,
+        min_edge_clearance_mm=exact_clearance.clearance,
+        min_clearance_y=(exact_clearance.left_point[1] + exact_clearance.right_point[1]) / 2.0,
         measurement=measurement,
         clearance_samples=corridor_samples,
         key_horizontal_clearance=key_clearance,
-        interlock_overlap_mm=interlock_overlap,
+        seam_key_clearances=seam_clearances,
+        outline_x_range_nesting_mm=outline_x_range_nesting,
     )
 
 
@@ -429,6 +659,18 @@ def key_horizontal_clearance_label(ctx: RenderContext) -> str:
     return f"{gap.left_label}-{gap.right_label} X {gap.clearance:.1f} mm"
 
 
+def seam_clearance_summary(ctx: RenderContext) -> str:
+    pairs = "/".join(
+        f"{clearance.left_label}-{clearance.right_label}"
+        for clearance in ctx.seam_key_clearances
+    )
+    minimum = min(clearance.cap_gap_mm for clearance in ctx.seam_key_clearances)
+    maximum = max(clearance.cap_gap_mm for clearance in ctx.seam_key_clearances)
+    if abs(maximum - minimum) <= 0.001:
+        return f"{len(ctx.seam_key_clearances)} actual cap pairs {pairs} = {minimum:.1f} mm"
+    return f"{len(ctx.seam_key_clearances)} actual cap pairs {pairs} = {minimum:.1f}-{maximum:.1f} mm"
+
+
 def render_svg(ctx: RenderContext, path: Path, *, zoom: bool) -> tuple[int, int]:
     if zoom:
         center = zoom_center_x(ctx)
@@ -449,34 +691,58 @@ def render_svg(ctx: RenderContext, path: Path, *, zoom: bool) -> tuple[int, int]
     polygon_points = " ".join(f"{tx(point)[0]:.2f},{tx(point)[1]:.2f}" for point in clearance_polygon(ctx))
     measurement_y = ctx.measurement.y
     measurement_px_width = ctx.measurement.clearance * ctx.scale
-    title_width = 760 if not zoom else min(width, 360)
+    title_width = max(0, width - 16)
+    if zoom:
+        summary_text = (
+            f"Exact PCB min {ctx.min_edge_clearance_mm:.2f} mm; "
+            f"row-center {ctx.measurement.clearance:.2f} mm."
+        )
+        corridor_text = f"Empty PCB corridor; {seam_clearance_summary(ctx)}."
+    else:
+        summary_text = (
+            f"Scale: {ctx.scale:g} px/mm. Min Edge.Cuts clearance: "
+            f"{ctx.min_edge_clearance_mm:.2f} mm. Row-center PCB gap: "
+            f"{ctx.measurement.clearance:.2f} mm. Outline X-range nesting: "
+            f"{ctx.outline_x_range_nesting_mm:.2f} mm."
+        )
+        corridor_text = f"Empty PCB clearance corridor (salmon); {seam_clearance_summary(ctx)}."
+    header_lines = [
+        '<rect x="8" y="8" width="{:.0f}" height="66" fill="#f7f5ee" fill-opacity="0.98" stroke="none"/>'.format(title_width),
+        f'<text x="16" y="24" font-family="Arial" font-size="15" fill="#222">KC2 {html.escape(ctx.variant.upper())} joined top view, board-coordinate composite</text>',
+        f'<text x="16" y="44" font-family="Arial" font-size="11" fill="#555">{html.escape(summary_text)}</text>',
+        f'<text x="16" y="61" font-family="Arial" font-size="11" fill="#7a2f25">{html.escape(corridor_text)}</text>',
+    ]
     lines = [
         f'<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}" viewBox="0 0 {width} {height}">',
         '<rect width="100%" height="100%" fill="#f7f5ee"/>',
         (
-            f'<g id="interlock-clearance" data-placement-mode="{ctx.placement_mode}" '
+            f'<g id="joined-clearance" data-placement-mode="{ctx.placement_mode}" '
             f'data-clearance-mm="{ctx.min_edge_clearance_mm:.4f}" '
             f'data-clearance-width-px="{ctx.min_edge_clearance_mm * ctx.scale:.2f}" '
             f'data-measurement-width-px="{measurement_px_width:.2f}" '
             f'data-key-horizontal-clearance-mm="{ctx.key_horizontal_clearance.clearance:.4f}" '
-            f'data-interlock-overlap-mm="{ctx.interlock_overlap_mm:.4f}">'
+            f'data-outline-x-range-nesting-mm="{ctx.outline_x_range_nesting_mm:.4f}">'
         ),
         f'<polygon points="{polygon_points}" fill="#f6b8a9" fill-opacity="0.55" stroke="none"/>',
         "</g>",
-        '<rect x="8" y="8" width="{:.0f}" height="48" fill="#f7f5ee" fill-opacity="0.94" stroke="none"/>'.format(title_width),
-        f'<text x="16" y="24" font-family="Arial" font-size="15" fill="#222">KC2 {html.escape(ctx.variant.upper())} joined top view, board-coordinate composite</text>',
-        (
-            f'<text x="16" y="44" font-family="Arial" font-size="11" fill="#555">'
-            f'Scale: {ctx.scale:g} px/mm. Min Edge.Cuts clearance: {ctx.min_edge_clearance_mm:.2f} mm. '
-            f'Interlock overlap: {ctx.interlock_overlap_mm:.2f} mm.</text>'
-        ),
+        f'<g id="seam-key-clearances" data-seam-pair-count="{len(ctx.seam_key_clearances)}">',
     ]
+    for clearance in ctx.seam_key_clearances:
+        pair = html.escape(f"{clearance.left_label}-{clearance.right_label}")
+        lines.append(
+            f'<g data-row="{clearance.row}" data-pair="{pair}" '
+            f'data-left-cap-width-mm="{clearance.left_cap_width_mm:.4f}" '
+            f'data-right-cap-width-mm="{clearance.right_cap_width_mm:.4f}" '
+            f'data-center-pitch-mm="{clearance.center_pitch_mm:.4f}" '
+            f'data-cap-gap-mm="{clearance.cap_gap_mm:.4f}" '
+            f'data-left-center-to-pcb-edge-mm="{clearance.left_center_to_pcb_edge_mm:.4f}" '
+            f'data-right-center-to-pcb-edge-mm="{clearance.right_center_to_pcb_edge_mm:.4f}" '
+            f'data-pcb-gap-mm="{clearance.pcb_gap_mm:.4f}"/>'
+        )
+    lines.append("</g>")
     lines.append(line((ctx.measurement.left_x, measurement_y), (ctx.measurement.right_x, measurement_y), 'stroke="#d33b2f" stroke-width="2"'))
     lines.append(line((ctx.measurement.left_x, measurement_y - 1.2), (ctx.measurement.left_x, measurement_y + 1.2), 'stroke="#d33b2f" stroke-width="2"'))
     lines.append(line((ctx.measurement.right_x, measurement_y - 1.2), (ctx.measurement.right_x, measurement_y + 1.2), 'stroke="#d33b2f" stroke-width="2"'))
-    mx, my = tx(((ctx.measurement.left_x + ctx.measurement.right_x) / 2.0, measurement_y))
-    lines.append(f'<text x="{mx:.2f}" y="{my - 8:.2f}" text-anchor="middle" font-family="Arial" font-size="10" fill="#8b2318">{ctx.measurement.clearance:.1f} mm</text>')
-
     for data, color in ((ctx.left, "#102018"), (ctx.right, "#101b2a")):
         for start, end in data.edge_segments:
             lines.append(line(shift_point(ctx, data.side, start), shift_point(ctx, data.side, end), f'stroke="{color}" stroke-width="2" fill="none"'))
@@ -486,7 +752,7 @@ def render_svg(ctx: RenderContext, path: Path, *, zoom: bool) -> tuple[int, int]
             x, y = center
             w = width_u * UNIT
             key_rect = (x - w / 2.0 + 0.5, y - UNIT / 2.0 + 0.5, x + w / 2.0 - 0.5, y + UNIT / 2.0 - 0.5)
-            lines.append(rect(key_rect, f'rx="2" ry="2" fill="{fill}" stroke="{stroke}" stroke-width="1" fill-opacity="0.86"'))
+            lines.append(rect(key_rect, f'rx="2" ry="2" fill="{fill}" stroke="{stroke}" stroke-width="1"'))
             cx, cy = tx(center)
             lines.append(f'<text x="{cx:.2f}" y="{cy + 3.46:.2f}" text-anchor="middle" font-family="Arial" font-size="10" fill="#101010">{html.escape(label)}</text>')
         ctrl = shifted_rect(ctx, data.side, data.controller_bounds)
@@ -516,13 +782,86 @@ def render_svg(ctx: RenderContext, path: Path, *, zoom: bool) -> tuple[int, int]
     )
     lines.append("</g>")
 
+    lines.extend(header_lines)
     lines.append("</svg>")
     path.write_text("\n".join(lines) + "\n", encoding="utf-8")
     return width, height
 
 
+def png_dimensions(path: Path) -> tuple[int, int]:
+    payload = path.read_bytes()
+    if len(payload) < 24 or payload[:8] != b"\x89PNG\r\n\x1a\n" or payload[12:16] != b"IHDR":
+        raise RuntimeError(f"browser did not create a valid PNG: {path}")
+    return struct.unpack(">II", payload[16:24])
+
+
+def find_headless_browser() -> Path | None:
+    override = os.environ.get("KC2_HEADLESS_BROWSER")
+    candidates = [
+        Path(override) if override else None,
+        *(Path(found) if found else None for found in (
+            shutil.which("msedge.exe"),
+            shutil.which("msedge"),
+            shutil.which("microsoft-edge"),
+            shutil.which("google-chrome"),
+            shutil.which("chromium"),
+        )),
+        Path(r"C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe"),
+        Path(r"C:\Program Files\Microsoft\Edge\Application\msedge.exe"),
+    ]
+    return next((candidate for candidate in candidates if candidate and candidate.is_file()), None)
+
+
+def render_png_with_browser(ctx: RenderContext, path: Path, *, zoom: bool) -> tuple[int, int]:
+    browser = find_headless_browser()
+    if browser is None:
+        raise RuntimeError(
+            "PNG rendering needs Pillow or a Chromium-family browser; "
+            "install Pillow or set KC2_HEADLESS_BROWSER to the browser executable"
+        )
+
+    svg_path = path.with_suffix(".svg")
+    width, height = render_svg(ctx, svg_path, zoom=zoom)
+    profile_dir = Path(tempfile.mkdtemp(prefix="kc2-render-edge-"))
+    try:
+        completed = subprocess.run(
+            [
+                str(browser),
+                "--headless=new",
+                "--disable-gpu",
+                "--hide-scrollbars",
+                "--force-device-scale-factor=1",
+                "--no-first-run",
+                "--no-default-browser-check",
+                f"--user-data-dir={profile_dir}",
+                f"--screenshot={path.resolve()}",
+                f"--window-size={width},{height}",
+                svg_path.resolve().as_uri(),
+            ],
+            capture_output=True,
+            text=True,
+            timeout=60,
+        )
+        if completed.returncode != 0:
+            detail = (completed.stdout + completed.stderr).strip()
+            raise RuntimeError(f"headless browser PNG rendering failed: {detail}")
+        actual_size = png_dimensions(path)
+        if actual_size != (width, height):
+            raise RuntimeError(
+                f"headless browser PNG size {actual_size} does not match SVG viewport {(width, height)}"
+            )
+        return actual_size
+    finally:
+        shutil.rmtree(profile_dir, ignore_errors=True)
+
+
 def render_png(ctx: RenderContext, path: Path, *, zoom: bool) -> tuple[int, int]:
-    from PIL import Image, ImageDraw, ImageFont
+    try:
+        from PIL import Image, ImageDraw, ImageFont
+    except ModuleNotFoundError as exc:
+        if not (exc.name or "").startswith("PIL"):
+            raise
+        return render_png_with_browser(ctx, path, zoom=zoom)
 
     if zoom:
         center = zoom_center_x(ctx)
@@ -534,22 +873,26 @@ def render_png(ctx: RenderContext, path: Path, *, zoom: bool) -> tuple[int, int]
     font = ImageFont.load_default()
 
     draw.polygon([tx(point) for point in clearance_polygon(ctx)], fill="#f6d2ca")
-    title_width = 760 if not zoom else min(width, 360)
-    draw.rectangle((8, 8, title_width, 56), fill="#f7f5ee")
-    draw.text((16, 14), f"KC2 {ctx.variant.upper()} joined top view, board-coordinate composite", fill="#222222", font=font)
-    draw.text(
-        (16, 34),
-        f"Scale: {ctx.scale:g} px/mm. Min Edge.Cuts clearance: {ctx.min_edge_clearance_mm:.2f} mm. Interlock overlap: {ctx.interlock_overlap_mm:.2f} mm.",
-        fill="#555555",
-        font=font,
-    )
+    title_width = max(0, width - 8)
+    if zoom:
+        summary_text = (
+            f"Exact PCB min {ctx.min_edge_clearance_mm:.2f} mm; "
+            f"row-center {ctx.measurement.clearance:.2f} mm."
+        )
+        corridor_text = f"Empty PCB corridor; {seam_clearance_summary(ctx)}."
+    else:
+        summary_text = (
+            f"Scale: {ctx.scale:g} px/mm. Min Edge.Cuts clearance: "
+            f"{ctx.min_edge_clearance_mm:.2f} mm. Row-center PCB gap: "
+            f"{ctx.measurement.clearance:.2f} mm. Outline X-range nesting: "
+            f"{ctx.outline_x_range_nesting_mm:.2f} mm."
+        )
+        corridor_text = f"Empty PCB clearance corridor (salmon); {seam_clearance_summary(ctx)}."
     p1 = tx((ctx.measurement.left_x, ctx.measurement.y))
     p2 = tx((ctx.measurement.right_x, ctx.measurement.y))
     draw.line((p1, p2), fill="#d33b2f", width=2)
     for x, y in (p1, p2):
         draw.line((x, y - 6, x, y + 6), fill="#d33b2f", width=2)
-    draw.text(((p1[0] + p2[0]) / 2.0, p1[1] - 10), f"{ctx.measurement.clearance:.1f} mm", fill="#8b2318", font=font, anchor="mm")
-
     for data, color in ((ctx.left, "#102018"), (ctx.right, "#101b2a")):
         for start, end in data.edge_segments:
             p1_edge = tx(shift_point(ctx, data.side, start))
@@ -589,6 +932,11 @@ def render_png(ctx: RenderContext, path: Path, *, zoom: bool) -> tuple[int, int]
     bbox = draw.textbbox((label_x, label_y), label, font=font, anchor="mm")
     draw.rectangle((bbox[0] - 2, bbox[1] - 1, bbox[2] + 2, bbox[3] + 1), fill="#f7f5ee")
     draw.text((label_x, label_y), label, fill="#123e7d", font=font, anchor="mm")
+
+    draw.rectangle((8, 8, title_width, 74), fill="#f7f5ee")
+    draw.text((16, 14), f"KC2 {ctx.variant.upper()} joined top view, board-coordinate composite", fill="#222222", font=font)
+    draw.text((16, 34), summary_text, fill="#555555", font=font)
+    draw.text((16, 51), corridor_text, fill="#7a2f25", font=font)
 
     img.save(path)
     return width, height
@@ -646,7 +994,15 @@ def main() -> int:
     print(f"measurement_y_mm={ctx.measurement.y:.4f}")
     print(f"measurement_clearance_mm={ctx.measurement.clearance:.4f}")
     print(f"key_horizontal_clearance_mm={ctx.key_horizontal_clearance.clearance:.4f}")
-    print(f"interlock_overlap_mm={ctx.interlock_overlap_mm:.4f}")
+    for clearance in ctx.seam_key_clearances:
+        print(
+            f"seam_pair_row_{clearance.row}={clearance.left_label}-{clearance.right_label},"
+            f"caps={clearance.left_cap_width_mm:.4f}/{clearance.right_cap_width_mm:.4f},"
+            f"pitch={clearance.center_pitch_mm:.4f},gap={clearance.cap_gap_mm:.4f},"
+            f"pcb_edges={clearance.left_center_to_pcb_edge_mm:.4f}/"
+            f"{clearance.right_center_to_pcb_edge_mm:.4f},pcb_gap={clearance.pcb_gap_mm:.4f}"
+        )
+    print(f"outline_x_range_nesting_mm={ctx.outline_x_range_nesting_mm:.4f}")
     print(f"right_shift_dx_mm={ctx.right_dx:.4f}")
     print(f"right_shift_dy_mm={ctx.right_dy:.4f}")
     return 0

@@ -16,7 +16,7 @@
       "pcb_bottom_z_mm": 2.5,
       "maximum_rail_vertical_gap_mm": 0.0,
       "maximum_support_vertical_gap_mm": 0.0,
-      "rail_plan_area_mm2": 294.0162,
+      "rail_plan_area_mm2": 292.6501,
       "rail_plan_area_matches_manifest": true,
       "rail_segment_count": 6,
       "support_posts": [
@@ -311,7 +311,7 @@
         "choc_socket_body": {
           "collision_count": 0,
           "intersection_area_mm2": 0.0,
-          "minimum_plan_clearance_mm": 0.35
+          "minimum_plan_clearance_mm": 0.3433
         },
         "choc_socket_fillets": {
           "collision_count": 0,
@@ -321,7 +321,7 @@
         "switch_mechanical_pins": {
           "collision_count": 0,
           "intersection_area_mm2": 0.0,
-          "minimum_plan_clearance_mm": 1.2582
+          "minimum_plan_clearance_mm": 1.25
         },
         "mx_pins_pads_fillets": {
           "collision_count": 0,
@@ -369,10 +369,10 @@
         0.0,
         2.5
       ],
-      "step_volume_mm3": 18078.474,
-      "planned_step_volume_mm3": 18078.474,
-      "step_top_contact_area_mm2": 7231.3896,
-      "planned_top_contact_area_mm2": 7231.3896,
+      "step_volume_mm3": 18045.7318,
+      "planned_step_volume_mm3": 18045.7318,
+      "step_top_contact_area_mm2": 7218.2927,
+      "planned_top_contact_area_mm2": 7218.2927,
       "step_top_contact_area_error_mm2": 0.0,
       "step_top_contact_area_matches_plan": true,
       "printable_parts": [
@@ -413,7 +413,7 @@
       "pcb_bottom_z_mm": 2.5,
       "maximum_rail_vertical_gap_mm": 0.0,
       "maximum_support_vertical_gap_mm": 0.0,
-      "rail_plan_area_mm2": 311.3213,
+      "rail_plan_area_mm2": 309.9553,
       "rail_plan_area_matches_manifest": true,
       "rail_segment_count": 7,
       "support_posts": [
@@ -647,7 +647,7 @@
           "opening_plan_area_mm2": 668.6844,
           "minimum_exterior_bottom_clearance_mm": 0.85,
           "breaks_lateral_housing_perimeter": false,
-          "minimum_housing_perimeter_land_mm": 3.3918,
+          "minimum_housing_perimeter_land_mm": 3.0888,
           "official_body_depth_max_mm": 1.35,
           "solder_fillet_allowance_mm": 0.3,
           "modeled_max_depth_mm": 1.65,
@@ -696,7 +696,7 @@
         "choc_socket_body": {
           "collision_count": 0,
           "intersection_area_mm2": 0.0,
-          "minimum_plan_clearance_mm": 0.35
+          "minimum_plan_clearance_mm": 0.3433
         },
         "choc_socket_fillets": {
           "collision_count": 0,
@@ -706,7 +706,7 @@
         "switch_mechanical_pins": {
           "collision_count": 0,
           "intersection_area_mm2": 0.0,
-          "minimum_plan_clearance_mm": 1.2582
+          "minimum_plan_clearance_mm": 1.25
         },
         "mx_pins_pads_fillets": {
           "collision_count": 0,
@@ -754,10 +754,10 @@
         -0.0,
         2.5
       ],
-      "step_volume_mm3": 20832.7724,
-      "planned_step_volume_mm3": 20832.7724,
-      "step_top_contact_area_mm2": 8333.109,
-      "planned_top_contact_area_mm2": 8333.109,
+      "step_volume_mm3": 20800.0327,
+      "planned_step_volume_mm3": 20800.0327,
+      "step_top_contact_area_mm2": 8320.0131,
+      "planned_top_contact_area_mm2": 8320.0131,
       "step_top_contact_area_error_mm2": 0.0,
       "step_top_contact_area_matches_plan": true,
       "printable_parts": [
@@ -842,7 +842,7 @@
         "glue_assumed": false,
         "feature_collision_count": 0,
         "support_collision_count": 0,
-        "planned_top_contact_area_mm2": 8333.109,
+        "planned_top_contact_area_mm2": 8320.0131,
         "assembly": "Lower the two full-depth housing parts together vertically so both keyed neck-and-head features enter their print-cleared sockets; no screw or adhesive is used.",
         "support_load_path_preserved": true
       }

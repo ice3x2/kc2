@@ -78,8 +78,17 @@ INNER_MARGIN = 2.8
 X3_INNER_MARGIN_EXTRA = 0.8
 X3_RIGHT_YH_HORIZONTAL_LEDGE_RELIEF = 0.8
 X3_V2_KEYCELL_EDGE_INSET = 1.5
-X3_V2_JOIN_CENTER_TO_EDGE = UNIT / 2.0 - X3_V2_KEYCELL_EDGE_INSET
+X3_V2_ONE_UNIT_JOIN_CENTER_TO_EDGE = UNIT / 2.0 - X3_V2_KEYCELL_EDGE_INSET
 X3_V2_JOIN_KEYCAP_SETBACK = X3_V2_KEYCELL_EDGE_INSET - 0.5
+X3_V2_JOIN_KEYCAP_GAP = 1.8
+X3_V2_JOIN_PLACEMENT_OFFSET = 0.8
+X3_V2_JOIN_CENTER_PITCH = UNIT + X3_V2_JOIN_PLACEMENT_OFFSET
+X3_V2_ROW_CENTER_PCB_GAP = 3.8
+X3_V2_MIN_JOINED_EDGE_CLEARANCE = 1.0
+# Opposing stair transitions formerly occupied the same row-boundary Y and
+# touched along horizontal Edge.Cuts.  Move the left transition upward and
+# the right transition downward before corner rounding.
+X3_V2_SEAM_TRANSITION_STAGGER = 0.55
 X3_V2_TOP_SECOND_DIODE_OFFSET = (-5.0, -5.6)
 X3_V2_TOP_OTHER_DIODE_OFFSET = (-9.25, -3.0)
 X3_V2_BOTTOM_FIRST_DIODE_OFFSET = (9.5, 3.0)
@@ -635,6 +644,41 @@ def make_right_keys_x3_v2() -> list[Key]:
     return keys
 
 
+def x3_v2_join_geometry_by_row() -> list[dict[str, object]]:
+    left_keys = make_left_keys_x3_v2()
+    right_keys = make_right_keys_x3_v2()
+    geometry: list[dict[str, object]] = []
+    for row in sorted({key.row for key in left_keys} & {key.row for key in right_keys}):
+        left_key = max(
+            (key for key in left_keys if key.row == row),
+            key=lambda key: key.x_u + key.w_u,
+        )
+        right_key = min(
+            (key for key in right_keys if key.row == row),
+            key=lambda key: key.x_u,
+        )
+        left_cap_width = left_key.w_u * UNIT - 1.0
+        right_cap_width = right_key.w_u * UNIT - 1.0
+        left_center_to_edge = left_key.w_u * UNIT / 2.0 - X3_V2_KEYCELL_EDGE_INSET
+        right_center_to_edge = right_key.w_u * UNIT / 2.0 - X3_V2_KEYCELL_EDGE_INSET
+        center_pitch = left_cap_width / 2.0 + right_cap_width / 2.0 + X3_V2_JOIN_KEYCAP_GAP
+        geometry.append(
+            {
+                "row": row,
+                "left_key": left_key.label,
+                "right_key": right_key.label,
+                "left_cap_width_mm": round(left_cap_width, 5),
+                "right_cap_width_mm": round(right_cap_width, 5),
+                "left_center_to_edge_mm": round(left_center_to_edge, 5),
+                "right_center_to_edge_mm": round(right_center_to_edge, 5),
+                "center_pitch_mm": round(center_pitch, 5),
+                "cap_gap_mm": X3_V2_JOIN_KEYCAP_GAP,
+                "pcb_gap_mm": round(center_pitch - left_center_to_edge - right_center_to_edge, 5),
+            }
+        )
+    return geometry
+
+
 def row_extents(keys: list[Key]) -> dict[int, tuple[float, float, float, float]]:
     out: dict[int, tuple[float, float, float, float]] = {}
     for row in sorted({k.row for k in keys}):
@@ -757,20 +801,28 @@ def raw_outline(
         # keycap.  Clamp the first/last row transitions to that inset instead
         # of walking out to the switch-cell boundary and then reversing back;
         # the latter creates a self-intersecting Edge.Cuts contour.
-        y_bottom = min(ext[r][3], bottom_y)
-        pts.append((rights[r], y_bottom))
         nxt = r + 1
+        y_bottom = min(ext[r][3], bottom_y)
+        transition_y = y_bottom
+        if variant == "x3-v2" and side == "left" and nxt in rights:
+            seam_delta = rights[nxt] - rights[r]
+            transition_y += math.copysign(X3_V2_SEAM_TRANSITION_STAGGER, seam_delta)
+        pts.append((rights[r], transition_y))
         if nxt in rights:
-            pts.append((rights[nxt], y_bottom))
+            pts.append((rights[nxt], transition_y))
     pts.append((rights[rows[-1]], bottom_y))
     pts.append((lefts[rows[-1]], bottom_y))
 
     for r in reversed(rows):
         y_top = max(ext[r][1], top_y)
-        pts.append((lefts[r], y_top))
         prv = r - 1
+        transition_y = y_top
+        if variant == "x3-v2" and side == "right" and prv in lefts:
+            seam_delta = lefts[r] - lefts[prv]
+            transition_y -= math.copysign(X3_V2_SEAM_TRANSITION_STAGGER, seam_delta)
+        pts.append((lefts[r], transition_y))
         if prv in lefts:
-            pts.append((lefts[prv], y_top))
+            pts.append((lefts[prv], transition_y))
 
     return remove_duplicate_points(pts)
 
@@ -1944,8 +1996,9 @@ def generate_variant(variant: str, output_dir: Path | None = None) -> dict[str, 
         notes.append("X3 V2 uses the fixed 71-key v4 no-stabilizer layout: 32 left keys and 39 right keys, with no key wider than 1.75U.")
         notes.append(
             f"X3 V2 insets every non-controller key-field edge {X3_V2_KEYCELL_EDGE_INSET:g} mm "
-            f"from the nominal switch-cell perimeter; each mating edge is "
-            f"{X3_V2_JOIN_CENTER_TO_EDGE:g} mm from its adjacent switch center."
+            f"from the nominal switch-cell perimeter. Rows 0-3 use "
+            f"{X3_V2_ONE_UNIT_JOIN_CENTER_TO_EDGE:g} mm center-to-edge offsets on both sides; "
+            "bottom Space-B uses 10.40625 mm left / 8.025 mm right."
         )
         notes.append("X3 V2 contains no legacy H1-H9 or REG1-REG9 key-field through-holes.")
         notes.append("The netless battery-lead slot is at the nice!nano USB/B+ end; insulated B+ and GND/B- leads must use strain relief and remain outside the antenna keepout.")
@@ -1958,7 +2011,7 @@ def generate_variant(variant: str, output_dir: Path | None = None) -> dict[str, 
         notes.append(f"Controller protrusion tab width is {CONTROLLER_TAB_W:g} mm and grows away from the inner joining edge.")
     switch_footprint_file_present = (switch_lib / f"{switch_fp}.kicad_mod").exists()
     manifest: dict[str, object] = {
-        "generated": "2026-08-21" if variant == "x3-v2" else "2026-06-08",
+        "generated": "2026-08-22" if variant == "x3-v2" else "2026-06-08",
         "variant": variant,
         "generator": "tools/generate_kc2_pcbs.py",
         "generation_command": f"python tools/generate_kc2_pcbs.py --variant {variant}",
@@ -2095,8 +2148,15 @@ def generate_variant(variant: str, output_dir: Path | None = None) -> dict[str, 
         },
         "max_key_width_u": max(k.w_u for k in left_keys + right_keys),
         "keycell_edge_inset_mm": X3_V2_KEYCELL_EDGE_INSET if variant == "x3-v2" else None,
-        "join_center_to_edge_mm": X3_V2_JOIN_CENTER_TO_EDGE if variant == "x3-v2" else None,
+        "one_unit_join_center_to_edge_mm": X3_V2_ONE_UNIT_JOIN_CENTER_TO_EDGE if variant == "x3-v2" else None,
+        "join_geometry_by_row": x3_v2_join_geometry_by_row() if variant == "x3-v2" else None,
         "join_keycap_setback_mm": X3_V2_JOIN_KEYCAP_SETBACK if variant == "x3-v2" else None,
+        "join_keycap_gap_mm": X3_V2_JOIN_KEYCAP_GAP if variant == "x3-v2" else None,
+        "one_unit_join_center_pitch_mm": X3_V2_JOIN_CENTER_PITCH if variant == "x3-v2" else None,
+        "join_placement_offset_mm": X3_V2_JOIN_PLACEMENT_OFFSET if variant == "x3-v2" else None,
+        "row_center_joined_pcb_gap_mm": X3_V2_ROW_CENTER_PCB_GAP if variant == "x3-v2" else None,
+        "minimum_joined_edge_clearance_mm": X3_V2_MIN_JOINED_EDGE_CLEARANCE if variant == "x3-v2" else None,
+        "seam_transition_stagger_mm": X3_V2_SEAM_TRANSITION_STAGGER if variant == "x3-v2" else None,
         "outline_policy": X3_V2_OUTLINE_POLICY if variant == "x3-v2" else None,
         "autoroute_boundary_policy": (
             {

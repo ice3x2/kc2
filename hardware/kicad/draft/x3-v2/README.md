@@ -25,6 +25,30 @@ The left and right boards use their physical split-keyboard orientations. The
 bottom-side socket pattern must be read from the PCB bottom; the 1:1 bottom PDF
 is already mirrored for a physical bottom view.
 
+## Joined spacing
+
+The joined reference places the right half `0.80 mm` farther outward than the
+ordinary `19.05 mm` one-unit transform. Corresponding Choc V2 and MX assembly
+modes are evaluated with the same selected cap envelope for each physical key.
+All five actual seam pairs have a nominal `1.80 mm` cap-to-cap gap and a
+`3.80 mm` row-center PCB gap:
+
+| Row | Pair | Cap widths (left/right) | Center pitch | Center-to-PCB-edge (left/right) |
+|---:|---|---:|---:|---:|
+| 0 | `6`-`7` | `18.05 / 18.05 mm` | `19.85 mm` | `8.025 / 8.025 mm` |
+| 1 | `T`-`Y` | `18.05 / 18.05 mm` | `19.85 mm` | `8.025 / 8.025 mm` |
+| 2 | `G`-`H` | `18.05 / 18.05 mm` | `19.85 mm` | `8.025 / 8.025 mm` |
+| 3 | `B`-`N` | `18.05 / 18.05 mm` | `19.85 mm` | `8.025 / 8.025 mm` |
+| 4 | `Space`-`B` | `22.8125 / 18.05 mm` | `22.23125 mm` | `10.40625 / 8.025 mm` |
+
+The two complete closed Edge.Cuts outlines are compared segment by segment,
+including horizontal stair transitions. Their exact minimum is `1.10 mm`,
+created by a direction-aware `0.55 mm` transition stagger. PCBWay's published
+`+/-0.20 mm` CNC outline tolerance gives a conservative two-edge lower bound
+of `0.70 mm` at that limiting transition. This is digital nominal geometry;
+actual half-to-half housing registration and assembled cap/switch play still
+require a printed first article.
+
 After soldering an MX switch, trim both electrical terminals after inspection.
 The 2.50 mm lower plate has exterior-bottom-open cutouts through the full plate
 height for every MX terminal and solder joint, rather than a closed component
@@ -73,6 +97,7 @@ Run PCB tools with KiCad 10 Python:
 ```powershell
 $kpy = 'C:\Program Files\KiCad\10.0\bin\python.exe'
 & $kpy -m tools.generate_kc2_pcbs --variant x3-v2 --output-dir tmp_x3_v2_clean
+& $kpy -m tools.render_kc2_x3_joined --variant x3-v2 --placement-mode key-pitch --scale 7 --output-dir hardware/kicad/draft/x3-v2/renders
 & $kpy -m tools.verify_kc2_x3_v2
 & $kpy -m tools.verify_kc2_x3_v2_coupon
 & $kpy -m tools.verify_kc2_x3_v2_outline
@@ -82,9 +107,21 @@ $kpy = 'C:\Program Files\KiCad\10.0\bin\python.exe'
 python -m tools.verify_kc2_x3_v2_housing
 ```
 
+The render command writes both SVG and PNG evidence. If Pillow is unavailable
+in KiCad Python, it automatically uses an installed Chromium-family browser;
+on Windows it detects Microsoft Edge in its standard install locations. Set
+`KC2_HEADLESS_BROWSER` to an explicit browser executable when auto-detection is
+not appropriate. The focused test launches this exact CLI with the active
+KiCad Python and verifies that both fresh PNG files have valid dimensions.
+
 The isolated generator output is intentionally unrouted. The committed board
 files include the reviewed route completion and must retain KiCad DRC results
 of zero violations and zero unconnected items.
+
+When only the generated outline policy changes, use
+`tools.repair_kc2_x3_v2_compact_edge --sync-edge-cuts-from <fresh-board>`.
+The command rejects non-rigid switch geometry, replaces only Edge.Cuts, and is
+covered by route/footprint-preservation and idempotence tests.
 
 The final diode-edge autoroute snapshots are
 `autoroute/kc2_left-x3-v2-71-r14.{dsn,ses}` and

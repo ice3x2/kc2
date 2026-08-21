@@ -10,6 +10,8 @@ from typing import Sequence
 
 import pcbnew
 
+from tools.generate_kc2_pcbs import x3_v2_join_geometry_by_row
+
 
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_FOOTPRINT = ROOT / "third_party" / "kc2.pretty" / "SW_Choc_V2_Socket_MX_THT.kicad_mod"
@@ -693,10 +695,28 @@ def verify_v2_release_candidate(
         errors.append(f"manifest: unexpected key count {manifest.get('key_count')!r}")
     if manifest.get("keycell_edge_inset_mm") != 1.5:
         errors.append("manifest: V2 key-field edge inset must be 1.5 mm")
-    if manifest.get("join_center_to_edge_mm") != 8.025:
-        errors.append("manifest: V2 join center-to-edge distance must be 8.025 mm")
+    if manifest.get("one_unit_join_center_to_edge_mm") != 8.025:
+        errors.append("manifest: V2 one-unit join center-to-edge distance must be 8.025 mm")
+    if "join_center_to_edge_mm" in manifest:
+        errors.append("manifest: ambiguous scalar join_center_to_edge_mm is forbidden")
+    if manifest.get("join_geometry_by_row") != x3_v2_join_geometry_by_row():
+        errors.append("manifest: V2 per-row joined cap/edge geometry is missing or stale")
     if manifest.get("join_keycap_setback_mm") != 1.0:
         errors.append("manifest: V2 join keycap-relative setback must be 1.0 mm")
+    if manifest.get("join_keycap_gap_mm") != 1.8:
+        errors.append("manifest: V2 joined MX-envelope keycap gap must be 1.8 mm")
+    if manifest.get("one_unit_join_center_pitch_mm") != 19.85:
+        errors.append("manifest: V2 joined one-unit center pitch must be 19.85 mm")
+    if "join_center_pitch_mm" in manifest:
+        errors.append("manifest: ambiguous scalar join_center_pitch_mm is forbidden")
+    if manifest.get("join_placement_offset_mm") != 0.8:
+        errors.append("manifest: V2 safe joined placement offset must be 0.8 mm")
+    if manifest.get("row_center_joined_pcb_gap_mm") != 3.8:
+        errors.append("manifest: V2 row-center PCB gap must be 3.8 mm")
+    if manifest.get("minimum_joined_edge_clearance_mm") != 1.0:
+        errors.append("manifest: V2 exact joined Edge.Cuts clearance gate must be 1.0 mm")
+    if manifest.get("seam_transition_stagger_mm") != 0.55:
+        errors.append("manifest: V2 seam transition stagger must be 0.55 mm")
     if manifest.get("outline_policy") != "keycap_concealed_except_controller_service":
         errors.append("manifest: V2 compact outline policy is missing")
     if manifest.get("autoroute_boundary_policy") != {
