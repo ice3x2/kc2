@@ -26,6 +26,10 @@ class V2FabricationTests(unittest.TestCase):
                 self.assertEqual(product_report["file_hash_mismatches"], [])
                 self.assertEqual(product_report["gerber_geometry_errors"], [])
                 self.assertTrue(product_report["drill_geometry_matches"])
+                self.assertEqual(
+                    product_report["drill_tools_mm"],
+                    product_report["expected_drill_tools_mm"],
+                )
                 self.assertGreaterEqual(product_report["archive_entry_count"], 13)
 
         self.assertEqual(report["products"]["left"]["bottom_paste_flash_count"], 128)
@@ -35,9 +39,13 @@ class V2FabricationTests(unittest.TestCase):
         self.assertEqual(
             report["products"]["left"]["drill_tools_mm"],
             {
-                "PTH": {"0.300": 27, "0.950": 24, "1.500": 64},
+                "PTH": {"0.300": 20, "0.950": 24, "1.500": 64},
                 "NPTH": {"1.650": 32, "1.700": 64, "2.200": 1, "3.000": 64, "5.000": 32},
             },
+        )
+        self.assertEqual(
+            report["products"]["left"]["source_board_via_drills_mm"],
+            {"0.300": 20},
         )
         self.assertEqual(
             report["products"]["right"]["drill_tools_mm"],
@@ -45,6 +53,10 @@ class V2FabricationTests(unittest.TestCase):
                 "PTH": {"0.300": 28, "0.950": 24, "1.500": 78},
                 "NPTH": {"1.650": 39, "1.700": 78, "2.200": 1, "3.000": 78, "5.000": 39},
             },
+        )
+        self.assertEqual(
+            report["products"]["right"]["source_board_via_drills_mm"],
+            {"0.300": 28},
         )
         self.assertEqual(
             report["products"]["coupon"]["drill_tools_mm"],

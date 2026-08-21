@@ -17,171 +17,171 @@
   "products": {
     "left": {
       "board": "hardware\\kicad\\draft\\x3-v2\\kc2_left-x3-v2\\kc2_left-x3-v2.kicad_pcb",
-      "source_board_sha256": "1f6eb6986377bd98437b6c69b3a9f780b8e2f6fc0f6358bcc4c8e5620d5483f8",
+      "source_board_sha256": "31b73bd75724ad894a1c45fabee8f04af69c2338b0397e8ee55875d4a63afa74",
       "key_count": 32,
       "output_dir": "hardware\\kicad\\draft\\x3-v2\\fabrication\\left",
       "archive": "hardware\\kicad\\draft\\x3-v2\\fabrication\\kc2_x3_v2_left.zip",
-      "archive_sha256": "d0f8701e81a27e2b7f12586ec76f750d98cdaf4c9883ce164b3bcd927ea29447",
+      "archive_sha256": "9c45ba9d7bcc50d4b4769ef02f3cdafaa1155b2b899d994cfdfb200051c99a6b",
       "files": [
         {
           "name": "kc2_left-x3-v2-B_Cu.gbl",
-          "size": 41189,
-          "sha256": "5ff2c440c427cc23ab7b1d6ef51007a62130b8ba7dd0d1b972f5876a298fae7e"
+          "size": 36286,
+          "sha256": "0439e6384b15b7d4c0774441ae57c8276fc8d117ef74ee7fa2b3df2ba8ea7ad1"
         },
         {
           "name": "kc2_left-x3-v2-B_Mask.gbs",
           "size": 14635,
-          "sha256": "0b5cfb79c416163c18263b8bd623a6a38541f82f4e319a8280453388eb67e71e"
+          "sha256": "0cf895708c81bec83fbaad84a4103a71d8342d4ff78dfdc604e499935cfb7005"
         },
         {
           "name": "kc2_left-x3-v2-B_Paste.gbp",
           "size": 6065,
-          "sha256": "759d8ef9fa431e0ee77bfc1273a78fcc26cd3510b9bd32019bf4b010765ac1f5"
+          "sha256": "c620d946286d1dd2aac8e044e4130c8fe530466ae1e196aadbf3f30f005868bb"
         },
         {
           "name": "kc2_left-x3-v2-B_Silkscreen.gbo",
           "size": 14647,
-          "sha256": "71bcee7a59c8b342d4fc186cb3ab51ad06ed16bb81bdac5921916f8087bb3a0c"
+          "sha256": "ca4cec111056669576458c92838e00e8d69abcfb64be45417d817686c82ccdc6"
         },
         {
           "name": "kc2_left-x3-v2-drill-report.txt",
           "size": 912,
-          "sha256": "c2cfa1449cfe44101aacaa4386ac6f055d3149dd7950d93be7a4b72041eaf431"
+          "sha256": "7e466f178bbe8e51aa2b7646a262b788cd80038a8c565f16425ab936e71a9da2"
         },
         {
           "name": "kc2_left-x3-v2-Edge_Cuts.gm1",
           "size": 6487,
-          "sha256": "2d67f4e6949919d66001a182a5662ed7b175c8546beec01792e9c9065484bab6"
+          "sha256": "52e15e4eff2b1b25bf9ff197375f32f9ee6cd4cb1f14e490d2fd2c98ee59e8e1"
         },
         {
           "name": "kc2_left-x3-v2-F_Cu.gtl",
-          "size": 15426,
-          "sha256": "7ac144b808eedafd2b455d4e2d8fb74a9c86270a4ca23f72a1b3328727880a77"
+          "size": 14268,
+          "sha256": "9255d469e3f28dfc120afe0017ffa67c678597d7f6299015f90d50dc26ab2984"
         },
         {
           "name": "kc2_left-x3-v2-F_Mask.gts",
           "size": 9492,
-          "sha256": "00227d1198674e5fbb7fccb1946289d2bdb82784c301ff5818f9f2a1bae3440a"
+          "sha256": "d514b8d2217f2f9c005f35903f746d806f8021c362b1947dc1625e147463d665"
         },
         {
           "name": "kc2_left-x3-v2-F_Paste.gtp",
           "size": 589,
-          "sha256": "d37808357703355bc38f34464498a67f6c7cf0aadd00b30ae2a7ee456af81642"
+          "sha256": "0a2f812926b56aca4fa90a33ea5cdfcd5b1229fb319f444c3fd9699146c4a540"
         },
         {
           "name": "kc2_left-x3-v2-F_Silkscreen.gto",
           "size": 101354,
-          "sha256": "e421ba120f0bfbe47a0a264c75183a96508eefc4ef112adfa382aae6b16a4098"
+          "sha256": "2500c76faefef30cd9d0c986340b6d17c636b5276999de3596a3347a98d74d7f"
         },
         {
           "name": "kc2_left-x3-v2-job.gbrjob",
           "size": 2824,
-          "sha256": "4cc18f4b94bc3d4ccb1329d4d0d33ff3de68c8426e62efef36f4e0fb1476c6f9"
+          "sha256": "605ecc74eafb13f4e643f291a4a6ffccb77f459514bd2bcc8f253ac2f3540d7d"
         },
         {
           "name": "kc2_left-x3-v2-NPTH-drl_map.gbr",
           "size": 129974,
-          "sha256": "7685e662540cc92d89bbd2aabc89c133082935e8dd1b20e52d4432f34a6eec41"
+          "sha256": "2c721805f409531db33ef0dd7a5da2ec620920e21260232f4c421c9b7da4bf1a"
         },
         {
           "name": "kc2_left-x3-v2-NPTH.drl",
           "size": 4098,
-          "sha256": "8c3e07cda6b7ce317f884b22ac4127507a0e85a14fdb5bd3edd4ce4107358cbc"
+          "sha256": "e7ba4fc4e7d4893b042609ae55dcf3afb28f57a457e8d12767720aaa52c5f287"
         },
         {
           "name": "kc2_left-x3-v2-PTH-drl_map.gbr",
-          "size": 61496,
-          "sha256": "802cd1d261e89f46f86909dd0f01ae64d36edc80693c8b0515d95959998e1a1a"
+          "size": 61696,
+          "sha256": "b003c88a555c6348e1d22dc85610a4f82d028d4b69d6c9a6f8bf808b437e547e"
         },
         {
           "name": "kc2_left-x3-v2-PTH.drl",
-          "size": 2491,
-          "sha256": "878e5ddd3f595e78663ef732b9b4f8c9ee252fdf5f3eeb6b501873bef3ddbae7"
+          "size": 2376,
+          "sha256": "2dfdc3b324f8a00c374727ea209fb135ad3e1b33992bfe052770644bd026a7f7"
         }
       ]
     },
     "right": {
       "board": "hardware\\kicad\\draft\\x3-v2\\kc2_right-x3-v2\\kc2_right-x3-v2.kicad_pcb",
-      "source_board_sha256": "7e756b0a8a749943425265cedb22bda9c3be822418b284c71a14485a32dbd030",
+      "source_board_sha256": "385ca07df588cea3a41f0dcbae219a50c30fe5775afe42657f08a5f4253f2420",
       "key_count": 39,
       "output_dir": "hardware\\kicad\\draft\\x3-v2\\fabrication\\right",
       "archive": "hardware\\kicad\\draft\\x3-v2\\fabrication\\kc2_x3_v2_right.zip",
-      "archive_sha256": "168c39422664ccaee4ed139a2a1b1a42c0fa9a3b1f4f12abc297c8738ba3b32a",
+      "archive_sha256": "bae69c342b11a279fc954e58f32b8225b2edd3c41bbe2d548aa02aeaf9cc0d2f",
       "files": [
         {
           "name": "kc2_right-x3-v2-B_Cu.gbl",
-          "size": 46771,
-          "sha256": "270f7420f34fe6adb7af232e9997fcf744b8d5f5f285b872107c33e1392e6ce7"
+          "size": 43826,
+          "sha256": "e9d52e1121449e8f4e8843a41fdbc0ba5c6a0288b01ebcd8786c0b7d777200d7"
         },
         {
           "name": "kc2_right-x3-v2-B_Mask.gbs",
-          "size": 17550,
-          "sha256": "9ffb560b2e04cd2a08cb07efe180631485872f7d4a2704bc311592a679d9cb2c"
+          "size": 17549,
+          "sha256": "914fb65ad9053b3976c32c9c9843f9959b6100675ba79f955556026718da12c7"
         },
         {
           "name": "kc2_right-x3-v2-B_Paste.gbp",
-          "size": 7115,
-          "sha256": "0c800d1f92c3d41f1dd2323f32182cc592f5ee93c1299500ffb3679ed2a33d2b"
+          "size": 7114,
+          "sha256": "473282a00f26a6d57330dff7be3b96badd83daf9ece107ca2a5b9d63507867dd"
         },
         {
           "name": "kc2_right-x3-v2-B_Silkscreen.gbo",
-          "size": 17562,
-          "sha256": "6c30be95487f0378613eac398bc551fe4254d35f1fc7bd111bf0c95f1d0d6c17"
+          "size": 17561,
+          "sha256": "096c26de399859b40f808b72a4a23b6f735e3ac39ac686239b3e60587c25d47a"
         },
         {
           "name": "kc2_right-x3-v2-drill-report.txt",
           "size": 915,
-          "sha256": "bdb7bdebff75f577b35b4b023d34e9c113d99da395cbba21fd18132484c5d84d"
+          "sha256": "bb5b2eb3f1bd131a815f0f9b0f60fdcaf4a049703356f7e814d407c23fcc6d32"
         },
         {
           "name": "kc2_right-x3-v2-Edge_Cuts.gm1",
           "size": 6424,
-          "sha256": "9b00bd3a65d6c1947e54d7d5a22680decb45ab2070a7270ff925df69c0791dce"
+          "sha256": "1a44b865ba8fd4f37a230f067e63e64448461ad7595ab66c78a9f8f266af59a7"
         },
         {
           "name": "kc2_right-x3-v2-F_Cu.gtl",
-          "size": 15957,
-          "sha256": "743063da30cc9500caf7803180fc9f62364171ef4696605170cc18943d309cbd"
+          "size": 16252,
+          "sha256": "96dec0448a038ed81923192427560fb668ab87f8c598979f182daa15d5a90547"
         },
         {
           "name": "kc2_right-x3-v2-F_Mask.gts",
           "size": 11431,
-          "sha256": "a17fe89feebd8b1bcdb72ecdedf85e959e0041bb76bfbd3b29b0e66e46fc8ae0"
+          "sha256": "1ca4c16baa91e15fce60bbd98c608ffed90a9f67fb5491d763d9ee5ea27d41bb"
         },
         {
           "name": "kc2_right-x3-v2-F_Paste.gtp",
           "size": 588,
-          "sha256": "2e25551400210de4c16d997ee3d7765696e9721a296e76cd8760baba5949a5a9"
+          "sha256": "8f6c79d923b8d43287851b67d77689baa8868cc00158ec16180a9b0ab597959c"
         },
         {
           "name": "kc2_right-x3-v2-F_Silkscreen.gto",
           "size": 103800,
-          "sha256": "7008fd71165c553312bcd5ed2e3b9ba7582266cd0f6a23b20f841f461ba85d05"
+          "sha256": "b9ee85d015a8f919f546f1e5fde7983ad772d0d505254f0b8aa23f798006ad99"
         },
         {
           "name": "kc2_right-x3-v2-job.gbrjob",
           "size": 2834,
-          "sha256": "abdc5d0c90c57c10d86d6c43324b6bb9092496d3a58cac1d1eff9662ee350cff"
+          "sha256": "00dad15eef914020326b08aeb59232a82d282ad3b72a26f282980929bcdab569"
         },
         {
           "name": "kc2_right-x3-v2-NPTH-drl_map.gbr",
           "size": 137228,
-          "sha256": "c65484aae5de9c0927f5299e7aba71cbb6a61d2466247db3ba68baa604d14a36"
+          "sha256": "1c5a89e65016f2d0a22156a8f9bbf0434b5a0acc2af10735232216a30bf088ca"
         },
         {
           "name": "kc2_right-x3-v2-NPTH.drl",
           "size": 4870,
-          "sha256": "376b15fd8ac565d0fcf11b12751162c260973a6cf7c62fd964a91e1f722360b3"
+          "sha256": "78edc2822bc3804bed6aa58916f4aac19ab906ed099046aeb1209e8e0161e052"
         },
         {
           "name": "kc2_right-x3-v2-PTH-drl_map.gbr",
-          "size": 64625,
-          "sha256": "7389d37d999329de729228acbef42f9d2c1bce575022f1919ef6e4a2687b359a"
+          "size": 64613,
+          "sha256": "ca2353e6d2cbba6baf8f49d7a19bc26310ed78ad5b9b2eaf11a03e74cce3c68c"
         },
         {
           "name": "kc2_right-x3-v2-PTH.drl",
-          "size": 2719,
-          "sha256": "1e7a40d6f03f985bff10ada3d55ec3a4135810ad16237a1b14c8eb27893350b7"
+          "size": 2716,
+          "sha256": "2b999dd7aa2ab9620d8fa819413109f1ad39263e196dc27252dfd77343fc4293"
         }
       ]
     },
@@ -191,82 +191,82 @@
       "key_count": 3,
       "output_dir": "hardware\\kicad\\draft\\x3-v2\\fabrication\\coupon",
       "archive": "hardware\\kicad\\draft\\x3-v2\\fabrication\\kc2_x3_v2_coupon.zip",
-      "archive_sha256": "76cc08d3aeeb24c096b49739c4ce570e8829cb02ecfb257ab18895bf69758df8",
+      "archive_sha256": "0a6e3456ca66a49fac96f50e8d26d6ee7ba204ee0bf8ba92c4fa69140c3722d1",
       "files": [
         {
           "name": "kc2_x3_v2_switch_coupon-B_Cu.gbl",
           "size": 3891,
-          "sha256": "c8176980fecd81ecd02ae407b66a9fab781119ebcf3e745708bf519a7c24ff59"
+          "sha256": "5829bce4ee618ecd8aabbf9ab9c288de12b047541ba0e2de8c84b3c1f272b535"
         },
         {
           "name": "kc2_x3_v2_switch_coupon-B_Mask.gbs",
           "size": 2784,
-          "sha256": "4272e00e8d3ef585ac130800bb5c50bd49239c35b3ff7621fef57c828c93ee23"
+          "sha256": "80a256e40243f7761006acd2863e67d4a951c61e2c44f158f4819234ed89f603"
         },
         {
           "name": "kc2_x3_v2_switch_coupon-B_Paste.gbp",
           "size": 1929,
-          "sha256": "455077455495a66aac41651a6f47eb21dd523f889f8515aa7c60939110efc543"
+          "sha256": "bc5e452b3589cc985ff9472ac930a7d8021312631e66dfb9bfeb41c04b018846"
         },
         {
           "name": "kc2_x3_v2_switch_coupon-B_Silkscreen.gbo",
           "size": 2796,
-          "sha256": "d321f08f15df45daf5bcc9ad4d793128efd2bcda23c8d98880b9a69e6db7b7d7"
+          "sha256": "4d0f303f6a26423b8bc93648fe6a217295ef9f1c96ffcaa014e02f4c1e143536"
         },
         {
           "name": "kc2_x3_v2_switch_coupon-drill-report.txt",
           "size": 805,
-          "sha256": "2468bef455dc7682852f04d0e2351f691ea484ea65fce563c464d6b80c34dcd0"
+          "sha256": "d24f2c6def8a70b1038ad613eedb8b709505533a267e269138ce98d6f90d0800"
         },
         {
           "name": "kc2_x3_v2_switch_coupon-Edge_Cuts.gm1",
           "size": 720,
-          "sha256": "d73ee98814beb5bde359af039c4575d35614dcaced95cde2a20b81f49c07312c"
+          "sha256": "496f8eec5a244389f0eafe13458a017439d21130f8110d8f576bbfc0cf21c85d"
         },
         {
           "name": "kc2_x3_v2_switch_coupon-F_Cu.gtl",
           "size": 972,
-          "sha256": "dc95dc6174af3579f6b7fdb62154258a89da23f57030dfeebd6e039a8935a709"
+          "sha256": "e953d9e4cdaf679d2f69bd35c9c0241d52b36a7101c7376e4b5fdbc3c786bb8a"
         },
         {
           "name": "kc2_x3_v2_switch_coupon-F_Mask.gts",
           "size": 1382,
-          "sha256": "d96d3e4254e01e727f1c0f40966303b4b90def745e0842a4f7168e7edf8393d6"
+          "sha256": "671d11f7e7d3c3f8ad814662972d7bebc5544d411e24be3d657dfb6136cdcace"
         },
         {
           "name": "kc2_x3_v2_switch_coupon-F_Paste.gtp",
           "size": 487,
-          "sha256": "cdefa373d7dc4f8a2e812e85c17145a158915e200a9b348ed16fb8fe5eb742bb"
+          "sha256": "3ff6a40cc01849d3ce0b3472e92df0f5ccc490f285326d9840e102dc2056da57"
         },
         {
           "name": "kc2_x3_v2_switch_coupon-F_Silkscreen.gto",
           "size": 1394,
-          "sha256": "0231a86e84c14776230fa38b3ab528ee9bc7bccfb7f1ca576ed78e5e1f684475"
+          "sha256": "8ad0bd8edcc8159c71c344ce445274e06ce1bf5cc2fa9af5858ec9df7a50365f"
         },
         {
           "name": "kc2_x3_v2_switch_coupon-job.gbrjob",
           "size": 2909,
-          "sha256": "3a6284bff1360d3308da2f82bb4d9299120a503b689c6143c6e08172f8946095"
+          "sha256": "e22579efb5a4c3303fa670ec573dc450a9a9e272bd8260b439ffa72d1078951e"
         },
         {
           "name": "kc2_x3_v2_switch_coupon-NPTH-drl_map.gbr",
           "size": 78507,
-          "sha256": "e05a4c6a50578cde33d81e7fc3780bf6530b5af78a4514cff42aa12566a433e5"
+          "sha256": "51bf7cff1bbd32d51e21fa048af025a7ce6b28c189066ad87e5f6c5c8b950f6a"
         },
         {
           "name": "kc2_x3_v2_switch_coupon-NPTH.drl",
           "size": 791,
-          "sha256": "3a2106bc9af701d75a34f21232c08794f4000c174ccc87e4a587f372c5dd1450"
+          "sha256": "10c6bda845ddd3fe40d66021c719b0f1bcf52191fe1b201d993972cab7a2d7e9"
         },
         {
           "name": "kc2_x3_v2_switch_coupon-PTH-drl_map.gbr",
           "size": 17280,
-          "sha256": "ddf859b0cdc489b0daf6472c77e6f0abb075524eb8239641cb2d5c3e381a860a"
+          "sha256": "61a483bdeb97246427ae6c2c6ecb153b9ec9aaf78cdfc9a8c4fda8d78c3466f2"
         },
         {
           "name": "kc2_x3_v2_switch_coupon-PTH.drl",
           "size": 425,
-          "sha256": "5cf37f42e4308cbdb9919ee092dd0860f3fc5e8d35a99d5d28a8d31d3ca8f812"
+          "sha256": "e619b1a0b2fdd2217b6d15d02abfd6a5f5f1353f292ef9fc460091708332c735"
         }
       ]
     }

@@ -195,6 +195,29 @@ def analyze_v2_housing() -> dict[str, Any]:
             )
             residual_volume = residual_plan_area * generator.HOUSING_HEIGHT_MM
             manifest_cutout = output["component_cutouts"][name]
+            diode_perimeter_fields: dict[str, Any] = {}
+            if name == "diode_body_pads_fillets":
+                breaks_perimeter = not plan["housing_outline"].covers(cutout_geometry)
+                diode_perimeter_fields = {
+                    "breaks_lateral_housing_perimeter": breaks_perimeter,
+                    "minimum_housing_perimeter_land_mm": round(
+                        0.0
+                        if breaks_perimeter
+                        else float(cutout_geometry.distance(plan["housing_outline"].boundary)),
+                        4,
+                    ),
+                    "perimeter_land_matches_manifest": (
+                        bool(manifest_cutout.get("breaks_lateral_housing_perimeter"))
+                        == breaks_perimeter
+                        and math.isclose(
+                            float(manifest_cutout.get("minimum_housing_perimeter_land_mm", -99.0)),
+                            0.0
+                            if breaks_perimeter
+                            else float(cutout_geometry.distance(plan["housing_outline"].boundary)),
+                            abs_tol=0.0001,
+                        )
+                    ),
+                }
             component_cutouts[name] = {
                 **manifest_cutout,
                 "opening_count": plan["component_cutout_counts"][name],
@@ -217,6 +240,7 @@ def analyze_v2_housing() -> dict[str, Any]:
                     float(manifest_cutout["opening_plan_area_mm2"]),
                     abs_tol=0.0001,
                 ),
+                **diode_perimeter_fields,
             }
         printable_parts = []
         for part in output["printable_parts"]:
@@ -452,6 +476,15 @@ def verify_report(report: dict[str, Any]) -> list[str]:
             errors.append(f"{side}: wrong diode solder-fillet allowance")
         if float(diode.get("minimum_exterior_bottom_clearance_mm", -99.0)) + 1e-6 < 0.50:
             errors.append(f"{side}: diode exterior clearance is below 0.50 mm")
+        if diode.get("breaks_lateral_housing_perimeter"):
+            errors.append(f"{side}: diode cutout breaks the lateral perimeter")
+        if (
+            float(diode.get("minimum_housing_perimeter_land_mm", -99.0)) + 1e-6
+            < generator.MIN_DIODE_HOUSING_PERIMETER_LAND_MM
+        ):
+            errors.append(f"{side}: diode perimeter land is below 0.85 mm")
+        if not diode.get("perimeter_land_matches_manifest"):
+            errors.append(f"{side}: diode perimeter land manifest is stale")
         if not data["step_sha256_matches"] or not data["stl_sha256_matches"]:
             errors.append(f"{side}: stale or missing STEP/STL")
         if data.get("step_has_trailing_whitespace"):

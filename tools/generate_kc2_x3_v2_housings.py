@@ -48,6 +48,7 @@ FILLET_ALLOWANCE_MM = 0.30
 COMPONENT_MINIMUM_CLEARANCE_MM = 0.30
 COMPONENT_CUTOUT_CLEARANCE_MM = 0.35
 COMPONENT_CUTOUT_SIMPLIFY_MM = 0.02
+MIN_DIODE_HOUSING_PERIMETER_LAND_MM = 0.85
 CHOC_SOCKET_OFFICIAL_BODY_DEPTH_MAX_MM = 2.30
 CHOC_SOCKET_ASSEMBLY_ALLOWANCE_MM = 0.10
 DIODE_OFFICIAL_BODY_DEPTH_MAX_MM = 1.35
@@ -867,6 +868,16 @@ def component_cutout_manifest(plan: dict[str, Any]) -> dict[str, Any]:
     result: dict[str, Any] = {}
     for name, geometry in plan["component_cutout_geometries"].items():
         modeled_depth = modeled_depths[name].get("modeled_max_depth_mm")
+        diode_perimeter_fields: dict[str, Any] = {}
+        if name == "diode_body_pads_fillets":
+            breaks_perimeter = not plan["housing_outline"].covers(geometry)
+            diode_perimeter_fields = {
+                "breaks_lateral_housing_perimeter": breaks_perimeter,
+                "minimum_housing_perimeter_land_mm": round(
+                    0.0 if breaks_perimeter else float(geometry.distance(plan["housing_outline"].boundary)),
+                    4,
+                ),
+            }
         result[name] = {
             "opening_count": plan["component_cutout_counts"][name],
             "minimum_xy_clearance_mm": COMPONENT_CUTOUT_CLEARANCE_MM,
@@ -876,6 +887,7 @@ def component_cutout_manifest(plan: dict[str, Any]) -> dict[str, Any]:
             "minimum_exterior_bottom_clearance_mm": (
                 None if modeled_depth is None else round(HOUSING_HEIGHT_MM - float(modeled_depth), 2)
             ),
+            **diode_perimeter_fields,
             **modeled_depths[name],
         }
     return result
@@ -907,6 +919,7 @@ def generate_outputs(output_dir: Path, kicad_python: Path) -> Path:
             "component_minimum_clearance_mm": COMPONENT_MINIMUM_CLEARANCE_MM,
             "component_cutout_clearance_mm": COMPONENT_CUTOUT_CLEARANCE_MM,
             "component_cutout_simplify_mm": COMPONENT_CUTOUT_SIMPLIFY_MM,
+            "minimum_diode_housing_perimeter_land_mm": MIN_DIODE_HOUSING_PERIMETER_LAND_MM,
             "maximum_load_point_to_support_mm": MAX_LOAD_POINT_TO_SUPPORT_MM,
             "print_volume_limit_mm": PRINT_VOLUME_LIMIT_MM,
         },

@@ -1,5 +1,5 @@
 {
-  "generated": "2026-08-20",
+  "generated": "2026-08-21",
   "variant": "x3-v2",
   "generator": "tools/generate_kc2_pcbs.py",
   "generation_command": "python tools/generate_kc2_pcbs.py --variant x3-v2",
@@ -48,10 +48,23 @@
       7.0,
       7.0
     ],
-    "perimeter_inward_adjustment_mm": 0.35,
-    "top_second_diode_lateral_adjustment_mm": 1.1,
+    "edge_safe_offsets_mm": {
+      "top_second_key": {
+        "x": -5.0,
+        "y": -5.6
+      },
+      "top_other_keys": {
+        "x": -9.25,
+        "y": -3.0
+      },
+      "bottom_first_key": {
+        "x": 9.5,
+        "y": 3.0
+      }
+    },
     "minimum_unused_feature_clearance_mm": 1.0,
-    "purpose": "hand-solder approach opposite the bottom-side Choc socket body"
+    "minimum_edge_cuts_clearance_mm": 1.3,
+    "purpose": "hand-solder approach opposite the bottom-side Choc socket body while preserving the lower-housing perimeter land"
   },
   "controller_socket_geometry_mm": {
     "longitudinal_pin_pitch": 2.54,
@@ -114,6 +127,6 @@
     "X3 V2 insets every non-controller key-field edge 1.5 mm from the nominal switch-cell perimeter; each mating edge is 8.025 mm from its adjacent switch center.",
     "X3 V2 contains no legacy H1-H9 or REG1-REG9 key-field through-holes.",
     "The netless battery-lead slot is at the nice!nano USB/B+ end; insulated B+ and GND/B- leads must use strain relief and remain outside the antenna keepout.",
-    "X3 V2 keeps each hand-solder SOD-123 diode at the socket-opposite 7.0 mm corner offset and requires renewed socket/MX solder-joint housing clearance verification."
+    "X3 V2 uses verified edge-safe SOD-123 offsets at perimeter keys; the limiting D2 envelope is nominally 1.35 mm inside Edge.Cuts while retaining hybrid-switch assembly and hand-solder clearance."
   ]
 }

@@ -7,21 +7,21 @@
   "products": {
     "left": {
       "board": "hardware\\kicad\\draft\\x3-v2\\kc2_left-x3-v2\\kc2_left-x3-v2.kicad_pcb",
-      "source_board_sha256": "1f6eb6986377bd98437b6c69b3a9f780b8e2f6fc0f6358bcc4c8e5620d5483f8",
+      "source_board_sha256": "31b73bd75724ad894a1c45fabee8f04af69c2338b0397e8ee55875d4a63afa74",
       "drawings": {
         "top": {
           "path": "hardware\\kicad\\draft\\x3-v2\\mechanical\\left_top_1to1.pdf",
           "layer": "F.Fab",
           "mirrored": false,
           "size": 88383,
-          "sha256": "f4fb3d6591401203f5f270dd33abaaf49d5e62979bfc071664e4eab672da4219"
+          "sha256": "96a9142db0e664cfd37948ce9f8c31c6bffd71d9b34982fd657cf141c13c755f"
         },
         "bottom": {
           "path": "hardware\\kicad\\draft\\x3-v2\\mechanical\\left_bottom_1to1.pdf",
           "layer": "B.Fab",
           "mirrored": true,
-          "size": 100639,
-          "sha256": "fa384ce22e3a3a3c21972a303c1011a7970ee12ff4251e33241157f64bd90a59"
+          "size": 100856,
+          "sha256": "1e86ce8dced9e95714a051d0b2f39c79e69049f07c6adc71cc1d024e63f62d49"
         }
       },
       "outline_svg": {
@@ -33,27 +33,27 @@
           "F.Silkscreen",
           "Edge.Cuts"
         ],
-        "size": 152184,
-        "sha256": "ed1b31195dd42d86a6693bbd051786abd63f95eead02703e8dbff41bb57da805"
+        "size": 148668,
+        "sha256": "bd3163083b757c3857eb414a87e94b35e6949617c57c2546992248d846ca1e85"
       }
     },
     "right": {
       "board": "hardware\\kicad\\draft\\x3-v2\\kc2_right-x3-v2\\kc2_right-x3-v2.kicad_pcb",
-      "source_board_sha256": "7e756b0a8a749943425265cedb22bda9c3be822418b284c71a14485a32dbd030",
+      "source_board_sha256": "385ca07df588cea3a41f0dcbae219a50c30fe5775afe42657f08a5f4253f2420",
       "drawings": {
         "top": {
           "path": "hardware\\kicad\\draft\\x3-v2\\mechanical\\right_top_1to1.pdf",
           "layer": "F.Fab",
           "mirrored": false,
-          "size": 104975,
-          "sha256": "021e3e77cf892ef5c3710f87ad77dd70e81e6f55a58ab6016a2376dbc078b73f"
+          "size": 104977,
+          "sha256": "4aee9ca7a08220256f8ad970e4d99aca20d07f9e621015150af481b6181286ec"
         },
         "bottom": {
           "path": "hardware\\kicad\\draft\\x3-v2\\mechanical\\right_bottom_1to1.pdf",
           "layer": "B.Fab",
           "mirrored": true,
-          "size": 118495,
-          "sha256": "97b51757fa2ee304675b27cf3d3a4805d1846250b61f637ccf7f05539db8c05b"
+          "size": 118739,
+          "sha256": "17ada504b0ddc1497ac5e7429fc7691a6e6eeaf0417996543e8b1ced8729ef41"
         }
       },
       "outline_svg": {
@@ -65,8 +65,8 @@
           "F.Silkscreen",
           "Edge.Cuts"
         ],
-        "size": 158942,
-        "sha256": "25785345f45bf0b5bb38022d035f7d22d79196d51e719b16312865068d6fc793"
+        "size": 159145,
+        "sha256": "18cbd0905b46d7d6a9b5c0c142c026cd2775c7339b7e3c1f39299f3b80ef2a5e"
       }
     },
     "coupon": {
@@ -78,14 +78,14 @@
           "layer": "F.Fab",
           "mirrored": false,
           "size": 18398,
-          "sha256": "0ac8e5949e00cf19d1e46a4b90abbf4b051a0a4ac34dc8edde49f14fc03ed2ef"
+          "sha256": "730636c67f65b707f1cbf2fde34f384a84b328cca3f01126f634634c1eefb919"
         },
         "bottom": {
           "path": "hardware\\kicad\\draft\\x3-v2\\mechanical\\coupon_bottom_1to1.pdf",
           "layer": "B.Fab",
           "mirrored": true,
           "size": 19854,
-          "sha256": "410595af16728f4a2d9821b60f8bf1605fd1758f6f0ebd91baef8512ca8aeb8e"
+          "sha256": "da9e468da0fca55488ec1bfe65434539e7938b8ecafb2ad8885c8564f35a4a7a"
         }
       }
     }

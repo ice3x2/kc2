@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+from collections import Counter
 import hashlib
 import json
 import re
@@ -33,13 +34,13 @@ EXPECTED_FILE_FUNCTIONS = {
     "B.Silkscreen": "Legend,Bot",
     "Edge.Cuts": "Profile,NP",
 }
-EXPECTED_DRILL_TOOLS = {
+EXPECTED_FIXED_DRILL_TOOLS = {
     "left": {
-        "PTH": {"0.300": 27, "0.950": 24, "1.500": 64},
+        "PTH": {"0.950": 24, "1.500": 64},
         "NPTH": {"1.650": 32, "1.700": 64, "2.200": 1, "3.000": 64, "5.000": 32},
     },
     "right": {
-        "PTH": {"0.300": 28, "0.950": 24, "1.500": 78},
+        "PTH": {"0.950": 24, "1.500": 78},
         "NPTH": {"1.650": 39, "1.700": 78, "2.200": 1, "3.000": 78, "5.000": 39},
     },
     "coupon": {
@@ -77,6 +78,24 @@ def inspect_gerber(payload: bytes) -> dict[str, object]:
     }
 
 
+def source_board_via_drills(path: Path) -> dict[str, int]:
+    if not path.is_file():
+        return {}
+    drills = re.findall(
+        r"\(via\s+.*?\(drill\s+([0-9.]+)\)",
+        path.read_text(encoding="utf-8"),
+        flags=re.DOTALL,
+    )
+    return dict(sorted(Counter(f"{float(value):.3f}" for value in drills).items()))
+
+
+def expected_drill_tools(product: str, source_board: Path) -> dict[str, dict[str, int]]:
+    fixed = EXPECTED_FIXED_DRILL_TOOLS[product]
+    pth = dict(fixed["PTH"])
+    pth.update(source_board_via_drills(source_board))
+    return {"PTH": dict(sorted(pth.items())), "NPTH": fixed["NPTH"]}
+
+
 def analyze_fabrication(manifest_path: Path = MANIFEST) -> dict[str, object]:
     if not manifest_path.is_file():
         raise FileNotFoundError(manifest_path)
@@ -85,6 +104,7 @@ def analyze_fabrication(manifest_path: Path = MANIFEST) -> dict[str, object]:
     for product, details in manifest["products"].items():
         archive = ROOT / details["archive"]
         source_board = ROOT / details["board"]
+        expected_drills = expected_drill_tools(product, source_board)
         entries: list[str] = []
         archive_digest = ""
         file_hash_mismatches: list[str] = []
@@ -150,7 +170,9 @@ def analyze_fabrication(manifest_path: Path = MANIFEST) -> dict[str, object]:
             and archive_digest == details["archive_sha256"],
             "file_hash_mismatches": file_hash_mismatches,
             "drill_tools_mm": drill_tools,
-            "drill_geometry_matches": drill_tools == EXPECTED_DRILL_TOOLS[product],
+            "source_board_via_drills_mm": source_board_via_drills(source_board),
+            "expected_drill_tools_mm": expected_drills,
+            "drill_geometry_matches": drill_tools == expected_drills,
             "gerber_layers": gerber_layers,
             "gerber_geometry_errors": gerber_geometry_errors,
             "bottom_paste_flash_count": gerber_layers.get("B.Paste", {}).get(
@@ -200,7 +222,7 @@ def main() -> None:
         if not details["drill_geometry_matches"]:
             errors.append(
                 f"{product}: drill geometry {details['drill_tools_mm']} "
-                f"!= {EXPECTED_DRILL_TOOLS[product]}"
+                f"!= {details['expected_drill_tools_mm']}"
             )
         if not details["bottom_paste_geometry_matches"]:
             errors.append(

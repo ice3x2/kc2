@@ -16,9 +16,9 @@
       "pcb_bottom_z_mm": 2.5,
       "maximum_rail_vertical_gap_mm": 0.0,
       "maximum_support_vertical_gap_mm": 0.0,
-      "rail_plan_area_mm2": 275.5454,
+      "rail_plan_area_mm2": 294.0162,
       "rail_plan_area_matches_manifest": true,
-      "rail_segment_count": 10,
+      "rail_segment_count": 6,
       "support_posts": [
         {
           "id": "LEFT-SUP-01",
@@ -253,7 +253,7 @@
         },
         "diode_body_pads_fillets": {
           "opening_count": 32,
-          "minimum_xy_clearance_mm": 0.3311,
+          "minimum_xy_clearance_mm": 0.3263,
           "exterior_open": true,
           "through_opening_z_mm": [
             0.0,
@@ -261,13 +261,16 @@
           ],
           "opening_plan_area_mm2": 548.6641,
           "minimum_exterior_bottom_clearance_mm": 0.85,
+          "breaks_lateral_housing_perimeter": false,
+          "minimum_housing_perimeter_land_mm": 0.9,
           "official_body_depth_max_mm": 1.35,
           "solder_fillet_allowance_mm": 0.3,
           "modeled_max_depth_mm": 1.65,
           "official_source": "https://www.vishay.com/docs/86356/1n4148w.pdf",
           "residual_collision_volume_mm3": 0.0,
           "three_dimensional_proof": "source-hash-bound constant-Z STEP extrusion; imported STEP volume/height matches the cutout-differenced support plan",
-          "opening_plan_area_matches_manifest": true
+          "opening_plan_area_matches_manifest": true,
+          "perimeter_land_matches_manifest": true
         },
         "controller_reset": {
           "opening_count": 1,
@@ -328,7 +331,7 @@
         "diode_body_pads_fillets": {
           "collision_count": 0,
           "intersection_area_mm2": 0.0,
-          "minimum_plan_clearance_mm": 0.3357
+          "minimum_plan_clearance_mm": 0.6
         },
         "bottom_copper_tracks": {
           "collision_count": 0,
@@ -366,10 +369,10 @@
         0.0,
         2.5
       ],
-      "step_volume_mm3": 18070.5222,
-      "planned_step_volume_mm3": 18070.5222,
-      "step_top_contact_area_mm2": 7228.2089,
-      "planned_top_contact_area_mm2": 7228.2089,
+      "step_volume_mm3": 18078.474,
+      "planned_step_volume_mm3": 18078.474,
+      "step_top_contact_area_mm2": 7231.3896,
+      "planned_top_contact_area_mm2": 7231.3896,
       "step_top_contact_area_error_mm2": 0.0,
       "step_top_contact_area_matches_plan": true,
       "printable_parts": [
@@ -410,9 +413,9 @@
       "pcb_bottom_z_mm": 2.5,
       "maximum_rail_vertical_gap_mm": 0.0,
       "maximum_support_vertical_gap_mm": 0.0,
-      "rail_plan_area_mm2": 288.3605,
+      "rail_plan_area_mm2": 311.3213,
       "rail_plan_area_matches_manifest": true,
-      "rail_segment_count": 13,
+      "rail_segment_count": 7,
       "support_posts": [
         {
           "id": "RIGHT-SUP-01",
@@ -635,7 +638,7 @@
         },
         "diode_body_pads_fillets": {
           "opening_count": 39,
-          "minimum_xy_clearance_mm": 0.3279,
+          "minimum_xy_clearance_mm": 0.3263,
           "exterior_open": true,
           "through_opening_z_mm": [
             0.0,
@@ -643,13 +646,16 @@
           ],
           "opening_plan_area_mm2": 668.6844,
           "minimum_exterior_bottom_clearance_mm": 0.85,
+          "breaks_lateral_housing_perimeter": false,
+          "minimum_housing_perimeter_land_mm": 3.3918,
           "official_body_depth_max_mm": 1.35,
           "solder_fillet_allowance_mm": 0.3,
           "modeled_max_depth_mm": 1.65,
           "official_source": "https://www.vishay.com/docs/86356/1n4148w.pdf",
           "residual_collision_volume_mm3": 0.0,
           "three_dimensional_proof": "source-hash-bound constant-Z STEP extrusion; imported STEP volume/height matches the cutout-differenced support plan",
-          "opening_plan_area_matches_manifest": true
+          "opening_plan_area_matches_manifest": true,
+          "perimeter_land_matches_manifest": true
         },
         "controller_reset": {
           "opening_count": 1,
@@ -710,7 +716,7 @@
         "diode_body_pads_fillets": {
           "collision_count": 0,
           "intersection_area_mm2": 0.0,
-          "minimum_plan_clearance_mm": 0.3357
+          "minimum_plan_clearance_mm": 1.65
         },
         "bottom_copper_tracks": {
           "collision_count": 0,
@@ -748,10 +754,10 @@
         -0.0,
         2.5
       ],
-      "step_volume_mm3": 20838.5677,
-      "planned_step_volume_mm3": 20838.5677,
-      "step_top_contact_area_mm2": 8335.4271,
-      "planned_top_contact_area_mm2": 8335.4271,
+      "step_volume_mm3": 20832.7724,
+      "planned_step_volume_mm3": 20832.7724,
+      "step_top_contact_area_mm2": 8333.109,
+      "planned_top_contact_area_mm2": 8333.109,
       "step_top_contact_area_error_mm2": 0.0,
       "step_top_contact_area_matches_plan": true,
       "printable_parts": [
@@ -787,7 +793,7 @@
           "bounds_xyz_mm": [
             81.9437,
             0.1,
-            0.0,
+            -0.0,
             163.5875,
             126.65,
             2.5
@@ -836,7 +842,7 @@
         "glue_assumed": false,
         "feature_collision_count": 0,
         "support_collision_count": 0,
-        "planned_top_contact_area_mm2": 8335.4271,
+        "planned_top_contact_area_mm2": 8333.109,
         "assembly": "Lower the two full-depth housing parts together vertically so both keyed neck-and-head features enter their print-cleared sockets; no screw or adhesive is used.",
         "support_load_path_preserved": true
       }

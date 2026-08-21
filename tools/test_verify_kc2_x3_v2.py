@@ -188,12 +188,12 @@ class V2GeneratorTests(unittest.TestCase):
             for index, key in enumerate(keys):
                 rotated = generator.switch_rotation_for_key(key, keys, "x3-v2") == 180.0
                 dx, dy = ((7.0, 7.0) if rotated else (-7.0, -7.0))
-                if key.row == 0 and dy < 0:
-                    dy += 0.35
-                if index == 1 and key.row == 0:
-                    dx += 1.10
-                if key.row == max(candidate.row for candidate in keys) and dy > 0:
-                    dy -= 0.35
+                if key.row == 0 and key.col == 1:
+                    dx, dy = (-5.0, -5.6)
+                elif key.row == 0 and dy < 0:
+                    dx, dy = (-9.25, -3.0)
+                elif key.row == max(candidate.row for candidate in keys) and key.col == 0:
+                    dx, dy = (9.5, 3.0)
                 self.assertEqual(
                     generator.diode_placement_for_key(key, keys, "x3-v2"),
                     (dx, dy, 0.0),
@@ -290,8 +290,12 @@ class V2GeneratorTests(unittest.TestCase):
                 },
             )
             self.assertEqual(
-                manifest["diode_placement_policy"]["top_second_diode_lateral_adjustment_mm"],
-                1.1,
+                manifest["diode_placement_policy"]["edge_safe_offsets_mm"],
+                {
+                    "top_second_key": {"x": -5.0, "y": -5.6},
+                    "top_other_keys": {"x": -9.25, "y": -3.0},
+                    "bottom_first_key": {"x": 9.5, "y": 3.0},
+                },
             )
 
     def test_compact_edge_repair_is_idempotent_against_generated_diode_positions(self) -> None:
@@ -313,6 +317,30 @@ class V2GeneratorTests(unittest.TestCase):
             self.assertEqual(second["top_diodes_shifted_inward"], [])
             self.assertEqual(second["bottom_diodes_shifted_inward"], [])
             self.assertEqual(second["attached_track_ends_shifted"], 0)
+
+    def test_compact_edge_cleanup_removes_an_isolated_autorouter_stub(self) -> None:
+        import pcbnew
+
+        from tools import generate_kc2_pcbs as generator
+        from tools.repair_kc2_x3_v2_compact_edge import remove_dangling_tracks
+
+        with TemporaryDirectory(dir=ROOT) as temporary:
+            output_dir = Path(temporary) / "x3-v2"
+            generator.generate_variant("x3-v2", output_dir=output_dir)
+            board_path = output_dir / "kc2_left-x3-v2" / "kc2_left-x3-v2.kicad_pcb"
+            board = pcbnew.LoadBoard(str(board_path))
+            net = board.FindNet("L_ROW0")
+            self.assertIsNotNone(net)
+            stub = pcbnew.PCB_TRACK(board)
+            stub.SetStart(pcbnew.VECTOR2I(pcbnew.FromMM(100.0), pcbnew.FromMM(100.0)))
+            stub.SetEnd(pcbnew.VECTOR2I(pcbnew.FromMM(101.0), pcbnew.FromMM(100.0)))
+            stub.SetLayer(pcbnew.B_Cu)
+            stub.SetWidth(pcbnew.FromMM(0.25))
+            stub.SetNetCode(net.GetNetCode())
+            board.Add(stub)
+
+            self.assertEqual(remove_dangling_tracks(board), 1)
+            self.assertNotIn(stub, list(board.GetTracks()))
 
     def test_generated_boards_preserve_x3_and_dual_contact_invariants(self) -> None:
         for side, board_path, expected_keys in (
@@ -348,6 +376,11 @@ class V2GeneratorTests(unittest.TestCase):
                     report["minimum_diode_fillet_to_switch_assembly_clearance_mm"],
                     0.0,
                 )
+                self.assertGreaterEqual(
+                    report["minimum_diode_fillet_to_edge_cuts_clearance_mm"],
+                    1.3,
+                )
+                self.assertEqual(report["diode_edge_clearance_errors"], [])
                 self.assertEqual(report["untented_bottom_via_count"], 0)
                 self.assertEqual(report["diode_tool_approach_errors"], [])
                 self.assertEqual(report["diode_hand_solder_clearance_errors"], [])
@@ -388,6 +421,24 @@ class V2GeneratorTests(unittest.TestCase):
             report = analyze_v2_board(copy)
 
             self.assertTrue(report["diode_hand_solder_clearance_errors"])
+
+    def test_diode_edge_gate_rejects_a_perimeter_diode_moved_outward(self) -> None:
+        import pcbnew
+
+        with TemporaryDirectory(dir=ROOT) as temporary:
+            copy = Path(temporary) / "kc2_left-x3-v2.kicad_pcb"
+            shutil.copy2(LEFT_BOARD, copy)
+            board = pcbnew.LoadBoard(str(copy))
+            diode = board.FindFootprintByReference("D2")
+            self.assertIsNotNone(diode)
+            diode.Move(pcbnew.VECTOR2I(0, -pcbnew.FromMM(0.1)))
+            pcbnew.SaveBoard(str(copy), board)
+
+            report = analyze_v2_board(copy)
+
+            self.assertTrue(
+                any("D2 edge_cuts_mm=" in error for error in report["diode_edge_clearance_errors"])
+            )
 
     def test_switch_layout_gate_rejects_non_rigid_switch_drift(self) -> None:
         import pcbnew
@@ -453,7 +504,18 @@ class V2GeneratorTests(unittest.TestCase):
             },
         )
         self.assertEqual(report["diode_placement_policy"]["minimum_unused_feature_clearance_mm"], 1.0)
-        self.assertEqual(report["diode_placement_policy"]["perimeter_inward_adjustment_mm"], 0.35)
+        self.assertEqual(
+            report["diode_placement_policy"]["edge_safe_offsets_mm"],
+            {
+                "top_second_key": {"x": -5.0, "y": -5.6},
+                "top_other_keys": {"x": -9.25, "y": -3.0},
+                "bottom_first_key": {"x": 9.5, "y": 3.0},
+            },
+        )
+        self.assertEqual(
+            report["diode_placement_policy"]["minimum_edge_cuts_clearance_mm"],
+            1.3,
+        )
         self.assertEqual(report["switch_footprint"], "kc2.pretty:SW_Choc_V2_Socket_MX_THT")
         self.assertEqual(report["assembly_modes"], ["choc_v2_bottom_socket", "mx_5pin_top_direct_solder"])
         self.assertTrue(report["assembly_modes_mutually_exclusive"])
@@ -491,6 +553,35 @@ class V2GeneratorTests(unittest.TestCase):
             self.assertEqual(first["warning_silkscreen_texts_moved_to_fab"], 0)
             self.assertEqual(first["v2_key_labels_moved_to_fab"], 0)
             self.assertEqual(second, first)
+
+    def test_left_controller_column_snapshot_repairs_and_is_idempotent(self) -> None:
+        import pcbnew
+
+        from tools.finalize_kc2_x3_v2_routes import restore_left_controller_columns
+        from tools.verify_kc2_connectivity import verify_board as verify_connectivity
+
+        with TemporaryDirectory(dir=ROOT) as temporary:
+            copy = Path(temporary) / "kc2_left-x3-v2.kicad_pcb"
+            board = pcbnew.LoadBoard(str(LEFT_BOARD))
+            for item in list(board.GetTracks()):
+                board.Delete(item)
+            self.assertTrue(
+                pcbnew.ImportSpecctraSES(
+                    board,
+                    str(
+                        ROOT
+                        / "hardware/kicad/draft/x3-v2/autoroute/kc2_left-x3-v2-71-r14.ses"
+                    ),
+                )
+            )
+
+            first = restore_left_controller_columns(board)
+            second = restore_left_controller_columns(board)
+            pcbnew.SaveBoard(str(copy), board)
+
+            self.assertGreater(first["track_and_via_items_added"], 0)
+            self.assertEqual(second["track_and_via_items_added"], 0)
+            self.assertEqual(verify_connectivity(copy), [])
 
     def test_left_col6_bridge_requires_the_reviewed_endpoint_geometry(self) -> None:
         import pcbnew

@@ -86,6 +86,13 @@ class V2LoadBearingHousingTests(unittest.TestCase):
                 cutouts["diode_body_pads_fillets"]["minimum_exterior_bottom_clearance_mm"],
                 0.50,
             )
+            self.assertFalse(
+                cutouts["diode_body_pads_fillets"]["breaks_lateral_housing_perimeter"]
+            )
+            self.assertGreaterEqual(
+                cutouts["diode_body_pads_fillets"]["minimum_housing_perimeter_land_mm"],
+                0.85,
+            )
 
     def test_supports_do_not_reintroduce_legacy_fasteners(self) -> None:
         for side in ("left", "right"):
@@ -156,11 +163,15 @@ class V2LoadBearingHousingTests(unittest.TestCase):
         diode = report["sides"]["left"]["component_cutouts"]["diode_body_pads_fillets"]
         diode["opening_count"] = 1
         diode["exterior_open"] = False
+        diode["breaks_lateral_housing_perimeter"] = True
+        diode["minimum_housing_perimeter_land_mm"] = 0.0
         diode["residual_collision_volume_mm3"] = 0.1
         diode["minimum_exterior_bottom_clearance_mm"] = 0.4
         errors = verify_report(report)
         self.assertTrue(any("diode_body_pads_fillets opening count" in error for error in errors))
         self.assertTrue(any("diode_body_pads_fillets is not exterior-open" in error for error in errors))
+        self.assertTrue(any("diode cutout breaks the lateral perimeter" in error for error in errors))
+        self.assertTrue(any("diode perimeter land" in error for error in errors))
         self.assertTrue(any("diode_body_pads_fillets 3D collision" in error for error in errors))
         self.assertTrue(any("diode exterior clearance" in error for error in errors))
 

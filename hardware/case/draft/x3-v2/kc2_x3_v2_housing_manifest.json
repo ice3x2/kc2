@@ -2,7 +2,7 @@
   "requirement": "CON-ARCH-006",
   "variant": "x3-v2",
   "generated_by": "tools/generate_kc2_x3_v2_housings.py",
-  "generator_sha256": "a07a4938046de7c031f6ac3f94425f7404a97a10d6145923cfd5407271a3efca",
+  "generator_sha256": "21d2eede596d920d5e5dcd00ab45365d893a84c26ffd083196ef5af8138bebcd",
   "coordinate_system": "board-local, X-reflected physical lower-housing assembly view",
   "parameters": {
     "exterior_bottom_z_mm": 0.0,
@@ -18,6 +18,7 @@
     "component_minimum_clearance_mm": 0.3,
     "component_cutout_clearance_mm": 0.35,
     "component_cutout_simplify_mm": 0.02,
+    "minimum_diode_housing_perimeter_land_mm": 0.85,
     "maximum_load_point_to_support_mm": 24.0,
     "print_volume_limit_mm": 150.0
   },
@@ -36,19 +37,19 @@
   "outputs": {
     "left": {
       "source_board": "hardware/kicad/draft/x3-v2/kc2_left-x3-v2/kc2_left-x3-v2.kicad_pcb",
-      "source_board_sha256": "1f6eb6986377bd98437b6c69b3a9f780b8e2f6fc0f6358bcc4c8e5620d5483f8",
+      "source_board_sha256": "31b73bd75724ad894a1c45fabee8f04af69c2338b0397e8ee55875d4a63afa74",
       "key_count": 32,
       "legacy_registration_refs": [],
       "step": "hardware/case/draft/x3-v2/kc2_left_x3_v2_lower_housing.step",
-      "step_sha256": "effce9a049836c3740b4ceaf7455ab42ccafbe79be000a24d92893279002f615",
+      "step_sha256": "ade841036716949ba4a1def30f01fe203ab92120277262fd1faf9cfdffa68116",
       "step_has_trailing_whitespace": false,
       "printable_parts": [
         {
           "name": "whole",
           "stl": "hardware/case/draft/x3-v2/kc2_left_x3_v2_lower_housing.stl",
-          "stl_sha256": "843b71970e822c5e4fcd7ff1f272ee5b2684113cda83587d525e1394d393b316",
+          "stl_sha256": "7c89c471316cd6306b2151b4ac1381e321fd7f886ed3efafe9c54b6273ba9109",
           "solid_count": 1,
-          "volume_mm3": 18070.522,
+          "volume_mm3": 18078.474,
           "bounds_xyz_mm": [
             0.1,
             0.1,
@@ -67,8 +68,8 @@
       "rail": {
         "top_z_mm": 2.5,
         "nominal_vertical_gap_mm": 0.0,
-        "plan_area_mm2": 275.5454,
-        "segment_count": 10,
+        "plan_area_mm2": 294.0162,
+        "segment_count": 6,
         "near_continuous": true,
         "clearance_cut_around_board_features": true
       },
@@ -128,6 +129,8 @@
           ],
           "opening_plan_area_mm2": 548.6641,
           "minimum_exterior_bottom_clearance_mm": 0.85,
+          "breaks_lateral_housing_perimeter": false,
+          "minimum_housing_perimeter_land_mm": 0.9,
           "official_body_depth_max_mm": 1.35,
           "solder_fillet_allowance_mm": 0.3,
           "modeled_max_depth_mm": 1.65,
@@ -335,23 +338,23 @@
       "maximum_load_point_to_support_mm": 14.9304,
       "maximum_seam_load_point_to_support_mm": 2.85,
       "solid_count": 1,
-      "volume_mm3": 18070.522
+      "volume_mm3": 18078.474
     },
     "right": {
       "source_board": "hardware/kicad/draft/x3-v2/kc2_right-x3-v2/kc2_right-x3-v2.kicad_pcb",
-      "source_board_sha256": "7e756b0a8a749943425265cedb22bda9c3be822418b284c71a14485a32dbd030",
+      "source_board_sha256": "385ca07df588cea3a41f0dcbae219a50c30fe5775afe42657f08a5f4253f2420",
       "key_count": 39,
       "legacy_registration_refs": [],
       "step": "hardware/case/draft/x3-v2/kc2_right_x3_v2_lower_housing.step",
-      "step_sha256": "f7dbbbcd4b83fb249a74bd420cb864022068a161c20cb9f9abaee2267bc4758f",
+      "step_sha256": "3668afca0992704748a285a53d3e32b169f38c64d1bac8eb72d3fa86862f427f",
       "step_has_trailing_whitespace": false,
       "printable_parts": [
         {
           "name": "part_a",
           "stl": "hardware/case/draft/x3-v2/kc2_right_x3_v2_lower_housing_part_a.stl",
-          "stl_sha256": "2a87b830a9f77803e2b7dc4b96031eb41bed4c4c288a5dd192edf2c043fa58d0",
+          "stl_sha256": "22bc463c6613c01947245023dda8377e438d2bc7c8ba81fa9e22101a68447664",
           "solid_count": 1,
-          "volume_mm3": 9994.741,
+          "volume_mm3": 9992.343,
           "bounds_xyz_mm": [
             0.1,
             34.6,
@@ -369,9 +372,9 @@
         {
           "name": "part_b",
           "stl": "hardware/case/draft/x3-v2/kc2_right_x3_v2_lower_housing_part_b.stl",
-          "stl_sha256": "c57b03f7bc67fcb9cd8f32b3697031a89367baefa663fb4a942bd0a851ebeb9b",
+          "stl_sha256": "70b8e96f2056a96f7e216fc228d24a39eeb476156ab2409b4c4eb75d24986a0d",
           "solid_count": 1,
-          "volume_mm3": 10843.827,
+          "volume_mm3": 10840.429,
           "bounds_xyz_mm": [
             81.9437,
             0.1,
@@ -390,8 +393,8 @@
       "rail": {
         "top_z_mm": 2.5,
         "nominal_vertical_gap_mm": 0.0,
-        "plan_area_mm2": 288.3605,
-        "segment_count": 13,
+        "plan_area_mm2": 311.3213,
+        "segment_count": 7,
         "near_continuous": true,
         "clearance_cut_around_board_features": true
       },
@@ -451,6 +454,8 @@
           ],
           "opening_plan_area_mm2": 668.6844,
           "minimum_exterior_bottom_clearance_mm": 0.85,
+          "breaks_lateral_housing_perimeter": false,
+          "minimum_housing_perimeter_land_mm": 3.3918,
           "official_body_depth_max_mm": 1.35,
           "solder_fillet_allowance_mm": 0.3,
           "modeled_max_depth_mm": 1.65,
@@ -646,7 +651,7 @@
       "maximum_load_point_to_support_mm": 18.4727,
       "maximum_seam_load_point_to_support_mm": 2.85,
       "solid_count": 2,
-      "volume_mm3": 20838.568,
+      "volume_mm3": 20832.772,
       "split_joint": {
         "type": "full_depth_vertical_keyed_puzzle",
         "part_count": 2,
@@ -682,7 +687,7 @@
         "glue_assumed": false,
         "feature_collision_count": 0,
         "support_collision_count": 0,
-        "planned_top_contact_area_mm2": 8335.4271,
+        "planned_top_contact_area_mm2": 8333.109,
         "assembly": "Lower the two full-depth housing parts together vertically so both keyed neck-and-head features enter their print-cleared sockets; no screw or adhesive is used."
       }
     }

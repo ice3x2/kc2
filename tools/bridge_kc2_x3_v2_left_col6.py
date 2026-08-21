@@ -53,6 +53,24 @@ def validate_reviewed_endpoints(board: pcbnew.BOARD) -> None:
             )
 
 
+def net_pads_are_fully_connected(board: pcbnew.BOARD, net_name: str) -> bool:
+    pads = [
+        pad
+        for footprint in board.GetFootprints()
+        for pad in footprint.Pads()
+        if pad.GetNetname() == net_name
+    ]
+    if not pads:
+        return False
+    board.BuildConnectivity()
+    connected = {
+        item.m_Uuid.AsString()
+        for item in board.GetConnectivity().GetConnectedItems(pads[0])
+    }
+    connected.add(pads[0].m_Uuid.AsString())
+    return all(pad.m_Uuid.AsString() in connected for pad in pads)
+
+
 def bridge_left_col6(board_path: Path, *, backup_dir: Path, dry_run: bool = False) -> dict[str, object]:
     if "left" not in board_path.name.lower():
         raise RuntimeError(f"Expected a left board, got {board_path.name}")
@@ -60,6 +78,18 @@ def bridge_left_col6(board_path: Path, *, backup_dir: Path, dry_run: bool = Fals
     if board.FindNet("L_COL6") is None:
         raise RuntimeError("Board has no L_COL6 net")
     validate_reviewed_endpoints(board)
+
+    if net_pads_are_fully_connected(board, "L_COL6"):
+        return {
+            "board": str(board_path),
+            "backup": str(backup_dir / board_path.name),
+            "dry_run": dry_run,
+            "net": "L_COL6",
+            "track_and_via_items_added": 0,
+            "back_path": BACK_PATH,
+            "front_path": FRONT_PATH,
+            "back_tail": BACK_TAIL,
+        }
 
     before = len(list(board.GetTracks()))
     for start, end in zip(BACK_PATH, BACK_PATH[1:]):

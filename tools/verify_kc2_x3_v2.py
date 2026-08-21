@@ -81,6 +81,117 @@ def boxes_overlap_mm(
     )
 
 
+def point_to_segment_distance_mm(
+    point: tuple[float, float],
+    start: tuple[float, float],
+    end: tuple[float, float],
+) -> float:
+    dx = end[0] - start[0]
+    dy = end[1] - start[1]
+    length_squared = dx * dx + dy * dy
+    if length_squared <= 1e-18:
+        return math.hypot(point[0] - start[0], point[1] - start[1])
+    projection = (
+        (point[0] - start[0]) * dx + (point[1] - start[1]) * dy
+    ) / length_squared
+    projection = min(1.0, max(0.0, projection))
+    nearest = (start[0] + projection * dx, start[1] + projection * dy)
+    return math.hypot(point[0] - nearest[0], point[1] - nearest[1])
+
+
+def _orientation(
+    first: tuple[float, float],
+    second: tuple[float, float],
+    third: tuple[float, float],
+) -> float:
+    return (second[0] - first[0]) * (third[1] - first[1]) - (
+        second[1] - first[1]
+    ) * (third[0] - first[0])
+
+
+def segments_intersect_mm(
+    first_start: tuple[float, float],
+    first_end: tuple[float, float],
+    second_start: tuple[float, float],
+    second_end: tuple[float, float],
+    tolerance: float = 1e-9,
+) -> bool:
+    orientations = (
+        _orientation(first_start, first_end, second_start),
+        _orientation(first_start, first_end, second_end),
+        _orientation(second_start, second_end, first_start),
+        _orientation(second_start, second_end, first_end),
+    )
+    if (
+        orientations[0] * orientations[1] < -tolerance
+        and orientations[2] * orientations[3] < -tolerance
+    ):
+        return True
+    for point, start, end, orientation in (
+        (second_start, first_start, first_end, orientations[0]),
+        (second_end, first_start, first_end, orientations[1]),
+        (first_start, second_start, second_end, orientations[2]),
+        (first_end, second_start, second_end, orientations[3]),
+    ):
+        if abs(orientation) <= tolerance and (
+            min(start[0], end[0]) - tolerance
+            <= point[0]
+            <= max(start[0], end[0]) + tolerance
+            and min(start[1], end[1]) - tolerance
+            <= point[1]
+            <= max(start[1], end[1]) + tolerance
+        ):
+            return True
+    return False
+
+
+def segment_to_box_clearance_mm(
+    start: tuple[float, float],
+    end: tuple[float, float],
+    box: tuple[float, float, float, float],
+) -> float:
+    corners = (
+        (box[0], box[1]),
+        (box[2], box[1]),
+        (box[2], box[3]),
+        (box[0], box[3]),
+    )
+    edges = tuple(zip(corners, (*corners[1:], corners[0])))
+    if any(segments_intersect_mm(start, end, edge_start, edge_end) for edge_start, edge_end in edges):
+        return 0.0
+
+    def point_to_box(point: tuple[float, float]) -> float:
+        dx = max(box[0] - point[0], point[0] - box[2], 0.0)
+        dy = max(box[1] - point[1], point[1] - box[3], 0.0)
+        return math.hypot(dx, dy)
+
+    return min(
+        point_to_box(start),
+        point_to_box(end),
+        *(point_to_segment_distance_mm(corner, start, end) for corner in corners),
+    )
+
+
+def board_outline_segments_mm(
+    board: pcbnew.BOARD,
+) -> list[tuple[tuple[float, float], tuple[float, float]]]:
+    outlines = pcbnew.SHAPE_POLY_SET()
+    if not board.GetBoardPolygonOutlines(outlines, False):
+        raise RuntimeError("KiCad could not resolve a closed Edge.Cuts outline")
+    segments: list[tuple[tuple[float, float], tuple[float, float]]] = []
+    for outline_index in range(outlines.OutlineCount()):
+        outline = outlines.Outline(outline_index)
+        for segment_index in range(outline.SegmentCount()):
+            segment = outline.CSegment(segment_index)
+            segments.append(
+                (
+                    (pcbnew.ToMM(segment.A.x), pcbnew.ToMM(segment.A.y)),
+                    (pcbnew.ToMM(segment.B.x), pcbnew.ToMM(segment.B.y)),
+                )
+            )
+    return segments
+
+
 def load_footprint(path: Path) -> pcbnew.FOOTPRINT:
     if not path.is_file():
         raise FileNotFoundError(path)
@@ -305,7 +416,9 @@ def analyze_v2_board(path: Path) -> dict[str, object]:
     ]
     diode_clearances: list[dict[str, object]] = []
     diode_hand_solder_clearance_errors: list[str] = []
+    diode_edge_clearance_errors: list[str] = []
     diode_tool_approach_errors: list[str] = []
+    outline_segments = board_outline_segments_mm(board)
     bottom_exposed_pad_items = [
         (footprint.GetReference(), pad.GetNetname(), bounding_box_mm(pad))
         for footprint in footprints
@@ -348,6 +461,26 @@ def analyze_v2_board(path: Path) -> dict[str, object]:
             if reference != diode.GetReference() and net not in diode_nets
         ]
         fillet_boxes = [inflate_box_mm(box, 0.30) for box in diode_boxes]
+        diode_body_boxes = [
+            bounding_box_mm(item)
+            for item in diode.GraphicalItems()
+            if item.GetLayer() in (pcbnew.B_Fab, pcbnew.B_SilkS)
+        ]
+        diode_edge_envelope_boxes = [*fillet_boxes]
+        if diode_body_boxes:
+            diode_edge_envelope_boxes.append(
+                (
+                    min(box[0] for box in diode_body_boxes),
+                    min(box[1] for box in diode_body_boxes),
+                    max(box[2] for box in diode_body_boxes),
+                    max(box[3] for box in diode_body_boxes),
+                )
+            )
+        edge_cuts_clearance = min(
+            segment_to_box_clearance_mm(start, end, envelope)
+            for envelope in diode_edge_envelope_boxes
+            for start, end in outline_segments
+        )
         fillet_to_switch_assembly = min(
             bounding_box_clearance_mm(diode_box, target)
             for diode_box in fillet_boxes
@@ -360,6 +493,7 @@ def analyze_v2_board(path: Path) -> dict[str, object]:
             "socket_body_mm": clearance_to(socket_body_boxes),
             "unrelated_exposed_copper_mm": clearance_to(unrelated_exposed_boxes),
             "fillet_to_switch_assembly_mm": fillet_to_switch_assembly,
+            "edge_cuts_mm": edge_cuts_clearance,
         }
         diode_clearances.append(clearances)
         for label in ("unused_npth_mm", "unrelated_exposed_copper_mm"):
@@ -370,6 +504,10 @@ def analyze_v2_board(path: Path) -> dict[str, object]:
         if fillet_to_switch_assembly <= 1e-6:
             diode_hand_solder_clearance_errors.append(
                 f"{diode.GetReference()} solder-fillet envelope intersects switch assembly"
+            )
+        if edge_cuts_clearance < 1.3 - 1e-6:
+            diode_edge_clearance_errors.append(
+                f"{diode.GetReference()} edge_cuts_mm={edge_cuts_clearance:.3f} mm"
             )
 
         switch = board.FindFootprintByReference(
@@ -494,8 +632,13 @@ def analyze_v2_board(path: Path) -> dict[str, object]:
         "minimum_diode_fillet_to_switch_assembly_clearance_mm": round(
             min(float(item["fillet_to_switch_assembly_mm"]) for item in diode_clearances), 3
         ),
+        "minimum_diode_fillet_to_edge_cuts_clearance_mm": round(
+            min(float(item["edge_cuts_mm"]) for item in diode_clearances), 3
+        ),
+        "diode_clearances": diode_clearances,
         "untented_bottom_via_count": len(untented_bottom_vias),
         "diode_tool_approach_errors": diode_tool_approach_errors,
+        "diode_edge_clearance_errors": diode_edge_clearance_errors,
         "diode_hand_solder_clearance_errors": diode_hand_solder_clearance_errors,
         "board_text": board_text,
         "drc_violation_count": len(drc.get("violations", [])),
@@ -579,10 +722,14 @@ def verify_v2_release_candidate(
     diode_policy = manifest.get("diode_placement_policy") or {}
     if diode_policy.get("minimum_unused_feature_clearance_mm") != 1.0:
         errors.append("manifest: diode hand-solder clearance policy is missing")
-    if diode_policy.get("perimeter_inward_adjustment_mm") != 0.35:
-        errors.append("manifest: perimeter diodes must move inward by 0.35 mm")
-    if diode_policy.get("top_second_diode_lateral_adjustment_mm") != 1.1:
-        errors.append("manifest: D2 must move laterally by 1.10 mm for hand-solder clearance")
+    if diode_policy.get("minimum_edge_cuts_clearance_mm") != 1.3:
+        errors.append("manifest: diode Edge.Cuts clearance policy is missing")
+    if diode_policy.get("edge_safe_offsets_mm") != {
+        "top_second_key": {"x": -5.0, "y": -5.6},
+        "top_other_keys": {"x": -9.25, "y": -3.0},
+        "bottom_first_key": {"x": 9.5, "y": 3.0},
+    }:
+        errors.append("manifest: verified edge-safe diode offsets are missing")
 
     board_reports: dict[str, object] = {}
     connectivity_errors: dict[str, list[str]] = {}
@@ -608,6 +755,7 @@ def verify_v2_release_candidate(
             "battery slot on USB/B+ side": report["battery_lead_slot_on_usb_side"],
             "no carrier power nets": not report["forbidden_carrier_power_nets"],
             "diode hand-solder clearance": not report["diode_hand_solder_clearance_errors"],
+            "diode Edge.Cuts clearance": not report["diode_edge_clearance_errors"],
             "V2 assembly warning": any(
                 "CHOC V1 UNSUPPORTED" in text.upper() for text in report["board_text"]
             ),

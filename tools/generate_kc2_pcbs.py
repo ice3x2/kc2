@@ -80,8 +80,10 @@ X3_RIGHT_YH_HORIZONTAL_LEDGE_RELIEF = 0.8
 X3_V2_KEYCELL_EDGE_INSET = 1.5
 X3_V2_JOIN_CENTER_TO_EDGE = UNIT / 2.0 - X3_V2_KEYCELL_EDGE_INSET
 X3_V2_JOIN_KEYCAP_SETBACK = X3_V2_KEYCELL_EDGE_INSET - 0.5
-X3_V2_PERIMETER_DIODE_INSET = 0.35
-X3_V2_D2_SOLDER_RELIEF_X = 1.10
+X3_V2_TOP_SECOND_DIODE_OFFSET = (-5.0, -5.6)
+X3_V2_TOP_OTHER_DIODE_OFFSET = (-9.25, -3.0)
+X3_V2_BOTTOM_FIRST_DIODE_OFFSET = (9.5, 3.0)
+X3_V2_MIN_DIODE_EDGE_CLEARANCE = 1.30
 X3_V2_OUTLINE_POLICY = "keycap_concealed_except_controller_service"
 EDGE_WIDTH = 0.10
 TRACK_WIDTH = 0.25
@@ -673,12 +675,12 @@ def diode_placement_for_key(
         if switch_rotation_for_key(key, keys, variant) == 180.0
         else (-7.0, -7.0)
     )
-    if key.row == 0 and dy < 0:
-        dy += X3_V2_PERIMETER_DIODE_INSET
-        if keys.index(key) == 1:
-            dx += X3_V2_D2_SOLDER_RELIEF_X
-    if key.row == max(candidate.row for candidate in keys) and dy > 0:
-        dy -= X3_V2_PERIMETER_DIODE_INSET
+    if key.row == 0 and key.col == 1:
+        dx, dy = X3_V2_TOP_SECOND_DIODE_OFFSET
+    elif key.row == 0 and dy < 0:
+        dx, dy = X3_V2_TOP_OTHER_DIODE_OFFSET
+    elif key.row == max(candidate.row for candidate in keys) and key.col == 0:
+        dx, dy = X3_V2_BOTTOM_FIRST_DIODE_OFFSET
     return dx, dy, 0.0
 
 
@@ -1947,12 +1949,16 @@ def generate_variant(variant: str, output_dir: Path | None = None) -> dict[str, 
         )
         notes.append("X3 V2 contains no legacy H1-H9 or REG1-REG9 key-field through-holes.")
         notes.append("The netless battery-lead slot is at the nice!nano USB/B+ end; insulated B+ and GND/B- leads must use strain relief and remain outside the antenna keepout.")
-        notes.append("X3 V2 keeps each hand-solder SOD-123 diode at the socket-opposite 7.0 mm corner offset and requires renewed socket/MX solder-joint housing clearance verification.")
+        notes.append(
+            "X3 V2 uses verified edge-safe SOD-123 offsets at perimeter keys; the limiting "
+            "D2 envelope is nominally 1.35 mm inside Edge.Cuts while retaining hybrid-switch "
+            "assembly and hand-solder clearance."
+        )
     else:
         notes.append(f"Controller protrusion tab width is {CONTROLLER_TAB_W:g} mm and grows away from the inner joining edge.")
     switch_footprint_file_present = (switch_lib / f"{switch_fp}.kicad_mod").exists()
     manifest: dict[str, object] = {
-        "generated": "2026-08-20" if variant == "x3-v2" else "2026-06-08",
+        "generated": "2026-08-21" if variant == "x3-v2" else "2026-06-08",
         "variant": variant,
         "generator": "tools/generate_kc2_pcbs.py",
         "generation_command": f"python tools/generate_kc2_pcbs.py --variant {variant}",
@@ -1991,10 +1997,26 @@ def generate_variant(variant: str, output_dir: Path | None = None) -> dict[str, 
             {
                 "unrotated_switch_offset_mm": [-7.0, -7.0],
                 "rotated_switch_offset_mm": [7.0, 7.0],
-                "perimeter_inward_adjustment_mm": X3_V2_PERIMETER_DIODE_INSET,
-                "top_second_diode_lateral_adjustment_mm": X3_V2_D2_SOLDER_RELIEF_X,
+                "edge_safe_offsets_mm": {
+                    "top_second_key": {
+                        "x": X3_V2_TOP_SECOND_DIODE_OFFSET[0],
+                        "y": X3_V2_TOP_SECOND_DIODE_OFFSET[1],
+                    },
+                    "top_other_keys": {
+                        "x": X3_V2_TOP_OTHER_DIODE_OFFSET[0],
+                        "y": X3_V2_TOP_OTHER_DIODE_OFFSET[1],
+                    },
+                    "bottom_first_key": {
+                        "x": X3_V2_BOTTOM_FIRST_DIODE_OFFSET[0],
+                        "y": X3_V2_BOTTOM_FIRST_DIODE_OFFSET[1],
+                    },
+                },
                 "minimum_unused_feature_clearance_mm": 1.0,
-                "purpose": "hand-solder approach opposite the bottom-side Choc socket body",
+                "minimum_edge_cuts_clearance_mm": X3_V2_MIN_DIODE_EDGE_CLEARANCE,
+                "purpose": (
+                    "hand-solder approach opposite the bottom-side Choc socket body while "
+                    "preserving the lower-housing perimeter land"
+                ),
             }
             if variant == "x3-v2"
             else None

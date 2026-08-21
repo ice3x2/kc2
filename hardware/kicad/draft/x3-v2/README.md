@@ -25,15 +25,23 @@ The left and right boards use their physical split-keyboard orientations. The
 bottom-side socket pattern must be read from the PCB bottom; the 1:1 bottom PDF
 is already mirrored for a physical bottom view.
 
-After soldering an MX switch, trim both electrical terminals to no more than
-2.20 mm below the PCB. This preserves at least 0.40 mm vertical clearance in
-the flat lower housing's 2.60 mm component cavity. The lateral solder-fillet
-model includes a 0.30 mm allowance.
+After soldering an MX switch, trim both electrical terminals after inspection.
+The 2.50 mm lower plate has exterior-bottom-open cutouts through the full plate
+height for every MX terminal and solder joint, rather than a closed component
+cavity. The lateral solder-fillet model includes a 0.30 mm allowance.
 
 The Choc socket SMD solder-fillet model also includes a 0.30 mm lateral
 allowance. The V2-specific rail/post verifier reports zero socket, MX, diode,
 track, via, controller/reset, battery-access, and key-travel intersections;
-the smallest modeled support-to-feature plan clearance is 0.1497 mm.
+all required exported cutouts retain at least 0.3263 mm measured XY clearance.
+
+The limiting left D2 diode body/pad/0.30 mm solder-fillet envelope is 1.35 mm
+inside PCB Edge.Cuts; the release gate is 1.30 mm. It keeps 1.035 mm from the
+nearest hybrid switch pad and has no switch/socket/fillet or solder-tool
+approach conflict. Other straight-edge-limited relocated diodes are at least
+3.95 mm inside Edge.Cuts. With the 0.10 mm housing inset and 0.35 mm cutout
+allowance, the left housing retains 0.90 mm of uninterrupted material outside
+the limiting diode opening (0.85 mm release gate).
 
 ## Battery service path
 
@@ -77,6 +85,16 @@ python -m tools.verify_kc2_x3_v2_housing
 The isolated generator output is intentionally unrouted. The committed board
 files include the reviewed route completion and must retain KiCad DRC results
 of zero violations and zero unconnected items.
+
+The final diode-edge autoroute snapshots are
+`autoroute/kc2_left-x3-v2-71-r14.{dsn,ses}` and
+`autoroute/kc2_right-x3-v2-71-r12.{dsn,ses}`. After importing the left session,
+run `tools.finalize_kc2_x3_v2_routes` with
+`--restore-left-controller-columns`; this restores the reviewed L_COL0/L_COL1
+fanout that Freerouting leaves open and is covered by a reconstruction and
+idempotence test. After importing the right session, run
+`tools.repair_kc2_x3_v2_compact_edge --cleanup-dangling-tracks` to remove only
+connectivity-proven dangling autorouter branches.
 
 The project explicitly ignores five KiCad diagnostic classes: missing
 courtyard, track-not-centered-on-via, tuning-profile track geometry,

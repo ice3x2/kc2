@@ -41,7 +41,10 @@ The verified openings cover:
 - battery-lead access.
 
 Every class has at least `0.30 mm` nominal XY clearance. The measured minimum
-is `0.3299 mm` left and `0.3279 mm` right after export simplification. The
+is `0.3263 mm` for the diode openings after export simplification. No diode
+opening breaks the lateral housing perimeter: the limiting left opening leaves
+`0.90 mm` of housing material and the right leaves `3.3918 mm`, against the
+`0.85 mm` release gate. The
 vertical model uses the official Kailh CPG135001S30 maximum socket depth
 `2.30 mm` plus `0.10 mm` assembly allowance, leaving `0.10 mm` to the
 exterior bottom. It uses the official Vishay SOD-123 maximum depth `1.35 mm`
