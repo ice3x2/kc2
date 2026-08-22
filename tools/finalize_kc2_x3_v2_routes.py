@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import argparse
 from collections import Counter
+import hashlib
 import json
 from pathlib import Path
 
@@ -96,6 +97,30 @@ LEFT_CONTROLLER_COLUMN_ROUTE = (
 )
 
 
+RIGHT_R12_FINAL_ROUTE_ITEM_COUNT = 697
+RIGHT_R12_FINAL_ROUTE_SHA256 = "040d236ab756e294373e59556a778355cda0448c7127518caa70090d1257106a"
+RIGHT_R12_IMPORTED_ONLY_ROUTE = (
+    ("track", "R_COL6", "B.Cu", 79.3776, 85.2680, 79.3776, 87.5840, 0.200),
+    ("track", "R_COL6", "F.Cu", 79.3776, 85.2680, 79.3776, 87.5840, 0.200),
+    ("track", "R_COL6", "B.Cu", 79.3776, 87.5840, 79.3776, 85.2680, 0.200),
+    ("track", "R_COL6", "F.Cu", 79.3776, 87.5840, 79.3776, 85.2680, 0.200),
+    ("track", "R_COL6", "B.Cu", 78.8995, 60.4155, 78.8983, 60.4143, 0.200),
+    ("track", "R_COL6", "F.Cu", 78.8995, 60.4155, 78.8983, 60.4143, 0.200),
+    ("track", "R_COL6", "B.Cu", 78.8983, 60.4143, 78.8995, 60.4155, 0.200),
+    ("track", "R_COL6", "F.Cu", 78.8983, 60.4143, 78.8995, 60.4155, 0.200),
+    ("track", "R_COL3", "F.Cu", 111.1111, 86.5350, 111.1111, 85.9139, 0.200),
+    ("track", "R_COL3", "F.Cu", 111.1111, 85.9139, 111.1111, 86.5350, 0.200),
+    ("track", "R_COL3", "B.Cu", 117.0453, 126.3076, 117.0453, 121.5250, 0.200),
+    ("track", "R_COL3", "F.Cu", 117.0453, 126.3076, 117.0453, 121.5250, 0.200),
+    ("track", "R_COL3", "B.Cu", 117.0453, 121.5250, 117.0453, 126.3076, 0.200),
+    ("track", "R_COL3", "F.Cu", 117.0453, 121.5250, 117.0453, 126.3076, 0.200),
+    ("track", "R_COL3", "B.Cu", 114.0782, 80.5345, 114.0782, 81.5899, 0.200),
+    ("track", "R_COL3", "F.Cu", 114.0782, 80.5345, 114.0782, 81.5899, 0.200),
+    ("track", "R_COL3", "B.Cu", 114.0782, 81.5899, 114.0782, 80.5345, 0.200),
+    ("track", "R_COL3", "F.Cu", 114.0782, 81.5899, 114.0782, 80.5345, 0.200),
+)
+
+
 def _route_signature(item: pcbnew.BOARD_CONNECTED_ITEM) -> tuple[object, ...]:
     if isinstance(item, pcbnew.PCB_VIA):
         position = item.GetPosition()
@@ -119,6 +144,150 @@ def _route_signature(item: pcbnew.BOARD_CONNECTED_ITEM) -> tuple[object, ...]:
         round(pcbnew.ToMM(end.y), 4),
         round(pcbnew.ToMM(item.GetWidth()), 3),
     )
+
+
+def _route_counter_digest(signatures: Counter[tuple[object, ...]]) -> str:
+    payload = "\n".join(
+        repr((signature, count)) for signature, count in sorted(signatures.items())
+    ).encode("utf-8")
+    return hashlib.sha256(payload).hexdigest()
+
+
+def _has_exact_reviewed_right_route(board: pcbnew.BOARD) -> bool:
+    signatures = Counter(_route_signature(item) for item in board.GetTracks())
+    return (
+        sum(signatures.values()) == RIGHT_R12_FINAL_ROUTE_ITEM_COUNT
+        and _route_counter_digest(signatures) == RIGHT_R12_FINAL_ROUTE_SHA256
+        and _matrix_pads_are_fully_connected(board, "right")
+    )
+
+
+def _matrix_pads_are_fully_connected(board: pcbnew.BOARD, side: str) -> bool:
+    prefixes = ("L_ROW", "L_COL", "LK") if side == "left" else ("R_ROW", "R_COL", "RK")
+    pads_by_net: dict[str, list[pcbnew.PAD]] = {}
+    for footprint in board.GetFootprints():
+        for pad in footprint.Pads():
+            net_name = pad.GetNetname()
+            if net_name.startswith(prefixes):
+                pads_by_net.setdefault(net_name, []).append(pad)
+    if not pads_by_net:
+        return False
+    board.BuildConnectivity()
+    connectivity = board.GetConnectivity()
+    for pads in pads_by_net.values():
+        connected = {
+            item.m_Uuid.AsString()
+            for item in connectivity.GetConnectedItems(pads[0])
+        }
+        connected.add(pads[0].m_Uuid.AsString())
+        if any(pad.m_Uuid.AsString() not in connected for pad in pads):
+            return False
+    return True
+
+
+def import_reviewed_left_v5_session(
+    board: pcbnew.BOARD,
+    session_path: Path,
+) -> dict[str, int]:
+    """Import the exact 31-key v5 SES once and reject stale or partial geometry."""
+    from tools.verify_kc2_x3_v2 import verify_switch_layout_against_generator
+
+    switches = sorted(
+        (
+            footprint
+            for footprint in board.GetFootprints()
+            if footprint.GetReference().startswith("SW")
+            and footprint.GetReference()[2:].isdigit()
+        ),
+        key=lambda footprint: int(footprint.GetReference()[2:]),
+    )
+    if len(switches) != 31:
+        raise RuntimeError(f"reviewed left v5 route requires 31 switches, found {len(switches)}")
+    layout_errors, _maximum_error = verify_switch_layout_against_generator(switches)
+    if layout_errors:
+        raise RuntimeError(f"reviewed left v5 switch geometry mismatch: {layout_errors[0]}")
+
+    before = len(list(board.GetTracks()))
+    if before:
+        if not _matrix_pads_are_fully_connected(board, "left"):
+            raise RuntimeError("refusing to replace a nonempty but incomplete left route")
+        return {"track_and_via_items_added": 0}
+    if not session_path.is_file():
+        raise RuntimeError(f"missing reviewed left v5 route session: {session_path}")
+    if not pcbnew.ImportSpecctraSES(board, str(session_path)):
+        raise RuntimeError(f"failed to import reviewed left v5 route session: {session_path}")
+    after = len(list(board.GetTracks()))
+    if after <= before or not _matrix_pads_are_fully_connected(board, "left"):
+        raise RuntimeError("reviewed left v5 route session did not connect the complete matrix")
+    return {"track_and_via_items_added": after - before}
+
+
+def import_reviewed_right_r12_session(
+    board: pcbnew.BOARD,
+    session_path: Path,
+) -> dict[str, int]:
+    """Import r12 and remove only its reviewed 18-item duplicate/dangling residue."""
+    from tools.verify_kc2_x3_v2 import verify_switch_layout_against_generator
+
+    switches = sorted(
+        (
+            footprint
+            for footprint in board.GetFootprints()
+            if footprint.GetReference().startswith("SW")
+            and footprint.GetReference()[2:].isdigit()
+        ),
+        key=lambda footprint: int(footprint.GetReference()[2:]),
+    )
+    if len(switches) != 39:
+        raise RuntimeError(f"reviewed right r12 route requires 39 switches, found {len(switches)}")
+    layout_errors, _maximum_error = verify_switch_layout_against_generator(switches)
+    if layout_errors:
+        raise RuntimeError(f"reviewed right r12 switch geometry mismatch: {layout_errors[0]}")
+
+    existing = list(board.GetTracks())
+    if existing:
+        if not _has_exact_reviewed_right_route(board):
+            raise RuntimeError("refusing a nonempty board that is not the exact reviewed right route")
+        return {
+            "imported_track_and_via_items": 0,
+            "reviewed_extras_removed": 0,
+            "final_track_and_via_items": len(existing),
+        }
+    if not session_path.is_file():
+        raise RuntimeError(f"missing reviewed right r12 route session: {session_path}")
+    if not pcbnew.ImportSpecctraSES(board, str(session_path)):
+        raise RuntimeError(f"failed to import reviewed right r12 route session: {session_path}")
+
+    imported = list(board.GetTracks())
+    expected_extras = Counter(RIGHT_R12_IMPORTED_ONLY_ROUTE)
+    actual_signatures = Counter(_route_signature(item) for item in imported)
+    if sum(actual_signatures.values()) != RIGHT_R12_FINAL_ROUTE_ITEM_COUNT + sum(expected_extras.values()):
+        raise RuntimeError(
+            "reviewed right r12 session item count changed: "
+            f"expected {RIGHT_R12_FINAL_ROUTE_ITEM_COUNT + sum(expected_extras.values())}, "
+            f"found {sum(actual_signatures.values())}"
+        )
+    if actual_signatures & expected_extras != expected_extras:
+        raise RuntimeError("reviewed right r12 imported-only signature precondition failed")
+
+    remaining = expected_extras.copy()
+    removed = 0
+    for item in list(board.GetTracks()):
+        signature = _route_signature(item)
+        if remaining[signature] <= 0:
+            continue
+        board.Delete(item)
+        remaining[signature] -= 1
+        removed += 1
+    if any(remaining.values()) or removed != len(RIGHT_R12_IMPORTED_ONLY_ROUTE):
+        raise RuntimeError("reviewed right r12 imported-only removal was incomplete")
+    if not _has_exact_reviewed_right_route(board):
+        raise RuntimeError("reviewed right r12 session did not reconstruct the exact committed route")
+    return {
+        "imported_track_and_via_items": len(imported),
+        "reviewed_extras_removed": removed,
+        "final_track_and_via_items": len(list(board.GetTracks())),
+    }
 
 
 def restore_left_controller_columns(board: pcbnew.BOARD) -> dict[str, int]:
@@ -258,10 +427,26 @@ def main() -> None:
     parser.add_argument("board", type=Path)
     parser.add_argument("--drc", type=Path)
     parser.add_argument("--restore-left-controller-columns", action="store_true")
+    parser.add_argument("--import-left-v5-session", type=Path)
+    parser.add_argument("--import-right-r12-session", type=Path)
     args = parser.parse_args()
     board = pcbnew.LoadBoard(str(args.board))
     side = "left" if "left" in args.board.name.lower() else "right"
     result: dict[str, object] = {}
+    if args.import_left_v5_session:
+        if side != "left":
+            raise RuntimeError("left v5 session cannot be applied to a right board")
+        result["left_v5_session"] = import_reviewed_left_v5_session(
+            board,
+            args.import_left_v5_session,
+        )
+    if args.import_right_r12_session:
+        if side != "right":
+            raise RuntimeError("right r12 session cannot be applied to a left board")
+        result["right_r12_session"] = import_reviewed_right_r12_session(
+            board,
+            args.import_right_r12_session,
+        )
     if args.restore_left_controller_columns:
         if side != "left":
             raise RuntimeError("left controller-column repair cannot be applied to a right board")
@@ -270,7 +455,10 @@ def main() -> None:
         report = load_reviewed_drc(args.drc)
         result["reviewed_cleanup"] = apply_reviewed_cleanup(board, report, side)
     if not result:
-        parser.error("provide --drc and/or --restore-left-controller-columns")
+        parser.error(
+            "provide --drc, --restore-left-controller-columns, --import-left-v5-session, "
+            "and/or --import-right-r12-session"
+        )
     pcbnew.SaveBoard(str(args.board), board)
     print(f"{side}: {result}")
 

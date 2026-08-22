@@ -92,7 +92,7 @@ def export_product(product: str, board: Path) -> dict[str, object]:
     return {
         "board": str(board.relative_to(ROOT)),
         "source_board_sha256": sha256(board),
-        "key_count": {"left": 32, "right": 39, "coupon": 3}[product],
+        "key_count": {"left": 31, "right": 39, "coupon": 3}[product],
         "output_dir": str(output_dir.relative_to(ROOT)),
         "archive": str(archive.relative_to(ROOT)),
         "archive_sha256": sha256(archive),

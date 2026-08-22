@@ -1,11 +1,11 @@
 {
   "variant": "kc2-x3-v2",
   "requirement_id": "CON-ARCH-004",
-  "layout": "71-key-v4-no-stabilizer",
+  "layout": "70-key-v5-no-stabilizer",
   "key_count": {
-    "left": 32,
+    "left": 31,
     "right": 39,
-    "total": 71
+    "total": 70
   },
   "matrix": {
     "rows": 5,
@@ -26,6 +26,13 @@
   "compact_controller": true,
   "carrier_battery_nets": false,
   "battery_leads": "direct-to-nice-nano-b-plus-b-minus",
+  "left_alt_fn_win_combo": {
+    "positions": [59, 60],
+    "timeout_ms": 50,
+    "binding": "LGUI",
+    "layers": "all",
+    "release": "first-constituent-key"
+  },
   "fn_position": "immediately-right-of-up",
   "bottom_row_right_fn": false
 }

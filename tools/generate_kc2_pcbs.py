@@ -581,8 +581,8 @@ def make_left_keys_x3_v2() -> list[Key]:
         [("~", 1.0), ("1", 1.0), ("2", 1.0), ("3", 1.0), ("4", 1.0), ("5", 1.0), ("6", 1.0)],
         [("TAB", 1.5), ("Q", 1.0), ("W", 1.0), ("E", 1.0), ("R", 1.0), ("T", 1.0)],
         [("Caps", 1.75), ("A", 1.0), ("S", 1.0), ("D", 1.0), ("F", 1.0), ("G", 1.0)],
-        [("LShift", 1.25), ("LShift", 1.0), ("Z", 1.0), ("X", 1.0), ("C", 1.0), ("V", 1.0), ("B", 1.0)],
-        [("Ctrl", 1.25), ("Win", 1.25), ("Alt", 1.25), ("Fn", 1.0), ("Space", 1.25), ("Space", 1.25)],
+        [("LShift", 1.0), ("LShift", 1.25), ("Z", 1.0), ("X", 1.0), ("C", 1.0), ("V", 1.0), ("B", 1.0)],
+        [("Ctrl", 1.25), ("Fn", 1.25), ("Alt", 1.25), ("Space", 1.75), ("Space", 1.75)],
     ]
     keys: list[Key] = []
     for row_idx, row in enumerate(rows):
@@ -1578,7 +1578,7 @@ def make_board(
 
     variant_label = "" if variant == "soldered" else f" {variant.upper()}"
     layout_name = (
-        "71-key v4 no-stabilizer split layout"
+        "70-key v5 no-stabilizer split layout"
         if variant == "x3-v2"
         else "77-key no-stabilizer split layout"
         if variant == "x3"
@@ -1990,15 +1990,17 @@ def generate_variant(variant: str, output_dir: Path | None = None) -> dict[str, 
         notes.append(f"X3 adds nine {REGISTRATION_HOLE_DIAMETER:g} mm NPTH REG_NPTH_3.0 registration holes per half for a PLA+ rail/capture lower tray, with visible H1-H9 support labels.")
         notes.append(f"X3 uses a {X3_GENERAL_MARGIN:g} mm nominal outer rail land, with 3.6 mm as the verified hard lower bound where local clearance requires it.")
     elif variant == "x3-v2":
+        bottom_join = x3_v2_join_geometry_by_row()[-1]
         notes.append("X3 V2 uses the KC2-owned Choc V2/PG1353 bottom-side hot-swap socket plus Cherry MX 5-pin direct-solder geometry.")
         notes.append("Choc V1 switch geometry, Choc V2 direct-solder pads, and MX hot-swap socket pads are intentionally excluded.")
         notes.append("The Choc socket and MX switch are mutually exclusive assembly options at every key position.")
-        notes.append("X3 V2 uses the fixed 71-key v4 no-stabilizer layout: 32 left keys and 39 right keys, with no key wider than 1.75U.")
+        notes.append("X3 V2 uses the fixed 70-key v5 no-stabilizer layout: 31 left keys and 39 right keys, with no key wider than 1.75U.")
         notes.append(
             f"X3 V2 insets every non-controller key-field edge {X3_V2_KEYCELL_EDGE_INSET:g} mm "
             f"from the nominal switch-cell perimeter. Rows 0-3 use "
             f"{X3_V2_ONE_UNIT_JOIN_CENTER_TO_EDGE:g} mm center-to-edge offsets on both sides; "
-            "bottom Space-B uses 10.40625 mm left / 8.025 mm right."
+            f"bottom Space-B uses {bottom_join['left_center_to_edge_mm']:.5f} mm left / "
+            f"{bottom_join['right_center_to_edge_mm']:.5f} mm right."
         )
         notes.append("X3 V2 contains no legacy H1-H9 or REG1-REG9 key-field through-holes.")
         notes.append("The netless battery-lead slot is at the nice!nano USB/B+ end; insulated B+ and GND/B- leads must use strain relief and remain outside the antenna keepout.")

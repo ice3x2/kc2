@@ -2,7 +2,7 @@
 
 Requirement: `CON-ARCH-006`.
 
-These files are generated only from the current 32-key left and 39-key right
+These files are generated only from the current 31-key left and 39-key right
 draft V2 KiCad boards. They do not reuse the promoted 77-key housing or any
 REG/H registration pattern.
 
@@ -36,7 +36,7 @@ The verified openings cover:
 - Choc V2 socket bodies and solder-fillet envelopes;
 - all switch center and locator NPTH/mechanical-pin continuations;
 - MX electrical pins, pads, solder joints, and lead-trimming access;
-- all 71 SOD-123 diode bodies, pads, and solder fillets;
+- all 70 SOD-123 diode bodies, pads, and solder fillets;
 - nice!nano/controller/reset/service geometry; and
 - battery-lead access.
 

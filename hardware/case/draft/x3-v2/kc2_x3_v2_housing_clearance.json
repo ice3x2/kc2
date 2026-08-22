@@ -7,7 +7,7 @@
     "left": {
       "source_board": "hardware/kicad/draft/x3-v2/kc2_left-x3-v2/kc2_left-x3-v2.kicad_pcb",
       "source_board_sha256_matches": true,
-      "key_count": 32,
+      "key_count": 31,
       "legacy_registration_refs": [],
       "exterior_bottom_z_mm": 0.0,
       "housing_height_mm": 2.5,
@@ -16,9 +16,9 @@
       "pcb_bottom_z_mm": 2.5,
       "maximum_rail_vertical_gap_mm": 0.0,
       "maximum_support_vertical_gap_mm": 0.0,
-      "rail_plan_area_mm2": 292.6501,
+      "rail_plan_area_mm2": 300.9893,
       "rail_plan_area_matches_manifest": true,
-      "rail_segment_count": 6,
+      "rail_segment_count": 5,
       "support_posts": [
         {
           "id": "LEFT-SUP-01",
@@ -47,8 +47,8 @@
         {
           "id": "LEFT-SUP-03",
           "category": "seam",
-          "x_mm": 19.1,
-          "y_mm": 107.581,
+          "x_mm": 16.6,
+          "y_mm": 110.581,
           "diameter_mm": 2.0,
           "bottom_z_mm": 0.0,
           "top_z_mm": 2.5,
@@ -59,13 +59,13 @@
         {
           "id": "LEFT-SUP-04",
           "category": "thumb",
-          "x_mm": 11.9062,
-          "y_mm": 111.225,
+          "x_mm": 18.1687,
+          "y_mm": 107.725,
           "diameter_mm": 2.0,
           "bottom_z_mm": 0.0,
           "top_z_mm": 2.5,
           "nominal_vertical_gap_mm": 0.0,
-          "target_x_mm": 10.4062,
+          "target_x_mm": 15.1687,
           "target_y_mm": 112.725
         },
         {
@@ -83,7 +83,7 @@
         {
           "id": "LEFT-SUP-06",
           "category": "thumb",
-          "x_mm": 123.2062,
+          "x_mm": 125.7062,
           "y_mm": 107.725,
           "diameter_mm": 2.0,
           "bottom_z_mm": 0.0,
@@ -179,8 +179,8 @@
         {
           "id": "LEFT-SUP-14",
           "category": "span",
-          "x_mm": 107.0375,
-          "y_mm": 89.031,
+          "x_mm": 107.5375,
+          "y_mm": 90.531,
           "diameter_mm": 2.0,
           "bottom_z_mm": 0.0,
           "top_z_mm": 2.5,
@@ -198,14 +198,14 @@
       "glue_assumed": false,
       "component_cutouts": {
         "choc_socket_body_fillets": {
-          "opening_count": 32,
+          "opening_count": 31,
           "minimum_xy_clearance_mm": 0.3311,
           "exterior_open": true,
           "through_opening_z_mm": [
             0.0,
             2.5
           ],
-          "opening_plan_area_mm2": 3243.7738,
+          "opening_plan_area_mm2": 3142.4059,
           "minimum_exterior_bottom_clearance_mm": 0.1,
           "official_body_depth_max_mm": 2.3,
           "assembly_allowance_mm": 0.1,
@@ -216,14 +216,14 @@
           "opening_plan_area_matches_manifest": true
         },
         "switch_mechanical_pins": {
-          "opening_count": 32,
+          "opening_count": 31,
           "minimum_xy_clearance_mm": 0.3299,
           "exterior_open": true,
           "through_opening_z_mm": [
             0.0,
             2.5
           ],
-          "opening_plan_area_mm2": 2439.1257,
+          "opening_plan_area_mm2": 2362.903,
           "minimum_exterior_bottom_clearance_mm": null,
           "official_body_depth_max_mm": null,
           "assembly_allowance_mm": null,
@@ -234,14 +234,14 @@
           "opening_plan_area_matches_manifest": true
         },
         "mx_pins_pads_fillets": {
-          "opening_count": 32,
+          "opening_count": 31,
           "minimum_xy_clearance_mm": 0.3311,
           "exterior_open": true,
           "through_opening_z_mm": [
             0.0,
             2.5
           ],
-          "opening_plan_area_mm2": 899.7057,
+          "opening_plan_area_mm2": 871.5899,
           "minimum_exterior_bottom_clearance_mm": null,
           "official_body_depth_max_mm": null,
           "assembly_allowance_mm": null,
@@ -252,14 +252,14 @@
           "opening_plan_area_matches_manifest": true
         },
         "diode_body_pads_fillets": {
-          "opening_count": 32,
+          "opening_count": 31,
           "minimum_xy_clearance_mm": 0.3263,
           "exterior_open": true,
           "through_opening_z_mm": [
             0.0,
             2.5
           ],
-          "opening_plan_area_mm2": 548.6641,
+          "opening_plan_area_mm2": 531.5184,
           "minimum_exterior_bottom_clearance_mm": 0.85,
           "breaks_lateral_housing_perimeter": false,
           "minimum_housing_perimeter_land_mm": 0.9,
@@ -369,10 +369,10 @@
         0.0,
         2.5
       ],
-      "step_volume_mm3": 18045.7318,
-      "planned_step_volume_mm3": 18045.7318,
-      "step_top_contact_area_mm2": 7218.2927,
-      "planned_top_contact_area_mm2": 7218.2927,
+      "step_volume_mm3": 18484.0002,
+      "planned_step_volume_mm3": 18484.0002,
+      "step_top_contact_area_mm2": 7393.6001,
+      "planned_top_contact_area_mm2": 7393.6001,
       "step_top_contact_area_error_mm2": 0.0,
       "step_top_contact_area_matches_plan": true,
       "printable_parts": [

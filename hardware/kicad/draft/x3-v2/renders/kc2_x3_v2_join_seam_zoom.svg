@@ -8,7 +8,7 @@
 <g data-row="1" data-pair="T-Y" data-left-cap-width-mm="18.0500" data-right-cap-width-mm="18.0500" data-center-pitch-mm="19.8500" data-cap-gap-mm="1.8000" data-left-center-to-pcb-edge-mm="8.0250" data-right-center-to-pcb-edge-mm="8.0250" data-pcb-gap-mm="3.8000"/>
 <g data-row="2" data-pair="G-H" data-left-cap-width-mm="18.0500" data-right-cap-width-mm="18.0500" data-center-pitch-mm="19.8500" data-cap-gap-mm="1.8000" data-left-center-to-pcb-edge-mm="8.0250" data-right-center-to-pcb-edge-mm="8.0250" data-pcb-gap-mm="3.8000"/>
 <g data-row="3" data-pair="B-N" data-left-cap-width-mm="18.0500" data-right-cap-width-mm="18.0500" data-center-pitch-mm="19.8500" data-cap-gap-mm="1.8000" data-left-center-to-pcb-edge-mm="8.0250" data-right-center-to-pcb-edge-mm="8.0250" data-pcb-gap-mm="3.8000"/>
-<g data-row="4" data-pair="Space-B" data-left-cap-width-mm="22.8125" data-right-cap-width-mm="18.0500" data-center-pitch-mm="22.2312" data-cap-gap-mm="1.7999" data-left-center-to-pcb-edge-mm="10.4062" data-right-center-to-pcb-edge-mm="8.0250" data-pcb-gap-mm="3.8000"/>
+<g data-row="4" data-pair="Space-B" data-left-cap-width-mm="32.3375" data-right-cap-width-mm="18.0500" data-center-pitch-mm="26.9937" data-cap-gap-mm="1.7999" data-left-center-to-pcb-edge-mm="15.1687" data-right-center-to-pcb-edge-mm="8.0250" data-pcb-gap-mm="3.8000"/>
 </g>
 <line x1="210.70" y1="471.03" x2="237.30" y2="471.03" stroke="#d33b2f" stroke-width="2"/>
 <line x1="210.70" y1="462.62" x2="210.70" y2="479.43" stroke="#d33b2f" stroke-width="2"/>
@@ -267,7 +267,7 @@
 <text x="21.18" y="474.49" text-anchor="middle" font-family="Arial" font-size="10" fill="#101010">R</text>
 <rect x="91.35" y="407.85" width="126.35" height="126.35" rx="2" ry="2" fill="#e9fff4" stroke="#2a8d66" stroke-width="1"/>
 <text x="154.53" y="474.49" text-anchor="middle" font-family="Arial" font-size="10" fill="#101010">T</text>
-<rect x="-642.07" y="541.20" width="226.36" height="126.35" rx="2" ry="2" fill="#e9fff4" stroke="#2a8d66" stroke-width="1"/>
+<rect x="-642.08" y="541.20" width="226.36" height="126.35" rx="2" ry="2" fill="#e9fff4" stroke="#2a8d66" stroke-width="1"/>
 <text x="-528.89" y="607.84" text-anchor="middle" font-family="Arial" font-size="10" fill="#101010">Caps</text>
 <rect x="-408.71" y="541.20" width="126.35" height="126.35" rx="2" ry="2" fill="#e9fff4" stroke="#2a8d66" stroke-width="1"/>
 <text x="-345.54" y="607.84" text-anchor="middle" font-family="Arial" font-size="10" fill="#101010">A</text>
@@ -279,10 +279,10 @@
 <text x="54.51" y="607.84" text-anchor="middle" font-family="Arial" font-size="10" fill="#101010">F</text>
 <rect x="124.69" y="541.20" width="126.35" height="126.35" rx="2" ry="2" fill="#e9fff4" stroke="#2a8d66" stroke-width="1"/>
 <text x="187.86" y="607.84" text-anchor="middle" font-family="Arial" font-size="10" fill="#101010">G</text>
-<rect x="-642.07" y="674.55" width="159.69" height="126.35" rx="2" ry="2" fill="#e9fff4" stroke="#2a8d66" stroke-width="1"/>
-<text x="-562.23" y="741.19" text-anchor="middle" font-family="Arial" font-size="10" fill="#101010">LShift</text>
-<rect x="-475.39" y="674.55" width="126.35" height="126.35" rx="2" ry="2" fill="#e9fff4" stroke="#2a8d66" stroke-width="1"/>
-<text x="-412.21" y="741.19" text-anchor="middle" font-family="Arial" font-size="10" fill="#101010">LShift</text>
+<rect x="-642.07" y="674.55" width="126.35" height="126.35" rx="2" ry="2" fill="#e9fff4" stroke="#2a8d66" stroke-width="1"/>
+<text x="-578.90" y="741.19" text-anchor="middle" font-family="Arial" font-size="10" fill="#101010">LShift</text>
+<rect x="-508.72" y="674.55" width="159.69" height="126.35" rx="2" ry="2" fill="#e9fff4" stroke="#2a8d66" stroke-width="1"/>
+<text x="-428.88" y="741.19" text-anchor="middle" font-family="Arial" font-size="10" fill="#101010">LShift</text>
 <rect x="-342.04" y="674.55" width="126.35" height="126.35" rx="2" ry="2" fill="#e9fff4" stroke="#2a8d66" stroke-width="1"/>
 <text x="-278.86" y="741.19" text-anchor="middle" font-family="Arial" font-size="10" fill="#101010">Z</text>
 <rect x="-208.69" y="674.55" width="126.35" height="126.35" rx="2" ry="2" fill="#e9fff4" stroke="#2a8d66" stroke-width="1"/>
@@ -296,15 +296,13 @@
 <rect x="-642.07" y="807.90" width="159.69" height="126.35" rx="2" ry="2" fill="#e9fff4" stroke="#2a8d66" stroke-width="1"/>
 <text x="-562.23" y="874.53" text-anchor="middle" font-family="Arial" font-size="10" fill="#101010">Ctrl</text>
 <rect x="-475.39" y="807.90" width="159.69" height="126.35" rx="2" ry="2" fill="#e9fff4" stroke="#2a8d66" stroke-width="1"/>
-<text x="-395.54" y="874.53" text-anchor="middle" font-family="Arial" font-size="10" fill="#101010">Win</text>
+<text x="-395.54" y="874.53" text-anchor="middle" font-family="Arial" font-size="10" fill="#101010">Fn</text>
 <rect x="-308.70" y="807.90" width="159.69" height="126.35" rx="2" ry="2" fill="#e9fff4" stroke="#2a8d66" stroke-width="1"/>
 <text x="-228.86" y="874.53" text-anchor="middle" font-family="Arial" font-size="10" fill="#101010">Alt</text>
-<rect x="-142.01" y="807.90" width="126.35" height="126.35" rx="2" ry="2" fill="#e9fff4" stroke="#2a8d66" stroke-width="1"/>
-<text x="-78.84" y="874.53" text-anchor="middle" font-family="Arial" font-size="10" fill="#101010">Fn</text>
-<rect x="-8.66" y="807.90" width="159.69" height="126.35" rx="2" ry="2" fill="#e9fff4" stroke="#2a8d66" stroke-width="1"/>
-<text x="71.18" y="874.53" text-anchor="middle" font-family="Arial" font-size="10" fill="#101010">Space</text>
-<rect x="158.03" y="807.90" width="159.69" height="126.35" rx="2" ry="2" fill="#e9fff4" stroke="#2a8d66" stroke-width="1"/>
-<text x="237.87" y="874.53" text-anchor="middle" font-family="Arial" font-size="10" fill="#101010">Space</text>
+<rect x="-142.01" y="807.90" width="226.36" height="126.35" rx="2" ry="2" fill="#e9fff4" stroke="#2a8d66" stroke-width="1"/>
+<text x="-28.83" y="874.53" text-anchor="middle" font-family="Arial" font-size="10" fill="#101010">Space</text>
+<rect x="91.35" y="807.90" width="226.36" height="126.35" rx="2" ry="2" fill="#e9fff4" stroke="#2a8d66" stroke-width="1"/>
+<text x="204.53" y="874.53" text-anchor="middle" font-family="Arial" font-size="10" fill="#101010">Space</text>
 <rect x="-55.18" y="78.36" width="208.18" height="119.28" fill="none" stroke="#252525" stroke-width="1.5" stroke-dasharray="4 3"/>
 <text x="48.91" y="72.76" text-anchor="middle" font-family="Arial" font-size="9" fill="#222">U1</text>
 <rect x="296.97" y="274.50" width="126.35" height="126.35" rx="2" ry="2" fill="#eef5ff" stroke="#467cc0" stroke-width="1"/>

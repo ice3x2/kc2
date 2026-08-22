@@ -36,8 +36,8 @@ EXPECTED_FILE_FUNCTIONS = {
 }
 EXPECTED_FIXED_DRILL_TOOLS = {
     "left": {
-        "PTH": {"0.950": 24, "1.500": 64},
-        "NPTH": {"1.650": 32, "1.700": 64, "2.200": 1, "3.000": 64, "5.000": 32},
+        "PTH": {"0.950": 24, "1.500": 62},
+        "NPTH": {"1.650": 31, "1.700": 62, "2.200": 1, "3.000": 62, "5.000": 31},
     },
     "right": {
         "PTH": {"0.950": 24, "1.500": 78},
@@ -48,8 +48,8 @@ EXPECTED_FIXED_DRILL_TOOLS = {
         "NPTH": {"1.650": 3, "1.700": 6, "3.000": 6, "5.000": 3},
     },
 }
-EXPECTED_BOTTOM_PASTE_FLASHES = {"left": 128, "right": 156, "coupon": 12}
-EXPECTED_KEY_COUNTS = {"left": 32, "right": 39, "coupon": 3}
+EXPECTED_BOTTOM_PASTE_FLASHES = {"left": 124, "right": 156, "coupon": 12}
+EXPECTED_KEY_COUNTS = {"left": 31, "right": 39, "coupon": 3}
 GERBER_OPERATION_RE = re.compile(r"(?:X-?\d+)?(?:Y-?\d+)?D0[123]\*")
 
 

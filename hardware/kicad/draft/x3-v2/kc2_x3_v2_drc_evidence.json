@@ -1,0 +1,38 @@
+{
+  "requirement_ids": [
+    "CON-ARCH-004",
+    "CON-ARCH-006"
+  ],
+  "variant": "x3-v2",
+  "status": "draft_not_orderable_pending_physical_evidence",
+  "boards": {
+    "left": {
+      "board_path": "hardware/kicad/draft/x3-v2/kc2_left-x3-v2/kc2_left-x3-v2.kicad_pcb",
+      "board_sha256": "f534bee5754d9f272baa068408afaff45fed382d7b55f2775ea807ef782e7699",
+      "drc_report_path": "hardware/kicad/draft/x3-v2/kc2_left-x3-v2/kc2_left-x3-v2.drc.json",
+      "drc_report_sha256": "7f732083149ac1e2a53ef83f4ff44dfb28fc6fbb1ad66453c0bfdbaa4f93aaac",
+      "schema": "https://schemas.kicad.org/drc.v1.json",
+      "source": "kc2_left-x3-v2.kicad_pcb",
+      "kicad_version": "10.0.3",
+      "date": "2026-08-22T16:45:12",
+      "included_severities": [
+        "error",
+        "warning"
+      ]
+    },
+    "right": {
+      "board_path": "hardware/kicad/draft/x3-v2/kc2_right-x3-v2/kc2_right-x3-v2.kicad_pcb",
+      "board_sha256": "b9237f778c282699e6967c69f5c7ec97e892bd8bae0d74adb3c990f1c48dbf1d",
+      "drc_report_path": "hardware/kicad/draft/x3-v2/kc2_right-x3-v2/kc2_right-x3-v2.drc.json",
+      "drc_report_sha256": "43bcda7070ccb3cd7e156390aedce416ff0ad404948987e05c2b8e24bce80052",
+      "schema": "https://schemas.kicad.org/drc.v1.json",
+      "source": "kc2_right-x3-v2.kicad_pcb",
+      "kicad_version": "10.0.3",
+      "date": "2026-08-22T16:55:29",
+      "included_severities": [
+        "error",
+        "warning"
+      ]
+    }
+  }
+}

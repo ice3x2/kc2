@@ -8,12 +8,11 @@
       "outer_cap_relative_setback_by_row_mm": [
         1.0,
         1.0,
-        0.9999,
-        0.9999,
+        1.0001,
+        1.0,
         0.9999
       ],
       "top_bottom_setback_mm": [
-        1.0,
         1.0,
         1.0,
         1.0,
@@ -36,8 +35,8 @@
             "reset/service access"
           ],
           "controller_span_mm": [
-            118.8425,
-            148.5825
+            117.8425,
+            147.5825
           ]
         },
         {
@@ -50,8 +49,8 @@
             "reset/service access"
           ],
           "controller_span_mm": [
-            118.8425,
-            148.5825
+            117.8425,
+            147.5825
           ]
         }
       ],
@@ -186,11 +185,11 @@
       "row": 4,
       "left_key": "Space",
       "right_key": "B",
-      "left_cap_width_mm": 22.8125,
+      "left_cap_width_mm": 32.3375,
       "right_cap_width_mm": 18.05,
-      "center_pitch_mm": 22.2312,
+      "center_pitch_mm": 26.9937,
       "cap_gap_mm": 1.7999,
-      "left_center_to_pcb_edge_mm": 10.4062,
+      "left_center_to_pcb_edge_mm": 15.1687,
       "right_center_to_pcb_edge_mm": 8.025,
       "pcb_gap_mm": 3.8
     }

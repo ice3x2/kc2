@@ -1,10 +1,13 @@
 from __future__ import annotations
 
+import hashlib
+import json
 import unittest
 import shutil
 import struct
 import subprocess
 import sys
+from collections import Counter
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
@@ -22,6 +25,8 @@ V2_ROOT = ROOT / "hardware" / "kicad" / "draft" / "x3-v2"
 LEFT_BOARD = V2_ROOT / "kc2_left-x3-v2" / "kc2_left-x3-v2.kicad_pcb"
 RIGHT_BOARD = V2_ROOT / "kc2_right-x3-v2" / "kc2_right-x3-v2.kicad_pcb"
 MANIFEST = V2_ROOT / "kc2_x3_v2_generation_manifest.json"
+DRC_EVIDENCE = V2_ROOT / "kc2_x3_v2_drc_evidence.json"
+PRODUCT_SPEC = ROOT / "docs/spec.md"
 
 
 class V2FootprintTests(unittest.TestCase):
@@ -61,24 +66,36 @@ class V2FootprintTests(unittest.TestCase):
 
 
 class V2GeneratorTests(unittest.TestCase):
-    def test_generator_uses_the_fixed_71_key_v4_layout(self) -> None:
+    def test_generator_uses_the_fixed_70_key_v5_layout(self) -> None:
         from tools import generate_kc2_pcbs as generator
 
         left = generator.make_left_keys_x3_v2()
         right = generator.make_right_keys_x3_v2()
 
-        self.assertEqual((len(left), len(right)), (32, 39))
+        self.assertEqual((len(left), len(right)), (31, 39))
+        self.assertEqual(
+            [(key.label, key.w_u) for key in left if key.row == 3],
+            [
+                ("LShift", 1.0),
+                ("LShift", 1.25),
+                ("Z", 1.0),
+                ("X", 1.0),
+                ("C", 1.0),
+                ("V", 1.0),
+                ("B", 1.0),
+            ],
+        )
         self.assertEqual(
             [(key.label, key.w_u) for key in left if key.row == 4],
             [
                 ("Ctrl", 1.25),
-                ("Win", 1.25),
+                ("Fn", 1.25),
                 ("Alt", 1.25),
-                ("Fn", 1.0),
-                ("Space", 1.25),
-                ("Space", 1.25),
+                ("Space", 1.75),
+                ("Space", 1.75),
             ],
         )
+        self.assertNotIn("Win", [key.label for key in left])
         self.assertEqual(
             [[(key.label, key.w_u) for key in right if key.row == row] for row in range(5)],
             [
@@ -238,7 +255,7 @@ class V2GeneratorTests(unittest.TestCase):
 
         context = build_context(ROOT, 1.0, 5.0, "key-pitch", variant="x3-v2")
 
-        self.assertEqual((len(context.left.keys), len(context.right.keys)), (32, 39))
+        self.assertEqual((len(context.left.keys), len(context.right.keys)), (31, 39))
         self.assertEqual(context.key_horizontal_clearance.left_label, "6")
         self.assertEqual(context.key_horizontal_clearance.right_label, "7")
         self.assertAlmostEqual(
@@ -256,7 +273,7 @@ class V2GeneratorTests(unittest.TestCase):
             (1, "T", "Y", 18.05, 18.05, 19.85, 8.025, 8.025),
             (2, "G", "H", 18.05, 18.05, 19.85, 8.025, 8.025),
             (3, "B", "N", 18.05, 18.05, 19.85, 8.025, 8.025),
-            (4, "Space", "B", 22.8125, 18.05, 22.23125, 10.40625, 8.025),
+            (4, "Space", "B", 32.3375, 18.05, 26.9937, 15.1687, 8.025),
         ]
         self.assertEqual(len(context.seam_key_clearances), len(expected_pairs))
         for clearance, expected in zip(context.seam_key_clearances, expected_pairs):
@@ -400,8 +417,8 @@ class V2GeneratorTests(unittest.TestCase):
             [(pair["left_key"], pair["right_key"]) for pair in report["cross_seam_pairs"]],
             [("6", "7"), ("T", "Y"), ("G", "H"), ("B", "N"), ("Space", "B")],
         )
-        self.assertEqual(report["cross_seam_pairs"][4]["left_cap_width_mm"], 22.8125)
-        self.assertEqual(report["cross_seam_pairs"][4]["left_center_to_pcb_edge_mm"], 10.4062)
+        self.assertEqual(report["cross_seam_pairs"][4]["left_cap_width_mm"], 32.3375)
+        self.assertEqual(report["cross_seam_pairs"][4]["left_center_to_pcb_edge_mm"], 15.1687)
         for pair in report["cross_seam_pairs"]:
             self.assertAlmostEqual(pair["cap_gap_mm"], 1.8, places=3)
             self.assertAlmostEqual(pair["pcb_gap_mm"], 3.8, places=3)
@@ -437,7 +454,9 @@ class V2GeneratorTests(unittest.TestCase):
         self.assertIn("`19.85 mm` one-unit seam pitch", layout_spec)
         self.assertIn("`1.80 mm` nominal gap", layout_spec)
         self.assertIn("`3.80 mm` nominal joined PCB gap", layout_spec)
-        self.assertIn("`22.8125 mm` / `18.05 mm`", layout_spec)
+        self.assertIn("`32.3375 mm` / `18.05 mm`", layout_spec)
+        self.assertIn("fixed 70-key v5 layout", layout_spec)
+        self.assertIn("Pressing the left Fn and left Alt positions within a `50 ms` combo timeout produces Win/LGUI", product_srs)
         self.assertNotIn("nominal `19.05 mm` one-unit pitch", layout_spec)
         self.assertNotIn("same `18.05 mm` MX-envelope keycaps", product_srs)
         self.assertNotIn("each row-center seam edge is 8.025 mm", product_srs)
@@ -455,7 +474,9 @@ class V2GeneratorTests(unittest.TestCase):
             self.assertTrue((output_dir / "kc2_left-x3-v2" / "kc2_left-x3-v2.kicad_pcb").is_file())
             self.assertTrue((output_dir / "kc2_right-x3-v2" / "kc2_right-x3-v2.kicad_pcb").is_file())
             self.assertEqual(manifest["variant"], "x3-v2")
-            self.assertEqual(manifest["key_count"], {"left": 32, "right": 39, "total": 71})
+            self.assertEqual(manifest["key_count"], {"left": 31, "right": 39, "total": 70})
+            self.assertTrue(any("15.16875 mm left / 8.02500 mm right" in note for note in manifest["notes"]))
+            self.assertFalse(any("10.40625 mm left" in note for note in manifest["notes"]))
             self.assertEqual(manifest["keycell_edge_inset_mm"], 1.5)
             self.assertEqual(manifest["one_unit_join_center_to_edge_mm"], 8.025)
             self.assertEqual(
@@ -465,7 +486,7 @@ class V2GeneratorTests(unittest.TestCase):
                     {"row": 1, "left_key": "T", "right_key": "Y", "left_cap_width_mm": 18.05, "right_cap_width_mm": 18.05, "left_center_to_edge_mm": 8.025, "right_center_to_edge_mm": 8.025, "center_pitch_mm": 19.85, "cap_gap_mm": 1.8, "pcb_gap_mm": 3.8},
                     {"row": 2, "left_key": "G", "right_key": "H", "left_cap_width_mm": 18.05, "right_cap_width_mm": 18.05, "left_center_to_edge_mm": 8.025, "right_center_to_edge_mm": 8.025, "center_pitch_mm": 19.85, "cap_gap_mm": 1.8, "pcb_gap_mm": 3.8},
                     {"row": 3, "left_key": "B", "right_key": "N", "left_cap_width_mm": 18.05, "right_cap_width_mm": 18.05, "left_center_to_edge_mm": 8.025, "right_center_to_edge_mm": 8.025, "center_pitch_mm": 19.85, "cap_gap_mm": 1.8, "pcb_gap_mm": 3.8},
-                    {"row": 4, "left_key": "Space", "right_key": "B", "left_cap_width_mm": 22.8125, "right_cap_width_mm": 18.05, "left_center_to_edge_mm": 10.40625, "right_center_to_edge_mm": 8.025, "center_pitch_mm": 22.23125, "cap_gap_mm": 1.8, "pcb_gap_mm": 3.8},
+                    {"row": 4, "left_key": "Space", "right_key": "B", "left_cap_width_mm": 32.3375, "right_cap_width_mm": 18.05, "left_center_to_edge_mm": 15.16875, "right_center_to_edge_mm": 8.025, "center_pitch_mm": 26.99375, "cap_gap_mm": 1.8, "pcb_gap_mm": 3.8},
                 ],
             )
             self.assertEqual(manifest["join_keycap_gap_mm"], 1.8)
@@ -596,7 +617,7 @@ class V2GeneratorTests(unittest.TestCase):
 
     def test_generated_boards_preserve_x3_and_dual_contact_invariants(self) -> None:
         for side, board_path, expected_keys in (
-            ("left", LEFT_BOARD, 32),
+            ("left", LEFT_BOARD, 31),
             ("right", RIGHT_BOARD, 39),
         ):
             with self.subTest(side=side):
@@ -639,6 +660,9 @@ class V2GeneratorTests(unittest.TestCase):
                 self.assertTrue(
                     any("CHOC V1 UNSUPPORTED" in text.upper() for text in report["board_text"])
                 )
+                identity_text = " ".join(report["board_text"]).upper()
+                self.assertIn("70-KEY V5 NO-STABILIZER SPLIT LAYOUT", identity_text)
+                self.assertNotIn("71-KEY V4 NO-STABILIZER SPLIT LAYOUT", identity_text)
                 self.assertEqual(report["drc_violation_count"], 0)
                 self.assertEqual(report["drc_unconnected_count"], 0)
                 self.assertEqual(
@@ -730,7 +754,7 @@ class V2GeneratorTests(unittest.TestCase):
     def test_manifest_identifies_mutually_exclusive_v2_modes(self) -> None:
         report = analyze_v2_manifest(MANIFEST)
         self.assertEqual(report["variant"], "x3-v2")
-        self.assertEqual(report["key_count"], {"left": 32, "right": 39, "total": 71})
+        self.assertEqual(report["key_count"], {"left": 31, "right": 39, "total": 70})
         self.assertEqual(report["max_key_width_u"], 1.75)
         self.assertEqual(report["keycell_edge_inset_mm"], 1.5)
         self.assertEqual(report["one_unit_join_center_to_edge_mm"], 8.025)
@@ -811,10 +835,13 @@ class V2GeneratorTests(unittest.TestCase):
             self.assertEqual(first["v2_key_labels_moved_to_fab"], 0)
             self.assertEqual(second, first)
 
-    def test_left_controller_column_snapshot_repairs_and_is_idempotent(self) -> None:
+    def test_left_v5_route_session_reconstructs_exactly_and_is_idempotent(self) -> None:
         import pcbnew
 
-        from tools.finalize_kc2_x3_v2_routes import restore_left_controller_columns
+        from tools.finalize_kc2_x3_v2_routes import (
+            _route_signature,
+            import_reviewed_left_v5_session,
+        )
         from tools.verify_kc2_connectivity import verify_board as verify_connectivity
 
         with TemporaryDirectory(dir=ROOT) as temporary:
@@ -822,54 +849,226 @@ class V2GeneratorTests(unittest.TestCase):
             board = pcbnew.LoadBoard(str(LEFT_BOARD))
             for item in list(board.GetTracks()):
                 board.Delete(item)
-            self.assertTrue(
-                pcbnew.ImportSpecctraSES(
-                    board,
-                    str(
-                        ROOT
-                        / "hardware/kicad/draft/x3-v2/autoroute/kc2_left-x3-v2-71-r14.ses"
-                    ),
-                )
+            session = (
+                ROOT
+                / "hardware/kicad/draft/x3-v2/autoroute/kc2_left-x3-v2-70-v5-r1.ses"
             )
 
-            first = restore_left_controller_columns(board)
-            second = restore_left_controller_columns(board)
+            first = import_reviewed_left_v5_session(board, session)
+            second = import_reviewed_left_v5_session(board, session)
             pcbnew.SaveBoard(str(copy), board)
 
             self.assertGreater(first["track_and_via_items_added"], 0)
             self.assertEqual(second["track_and_via_items_added"], 0)
             self.assertEqual(verify_connectivity(copy), [])
+            self.assertEqual(
+                Counter(_route_signature(item) for item in board.GetTracks()),
+                Counter(_route_signature(item) for item in pcbnew.LoadBoard(str(LEFT_BOARD)).GetTracks()),
+            )
 
-    def test_left_col6_bridge_requires_the_reviewed_endpoint_geometry(self) -> None:
+    def test_right_r12_route_session_reconstructs_exactly_and_is_idempotent(self) -> None:
         import pcbnew
 
-        from tools.bridge_kc2_x3_v2_left_col6 import bridge_left_col6
+        from tools.finalize_kc2_x3_v2_routes import (
+            _route_signature,
+            import_reviewed_right_r12_session,
+        )
+        from tools.verify_kc2_connectivity import verify_board as verify_connectivity
 
         with TemporaryDirectory(dir=ROOT) as temporary:
-            copy = Path(temporary) / "kc2_left-x3-v2.kicad_pcb"
-            shutil.copy2(LEFT_BOARD, copy)
-            board = pcbnew.LoadBoard(str(copy))
-            switch = board.FindFootprintByReference("SW7")
-            self.assertIsNotNone(switch)
-            switch.Move(pcbnew.VECTOR2I(pcbnew.FromMM(0.1), 0))
+            copy = Path(temporary) / "kc2_right-x3-v2.kicad_pcb"
+            board = pcbnew.LoadBoard(str(RIGHT_BOARD))
+            for item in list(board.GetTracks()):
+                board.Delete(item)
+            session = V2_ROOT / "autoroute/kc2_right-x3-v2-71-r12.ses"
+
+            first = import_reviewed_right_r12_session(board, session)
+            second = import_reviewed_right_r12_session(board, session)
             pcbnew.SaveBoard(str(copy), board)
 
-            with self.assertRaisesRegex(RuntimeError, "reviewed L_COL6 endpoint"):
-                bridge_left_col6(copy, backup_dir=Path(temporary) / "backup")
+            self.assertEqual(first["imported_track_and_via_items"], 715)
+            self.assertEqual(first["reviewed_extras_removed"], 18)
+            self.assertEqual(first["final_track_and_via_items"], 697)
+            self.assertEqual(
+                second,
+                {
+                    "imported_track_and_via_items": 0,
+                    "reviewed_extras_removed": 0,
+                    "final_track_and_via_items": 697,
+                },
+            )
+            self.assertEqual(verify_connectivity(copy), [])
+            self.assertEqual(
+                Counter(_route_signature(item) for item in board.GetTracks()),
+                Counter(_route_signature(item) for item in pcbnew.LoadBoard(str(RIGHT_BOARD)).GetTracks()),
+            )
 
-    def test_left_col6_bridge_is_idempotent_on_the_reviewed_route(self) -> None:
-        from tools.bridge_kc2_x3_v2_left_col6 import bridge_left_col6
+    def test_right_r12_route_import_rejects_partial_and_wrong_geometry(self) -> None:
+        import pcbnew
+
+        from tools.finalize_kc2_x3_v2_routes import import_reviewed_right_r12_session
+
+        session = V2_ROOT / "autoroute/kc2_right-x3-v2-71-r12.ses"
+        partial = pcbnew.LoadBoard(str(RIGHT_BOARD))
+        partial.Delete(next(iter(partial.GetTracks())))
+        with self.assertRaisesRegex(RuntimeError, "nonempty.*exact reviewed right route"):
+            import_reviewed_right_r12_session(partial, session)
+
+        wrong_geometry = pcbnew.LoadBoard(str(RIGHT_BOARD))
+        for item in list(wrong_geometry.GetTracks()):
+            wrong_geometry.Delete(item)
+        switch = wrong_geometry.FindFootprintByReference("SW1")
+        switch.SetPosition(switch.GetPosition() + pcbnew.VECTOR2I(pcbnew.FromMM(0.1), 0))
+        with self.assertRaisesRegex(RuntimeError, "right r12 switch geometry mismatch"):
+            import_reviewed_right_r12_session(wrong_geometry, session)
 
         with TemporaryDirectory(dir=ROOT) as temporary:
-            copy = Path(temporary) / "kc2_left-x3-v2.kicad_pcb"
-            shutil.copy2(LEFT_BOARD, copy)
-            backup = Path(temporary) / "backup"
+            stale_session = Path(temporary) / session.name
+            source = session.read_text(encoding="utf-8")
+            stale_session.write_text(
+                source.replace("793776 -875840", "793776 -875830", 1),
+                encoding="utf-8",
+            )
+            self.assertNotEqual(stale_session.read_bytes(), session.read_bytes())
+            stale_board = pcbnew.LoadBoard(str(RIGHT_BOARD))
+            for item in list(stale_board.GetTracks()):
+                stale_board.Delete(item)
+            with self.assertRaisesRegex(RuntimeError, "reviewed right r12"):
+                import_reviewed_right_r12_session(stale_board, stale_session)
 
-            first = bridge_left_col6(copy, backup_dir=backup)
-            second = bridge_left_col6(copy, backup_dir=backup)
+    def test_drc_evidence_binds_current_boards_and_reports(self) -> None:
+        from tools.verify_kc2_x3_v2 import build_drc_evidence
 
-            self.assertEqual(first["track_and_via_items_added"], 0)
-            self.assertEqual(second["track_and_via_items_added"], 0)
+        evidence = json.loads(DRC_EVIDENCE.read_text(encoding="utf-8"))
+        self.assertEqual(evidence, build_drc_evidence())
+        self.assertEqual(evidence["requirement_ids"], ["CON-ARCH-004", "CON-ARCH-006"])
+        self.assertEqual(evidence["variant"], "x3-v2")
+        self.assertEqual(set(evidence["boards"]), {"left", "right"})
+        for side, board in (("left", LEFT_BOARD), ("right", RIGHT_BOARD)):
+            record = evidence["boards"][side]
+            report = board.with_suffix(".drc.json")
+            parsed = json.loads(report.read_text(encoding="utf-8"))
+            self.assertEqual(record["board_sha256"], hashlib.sha256(board.read_bytes()).hexdigest())
+            self.assertEqual(record["drc_report_sha256"], hashlib.sha256(report.read_bytes()).hexdigest())
+            self.assertEqual(record["schema"], parsed["$schema"])
+            self.assertEqual(record["source"], parsed["source"])
+            self.assertEqual(record["kicad_version"], parsed["kicad_version"])
+            self.assertEqual(record["date"], parsed["date"])
+            self.assertEqual(record["included_severities"], parsed["included_severities"])
+
+    def test_product_spec_uses_current_70_key_v5_quantities(self) -> None:
+        product_spec = PRODUCT_SPEC.read_text(encoding="utf-8")
+
+        current_claims = (
+            "implemented draft `kc2-x3-v2`는 `CON-ARCH-004`의 70-key v5 배열(왼쪽 31, 오른쪽 39)",
+            "70 for implemented draft `kc2-x3-v2` under `CON-ARCH-004` (31 left / 39 right)",
+            "current X3 V2 v5 rows 15 / 14 / 14 / 15 / 12",
+            "implemented draft `kc2-x3-v2` uses the same SOD-123 diode at each of its 70 positions",
+            "implemented draft `kc2-x3-v2`는 `CON-ARCH-004` switch footprint와 SOD-123 diode 70개",
+            "| KC2 X3 V2 target switch | Kailh Deep Sea Whale low-profile Choc V2 / PG1353-class, 70개.",
+            "| KC2 X3 V2 socket | Kailh Choc hot-swap socket `CPG135001S30` class, 70개",
+            "| KC2 X3 V2 MX alternative | Cherry MX-style 5-pin PCB-mount switches, 70개",
+        )
+        for claim in current_claims:
+            self.assertIn(claim, product_spec)
+
+        stale_current_claims = (
+            "implemented draft `kc2-x3-v2`는 `CON-ARCH-004`의 71-key v4",
+            "implemented draft `kc2-x3-v2` 71-key v4",
+            "71 for implemented draft `kc2-x3-v2` under `CON-ARCH-004` (32 left / 39 right)",
+            "current X3 V2 v4 rows 15 / 14 / 14 / 15 / 13",
+            "implemented draft `kc2-x3-v2` uses the same SOD-123 diode at each of its 71 positions",
+            "implemented draft `kc2-x3-v2`는 `CON-ARCH-004` switch footprint와 SOD-123 diode 71개",
+        )
+        for stale_claim in stale_current_claims:
+            self.assertNotIn(stale_claim, product_spec)
+
+    def test_drc_evidence_rejects_self_consistent_invalid_metadata(self) -> None:
+        from tools.verify_kc2_x3_v2 import (
+            build_drc_evidence,
+            verify_drc_evidence_binding,
+        )
+
+        mutations = (
+            ("kicad_version", "9.0.6", "KiCad DRC version must be 10.x"),
+            ("date", "not-an-iso-timestamp", "KiCad DRC date is not a valid ISO timestamp"),
+            ("included_severities", ["error"], "KiCad DRC included_severities must contain error and warning"),
+            (
+                "included_severities",
+                ["error", "warning", "info"],
+                "KiCad DRC included_severities contains an unsupported value",
+            ),
+        )
+        for field, value, expected_error in mutations:
+            with self.subTest(field=field), TemporaryDirectory(dir=ROOT) as temporary:
+                temp = Path(temporary)
+                board = temp / LEFT_BOARD.name
+                report_path = board.with_suffix(".drc.json")
+                shutil.copy2(LEFT_BOARD, board)
+                report = json.loads(LEFT_BOARD.with_suffix(".drc.json").read_text(encoding="utf-8"))
+                report[field] = value
+                report_path.write_text(json.dumps(report, indent=4) + "\n", encoding="utf-8")
+                evidence = build_drc_evidence((board,))
+
+                errors, _record = verify_drc_evidence_binding(board, "left", evidence)
+
+                self.assertIn(f"left: {expected_error}", errors)
+
+    def test_drc_evidence_writer_is_reproducible(self) -> None:
+        from tools.generate_kc2_x3_v2_drc_evidence import write_drc_evidence
+
+        with TemporaryDirectory(dir=ROOT) as temporary:
+            output = Path(temporary) / "drc-evidence.json"
+            first = write_drc_evidence(output)
+            first_bytes = output.read_bytes()
+            second = write_drc_evidence(output)
+
+            self.assertEqual(first, second)
+            self.assertEqual(output.read_bytes(), first_bytes)
+            self.assertEqual(first, json.loads(DRC_EVIDENCE.read_text(encoding="utf-8")))
+
+    def test_release_verifier_rejects_mutated_board_with_stale_drc_evidence(self) -> None:
+        with TemporaryDirectory(dir=ROOT) as temporary:
+            temp = Path(temporary)
+            boards = []
+            for source in (LEFT_BOARD, RIGHT_BOARD):
+                board = temp / source.name
+                report = board.with_suffix(".drc.json")
+                shutil.copy2(source, board)
+                shutil.copy2(source.with_suffix(".drc.json"), report)
+                boards.append(board)
+            boards[0].write_bytes(boards[0].read_bytes() + b"\n")
+
+            report = verify_v2_release_candidate(
+                footprint_path=FOOTPRINT,
+                board_paths=boards,
+                manifest_path=MANIFEST,
+                drc_evidence_path=DRC_EVIDENCE,
+            )
+
+            self.assertIn("left: DRC evidence board SHA-256 mismatch", report["errors"])
+
+    def test_release_verifier_rejects_mutated_drc_report_with_stale_evidence(self) -> None:
+        with TemporaryDirectory(dir=ROOT) as temporary:
+            temp = Path(temporary)
+            boards = []
+            for source in (LEFT_BOARD, RIGHT_BOARD):
+                board = temp / source.name
+                report = board.with_suffix(".drc.json")
+                shutil.copy2(source, board)
+                shutil.copy2(source.with_suffix(".drc.json"), report)
+                boards.append(board)
+            reports = [board.with_suffix(".drc.json") for board in boards]
+            reports[1].write_bytes(reports[1].read_bytes() + b"\n")
+
+            report = verify_v2_release_candidate(
+                footprint_path=FOOTPRINT,
+                board_paths=boards,
+                manifest_path=MANIFEST,
+                drc_evidence_path=DRC_EVIDENCE,
+            )
+
+            self.assertIn("right: DRC evidence report SHA-256 mismatch", report["errors"])
 
 
 if __name__ == "__main__":

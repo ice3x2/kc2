@@ -1,4 +1,4 @@
-"""Verify the isolated KC2 X3 V2 ZMK shield against the 71-key KiCad boards.
+"""Verify the isolated KC2 X3 V2 ZMK shield against the 70-key KiCad boards.
 
 Requirement: CON-ARCH-004 AC-5 and AC-7.
 """
@@ -6,22 +6,74 @@ Requirement: CON-ARCH-004 AC-5 and AC-7.
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import os
 from pathlib import Path
 import re
+import struct
 import subprocess
 import sys
-from typing import Iterable
+from typing import Iterable, Mapping
 
 
 ROOT = Path(__file__).resolve().parents[1]
 SHIELD_DIR = ROOT / "firmware" / "kc2_zmk" / "boards" / "shields" / "kc2_x3_v2"
+BUILD_EVIDENCE_PATH = SHIELD_DIR / "kc2_x3_v2_build_evidence.json"
+BUILD_SOURCE_PATHS = (
+    Path("firmware/kc2_zmk/zephyr/module.yml"),
+    Path("firmware/kc2_zmk/boards/shields/kc2_x3_v2/CMakeLists.txt"),
+    Path("firmware/kc2_zmk/boards/shields/kc2_x3_v2/Kconfig.defconfig"),
+    Path("firmware/kc2_zmk/boards/shields/kc2_x3_v2/Kconfig.shield"),
+    Path("firmware/kc2_zmk/boards/shields/kc2_x3_v2/kc2_x3_v2.dtsi"),
+    Path("firmware/kc2_zmk/boards/shields/kc2_x3_v2/kc2_x3_v2.keymap"),
+    Path("firmware/kc2_zmk/boards/shields/kc2_x3_v2/kc2_x3_v2_left.overlay"),
+    Path("firmware/kc2_zmk/boards/shields/kc2_x3_v2/kc2_x3_v2_right.overlay"),
+)
+BUILD_METADATA_PATHS = (
+    Path("firmware/kc2_zmk/boards/shields/kc2_x3_v2/kc2_x3_v2.zmk.yml"),
+    Path("firmware/kc2_zmk/boards/shields/kc2_x3_v2/kc2_x3_v2_variant.json"),
+)
+LOCAL_ARTIFACT_PATHS = {
+    "left": ROOT / "firmware" / "out" / "kc2_x3_v2_left.uf2",
+    "right": ROOT / "firmware" / "out" / "kc2_x3_v2_right.uf2",
+}
+EXPECTED_BUILD_TOOLCHAIN = {
+    "zmk_version": "v0.3.0",
+    "zmk_commit": "edf5c0814fd3ea202e43aad2d68fd32e882a518c",
+    "zephyr_sdk_version": "0.16.9",
+    "board": "nice_nano_v2",
+    "extra_module": "firmware/kc2_zmk",
+}
+EXPECTED_BUILD_ARTIFACTS = {
+    "left": {
+        "shield": "kc2_x3_v2_left",
+        "build_directory": "firmware/build/kc2_x3_v2_left",
+        "output": "firmware/out/kc2_x3_v2_left.uf2",
+        "size_bytes": 423424,
+        "sha256": "86c9a777c29d7f1c6f178d8df8aa4f5ecf8e8f75b7fc3daa1ca4842e761c2561",
+        "uf2_block_count": 827,
+    },
+    "right": {
+        "shield": "kc2_x3_v2_right",
+        "build_directory": "firmware/build/kc2_x3_v2_right",
+        "output": "firmware/out/kc2_x3_v2_right.uf2",
+        "size_bytes": 340992,
+        "sha256": "92c8dd1175de2c19505d3ca3487bcc8baa1d03a581c6de13c191ca63743e9b35",
+        "uf2_block_count": 666,
+    },
+}
+EXPECTED_UF2_MAGIC = {
+    "start0_le_u32": "0x0a324655",
+    "start1_le_u32": "0x9e5d5157",
+    "end_le_u32": "0x0ab16f30",
+    "block_size_bytes": 512,
+}
 BOARD_PATHS = {
     "left": ROOT / "hardware" / "kicad" / "draft" / "x3-v2" / "kc2_left-x3-v2" / "kc2_left-x3-v2.kicad_pcb",
     "right": ROOT / "hardware" / "kicad" / "draft" / "x3-v2" / "kc2_right-x3-v2" / "kc2_right-x3-v2.kicad_pcb",
 }
-EXPECTED_COUNTS = {"left": 32, "right": 39}
+EXPECTED_COUNTS = {"left": 31, "right": 39}
 EXPECTED_PINS = {
     "left": {
         "cols": [(0, 20), (0, 24), (0, 22), (1, 0), (0, 11), (1, 4), (1, 6)],
@@ -42,7 +94,7 @@ EXPECTED_DEFAULT_BINDINGS = [
     "&kp H", "&kp J", "&kp K", "&kp L", "&kp SEMI", "&kp SQT", "&kp RET", "&kp RET",
     "&kp LSHFT", "&kp LSHFT", "&kp Z", "&kp X", "&kp C", "&kp V", "&kp B",
     "&kp N", "&kp M", "&kp COMMA", "&kp DOT", "&kp FSLH", "&kp RSHFT", "&kp UP", "&mo 1",
-    "&kp LCTRL", "&kp LGUI", "&kp LALT", "&mo 1", "&kp SPACE", "&kp SPACE",
+    "&kp LCTRL", "&mo 1", "&kp LALT", "&kp SPACE", "&kp SPACE",
     "&kp B", "&kp SPACE", "&kp RALT", "&kp RCTRL", "&kp LEFT", "&kp DOWN", "&kp RIGHT",
 ]
 EXPECTED_FN_BINDINGS = [
@@ -54,7 +106,7 @@ EXPECTED_FN_BINDINGS = [
     *("&trans" for _ in range(8)),
     "&kp LSHFT", "&kp LSHFT", "&trans", "&trans", "&trans", "&trans", "&bt BT_CLR",
     "&trans", "&trans", "&trans", "&trans", "&trans", "&trans", "&kp PG_UP", "&mo 2",
-    "&trans", "&trans", "&trans", "&mo 2", "&kp ESC", "&kp ESC",
+    "&trans", "&mo 2", "&trans", "&kp ESC", "&kp ESC",
     "&trans", "&trans", "&trans", "&trans", "&kp HOME", "&kp PG_DN", "&kp END",
 ]
 EXPECTED_FN2_BINDINGS = [
@@ -64,7 +116,7 @@ EXPECTED_FN2_BINDINGS = [
     *("&trans" for _ in range(8)),
     *("&trans" for _ in range(14)),
     "&bt BT_CLR", *("&trans" for _ in range(14)),
-    *("&trans" for _ in range(13)),
+    *("&trans" for _ in range(12)),
 ]
 EXPECTED_LAYERS = {
     "default_layer": EXPECTED_DEFAULT_BINDINGS,
@@ -74,8 +126,8 @@ EXPECTED_LAYERS = {
 EXPECTED_METADATA = {
     "variant": "kc2-x3-v2",
     "requirement_id": "CON-ARCH-004",
-    "layout": "71-key-v4-no-stabilizer",
-    "key_count": {"left": 32, "right": 39, "total": 71},
+    "layout": "70-key-v5-no-stabilizer",
+    "key_count": {"left": 31, "right": 39, "total": 70},
     "matrix": {"rows": 5, "left_columns": 7, "right_columns": 8, "transform_columns": 15},
     "supported_assembly": ["choc-v2-bottom-socket", "mx-direct-solder"],
     "unsupported_assembly": ["choc-v1", "choc-v2-direct-solder", "mx-hotswap"],
@@ -83,9 +135,179 @@ EXPECTED_METADATA = {
     "compact_controller": True,
     "carrier_battery_nets": False,
     "battery_leads": "direct-to-nice-nano-b-plus-b-minus",
+    "left_alt_fn_win_combo": {
+        "positions": [59, 60],
+        "timeout_ms": 50,
+        "binding": "LGUI",
+        "layers": "all",
+        "release": "first-constituent-key",
+    },
     "fn_position": "immediately-right-of-up",
     "bottom_row_right_fn": False,
 }
+
+
+def sha256(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as source:
+        for chunk in iter(lambda: source.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+def read_build_evidence(path: Path = BUILD_EVIDENCE_PATH) -> dict[str, object]:
+    return json.loads(path.read_text(encoding="utf-8"))
+
+
+def _verify_digest_group(
+    manifest: Mapping[str, object],
+    field: str,
+    expected_paths: tuple[Path, ...],
+    root: Path,
+) -> tuple[list[str], list[str]]:
+    errors: list[str] = []
+    verified: list[str] = []
+    recorded = manifest.get(field)
+    expected_names = {path.as_posix() for path in expected_paths}
+    if not isinstance(recorded, dict) or set(recorded) != expected_names:
+        actual_names = set(recorded) if isinstance(recorded, dict) else set()
+        errors.append(
+            f"build evidence {field} source set mismatch: "
+            f"missing={sorted(expected_names - actual_names)}, extra={sorted(actual_names - expected_names)}"
+        )
+        recorded = recorded if isinstance(recorded, dict) else {}
+    for relative in expected_paths:
+        name = relative.as_posix()
+        expected_digest = recorded.get(name)
+        source = root / relative
+        if not isinstance(expected_digest, str) or re.fullmatch(r"[0-9a-f]{64}", expected_digest) is None:
+            errors.append(f"build evidence {field} missing valid SHA-256 for {name}")
+            continue
+        if not source.is_file():
+            errors.append(f"build evidence source is missing: {name}")
+            continue
+        actual_digest = sha256(source)
+        if actual_digest != expected_digest:
+            errors.append(
+                f"build evidence source digest mismatch for {name}: "
+                f"recorded={expected_digest}, current={actual_digest}"
+            )
+            continue
+        verified.append(name)
+    return errors, verified
+
+
+def _verify_local_uf2(path: Path, expected: Mapping[str, object], side: str) -> list[str]:
+    errors: list[str] = []
+    data = path.read_bytes()
+    expected_size = expected["size_bytes"]
+    if len(data) != expected_size:
+        errors.append(f"{side} local UF2 size is {len(data)}, expected {expected_size}")
+    actual_digest = hashlib.sha256(data).hexdigest()
+    if actual_digest != expected["sha256"]:
+        errors.append(
+            f"{side} local UF2 SHA-256 is {actual_digest}, expected {expected['sha256']}"
+        )
+    block_size = int(EXPECTED_UF2_MAGIC["block_size_bytes"])
+    if not data or len(data) % block_size:
+        errors.append(f"{side} local UF2 size is not a nonzero multiple of {block_size}")
+        return errors
+    block_count = len(data) // block_size
+    if block_count != expected["uf2_block_count"]:
+        errors.append(
+            f"{side} local UF2 block count is {block_count}, expected {expected['uf2_block_count']}"
+        )
+    expected_magic = (
+        int(str(EXPECTED_UF2_MAGIC["start0_le_u32"]), 16),
+        int(str(EXPECTED_UF2_MAGIC["start1_le_u32"]), 16),
+        int(str(EXPECTED_UF2_MAGIC["end_le_u32"]), 16),
+    )
+    for block_index, offset in enumerate(range(0, len(data), block_size)):
+        actual_magic = (
+            struct.unpack_from("<I", data, offset)[0],
+            struct.unpack_from("<I", data, offset + 4)[0],
+            struct.unpack_from("<I", data, offset + block_size - 4)[0],
+        )
+        if actual_magic != expected_magic:
+            errors.append(
+                f"{side} local UF2 block {block_index} magic is invalid: "
+                f"{tuple(f'0x{value:08x}' for value in actual_magic)}"
+            )
+            break
+    return errors
+
+
+def verify_build_evidence(
+    manifest_path: Path = BUILD_EVIDENCE_PATH,
+    root: Path = ROOT,
+    artifact_paths: Mapping[str, Path] | None = None,
+) -> tuple[list[str], dict[str, object]]:
+    """Verify pinned source provenance and, when present, ignored local UF2 files."""
+    provenance_errors: list[str] = []
+    selected_artifacts = dict(LOCAL_ARTIFACT_PATHS if artifact_paths is None else artifact_paths)
+    local_artifact_report = {
+        side: {
+            "present": (path := selected_artifacts.get(side)) is not None and path.is_file(),
+            "verified": False,
+        }
+        for side in ("left", "right")
+    }
+    try:
+        manifest = read_build_evidence(manifest_path)
+    except (OSError, json.JSONDecodeError) as error:
+        report = {
+            "manifest_provenance_verified": False,
+            "source_digests_verified": [],
+            "metadata_digests_verified": [],
+            "local_artifacts": local_artifact_report,
+        }
+        return [f"Cannot read V2 build evidence: {error}"], report
+
+    if manifest.get("schema_version") != 1:
+        provenance_errors.append("build evidence schema_version must be 1")
+    if manifest.get("requirement_id") != "CON-ARCH-004":
+        provenance_errors.append("build evidence requirement_id must be CON-ARCH-004")
+    if manifest.get("variant") != "kc2-x3-v2-70-key-v5":
+        provenance_errors.append("build evidence variant must identify the 70-key v5 shield")
+    if manifest.get("recorded_build_date") != "2026-08-22":
+        provenance_errors.append("build evidence recorded_build_date must identify the verified v5 build")
+    if manifest.get("toolchain") != EXPECTED_BUILD_TOOLCHAIN:
+        provenance_errors.append("build evidence pinned toolchain metadata is stale or incomplete")
+    if manifest.get("artifacts") != EXPECTED_BUILD_ARTIFACTS:
+        provenance_errors.append("build evidence left/right artifact metadata is stale or incomplete")
+    if manifest.get("uf2_magic") != EXPECTED_UF2_MAGIC:
+        provenance_errors.append("build evidence UF2 magic contract is stale or incomplete")
+    if manifest.get("artifact_policy") != {
+        "tracked_in_git": False,
+        "local_presence_required_for_source_provenance": False,
+        "when_present": "Verifier hard-checks size, SHA-256, block count, and UF2 magic for every block.",
+    }:
+        provenance_errors.append("build evidence ignored-artifact policy is stale or incomplete")
+
+    source_errors, sources_verified = _verify_digest_group(
+        manifest, "build_inputs", BUILD_SOURCE_PATHS, root
+    )
+    metadata_errors, metadata_verified = _verify_digest_group(
+        manifest, "verification_metadata_inputs", BUILD_METADATA_PATHS, root
+    )
+    provenance_errors.extend(source_errors)
+    provenance_errors.extend(metadata_errors)
+
+    artifact_errors: list[str] = []
+    for side in ("left", "right"):
+        path = selected_artifacts.get(side)
+        present = local_artifact_report[side]["present"]
+        side_errors = _verify_local_uf2(path, EXPECTED_BUILD_ARTIFACTS[side], side) if present else []
+        artifact_errors.extend(side_errors)
+        local_artifact_report[side]["verified"] = present and not side_errors
+
+    report = {
+        "manifest_provenance_verified": not provenance_errors,
+        "source_digests_verified": sources_verified,
+        "metadata_digests_verified": metadata_verified,
+        "local_artifacts": local_artifact_report,
+    }
+    return [*provenance_errors, *artifact_errors], report
 
 
 def parse_bindings(source: str) -> list[str]:
@@ -112,6 +334,30 @@ def parse_transform_positions(source: str) -> list[tuple[int, int]]:
     return [(int(row), int(col)) for row, col in re.findall(r"RC\(\s*(\d+)\s*,\s*(\d+)\s*\)", match.group(1))]
 
 
+def parse_combo(source: str, combo_name: str) -> dict[str, object]:
+    match = re.search(rf"\b{re.escape(combo_name)}\s*\{{(.*?)\n\s*\}};", source, re.DOTALL)
+    if match is None:
+        raise ValueError(f"Missing {combo_name} combo")
+    body = match.group(1)
+    timeout_match = re.search(r"\btimeout-ms\s*=\s*<(\d+)>;", body)
+    positions_match = re.search(r"\bkey-positions\s*=\s*<([^>]*)>;", body, re.DOTALL)
+    binding_match = re.search(r"\bbindings\s*=\s*<([^>]*)>;", body, re.DOTALL)
+    if timeout_match is None or positions_match is None or binding_match is None:
+        raise ValueError(f"Incomplete {combo_name} combo")
+    bindings = parse_bindings(f"bindings = <{binding_match.group(1)}>;")
+    if len(bindings) != 1:
+        raise ValueError(f"{combo_name} must emit exactly one binding")
+    layers_match = re.search(r"\blayers\s*=", body)
+    slow_release_match = re.search(r"\bslow-release\s*;", body)
+    return {
+        "key_positions": [int(value) for value in re.findall(r"\d+", positions_match.group(1))],
+        "binding": bindings[0],
+        "timeout_ms": int(timeout_match.group(1)),
+        "global_layers": layers_match is None,
+        "release_on_first_key": slow_release_match is None,
+    }
+
+
 def parse_gpio_list(source: str, property_name: str) -> list[tuple[int, int]]:
     match = re.search(rf"\b{re.escape(property_name)}\s*=\s*(.*?);", source, re.DOTALL)
     if match is None:
@@ -125,6 +371,10 @@ def read_transform() -> list[tuple[int, int]]:
 
 def read_layer(layer_name: str) -> list[str]:
     return parse_layer_bindings((SHIELD_DIR / "kc2_x3_v2.keymap").read_text(encoding="utf-8"), layer_name)
+
+
+def read_combo(combo_name: str) -> dict[str, object]:
+    return parse_combo((SHIELD_DIR / "kc2_x3_v2.keymap").read_text(encoding="utf-8"), combo_name)
 
 
 def read_overlay_pins(side: str) -> dict[str, list[tuple[int, int]]]:
@@ -215,13 +465,13 @@ def extract_board_positions(board_path: Path, kicad_python: Path, side: str) -> 
 
 
 def verify(kicad_python: Path) -> list[str]:
-    errors: list[str] = []
+    errors, _ = verify_build_evidence()
     try:
         transform = read_transform()
     except (OSError, ValueError) as error:
         return [f"Cannot read V2 matrix transform: {error}"]
-    if len(transform) != 71:
-        errors.append(f"V2 matrix transform contains {len(transform)} positions, expected 71")
+    if len(transform) != 70:
+        errors.append(f"V2 matrix transform contains {len(transform)} positions, expected 70")
     if len(set(transform)) != len(transform):
         errors.append("V2 matrix transform contains duplicate positions")
     if any(row not in range(5) or col not in range(15) for row, col in transform):
@@ -232,10 +482,24 @@ def verify(kicad_python: Path) -> list[str]:
             actual = read_layer(layer_name)
             if actual != expected:
                 errors.append(f"{layer_name} bindings do not match the KC2 X3 V2 behavior model")
-            if len(actual) != 71:
-                errors.append(f"{layer_name} has {len(actual)} bindings, expected 71")
+            if len(actual) != 70:
+                errors.append(f"{layer_name} has {len(actual)} bindings, expected 70")
     except (OSError, ValueError) as error:
         errors.append(f"Cannot read V2 keymap: {error}")
+
+    try:
+        combo = read_combo("left_alt_fn_win")
+        expected_combo = {
+            "key_positions": [59, 60],
+            "binding": "&kp LGUI",
+            "timeout_ms": 50,
+            "global_layers": True,
+            "release_on_first_key": True,
+        }
+        if combo != expected_combo:
+            errors.append("left Alt+Fn combo does not match the CON-ARCH-004 Win/LGUI behavior")
+    except (OSError, ValueError) as error:
+        errors.append(f"Cannot read V2 Alt+Fn combo: {error}")
 
     try:
         metadata = read_variant_metadata()
@@ -280,7 +544,16 @@ def main() -> int:
         for error in errors:
             print(f"- {error}", file=sys.stderr)
         return 1
-    print("CON-ARCH-004 V2 firmware verification passed: 71 keys (32 left, 39 right).")
+    _, build_report = verify_build_evidence()
+    artifact_states = ", ".join(
+        f"{side}=" + ("verified" if state["verified"] else "absent")
+        for side, state in build_report["local_artifacts"].items()
+    )
+    print(
+        "CON-ARCH-004 V2 firmware verification passed: 70 keys (31 left, 39 right); "
+        f"manifest_provenance_verified={str(build_report['manifest_provenance_verified']).lower()}; "
+        f"local_artifacts={artifact_states}."
+    )
     return 0
 
 

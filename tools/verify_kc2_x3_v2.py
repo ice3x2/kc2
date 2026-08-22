@@ -1,8 +1,10 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 from collections import Counter
+from datetime import datetime
 import math
 from pathlib import Path
 import re
@@ -21,6 +23,7 @@ DEFAULT_BOARDS = (
     V2_ROOT / "kc2_right-x3-v2" / "kc2_right-x3-v2.kicad_pcb",
 )
 DEFAULT_MANIFEST = V2_ROOT / "kc2_x3_v2_generation_manifest.json"
+DEFAULT_DRC_EVIDENCE = V2_ROOT / "kc2_x3_v2_drc_evidence.json"
 EXPECTED_IGNORED_DRC_CHECKS = [
     "footprint_filters_mismatch",
     "footprint_type_mismatch",
@@ -28,6 +31,12 @@ EXPECTED_IGNORED_DRC_CHECKS = [
     "track_not_centered_on_via",
     "tuning_profile_track_geometries",
 ]
+ALLOWED_DRC_SEVERITIES = {"error", "warning", "exclusion"}
+REQUIRED_DRC_SEVERITIES = {"error", "warning"}
+KICAD_10_VERSION_RE = re.compile(r"^10(?:\.\d+)+(?:[-+][0-9A-Za-z.-]+)?$")
+ISO_TIMESTAMP_RE = re.compile(
+    r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[+-]\d{2}:\d{2})?$"
+)
 
 
 def mm(value: int) -> float:
@@ -275,7 +284,7 @@ def verify_switch_layout_against_generator(
         switch_rotation_for_key,
     )
 
-    if len(switches) == 32:
+    if len(switches) == 31:
         keys = make_left_keys_x3_v2()
     elif len(switches) == 39:
         keys = make_right_keys_x3_v2()
@@ -655,6 +664,108 @@ def analyze_v2_manifest(path: Path = DEFAULT_MANIFEST) -> dict[str, object]:
     return json.loads(path.read_text(encoding="utf-8"))
 
 
+def build_drc_evidence(
+    board_paths: Sequence[Path] = DEFAULT_BOARDS,
+) -> dict[str, object]:
+    records: dict[str, object] = {}
+    for board_path in board_paths:
+        side = "left" if "left" in board_path.name.lower() else "right"
+        report_path = board_path.with_suffix(".drc.json")
+        report = json.loads(report_path.read_text(encoding="utf-8"))
+        records[side] = {
+            "board_path": board_path.relative_to(ROOT).as_posix(),
+            "board_sha256": hashlib.sha256(board_path.read_bytes()).hexdigest(),
+            "drc_report_path": report_path.relative_to(ROOT).as_posix(),
+            "drc_report_sha256": hashlib.sha256(report_path.read_bytes()).hexdigest(),
+            "schema": report.get("$schema"),
+            "source": report.get("source"),
+            "kicad_version": report.get("kicad_version"),
+            "date": report.get("date"),
+            "included_severities": report.get("included_severities"),
+        }
+    return {
+        "requirement_ids": ["CON-ARCH-004", "CON-ARCH-006"],
+        "variant": "x3-v2",
+        "status": "draft_not_orderable_pending_physical_evidence",
+        "boards": records,
+    }
+
+
+def verify_drc_evidence_binding(
+    board_path: Path,
+    side: str,
+    evidence: dict[str, object],
+) -> tuple[list[str], dict[str, object]]:
+    errors: list[str] = []
+    boards = evidence.get("boards")
+    record = boards.get(side) if isinstance(boards, dict) else None
+    if not isinstance(record, dict):
+        return [f"{side}: DRC evidence record is missing"], {}
+
+    report_path = board_path.with_suffix(".drc.json")
+    if not board_path.is_file():
+        return [f"{side}: DRC evidence board is missing"], record
+    if not report_path.is_file():
+        return [f"{side}: DRC evidence report is missing"], record
+
+    board_sha256 = hashlib.sha256(board_path.read_bytes()).hexdigest()
+    report_sha256 = hashlib.sha256(report_path.read_bytes()).hexdigest()
+    if record.get("board_sha256") != board_sha256:
+        errors.append(f"{side}: DRC evidence board SHA-256 mismatch")
+    if record.get("drc_report_sha256") != report_sha256:
+        errors.append(f"{side}: DRC evidence report SHA-256 mismatch")
+
+    expected_board_path = DEFAULT_BOARDS[0 if side == "left" else 1].relative_to(ROOT).as_posix()
+    expected_report_path = DEFAULT_BOARDS[0 if side == "left" else 1].with_suffix(".drc.json").relative_to(ROOT).as_posix()
+    if record.get("board_path") != expected_board_path:
+        errors.append(f"{side}: DRC evidence canonical board path mismatch")
+    if record.get("drc_report_path") != expected_report_path:
+        errors.append(f"{side}: DRC evidence canonical report path mismatch")
+
+    try:
+        report = json.loads(report_path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as error:
+        errors.append(f"{side}: DRC evidence report cannot be parsed: {error}")
+        return errors, record
+    for field, report_field in (
+        ("schema", "$schema"),
+        ("source", "source"),
+        ("kicad_version", "kicad_version"),
+        ("date", "date"),
+        ("included_severities", "included_severities"),
+    ):
+        if record.get(field) != report.get(report_field):
+            errors.append(f"{side}: DRC evidence {field} mismatch")
+    if report.get("$schema") != "https://schemas.kicad.org/drc.v1.json":
+        errors.append(f"{side}: unsupported KiCad DRC schema")
+    if report.get("source") != board_path.name:
+        errors.append(f"{side}: DRC evidence source does not name the current board")
+    kicad_version = report.get("kicad_version")
+    if not isinstance(kicad_version, str) or KICAD_10_VERSION_RE.fullmatch(kicad_version) is None:
+        errors.append(f"{side}: KiCad DRC version must be 10.x")
+    report_date = report.get("date")
+    valid_timestamp = isinstance(report_date, str) and ISO_TIMESTAMP_RE.fullmatch(report_date) is not None
+    if valid_timestamp:
+        try:
+            datetime.fromisoformat(report_date.replace("Z", "+00:00"))
+        except ValueError:
+            valid_timestamp = False
+    if not valid_timestamp:
+        errors.append(f"{side}: KiCad DRC date is not a valid ISO timestamp")
+    included_severities = report.get("included_severities")
+    severity_set = set(included_severities) if isinstance(included_severities, list) else set()
+    if (
+        not isinstance(included_severities, list)
+        or any(not isinstance(value, str) for value in included_severities)
+        or len(severity_set) != len(included_severities)
+        or not REQUIRED_DRC_SEVERITIES.issubset(severity_set)
+    ):
+        errors.append(f"{side}: KiCad DRC included_severities must contain error and warning")
+    if severity_set - ALLOWED_DRC_SEVERITIES:
+        errors.append(f"{side}: KiCad DRC included_severities contains an unsupported value")
+    return errors, record
+
+
 def verify_v2_footprint(path: Path = DEFAULT_FOOTPRINT) -> list[str]:
     report = analyze_v2_footprint(path)
     errors: list[str] = []
@@ -675,6 +786,7 @@ def verify_v2_release_candidate(
     footprint_path: Path = DEFAULT_FOOTPRINT,
     board_paths: Sequence[Path] = DEFAULT_BOARDS,
     manifest_path: Path = DEFAULT_MANIFEST,
+    drc_evidence_path: Path = DEFAULT_DRC_EVIDENCE,
 ) -> dict[str, object]:
     from tools.verify_kc2_antenna_keepout import check_board as check_antenna_keepout
     from tools.verify_kc2_compact_controller import check_side as check_compact_controller
@@ -682,6 +794,11 @@ def verify_v2_release_candidate(
 
     errors = [f"footprint: {error}" for error in verify_v2_footprint(footprint_path)]
     manifest = analyze_v2_manifest(manifest_path)
+    drc_evidence = analyze_v2_manifest(drc_evidence_path)
+    if drc_evidence.get("requirement_ids") != ["CON-ARCH-004", "CON-ARCH-006"]:
+        errors.append("DRC evidence: requirement IDs are missing or stale")
+    if drc_evidence.get("variant") != "x3-v2":
+        errors.append("DRC evidence: variant is missing or stale")
     if manifest.get("variant") != "x3-v2":
         errors.append(f"manifest: unexpected variant {manifest.get('variant')!r}")
     if manifest.get("assembly_modes") != [
@@ -691,7 +808,7 @@ def verify_v2_release_candidate(
         errors.append("manifest: assembly modes are incomplete or out of order")
     if not manifest.get("assembly_modes_mutually_exclusive"):
         errors.append("manifest: switch assembly modes must be mutually exclusive")
-    if manifest.get("key_count") != {"left": 32, "right": 39, "total": 71}:
+    if manifest.get("key_count") != {"left": 31, "right": 39, "total": 70}:
         errors.append(f"manifest: unexpected key count {manifest.get('key_count')!r}")
     if manifest.get("keycell_edge_inset_mm") != 1.5:
         errors.append("manifest: V2 key-field edge inset must be 1.5 mm")
@@ -753,9 +870,17 @@ def verify_v2_release_candidate(
 
     board_reports: dict[str, object] = {}
     connectivity_errors: dict[str, list[str]] = {}
+    drc_evidence_reports: dict[str, object] = {}
     for board_path in board_paths:
         side = detect_side(board_path)
-        expected_keys = 32 if side == "left" else 39
+        drc_binding_errors, drc_evidence_record = verify_drc_evidence_binding(
+            board_path,
+            side,
+            drc_evidence,
+        )
+        errors.extend(drc_binding_errors)
+        drc_evidence_reports[side] = drc_evidence_record
+        expected_keys = 31 if side == "left" else 39
         report = analyze_v2_board(board_path)
         board_reports[side] = report
         checks = {
@@ -800,6 +925,7 @@ def verify_v2_release_candidate(
         "status": "draft_not_orderable_pending_physical_coupon",
         "boards": board_reports,
         "connectivity_errors": connectivity_errors,
+        "drc_evidence": drc_evidence_reports,
         "reviewed_drc_exclusions": {
             "checks": EXPECTED_IGNORED_DRC_CHECKS,
             "rationale": (
@@ -817,8 +943,14 @@ def main() -> None:
     parser.add_argument("--footprint", type=Path, default=DEFAULT_FOOTPRINT)
     parser.add_argument("--boards", type=Path, nargs="*", default=DEFAULT_BOARDS)
     parser.add_argument("--manifest", type=Path, default=DEFAULT_MANIFEST)
+    parser.add_argument("--drc-evidence", type=Path, default=DEFAULT_DRC_EVIDENCE)
     args = parser.parse_args()
-    report = verify_v2_release_candidate(args.footprint, args.boards, args.manifest)
+    report = verify_v2_release_candidate(
+        args.footprint,
+        args.boards,
+        args.manifest,
+        args.drc_evidence,
+    )
     errors = report["errors"]
     if errors:
         raise SystemExit("FAIL: KC2 X3 V2 routed draft verification\n- " + "\n- ".join(errors))

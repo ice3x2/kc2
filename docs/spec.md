@@ -9,7 +9,7 @@ KC2는 KC1 핸드와이어링 키보드의 배열 철학과 결합/분리 사용
 - 이름: KC2
 - 형식: 좌우 분리형 split keyboard
 - 배열: 일반 row-stagger 기반
-- 키 수: 현재 주문 가능한 X3는 77키이고, implemented draft `kc2-x3-v2`는 `CON-ARCH-004`의 71-key v4 배열(왼쪽 32, 오른쪽 39)을 사용한다. 그보다 앞선 71키 배열 설명은 historical routed draft baseline으로만 유지한다.
+- 키 수: 현재 주문 가능한 X3는 77키이고, implemented draft `kc2-x3-v2`는 `CON-ARCH-004`의 70-key v5 배열(왼쪽 31, 오른쪽 39)을 사용한다. 그보다 앞선 71키 배열 설명은 historical routed draft baseline으로만 유지한다.
 - 펌웨어: ZMK
 - 컨트롤러: nice!nano v2, 좌우 각 1개
 - 연결: BLE 중심, USB는 firmware flash/debug 및 필요 시 유선 출력용
@@ -82,7 +82,7 @@ KC1과의 관계는 배열 철학과 사용성의 계승이며, KC2의 하드웨
 
 KC2는 상부 보강판이 없고 PCB 또는 switch socket이 switch retention/assembly 구조의 일부가 되므로, 큰 키의 stabilizer는 단순한 plate-mounted low-profile stabilizer를 사용할 수 없다. 조사 결과 Kailh Choc V1/V2 계열 stabilizer는 일반적으로 PCB cutout과 1.2 mm급 switch plate cutout을 함께 요구한다. 따라서 KC2에서는 "PCB에 구멍만 있는 상태"로 실제 부품이 고정되는지 검증되지 않은 footprint를 발주용으로 인정하지 않는다.
 
-현재 주문 가능한 X3는 77-key no-stabilizer layout을 사용하고, implemented draft `kc2-x3-v2`는 `CON-ARCH-004`와 `docs/spec/20.kc2-no-stabilizer-layout.md`가 정의한 71-key v4 layout(왼쪽 32, 오른쪽 39)을 사용한다. 두 variant 모두 stabilizer footprint를 생성하지 않는다. 아래 2u 이상 key/stabilizer 검토 내용은 이전 71-key routed draft baseline 또는 stabilizer가 필요한 별도 layout을 위한 historical design constraint로만 유지한다.
+현재 주문 가능한 X3는 77-key no-stabilizer layout을 사용하고, implemented draft `kc2-x3-v2`는 `CON-ARCH-004`와 `docs/spec/20.kc2-no-stabilizer-layout.md`가 정의한 70-key v5 layout(왼쪽 31, 오른쪽 39)을 사용한다. 두 variant 모두 stabilizer footprint를 생성하지 않는다. 아래 2u 이상 key/stabilizer 검토 내용은 이전 71-key routed draft baseline 또는 stabilizer가 필요한 별도 layout을 위한 historical design constraint로만 유지한다.
 
 기존 71-key routed draft baseline과 stabilizer가 필요한 별도 layout에 대한 5개 서브에이전트 검토 결론:
 
@@ -163,7 +163,7 @@ stabilizer가 필요한 별도 layout의 제조 및 routing keepout:
 
 KC2의 PCB 설계에서는 물리 배열과 firmware 동작을 분리해서 본다. 사용자 제공 KLE와 실물 측정은 switch center, key size, stabilizer 위치의 기준이고, ZMK keymap은 각 물리 키의 동작 기준이다.
 
-무보강판 low-profile no-stabilizer 방향의 최종 split layout은 하위 문서 `docs/spec/20.kc2-no-stabilizer-layout.md`를 따른다. 이 하위 문서는 주문 가능한 X3의 77-key layout과 `CON-ARCH-004`가 정의한 draft X3 V2의 71-key v4 layout(왼쪽 32, 오른쪽 39)을 각각 규정하며, 이 문서의 그보다 앞선 71-key 배열 설명은 historical routed draft baseline으로 유지한다.
+무보강판 low-profile no-stabilizer 방향의 최종 split layout은 하위 문서 `docs/spec/20.kc2-no-stabilizer-layout.md`를 따른다. 이 하위 문서는 주문 가능한 X3의 77-key layout과 `CON-ARCH-004`가 정의한 draft X3 V2의 70-key v5 layout(왼쪽 31, 오른쪽 39)을 각각 규정하며, 이 문서의 그보다 앞선 71-key 배열 설명은 historical routed draft baseline으로 유지한다.
 
 기존 71-key routed draft baseline의 왼쪽 half 물리 배열:
 
@@ -237,7 +237,7 @@ Row 5: Ctrl GUI Alt Fn Space     |  B  Space RAlt Fn RCtrl Left Down Right
 
 주의:
 
-- 기존 71-key routed draft의 `fn_layer2` binding 수는 2026-06-02 검증에서 70개로 확인되어, 누락된 `&trans` 1개를 추가해 71개로 맞췄다. 현재 주문 가능한 X3 no-stabilizer 77-key keymap과 implemented draft `kc2-x3-v2` 71-key v4 keymap은 각각 별도 검증 대상이다.
+- 기존 71-key routed draft의 `fn_layer2` binding 수는 2026-06-02 검증에서 70개로 확인되어, 누락된 `&trans` 1개를 추가해 71개로 맞췄다. 현재 주문 가능한 X3 no-stabilizer 77-key keymap과 implemented draft `kc2-x3-v2` 70-key v5 keymap은 각각 별도 검증 대상이다.
 - PCB 제작 전 `./zmk/app/build.sh`로 좌우 firmware 빌드를 검증한다.
 - 기존 `kc1` 펌웨어 식별자는 KC1 핸드와이어링/이전 설계 기록을 가리키는 이름으로만 남기며, KC2 제작용 ZMK shield id로는 사용하지 않는다.
 
@@ -245,16 +245,16 @@ Row 5: Ctrl GUI Alt Fn Space     |  B  Space RAlt Fn RCtrl Left Down Right
 
 - logical rows: 5
 - logical columns: 16
-- mapped positions: 77 for current X3 no-stabilizer; 71 for implemented draft `kc2-x3-v2` under `CON-ARCH-004` (32 left / 39 right)
-- transform row별 key 수: current X3 no-stabilizer physical rows 16 / 15 / 15 / 16 / 15; current X3 V2 v4 rows 15 / 14 / 14 / 15 / 13; historical earlier 71-key routed draft used 15 / 15 / 14 / 14 / 13
+- mapped positions: 77 for current X3 no-stabilizer; 70 for implemented draft `kc2-x3-v2` under `CON-ARCH-004` (31 left / 39 right)
+- transform row별 key 수: current X3 no-stabilizer physical rows 16 / 15 / 15 / 16 / 15; current X3 V2 v5 rows 15 / 14 / 14 / 15 / 12; historical earlier 71-key routed draft used 15 / 15 / 14 / 14 / 13
 - diode direction: `col2row`
-- diode: current X3 no-stabilizer main boards use 디바이스마트 상품번호 14592018 `1N4148W`, SOD-123, 총 77개; implemented draft `kc2-x3-v2` uses the same SOD-123 diode at each of its 71 positions; historical earlier 71-key routed draft used 디바이스마트 상품번호 25 `1N4148`, SOD-27(DO-35), 71개
+- diode: current X3 no-stabilizer main boards use 디바이스마트 상품번호 14592018 `1N4148W`, SOD-123, 총 77개; implemented draft `kc2-x3-v2` uses the same SOD-123 diode at each of its 70 positions; historical earlier 71-key routed draft used 디바이스마트 상품번호 25 `1N4148`, SOD-27(DO-35), 71개
 - `col2row` 기준 diode의 cathode, 즉 표시선 쪽은 row net으로 둔다.
 - X3 SOD-123 diode assembly orientation: solder side/B.Cu가 보이게 PCB를 뒤집고 controller tab이 위로 가게 놓으면, 좌우 half 모두 diode의 흰색 cathode band를 왼쪽으로 둔다. KiCad top/front view에서는 pad 1(row net, cathode)이 오른쪽(+X)에 있지만, bottom-side soldering view에서는 좌우가 mirror되어 왼쪽으로 보인다. PCB를 손에서 돌린 경우에는 left/right보다 `pad 1 = row net = cathode band`를 기준으로 맞춘다.
-- implemented draft `kc2-x3-v2`는 `CON-ARCH-004` switch footprint와 SOD-123 diode 71개를 DRC, 수납땜 접근, 하우징 간섭 검사로 검증했으며, 물리 coupon 검증은 미완료이다.
+- implemented draft `kc2-x3-v2`는 `CON-ARCH-004` switch footprint와 SOD-123 diode 70개를 DRC, 수납땜 접근, 하우징 간섭 검사로 검증했으며, 물리 coupon 검증은 미완료이다.
 - historical 또는 future variant에서 SOD-27(DO-35) 배치 공간이 실제로 부족하면 SMD diode로 전환한다.
 - SMD 전환 1순위 후보는 `1N4148W` / `SOD-123`이다. 손납땜성과 공간 절약의 균형이 가장 좋다.
-- SMD 전환 2순위 후보는 `1N4148WS` / `SOD-323`이다. 공간은 더 작지만 current X3 no-stabilizer의 77개 및 implemented draft `kc2-x3-v2`의 71개 수동 납땜 난도가 높으므로 SOD-123으로도 outline, variant별 housing support 또는 registration geometry, routing이 성립하지 않을 때 사용한다. historical/separate M2 layout에서는 M2 hole도 같은 기준으로 본다.
+- SMD 전환 2순위 후보는 `1N4148WS` / `SOD-323`이다. 공간은 더 작지만 current X3 no-stabilizer의 77개 및 implemented draft `kc2-x3-v2`의 70개 수동 납땜 난도가 높으므로 SOD-123으로도 outline, variant별 housing support 또는 registration geometry, routing이 성립하지 않을 때 사용한다. historical/separate M2 layout에서는 M2 hole도 같은 기준으로 본다.
 
 ## Left Half Matrix
 
@@ -337,7 +337,7 @@ Row 5: Ctrl GUI Alt Fn Space     |  B  Space RAlt Fn RCtrl Left Down Right
 - `무보강판 스테빌라이저` 섹션은 stabilizer가 필요한 별도 layout에만 적용한다. 현재 X3 no-stabilizer layout 및 implemented draft `kc2-x3-v2`는 stabilizer footprint와 keepout을 생성하지 않는다.
 - 보강판에 의존하는 plate-mounted stabilizer는 KC2 기본 구조와 맞지 않으므로 final footprint로 사용하지 않는다.
 - 현 draft의 MX-style `KC2:PCB_Mount_2u_Stabilizer_NPTH`는 위치/공간 확인용 placeholder이며, low-profile 무보강판 실물 체결 검증 전에는 fabrication footprint로 사용하지 않는다.
-- 현재 주문 가능한 X3는 77개 switch/diode 배치를 기준으로 검증하고, implemented draft `kc2-x3-v2`는 `CON-ARCH-004`의 71개 switch/diode 배치를 기준으로 별도 검증한다. 그보다 앞선 71-key routed draft의 diode 공간 검토는 historical baseline으로만 유지한다.
+- 현재 주문 가능한 X3는 77개 switch/diode 배치를 기준으로 검증하고, implemented draft `kc2-x3-v2`는 `CON-ARCH-004`의 70개 switch/diode 배치를 기준으로 별도 검증한다. 그보다 앞선 71-key routed draft의 diode 공간 검토는 historical baseline으로만 유지한다.
 - Historical 또는 future variant에서 DO-35 axial diode를 검토할 경우, through-hole axial 부품은 SMD diode보다 차지하는 면적과 lead bending 공간이 크다.
 - DO-35 유지 실패 기준은 switch footprint 또는 stabilizer가 필요한 별도 layout의 stabilizer footprint와의 courtyard overlap, screwless registration hole 배치 실패, historical/separate M2 layout의 M2 hole 배치 실패, hole-to-hole clearance 위반, 결합 edge 2.5-3.0 mm 여백 침범, 하부 바닥판 지지점 간섭, lead bending 공간 부족 중 하나라도 발생하는 경우로 둔다.
 - 공간이 부족하면 diode 위치 재배치, PCB 반대면 배치, routing 재배치를 먼저 검토하되, compact outline이나 screwless registration hole을 훼손해야 한다면 SMD `1N4148W`/SOD-123 전환을 우선한다. historical/separate M2 layout에서는 M2 고정 홀도 같은 기준으로 보호한다. SOD-123으로도 부족하면 `1N4148WS`/SOD-323을 검토한다.
@@ -425,9 +425,9 @@ Row 5: Ctrl GUI Alt Fn Space     |  B  Space RAlt Fn RCtrl Left Down Right
 | Controller socket | 디바이스마트 상품번호 5494 `싱글라운드소켓(64핀)`, 2.54 mm pitch, 1열 round socket | https://www.devicemart.co.kr/goods/view?no=5494 |
 | Battery | 디바이스마트 상품번호 1376800 `TW301525`, 3.7 V, 80 mAh, A1251-02, 15 mm x 25 mm급 | https://www.devicemart.co.kr/goods/view?no=1376800 |
 | Programming tact switch | 디바이스마트 상품번호 1322056 `NW3-A06-B3`, SMD micro tact switch, 6.1 mm x 3.7 mm급 body, 2.55 mm급 높이 | https://www.devicemart.co.kr/goods/view?no=1322056 |
-| KC2 X3 V2 target switch | Kailh Deep Sea Whale low-profile Choc V2 / PG1353-class, 71개. Bottom-side socket assembly only. | https://www.kailhswitch.com/mechanical-keyboard-switches/key-switches/kailh-low-profile-switch-choc-v2.html |
-| KC2 X3 V2 socket | Kailh Choc hot-swap socket `CPG135001S30` class, 71개 when using Choc V2 mode. Do not populate in MX mode. | https://www.kailhswitch.com/uploads/15927/files/CPG135001S30.pdf?rnd=925 |
-| KC2 X3 V2 MX alternative | Cherry MX-style 5-pin PCB-mount switches, 71개 when using MX direct-solder mode. Do not populate Choc sockets at the same positions. | https://www.cherry.de/fileadmin/media/Industrial/Switch/MX_BLACK/Data_sheet_MX2A_Black.pdf |
+| KC2 X3 V2 target switch | Kailh Deep Sea Whale low-profile Choc V2 / PG1353-class, 70개. Bottom-side socket assembly only. | https://www.kailhswitch.com/mechanical-keyboard-switches/key-switches/kailh-low-profile-switch-choc-v2.html |
+| KC2 X3 V2 socket | Kailh Choc hot-swap socket `CPG135001S30` class, 70개 when using Choc V2 mode. Do not populate in MX mode. | https://www.kailhswitch.com/uploads/15927/files/CPG135001S30.pdf?rnd=925 |
+| KC2 X3 V2 MX alternative | Cherry MX-style 5-pin PCB-mount switches, 70개 when using MX direct-solder mode. Do not populate Choc sockets at the same positions. | https://www.cherry.de/fileadmin/media/Industrial/Switch/MX_BLACK/Data_sheet_MX2A_Black.pdf |
 | Historical draft hot-swap socket variant | Kailh Choc/PG1350 low-profile hot-swap socket, `CPG135001S30` 계열. 기존 `-hotswap` draft 변형 기록으로만 유지하며 `kc2-x3-v2` 기준 부품이 아니다. | https://ko.aliexpress.com/item/1005009187521124.html |
 
 Historical draft hot-swap 참고 자료:

@@ -39,7 +39,7 @@ All five actual seam pairs have a nominal `1.80 mm` cap-to-cap gap and a
 | 1 | `T`-`Y` | `18.05 / 18.05 mm` | `19.85 mm` | `8.025 / 8.025 mm` |
 | 2 | `G`-`H` | `18.05 / 18.05 mm` | `19.85 mm` | `8.025 / 8.025 mm` |
 | 3 | `B`-`N` | `18.05 / 18.05 mm` | `19.85 mm` | `8.025 / 8.025 mm` |
-| 4 | `Space`-`B` | `22.8125 / 18.05 mm` | `22.23125 mm` | `10.40625 / 8.025 mm` |
+| 4 | `Space`-`B` | `32.3375 / 18.05 mm` | `26.99375 mm` nominal (`26.9937 mm` in the routed coordinate serialization) | `15.16875 / 8.025 mm` nominal |
 
 The two complete closed Edge.Cuts outlines are compared segment by segment,
 including horizontal stair transitions. Their exact minimum is `1.10 mm`,
@@ -116,7 +116,21 @@ KiCad Python and verifies that both fresh PNG files have valid dimensions.
 
 The isolated generator output is intentionally unrouted. The committed board
 files include the reviewed route completion and must retain KiCad DRC results
-of zero violations and zero unconnected items.
+of zero violations and zero unconnected items. After producing both fresh DRC
+JSON reports, regenerate the exact board/report evidence binding before running
+the release verifier:
+
+```powershell
+& "C:\Program Files\KiCad\10.0\bin\python.exe" -B -m tools.generate_kc2_x3_v2_drc_evidence
+& "C:\Program Files\KiCad\10.0\bin\python.exe" -B -m tools.verify_kc2_x3_v2
+```
+
+`kc2_x3_v2_drc_evidence.json` binds each current board SHA-256 to its DRC report
+SHA-256, schema, source filename, KiCad version, report date, and included
+severity classes. The release verifier requires a KiCad 10.x report, a valid
+ISO timestamp, and both `error` and `warning` coverage; `exclusion` is the only
+optional additional severity. A changed board or report cannot pass against
+stale evidence.
 
 When only the generated outline policy changes, use
 `tools.repair_kc2_x3_v2_compact_edge --sync-edge-cuts-from <fresh-board>`.
@@ -124,14 +138,25 @@ The command rejects non-rigid switch geometry, replaces only Edge.Cuts, and is
 covered by route/footprint-preservation and idempotence tests.
 
 The final diode-edge autoroute snapshots are
-`autoroute/kc2_left-x3-v2-71-r14.{dsn,ses}` and
-`autoroute/kc2_right-x3-v2-71-r12.{dsn,ses}`. After importing the left session,
-run `tools.finalize_kc2_x3_v2_routes` with
-`--restore-left-controller-columns`; this restores the reviewed L_COL0/L_COL1
-fanout that Freerouting leaves open and is covered by a reconstruction and
-idempotence test. After importing the right session, run
-`tools.repair_kc2_x3_v2_compact_edge --cleanup-dangling-tracks` to remove only
-connectivity-proven dangling autorouter branches.
+`autoroute/kc2_left-x3-v2-70-v5-r1.{dsn,ses}` and
+`autoroute/kc2_right-x3-v2-71-r12.{dsn,ses}`. Against empty-track generated
+boards, reconstruct the exact final routes with:
+
+```powershell
+& "C:\Program Files\KiCad\10.0\bin\python.exe" -B -m tools.finalize_kc2_x3_v2_routes `
+  hardware/kicad/draft/x3-v2/kc2_left-x3-v2/kc2_left-x3-v2.kicad_pcb `
+  --import-left-v5-session hardware/kicad/draft/x3-v2/autoroute/kc2_left-x3-v2-70-v5-r1.ses
+& "C:\Program Files\KiCad\10.0\bin\python.exe" -B -m tools.finalize_kc2_x3_v2_routes `
+  hardware/kicad/draft/x3-v2/kc2_right-x3-v2/kc2_right-x3-v2.kicad_pcb `
+  --import-right-r12-session hardware/kicad/draft/x3-v2/autoroute/kc2_right-x3-v2-71-r12.ses
+```
+
+The helper rejects non-v5 switch geometry, stale sessions, and partial or
+unexpected nonempty routes. The right importer removes only the exact reviewed
+18-item R_COL3/R_COL6 r12 residue under signature and item-count preconditions.
+Both importers verify complete matrix connectivity, reproduce the committed
+route signature exactly, and are covered by second-run idempotence tests. Running
+either command against its already exact committed board is a verified no-op.
 
 The project explicitly ignores five KiCad diagnostic classes: missing
 courtyard, track-not-centered-on-via, tuning-profile track geometry,

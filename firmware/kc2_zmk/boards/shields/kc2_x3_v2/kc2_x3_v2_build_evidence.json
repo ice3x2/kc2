@@ -1,0 +1,56 @@
+{
+  "schema_version": 1,
+  "requirement_id": "CON-ARCH-004",
+  "variant": "kc2-x3-v2-70-key-v5",
+  "recorded_build_date": "2026-08-22",
+  "toolchain": {
+    "zmk_version": "v0.3.0",
+    "zmk_commit": "edf5c0814fd3ea202e43aad2d68fd32e882a518c",
+    "zephyr_sdk_version": "0.16.9",
+    "board": "nice_nano_v2",
+    "extra_module": "firmware/kc2_zmk"
+  },
+  "build_inputs": {
+    "firmware/kc2_zmk/zephyr/module.yml": "6321aeb98f5102c1c427bfa72253a2bfa34ba406c31a2cd44f6dbfbd331ba88a",
+    "firmware/kc2_zmk/boards/shields/kc2_x3_v2/CMakeLists.txt": "5be230fa13a76b43315ce684e1e849c7104db7aa30af69f7d91144b4b665e2d3",
+    "firmware/kc2_zmk/boards/shields/kc2_x3_v2/Kconfig.defconfig": "2345dc8f5f1163b83d4cadb70590914bdb450a8719751f9ebb1a81aef799808b",
+    "firmware/kc2_zmk/boards/shields/kc2_x3_v2/Kconfig.shield": "0d748e7e9e65948956151e9a74265973c07685e1bedb120ab0398c03a4577157",
+    "firmware/kc2_zmk/boards/shields/kc2_x3_v2/kc2_x3_v2.dtsi": "b66875a3a33045522d1cb7bc234bfe31321e9dd96fa6274924477ccc524e5210",
+    "firmware/kc2_zmk/boards/shields/kc2_x3_v2/kc2_x3_v2.keymap": "50abff02f1d11052e728eee97d7d85f5e1109d9b65f67257f7351aee0bc2aa0e",
+    "firmware/kc2_zmk/boards/shields/kc2_x3_v2/kc2_x3_v2_left.overlay": "873586296183404501092080b0488fe8cd50bc91ea8946298e3d13c64627edca",
+    "firmware/kc2_zmk/boards/shields/kc2_x3_v2/kc2_x3_v2_right.overlay": "2cb92105abef2ba5701e21497d66fcfdb9d95a1a4728f158722d948a00e2b7a2"
+  },
+  "verification_metadata_inputs": {
+    "firmware/kc2_zmk/boards/shields/kc2_x3_v2/kc2_x3_v2.zmk.yml": "546543a84e84206cc8c2d05f7eb9e364040e18106cf0497e20632f93fc9bac94",
+    "firmware/kc2_zmk/boards/shields/kc2_x3_v2/kc2_x3_v2_variant.json": "7075aabcfc042f6f9534b836eb2508ad76e739f12b167a633c454c9cab0880d5"
+  },
+  "artifacts": {
+    "left": {
+      "shield": "kc2_x3_v2_left",
+      "build_directory": "firmware/build/kc2_x3_v2_left",
+      "output": "firmware/out/kc2_x3_v2_left.uf2",
+      "size_bytes": 423424,
+      "sha256": "86c9a777c29d7f1c6f178d8df8aa4f5ecf8e8f75b7fc3daa1ca4842e761c2561",
+      "uf2_block_count": 827
+    },
+    "right": {
+      "shield": "kc2_x3_v2_right",
+      "build_directory": "firmware/build/kc2_x3_v2_right",
+      "output": "firmware/out/kc2_x3_v2_right.uf2",
+      "size_bytes": 340992,
+      "sha256": "92c8dd1175de2c19505d3ca3487bcc8baa1d03a581c6de13c191ca63743e9b35",
+      "uf2_block_count": 666
+    }
+  },
+  "uf2_magic": {
+    "start0_le_u32": "0x0a324655",
+    "start1_le_u32": "0x9e5d5157",
+    "end_le_u32": "0x0ab16f30",
+    "block_size_bytes": 512
+  },
+  "artifact_policy": {
+    "tracked_in_git": false,
+    "local_presence_required_for_source_provenance": false,
+    "when_present": "Verifier hard-checks size, SHA-256, block count, and UF2 magic for every block."
+  }
+}

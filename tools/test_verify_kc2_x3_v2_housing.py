@@ -19,7 +19,7 @@ class V2LoadBearingHousingTests(unittest.TestCase):
             board = self.report["sides"][side]
             self.assertIn("hardware/kicad/draft/x3-v2/", board["source_board"])
             self.assertTrue(board["source_board_sha256_matches"])
-            self.assertEqual(board["key_count"], 32 if side == "left" else 39)
+            self.assertEqual(board["key_count"], 31 if side == "left" else 39)
             self.assertEqual(board["legacy_registration_refs"], [])
 
     def test_nominal_2_5mm_plate_and_support_regions_are_zero_gap_load_paths(self) -> None:
@@ -59,7 +59,7 @@ class V2LoadBearingHousingTests(unittest.TestCase):
             housing = self.report["sides"][side]
             cutouts = housing["component_cutouts"]
             self.assertEqual(set(cutouts), required)
-            key_count = 32 if side == "left" else 39
+            key_count = 31 if side == "left" else 39
             for name in (
                 "choc_socket_body_fillets",
                 "switch_mechanical_pins",

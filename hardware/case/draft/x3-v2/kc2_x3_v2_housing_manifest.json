@@ -37,19 +37,19 @@
   "outputs": {
     "left": {
       "source_board": "hardware/kicad/draft/x3-v2/kc2_left-x3-v2/kc2_left-x3-v2.kicad_pcb",
-      "source_board_sha256": "d57a359fe8e564ed96cd02e468ee8f5b4175d6c213d44da732aba4d192fb25d3",
-      "key_count": 32,
+      "source_board_sha256": "f534bee5754d9f272baa068408afaff45fed382d7b55f2775ea807ef782e7699",
+      "key_count": 31,
       "legacy_registration_refs": [],
       "step": "hardware/case/draft/x3-v2/kc2_left_x3_v2_lower_housing.step",
-      "step_sha256": "714654fb08e59394b90b2422dbbe0f607dd5c2969e1d3e80e4b5dfab89130a06",
+      "step_sha256": "1bbb16b24211f53b7f3a73b4cd8923a92e00be38c3f6d6d5bdb747a36d92a24a",
       "step_has_trailing_whitespace": false,
       "printable_parts": [
         {
           "name": "whole",
           "stl": "hardware/case/draft/x3-v2/kc2_left_x3_v2_lower_housing.stl",
-          "stl_sha256": "dcbe78e3810ebf65671fb726f7a22fdc921076a52ccc19f5912189dac6b60f5c",
+          "stl_sha256": "a05d83f1bee9587a5091134af859751b3809367be72abe3ccf484860d0879c7f",
           "solid_count": 1,
-          "volume_mm3": 18045.732,
+          "volume_mm3": 18484.0,
           "bounds_xyz_mm": [
             0.1,
             0.1,
@@ -68,21 +68,21 @@
       "rail": {
         "top_z_mm": 2.5,
         "nominal_vertical_gap_mm": 0.0,
-        "plan_area_mm2": 292.6501,
-        "segment_count": 6,
+        "plan_area_mm2": 300.9893,
+        "segment_count": 5,
         "near_continuous": true,
         "clearance_cut_around_board_features": true
       },
       "component_cutouts": {
         "choc_socket_body_fillets": {
-          "opening_count": 32,
+          "opening_count": 31,
           "minimum_xy_clearance_mm": 0.35,
           "exterior_open": true,
           "through_opening_z_mm": [
             0.0,
             2.5
           ],
-          "opening_plan_area_mm2": 3243.7738,
+          "opening_plan_area_mm2": 3142.4059,
           "minimum_exterior_bottom_clearance_mm": 0.1,
           "official_body_depth_max_mm": 2.3,
           "assembly_allowance_mm": 0.1,
@@ -90,14 +90,14 @@
           "official_source": "https://www.kailhswitch.com/uploads/15927/files/CPG135001S30.pdf"
         },
         "switch_mechanical_pins": {
-          "opening_count": 32,
+          "opening_count": 31,
           "minimum_xy_clearance_mm": 0.35,
           "exterior_open": true,
           "through_opening_z_mm": [
             0.0,
             2.5
           ],
-          "opening_plan_area_mm2": 2439.1257,
+          "opening_plan_area_mm2": 2362.903,
           "minimum_exterior_bottom_clearance_mm": null,
           "official_body_depth_max_mm": null,
           "assembly_allowance_mm": null,
@@ -105,14 +105,14 @@
           "assembly_note": "Exterior-open cutouts continue every switch NPTH below the PCB."
         },
         "mx_pins_pads_fillets": {
-          "opening_count": 32,
+          "opening_count": 31,
           "minimum_xy_clearance_mm": 0.35,
           "exterior_open": true,
           "through_opening_z_mm": [
             0.0,
             2.5
           ],
-          "opening_plan_area_mm2": 899.7057,
+          "opening_plan_area_mm2": 871.5899,
           "minimum_exterior_bottom_clearance_mm": null,
           "official_body_depth_max_mm": null,
           "assembly_allowance_mm": null,
@@ -120,14 +120,14 @@
           "assembly_note": "Exterior-open cutouts permit soldering and post-solder lead trimming."
         },
         "diode_body_pads_fillets": {
-          "opening_count": 32,
+          "opening_count": 31,
           "minimum_xy_clearance_mm": 0.35,
           "exterior_open": true,
           "through_opening_z_mm": [
             0.0,
             2.5
           ],
-          "opening_plan_area_mm2": 548.6641,
+          "opening_plan_area_mm2": 531.5184,
           "minimum_exterior_bottom_clearance_mm": 0.85,
           "breaks_lateral_housing_perimeter": false,
           "minimum_housing_perimeter_land_mm": 0.9,
@@ -193,8 +193,8 @@
         {
           "id": "LEFT-SUP-03",
           "category": "seam",
-          "x_mm": 19.1,
-          "y_mm": 107.581,
+          "x_mm": 16.6,
+          "y_mm": 110.581,
           "diameter_mm": 2.0,
           "bottom_z_mm": 0.0,
           "top_z_mm": 2.5,
@@ -205,13 +205,13 @@
         {
           "id": "LEFT-SUP-04",
           "category": "thumb",
-          "x_mm": 11.9062,
-          "y_mm": 111.225,
+          "x_mm": 18.1687,
+          "y_mm": 107.725,
           "diameter_mm": 2.0,
           "bottom_z_mm": 0.0,
           "top_z_mm": 2.5,
           "nominal_vertical_gap_mm": 0.0,
-          "target_x_mm": 10.4062,
+          "target_x_mm": 15.1687,
           "target_y_mm": 112.725
         },
         {
@@ -229,7 +229,7 @@
         {
           "id": "LEFT-SUP-06",
           "category": "thumb",
-          "x_mm": 123.2062,
+          "x_mm": 125.7062,
           "y_mm": 107.725,
           "diameter_mm": 2.0,
           "bottom_z_mm": 0.0,
@@ -325,8 +325,8 @@
         {
           "id": "LEFT-SUP-14",
           "category": "span",
-          "x_mm": 107.0375,
-          "y_mm": 89.031,
+          "x_mm": 107.5375,
+          "y_mm": 90.531,
           "diameter_mm": 2.0,
           "bottom_z_mm": 0.0,
           "top_z_mm": 2.5,
@@ -338,15 +338,15 @@
       "maximum_load_point_to_support_mm": 14.9304,
       "maximum_seam_load_point_to_support_mm": 2.85,
       "solid_count": 1,
-      "volume_mm3": 18045.732
+      "volume_mm3": 18484.0
     },
     "right": {
       "source_board": "hardware/kicad/draft/x3-v2/kc2_right-x3-v2/kc2_right-x3-v2.kicad_pcb",
-      "source_board_sha256": "3b771715dd13ad46ea7658b35cd4dcfcc7a640f274d8618eb4fe0ccb81945de7",
+      "source_board_sha256": "b9237f778c282699e6967c69f5c7ec97e892bd8bae0d74adb3c990f1c48dbf1d",
       "key_count": 39,
       "legacy_registration_refs": [],
       "step": "hardware/case/draft/x3-v2/kc2_right_x3_v2_lower_housing.step",
-      "step_sha256": "cc2db3781fa87f473a0ba305458f153462a2a0f5716cf2cdce736a98c94adf58",
+      "step_sha256": "24d2e2085b3fe38d8fcdfbeaa44aa08545ebaf54beff128756e5085c489eeb29",
       "step_has_trailing_whitespace": false,
       "printable_parts": [
         {

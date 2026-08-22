@@ -21194,7 +21194,7 @@
 			)
 		)
 	)
-	(gr_text "KC2 RIGHT X3-V2 - 71-key v4 no-stabilizer split layout"
+	(gr_text "KC2 RIGHT X3-V2 - 70-key v5 no-stabilizer split layout"
 		(at 35 24 0)
 		(layer "F.SilkS")
 		(uuid "7f156430-b3e3-4fdb-adc8-0443b0e974ef")

@@ -98,9 +98,9 @@
   "x3_controller_anchor_inner_span_mm": 30.5,
   "x3_tact_battery_clearance_mm": 1.0,
   "key_count": {
-    "left": 32,
+    "left": 31,
     "right": 39,
-    "total": 71
+    "total": 70
   },
   "max_key_width_u": 1.75,
   "keycell_edge_inset_mm": 1.5,
@@ -158,11 +158,11 @@
       "row": 4,
       "left_key": "Space",
       "right_key": "B",
-      "left_cap_width_mm": 22.8125,
+      "left_cap_width_mm": 32.3375,
       "right_cap_width_mm": 18.05,
-      "left_center_to_edge_mm": 10.40625,
+      "left_center_to_edge_mm": 15.16875,
       "right_center_to_edge_mm": 8.025,
-      "center_pitch_mm": 22.23125,
+      "center_pitch_mm": 26.99375,
       "cap_gap_mm": 1.8,
       "pcb_gap_mm": 3.8
     }
@@ -191,8 +191,8 @@
     "X3 V2 uses the KC2-owned Choc V2/PG1353 bottom-side hot-swap socket plus Cherry MX 5-pin direct-solder geometry.",
     "Choc V1 switch geometry, Choc V2 direct-solder pads, and MX hot-swap socket pads are intentionally excluded.",
     "The Choc socket and MX switch are mutually exclusive assembly options at every key position.",
-    "X3 V2 uses the fixed 71-key v4 no-stabilizer layout: 32 left keys and 39 right keys, with no key wider than 1.75U.",
-    "X3 V2 insets every non-controller key-field edge 1.5 mm from the nominal switch-cell perimeter. Rows 0-3 use 8.025 mm center-to-edge offsets on both sides; bottom Space-B uses 10.40625 mm left / 8.025 mm right.",
+    "X3 V2 uses the fixed 70-key v5 no-stabilizer layout: 31 left keys and 39 right keys, with no key wider than 1.75U.",
+    "X3 V2 insets every non-controller key-field edge 1.5 mm from the nominal switch-cell perimeter. Rows 0-3 use 8.025 mm center-to-edge offsets on both sides; bottom Space-B uses 15.16875 mm left / 8.02500 mm right.",
     "X3 V2 contains no legacy H1-H9 or REG1-REG9 key-field through-holes.",
     "The netless battery-lead slot is at the nice!nano USB/B+ end; insulated B+ and GND/B- leads must use strain relief and remain outside the antenna keepout.",
     "X3 V2 uses verified edge-safe SOD-123 offsets at perimeter keys; the limiting D2 envelope is nominally 1.35 mm inside Edge.Cuts while retaining hybrid-switch assembly and hand-solder clearance."
