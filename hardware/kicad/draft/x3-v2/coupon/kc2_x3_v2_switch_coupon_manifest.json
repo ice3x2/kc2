@@ -1,7 +1,7 @@
 {
   "requirement": "CON-ARCH-004",
   "purpose": "1:1 physical fit coupon; fabrication and populated fit results are required before orderable status",
-  "orientation_scope": "SW_L 0-degree and SW_R 180-degree conservatively exercise both representative bottom-socket orientations required by CON-ARCH-004 AC-8",
+  "orientation_scope": "SW_L 0-degree and SW_R 180-degree conservatively exercise both representative bottom-socket orientations required by CON-ARCH-004 AC-9",
   "board": "hardware\\kicad\\draft\\x3-v2\\coupon\\kc2_x3_v2_switch_coupon.kicad_pcb",
   "samples": [
     {
@@ -37,6 +37,63 @@
   ],
   "key_pitch_mm": 19.05,
   "switch_footprint": "kc2.pretty:SW_Choc_V2_Socket_MX_THT",
+  "matrix_diode": {
+    "manufacturer": "Jingdao Microelectronics",
+    "mpn": "ES1B",
+    "lcsc": "C437840",
+    "eleparts_goods_no": "9475342",
+    "footprint": "kc2.pretty:D_ES1B_SMA_HandSolder_C437840",
+    "assembly_side": "bottom",
+    "pin_1": "cathode_row",
+    "pin_2": "anode_switch",
+    "recommended_land_mm": {
+      "pad_size": [
+        1.8,
+        1.8
+      ],
+      "inner_gap": 2.4,
+      "outer_span": 6.0
+    }
+  },
+  "service_probes": {
+    "per_sample": [
+      "COL",
+      "ANODE",
+      "ROW"
+    ],
+    "footprint": "TestPoint:TestPoint_Plated_Hole_D2.0mm",
+    "drill_mm": 2.0,
+    "copper_diameter_mm": 3.0
+  },
+  "planned_measurements": {
+    "low_current_vf": {
+      "connect": "external current source between each ANODE and ROW probe",
+      "currents_ua": [
+        100,
+        1000
+      ],
+      "record": "forward voltage and polarity for all three populated ES1B samples"
+    },
+    "row_high_3v0_3v3": {
+      "connect": "external tester drives COL, closes the matching switch, and senses ROW",
+      "supply_v": [
+        3.0,
+        3.3
+      ],
+      "record": "ROW high voltage and noise margin for press and release"
+    },
+    "zero_wait_scan": {
+      "connect": "external zero-wait matrix harness uses the labeled COL and ROW probes",
+      "record": "missing, false, or stuck events during representative three-key stress"
+    }
+  },
   "assembly_modes_mutually_exclusive": true,
-  "physical_evidence_status": "pending_fabrication_and_populated_fit_test"
+  "coverage_limitations": {
+    "non_1u": "not_covered_by_this_three-switch_coupon; use revised coupon or first article",
+    "keycap_spacing": "not_covered_by_this_three-switch_coupon",
+    "housing_clearance": "requires printed housing or first-article fit",
+    "scan_stress": "representative_three_sample_only; maximum same-row/same-column matrix stress requires first article"
+  },
+  "order_ready": false,
+  "physical_evidence_status": "pending_fabrication_population_and_measurement"
 }

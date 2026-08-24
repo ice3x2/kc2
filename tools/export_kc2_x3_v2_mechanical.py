@@ -1,10 +1,14 @@
 from __future__ import annotations
 
 import argparse
-import hashlib
 import json
 import subprocess
 from pathlib import Path
+
+if __package__:
+    from tools.canonical_hash import HASH_POLICY, sha256_file
+else:
+    from canonical_hash import HASH_POLICY, sha256_file
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -17,10 +21,6 @@ BOARDS = {
     "right": V2_ROOT / "kc2_right-x3-v2" / "kc2_right-x3-v2.kicad_pcb",
     "coupon": V2_ROOT / "coupon" / "kc2_x3_v2_switch_coupon.kicad_pcb",
 }
-
-
-def sha256(path: Path) -> str:
-    return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
 def normalize_svg(path: Path) -> None:
@@ -68,11 +68,11 @@ def export_mechanical(kicad_cli: Path = DEFAULT_KICAD_CLI) -> dict[str, object]:
                 "layer": layer.split(",")[0],
                 "mirrored": mirror,
                 "size": output.stat().st_size,
-                "sha256": sha256(output),
+                "sha256": sha256_file(output),
             }
         products[product] = {
             "board": str(board.relative_to(ROOT)),
-            "source_board_sha256": sha256(board),
+            "source_board_sha256": sha256_file(board),
             "drawings": drawings,
         }
         if product in {"left", "right"}:
@@ -104,10 +104,11 @@ def export_mechanical(kicad_cli: Path = DEFAULT_KICAD_CLI) -> dict[str, object]:
                 "scale": 1.0,
                 "layers": ["F.Cu", "F.Mask", "F.Silkscreen", "Edge.Cuts"],
                 "size": outline_svg.stat().st_size,
-                "sha256": sha256(outline_svg),
+                "sha256": sha256_file(outline_svg),
             }
     manifest = {
         "requirement": "CON-ARCH-004",
+        "hash_policy": HASH_POLICY,
         "status": "draft_not_orderable_pending_physical_coupon",
         "scale": 1.0,
         "units": "mm",

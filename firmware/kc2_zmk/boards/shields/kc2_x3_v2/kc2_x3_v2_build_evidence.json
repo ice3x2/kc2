@@ -1,5 +1,6 @@
 {
   "schema_version": 1,
+  "hash_policy": "lf-normalized-utf8-text-else-raw-v1",
   "requirement_id": "CON-ARCH-004",
   "variant": "kc2-x3-v2-70-key-v5",
   "recorded_build_date": "2026-08-22",
@@ -10,8 +11,44 @@
     "board": "nice_nano_v2",
     "extra_module": "firmware/kc2_zmk"
   },
+  "hardware_compatibility": {
+    "matrix_diode": {
+      "manufacturer": "Jingdao Microelectronics",
+      "mpn": "ES1B",
+      "lcsc": "C437840",
+      "eleparts_goods_no": "9475342",
+      "quantity": 70,
+      "package": "SMA",
+      "assembly_side": "B.Cu",
+      "bottom_view": "mirrored",
+      "pad_1": "cathode-row",
+      "pad_2": "anode-per-key-switch"
+    },
+    "matrix_contract": {
+      "diode_direction": "col2row",
+      "column_drive": "active-high",
+      "row_input": "active-high-pull-down"
+    },
+    "scan_timing": {
+      "recorded_wait_before_inputs_us": 0,
+      "recorded_wait_between_outputs_us": 0,
+      "firmware_source_changed_for_es1b": false,
+      "change_policy": "physical-coupon-required-before-scan-delay-change",
+      "physical_stress": {
+        "status": "pending",
+        "supply_volts": [
+          3.0,
+          3.3
+        ],
+        "patterns": [
+          "maximum-same-row",
+          "maximum-same-column"
+        ]
+      }
+    }
+  },
   "build_inputs": {
-    "firmware/kc2_zmk/zephyr/module.yml": "6321aeb98f5102c1c427bfa72253a2bfa34ba406c31a2cd44f6dbfbd331ba88a",
+    "firmware/kc2_zmk/zephyr/module.yml": "053e1f919667c5605d9ca186ab5ca4a6513879382c973732667cdcbb046b3c33",
     "firmware/kc2_zmk/boards/shields/kc2_x3_v2/CMakeLists.txt": "5be230fa13a76b43315ce684e1e849c7104db7aa30af69f7d91144b4b665e2d3",
     "firmware/kc2_zmk/boards/shields/kc2_x3_v2/Kconfig.defconfig": "2345dc8f5f1163b83d4cadb70590914bdb450a8719751f9ebb1a81aef799808b",
     "firmware/kc2_zmk/boards/shields/kc2_x3_v2/Kconfig.shield": "0d748e7e9e65948956151e9a74265973c07685e1bedb120ab0398c03a4577157",

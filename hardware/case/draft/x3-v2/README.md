@@ -15,14 +15,32 @@ REG/H registration pattern.
 - Clearance-cut perimeter regions and distributed `2.00 mm` support datum
   regions terminate at exactly Z `2.50 mm`, so the PCB has zero nominal
   vertical support gap without screw preload.
-- The generated support set contains 14 left and 13 right seam/thumb/span
+- The generated support set contains 14 left and 11 right seam/thumb/span
   regions. The measured worst switch-center distance to support is
-  `14.9304 mm` left and `18.4727 mm` right; seam distance is `2.85 mm`
+  `15.4640 mm` left and `18.9619 mm` right; seam distance is `2.85 mm`
   on both halves.
-- There are no PCB registration pegs, screw pilots, or fastener bosses. PCB
-  retention remains intentionally unresolved; the plate provides the vertical
-  typing-load path, but physical retention and deflection still require a
-  printed first article.
+- A `2.00 mm` diameter foot continues downward from every distributed support
+  datum to desk datum Z `-0.80 mm`. The eight left and ten right mounting
+  points add coaxial `3.00 mm` desk-contact columns. The left part therefore
+  has 22 coplanar desk contacts; right parts A/B have 10/11. Each set is
+  non-collinear and its contact hull contains
+  the projected plate centroid, so every printable part has an independent
+  no-rocking digital support proof. Feet remain inside the housing silhouette
+  and have zero intersections with exterior-open component cutouts.
+- There are no legacy REG/H pegs or separate fastener bosses. The exact
+  `MH1..MH8` left and `MH1..MH10` right M1.4 pattern adds `3.00 mm` zero-gap
+  annular support lands at Z `2.50 mm`, aligned `3.00 mm` columns to Z
+  `-0.80 mm`, and provisional `1.10 mm x 2.80 mm` blind pilots. Each pilot
+  ends at Z `-0.30 mm`, leaving a nominal `0.50 mm` closed column bottom.
+  The provisional 4.00 mm under-head screw length yields `2.24..2.56 mm`
+  penetration across the PCB thickness tolerance and at least `0.24 mm`
+  nominal tip clearance. The exact screw MPN, printed pilot, torque, repeated
+  service, and full-pattern registration remain physical gates.
+- The mounting service model removes keycaps but leaves switches installed.
+  All selected points pass the final `3.00 mm` PH0 driver cylinder and
+  `2.00 x 0.50 mm` head envelope without adding a second clearance buffer.
+  The screw pattern clamps and registers the PCB; it does not replace the
+  perimeter rail or the retained 14/11 distributed supports.
 
 ## Exterior-open underside clearances
 
@@ -36,24 +54,26 @@ The verified openings cover:
 - Choc V2 socket bodies and solder-fillet envelopes;
 - all switch center and locator NPTH/mechanical-pin continuations;
 - MX electrical pins, pads, solder joints, and lead-trimming access;
-- all 70 SOD-123 diode bodies, pads, and solder fillets;
+- all 70 Jingdao ES1B SMA maximum lead/body, pad, and solder-fillet envelopes;
 - nice!nano/controller/reset/service geometry; and
 - battery-lead access.
 
-Every class has at least `0.30 mm` nominal XY clearance. The measured minimum
-is `0.3263 mm` for the diode openings after export simplification. No diode
-opening breaks the lateral housing perimeter: the limiting left opening leaves
-`0.90 mm` of housing material and the right leaves `3.0888 mm`, against the
-`0.85 mm` release gate. The
+Every class has at least `0.30 mm` nominal XY clearance. The measured overall
+minimum is `0.3299 mm`; the ES1B openings retain at least `0.3311 mm`. No diode
+opening breaks the lateral housing perimeter: the limiting opening leaves
+`1.0250 mm` of housing material on both sides, against the `0.85 mm` release
+gate. The
 vertical model uses the official Kailh CPG135001S30 maximum socket depth
 `2.30 mm` plus `0.10 mm` assembly allowance, leaving `0.10 mm` to the
-exterior bottom. It uses the official Vishay SOD-123 maximum depth `1.35 mm`
-plus `0.30 mm` solder allowance, leaving `0.85 mm`.
+plate bottom. It uses Jingdao's ES1B maximum `5.20 x 2.70 x 2.20 mm`
+lead/body envelope plus `0.30 mm` solder allowance. This consumes the full
+`2.50 mm` plate depth, but the feet provide `0.80 mm` nominal diode-to-desk
+clearance and `0.50 mm` after the documented `0.30 mm` print allowance.
 
 - Kailh drawing:
   <https://www.kailhswitch.com/uploads/15927/files/CPG135001S30.pdf>
-- Vishay 1N4148W datasheet:
-  <https://www.vishay.com/docs/86356/1n4148w.pdf>
+- Jingdao ES1B / LCSC C437840 datasheet:
+  <https://datasheet.lcsc.com/datasheet/pdf/2343098076327222563a84c9a80dbd7d.pdf?productCode=C437840>
 
 Bottom copper tracks and tented vias do not protrude below the PCB support
 plane. Their electrical/mask state remains covered by the V2 board verifier.
@@ -63,16 +83,16 @@ plane. Their electrical/mask state remains covered by the V2 board verifier.
 The left housing is one printable part. The right housing is exactly two parts
 and has no stale monolithic STL:
 
-- left: `134.9125 x 126.5500 x 2.5000 mm`;
-- right part A: `86.9938 x 92.0500 x 2.5000 mm`;
-- right part B: `81.6438 x 126.5500 x 2.5000 mm`.
+- left: `134.9125 x 126.5500 x 3.3001 mm`;
+- right part A: `86.9938 x 92.0500 x 3.3001 mm`;
+- right part B: `81.6438 x 126.5500 x 3.3001 mm`.
 
 Every STL is one watertight shell and fits the `150 mm` cube. The two right
 parts use two full-depth neck-and-head puzzle captures. They assemble
 vertically, use `0.20 mm` nominal print clearance, provide `1.25 mm`
 minimum in-plane capture per side, and require neither screws nor adhesive.
 This joint provides in-plane case-part registration; it does not claim to
-replace the still-pending PCB retention validation.
+replace the still-pending physical PCB-registration validation.
 
 The generator strips trailing spaces and tabs from exported STEP/STL lines
 while preserving newline bytes. The manifest and verifier hard-check
@@ -87,13 +107,17 @@ python -B -m unittest tools.test_verify_kc2_x3_v2_housing -v
 ```
 
 The manifest binds the current source-board SHA-256, generator SHA-256, STEP
-and STL SHA-256, support locations, component openings, printable bounds, and
-joint geometry.
+and STL SHA-256, support/desk-contact locations, component openings, printable
+bounds, M1.4 land/pilot/column/head/driver contract, and joint geometry. The
+verifier independently extracts each STL's
+bottom contact components and compares their count, centers, Z datum, and
+stability hull with the generated plan.
 
 ## Remaining physical gate
 
 This is digital clearance and geometry evidence only. `CON-ARCH-006` AC-7 is
 still pending: the printed, assembled housing must pass the 2.0 N load test at
 the worst spans with no more than 0.30 mm downward PCB displacement, while PCB
-retention and real component insertion are checked. These draft files are not
+registration, pilot/torque/ten-cycle behavior, switch/keycap clearance, and
+real component insertion are checked. `order_ready` remains false. These draft files are not
 fabrication/order-readiness approval.

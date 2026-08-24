@@ -5,6 +5,7 @@ from collections import Counter
 import hashlib
 import json
 from pathlib import Path
+import re
 
 import pcbnew
 
@@ -121,6 +122,80 @@ RIGHT_R12_IMPORTED_ONLY_ROUTE = (
 )
 
 
+ES1B_ROUTE_ITEM_COUNTS = {"left": 564, "right": 732}
+ES1B_ROUTE_SHA256 = {
+    "left": "ba48ff17dd7f447e4cbededba09c1889b82713b1defef18d63aace4e59f92c7d",
+    "right": "1592744e711eda0eef59d51062c3c2bab87e5ae05c8156f0708f0544a09b7e38",
+}
+ES1B_IMPORTED_ITEM_COUNTS = {"left": 560, "right": 729}
+ES1B_ROUTE_REMOVALS = {
+    "left": (
+        ("track", "L_ROW0", "B.Cu", 148.5750, 71.4872, 150.8671, 71.4872, 0.250),
+        ("track", "L_COL0", "B.Cu", 122.6545, 104.9299, 46.4687, 104.9299, 0.250),
+    ),
+    "right": (
+        ("track", "R_COL1", "B.Cu", 70.0985, 128.6218, 71.0717, 129.5950, 0.250),
+        ("track", "R_COL1", "B.Cu", 70.0985, 121.9640, 70.0985, 128.6218, 0.250),
+        ("via", "R_ROW4", 66.1387, 143.2420, 0.600, 0.300),
+        ("track", "R_ROW4", "B.Cu", 70.8543, 147.9576, 66.1387, 143.2420, 0.250),
+        ("track", "R_ROW4", "F.Cu", 66.1387, 143.2420, 66.1387, 130.9012, 0.250),
+        ("track", "R_ROW1", "B.Cu", 60.3056, 88.2454, 60.3056, 80.1004, 0.250),
+        ("track", "R_COL6", "B.Cu", 99.1009, 84.0393, 99.1009, 86.2026, 0.250),
+        ("track", "R_COL6", "F.Cu", 99.1009, 84.0393, 99.1009, 86.2026, 0.250),
+        ("track", "R_COL6", "B.Cu", 99.1009, 86.2026, 99.1009, 84.0393, 0.250),
+        ("track", "R_COL6", "F.Cu", 99.1009, 86.2026, 99.1009, 84.0393, 0.250),
+        ("track", "R_COL2", "B.Cu", 80.9822, 73.5207, 84.9343, 73.5207, 0.250),
+        ("track", "R_COL2", "B.Cu", 79.2828, 71.8213, 80.9822, 73.5207, 0.250),
+    ),
+}
+ES1B_ROUTE_ADDITIONS = {
+    "left": (
+        ("track", "L_COL0", "B.Cu", 46.4687, 104.9299, 50.8000, 104.9299, 0.250),
+        ("track", "L_COL0", "B.Cu", 50.8000, 104.9299, 51.1000, 105.2500, 0.250),
+        ("track", "L_COL0", "B.Cu", 51.1000, 105.2500, 58.4750, 105.2500, 0.250),
+        ("track", "L_COL0", "B.Cu", 58.4750, 105.2500, 58.8000, 104.9299, 0.250),
+        ("track", "L_COL0", "B.Cu", 58.8000, 104.9299, 122.6545, 104.9299, 0.250),
+    ),
+    "right": (
+        ("track", "R_COL2", "B.Cu", 79.2828, 71.8213, 79.8000, 73.0000, 0.250),
+        ("track", "R_COL2", "B.Cu", 79.8000, 73.0000, 79.8000, 74.2750, 0.250),
+        ("track", "R_COL2", "B.Cu", 79.8000, 74.2750, 84.2000, 74.2750, 0.250),
+        ("track", "R_COL2", "B.Cu", 84.2000, 74.2750, 84.9343, 73.5207, 0.250),
+        ("via", "R_COL1", 70.0985, 121.9640, 0.600, 0.300),
+        ("via", "R_COL1", 71.0717, 129.5950, 0.600, 0.300),
+        ("track", "R_COL1", "F.Cu", 70.0985, 121.9640, 71.0717, 129.5950, 0.250),
+        ("track", "R_ROW1", "B.Cu", 60.3056, 88.2454, 59.5500, 87.4898, 0.250),
+        ("track", "R_ROW1", "B.Cu", 59.5500, 87.4898, 59.5500, 81.0000, 0.250),
+        ("track", "R_ROW1", "B.Cu", 59.5500, 81.0000, 60.3056, 80.1004, 0.250),
+        ("track", "R_ROW4", "F.Cu", 66.1387, 143.6000, 66.1387, 130.9012, 0.250),
+        ("track", "R_ROW4", "B.Cu", 70.8543, 147.9576, 66.1387, 143.6000, 0.250),
+        ("via", "R_ROW4", 66.1387, 143.6000, 0.600, 0.300),
+    ),
+}
+
+M1_4_DRIVER_ROUTE_REMOVALS = {
+    "left": (
+        ("track", "L_COL5", "F.Cu", 144.1425, 56.6200, 144.1425, 69.1175, 0.250),
+        ("track", "L_COL5", "F.Cu", 144.1425, 69.1175, 140.8150, 72.4450, 0.250),
+    ),
+    "right": (
+        ("track", "RK30_D", "B.Cu", 143.8625, 136.0703, 147.7978, 132.1350, 0.250),
+    ),
+}
+M1_4_DRIVER_ROUTE_ADDITIONS = {
+    "left": (
+        ("track", "L_COL5", "B.Cu", 144.1425, 56.6200, 140.8150, 64.5000, 0.250),
+        ("via", "L_COL5", 140.8150, 64.5000, 0.600, 0.300),
+        ("track", "L_COL5", "F.Cu", 140.8150, 64.5000, 140.8150, 72.4450, 0.250),
+    ),
+    "right": (
+        ("track", "RK30_D", "B.Cu", 143.8625, 136.0703, 145.5000, 135.0000, 0.250),
+        ("track", "RK30_D", "B.Cu", 145.5000, 135.0000, 147.0000, 132.5000, 0.250),
+        ("track", "RK30_D", "B.Cu", 147.0000, 132.5000, 147.7978, 132.1350, 0.250),
+    ),
+}
+
+
 def _route_signature(item: pcbnew.BOARD_CONNECTED_ITEM) -> tuple[object, ...]:
     if isinstance(item, pcbnew.PCB_VIA):
         position = item.GetPosition()
@@ -183,6 +258,193 @@ def _matrix_pads_are_fully_connected(board: pcbnew.BOARD, side: str) -> bool:
         if any(pad.m_Uuid.AsString() not in connected for pad in pads):
             return False
     return True
+
+
+def _add_route_spec(board: pcbnew.BOARD, spec: tuple[object, ...]) -> None:
+    kind, net_name, *values = spec
+    net = board.FindNet(str(net_name))
+    if net is None:
+        raise RuntimeError(f"missing reviewed route net {net_name}")
+    if kind == "via":
+        x, y, diameter, drill = values
+        item = pcbnew.PCB_VIA(board)
+        item.SetPosition(pcbnew.VECTOR2I(pcbnew.FromMM(x), pcbnew.FromMM(y)))
+        item.SetWidth(pcbnew.FromMM(diameter))
+        item.SetDrill(pcbnew.FromMM(drill))
+        item.SetLayerPair(pcbnew.F_Cu, pcbnew.B_Cu)
+    else:
+        layer_name, x1, y1, x2, y2, width = values
+        item = pcbnew.PCB_TRACK(board)
+        item.SetLayer(board.GetLayerID(layer_name))
+        item.SetStart(pcbnew.VECTOR2I(pcbnew.FromMM(x1), pcbnew.FromMM(y1)))
+        item.SetEnd(pcbnew.VECTOR2I(pcbnew.FromMM(x2), pcbnew.FromMM(y2)))
+        item.SetWidth(pcbnew.FromMM(width))
+    item.SetNet(net)
+    board.Add(item)
+
+
+def apply_m1_4_driver_route_detours(
+    board: pcbnew.BOARD,
+    side: str,
+) -> dict[str, int]:
+    """Apply only the reviewed route detours needed by the final 3 mm driver."""
+    if side not in M1_4_DRIVER_ROUTE_REMOVALS:
+        raise RuntimeError(f"unsupported M1.4 driver detour side {side!r}")
+    signatures = Counter(_route_signature(item) for item in board.GetTracks())
+    removals = Counter(M1_4_DRIVER_ROUTE_REMOVALS[side])
+    additions = Counter(M1_4_DRIVER_ROUTE_ADDITIONS[side])
+    has_old = signatures & removals == removals
+    has_new = signatures & additions == additions
+    if has_new and not has_old:
+        return {"removed": 0, "added": 0}
+    if not has_old or has_new:
+        raise RuntimeError(f"reviewed {side} M1.4 driver detour precondition failed")
+
+    remaining = removals.copy()
+    removed = 0
+    for item in list(board.GetTracks()):
+        signature = _route_signature(item)
+        if remaining[signature] <= 0:
+            continue
+        board.Delete(item)
+        remaining[signature] -= 1
+        removed += 1
+    if any(remaining.values()):
+        raise RuntimeError(f"reviewed {side} M1.4 driver detour removal was incomplete")
+    for spec in M1_4_DRIVER_ROUTE_ADDITIONS[side]:
+        _add_route_spec(board, spec)
+    updated = Counter(_route_signature(item) for item in board.GetTracks())
+    if updated & removals or updated & additions != additions:
+        raise RuntimeError(f"reviewed {side} M1.4 driver detour was incomplete")
+    return {"removed": removed, "added": len(M1_4_DRIVER_ROUTE_ADDITIONS[side])}
+
+
+def export_current_mh_trackless_dsn(
+    board: pcbnew.BOARD,
+    output_path: Path,
+    side: str,
+) -> None:
+    """Export a deterministic current-MH routing input from a trackless board."""
+    expected_holes = 8 if side == "left" else 10 if side == "right" else None
+    if expected_holes is None:
+        raise RuntimeError(f"unsupported current-MH DSN side {side!r}")
+    holes = [
+        footprint
+        for footprint in board.GetFootprints()
+        if re.fullmatch(r"MH\d+", footprint.GetReference())
+    ]
+    if len(holes) != expected_holes:
+        raise RuntimeError(
+            f"{side} current-MH DSN requires {expected_holes} mounting holes, found {len(holes)}"
+        )
+    if list(board.GetTracks()):
+        raise RuntimeError(f"{side} current-MH DSN export requires a trackless board")
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    if not pcbnew.ExportSpecctraDSN(board, str(output_path)):
+        raise RuntimeError(f"failed to export current-MH DSN {output_path}")
+    text = output_path.read_text(encoding="utf-8")
+    canonical_name = f"kc2_{side}-x3-v2-70-es1b-mh-r2.dsn"
+    normalized, count = re.subn(
+        r'^\(pcb\s+(?:"[^"]*"|[^\r\n]+)',
+        f'(pcb "{canonical_name}"',
+        text,
+        count=1,
+    )
+    if count != 1:
+        raise RuntimeError(f"failed to normalize current-MH DSN identity {output_path}")
+    output_path.write_text(normalized, encoding="utf-8", newline="\n")
+
+
+def _has_exact_reviewed_es1b_route(board: pcbnew.BOARD, side: str) -> bool:
+    signatures = Counter(_route_signature(item) for item in board.GetTracks())
+    return (
+        sum(signatures.values()) == ES1B_ROUTE_ITEM_COUNTS[side]
+        and _route_counter_digest(signatures) == ES1B_ROUTE_SHA256[side]
+        and _matrix_pads_are_fully_connected(board, side)
+    )
+
+
+def import_reviewed_es1b_session(
+    board: pcbnew.BOARD,
+    session_path: Path,
+    side: str,
+) -> dict[str, int]:
+    """Reconstruct the exact ES1B route and apply reviewed solder-envelope detours."""
+    from tools.verify_kc2_x3_v2 import verify_switch_layout_against_generator
+
+    if side not in {"left", "right"}:
+        raise RuntimeError(f"unsupported ES1B route side {side!r}")
+    expected_switches = 31 if side == "left" else 39
+    switches = sorted(
+        (
+            footprint
+            for footprint in board.GetFootprints()
+            if footprint.GetReference().startswith("SW")
+            and footprint.GetReference()[2:].isdigit()
+        ),
+        key=lambda footprint: int(footprint.GetReference()[2:]),
+    )
+    if len(switches) != expected_switches:
+        raise RuntimeError(
+            f"reviewed {side} ES1B route requires {expected_switches} switches, "
+            f"found {len(switches)}"
+        )
+    layout_errors, _maximum_error = verify_switch_layout_against_generator(switches)
+    if layout_errors:
+        raise RuntimeError(
+            f"reviewed {side} ES1B switch geometry mismatch: {layout_errors[0]}"
+        )
+
+    existing = list(board.GetTracks())
+    if existing:
+        if not _has_exact_reviewed_es1b_route(board, side):
+            raise RuntimeError(
+                f"refusing a nonempty board that is not the exact reviewed {side} ES1B route"
+            )
+        return {
+            "imported_track_and_via_items": 0,
+            "reviewed_items_removed": 0,
+            "reviewed_items_added": 0,
+            "final_track_and_via_items": len(existing),
+        }
+    if not session_path.is_file():
+        raise RuntimeError(f"missing reviewed {side} ES1B route session: {session_path}")
+    if not pcbnew.ImportSpecctraSES(board, str(session_path)):
+        raise RuntimeError(f"failed to import reviewed {side} ES1B route session: {session_path}")
+
+    imported = list(board.GetTracks())
+    imported_signatures = Counter(_route_signature(item) for item in imported)
+    expected_removals = Counter(ES1B_ROUTE_REMOVALS[side])
+    if len(imported) != ES1B_IMPORTED_ITEM_COUNTS[side]:
+        raise RuntimeError(
+            f"reviewed {side} ES1B session item count changed: expected "
+            f"{ES1B_IMPORTED_ITEM_COUNTS[side]}, found {len(imported)}"
+        )
+    if imported_signatures & expected_removals != expected_removals:
+        raise RuntimeError(f"reviewed {side} ES1B removal precondition failed")
+
+    remaining = expected_removals.copy()
+    removed = 0
+    for item in list(board.GetTracks()):
+        signature = _route_signature(item)
+        if remaining[signature] <= 0:
+            continue
+        board.Delete(item)
+        remaining[signature] -= 1
+        removed += 1
+    if any(remaining.values()):
+        raise RuntimeError(f"reviewed {side} ES1B route removal was incomplete")
+    for spec in ES1B_ROUTE_ADDITIONS[side]:
+        _add_route_spec(board, spec)
+    driver_detour = apply_m1_4_driver_route_detours(board, side)
+    if not _has_exact_reviewed_es1b_route(board, side):
+        raise RuntimeError(f"reviewed {side} ES1B session did not reconstruct the exact route")
+    return {
+        "imported_track_and_via_items": len(imported),
+        "reviewed_items_removed": removed + driver_detour["removed"],
+        "reviewed_items_added": len(ES1B_ROUTE_ADDITIONS[side]) + driver_detour["added"],
+        "final_track_and_via_items": len(list(board.GetTracks())),
+    }
 
 
 def import_reviewed_left_v5_session(
@@ -429,10 +691,17 @@ def main() -> None:
     parser.add_argument("--restore-left-controller-columns", action="store_true")
     parser.add_argument("--import-left-v5-session", type=Path)
     parser.add_argument("--import-right-r12-session", type=Path)
+    parser.add_argument("--import-es1b-session", type=Path)
     args = parser.parse_args()
     board = pcbnew.LoadBoard(str(args.board))
     side = "left" if "left" in args.board.name.lower() else "right"
     result: dict[str, object] = {}
+    if args.import_es1b_session:
+        result["es1b_session"] = import_reviewed_es1b_session(
+            board,
+            args.import_es1b_session,
+            side,
+        )
     if args.import_left_v5_session:
         if side != "left":
             raise RuntimeError("left v5 session cannot be applied to a right board")
@@ -457,7 +726,7 @@ def main() -> None:
     if not result:
         parser.error(
             "provide --drc, --restore-left-controller-columns, --import-left-v5-session, "
-            "and/or --import-right-r12-session"
+            "--import-right-r12-session, and/or --import-es1b-session"
         )
     pcbnew.SaveBoard(str(args.board), board)
     print(f"{side}: {result}")

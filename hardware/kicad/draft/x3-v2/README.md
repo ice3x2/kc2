@@ -25,6 +25,22 @@ The left and right boards use their physical split-keyboard orientations. The
 bottom-side socket pattern must be read from the PCB bottom; the 1:1 bottom PDF
 is already mirrored for a physical bottom view.
 
+## Matrix diode and polarity
+
+The active V2 BOM contains exactly 70 Jingdao Microelectronics `ES1B` matrix
+diodes: LCSC `C437840`, Eleparts goods `9475342`, SMA, 100 V / 1 A. All are
+assembled on `B.Cu`. Pin/pad 1 is the cathode connected to the row net; pin/pad
+2 is the anode connected to the per-key switch net. A physical bottom view is
+mirrored relative to KiCad's top/front view, so place the cathode band toward
+the marked pad 1 rather than relying on an assumed left/right direction.
+
+The firmware contract remains `col2row`, active-high columns, and active-high
+row inputs with pull-downs. The existing pinned build remains zero-wait: no
+extra delay before reading inputs and no delay between driven columns. Do not
+change those scan delays until a populated physical coupon has passed both
+3.0 V and 3.3 V maximum same-row and maximum same-column stress tests. Those
+tests remain pending, so these digitally verified boards are not orderable.
+
 ## Joined spacing
 
 The joined reference places the right half `0.80 mm` farther outward than the
@@ -54,18 +70,39 @@ The 2.50 mm lower plate has exterior-bottom-open cutouts through the full plate
 height for every MX terminal and solder joint, rather than a closed component
 cavity. The lateral solder-fillet model includes a 0.30 mm allowance.
 
-The Choc socket SMD solder-fillet model also includes a 0.30 mm lateral
-allowance. The V2-specific rail/post verifier reports zero socket, MX, diode,
-track, via, controller/reset, battery-access, and key-travel intersections;
-all required exported cutouts retain at least 0.3263 mm measured XY clearance.
+The Choc socket and ES1B SMD solder-fillet models each include a 0.30 mm
+lateral allowance. The routed ES1B boards pass the current digital diode gates:
+the minima across both halves are 1.605 mm to unused switch NPTH, 1.000 mm to
+switch pads and unrelated exposed copper, 1.725 mm to socket bodies, 0.400 mm
+between diode and switch-assembly fillet envelopes, 0.213 mm to an unrelated
+route, and 1.475 mm from the diode fillet envelope to Edge.Cuts. Every diode
+pad has an unobstructed 1.50 mm cardinal solder-tool approach. These PCB
+measurements supersede the old SOD-123 D2 values. Regenerated ES1B housing
+evidence reports 0.3299 mm minimum cutout XY clearance overall, 0.3311 mm for
+ES1B, and 1.0250 mm minimum diode perimeter land on both halves. The 2.50 mm
+structural plate plus 0.80 mm underside feet provides 0.80 mm nominal and
+0.50 mm post-print-tolerance diode-to-desk clearance. This remains digital
+evidence only; physical retention, deflection, and populated-coupon tests are
+still required before ordering.
 
-The limiting left D2 diode body/pad/0.30 mm solder-fillet envelope is 1.35 mm
-inside PCB Edge.Cuts; the release gate is 1.30 mm. It keeps 1.035 mm from the
-nearest hybrid switch pad and has no switch/socket/fillet or solder-tool
-approach conflict. Other straight-edge-limited relocated diodes are at least
-3.95 mm inside Edge.Cuts. With the 0.10 mm housing inset and 0.35 mm cutout
-allowance, the left housing retains 0.90 mm of uninterrupted material outside
-the limiting diode opening (0.85 mm release gate).
+## M1.4 retention prototype
+
+The PCB contains eight left and ten right `MH*` features using the owned
+`MH_M1.4_NPTH_1.60` footprint. Each is an unnetted, copper-free `1.60 mm`
+round NPTH. Service is modeled with keycaps removed and either supported switch
+type still installed. A final `3.00 mm` vertical PH0 driver envelope and a
+`2.00 x 0.50 mm` head envelope clear the modeled Choc V2 and MX assemblies;
+the driver envelope already includes the search reserve and must not be
+buffered a second time.
+
+The matching lower housing provides a `3.00 mm` zero-gap support land and desk
+column at every hole, with a provisional `1.10 x 2.80 mm` blind pilot and a
+`0.50 mm` closed bottom. The original 14-left/11-right distributed supports
+remain the primary typing-load path. The provisional 4.00 mm under-head screw
+length, exact screw and driver, full-pattern registration, installation and
+stripping torque, ten service cycles, keycap-skirt clearance, and 2.0 N
+deflection must be proven on physical coupons. These digital files are not a
+fastener purchase recommendation and remain not orderable.
 
 ## Battery service path
 
@@ -87,8 +124,10 @@ wire path outside the antenna keepout.
 The coupon contains conservative representative 0-degree and 180-degree
 bottom socket orientations plus a 5-pin MX direct-solder sample at 19.05 mm
 pitch. The 180-degree sample deliberately exercises the rotated/mirrored
-assembly risk required by `CON-ARCH-004` AC-8. Its CAD and fabrication package
-do not satisfy the physical evidence gate by themselves.
+assembly risk required by `CON-ARCH-004` AC-9. Its CAD and fabrication package
+do not satisfy the physical evidence gate by themselves. A populated coupon
+must additionally verify ES1B polarity and solder access plus the pending 3.0 V
+and 3.3 V zero-wait same-row/same-column matrix stress cases.
 
 ## Reproduction and verification
 
@@ -125,38 +164,47 @@ the release verifier:
 & "C:\Program Files\KiCad\10.0\bin\python.exe" -B -m tools.verify_kc2_x3_v2
 ```
 
-`kc2_x3_v2_drc_evidence.json` binds each current board SHA-256 to its DRC report
-SHA-256, schema, source filename, KiCad version, report date, and included
-severity classes. The release verifier requires a KiCad 10.x report, a valid
-ISO timestamp, and both `error` and `warning` coverage; `exclusion` is the only
-optional additional severity. A changed board or report cannot pass against
-stale evidence.
+`kc2_x3_v2_drc_evidence.json` binds each current board and `.kicad_pro`
+SHA-256 to its DRC report SHA-256, schema, source filename, KiCad version,
+report date, included severity classes, and the project's `Default` netclass
+clearance. The release verifier requires that clearance to remain at least
+`0.30 mm`, a KiCad 10.x report, a valid ISO timestamp, and both `error` and
+`warning` coverage; `exclusion` is the only optional additional severity. A
+changed board, project, or report cannot pass against stale evidence.
 
 When only the generated outline policy changes, use
 `tools.repair_kc2_x3_v2_compact_edge --sync-edge-cuts-from <fresh-board>`.
 The command rejects non-rigid switch geometry, replaces only Edge.Cuts, and is
 covered by route/footprint-preservation and idempotence tests.
 
-The final diode-edge autoroute snapshots are
-`autoroute/kc2_left-x3-v2-70-v5-r1.{dsn,ses}` and
-`autoroute/kc2_right-x3-v2-71-r12.{dsn,ses}`. Against empty-track generated
-boards, reconstruct the exact final routes with:
+The current mounting-hole-aware trackless inputs are
+`autoroute/kc2_left-x3-v2-70-es1b-mh-r2.dsn` and
+`autoroute/kc2_right-x3-v2-70-es1b-mh-r2.dsn`; they contain exactly eight and
+ten M1.4 NPTHs. The reviewed sessions remain the pre-MH r1 SES files. Against
+empty-track generated boards, the finalizer imports those sessions and then
+applies exact, precondition-checked driver-clearance detours:
 
 ```powershell
 & "C:\Program Files\KiCad\10.0\bin\python.exe" -B -m tools.finalize_kc2_x3_v2_routes `
   hardware/kicad/draft/x3-v2/kc2_left-x3-v2/kc2_left-x3-v2.kicad_pcb `
-  --import-left-v5-session hardware/kicad/draft/x3-v2/autoroute/kc2_left-x3-v2-70-v5-r1.ses
+  --import-es1b-session hardware/kicad/draft/x3-v2/autoroute/kc2_left-x3-v2-70-es1b-r1.ses
 & "C:\Program Files\KiCad\10.0\bin\python.exe" -B -m tools.finalize_kc2_x3_v2_routes `
   hardware/kicad/draft/x3-v2/kc2_right-x3-v2/kc2_right-x3-v2.kicad_pcb `
-  --import-right-r12-session hardware/kicad/draft/x3-v2/autoroute/kc2_right-x3-v2-71-r12.ses
+  --import-es1b-session hardware/kicad/draft/x3-v2/autoroute/kc2_right-x3-v2-70-es1b-r1.ses
 ```
 
-The helper rejects non-v5 switch geometry, stale sessions, and partial or
-unexpected nonempty routes. The right importer removes only the exact reviewed
-18-item R_COL3/R_COL6 r12 residue under signature and item-count preconditions.
-Both importers verify complete matrix connectivity, reproduce the committed
-route signature exactly, and are covered by second-run idempotence tests. Running
-either command against its already exact committed board is a verified no-op.
+The helper rejects wrong ES1B/switch geometry, stale sessions, and partial or
+unexpected nonempty routes. Both importers verify complete matrix connectivity,
+reproduce the committed route exactly, and are covered by second-run
+idempotence tests. The deterministic final track/via counts are 564 left and
+732 right, with route digests
+`ba48ff17dd7f447e4cbededba09c1889b82713b1defef18d63aace4e59f92c7d`
+and `1592744e711eda0eef59d51062c3c2bab87e5ae05c8156f0708f0544a09b7e38`.
+Running either command against its already exact committed board is a verified
+no-op. The generation manifest separately binds the current MH-aware DSN, the
+pre-MH r1 source DSN, and the reviewed r1 SES by SHA-256. It also verifies both
+current DSN global/default clearance rules remain at least `300` internal units
+(`0.30 mm` at the recorded DSN resolution).
 
 The project explicitly ignores five KiCad diagnostic classes: missing
 courtyard, track-not-centered-on-via, tuning-profile track geometry,
@@ -167,9 +215,18 @@ electrical implications remain covered by exact footprint geometry checks,
 matrix-island connectivity checks, NPTH copper-free checks, Gerber/Excellon
 inspection, and zero DRC violations/unconnected items.
 
+The production release gate compares every placed ES1B pad, B.Fab body,
+courtyard, and mirrored B.Silkscreen cathode mark against the KC2-owned
+footprint. It also compares every hybrid-switch pad/NPTH and the side-specific
+24-pad nice!nano socket against its owned footprint, requires the matching
+front-silkscreen `USB_OUT_LEFT`/`USB_OUT_RIGHT` label, and hard-checks
+`SW_RST1` pad 1=`RST`, pad 2=`GND`.
+
 Official geometry references:
 
 - Kailh Choc V2 switch: https://www.kailhswitch.com/mechanical-keyboard-switches/key-switches/kailh-low-profile-switch-choc-v2.html
 - Kailh socket drawing: https://www.kailhswitch.com/uploads/15927/files/CPG135001S30.pdf?rnd=925
 - Cherry MX2A 5-pin datasheet: https://www.cherry.de/fileadmin/media/Industrial/Switch/MX_BLACK/Data_sheet_MX2A_Black.pdf
+- Jingdao ES1B / LCSC C437840 datasheet: https://www.lcsc.com/datasheet/C437840.pdf
+- Eleparts goods 9475342: https://www.eleparts.co.kr/goods/view?no=9475342
 - nice!nano v2 pinout and schematic: https://nicekeyboards.com/docs/nice-nano/pinout-schematic/

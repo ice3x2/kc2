@@ -3,9 +3,12 @@
 from __future__ import annotations
 
 import json
+import os
 from pathlib import Path
 import shutil
 import struct
+import subprocess
+import sys
 from tempfile import TemporaryDirectory
 import unittest
 
@@ -13,6 +16,71 @@ from tools import verify_kc2_x3_v2_zmk_firmware as verifier
 
 
 class V2FirmwareContractTests(unittest.TestCase):
+    def test_build_evidence_hash_policy_accepts_crlf_and_exact_index_snapshot(self) -> None:
+        from tools.canonical_hash import HASH_POLICY, sha256_file
+
+        manifest = verifier.read_build_evidence()
+        self.assertEqual(manifest.get("hash_policy"), HASH_POLICY)
+        with TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            lf = root / "lf.txt"
+            crlf = root / "crlf.txt"
+            lf.write_bytes(b"alpha\nbeta\n")
+            crlf.write_bytes(b"alpha\r\nbeta\r\n")
+            self.assertEqual(sha256_file(lf), sha256_file(crlf))
+
+            manifest_relative = verifier.BUILD_EVIDENCE_PATH.relative_to(verifier.ROOT)
+            snapshot_paths = (
+                *verifier.BUILD_SOURCE_PATHS,
+                *verifier.BUILD_METADATA_PATHS,
+                manifest_relative,
+            )
+            candidate_index = root / "candidate.index"
+            environment = os.environ.copy()
+            environment["GIT_INDEX_FILE"] = str(candidate_index)
+            subprocess.run(
+                ["git", "read-tree", "HEAD"],
+                cwd=verifier.ROOT,
+                env=environment,
+                check=True,
+            )
+            subprocess.run(
+                ["git", "add", "-f", "--", *(path.as_posix() for path in snapshot_paths)],
+                cwd=verifier.ROOT,
+                env=environment,
+                check=True,
+            )
+            for relative in snapshot_paths:
+                destination = root / relative
+                destination.parent.mkdir(parents=True, exist_ok=True)
+                destination.write_bytes(
+                    subprocess.check_output(
+                        ["git", "show", f":{relative.as_posix()}"],
+                        cwd=verifier.ROOT,
+                        env=environment,
+                    )
+                )
+            manifest_path = root / manifest_relative
+            errors, report = verifier.verify_build_evidence(
+                manifest_path=manifest_path,
+                root=root,
+                artifact_paths={
+                    "left": root / "missing-left.uf2",
+                    "right": root / "missing-right.uf2",
+                },
+            )
+
+        self.assertEqual(errors, [])
+        self.assertTrue(report["hash_policy_verified"])
+        self.assertTrue(report["manifest_provenance_verified"])
+        direct = subprocess.run(
+            [sys.executable, "-B", str(Path(verifier.__file__)), "--help"],
+            cwd=verifier.ROOT,
+            capture_output=True,
+            text=True,
+        )
+        self.assertEqual(direct.returncode, 0, direct.stderr)
+
     def test_build_evidence_reports_present_artifacts_when_manifest_is_unreadable(self) -> None:
         with TemporaryDirectory() as temporary:
             root = Path(temporary)
@@ -64,6 +132,8 @@ class V2FirmwareContractTests(unittest.TestCase):
 
         self.assertEqual(errors, [])
         self.assertTrue(report["manifest_provenance_verified"])
+        self.assertTrue(report["hash_policy_verified"])
+        self.assertTrue(report["hardware_compatibility_verified"])
         self.assertEqual(
             set(report["source_digests_verified"]),
             {path.as_posix() for path in verifier.BUILD_SOURCE_PATHS},
@@ -95,6 +165,10 @@ class V2FirmwareContractTests(unittest.TestCase):
                 (root / verifier.BUILD_SOURCE_PATHS[0]).read_bytes() + b"\n# mutation\n"
             )
             manifest["build_inputs"].pop(verifier.BUILD_SOURCE_PATHS[1].as_posix())
+            manifest["hardware_compatibility"]["scan_timing"][
+                "recorded_wait_between_outputs_us"
+            ] = 1
+            manifest["hash_policy"] = "raw-bytes-v0"
             manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
 
             errors, report = verifier.verify_build_evidence(
@@ -108,7 +182,10 @@ class V2FirmwareContractTests(unittest.TestCase):
 
         self.assertTrue(any("digest mismatch" in error for error in errors))
         self.assertTrue(any("build_inputs source set" in error for error in errors))
+        self.assertTrue(any("ES1B hardware compatibility" in error for error in errors))
+        self.assertTrue(any("hash policy" in error for error in errors))
         self.assertFalse(report["manifest_provenance_verified"])
+        self.assertFalse(report["hardware_compatibility_verified"])
         self.assertEqual(report["local_artifacts"]["left"], {"present": False, "verified": False})
         self.assertEqual(report["local_artifacts"]["right"], {"present": False, "verified": False})
 
@@ -174,9 +251,13 @@ class V2FirmwareContractTests(unittest.TestCase):
         self.assertIn("kc2_x3_v2_build_evidence.json", srs)
         self.assertIn("all current shield build-input SHA-256", srs)
         self.assertIn("ignored local uf2", srs.lower())
-        self.assertIn("Twelve focused tests", srs)
+        self.assertIn("Fourteen focused tests", srs)
+        self.assertIn("lf-normalized-utf8-text-else-raw-v1", srs)
+        self.assertIn("candidate staged snapshot", srs)
         self.assertIn("tracked build-evidence manifest", srs)
         self.assertNotIn("Eleven focused tests", srs)
+        self.assertNotIn("Twelve focused tests", srs)
+        self.assertNotIn("Thirteen focused tests", srs)
         self.assertNotIn("staged build-evidence manifest", srs)
 
     def test_exact_v5_transform_and_half_counts(self) -> None:
@@ -265,6 +346,142 @@ class V2FirmwareContractTests(unittest.TestCase):
         self.assertEqual(metadata["supported_assembly"], ["choc-v2-bottom-socket", "mx-direct-solder"])
         self.assertEqual(metadata["unsupported_assembly"], ["choc-v1", "choc-v2-direct-solder", "mx-hotswap"])
         self.assertEqual(metadata["battery_leads"], "direct-to-nice-nano-b-plus-b-minus")
+
+    def test_es1b_transition_preserves_firmware_and_documents_pending_physical_scan_gate(self) -> None:
+        evidence = verifier.read_build_evidence()
+
+        self.assertEqual(
+            evidence["hardware_compatibility"],
+            verifier.EXPECTED_HARDWARE_COMPATIBILITY,
+        )
+        self.assertEqual(evidence["artifacts"], verifier.EXPECTED_BUILD_ARTIFACTS)
+        self.assertEqual(
+            evidence["build_inputs"],
+            {
+                path.as_posix(): verifier.sha256_file(verifier.ROOT / path)
+                for path in verifier.BUILD_SOURCE_PATHS
+            },
+        )
+
+        for side in ("left", "right"):
+            overlay = (verifier.SHIELD_DIR / f"kc2_x3_v2_{side}.overlay").read_text(
+                encoding="utf-8"
+            )
+            self.assertIn('diode-direction = "col2row";', overlay)
+            self.assertNotIn("CONFIG_ZMK_KSCAN_MATRIX_WAIT", overlay)
+            self.assertNotIn("wait-before-inputs", overlay)
+            self.assertNotIn("wait-between-outputs", overlay)
+
+        firmware_readme = (verifier.SHIELD_DIR / "README.md").read_text(encoding="utf-8")
+        hardware_readme = (
+            verifier.ROOT / "hardware/kicad/draft/x3-v2/README.md"
+        ).read_text(encoding="utf-8")
+        summary = (verifier.ROOT / "docs/spec.md").read_text(encoding="utf-8")
+        srs = (
+            verifier.ROOT / "docs/spec/10.product-architecture.srs.md"
+        ).read_text(encoding="utf-8")
+        generation = json.loads(
+            (
+                verifier.ROOT
+                / "hardware/kicad/draft/x3-v2/kc2_x3_v2_generation_manifest.json"
+            ).read_text(encoding="utf-8")
+        )
+
+        for document in (firmware_readme, hardware_readme, summary, srs):
+            self.assertIn("Jingdao", document)
+            self.assertIn("ES1B", document)
+            self.assertIn("C437840", document)
+            self.assertIn("9475342", document)
+
+        self.assertIn("70", hardware_readme)
+        self.assertIn("B.Cu", hardware_readme)
+        self.assertIn("pad 1", hardware_readme)
+        self.assertIn("cathode", hardware_readme.lower())
+        self.assertIn("mirrored", hardware_readme.lower())
+        self.assertIn("3.0 V", hardware_readme)
+        self.assertIn("3.3 V", hardware_readme)
+        self.assertIn("same-row", hardware_readme)
+        self.assertIn("same-column", hardware_readme)
+        self.assertIn("zero-wait", hardware_readme)
+        self.assertIn("not orderable", hardware_readme.lower())
+
+        self.assertIn("kc2_left-x3-v2-70-es1b-mh-r2.dsn", hardware_readme)
+        self.assertIn("kc2_right-x3-v2-70-es1b-mh-r2.dsn", hardware_readme)
+        self.assertIn("pre-MH r1", hardware_readme)
+        self.assertNotIn("kc2_left-x3-v2-70-v5-r1", hardware_readme)
+        self.assertNotIn("kc2_right-x3-v2-71-r12", hardware_readme)
+
+        self.assertIn("no firmware source or UF2 change", firmware_readme)
+        self.assertIn("zero-wait", firmware_readme)
+        self.assertIn("physical coupon", firmware_readme)
+
+        self.assertIn("`0.3299 mm` overall", srs)
+        self.assertIn("`0.3311 mm` for ES1B", srs)
+        self.assertIn("1.0250 mm", srs)
+        self.assertIn("retaining the 14/11 distributed supports", srs)
+        self.assertIn("Seventeen focused housing tests pass", srs)
+        self.assertNotIn("Fourteen focused housing tests pass", srs)
+        self.assertNotIn("Twelve focused housing tests pass", srs)
+
+        self.assertEqual(
+            generation["canonical_route_evidence"],
+            {
+                "left": {
+                    "dsn": "hardware/kicad/draft/x3-v2/autoroute/kc2_left-x3-v2-70-es1b-mh-r2.dsn",
+                    "dsn_role": "current_mh_trackless_routing_input",
+                    "dsn_mounting_hole_count": 8,
+                    "session_source_dsn": "hardware/kicad/draft/x3-v2/autoroute/kc2_left-x3-v2-70-es1b-r1.dsn",
+                    "session_source_dsn_sha256": "34878f2da21192a3c8dcd4189428a395a458cdb8c2afcadcbb2071130276f292",
+                    "ses": "hardware/kicad/draft/x3-v2/autoroute/kc2_left-x3-v2-70-es1b-r1.ses",
+                    "ses_role": "reviewed_pre_mh_r1_import_plus_exact_m1_4_driver_detours",
+                    "dsn_sha256": "53b5196d3b5b28ba3cc09be1f16e9b9ca5565931de982c5626cd32e485d87d97",
+                    "ses_sha256": "8db5143f81fbf2f339c7d53baeb3ea4bafba56bfff5a05ca587705f95b82f1d6",
+                    "dsn_default_clearance_internal_units": 300,
+                    "dsn_clearances_internal_units": {
+                        "global": 300,
+                        "kicad_default": 300,
+                    },
+                    "final_track_via_count": 564,
+                    "route_digest_sha256": "ba48ff17dd7f447e4cbededba09c1889b82713b1defef18d63aace4e59f92c7d",
+                },
+                "right": {
+                    "dsn": "hardware/kicad/draft/x3-v2/autoroute/kc2_right-x3-v2-70-es1b-mh-r2.dsn",
+                    "dsn_role": "current_mh_trackless_routing_input",
+                    "dsn_mounting_hole_count": 10,
+                    "session_source_dsn": "hardware/kicad/draft/x3-v2/autoroute/kc2_right-x3-v2-70-es1b-r1.dsn",
+                    "session_source_dsn_sha256": "6598f0e6d7be2cb18c04a5d4a93b1a668d4960eb7f671d9b3313a47086732750",
+                    "ses": "hardware/kicad/draft/x3-v2/autoroute/kc2_right-x3-v2-70-es1b-r1.ses",
+                    "ses_role": "reviewed_pre_mh_r1_import_plus_exact_m1_4_driver_detours",
+                    "dsn_sha256": "9321cb704423e07e3028a5df88cbc2ccd1831fdb9e4acac5a1c3767bc780fdd6",
+                    "ses_sha256": "b42a6efed10d657a0aa9b5bb8fa3e5a795b3d6b2b3f9b9652ca6a1b5101ee62c",
+                    "dsn_default_clearance_internal_units": 300,
+                    "dsn_clearances_internal_units": {
+                        "global": 300,
+                        "kicad_default": 300,
+                    },
+                    "final_track_via_count": 732,
+                    "route_digest_sha256": "1592744e711eda0eef59d51062c3c2bab87e5ae05c8156f0708f0544a09b7e38",
+                },
+            },
+        )
+        self.assertEqual(
+            generation["firmware_matrix_compatibility"],
+            {
+                "diode_direction": "col2row",
+                "pad_1": "row_cathode",
+                "pad_2": "per_key_switch_anode",
+                "scan_delay_changed": False,
+            },
+        )
+        self.assertEqual(
+            generation["physical_scan_validation"],
+            {
+                "status": "pending",
+                "supply_volts": [3.0, 3.3],
+                "patterns": ["maximum_same_row", "maximum_same_column"],
+                "orderable": False,
+            },
+        )
 
 
 if __name__ == "__main__":

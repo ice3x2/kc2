@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import argparse
-import hashlib
 import json
 from collections import Counter
 from datetime import datetime
@@ -12,11 +11,18 @@ from typing import Sequence
 
 import pcbnew
 
+from tools.canonical_hash import HASH_POLICY, sha256_file
 from tools.generate_kc2_pcbs import x3_v2_join_geometry_by_row
 
 
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_FOOTPRINT = ROOT / "third_party" / "kc2.pretty" / "SW_Choc_V2_Socket_MX_THT.kicad_mod"
+DEFAULT_DIODE_FOOTPRINT = ROOT / "third_party" / "kc2.pretty" / "D_ES1B_SMA_HandSolder_C437840.kicad_mod"
+DEFAULT_MOUNT_FOOTPRINT = ROOT / "third_party" / "kc2.pretty" / "MH_M1.4_NPTH_1.60.kicad_mod"
+DEFAULT_CONTROLLER_FOOTPRINTS = {
+    "left": ROOT / "third_party" / "kc2.pretty" / "NiceNanoV2_Socket_24Pin_USB_OUT_LEFT.kicad_mod",
+    "right": ROOT / "third_party" / "kc2.pretty" / "NiceNanoV2_Socket_24Pin_USB_OUT_RIGHT.kicad_mod",
+}
 V2_ROOT = ROOT / "hardware" / "kicad" / "draft" / "x3-v2"
 DEFAULT_BOARDS = (
     V2_ROOT / "kc2_left-x3-v2" / "kc2_left-x3-v2.kicad_pcb",
@@ -37,6 +43,30 @@ KICAD_10_VERSION_RE = re.compile(r"^10(?:\.\d+)+(?:[-+][0-9A-Za-z.-]+)?$")
 ISO_TIMESTAMP_RE = re.compile(
     r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[+-]\d{2}:\d{2})?$"
 )
+EXPECTED_M1_4_MOUNTING_POINTS = {
+    "left": [
+        ("MH1", 142.6125, 68.0000),
+        ("MH2", 128.6125, 86.5000),
+        ("MH3", 100.1125, 93.5000),
+        ("MH4", 57.1125, 99.0000),
+        ("MH5", 133.6125, 131.5000),
+        ("MH6", 55.1125, 144.0000),
+        ("MH7", 165.6125, 145.0000),
+        ("MH8", 102.6125, 147.0000),
+    ],
+    "right": [
+        ("MH1", 71.6875, 68.0000),
+        ("MH2", 181.1875, 85.5000),
+        ("MH3", 147.6875, 93.5000),
+        ("MH4", 109.6875, 96.5000),
+        ("MH5", 71.6875, 105.5000),
+        ("MH6", 42.1875, 106.0000),
+        ("MH7", 181.1875, 134.5000),
+        ("MH8", 143.1875, 134.5000),
+        ("MH9", 51.6875, 144.0000),
+        ("MH10", 95.6875, 147.0000),
+    ],
+}
 
 
 def mm(value: int) -> float:
@@ -90,6 +120,15 @@ def boxes_overlap_mm(
         min(first[2], second[2]) - max(first[0], second[0]) > tolerance
         and min(first[3], second[3]) - max(first[1], second[1]) > tolerance
     )
+
+
+def point_to_box_distance_mm(
+    point: tuple[float, float],
+    box: tuple[float, float, float, float],
+) -> float:
+    dx = max(box[0] - point[0], point[0] - box[2], 0.0)
+    dy = max(box[1] - point[1], point[1] - box[3], 0.0)
+    return math.hypot(dx, dy)
 
 
 def point_to_segment_distance_mm(
@@ -274,6 +313,485 @@ def matrix_footprints(board: pcbnew.BOARD, prefix: str) -> list[pcbnew.FOOTPRINT
     )
 
 
+def _canonical_layer_names(pad: pcbnew.PAD, flipped_to_front: bool) -> tuple[str, ...]:
+    if pad.GetAttribute() == pcbnew.PAD_ATTRIB_NPTH:
+        # KiCad normalizes library `*.Cu *.Mask` NPTH declarations to mask-only
+        # layer sets when a footprint is saved into a board. The NPTH attribute,
+        # not that serialization difference, is the copper-free contract.
+        return ("NPTH_COPPER_FREE",)
+    names = []
+    for layer in pad.GetLayerSet().Seq():
+        name = pcbnew.LayerName(layer)
+        if flipped_to_front and name.startswith("B."):
+            name = "F." + name[2:]
+        names.append(name)
+    return tuple(sorted(names))
+
+
+def normalized_pad_signatures(
+    footprint: pcbnew.FOOTPRINT,
+    *,
+    normalize_flip: bool = False,
+) -> list[tuple[object, ...]]:
+    flipped = bool(normalize_flip and footprint.IsFlipped())
+    signatures: list[tuple[object, ...]] = []
+    for pad in footprint.Pads():
+        relative = pad.GetFPRelativePosition()
+        relative_y = -mm(relative.y) if flipped else mm(relative.y)
+        signatures.append(
+            (
+                pad.GetNumber(),
+                mm(relative.x),
+                relative_y,
+                *pad_size(pad),
+                mm(pad.GetDrillSize().x),
+                mm(pad.GetDrillSize().y),
+                int(pad.GetAttribute()),
+                int(pad.GetShape()),
+                _canonical_layer_names(pad, flipped),
+            )
+        )
+    return sorted(signatures, key=repr)
+
+
+def normalized_diode_graphics(
+    footprint: pcbnew.FOOTPRINT,
+) -> list[tuple[object, ...]]:
+    flipped = footprint.IsFlipped()
+    signatures: list[tuple[object, ...]] = []
+    for item in footprint.GraphicalItems():
+        layer = pcbnew.LayerName(item.GetLayer())
+        if layer not in {"F.Fab", "B.Fab", "F.Courtyard", "B.Courtyard", "F.Silkscreen", "B.Silkscreen"}:
+            continue
+        if flipped and layer.startswith("B."):
+            layer = "F." + layer[2:]
+        relative = item.GetFPRelativePosition()
+        relative_y = -mm(relative.y) if flipped else mm(relative.y)
+        if isinstance(item, pcbnew.PCB_SHAPE):
+            signatures.append(
+                (
+                    "shape",
+                    layer,
+                    int(item.GetShape()),
+                    mm(relative.x),
+                    relative_y,
+                    mm(item.GetLength()),
+                    mm(item.GetWidth()),
+                )
+            )
+        elif isinstance(item, pcbnew.PCB_TEXT):
+            signatures.append(
+                (
+                    "text",
+                    layer,
+                    item.GetText(),
+                    mm(relative.x),
+                    relative_y,
+                    mm(item.GetTextSize().x),
+                    mm(item.GetTextSize().y),
+                    mm(item.GetTextThickness()),
+                )
+            )
+    return sorted(signatures, key=repr)
+
+
+def verify_placed_footprint_contracts(
+    board: pcbnew.BOARD,
+    switches: Sequence[pcbnew.FOOTPRINT],
+    diodes: Sequence[pcbnew.FOOTPRINT],
+    side: str,
+) -> tuple[list[str], list[str], list[str], list[str]]:
+    diode_errors: list[str] = []
+    switch_errors: list[str] = []
+    controller_errors: list[str] = []
+    reset_errors: list[str] = []
+
+    diode_source = load_footprint(DEFAULT_DIODE_FOOTPRINT)
+    expected_diode_pads = normalized_pad_signatures(diode_source, normalize_flip=True)
+    expected_diode_graphics = normalized_diode_graphics(diode_source)
+    for diode in diodes:
+        if diode.GetLayer() != pcbnew.B_Cu or not diode.IsFlipped():
+            diode_errors.append(
+                f"{diode.GetReference()}: ES1B must be mirrored on B.Cu"
+            )
+        if normalized_pad_signatures(diode, normalize_flip=True) != expected_diode_pads:
+            diode_errors.append(f"{diode.GetReference()}: pads differ from owned ES1B footprint")
+        if normalized_diode_graphics(diode) != expected_diode_graphics:
+            diode_errors.append(
+                f"{diode.GetReference()}: B.Fab/courtyard/B.Silk cathode geometry differs from owned ES1B footprint"
+            )
+
+    switch_source = load_footprint(DEFAULT_FOOTPRINT)
+    expected_switch_pads = normalized_pad_signatures(switch_source)
+    for switch in switches:
+        if normalized_pad_signatures(switch) != expected_switch_pads:
+            switch_errors.append(
+                f"{switch.GetReference()}: pad/NPTH geometry differs from owned hybrid-switch footprint"
+            )
+
+    controller = board.FindFootprintByReference("U1")
+    controller_source = load_footprint(DEFAULT_CONTROLLER_FOOTPRINTS[side])
+    expected_fpid = f"NiceNanoV2_Socket_24Pin_USB_OUT_{side.upper()}"
+    if controller is None:
+        controller_errors.append("U1 is missing")
+    else:
+        if str(controller.GetFPID().GetLibItemName()) != expected_fpid:
+            controller_errors.append(f"U1 FPID must be {expected_fpid}")
+        if len(list(controller.Pads())) != 24:
+            controller_errors.append("U1 must have exactly 24 pads")
+        if normalized_pad_signatures(controller) != normalized_pad_signatures(controller_source):
+            controller_errors.append(
+                "U1 pad labels/positions/sizes/drills/layers differ from the side-specific owned footprint"
+            )
+    expected_usb_text = f"USB_OUT_{side.upper()}"
+    usb_labels = [
+        item
+        for item in board.GetDrawings()
+        if isinstance(item, pcbnew.PCB_TEXT) and item.GetText().startswith("USB_OUT_")
+    ]
+    if len(usb_labels) != 1 or usb_labels[0].GetText() != expected_usb_text:
+        controller_errors.append(f"board USB direction label must be exactly {expected_usb_text}")
+    elif usb_labels[0].GetLayer() != pcbnew.F_SilkS:
+        controller_errors.append("board USB direction label must be on F.Silkscreen")
+
+    reset = board.FindFootprintByReference("SW_RST1")
+    if reset is None:
+        reset_errors.append("SW_RST1 is missing")
+    else:
+        reset_pads = {pad.GetNumber(): pad.GetNetname() for pad in reset.Pads()}
+        expected_reset_net = "RST"
+        if reset_pads != {"1": expected_reset_net, "2": "GND"}:
+            reset_errors.append(
+                f"SW_RST1 must be pad1={expected_reset_net}, pad2=GND; found {reset_pads}"
+            )
+    return diode_errors, switch_errors, controller_errors, reset_errors
+
+
+def expected_m1_4_mount_manifest() -> dict[str, object]:
+    return {
+        "footprint": "kc2.pretty:MH_M1.4_NPTH_1.60",
+        "references": "MH1..MH8 left; MH1..MH10 right",
+        "counts": {"left": 8, "right": 10, "total": 18},
+        "positions_mm": {
+            side: [
+                {"ref": ref, "x": x, "y": y}
+                for ref, x, y in points
+            ]
+            for side, points in EXPECTED_M1_4_MOUNTING_POINTS.items()
+        },
+        "hole": {
+            "type": "NPTH",
+            "diameter_mm": 1.6,
+            "unnetted": True,
+            "copper_free": True,
+        },
+        "screw_head_envelope_mm": {"diameter": 2.0, "height": 0.5},
+        "vertical_driver_envelope_mm": {"diameter": 3.0},
+        "provisional_under_head_screw_length_mm": 4.0,
+        "service_state": {"keycaps": "removed", "switches": "installed"},
+        "housing_interface_mm": {
+            "zero_gap_support_land_diameter": 3.0,
+            "provisional_blind_pilot_diameter": 1.1,
+            "provisional_blind_pilot_depth": 2.8,
+            "desk_column_closed_bottom": 0.5,
+        },
+        "registration_status": "pending_full_pattern_physical_fit",
+        "physical_validation": "pending",
+        "order_ready": False,
+    }
+
+
+def verify_m1_4_mounting_holes(
+    board: pcbnew.BOARD,
+    side: str,
+) -> tuple[
+    list[str],
+    list[tuple[str, float, float]],
+    dict[str, float | None],
+    list[str],
+]:
+    errors: list[str] = []
+    holes = matrix_footprints(board, "MH")
+    positions = [
+        (
+            hole.GetReference(),
+            round(pcbnew.ToMM(hole.GetPosition().x), 4),
+            round(pcbnew.ToMM(hole.GetPosition().y), 4),
+        )
+        for hole in holes
+    ]
+    expected_positions = EXPECTED_M1_4_MOUNTING_POINTS[side]
+    if positions != expected_positions:
+        errors.append(
+            f"{side}: exact MH positions differ: expected {expected_positions}, found {positions}"
+        )
+
+    source = load_footprint(DEFAULT_MOUNT_FOOTPRINT)
+    expected_pads = normalized_pad_signatures(source)
+    for hole in holes:
+        if str(hole.GetFPID().GetLibItemName()) != "MH_M1.4_NPTH_1.60":
+            errors.append(f"{hole.GetReference()}: unexpected mounting footprint")
+        if str(hole.GetValue()) != "M1.4_NPTH_1.60":
+            errors.append(f"{hole.GetReference()}: unexpected mounting value")
+        if abs(float(hole.GetOrientationDegrees())) > 1e-6:
+            errors.append(f"{hole.GetReference()}: mounting footprint rotation must be zero")
+        pads = list(hole.Pads())
+        if normalized_pad_signatures(hole) != expected_pads:
+            errors.append(f"{hole.GetReference()}: pad geometry differs from owned M1.4 footprint")
+        if len(pads) != 1:
+            errors.append(f"{hole.GetReference()}: expected one NPTH pad, found {len(pads)}")
+            continue
+        pad = pads[0]
+        if (
+            pad.GetAttribute() != pcbnew.PAD_ATTRIB_NPTH
+            or pad.GetNumber()
+            or pad.GetNetname()
+            or pad_size(pad) != (1.6, 1.6)
+            or (mm(pad.GetDrillSize().x), mm(pad.GetDrillSize().y)) != (1.6, 1.6)
+        ):
+            errors.append(
+                f"{hole.GetReference()}: must be one unnumbered, unnetted, copper-free 1.60 mm NPTH"
+            )
+
+    hole_centers = [(x, y) for _, x, y in positions]
+    copper_pads = [
+        (f"{footprint.GetReference()}.{pad.GetNumber()}", bounding_box_mm(pad))
+        for footprint in board.GetFootprints()
+        if not re.fullmatch(r"MH\d+", footprint.GetReference())
+        for pad in footprint.Pads()
+        if pad.GetAttribute() != pcbnew.PAD_ATTRIB_NPTH
+        and (pad.IsOnLayer(pcbnew.F_Cu) or pad.IsOnLayer(pcbnew.B_Cu))
+    ]
+    copper_clearances: list[float] = []
+    for center in hole_centers:
+        copper_clearances.extend(
+            point_to_box_distance_mm(center, box) - 0.8
+            for _label, box in copper_pads
+        )
+        for track in board.GetTracks():
+            if isinstance(track, pcbnew.PCB_VIA):
+                at = track.GetPosition()
+                copper_clearances.append(
+                    math.hypot(
+                        center[0] - pcbnew.ToMM(at.x),
+                        center[1] - pcbnew.ToMM(at.y),
+                    )
+                    - pcbnew.ToMM(track.GetWidth(pcbnew.F_Cu)) / 2.0
+                    - 0.8
+                )
+            else:
+                start = track.GetStart()
+                end = track.GetEnd()
+                copper_clearances.append(
+                    point_to_segment_distance_mm(
+                        center,
+                        (pcbnew.ToMM(start.x), pcbnew.ToMM(start.y)),
+                        (pcbnew.ToMM(end.x), pcbnew.ToMM(end.y)),
+                    )
+                    - pcbnew.ToMM(track.GetWidth()) / 2.0
+                    - 0.8
+                )
+    minimum_copper_clearance = min(copper_clearances) if copper_clearances else math.inf
+    if minimum_copper_clearance < 0.30 - 1e-6:
+        errors.append(
+            f"{side}: M1.4 NPTH edge-to-copper clearance {minimum_copper_clearance:.4f} mm is below 0.30 mm"
+        )
+
+    driver_copper_measurements: list[tuple[float, str]] = []
+    for reference, x, y in positions:
+        center = (x, y)
+        driver_copper_measurements.extend(
+            (
+                point_to_box_distance_mm(center, box) - 1.5,
+                f"{reference} vs pad {label}",
+            )
+            for label, box in copper_pads
+        )
+        for track in board.GetTracks():
+            if isinstance(track, pcbnew.PCB_VIA):
+                at = track.GetPosition()
+                margin = (
+                    math.hypot(x - pcbnew.ToMM(at.x), y - pcbnew.ToMM(at.y))
+                    - pcbnew.ToMM(track.GetWidth(pcbnew.F_Cu)) / 2.0
+                    - 1.5
+                )
+                label = (
+                    f"{reference} vs via {track.GetNetname()} "
+                    f"({pcbnew.ToMM(at.x):.4f},{pcbnew.ToMM(at.y):.4f})"
+                )
+            else:
+                start = track.GetStart()
+                end = track.GetEnd()
+                start_mm = (pcbnew.ToMM(start.x), pcbnew.ToMM(start.y))
+                end_mm = (pcbnew.ToMM(end.x), pcbnew.ToMM(end.y))
+                margin = (
+                    point_to_segment_distance_mm(center, start_mm, end_mm)
+                    - pcbnew.ToMM(track.GetWidth()) / 2.0
+                    - 1.5
+                )
+                label = (
+                    f"{reference} vs {board.GetLayerName(track.GetLayer())} "
+                    f"track {track.GetNetname()} {start_mm}->{end_mm}"
+                )
+            driver_copper_measurements.append((margin, label))
+    minimum_driver_copper_clearance = min(
+        (margin for margin, _label in driver_copper_measurements),
+        default=math.inf,
+    )
+    driver_copper_errors = [
+        f"{side}: final 3.00 mm PH0 driver intersects copper: {label}; margin {margin:.4f} mm"
+        for margin, label in driver_copper_measurements
+        if margin < -1e-6
+    ]
+    errors.extend(driver_copper_errors)
+
+    switch_driver_boxes = [
+        (
+            pcbnew.ToMM(switch.GetPosition().x) - 7.8,
+            pcbnew.ToMM(switch.GetPosition().y) - 7.8,
+            pcbnew.ToMM(switch.GetPosition().x) + 7.8,
+            pcbnew.ToMM(switch.GetPosition().y) + 7.8,
+        )
+        for switch in matrix_footprints(board, "SW")
+    ]
+    controller_service_boxes = [
+        bounding_box_mm(footprint)
+        for footprint in board.GetFootprints()
+        if footprint.GetReference() in {"U1", "SW_RST1"}
+    ]
+    driver_boxes = switch_driver_boxes + controller_service_boxes
+    driver_clearances = [
+        point_to_box_distance_mm(center, box) - 1.5
+        for center in hole_centers
+        for box in driver_boxes
+    ]
+    minimum_driver_clearance = min(driver_clearances) if driver_clearances else math.inf
+    if minimum_driver_clearance < -1e-6:
+        errors.append(
+            f"{side}: final 3.00 mm PH0 driver envelope intersects an installed body by "
+            f"{-minimum_driver_clearance:.4f} mm"
+        )
+
+    outline_segments = board_outline_segments_mm(board)
+    edge_clearances = [
+        point_to_segment_distance_mm(center, start, end) - 1.0
+        for center in hole_centers
+        for start, end in outline_segments
+    ]
+    minimum_head_edge_clearance = min(edge_clearances) if edge_clearances else math.inf
+    if minimum_head_edge_clearance < 0.25 - 1e-6:
+        errors.append(
+            f"{side}: screw-head-to-Edge.Cuts clearance {minimum_head_edge_clearance:.4f} mm is below 0.25 mm"
+        )
+
+    return errors, positions, {
+        "minimum_npth_edge_to_copper_mm": round(minimum_copper_clearance, 4),
+        "minimum_driver_to_copper_mm": round(minimum_driver_copper_clearance, 4),
+        "minimum_driver_to_installed_body_mm": round(minimum_driver_clearance, 4),
+        "minimum_head_to_edge_cuts_mm": round(minimum_head_edge_clearance, 4),
+    }, driver_copper_errors
+
+
+def project_default_clearance_mm(project_path: Path) -> float:
+    project = json.loads(project_path.read_text(encoding="utf-8"))
+    default = next(
+        netclass
+        for netclass in project["net_settings"]["classes"]
+        if netclass.get("name") == "Default"
+    )
+    return float(default["clearance"])
+
+
+def _dsn_default_clearances(dsn_path: Path) -> dict[str, int]:
+    text = dsn_path.read_text(encoding="utf-8")
+    global_match = re.search(
+        r"\(structure\b[\s\S]*?\(rule\b[\s\S]*?\(clearance\s+(\d+)\)",
+        text,
+    )
+    default_match = re.search(
+        r"\(class\s+kicad_default\b[\s\S]*?\(rule\b[\s\S]*?\(clearance\s+(\d+)\)",
+        text,
+    )
+    return {
+        label: int(match.group(1))
+        for label, match in (("global", global_match), ("kicad_default", default_match))
+        if match is not None
+    }
+
+
+def verify_canonical_route_evidence(
+    manifest: dict[str, object],
+) -> tuple[list[str], dict[str, object]]:
+    errors: list[str] = []
+    reports: dict[str, object] = {}
+    if manifest.get("hash_policy") != HASH_POLICY:
+        errors.append("manifest: canonical hash policy mismatch")
+    records = manifest.get("canonical_route_evidence")
+    if not isinstance(records, dict):
+        return ["manifest: canonical route evidence is missing"], reports
+    for side in ("left", "right"):
+        record = records.get(side)
+        if not isinstance(record, dict):
+            errors.append(f"{side}: canonical route evidence is missing")
+            continue
+        expected_dsn = f"hardware/kicad/draft/x3-v2/autoroute/kc2_{side}-x3-v2-70-es1b-mh-r2.dsn"
+        expected_session_source_dsn = (
+            f"hardware/kicad/draft/x3-v2/autoroute/kc2_{side}-x3-v2-70-es1b-r1.dsn"
+        )
+        expected_ses = f"hardware/kicad/draft/x3-v2/autoroute/kc2_{side}-x3-v2-70-es1b-r1.ses"
+        if record.get("dsn") != expected_dsn:
+            errors.append(f"{side}: canonical DSN path mismatch")
+        if record.get("ses") != expected_ses:
+            errors.append(f"{side}: canonical SES path mismatch")
+        if record.get("session_source_dsn") != expected_session_source_dsn:
+            errors.append(f"{side}: reviewed SES source DSN path mismatch")
+        if record.get("dsn_role") != "current_mh_trackless_routing_input":
+            errors.append(f"{side}: current MH DSN role mismatch")
+        if record.get("ses_role") != "reviewed_pre_mh_r1_import_plus_exact_m1_4_driver_detours":
+            errors.append(f"{side}: reviewed SES/detour role mismatch")
+        try:
+            dsn_path = ROOT / str(record.get("dsn"))
+            session_source_dsn_path = ROOT / str(record.get("session_source_dsn"))
+            ses_path = ROOT / str(record.get("ses"))
+            dsn_sha = sha256_file(dsn_path)
+            session_source_dsn_sha = sha256_file(session_source_dsn_path)
+            ses_sha = sha256_file(ses_path)
+            clearances = _dsn_default_clearances(dsn_path)
+            dsn_text = dsn_path.read_text(encoding="utf-8")
+        except OSError as error:
+            errors.append(f"{side}: canonical route source cannot be read: {error}")
+            continue
+        minimum_clearance = min(clearances.values()) if clearances else None
+        reports[side] = {
+            "dsn_sha256": dsn_sha,
+            "session_source_dsn_sha256": session_source_dsn_sha,
+            "ses_sha256": ses_sha,
+            "dsn_mounting_hole_count": len(
+                re.findall(r"\(place\s+MH\d+\b", dsn_text)
+            ),
+            "dsn_default_clearance_internal_units": minimum_clearance,
+            "dsn_clearances_internal_units": clearances,
+        }
+        if record.get("dsn_sha256") != dsn_sha:
+            errors.append(f"{side}: DSN SHA-256 mismatch")
+        if record.get("ses_sha256") != ses_sha:
+            errors.append(f"{side}: SES SHA-256 mismatch")
+        if record.get("session_source_dsn_sha256") != session_source_dsn_sha:
+            errors.append(f"{side}: reviewed SES source DSN SHA-256 mismatch")
+        expected_holes = 8 if side == "left" else 10
+        if reports[side]["dsn_mounting_hole_count"] != expected_holes:
+            errors.append(f"{side}: current DSN does not contain the exact MH pattern")
+        if record.get("dsn_mounting_hole_count") != expected_holes:
+            errors.append(f"{side}: current DSN MH count evidence mismatch")
+        if set(clearances) != {"global", "kicad_default"} or minimum_clearance is None or minimum_clearance < 300:
+            errors.append(f"{side}: DSN global/default clearance must be at least 300 internal units")
+        if record.get("dsn_default_clearance_internal_units") != minimum_clearance:
+            errors.append(f"{side}: DSN clearance evidence mismatch")
+        if record.get("dsn_clearances_internal_units") != clearances:
+            errors.append(f"{side}: DSN global/default clearance evidence mismatch")
+    return errors, reports
+
+
 def verify_switch_layout_against_generator(
     switches: Sequence[pcbnew.FOOTPRINT],
 ) -> tuple[list[str], float]:
@@ -332,8 +850,27 @@ def analyze_v2_board(path: Path) -> dict[str, object]:
     if not path.is_file():
         raise FileNotFoundError(path)
     board = pcbnew.LoadBoard(str(path))
+    from tools.finalize_kc2_x3_v2_routes import (
+        _route_counter_digest,
+        _route_signature,
+    )
+
+    route_signatures = Counter(_route_signature(item) for item in board.GetTracks())
     switches = matrix_footprints(board, "SW")
     diodes = matrix_footprints(board, "D")
+    side = "left" if "left" in path.name.lower() else "right"
+    (
+        mounting_hole_errors,
+        mounting_hole_positions_mm,
+        mounting_hole_clearances,
+        mounting_hole_driver_copper_errors,
+    ) = verify_m1_4_mounting_holes(board, side)
+    (
+        diode_footprint_geometry_errors,
+        switch_footprint_geometry_errors,
+        controller_contract_errors,
+        reset_contract_errors,
+    ) = verify_placed_footprint_contracts(board, switches, diodes, side)
     switch_layout_errors, switch_layout_max_position_error_mm = (
         verify_switch_layout_against_generator(switches)
     )
@@ -429,6 +966,9 @@ def analyze_v2_board(path: Path) -> dict[str, object]:
     diode_hand_solder_clearance_errors: list[str] = []
     diode_edge_clearance_errors: list[str] = []
     diode_tool_approach_errors: list[str] = []
+    diode_tool_approaches: list[dict[str, object]] = []
+    diode_to_unrelated_route_errors: list[str] = []
+    diode_pin_net_errors: list[str] = []
     outline_segments = board_outline_segments_mm(board)
     bottom_exposed_pad_items = [
         (footprint.GetReference(), pad.GetNetname(), bounding_box_mm(pad))
@@ -454,10 +994,59 @@ def analyze_v2_board(path: Path) -> dict[str, object]:
         for diode in diodes
         for pad in diode.Pads()
     ]
+    bottom_route_items: list[dict[str, object]] = []
+    for track in board.GetTracks():
+        if isinstance(track, pcbnew.PCB_VIA):
+            bottom_route_items.append(
+                {
+                    "kind": "via",
+                    "net": track.GetNetname(),
+                    "box": bounding_box_mm(track),
+                }
+            )
+        elif track.IsOnLayer(pcbnew.B_Cu):
+            start = track.GetStart()
+            end = track.GetEnd()
+            bottom_route_items.append(
+                {
+                    "kind": "track",
+                    "net": track.GetNetname(),
+                    "start": (pcbnew.ToMM(start.x), pcbnew.ToMM(start.y)),
+                    "end": (pcbnew.ToMM(end.x), pcbnew.ToMM(end.y)),
+                    "half_width_mm": pcbnew.ToMM(track.GetWidth()) / 2.0,
+                }
+            )
     for diode in diodes:
         diode_pads = list(diode.Pads())
         diode_boxes = [bounding_box_mm(pad) for pad in diode_pads]
         diode_nets = {pad.GetNetname() for pad in diode_pads if pad.GetNetname()}
+
+        pad_nets = {
+            pad.GetNumber(): pad.GetNetname()
+            for pad in diode_pads
+            if pad.GetNumber()
+        }
+        switch = board.FindFootprintByReference("SW" + diode.GetReference()[1:])
+        switch_pad_2_nets = {
+            pad.GetNetname()
+            for pad in (switch.Pads() if switch is not None else [])
+            if pad.GetNumber() == "2"
+        }
+        expected_row_prefix = "L_ROW" if "left" in path.name.lower() else "R_ROW"
+        if set(pad_nets) != {"1", "2"}:
+            diode_pin_net_errors.append(
+                f"{diode.GetReference()}: expected exactly pins 1/2, found {sorted(pad_nets)}"
+            )
+        elif not pad_nets["1"].startswith(expected_row_prefix):
+            diode_pin_net_errors.append(
+                f"{diode.GetReference()} pin 1 cathode must be a {expected_row_prefix} net; "
+                f"found {pad_nets['1']!r}"
+            )
+        elif switch is None or switch_pad_2_nets != {pad_nets["2"]}:
+            diode_pin_net_errors.append(
+                f"{diode.GetReference()} pin 2 anode {pad_nets['2']!r} does not match "
+                f"the paired switch pad-2 net {sorted(switch_pad_2_nets)}"
+            )
 
         def clearance_to(targets: list[tuple[float, float, float, float]]) -> float:
             return min(
@@ -497,6 +1086,28 @@ def analyze_v2_board(path: Path) -> dict[str, object]:
             for diode_box in fillet_boxes
             for target in switch_assembly_boxes
         )
+        unrelated_route_clearances: list[float] = []
+        for route in bottom_route_items:
+            if route["net"] in diode_nets:
+                continue
+            for fillet_box in fillet_boxes:
+                if route["kind"] == "via":
+                    route_clearance = bounding_box_clearance_mm(
+                        fillet_box,
+                        route["box"],
+                    )
+                else:
+                    route_clearance = segment_to_box_clearance_mm(
+                        route["start"],
+                        route["end"],
+                        fillet_box,
+                    ) - float(route["half_width_mm"])
+                unrelated_route_clearances.append(route_clearance)
+        fillet_to_unrelated_route = (
+            min(unrelated_route_clearances)
+            if unrelated_route_clearances
+            else math.inf
+        )
         clearances = {
             "reference": diode.GetReference(),
             "unused_npth_mm": clearance_to(unused_npth_boxes),
@@ -504,10 +1115,15 @@ def analyze_v2_board(path: Path) -> dict[str, object]:
             "socket_body_mm": clearance_to(socket_body_boxes),
             "unrelated_exposed_copper_mm": clearance_to(unrelated_exposed_boxes),
             "fillet_to_switch_assembly_mm": fillet_to_switch_assembly,
+            "fillet_to_unrelated_route_mm": fillet_to_unrelated_route,
             "edge_cuts_mm": edge_cuts_clearance,
         }
         diode_clearances.append(clearances)
-        for label in ("unused_npth_mm", "unrelated_exposed_copper_mm"):
+        for label in (
+            "unused_npth_mm",
+            "switch_pad_mm",
+            "unrelated_exposed_copper_mm",
+        ):
             if float(clearances[label]) < 1.0 - 1e-6:
                 diode_hand_solder_clearance_errors.append(
                     f"{diode.GetReference()} {label}={float(clearances[label]):.3f} mm"
@@ -520,44 +1136,76 @@ def analyze_v2_board(path: Path) -> dict[str, object]:
             diode_edge_clearance_errors.append(
                 f"{diode.GetReference()} edge_cuts_mm={edge_cuts_clearance:.3f} mm"
             )
+        if fillet_to_unrelated_route < 0.10 - 1e-6:
+            diode_to_unrelated_route_errors.append(
+                f"{diode.GetReference()} solder-fillet envelope to unrelated B.Cu routing "
+                f"is {fillet_to_unrelated_route:.3f} mm; expected at least 0.100 mm"
+            )
 
-        switch = board.FindFootprintByReference(
-            "SW" + diode.GetReference()[1:]
-        )
         if switch is None:
             diode_tool_approach_errors.append(
                 f"{diode.GetReference()}: matching switch is missing"
             )
             continue
-        diode_y = pcbnew.ToMM(diode.GetPosition().y)
-        switch_y = pcbnew.ToMM(switch.GetPosition().y)
         approach_obstacles = switch_assembly_boxes + [
             inflate_box_mm(box, 0.30)
             for reference, box in all_diode_pad_items
             if reference != diode.GetReference()
         ]
         for pad, pad_box in zip(diode_pads, diode_boxes):
-            if diode_y < switch_y:
-                corridor = (
+            corridors = {
+                "north": (
                     pad_box[0] - 0.40,
                     pad_box[1] - 1.50,
                     pad_box[2] + 0.40,
                     pad_box[1],
-                )
-                direction = "north"
-            else:
-                corridor = (
+                ),
+                "south": (
                     pad_box[0] - 0.40,
                     pad_box[3],
                     pad_box[2] + 0.40,
                     pad_box[3] + 1.50,
-                )
-                direction = "south"
-            if any(boxes_overlap_mm(corridor, obstacle) for obstacle in approach_obstacles):
+                ),
+                "west": (
+                    pad_box[0] - 1.50,
+                    pad_box[1] - 0.40,
+                    pad_box[0],
+                    pad_box[3] + 0.40,
+                ),
+                "east": (
+                    pad_box[2],
+                    pad_box[1] - 0.40,
+                    pad_box[2] + 1.50,
+                    pad_box[3] + 0.40,
+                ),
+            }
+            direction = next(
+                (
+                    candidate_direction
+                    for candidate_direction, corridor in corridors.items()
+                    if not any(
+                        boxes_overlap_mm(corridor, obstacle)
+                        for obstacle in approach_obstacles
+                    )
+                ),
+                None,
+            )
+            if direction is None:
                 diode_tool_approach_errors.append(
-                    f"{diode.GetReference()} pad {pad.GetNumber()}: {direction} tool corridor obstructed"
+                    f"{diode.GetReference()} pad {pad.GetNumber()}: no unobstructed "
+                    "1.50 mm cardinal tool corridor"
+                )
+            else:
+                diode_tool_approaches.append(
+                    {
+                        "reference": diode.GetReference(),
+                        "pad": pad.GetNumber(),
+                        "direction": direction,
+                        "length_mm": 1.5,
+                    }
                 )
     diode_hand_solder_clearance_errors.extend(diode_tool_approach_errors)
+    diode_hand_solder_clearance_errors.extend(diode_to_unrelated_route_errors)
     side = "left" if "left" in path.name.lower() else "right"
     antenna_direction = 1 if side == "left" else -1
     battery_lead_slot_on_usb_side = bool(
@@ -602,11 +1250,19 @@ def analyze_v2_board(path: Path) -> dict[str, object]:
     return {
         "switch_count": len(switches),
         "diode_count": len(diodes),
+        "diode_footprint_names": {
+            str(diode.GetFPID().GetLibItemName())
+            for diode in diodes
+        },
+        "diode_values": {diode.GetValue() for diode in diodes},
+        "diode_pin_net_errors": diode_pin_net_errors,
+        "diode_footprint_geometry_errors": diode_footprint_geometry_errors,
         "switch_footprint_names": {
             str(switch.GetFPID().GetLibItemName())
             for switch in switches
         },
         "alternate_contact_net_mismatches": mismatches,
+        "switch_footprint_geometry_errors": switch_footprint_geometry_errors,
         "switch_layout_errors": switch_layout_errors,
         "switch_layout_max_position_error_mm": switch_layout_max_position_error_mm,
         "stabilizer_refs": sorted(
@@ -617,6 +1273,12 @@ def analyze_v2_board(path: Path) -> dict[str, object]:
         "registration_hole_count": len(registration_holes),
         "registration_hole_errors": registration_hole_errors,
         "legacy_mount_hole_refs": legacy_mount_hole_refs,
+        "mounting_hole_positions_mm": mounting_hole_positions_mm,
+        "mounting_hole_errors": mounting_hole_errors,
+        "mounting_hole_clearances": mounting_hole_clearances,
+        "mounting_hole_driver_copper_errors": mounting_hole_driver_copper_errors,
+        "route_track_via_count": sum(route_signatures.values()),
+        "route_digest_sha256": _route_counter_digest(route_signatures),
         "registration_label_layers": registration_label_layers,
         "carrier_power_pad_refs": sorted(
             footprint.GetReference()
@@ -628,6 +1290,8 @@ def analyze_v2_board(path: Path) -> dict[str, object]:
         "battery_lead_slot_on_usb_side": battery_lead_slot_on_usb_side,
         "forbidden_carrier_power_nets": forbidden_carrier_power_nets,
         "controller_socket_row_spacing_mm": controller_socket_row_spacing_mm,
+        "controller_contract_errors": controller_contract_errors,
+        "reset_contract_errors": reset_contract_errors,
         "minimum_diode_to_unused_npth_clearance_mm": round(
             min(float(item["unused_npth_mm"]) for item in diode_clearances), 3
         ),
@@ -643,12 +1307,25 @@ def analyze_v2_board(path: Path) -> dict[str, object]:
         "minimum_diode_fillet_to_switch_assembly_clearance_mm": round(
             min(float(item["fillet_to_switch_assembly_mm"]) for item in diode_clearances), 3
         ),
+        "minimum_diode_fillet_to_unrelated_route_mm": (
+            round(
+                min(float(item["fillet_to_unrelated_route_mm"]) for item in diode_clearances),
+                3,
+            )
+            if any(
+                math.isfinite(float(item["fillet_to_unrelated_route_mm"]))
+                for item in diode_clearances
+            )
+            else None
+        ),
         "minimum_diode_fillet_to_edge_cuts_clearance_mm": round(
             min(float(item["edge_cuts_mm"]) for item in diode_clearances), 3
         ),
         "diode_clearances": diode_clearances,
         "untented_bottom_via_count": len(untented_bottom_vias),
         "diode_tool_approach_errors": diode_tool_approach_errors,
+        "diode_tool_approaches": diode_tool_approaches,
+        "diode_to_unrelated_route_errors": diode_to_unrelated_route_errors,
         "diode_edge_clearance_errors": diode_edge_clearance_errors,
         "diode_hand_solder_clearance_errors": diode_hand_solder_clearance_errors,
         "board_text": board_text,
@@ -671,12 +1348,19 @@ def build_drc_evidence(
     for board_path in board_paths:
         side = "left" if "left" in board_path.name.lower() else "right"
         report_path = board_path.with_suffix(".drc.json")
+        project_path = board_path.with_suffix(".kicad_pro")
         report = json.loads(report_path.read_text(encoding="utf-8"))
         records[side] = {
             "board_path": board_path.relative_to(ROOT).as_posix(),
-            "board_sha256": hashlib.sha256(board_path.read_bytes()).hexdigest(),
+            "board_sha256": sha256_file(board_path),
             "drc_report_path": report_path.relative_to(ROOT).as_posix(),
-            "drc_report_sha256": hashlib.sha256(report_path.read_bytes()).hexdigest(),
+            "drc_report_sha256": sha256_file(report_path),
+            "project_path": DEFAULT_BOARDS[0 if side == "left" else 1]
+            .with_suffix(".kicad_pro")
+            .relative_to(ROOT)
+            .as_posix(),
+            "project_sha256": sha256_file(project_path),
+            "default_clearance_mm": project_default_clearance_mm(project_path),
             "schema": report.get("$schema"),
             "source": report.get("source"),
             "kicad_version": report.get("kicad_version"),
@@ -687,6 +1371,7 @@ def build_drc_evidence(
         "requirement_ids": ["CON-ARCH-004", "CON-ARCH-006"],
         "variant": "x3-v2",
         "status": "draft_not_orderable_pending_physical_evidence",
+        "hash_policy": HASH_POLICY,
         "boards": records,
     }
 
@@ -701,26 +1386,46 @@ def verify_drc_evidence_binding(
     record = boards.get(side) if isinstance(boards, dict) else None
     if not isinstance(record, dict):
         return [f"{side}: DRC evidence record is missing"], {}
+    if evidence.get("hash_policy") != HASH_POLICY:
+        errors.append(f"{side}: DRC evidence canonical hash policy mismatch")
 
     report_path = board_path.with_suffix(".drc.json")
+    project_path = board_path.with_suffix(".kicad_pro")
     if not board_path.is_file():
         return [f"{side}: DRC evidence board is missing"], record
     if not report_path.is_file():
         return [f"{side}: DRC evidence report is missing"], record
+    if not project_path.is_file():
+        return [f"{side}: KiCad project is missing"], record
 
-    board_sha256 = hashlib.sha256(board_path.read_bytes()).hexdigest()
-    report_sha256 = hashlib.sha256(report_path.read_bytes()).hexdigest()
+    board_sha256 = sha256_file(board_path)
+    report_sha256 = sha256_file(report_path)
+    project_sha256 = sha256_file(project_path)
     if record.get("board_sha256") != board_sha256:
         errors.append(f"{side}: DRC evidence board SHA-256 mismatch")
     if record.get("drc_report_sha256") != report_sha256:
         errors.append(f"{side}: DRC evidence report SHA-256 mismatch")
+    if record.get("project_sha256") != project_sha256:
+        errors.append(f"{side}: DRC evidence project SHA-256 mismatch")
 
     expected_board_path = DEFAULT_BOARDS[0 if side == "left" else 1].relative_to(ROOT).as_posix()
     expected_report_path = DEFAULT_BOARDS[0 if side == "left" else 1].with_suffix(".drc.json").relative_to(ROOT).as_posix()
+    expected_project_path = DEFAULT_BOARDS[0 if side == "left" else 1].with_suffix(".kicad_pro").relative_to(ROOT).as_posix()
     if record.get("board_path") != expected_board_path:
         errors.append(f"{side}: DRC evidence canonical board path mismatch")
     if record.get("drc_report_path") != expected_report_path:
         errors.append(f"{side}: DRC evidence canonical report path mismatch")
+    if record.get("project_path") != expected_project_path:
+        errors.append(f"{side}: DRC evidence canonical project path mismatch")
+    try:
+        default_clearance = project_default_clearance_mm(project_path)
+    except (OSError, KeyError, TypeError, ValueError, json.JSONDecodeError) as error:
+        errors.append(f"{side}: KiCad project Default clearance cannot be parsed: {error}")
+    else:
+        if default_clearance < 0.30:
+            errors.append(f"{side}: project Default clearance must be at least 0.30 mm")
+        if record.get("default_clearance_mm") != default_clearance:
+            errors.append(f"{side}: DRC evidence project Default clearance mismatch")
 
     try:
         report = json.loads(report_path.read_text(encoding="utf-8"))
@@ -842,11 +1547,8 @@ def verify_v2_release_candidate(
         "edge_cuts_unchanged": True,
     }:
         errors.append("manifest: V2 autoroute edge-clearance boundary policy is missing")
-    if manifest.get("pcb_fastener_holes") != {
-        "count_per_half": 0,
-        "strategy": "external housing capture",
-    }:
-        errors.append("manifest: V2 must not use inaccessible key-field fastener holes")
+    if manifest.get("pcb_fastener_holes") != expected_m1_4_mount_manifest():
+        errors.append("manifest: exact selected M1.4 MH pattern and service envelope are missing or stale")
     if manifest.get("screwless_registration_holes") is not None:
         errors.append("manifest: legacy H1-H9 registration holes are forbidden on V2")
     if manifest.get("controller_socket_geometry_mm") != {
@@ -859,14 +1561,21 @@ def verify_v2_release_candidate(
     diode_policy = manifest.get("diode_placement_policy") or {}
     if diode_policy.get("minimum_unused_feature_clearance_mm") != 1.0:
         errors.append("manifest: diode hand-solder clearance policy is missing")
+    if manifest.get("matrix_route_clearance_mm") != 0.30:
+        errors.append("manifest: V2 matrix route clearance must be 0.30 mm")
+    if diode_policy.get("minimum_fillet_to_unrelated_route_mm") != 0.10:
+        errors.append("manifest: diode-to-unrelated-route clearance policy is missing")
     if diode_policy.get("minimum_edge_cuts_clearance_mm") != 1.3:
         errors.append("manifest: diode Edge.Cuts clearance policy is missing")
     if diode_policy.get("edge_safe_offsets_mm") != {
-        "top_second_key": {"x": -5.0, "y": -5.6},
-        "top_other_keys": {"x": -9.25, "y": -3.0},
-        "bottom_first_key": {"x": 9.5, "y": 3.0},
+        "top_second_key": {"x": 7.0, "y": 7.0, "rotation_degrees": 90.0},
+        "top_other_keys": {"x": -8.75, "y": -3.25, "rotation_degrees": 270.0},
+        "bottom_first_key": {"x": 9.5, "y": 3.25},
     }:
         errors.append("manifest: verified edge-safe diode offsets are missing")
+
+    route_evidence_errors, route_evidence_reports = verify_canonical_route_evidence(manifest)
+    errors.extend(route_evidence_errors)
 
     board_reports: dict[str, object] = {}
     connectivity_errors: dict[str, list[str]] = {}
@@ -886,20 +1595,48 @@ def verify_v2_release_candidate(
         checks = {
             "switch count": report["switch_count"] == expected_keys,
             "diode count": report["diode_count"] == expected_keys,
+            "owned ES1B diode footprint": report["diode_footprint_names"]
+            == {"D_ES1B_SMA_HandSolder_C437840"},
+            "locked ES1B diode identity": report["diode_values"]
+            == {"ES1B_Jingdao_C437840_Eleparts9475342"},
+            "ES1B cathode/anode nets": not report["diode_pin_net_errors"],
+            "placed ES1B owned geometry": not report["diode_footprint_geometry_errors"],
             "owned switch footprint": report["switch_footprint_names"]
             == {"SW_Choc_V2_Socket_MX_THT"},
+            "placed switch owned geometry": not report["switch_footprint_geometry_errors"],
             "alternate contact nets": not report["alternate_contact_net_mismatches"],
             "switch placement matches generator": not report["switch_layout_errors"],
             "no stabilizers": not report["stabilizer_refs"],
             "no legacy key-field registration holes": report["registration_hole_count"] == 0,
             "registration hole safety": not report["registration_hole_errors"],
             "no legacy H-series mounting holes": not report["legacy_mount_hole_refs"],
+            "exact copper-free M1.4 MH pattern": not report["mounting_hole_errors"],
+            "M1.4 driver-to-copper clearance": not report[
+                "mounting_hole_driver_copper_errors"
+            ],
+            "canonical final route item count": report["route_track_via_count"]
+            == manifest["canonical_route_evidence"][side]["final_track_via_count"],
+            "canonical final route digest": report["route_digest_sha256"]
+            == manifest["canonical_route_evidence"][side]["route_digest_sha256"],
+            "M1.4 retention board identity": (
+                any(
+                    "SELECTED M1.4 MH RETENTION" in text.upper()
+                    for text in report["board_text"]
+                )
+                and not any(
+                    "NO KEY-FIELD HOLES" in text.upper()
+                    for text in report["board_text"]
+                )
+            ),
             "no carrier power pads": not report["carrier_power_pad_refs"],
             "one battery lead slot": report["battery_lead_slot_count"] == 1,
             "copper-free battery lead slot": not report["battery_lead_slot_errors"],
             "battery slot on USB/B+ side": report["battery_lead_slot_on_usb_side"],
             "no carrier power nets": not report["forbidden_carrier_power_nets"],
+            "side-specific controller footprint and USB label": not report["controller_contract_errors"],
+            "reset pad contract": not report["reset_contract_errors"],
             "diode hand-solder clearance": not report["diode_hand_solder_clearance_errors"],
+            "diode unrelated-route clearance": not report["diode_to_unrelated_route_errors"],
             "diode Edge.Cuts clearance": not report["diode_edge_clearance_errors"],
             "V2 assembly warning": any(
                 "CHOC V1 UNSUPPORTED" in text.upper() for text in report["board_text"]
@@ -926,6 +1663,7 @@ def verify_v2_release_candidate(
         "boards": board_reports,
         "connectivity_errors": connectivity_errors,
         "drc_evidence": drc_evidence_reports,
+        "canonical_route_evidence": route_evidence_reports,
         "reviewed_drc_exclusions": {
             "checks": EXPECTED_IGNORED_DRC_CHECKS,
             "rationale": (

@@ -9,7 +9,9 @@ from tools.verify_kc2_x3_v2 import DEFAULT_DRC_EVIDENCE, build_drc_evidence
 
 def write_drc_evidence(output: Path = DEFAULT_DRC_EVIDENCE) -> dict[str, object]:
     evidence = build_drc_evidence()
-    output.write_text(json.dumps(evidence, indent=2) + "\n", encoding="utf-8")
+    output.write_text(
+        json.dumps(evidence, indent=2) + "\n", encoding="utf-8", newline="\n"
+    )
     return evidence
 
 

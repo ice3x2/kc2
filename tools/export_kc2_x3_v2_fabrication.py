@@ -1,10 +1,14 @@
 from __future__ import annotations
 
-import hashlib
 import json
 import subprocess
 from pathlib import Path
 from zipfile import ZIP_DEFLATED, ZipFile
+
+if __package__:
+    from tools.canonical_hash import HASH_POLICY, sha256_file
+else:
+    from canonical_hash import HASH_POLICY, sha256_file
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -16,14 +20,6 @@ PRODUCTS = {
     "coupon": ROOT / "hardware" / "kicad" / "draft" / "x3-v2" / "coupon" / "kc2_x3_v2_switch_coupon.kicad_pcb",
 }
 LAYERS = "F.Cu,B.Cu,F.Mask,B.Mask,F.Paste,B.Paste,F.Silkscreen,B.Silkscreen,Edge.Cuts"
-
-
-def sha256(path: Path) -> str:
-    digest = hashlib.sha256()
-    with path.open("rb") as source:
-        for chunk in iter(lambda: source.read(1024 * 1024), b""):
-            digest.update(chunk)
-    return digest.hexdigest()
 
 
 def clear_owned_output(path: Path) -> None:
@@ -91,16 +87,16 @@ def export_product(product: str, board: Path) -> dict[str, object]:
             package.write(path, arcname=path.name)
     return {
         "board": str(board.relative_to(ROOT)),
-        "source_board_sha256": sha256(board),
+        "source_board_sha256": sha256_file(board),
         "key_count": {"left": 31, "right": 39, "coupon": 3}[product],
         "output_dir": str(output_dir.relative_to(ROOT)),
         "archive": str(archive.relative_to(ROOT)),
-        "archive_sha256": sha256(archive),
+        "archive_sha256": sha256_file(archive),
         "files": [
             {
                 "name": path.name,
                 "size": path.stat().st_size,
-                "sha256": sha256(path),
+                "sha256": sha256_file(path),
             }
             for path in files
         ],
@@ -117,6 +113,7 @@ def main() -> None:
     }
     manifest = {
         "requirement": "CON-ARCH-004",
+        "hash_policy": HASH_POLICY,
         "variant": "x3-v2",
         "status": "draft_not_orderable_pending_physical_coupon",
         "kicad_cli": str(KICAD_CLI),

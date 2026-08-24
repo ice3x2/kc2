@@ -2,11 +2,15 @@ from __future__ import annotations
 
 import argparse
 from collections import Counter
-import hashlib
 import json
 import re
 from pathlib import Path
 from zipfile import ZipFile
+
+if __package__:
+    from tools.canonical_hash import HASH_POLICY, sha256_bytes, sha256_file
+else:
+    from canonical_hash import HASH_POLICY, sha256_bytes, sha256_file
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -37,14 +41,14 @@ EXPECTED_FILE_FUNCTIONS = {
 EXPECTED_FIXED_DRILL_TOOLS = {
     "left": {
         "PTH": {"0.950": 24, "1.500": 62},
-        "NPTH": {"1.650": 31, "1.700": 62, "2.200": 1, "3.000": 62, "5.000": 31},
+        "NPTH": {"1.600": 8, "1.650": 31, "1.700": 62, "2.200": 1, "3.000": 62, "5.000": 31},
     },
     "right": {
         "PTH": {"0.950": 24, "1.500": 78},
-        "NPTH": {"1.650": 39, "1.700": 78, "2.200": 1, "3.000": 78, "5.000": 39},
+        "NPTH": {"1.600": 10, "1.650": 39, "1.700": 78, "2.200": 1, "3.000": 78, "5.000": 39},
     },
     "coupon": {
-        "PTH": {"1.500": 6},
+        "PTH": {"1.500": 6, "2.000": 9},
         "NPTH": {"1.650": 3, "1.700": 6, "3.000": 6, "5.000": 3},
     },
 }
@@ -96,29 +100,31 @@ def expected_drill_tools(product: str, source_board: Path) -> dict[str, dict[str
     return {"PTH": dict(sorted(pth.items())), "NPTH": fixed["NPTH"]}
 
 
-def analyze_fabrication(manifest_path: Path = MANIFEST) -> dict[str, object]:
+def analyze_fabrication(manifest_path: Path = MANIFEST, root: Path = ROOT) -> dict[str, object]:
     if not manifest_path.is_file():
         raise FileNotFoundError(manifest_path)
     manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
     products: dict[str, object] = {}
     for product, details in manifest["products"].items():
-        archive = ROOT / details["archive"]
-        source_board = ROOT / details["board"]
+        archive = root / details["archive"]
+        source_board = root / details["board"]
+        output_dir = root / details["output_dir"]
         expected_drills = expected_drill_tools(product, source_board)
         entries: list[str] = []
         archive_digest = ""
         file_hash_mismatches: list[str] = []
+        output_file_hash_mismatches: list[str] = []
         drill_tools: dict[str, dict[str, int]] = {"PTH": {}, "NPTH": {}}
         gerber_layers: dict[str, dict[str, object]] = {}
         gerber_geometry_errors: list[str] = []
         if archive.is_file():
-            archive_digest = hashlib.sha256(archive.read_bytes()).hexdigest()
+            archive_digest = sha256_file(archive)
             with ZipFile(archive) as package:
                 entries = package.namelist()
                 expected_hashes = {item["name"]: item["sha256"] for item in details["files"]}
                 for entry in entries:
                     expected = expected_hashes.get(entry)
-                    actual = hashlib.sha256(package.read(entry)).hexdigest()
+                    actual = sha256_bytes(package.read(entry))
                     if expected != actual:
                         file_hash_mismatches.append(entry)
                 report_entry = next(
@@ -153,10 +159,14 @@ def analyze_fabrication(manifest_path: Path = MANIFEST) -> dict[str, object]:
             "PTH": any(entry.endswith("-PTH.drl") for entry in entries),
             "NPTH": any(entry.endswith("-NPTH.drl") for entry in entries),
         }
+        for item in details["files"]:
+            output_path = output_dir / item["name"]
+            if not output_path.is_file() or sha256_file(output_path) != item["sha256"]:
+                output_file_hash_mismatches.append(item["name"])
         products[product] = {
             "source_board_exists": source_board.is_file(),
             "source_board_sha256_matches": source_board.is_file()
-            and hashlib.sha256(source_board.read_bytes()).hexdigest()
+            and sha256_file(source_board)
             == details.get("source_board_sha256"),
             "key_count_matches": details.get("key_count") == EXPECTED_KEY_COUNTS[product],
             "archive_exists": archive.is_file(),
@@ -169,6 +179,7 @@ def analyze_fabrication(manifest_path: Path = MANIFEST) -> dict[str, object]:
             "archive_sha256_matches": bool(archive_digest)
             and archive_digest == details["archive_sha256"],
             "file_hash_mismatches": file_hash_mismatches,
+            "output_file_hash_mismatches": output_file_hash_mismatches,
             "drill_tools_mm": drill_tools,
             "source_board_via_drills_mm": source_board_via_drills(source_board),
             "expected_drill_tools_mm": expected_drills,
@@ -185,6 +196,8 @@ def analyze_fabrication(manifest_path: Path = MANIFEST) -> dict[str, object]:
         }
     return {
         "requirement": manifest["requirement"],
+        "hash_policy": manifest.get("hash_policy"),
+        "hash_policy_matches": manifest.get("hash_policy") == HASH_POLICY,
         "variant": manifest.get("variant"),
         "products": products,
     }
@@ -198,6 +211,8 @@ def main() -> None:
     errors: list[str] = []
     if report["variant"] != "x3-v2":
         errors.append(f"unexpected variant {report['variant']!r}")
+    if not report["hash_policy_matches"]:
+        errors.append(f"hash policy must be {HASH_POLICY!r}")
     for product, details in report["products"].items():
         if not details["archive_exists"]:
             errors.append(f"{product}: archive missing")
@@ -217,6 +232,11 @@ def main() -> None:
             errors.append(f"{product}: archive SHA-256 mismatch")
         if details["file_hash_mismatches"]:
             errors.append(f"{product}: file SHA-256 mismatches {details['file_hash_mismatches']}")
+        if details["output_file_hash_mismatches"]:
+            errors.append(
+                f"{product}: extracted output SHA-256 mismatches "
+                f"{details['output_file_hash_mismatches']}"
+            )
         if details["gerber_geometry_errors"]:
             errors.append(f"{product}: Gerber geometry {details['gerber_geometry_errors']}")
         if not details["drill_geometry_matches"]:

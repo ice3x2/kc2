@@ -4,12 +4,14 @@ import argparse
 import json
 import math
 import os
+import re
 import shutil
 from dataclasses import dataclass
 from pathlib import Path
 
 import pcbnew
 
+from tools.canonical_hash import HASH_POLICY, sha256_file
 from tools.inset_specctra_boundary import (
     DEFAULT_INSET_MM as X3_V2_AUTOROUTE_BOUNDARY_INSET_MM,
     DEFAULT_PRESERVE_CONTROLLER_ABOVE_MM as X3_V2_AUTOROUTE_PRESERVE_CONTROLLER_ABOVE_MM,
@@ -19,6 +21,49 @@ from tools.inset_specctra_boundary import (
 ROOT = Path(__file__).resolve().parents[1]
 KICAD_ROOT = ROOT / "hardware" / "kicad"
 DRAFT_ROOT = KICAD_ROOT / "draft"
+
+
+def canonical_x3_v2_route_record(side: str, final_count: int, route_digest: str) -> dict[str, object]:
+    base = Path("hardware/kicad/draft/x3-v2/autoroute")
+    dsn_relative = base / f"kc2_{side}-x3-v2-70-es1b-mh-r2.dsn"
+    session_source_dsn_relative = base / f"kc2_{side}-x3-v2-70-es1b-r1.dsn"
+    ses_relative = base / f"kc2_{side}-x3-v2-70-es1b-r1.ses"
+    dsn_path = ROOT / dsn_relative
+    session_source_dsn_path = ROOT / session_source_dsn_relative
+    ses_path = ROOT / ses_relative
+    dsn_text = dsn_path.read_text(encoding="utf-8")
+    matches = {
+        "global": re.search(
+            r"\(structure\b[\s\S]*?\(rule\b[\s\S]*?\(clearance\s+(\d+)\)",
+            dsn_text,
+        ),
+        "kicad_default": re.search(
+            r"\(class\s+kicad_default\b[\s\S]*?\(rule\b[\s\S]*?\(clearance\s+(\d+)\)",
+            dsn_text,
+        ),
+    }
+    if any(match is None for match in matches.values()):
+        raise RuntimeError(f"missing canonical global/default clearance in {dsn_path}")
+    default_clearances = {
+        label: int(match.group(1))
+        for label, match in matches.items()
+        if match is not None
+    }
+    return {
+        "dsn": dsn_relative.as_posix(),
+        "dsn_role": "current_mh_trackless_routing_input",
+        "dsn_mounting_hole_count": len(re.findall(r"\(place\s+MH\d+\b", dsn_text)),
+        "session_source_dsn": session_source_dsn_relative.as_posix(),
+        "session_source_dsn_sha256": sha256_file(session_source_dsn_path),
+        "ses": ses_relative.as_posix(),
+        "ses_role": "reviewed_pre_mh_r1_import_plus_exact_m1_4_driver_detours",
+        "dsn_sha256": sha256_file(dsn_path),
+        "ses_sha256": sha256_file(ses_path),
+        "dsn_default_clearance_internal_units": min(default_clearances.values()),
+        "dsn_clearances_internal_units": default_clearances,
+        "final_track_via_count": final_count,
+        "route_digest_sha256": route_digest,
+    }
 
 
 def find_kicad_share() -> Path:
@@ -45,10 +90,17 @@ DIODE_FP = "D_SOD-123"
 X1_DIODE_LIB = KC2_FP_LIB
 X1_DIODE_FP = "D_SOD123_HandSolder_14592018"
 X1_DIODE_VALUE = "1N4148W_SOD123_DeviceMart_14592018"
+X3_V2_DIODE_LIB = KC2_FP_LIB
+X3_V2_DIODE_FP = "D_ES1B_SMA_HandSolder_C437840"
+X3_V2_DIODE_VALUE = "ES1B_Jingdao_C437840_Eleparts9475342"
+X3_V2_DIODE_PIN_MAPPING = {"1": "cathode_row", "2": "anode_switch"}
 TACT_LIB = KC2_FP_LIB
 TACT_FP = "SW_NW3_A06_B3_SMD"
 MOUNT_LIB = KICAD_SHARE / "footprints" / "MountingHole.pretty"
 MOUNT_FP = "MountingHole_2.2mm_M2"
+X3_V2_MOUNT_LIB = KC2_FP_LIB
+X3_V2_MOUNT_FP = "MH_M1.4_NPTH_1.60"
+X3_V2_MOUNT_VALUE = "M1.4_NPTH_1.60"
 REGISTRATION_LIB = KC2_FP_LIB
 REGISTRATION_FP = "REG_NPTH_3.0"
 BATTERY_LEAD_SLOT_LIB = KC2_FP_LIB
@@ -89,11 +141,44 @@ X3_V2_MIN_JOINED_EDGE_CLEARANCE = 1.0
 # touched along horizontal Edge.Cuts.  Move the left transition upward and
 # the right transition downward before corner rounding.
 X3_V2_SEAM_TRANSITION_STAGGER = 0.55
-X3_V2_TOP_SECOND_DIODE_OFFSET = (-5.0, -5.6)
-X3_V2_TOP_OTHER_DIODE_OFFSET = (-9.25, -3.0)
-X3_V2_BOTTOM_FIRST_DIODE_OFFSET = (9.5, 3.0)
+X3_V2_TOP_SECOND_DIODE_OFFSET = (7.0, 7.0)
+X3_V2_TOP_SECOND_DIODE_ROTATION = 90.0
+X3_V2_TOP_OTHER_DIODE_OFFSET = (-8.75, -3.25)
+X3_V2_TOP_OTHER_DIODE_ROTATION = 270.0
+X3_V2_BOTTOM_FIRST_DIODE_OFFSET = (9.5, 3.25)
 X3_V2_MIN_DIODE_EDGE_CLEARANCE = 1.30
 X3_V2_OUTLINE_POLICY = "keycap_concealed_except_controller_service"
+X3_V2_MOUNT_HOLE_DIAMETER_MM = 1.60
+X3_V2_MOUNT_HEAD_ENVELOPE_MM = (2.00, 0.50)
+X3_V2_MOUNT_DRIVER_DIAMETER_MM = 3.00
+X3_V2_MOUNT_SUPPORT_LAND_DIAMETER_MM = 3.00
+X3_V2_MOUNT_PILOT_ENVELOPE_MM = (1.10, 2.80)
+X3_V2_MOUNT_UNDER_HEAD_LENGTH_MM = 4.00
+X3_V2_MOUNT_CLOSED_BOTTOM_MM = 0.50
+X3_V2_MOUNTING_POINTS = {
+    "left": [
+        (142.6125, 68.0000),
+        (128.6125, 86.5000),
+        (100.1125, 93.5000),
+        (57.1125, 99.0000),
+        (133.6125, 131.5000),
+        (55.1125, 144.0000),
+        (165.6125, 145.0000),
+        (102.6125, 147.0000),
+    ],
+    "right": [
+        (71.6875, 68.0000),
+        (181.1875, 85.5000),
+        (147.6875, 93.5000),
+        (109.6875, 96.5000),
+        (71.6875, 105.5000),
+        (42.1875, 106.0000),
+        (181.1875, 134.5000),
+        (143.1875, 134.5000),
+        (51.6875, 144.0000),
+        (95.6875, 147.0000),
+    ],
+}
 EDGE_WIDTH = 0.10
 TRACK_WIDTH = 0.25
 POWER_TRACK_WIDTH = 0.75
@@ -708,9 +793,9 @@ def diode_placement_for_key(
 ) -> tuple[float, float, float]:
     """Return a diode offset/rotation with an open hand-solder approach.
 
-    V2 puts the diode in the corner opposite the bottom-side Choc socket body.
-    This also moves both enlarged SOD-123 pads away from the hybrid footprint's
-    unused NPTH features and MX solder pins.
+    V2 puts the exact ES1B SMA land in a verified hand-solder corner.
+    This moves both manufacturer-recommended pads away from the hybrid
+    footprint's unused NPTH features and MX solder pins.
     """
     if variant != "x3-v2":
         return 0.0, default_y_offset, 0.0
@@ -719,13 +804,16 @@ def diode_placement_for_key(
         if switch_rotation_for_key(key, keys, variant) == 180.0
         else (-7.0, -7.0)
     )
+    rotation = 0.0
     if key.row == 0 and key.col == 1:
         dx, dy = X3_V2_TOP_SECOND_DIODE_OFFSET
+        rotation = X3_V2_TOP_SECOND_DIODE_ROTATION
     elif key.row == 0 and dy < 0:
         dx, dy = X3_V2_TOP_OTHER_DIODE_OFFSET
+        rotation = X3_V2_TOP_OTHER_DIODE_ROTATION
     elif key.row == max(candidate.row for candidate in keys) and key.col == 0:
         dx, dy = X3_V2_BOTTOM_FIRST_DIODE_OFFSET
-    return dx, dy, 0.0
+    return dx, dy, rotation
 
 
 def controller_tab_spans(side: str, variant: str) -> tuple[float, float]:
@@ -891,11 +979,12 @@ def shift_points(points: list[tuple[float, float]], dx: float, dy: float) -> lis
 
 
 def make_project_file(project_dir: Path, name: str, variant: str = "soldered") -> None:
+    default_clearance = 0.30 if variant == "x3-v2" else 0.20
     net_classes = [
         {
             "name": "Default",
             "bus_width": 12.0,
-            "clearance": 0.20,
+            "clearance": default_clearance,
             "diff_pair_gap": 0.25,
             "diff_pair_via_gap": 0.25,
             "diff_pair_width": 0.20,
@@ -1430,13 +1519,11 @@ def make_board(
     tact_y = ctrl_cy + CONTROLLER_W / 2.0 + 4.0
     tact = load_footprint(board, TACT_LIB, TACT_FP, "SW_RST1", "NW3-A06-B3 RST", tact_x, tact_y, 0)
 
-    # V2 removes the old key-field H1-H9 through-holes.  The revised lower
-    # housing captures the perimeter and supports the PCB from below, so a
-    # driver never has to fit between populated switches.
     registration_points = x3_registration_points(side, shifted_keys) if variant == "x3" else []
+    v2_mount_points = X3_V2_MOUNTING_POINTS[side] if variant == "x3-v2" else []
     global ACTIVE_TRACE_KEEP_OUTS
     previous_trace_keep_outs = ACTIVE_TRACE_KEEP_OUTS
-    ACTIVE_TRACE_KEEP_OUTS = registration_points + battery_lead_slot_points
+    ACTIVE_TRACE_KEEP_OUTS = registration_points + battery_lead_slot_points + v2_mount_points
 
     mount_points = mounting_points(side, shifted_keys, shifted_outline, ctrl_cx, ctrl_cy)
     if is_x3_family(variant):
@@ -1444,6 +1531,18 @@ def make_board(
     for idx, (mx, my) in enumerate(mount_points, start=1):
         fp = load_footprint(board, MOUNT_LIB, MOUNT_FP, f"H{idx}", "M2_NPTH_2.2", mx, my)
         add_rect_lines(board, mx - 2.5, my - 2.5, mx + 2.5, my + 2.5, pcbnew.Cmts_User, 0.08)
+    for idx, (mx, my) in enumerate(v2_mount_points, start=1):
+        fp = load_footprint(
+            board,
+            X3_V2_MOUNT_LIB,
+            X3_V2_MOUNT_FP,
+            f"MH{idx}",
+            X3_V2_MOUNT_VALUE,
+            mx,
+            my,
+        )
+        fp.Reference().SetVisible(False)
+        fp.Value().SetVisible(False)
     for idx, (rx, ry) in enumerate(registration_points, start=1):
         fp = load_footprint(board, REGISTRATION_LIB, REGISTRATION_FP, f"REG{idx}", REGISTRATION_VALUE, rx, ry)
         fp.Reference().SetVisible(False)
@@ -1586,14 +1685,19 @@ def make_board(
     )
     add_board_text(board, f"KC2 {side.upper()}{variant_label} - {layout_name}", 35, 24, pcbnew.F_SilkS, 1.2)
     housing_note = (
-        "No top housing / external capture + independent underside supports / no key-field holes"
+        "No top housing / selected M1.4 MH retention + independent underside supports"
         if variant == "x3-v2"
         else "No top housing / screwless PLA+ rail tray / REG holes"
         if variant == "x3"
         else "No top housing / PCB is switch plate / bottom plate M2+adhesive"
     )
     add_board_text(board, housing_note, 35, 27, pcbnew.F_SilkS, 0.9)
-    add_board_text(board, "Diode fallback: 1N4148W SOD-123 because DO-35 conflicts with compact hybrid footprint", 35, 30, pcbnew.Cmts_User, 0.9)
+    diode_note = (
+        "Diode: Jingdao ES1B / C437840 / Eleparts 9475342; pad 1 = row cathode"
+        if variant == "x3-v2"
+        else "Diode fallback: 1N4148W SOD-123 because DO-35 conflicts with compact hybrid footprint"
+    )
+    add_board_text(board, diode_note, 35, 30, pcbnew.Cmts_User, 0.9)
     if variant == "hotswap":
         add_board_text(board, "Hot-swap variant: Kailh Choc V1/V2 socket footprint, not MX-only socket", 35, 33, pcbnew.Cmts_User, 0.9)
     elif variant == "x1":
@@ -1902,9 +2006,9 @@ def generate_variant(variant: str, output_dir: Path | None = None) -> dict[str, 
         project_suffix = variant_project_suffix(variant)
         switch_lib = KC2_FP_LIB
         switch_fp = variant_switch_footprint(variant)
-        diode_lib = X1_DIODE_LIB
-        diode_fp = X1_DIODE_FP
-        diode_value = X1_DIODE_VALUE
+        diode_lib = X3_V2_DIODE_LIB if variant == "x3-v2" else X1_DIODE_LIB
+        diode_fp = X3_V2_DIODE_FP if variant == "x3-v2" else X1_DIODE_FP
+        diode_value = X3_V2_DIODE_VALUE if variant == "x3-v2" else X1_DIODE_VALUE
         diode_y_offset = X2_DIODE_Y_OFFSET
         manifest_name = "kc2_generation_manifest.json" if variant == "x3" else "kc2_x3_v2_generation_manifest.json"
         if variant == "x3-v2":
@@ -1952,13 +2056,17 @@ def generate_variant(variant: str, output_dir: Path | None = None) -> dict[str, 
         variant=variant,
     )
     notes = [
-        "SOD-123 1N4148W fallback is used because DO-35 conflicts with the compact hybrid switch footprint at 19.05 mm pitch.",
         "Antenna keepout rule areas are generated directly in the board files.",
         "Switch footprint values are sanitized as KEY_XX so Specctra DSN export does not expose legend characters such as backslash to Freerouting.",
         "Right-half R_COL7 uses D21 and R_COL8 uses D20 to keep the longer outer column on the easier controller fanout pin.",
         f"Controller protrusion tabs are aligned toward the inner joining edge: left recessed {LEFT_CONTROLLER_JOIN_EDGE_RECESS:g} mm, right recessed {RIGHT_CONTROLLER_JOIN_EDGE_RECESS:g} mm.",
         "Programming tact switch uses the smaller DeviceMart 1322056 NW3-A06-B3 SMD footprint.",
     ]
+    if variant != "x3-v2":
+        notes.insert(
+            0,
+            "SOD-123 1N4148W fallback is used because DO-35 conflicts with the compact hybrid switch footprint at 19.05 mm pitch.",
+        )
     if variant == "hotswap":
         notes.append("Hot-swap variant uses the Kailh Choc V1/V2 low-profile socket footprint. MX-only Kailh sockets are not compatible with this variant.")
     elif variant == "x1":
@@ -2005,16 +2113,29 @@ def generate_variant(variant: str, output_dir: Path | None = None) -> dict[str, 
         notes.append("X3 V2 contains no legacy H1-H9 or REG1-REG9 key-field through-holes.")
         notes.append("The netless battery-lead slot is at the nice!nano USB/B+ end; insulated B+ and GND/B- leads must use strain relief and remain outside the antenna keepout.")
         notes.append(
-            "X3 V2 uses verified edge-safe SOD-123 offsets at perimeter keys; the limiting "
-            "D2 envelope is nominally 1.35 mm inside Edge.Cuts while retaining hybrid-switch "
-            "assembly and hand-solder clearance."
+            "X3 V2 uses the exact Jingdao ES1B / LCSC C437840 / Eleparts 9475342 "
+            "manufacturer-recommended SMA land on B.Cu: 1.8 x 1.8 mm pads, 2.4 mm "
+            "inner gap, pin 1 cathode to row and pin 2 anode to the per-key switch net."
+        )
+        notes.append(
+            "The ES1B placements and rotations preserve at least 1.30 mm to Edge.Cuts, "
+            "1.00 mm to switch copper/unused NPTH/unrelated exposed copper, and one "
+            "unobstructed 1.50 mm cardinal hand-solder approach per pad."
+        )
+        notes.append(
+            f"X3 V2 uses the selected {len(X3_V2_MOUNTING_POINTS['left'])}-left / "
+            f"{len(X3_V2_MOUNTING_POINTS['right'])}-right M1.4 retention prototype: "
+            f"{X3_V2_MOUNT_HOLE_DIAMETER_MM:.2f} mm copper-free NPTHs, keycaps removed "
+            "and switches installed for PH0 service. Physical pilot, torque, full-pattern "
+            "fit, and deflection evidence remain pending; the board is not order-ready."
         )
     else:
         notes.append(f"Controller protrusion tab width is {CONTROLLER_TAB_W:g} mm and grows away from the inner joining edge.")
     switch_footprint_file_present = (switch_lib / f"{switch_fp}.kicad_mod").exists()
     manifest: dict[str, object] = {
-        "generated": "2026-08-22" if variant == "x3-v2" else "2026-06-08",
+        "generated": "2026-08-25" if variant == "x3-v2" else "2026-06-08",
         "variant": variant,
+        **({"hash_policy": HASH_POLICY} if variant == "x3-v2" else {}),
         "generator": "tools/generate_kc2_pcbs.py",
         "generation_command": f"python tools/generate_kc2_pcbs.py --variant {variant}",
         "pcbnew_version": pcbnew.GetBuildVersion() if hasattr(pcbnew, "GetBuildVersion") else "unknown",
@@ -2047,6 +2168,64 @@ def generate_variant(variant: str, output_dir: Path | None = None) -> dict[str, 
         ),
         "diode_footprint": f"{diode_lib.name}:{diode_fp}",
         "diode_value": diode_value,
+        "matrix_diode": (
+            {
+                "manufacturer": "Jingdao Microelectronics",
+                "mpn": "ES1B",
+                "lcsc": "C437840",
+                "eleparts_goods_no": "9475342",
+                "footprint": f"{diode_lib.name}:{diode_fp}",
+                "package": "SMA",
+                "assembly_side": "bottom",
+                "pin_1": X3_V2_DIODE_PIN_MAPPING["1"],
+                "pin_2": X3_V2_DIODE_PIN_MAPPING["2"],
+                "recommended_land_mm": {"pad_size": [1.8, 1.8], "inner_gap": 2.4},
+                "implemented_land_mm": {"pad_size": [1.8, 1.8], "inner_gap": 2.4, "outer_span": 6.0},
+                "maximum_package_mm": {
+                    "lead_span": 5.2,
+                    "body_length": 4.5,
+                    "body_width": 2.7,
+                    "height": 2.2,
+                },
+            }
+            if variant == "x3-v2"
+            else None
+        ),
+        "matrix_route_clearance_mm": 0.30 if variant == "x3-v2" else None,
+        "canonical_route_evidence": (
+            {
+                "left": canonical_x3_v2_route_record(
+                    "left", 564,
+                    "ba48ff17dd7f447e4cbededba09c1889b82713b1defef18d63aace4e59f92c7d",
+                ),
+                "right": canonical_x3_v2_route_record(
+                    "right", 732,
+                    "1592744e711eda0eef59d51062c3c2bab87e5ae05c8156f0708f0544a09b7e38",
+                ),
+            }
+            if variant == "x3-v2"
+            else None
+        ),
+        "firmware_matrix_compatibility": (
+            {
+                "diode_direction": "col2row",
+                "pad_1": "row_cathode",
+                "pad_2": "per_key_switch_anode",
+                "scan_delay_changed": False,
+            }
+            if variant == "x3-v2"
+            else None
+        ),
+        "physical_scan_validation": (
+            {
+                "status": "pending",
+                "supply_volts": [3.0, 3.3],
+                "patterns": ["maximum_same_row", "maximum_same_column"],
+                "orderable": False,
+            }
+            if variant == "x3-v2"
+            else None
+        ),
         "diode_y_offset_mm": None if variant == "x3-v2" else diode_y_offset,
         "diode_placement_policy": (
             {
@@ -2056,10 +2235,12 @@ def generate_variant(variant: str, output_dir: Path | None = None) -> dict[str, 
                     "top_second_key": {
                         "x": X3_V2_TOP_SECOND_DIODE_OFFSET[0],
                         "y": X3_V2_TOP_SECOND_DIODE_OFFSET[1],
+                        "rotation_degrees": X3_V2_TOP_SECOND_DIODE_ROTATION,
                     },
                     "top_other_keys": {
                         "x": X3_V2_TOP_OTHER_DIODE_OFFSET[0],
                         "y": X3_V2_TOP_OTHER_DIODE_OFFSET[1],
+                        "rotation_degrees": X3_V2_TOP_OTHER_DIODE_ROTATION,
                     },
                     "bottom_first_key": {
                         "x": X3_V2_BOTTOM_FIRST_DIODE_OFFSET[0],
@@ -2067,6 +2248,7 @@ def generate_variant(variant: str, output_dir: Path | None = None) -> dict[str, 
                     },
                 },
                 "minimum_unused_feature_clearance_mm": 1.0,
+                "minimum_fillet_to_unrelated_route_mm": 0.10,
                 "minimum_edge_cuts_clearance_mm": X3_V2_MIN_DIODE_EDGE_CLEARANCE,
                 "purpose": (
                     "hand-solder approach opposite the bottom-side Choc socket body while "
@@ -2113,7 +2295,46 @@ def generate_variant(variant: str, output_dir: Path | None = None) -> dict[str, 
             else None
         ),
         "pcb_fastener_holes": (
-            {"count_per_half": 0, "strategy": "external housing capture"}
+            {
+                "footprint": f"{X3_V2_MOUNT_LIB.name}:{X3_V2_MOUNT_FP}",
+                "references": "MH1..MH8 left; MH1..MH10 right",
+                "counts": {
+                    "left": len(X3_V2_MOUNTING_POINTS["left"]),
+                    "right": len(X3_V2_MOUNTING_POINTS["right"]),
+                    "total": sum(len(points) for points in X3_V2_MOUNTING_POINTS.values()),
+                },
+                "positions_mm": {
+                    side: [
+                        {"ref": f"MH{index}", "x": x, "y": y}
+                        for index, (x, y) in enumerate(points, start=1)
+                    ]
+                    for side, points in X3_V2_MOUNTING_POINTS.items()
+                },
+                "hole": {
+                    "type": "NPTH",
+                    "diameter_mm": X3_V2_MOUNT_HOLE_DIAMETER_MM,
+                    "unnetted": True,
+                    "copper_free": True,
+                },
+                "screw_head_envelope_mm": {
+                    "diameter": X3_V2_MOUNT_HEAD_ENVELOPE_MM[0],
+                    "height": X3_V2_MOUNT_HEAD_ENVELOPE_MM[1],
+                },
+                "vertical_driver_envelope_mm": {
+                    "diameter": X3_V2_MOUNT_DRIVER_DIAMETER_MM,
+                },
+                "provisional_under_head_screw_length_mm": X3_V2_MOUNT_UNDER_HEAD_LENGTH_MM,
+                "service_state": {"keycaps": "removed", "switches": "installed"},
+                "housing_interface_mm": {
+                    "zero_gap_support_land_diameter": X3_V2_MOUNT_SUPPORT_LAND_DIAMETER_MM,
+                    "provisional_blind_pilot_diameter": X3_V2_MOUNT_PILOT_ENVELOPE_MM[0],
+                    "provisional_blind_pilot_depth": X3_V2_MOUNT_PILOT_ENVELOPE_MM[1],
+                    "desk_column_closed_bottom": X3_V2_MOUNT_CLOSED_BOTTOM_MM,
+                },
+                "registration_status": "pending_full_pattern_physical_fit",
+                "physical_validation": "pending",
+                "order_ready": False,
+            }
             if variant == "x3-v2"
             else None
         ),
@@ -2173,7 +2394,9 @@ def generate_variant(variant: str, output_dir: Path | None = None) -> dict[str, 
         "notes": notes,
     }
     out_dir.mkdir(parents=True, exist_ok=True)
-    (out_dir / manifest_name).write_text(json.dumps(manifest, indent=2), encoding="utf-8")
+    (out_dir / manifest_name).write_text(
+        json.dumps(manifest, indent=2), encoding="utf-8", newline="\n"
+    )
     return manifest
 
 

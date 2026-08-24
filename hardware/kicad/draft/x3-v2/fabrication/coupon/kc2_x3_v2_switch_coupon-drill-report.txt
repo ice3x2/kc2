@@ -1,5 +1,5 @@
 Drill report for kc2_x3_v2_switch_coupon.kicad_pcb
-Created on 2026-08-22T16:55:44
+Created on 2026-08-25T02:24:58
 
 Copper Layer Stackup:
     =============================================================
@@ -11,8 +11,9 @@ Drill file 'kc2_x3_v2_switch_coupon-PTH.drl' contains
     plated through holes:
     =============================================================
     T1  1.500mm  0.0591"  (6 holes))
+    T2  2.000mm  0.0787"  (9 holes))
 
-    Total plated holes count 6
+    Total plated holes count 15
 
 
 Drill file 'kc2_x3_v2_switch_coupon-NPTH.drl' contains

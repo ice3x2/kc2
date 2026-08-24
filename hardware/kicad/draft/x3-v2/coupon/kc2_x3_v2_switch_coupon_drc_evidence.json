@@ -1,0 +1,41 @@
+{
+  "requirement_ids": [
+    "CON-ARCH-004"
+  ],
+  "variant": "x3-v2-switch-coupon",
+  "status": "draft_not_orderable_pending_physical_evidence",
+  "hash_policy": "lf-normalized-utf8-text-else-raw-v1",
+  "board": {
+    "board_path": "hardware/kicad/draft/x3-v2/coupon/kc2_x3_v2_switch_coupon.kicad_pcb",
+    "board_sha256": "b7e2a15e1e50e4d8514254052a9e22e1223d114a09020741839f8970c8e35dcf",
+    "drc_report_path": "hardware/kicad/draft/x3-v2/coupon/kc2_x3_v2_switch_coupon.drc.json",
+    "drc_report_sha256": "aa8d2db330d4ec9fa03e663fa20cf757808631bc8aa7631c188751c9a5eda06d",
+    "schema": "https://schemas.kicad.org/drc.v1.json",
+    "source": "kc2_x3_v2_switch_coupon.kicad_pcb",
+    "kicad_version": "10.0.3",
+    "date": "2026-08-24T21:49:30",
+    "included_severities": [
+      "error",
+      "warning",
+      "exclusion"
+    ],
+    "ignored_checks": [
+      "footprint_filters_mismatch",
+      "footprint_type_mismatch",
+      "missing_courtyard",
+      "npth_inside_courtyard",
+      "pth_inside_courtyard",
+      "track_not_centered_on_via",
+      "tuning_profile_track_geometries"
+    ],
+    "ignored_check_rationale": {
+      "footprint_filters_mismatch": "No schematic footprint-filter source is committed for this PCB-only coupon.",
+      "footprint_type_mismatch": "Intentional hybrid plated and SMD switch contacts share one PCB-only footprint.",
+      "missing_courtyard": "Board-only service-probe and text helpers without courtyard are visually reviewed.",
+      "npth_inside_courtyard": "Intentional hybrid-switch mechanical NPTH lies within its own switch courtyard.",
+      "pth_inside_courtyard": "Intentional MX and Choc alternate contacts lie within their own hybrid courtyard.",
+      "track_not_centered_on_via": "Reviewed coupon probe routes intentionally enter vias off-center.",
+      "tuning_profile_track_geometries": "No impedance or length-tuning profiles are used by the coupon."
+    }
+  }
+}

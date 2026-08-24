@@ -6,7 +6,6 @@ Requirement: CON-ARCH-004 AC-5 and AC-7.
 from __future__ import annotations
 
 import argparse
-import hashlib
 import json
 import os
 from pathlib import Path
@@ -15,6 +14,11 @@ import struct
 import subprocess
 import sys
 from typing import Iterable, Mapping
+
+if __package__:
+    from tools.canonical_hash import HASH_POLICY, sha256_file
+else:
+    from canonical_hash import HASH_POLICY, sha256_file
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -61,6 +65,36 @@ EXPECTED_BUILD_ARTIFACTS = {
         "size_bytes": 340992,
         "sha256": "92c8dd1175de2c19505d3ca3487bcc8baa1d03a581c6de13c191ca63743e9b35",
         "uf2_block_count": 666,
+    },
+}
+EXPECTED_HARDWARE_COMPATIBILITY = {
+    "matrix_diode": {
+        "manufacturer": "Jingdao Microelectronics",
+        "mpn": "ES1B",
+        "lcsc": "C437840",
+        "eleparts_goods_no": "9475342",
+        "quantity": 70,
+        "package": "SMA",
+        "assembly_side": "B.Cu",
+        "bottom_view": "mirrored",
+        "pad_1": "cathode-row",
+        "pad_2": "anode-per-key-switch",
+    },
+    "matrix_contract": {
+        "diode_direction": "col2row",
+        "column_drive": "active-high",
+        "row_input": "active-high-pull-down",
+    },
+    "scan_timing": {
+        "recorded_wait_before_inputs_us": 0,
+        "recorded_wait_between_outputs_us": 0,
+        "firmware_source_changed_for_es1b": False,
+        "change_policy": "physical-coupon-required-before-scan-delay-change",
+        "physical_stress": {
+            "status": "pending",
+            "supply_volts": [3.0, 3.3],
+            "patterns": ["maximum-same-row", "maximum-same-column"],
+        },
     },
 }
 EXPECTED_UF2_MAGIC = {
@@ -147,14 +181,6 @@ EXPECTED_METADATA = {
 }
 
 
-def sha256(path: Path) -> str:
-    digest = hashlib.sha256()
-    with path.open("rb") as source:
-        for chunk in iter(lambda: source.read(1024 * 1024), b""):
-            digest.update(chunk)
-    return digest.hexdigest()
-
-
 def read_build_evidence(path: Path = BUILD_EVIDENCE_PATH) -> dict[str, object]:
     return json.loads(path.read_text(encoding="utf-8"))
 
@@ -186,7 +212,7 @@ def _verify_digest_group(
         if not source.is_file():
             errors.append(f"build evidence source is missing: {name}")
             continue
-        actual_digest = sha256(source)
+        actual_digest = sha256_file(source)
         if actual_digest != expected_digest:
             errors.append(
                 f"build evidence source digest mismatch for {name}: "
@@ -203,7 +229,7 @@ def _verify_local_uf2(path: Path, expected: Mapping[str, object], side: str) -> 
     expected_size = expected["size_bytes"]
     if len(data) != expected_size:
         errors.append(f"{side} local UF2 size is {len(data)}, expected {expected_size}")
-    actual_digest = hashlib.sha256(data).hexdigest()
+    actual_digest = sha256_file(path)
     if actual_digest != expected["sha256"]:
         errors.append(
             f"{side} local UF2 SHA-256 is {actual_digest}, expected {expected['sha256']}"
@@ -257,6 +283,8 @@ def verify_build_evidence(
     except (OSError, json.JSONDecodeError) as error:
         report = {
             "manifest_provenance_verified": False,
+            "hash_policy_verified": False,
+            "hardware_compatibility_verified": False,
             "source_digests_verified": [],
             "metadata_digests_verified": [],
             "local_artifacts": local_artifact_report,
@@ -265,6 +293,9 @@ def verify_build_evidence(
 
     if manifest.get("schema_version") != 1:
         provenance_errors.append("build evidence schema_version must be 1")
+    hash_policy_verified = manifest.get("hash_policy") == HASH_POLICY
+    if not hash_policy_verified:
+        provenance_errors.append(f"build evidence hash policy must be {HASH_POLICY!r}")
     if manifest.get("requirement_id") != "CON-ARCH-004":
         provenance_errors.append("build evidence requirement_id must be CON-ARCH-004")
     if manifest.get("variant") != "kc2-x3-v2-70-key-v5":
@@ -275,6 +306,13 @@ def verify_build_evidence(
         provenance_errors.append("build evidence pinned toolchain metadata is stale or incomplete")
     if manifest.get("artifacts") != EXPECTED_BUILD_ARTIFACTS:
         provenance_errors.append("build evidence left/right artifact metadata is stale or incomplete")
+    hardware_compatibility_verified = (
+        manifest.get("hardware_compatibility") == EXPECTED_HARDWARE_COMPATIBILITY
+    )
+    if not hardware_compatibility_verified:
+        provenance_errors.append(
+            "build evidence ES1B hardware compatibility and pending scan gate are stale or incomplete"
+        )
     if manifest.get("uf2_magic") != EXPECTED_UF2_MAGIC:
         provenance_errors.append("build evidence UF2 magic contract is stale or incomplete")
     if manifest.get("artifact_policy") != {
@@ -303,6 +341,8 @@ def verify_build_evidence(
 
     report = {
         "manifest_provenance_verified": not provenance_errors,
+        "hash_policy_verified": hash_policy_verified,
+        "hardware_compatibility_verified": hardware_compatibility_verified,
         "source_digests_verified": sources_verified,
         "metadata_digests_verified": metadata_verified,
         "local_artifacts": local_artifact_report,

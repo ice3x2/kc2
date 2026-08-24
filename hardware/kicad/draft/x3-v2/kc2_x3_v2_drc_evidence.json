@@ -5,33 +5,42 @@
   ],
   "variant": "x3-v2",
   "status": "draft_not_orderable_pending_physical_evidence",
+  "hash_policy": "lf-normalized-utf8-text-else-raw-v1",
   "boards": {
     "left": {
       "board_path": "hardware/kicad/draft/x3-v2/kc2_left-x3-v2/kc2_left-x3-v2.kicad_pcb",
-      "board_sha256": "f534bee5754d9f272baa068408afaff45fed382d7b55f2775ea807ef782e7699",
+      "board_sha256": "ed338c5839a4cf0c1197611a4cdaf7ca339a54cbc7aa3297d5963d52a1b25148",
       "drc_report_path": "hardware/kicad/draft/x3-v2/kc2_left-x3-v2/kc2_left-x3-v2.drc.json",
-      "drc_report_sha256": "7f732083149ac1e2a53ef83f4ff44dfb28fc6fbb1ad66453c0bfdbaa4f93aaac",
+      "drc_report_sha256": "8bf6b244cfd675c92442b19c7db66a8d80b90faaa780441157a08854fe859d61",
+      "project_path": "hardware/kicad/draft/x3-v2/kc2_left-x3-v2/kc2_left-x3-v2.kicad_pro",
+      "project_sha256": "37725ca8999fa703fa17304e3f852764e4d8d78d6e9d4a3f5d504d3c4232cdbe",
+      "default_clearance_mm": 0.3,
       "schema": "https://schemas.kicad.org/drc.v1.json",
       "source": "kc2_left-x3-v2.kicad_pcb",
       "kicad_version": "10.0.3",
-      "date": "2026-08-22T16:45:12",
+      "date": "2026-08-25T02:24:10",
       "included_severities": [
         "error",
-        "warning"
+        "warning",
+        "exclusion"
       ]
     },
     "right": {
       "board_path": "hardware/kicad/draft/x3-v2/kc2_right-x3-v2/kc2_right-x3-v2.kicad_pcb",
-      "board_sha256": "b9237f778c282699e6967c69f5c7ec97e892bd8bae0d74adb3c990f1c48dbf1d",
+      "board_sha256": "ee0cfd269733169f397fb33a7c435fa1d87a1d37483a698705c1575138a477ca",
       "drc_report_path": "hardware/kicad/draft/x3-v2/kc2_right-x3-v2/kc2_right-x3-v2.drc.json",
-      "drc_report_sha256": "43bcda7070ccb3cd7e156390aedce416ff0ad404948987e05c2b8e24bce80052",
+      "drc_report_sha256": "3e83fee64a76d40151cc715e354ef2c0f01a7e5ded323efcfa1afce6acc7cc1a",
+      "project_path": "hardware/kicad/draft/x3-v2/kc2_right-x3-v2/kc2_right-x3-v2.kicad_pro",
+      "project_sha256": "9b834aece3031c8ce80660ee9a6b0e3c69d3d84e0762e506d22bfdf567a2a696",
+      "default_clearance_mm": 0.3,
       "schema": "https://schemas.kicad.org/drc.v1.json",
       "source": "kc2_right-x3-v2.kicad_pcb",
       "kicad_version": "10.0.3",
-      "date": "2026-08-22T16:55:29",
+      "date": "2026-08-25T02:24:12",
       "included_severities": [
         "error",
-        "warning"
+        "warning",
+        "exclusion"
       ]
     }
   }

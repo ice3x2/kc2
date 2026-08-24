@@ -2,13 +2,13 @@
 
 The V2 design is intentionally independent of the promoted 77-key housing.
 It subtracts exterior-open underside-component envelopes from the current draft
-V2 board outlines and never uses REG/H holes, pegs, pilots, or key-field screws.
+V2 board outlines, preserves the distributed load path, and adds only the
+CON-ARCH-006 M1.4 MH clamp/registration columns and provisional blind pilots.
 """
 
 from __future__ import annotations
 
 import argparse
-import hashlib
 import json
 import math
 import re
@@ -24,6 +24,7 @@ if str(ROOT / "tools") not in sys.path:
     sys.path.insert(0, str(ROOT / "tools"))
 
 import generate_kc2_housings as legacy_geometry  # noqa: E402
+from canonical_hash import HASH_POLICY, sha256_file  # noqa: E402
 
 
 REQUIREMENT = "CON-ARCH-006"
@@ -51,10 +52,17 @@ COMPONENT_CUTOUT_SIMPLIFY_MM = 0.02
 MIN_DIODE_HOUSING_PERIMETER_LAND_MM = 0.85
 CHOC_SOCKET_OFFICIAL_BODY_DEPTH_MAX_MM = 2.30
 CHOC_SOCKET_ASSEMBLY_ALLOWANCE_MM = 0.10
-DIODE_OFFICIAL_BODY_DEPTH_MAX_MM = 1.35
+DIODE_MANUFACTURER = "Jingdao Microelectronics"
+DIODE_MPN = "ES1B"
+DIODE_LCSC = "C437840"
+DIODE_OFFICIAL_BODY_DEPTH_MAX_MM = 2.20
+DIODE_OFFICIAL_PLAN_ENVELOPE_MAX_MM = (5.20, 2.70)
 DIODE_SOLDER_FILLET_DEPTH_ALLOWANCE_MM = 0.30
 CHOC_SOCKET_OFFICIAL_SOURCE = "https://www.kailhswitch.com/uploads/15927/files/CPG135001S30.pdf"
-DIODE_OFFICIAL_SOURCE = "https://www.vishay.com/docs/86356/1n4148w.pdf"
+DIODE_OFFICIAL_SOURCE = (
+    "https://datasheet.lcsc.com/datasheet/pdf/2343098076327222563a84c9a80dbd7d.pdf"
+    "?productCode=C437840"
+)
 TRACK_CLEARANCE_MM = 0.15
 BATTERY_ACCESS_CLEARANCE_MM = 0.70
 MAX_LOAD_POINT_TO_SUPPORT_MM = 24.0
@@ -65,14 +73,63 @@ PUZZLE_NECK_WIDTH_MM = 2.00
 PUZZLE_HEAD_DIAMETER_MM = 4.50
 PUZZLE_NECK_LENGTH_MM = 3.00
 PUZZLE_MIN_CAPTURE_PER_SIDE_MM = 1.00
-
-
-def sha256_path(path: Path) -> str:
-    digest = hashlib.sha256()
-    with path.open("rb") as stream:
-        for block in iter(lambda: stream.read(1024 * 1024), b""):
-            digest.update(block)
-    return digest.hexdigest()
+DESK_STANDOFF_NOMINAL_MM = 0.80
+DESK_STANDOFF_PRINT_TOLERANCE_MM = 0.30
+DESK_DATUM_Z_MM = EXTERIOR_BOTTOM_Z_MM - DESK_STANDOFF_NOMINAL_MM
+DESK_CONTACT_DIAMETER_MM = POST_DIAMETER_MM
+MOUNTING_NPTH_DIAMETER_MM = 1.60
+MOUNTING_SUPPORT_LAND_DIAMETER_MM = 3.00
+MOUNTING_PILOT_DIAMETER_MM = 1.10
+MOUNTING_PILOT_DEPTH_MM = 2.80
+MOUNTING_PILOT_BOTTOM_Z_MM = round(
+    PCB_BOTTOM_Z_MM - MOUNTING_PILOT_DEPTH_MM,
+    4,
+)
+MOUNTING_CLOSED_BOTTOM_MM = round(
+    MOUNTING_PILOT_BOTTOM_Z_MM - DESK_DATUM_Z_MM,
+    4,
+)
+MOUNTING_HEAD_DIAMETER_MM = 2.00
+MOUNTING_HEAD_HEIGHT_MM = 0.50
+MOUNTING_DRIVER_DIAMETER_MM = 3.00
+MOUNTING_PROVISIONAL_SCREW_UNDER_HEAD_LENGTH_MM = 4.00
+PCB_THICKNESS_TOLERANCE_FRACTION = 0.10
+MOUNTING_PENETRATION_RANGE_MM = (
+    MOUNTING_PROVISIONAL_SCREW_UNDER_HEAD_LENGTH_MM
+    - PCB_THICKNESS_MM * (1.0 + PCB_THICKNESS_TOLERANCE_FRACTION),
+    MOUNTING_PROVISIONAL_SCREW_UNDER_HEAD_LENGTH_MM
+    - PCB_THICKNESS_MM * (1.0 - PCB_THICKNESS_TOLERANCE_FRACTION),
+)
+MOUNTING_MINIMUM_TIP_CLEARANCE_MM = (
+    MOUNTING_PILOT_DEPTH_MM - MOUNTING_PENETRATION_RANGE_MM[1]
+)
+SWITCH_SERVICE_BODY_ENVELOPE_MM = 15.60
+EXPECTED_DISTRIBUTED_SUPPORT_COUNTS = {"left": 14, "right": 11}
+EXPECTED_PRIMARY_SUPPORT_LOAD_SPAN_MM = {"left": 15.4640, "right": 18.9619}
+MOUNTING_HOLE_COORDINATES_MM = {
+    "left": (
+        ("MH1", 142.6125, 68.0000),
+        ("MH2", 128.6125, 86.5000),
+        ("MH3", 100.1125, 93.5000),
+        ("MH4", 57.1125, 99.0000),
+        ("MH5", 133.6125, 131.5000),
+        ("MH6", 55.1125, 144.0000),
+        ("MH7", 165.6125, 145.0000),
+        ("MH8", 102.6125, 147.0000),
+    ),
+    "right": (
+        ("MH1", 71.6875, 68.0000),
+        ("MH2", 181.1875, 85.5000),
+        ("MH3", 147.6875, 93.5000),
+        ("MH4", 109.6875, 96.5000),
+        ("MH5", 71.6875, 105.5000),
+        ("MH6", 42.1875, 106.0000),
+        ("MH7", 181.1875, 134.5000),
+        ("MH8", 143.1875, 134.5000),
+        ("MH9", 51.6875, 144.0000),
+        ("MH10", 95.6875, 147.0000),
+    ),
+}
 
 
 def has_trailing_horizontal_whitespace(path: Path) -> bool:
@@ -125,6 +182,8 @@ def extract_board(pcbnew: Any, path: Path) -> dict[str, Any]:
         "battery_slot": [],
     }
     switches: list[dict[str, Any]] = []
+    mounting_holes: list[dict[str, Any]] = []
+    routed_copper_exact: list[dict[str, Any]] = []
     legacy_refs: list[str] = []
 
     for footprint in board.GetFootprints():
@@ -136,9 +195,47 @@ def extract_board(pcbnew: Any, path: Path) -> dict[str, Any]:
 
         pads = list(footprint.Pads())
         graphics = list(footprint.GraphicalItems())
+        if ref.startswith("MH") and ref[2:].isdigit():
+            pad_records = []
+            for pad in pads:
+                drill = pad.GetDrillSize()
+                size = pad.GetSize()
+                drill_x = pcbnew.ToMM(drill.x)
+                drill_y = pcbnew.ToMM(drill.y)
+                size_x = pcbnew.ToMM(size.x)
+                size_y = pcbnew.ToMM(size.y)
+                pad_records.append(
+                    {
+                        "attribute": int(pad.GetAttribute()),
+                        "is_npth": pad.GetAttribute() == pcbnew.PAD_ATTRIB_NPTH,
+                        "drill_mm": [drill_x, drill_y],
+                        "size_mm": [size_x, size_y],
+                        "copper_annulus_mm": round(
+                            max(size_x - drill_x, size_y - drill_y) / 2.0,
+                            6,
+                        ),
+                        "net": pad.GetNetname(),
+                    }
+                )
+            mounting_holes.append(
+                {
+                    "ref": ref,
+                    "center": _point(pcbnew, footprint.GetPosition()),
+                    "pad_count": len(pad_records),
+                    "pads": pad_records,
+                }
+            )
+            continue
+
         if ref.startswith("SW") and ref[2:].isdigit():
             center = _point(pcbnew, footprint.GetPosition())
-            switches.append({"ref": ref, "center": center})
+            switches.append(
+                {
+                    "ref": ref,
+                    "center": center,
+                    "angle_deg": float(footprint.GetOrientationDegrees()),
+                }
+            )
             body_boxes = [
                 _box(pcbnew, item)
                 for item in graphics
@@ -187,24 +284,20 @@ def extract_board(pcbnew: Any, path: Path) -> dict[str, Any]:
             continue
 
         if ref.startswith("D") and ref[1:].isdigit():
-            body_boxes = [
-                _box(pcbnew, item)
-                for item in graphics
-                if item.GetLayer() in (pcbnew.B_Fab, pcbnew.B_SilkS)
-            ]
-            if body_boxes:
-                classes["diode_body_pads_fillets"].append(
-                    {
-                        "kind": "box",
-                        "bounds": [
-                            min(bounds[0] for bounds in body_boxes),
-                            min(bounds[1] for bounds in body_boxes),
-                            max(bounds[2] for bounds in body_boxes),
-                            max(bounds[3] for bounds in body_boxes),
-                        ],
-                        "ref": ref,
-                    }
-                )
+            # The housing keepout follows the official Jingdao maximum lead/body
+            # envelope rather than nominal Fab/Silk graphics.  The manufacturer
+            # land pattern is represented by the actual 1.80 mm square pads
+            # below, including the separate solder-fillet allowance.
+            classes["diode_body_pads_fillets"].append(
+                {
+                    "kind": "oriented_box",
+                    "center": _point(pcbnew, footprint.GetPosition()),
+                    "size_x_mm": DIODE_OFFICIAL_PLAN_ENVELOPE_MAX_MM[0],
+                    "size_y_mm": DIODE_OFFICIAL_PLAN_ENVELOPE_MAX_MM[1],
+                    "angle_deg": float(footprint.GetOrientationDegrees()),
+                    "ref": ref,
+                }
+            )
             for pad in pads:
                 classes["diode_body_pads_fillets"].append(
                     {
@@ -255,20 +348,29 @@ def extract_board(pcbnew: Any, path: Path) -> dict[str, Any]:
 
     for track in board.GetTracks():
         if track.GetClass() == "PCB_VIA":
-            classes["vias"].append(
-                {
-                    "kind": "circle",
-                    "center": _point(pcbnew, track.GetPosition()),
-                    "radius_mm": pcbnew.ToMM(track.GetWidth(pcbnew.F_Cu)) / 2.0,
-                }
-            )
+            feature = {
+                "kind": "circle",
+                "center": _point(pcbnew, track.GetPosition()),
+                "radius_mm": pcbnew.ToMM(track.GetWidth(pcbnew.F_Cu)) / 2.0,
+                "net": track.GetNetname(),
+                "layer": "via",
+            }
+            classes["vias"].append(feature)
+            routed_copper_exact.append(feature)
             continue
+        exact_feature = {
+            "kind": "line",
+            "start": _point(pcbnew, track.GetStart()),
+            "end": _point(pcbnew, track.GetEnd()),
+            "radius_mm": pcbnew.ToMM(track.GetWidth()) / 2.0,
+            "net": track.GetNetname(),
+            "layer": board.GetLayerName(track.GetLayer()),
+        }
+        routed_copper_exact.append(exact_feature)
         classes["bottom_copper_tracks"].append(
             {
-                "kind": "line",
-                "start": _point(pcbnew, track.GetStart()),
-                "end": _point(pcbnew, track.GetEnd()),
-                "radius_mm": pcbnew.ToMM(track.GetWidth()) / 2.0 + TRACK_CLEARANCE_MM,
+                **exact_feature,
+                "radius_mm": exact_feature["radius_mm"] + TRACK_CLEARANCE_MM,
             }
         )
 
@@ -276,6 +378,11 @@ def extract_board(pcbnew: Any, path: Path) -> dict[str, Any]:
         "path": str(path.relative_to(ROOT)).replace("\\", "/"),
         "edge_segments": edge_segments,
         "switches": sorted(switches, key=lambda item: int(item["ref"][2:])),
+        "mounting_holes": sorted(
+            mounting_holes,
+            key=lambda item: int(item["ref"][2:]),
+        ),
+        "routed_copper_exact": routed_copper_exact,
         "legacy_registration_refs": sorted(legacy_refs),
         "feature_classes": classes,
     }
@@ -311,6 +418,55 @@ def _reflect_xy(bounds: tuple[float, float, float, float], x: float, y: float) -
     return max_x - x, y - min_y
 
 
+def mounting_board_contract(side: str, board_data: dict[str, Any]) -> dict[str, Any]:
+    expected = MOUNTING_HOLE_COORDINATES_MM[side]
+    actual = board_data.get("mounting_holes", [])
+    expected_by_ref = {ref: (x, y) for ref, x, y in expected}
+    actual_by_ref = {item["ref"]: item for item in actual}
+    holes = []
+    for ref, x, y in expected:
+        item = actual_by_ref.get(ref)
+        pads = [] if item is None else item.get("pads", [])
+        pad = pads[0] if len(pads) == 1 else {}
+        center_matches = bool(
+            item is not None
+            and math.isclose(float(item["center"][0]), x, abs_tol=1e-6)
+            and math.isclose(float(item["center"][1]), y, abs_tol=1e-6)
+        )
+        npth_matches = bool(
+            len(pads) == 1
+            and pad.get("is_npth")
+            and all(
+                math.isclose(float(value), MOUNTING_NPTH_DIAMETER_MM, abs_tol=1e-6)
+                for value in pad.get("drill_mm", [])
+            )
+            and math.isclose(float(pad.get("copper_annulus_mm", -99.0)), 0.0, abs_tol=1e-6)
+            and not pad.get("net")
+        )
+        holes.append(
+            {
+                "ref": ref,
+                "center_mm": [x, y],
+                "present": item is not None,
+                "center_matches": center_matches,
+                "npth_matches": npth_matches,
+                "actual": item,
+            }
+        )
+    exact_refs = set(actual_by_ref) == set(expected_by_ref)
+    return {
+        "expected_count": len(expected),
+        "actual_count": len(actual),
+        "exact_refs": exact_refs,
+        "holes": holes,
+        "matches": bool(
+            exact_refs
+            and len(actual) == len(expected)
+            and all(item["center_matches"] and item["npth_matches"] for item in holes)
+        ),
+    }
+
+
 def _feature_geometry(shp: dict[str, Any], feature: dict[str, Any], bounds: tuple[float, float, float, float]) -> Any:
     kind = feature["kind"]
     allowance = float(feature.get("allowance_mm", 0.0))
@@ -322,6 +478,14 @@ def _feature_geometry(shp: dict[str, Any], feature: dict[str, Any], bounds: tupl
     elif kind == "circle":
         x, y = _reflect_xy(bounds, *feature["center"])
         geometry = shp["Point"](x, y).buffer(float(feature["radius_mm"]), quad_segs=16)
+    elif kind == "oriented_box":
+        x, y = _reflect_xy(bounds, *feature["center"])
+        half_x = float(feature["size_x_mm"]) / 2.0
+        half_y = float(feature["size_y_mm"]) / 2.0
+        geometry = shp["box"](x - half_x, y - half_y, x + half_x, y + half_y)
+        angle = -float(feature.get("angle_deg", 0.0))
+        if abs(angle) > 1e-9:
+            geometry = shp["affinity"].rotate(geometry, angle, origin=(x, y))
     elif kind == "line":
         start = _reflect_xy(bounds, *feature["start"])
         end = _reflect_xy(bounds, *feature["end"])
@@ -364,6 +528,15 @@ def build_plan_geometry(shp: dict[str, Any], side: str, board_data: dict[str, An
     for name, features in board_data["feature_classes"].items():
         parts = [_feature_geometry(shp, feature, bounds) for feature in features]
         feature_geometries[name] = shp["unary_union"](parts) if parts else shp["Polygon"]()
+    routed_copper_exact_parts = [
+        _feature_geometry(shp, feature, bounds)
+        for feature in board_data.get("routed_copper_exact", [])
+    ]
+    routed_copper_exact_geometry = (
+        shp["unary_union"](routed_copper_exact_parts)
+        if routed_copper_exact_parts
+        else shp["Polygon"]()
+    )
 
     cutout_sources = {
         "choc_socket_body_fillets": ("choc_socket_body", "choc_socket_fillets"),
@@ -425,9 +598,23 @@ def build_plan_geometry(shp: dict[str, Any], side: str, board_data: dict[str, An
         {
             "ref": switch["ref"],
             "center": list(_reflect_xy(bounds, *switch["center"])),
+            "angle_deg": -float(switch.get("angle_deg", 0.0)),
         }
         for switch in board_data["switches"]
     ]
+    switch_service_bodies = []
+    for switch in switches:
+        x, y = switch["center"]
+        half = SWITCH_SERVICE_BODY_ENVELOPE_MM / 2.0
+        body = shp["box"](x - half, y - half, x + half, y + half)
+        if abs(float(switch["angle_deg"])) > 1e-9:
+            body = shp["affinity"].rotate(
+                body,
+                float(switch["angle_deg"]),
+                origin=(x, y),
+            )
+        switch_service_bodies.append(body)
+    switch_service_body_geometry = shp["unary_union"](switch_service_bodies)
     posts = choose_support_posts(
         shp,
         side,
@@ -436,6 +623,87 @@ def build_plan_geometry(shp: dict[str, Any], side: str, board_data: dict[str, An
         all_component_cutouts,
         switches,
     )
+    board_mounting_contract = mounting_board_contract(side, board_data)
+    mounting_holes = []
+    for ref, board_x, board_y in MOUNTING_HOLE_COORDINATES_MM[side]:
+        x, y = _reflect_xy(bounds, board_x, board_y)
+        mounting_holes.append(
+            {
+                "ref": ref,
+                "board_center_mm": [board_x, board_y],
+                "housing_center_mm": [round(x, 4), round(y, 4)],
+                "land_geometry": shp["Point"](x, y).buffer(
+                    MOUNTING_SUPPORT_LAND_DIAMETER_MM / 2.0,
+                    quad_segs=64,
+                ),
+                "pilot_geometry": shp["Point"](x, y).buffer(
+                    MOUNTING_PILOT_DIAMETER_MM / 2.0,
+                    quad_segs=64,
+                ),
+                "head_geometry": shp["Point"](x, y).buffer(
+                    MOUNTING_HEAD_DIAMETER_MM / 2.0,
+                    quad_segs=64,
+                ),
+                # This is already the final service envelope. Do not add a
+                # second placement reserve or driver-runout buffer here.
+                "driver_geometry": shp["Point"](x, y).buffer(
+                    MOUNTING_DRIVER_DIAMETER_MM / 2.0,
+                    quad_segs=64,
+                ),
+            }
+        )
+    mounting_land_geometry = shp["unary_union"](
+        [item["land_geometry"] for item in mounting_holes]
+    )
+    mounting_pilot_geometry = shp["unary_union"](
+        [item["pilot_geometry"] for item in mounting_holes]
+    )
+    mounting_driver_geometry = shp["unary_union"](
+        [item["driver_geometry"] for item in mounting_holes]
+    )
+    if not support_surface.covers(mounting_land_geometry):
+        raise RuntimeError(f"{side}: an MH support land leaves the structural support surface")
+
+    distributed_desk_contacts = [
+        {
+            "id": post["id"].replace("-SUP-", "-FOOT-"),
+            "source_support_id": post["id"],
+            "category": post["category"],
+            "x_mm": post["x_mm"],
+            "y_mm": post["y_mm"],
+            "diameter_mm": DESK_CONTACT_DIAMETER_MM,
+            "top_z_mm": EXTERIOR_BOTTOM_Z_MM,
+            "bottom_z_mm": DESK_DATUM_Z_MM,
+            "height_mm": DESK_STANDOFF_NOMINAL_MM,
+        }
+        for post in posts
+    ]
+    mounting_desk_contacts = [
+        {
+            "id": f"{side.upper()}-{item['ref']}-COLUMN",
+            "source_support_id": item["ref"],
+            "category": "mounting",
+            "x_mm": item["housing_center_mm"][0],
+            "y_mm": item["housing_center_mm"][1],
+            "diameter_mm": MOUNTING_SUPPORT_LAND_DIAMETER_MM,
+            "top_z_mm": EXTERIOR_BOTTOM_Z_MM,
+            "bottom_z_mm": DESK_DATUM_Z_MM,
+            "height_mm": DESK_STANDOFF_NOMINAL_MM,
+        }
+        for item in mounting_holes
+    ]
+    desk_contacts = distributed_desk_contacts + mounting_desk_contacts
+    desk_contact_geometry = shp["unary_union"](
+        [
+            shp["Point"](contact["x_mm"], contact["y_mm"]).buffer(
+                contact["diameter_mm"] / 2.0,
+                quad_segs=20,
+            )
+            for contact in desk_contacts
+        ]
+    )
+    if not support_surface.covers(desk_contact_geometry):
+        raise RuntimeError(f"{side}: desk contacts leave the cutout-differenced structural plate")
     return {
         "board": board,
         "housing_outline": housing_outline,
@@ -443,12 +711,23 @@ def build_plan_geometry(shp: dict[str, Any], side: str, board_data: dict[str, An
         "raw_bounds": bounds,
         "rail": rail,
         "feature_geometries": feature_geometries,
+        "routed_copper_exact_geometry": routed_copper_exact_geometry,
         "component_geometries": component_geometries,
         "component_cutout_geometries": component_cutout_geometries,
         "component_cutout_counts": component_cutout_counts,
         "all_component_cutouts": all_component_cutouts,
         "switches": switches,
+        "switch_service_body_geometry": switch_service_body_geometry,
         "support_posts": posts,
+        "board_mounting_contract": board_mounting_contract,
+        "mounting_holes": mounting_holes,
+        "mounting_land_geometry": mounting_land_geometry,
+        "mounting_pilot_geometry": mounting_pilot_geometry,
+        "mounting_driver_geometry": mounting_driver_geometry,
+        "distributed_desk_contacts": distributed_desk_contacts,
+        "mounting_desk_contacts": mounting_desk_contacts,
+        "desk_contacts": desk_contacts,
+        "desk_contact_geometry": desk_contact_geometry,
     }
 
 
@@ -585,7 +864,27 @@ def build_cad(cq: Any, shp: dict[str, Any], plan: dict[str, Any]) -> Any:
     housing = _extrude_geometry(cq, plan["support_surface"], HOUSING_HEIGHT_MM)
     if housing is None:
         raise RuntimeError("component cutouts removed the entire housing support surface")
-    return housing.clean()
+    feet = _extrude_geometry(
+        cq,
+        plan["desk_contact_geometry"],
+        DESK_STANDOFF_NOMINAL_MM,
+        DESK_DATUM_Z_MM,
+    )
+    if feet is None:
+        raise RuntimeError("desk-contact generation produced no solid")
+    pilot_solids = []
+    for item in plan["mounting_holes"]:
+        x, y = item["housing_center_mm"]
+        cutter = (
+            cq.Workplane("XY")
+            .center(x, y)
+            .circle(MOUNTING_PILOT_DIAMETER_MM / 2.0)
+            .extrude(MOUNTING_PILOT_DEPTH_MM + 0.10)
+            .translate((0.0, 0.0, MOUNTING_PILOT_BOTTOM_Z_MM))
+        )
+        pilot_solids.append(cutter.val())
+    pilot_cutters = cq.Workplane(obj=cq.Compound.makeCompound(pilot_solids))
+    return housing.union(feet).cut(pilot_cutters).clean()
 
 
 def _support_plan_union(shp: dict[str, Any], posts: list[dict[str, Any]]) -> Any:
@@ -598,6 +897,206 @@ def _support_plan_union(shp: dict[str, Any], posts: list[dict[str, Any]]) -> Any
             for post in posts
         ]
     )
+
+
+def desk_contacts_for_part(
+    shp: dict[str, Any],
+    plan: dict[str, Any],
+    part_plan: Any,
+) -> list[dict[str, Any]]:
+    contacts = []
+    for contact in plan["desk_contacts"]:
+        disk = shp["Point"](contact["x_mm"], contact["y_mm"]).buffer(
+            contact["diameter_mm"] / 2.0,
+            quad_segs=20,
+        )
+        if part_plan.covers(disk):
+            contacts.append(contact)
+    return contacts
+
+
+def desk_contact_stability_manifest(
+    shp: dict[str, Any],
+    part_plan: Any,
+    contacts: list[dict[str, Any]],
+) -> dict[str, Any]:
+    centers = [(float(item["x_mm"]), float(item["y_mm"])) for item in contacts]
+    hull = shp["unary_union"]([shp["Point"](*center) for center in centers]).convex_hull
+    centroid = part_plan.centroid
+    non_collinear = len(contacts) >= 3 and float(hull.area) > 1e-6
+    centroid_inside = non_collinear and hull.covers(centroid)
+    bottom_z_values = [float(item["bottom_z_mm"]) for item in contacts]
+    coplanarity = 0.0 if not bottom_z_values else max(bottom_z_values) - min(bottom_z_values)
+    return {
+        "desk_contact_ids": [item["id"] for item in contacts],
+        "desk_contact_count": len(contacts),
+        "desk_contact_z_mm": DESK_DATUM_Z_MM,
+        "desk_contact_coplanarity_mm": round(coplanarity, 6),
+        "desk_contact_hull_area_mm2": round(float(hull.area), 4),
+        "projected_plate_centroid_mm": [round(float(centroid.x), 4), round(float(centroid.y), 4)],
+        "projected_centroid_inside_contact_hull": bool(centroid_inside),
+        "desk_contacts_non_collinear": bool(non_collinear),
+        "desk_contacts_statically_stable": bool(
+            len(contacts) >= 3 and non_collinear and centroid_inside and coplanarity <= 1e-6
+        ),
+    }
+
+
+def mounting_system_manifest(
+    shp: dict[str, Any],
+    side: str,
+    plan: dict[str, Any],
+    part_plans: list[Any],
+) -> dict[str, Any]:
+    part_names = ["whole"] if side == "left" else ["part_a", "part_b"]
+    existing_supports = _support_plan_union(shp, plan["support_posts"]).union(
+        plan["rail"]
+    )
+    raised_or_component_features = shp["unary_union"](
+        [
+            geometry
+            for name, geometry in plan["feature_geometries"].items()
+            if name not in {"bottom_copper_tracks", "vias"}
+            if not geometry.is_empty
+        ]
+    )
+    split_slot = shp["Polygon"]()
+    if side == "right":
+        split_slot = build_right_split_plan(shp, plan)["slot_union"]
+    board_holes = {
+        item["ref"]: item
+        for item in plan["board_mounting_contract"]["holes"]
+    }
+    holes = []
+    distribution: dict[str, int] = {}
+    for item in plan["mounting_holes"]:
+        ref = item["ref"]
+        containing_parts = [
+            name
+            for name, part_plan in zip(part_names, part_plans)
+            if part_plan.covers(item["land_geometry"])
+        ]
+        printable_part = containing_parts[0] if len(containing_parts) == 1 else "unassigned"
+        distribution[printable_part] = distribution.get(printable_part, 0) + 1
+        checks = {
+            "support_land_leaves_support_surface": not plan["support_surface"].covers(
+                item["land_geometry"]
+            ),
+            "support_land_component_cutout": item["land_geometry"].intersects(
+                plan["all_component_cutouts"]
+            ),
+            "support_land_existing_support": item["land_geometry"].intersects(
+                existing_supports
+            ),
+            "pilot_component_cutout": item["pilot_geometry"].intersects(
+                plan["all_component_cutouts"]
+            ),
+            "head_leaves_housing_outline": not plan["housing_outline"].covers(
+                item["head_geometry"]
+            ),
+            "driver_leaves_housing_outline": not plan["housing_outline"].covers(
+                item["driver_geometry"]
+            ),
+            "driver_switch_body": item["driver_geometry"].intersects(
+                plan["switch_service_body_geometry"]
+            ),
+            "driver_component": item["driver_geometry"].intersects(
+                raised_or_component_features
+            ),
+            "driver_routed_copper_or_via": item["driver_geometry"].intersects(
+                plan["routed_copper_exact_geometry"]
+            ),
+            "right_split_feature": (
+                side == "right"
+                and (
+                    item["land_geometry"].intersects(split_slot)
+                    or item["pilot_geometry"].intersects(split_slot)
+                )
+            ),
+            "part_assignment": len(containing_parts) != 1,
+        }
+        board_hole = board_holes[ref]
+        holes.append(
+            {
+                "ref": ref,
+                "board_center_mm": item["board_center_mm"],
+                "housing_center_mm": item["housing_center_mm"],
+                "printable_part": printable_part,
+                "pcb_npth_diameter_mm": MOUNTING_NPTH_DIAMETER_MM,
+                "board_feature_matches": bool(
+                    board_hole["center_matches"] and board_hole["npth_matches"]
+                ),
+                "support_land_diameter_mm": MOUNTING_SUPPORT_LAND_DIAMETER_MM,
+                "support_land_annular_width_mm": round(
+                    (MOUNTING_SUPPORT_LAND_DIAMETER_MM - MOUNTING_PILOT_DIAMETER_MM)
+                    / 2.0,
+                    4,
+                ),
+                "support_land_top_z_mm": PCB_BOTTOM_Z_MM,
+                "support_land_vertical_gap_mm": 0.0,
+                "desk_column_diameter_mm": MOUNTING_SUPPORT_LAND_DIAMETER_MM,
+                "desk_column_bottom_z_mm": DESK_DATUM_Z_MM,
+                "pilot_diameter_mm": MOUNTING_PILOT_DIAMETER_MM,
+                "pilot_depth_mm": MOUNTING_PILOT_DEPTH_MM,
+                "pilot_top_z_mm": PCB_BOTTOM_Z_MM,
+                "pilot_bottom_z_mm": MOUNTING_PILOT_BOTTOM_Z_MM,
+                "pilot_extension_below_plate_mm": round(
+                    EXTERIOR_BOTTOM_Z_MM - MOUNTING_PILOT_BOTTOM_Z_MM,
+                    4,
+                ),
+                "closed_bottom_to_desk_datum_mm": MOUNTING_CLOSED_BOTTOM_MM,
+                "pilot_breaks_desk_contact_bottom": (
+                    MOUNTING_PILOT_BOTTOM_Z_MM <= DESK_DATUM_Z_MM
+                ),
+                "provisional_screw_under_head_length_mm": (
+                    MOUNTING_PROVISIONAL_SCREW_UNDER_HEAD_LENGTH_MM
+                ),
+                "pcb_tolerance_penetration_range_mm": [
+                    round(value, 4) for value in MOUNTING_PENETRATION_RANGE_MM
+                ],
+                "minimum_tip_clearance_mm": round(
+                    MOUNTING_MINIMUM_TIP_CLEARANCE_MM,
+                    4,
+                ),
+                "head_envelope_mm": [
+                    MOUNTING_HEAD_DIAMETER_MM,
+                    MOUNTING_HEAD_HEIGHT_MM,
+                ],
+                "driver_envelope_diameter_mm": MOUNTING_DRIVER_DIAMETER_MM,
+                "service_condition": "keycaps-off, switches-installed",
+                "collision_checks": checks,
+                "collision_count": sum(bool(value) for value in checks.values()),
+            }
+        )
+    expected_distribution = (
+        {"whole": len(MOUNTING_HOLE_COORDINATES_MM[side])}
+        if side == "left"
+        else {"part_a": 4, "part_b": 6}
+    )
+    return {
+        "fastener_envelope": "M1.4 provisional direct-plastic prototype",
+        "physical_registration_status": "pending",
+        "count": len(holes),
+        "board_coordinates_mm": [
+            [x, y] for _ref, x, y in MOUNTING_HOLE_COORDINATES_MM[side]
+        ],
+        "board_features_match_selected_pattern": bool(
+            plan["board_mounting_contract"]["matches"]
+        ),
+        "holes": holes,
+        "part_distribution": distribution,
+        "expected_part_distribution": expected_distribution,
+        "part_distribution_matches_plan": distribution == expected_distribution,
+        "distributed_support_count": len(plan["support_posts"]),
+        "primary_support_load_span_unchanged": bool(
+            len(plan["support_posts"]) == EXPECTED_DISTRIBUTED_SUPPORT_COUNTS[side]
+            and math.isclose(
+                _maximum_load_distance(shp, plan),
+                EXPECTED_PRIMARY_SUPPORT_LOAD_SPAN_MM[side],
+                abs_tol=0.0001,
+            )
+        ),
+    }
 
 
 
@@ -623,7 +1122,11 @@ def build_right_split_plan(shp: dict[str, Any], plan: dict[str, Any]) -> dict[st
     split_x = (min_x + max_x) / 2.0
     half_gap = RIGHT_SPLIT_CLEARANCE_MM / 2.0
     margin = 2.0
-    explicit_supports = _support_plan_union(shp, plan["support_posts"]).union(plan["rail"])
+    explicit_supports = (
+        _support_plan_union(shp, plan["support_posts"])
+        .union(plan["rail"])
+        .union(plan["mounting_land_geometry"])
+    )
     component_cutouts = plan["all_component_cutouts"]
     capture_points: list[dict[str, float]] = []
     keys: list[Any] = []
@@ -706,7 +1209,14 @@ def build_right_split_plan(shp: dict[str, Any], plan: dict[str, Any]) -> dict[st
             round(part_a_discarded, 6),
             round(part_b_discarded, 6),
         ],
-        "planned_top_contact_area_mm2": round(float(part_a_plan.area + part_b_plan.area), 4),
+        "planned_top_contact_area_mm2": round(
+            float(
+                part_a_plan.union(part_b_plan)
+                .difference(plan["mounting_pilot_geometry"])
+                .area
+            ),
+            4,
+        ),
     }
 
 
@@ -720,14 +1230,14 @@ def split_right_housing_keyed(
     part_a_cutter = _extrude_geometry(
         cq,
         split_plan["part_a_mask"],
-        HOUSING_HEIGHT_MM + 0.20,
-        -0.10,
+        HOUSING_HEIGHT_MM - DESK_DATUM_Z_MM + 0.20,
+        DESK_DATUM_Z_MM - 0.10,
     )
     part_b_cutter = _extrude_geometry(
         cq,
         split_plan["part_b_mask"],
-        HOUSING_HEIGHT_MM + 0.20,
-        -0.10,
+        HOUSING_HEIGHT_MM - DESK_DATUM_Z_MM + 0.20,
+        DESK_DATUM_Z_MM - 0.10,
     )
     raw_parts = [housing.intersect(part_a_cutter).clean(), housing.intersect(part_b_cutter).clean()]
     parts: list[Any] = []
@@ -846,7 +1356,11 @@ def component_cutout_manifest(plan: dict[str, Any]) -> dict[str, Any]:
             "assembly_note": "Exterior-open cutouts permit soldering and post-solder lead trimming.",
         },
         "diode_body_pads_fillets": {
+            "manufacturer": DIODE_MANUFACTURER,
+            "mpn": DIODE_MPN,
+            "lcsc": DIODE_LCSC,
             "official_body_depth_max_mm": DIODE_OFFICIAL_BODY_DEPTH_MAX_MM,
+            "official_plan_envelope_max_mm": list(DIODE_OFFICIAL_PLAN_ENVELOPE_MAX_MM),
             "solder_fillet_allowance_mm": DIODE_SOLDER_FILLET_DEPTH_ALLOWANCE_MM,
             "modeled_max_depth_mm": round(
                 DIODE_OFFICIAL_BODY_DEPTH_MAX_MM + DIODE_SOLDER_FILLET_DEPTH_ALLOWANCE_MM,
@@ -868,6 +1382,19 @@ def component_cutout_manifest(plan: dict[str, Any]) -> dict[str, Any]:
     result: dict[str, Any] = {}
     for name, geometry in plan["component_cutout_geometries"].items():
         modeled_depth = modeled_depths[name].get("modeled_max_depth_mm")
+        plate_bottom_clearance = (
+            None if modeled_depth is None else HOUSING_HEIGHT_MM - float(modeled_depth)
+        )
+        nominal_desk_clearance = (
+            None
+            if plate_bottom_clearance is None
+            else plate_bottom_clearance + DESK_STANDOFF_NOMINAL_MM
+        )
+        minimum_desk_clearance = (
+            None
+            if nominal_desk_clearance is None
+            else nominal_desk_clearance - DESK_STANDOFF_PRINT_TOLERANCE_MM
+        )
         diode_perimeter_fields: dict[str, Any] = {}
         if name == "diode_body_pads_fillets":
             breaks_perimeter = not plan["housing_outline"].covers(geometry)
@@ -885,7 +1412,17 @@ def component_cutout_manifest(plan: dict[str, Any]) -> dict[str, Any]:
             "through_opening_z_mm": [EXTERIOR_BOTTOM_Z_MM, HOUSING_HEIGHT_MM],
             "opening_plan_area_mm2": round(float(geometry.area), 4),
             "minimum_exterior_bottom_clearance_mm": (
-                None if modeled_depth is None else round(HOUSING_HEIGHT_MM - float(modeled_depth), 2)
+                None if plate_bottom_clearance is None else round(plate_bottom_clearance, 2)
+            ),
+            "minimum_plate_bottom_clearance_mm": (
+                None if plate_bottom_clearance is None else round(plate_bottom_clearance, 2)
+            ),
+            "nominal_desk_clearance_mm": (
+                None if nominal_desk_clearance is None else round(nominal_desk_clearance, 2)
+            ),
+            "desk_standoff_print_tolerance_mm": DESK_STANDOFF_PRINT_TOLERANCE_MM,
+            "minimum_desk_clearance_mm": (
+                None if minimum_desk_clearance is None else round(minimum_desk_clearance, 2)
             ),
             **diode_perimeter_fields,
             **modeled_depths[name],
@@ -903,8 +1440,10 @@ def generate_outputs(output_dir: Path, kicad_python: Path) -> Path:
         "requirement": REQUIREMENT,
         "variant": VARIANT,
         "generated_by": "tools/generate_kc2_x3_v2_housings.py",
-        "generator_sha256": sha256_path(GENERATOR_PATH),
+        "hash_policy": HASH_POLICY,
+        "generator_sha256": sha256_file(GENERATOR_PATH),
         "coordinate_system": "board-local, X-reflected physical lower-housing assembly view",
+        "order_ready": False,
         "parameters": {
             "exterior_bottom_z_mm": EXTERIOR_BOTTOM_Z_MM,
             "housing_height_mm": HOUSING_HEIGHT_MM,
@@ -922,15 +1461,50 @@ def generate_outputs(output_dir: Path, kicad_python: Path) -> Path:
             "minimum_diode_housing_perimeter_land_mm": MIN_DIODE_HOUSING_PERIMETER_LAND_MM,
             "maximum_load_point_to_support_mm": MAX_LOAD_POINT_TO_SUPPORT_MM,
             "print_volume_limit_mm": PRINT_VOLUME_LIMIT_MM,
+            "desk_standoff_nominal_mm": DESK_STANDOFF_NOMINAL_MM,
+            "desk_standoff_print_tolerance_mm": DESK_STANDOFF_PRINT_TOLERANCE_MM,
+            "desk_datum_z_mm": DESK_DATUM_Z_MM,
+            "desk_contact_diameter_mm": DESK_CONTACT_DIAMETER_MM,
+            "mounting_npth_diameter_mm": MOUNTING_NPTH_DIAMETER_MM,
+            "mounting_support_land_diameter_mm": MOUNTING_SUPPORT_LAND_DIAMETER_MM,
+            "mounting_pilot_diameter_mm": MOUNTING_PILOT_DIAMETER_MM,
+            "mounting_pilot_depth_mm": MOUNTING_PILOT_DEPTH_MM,
+            "mounting_pilot_bottom_z_mm": MOUNTING_PILOT_BOTTOM_Z_MM,
+            "mounting_closed_bottom_mm": MOUNTING_CLOSED_BOTTOM_MM,
+            "mounting_head_envelope_mm": [
+                MOUNTING_HEAD_DIAMETER_MM,
+                MOUNTING_HEAD_HEIGHT_MM,
+            ],
+            "mounting_driver_envelope_diameter_mm": MOUNTING_DRIVER_DIAMETER_MM,
+            "provisional_screw_under_head_length_mm": (
+                MOUNTING_PROVISIONAL_SCREW_UNDER_HEAD_LENGTH_MM
+            ),
+            "pcb_thickness_tolerance_fraction": PCB_THICKNESS_TOLERANCE_FRACTION,
+            "pcb_tolerance_penetration_range_mm": [
+                round(value, 4) for value in MOUNTING_PENETRATION_RANGE_MM
+            ],
+            "minimum_tip_clearance_mm": round(
+                MOUNTING_MINIMUM_TIP_CLEARANCE_MM,
+                4,
+            ),
         },
         "retention": {
             "registration_peg_count": 0,
-            "screw_pilot_count": 0,
+            "screw_pilot_count": sum(
+                len(points) for points in MOUNTING_HOLE_COORDINATES_MM.values()
+            ),
+            "screw_pilot_count_by_side": {
+                side: len(points)
+                for side, points in MOUNTING_HOLE_COORDINATES_MM.items()
+            },
             "fastener_boss_count": 0,
             "glue_assumed": False,
+            "physical_registration_status": "pending",
+            "service_condition": "keycaps-off, switches-installed",
             "note": (
-                "PCB retention remains intentionally unresolved; the 2.50 mm plate, perimeter "
-                "regions, and distributed contact regions provide the independent vertical load path."
+                "M1.4 features clamp/register the PCB but remain a provisional physical interface; "
+                "the 2.50 mm plate, perimeter rail, and 14/11 distributed supports remain the "
+                "independent vertical load path."
             ),
         },
         "physical_deflection_test": {
@@ -944,19 +1518,36 @@ def generate_outputs(output_dir: Path, kicad_python: Path) -> Path:
     for side in ("left", "right"):
         board_data = extracted["boards"][side]
         plan = build_plan_geometry(shp, side, board_data)
+        if not plan["board_mounting_contract"]["matches"]:
+            raise RuntimeError(
+                f"{side}: source PCB does not match the exact CON-ARCH-006 MH pattern: "
+                f"{plan['board_mounting_contract']}"
+            )
         housing = build_cad(cq, shp, plan)
         step_path = output_dir / f"kc2_{side}_x3_v2_lower_housing.step"
         split_joint = None
+        part_plans = [plan["support_surface"]]
         if side == "right":
             parts, split_joint = split_right_housing_keyed(cq, shp, housing, plan)
+            split_plan = build_right_split_plan(shp, plan)
+            part_plans = [split_plan["part_a_plan"], split_plan["part_b_plan"]]
             export_model = cq.Workplane(obj=cq.Compound.makeCompound([part.val() for part in parts]))
         else:
             parts = [housing]
             export_model = housing
+        mounting_system = mounting_system_manifest(shp, side, plan, part_plans)
+        if (
+            not mounting_system["part_distribution_matches_plan"]
+            or not mounting_system["primary_support_load_span_unchanged"]
+            or any(hole["collision_count"] for hole in mounting_system["holes"])
+        ):
+            raise RuntimeError(
+                f"{side}: mounting-system contract failed: {mounting_system}"
+            )
         cq.exporters.export(export_model, str(step_path), exportType="STEP", tolerance=0.001, angularTolerance=0.1, unit="MM")
         normalize_exported_text(step_path)
         printable_parts = []
-        for index, part in enumerate(parts):
+        for index, (part, part_plan) in enumerate(zip(parts, part_plans)):
             suffix = "" if side == "left" else f"_part_{chr(ord('a') + index)}"
             stl_path = output_dir / f"kc2_{side}_x3_v2_lower_housing{suffix}.stl"
             cq.exporters.export(part, str(stl_path), exportType="STL", tolerance=0.03, angularTolerance=0.08, opt={"ascii": True})
@@ -964,13 +1555,20 @@ def generate_outputs(output_dir: Path, kicad_python: Path) -> Path:
             dimensions = model_bounds(part)
             if any(value > PRINT_VOLUME_LIMIT_MM for value in dimensions["size_xyz_mm"]):
                 raise RuntimeError(f"{stl_path.name} exceeds {PRINT_VOLUME_LIMIT_MM} mm: {dimensions['size_xyz_mm']}")
+            part_contacts = desk_contacts_for_part(shp, plan, part_plan)
+            stability = desk_contact_stability_manifest(shp, part_plan, part_contacts)
+            if not stability["desk_contacts_statically_stable"]:
+                raise RuntimeError(
+                    f"{side}:{stability['desk_contact_ids']} do not statically support printable part {index}"
+                )
             printable_parts.append(
                 {
                     "name": "whole" if side == "left" else f"part_{chr(ord('a') + index)}",
                     "stl": str(stl_path.relative_to(ROOT)).replace("\\", "/"),
-                    "stl_sha256": sha256_path(stl_path),
+                    "stl_sha256": sha256_file(stl_path),
                     "solid_count": len(part.solids().vals()),
                     "volume_mm3": round(sum(float(solid.Volume()) for solid in part.solids().vals()), 3),
+                    **stability,
                     **dimensions,
                 }
             )
@@ -979,13 +1577,51 @@ def generate_outputs(output_dir: Path, kicad_python: Path) -> Path:
             stale_right_stl.unlink()
         manifest["outputs"][side] = {
             "source_board": board_data["path"],
-            "source_board_sha256": sha256_path(BOARD_PATHS[side]),
+            "source_board_sha256": sha256_file(BOARD_PATHS[side]),
             "key_count": len(board_data["switches"]),
             "legacy_registration_refs": board_data["legacy_registration_refs"],
             "step": str(step_path.relative_to(ROOT)).replace("\\", "/"),
-            "step_sha256": sha256_path(step_path),
+            "step_sha256": sha256_file(step_path),
             "step_has_trailing_whitespace": has_trailing_horizontal_whitespace(step_path),
             "printable_parts": printable_parts,
+            "desk_standoff_nominal_mm": DESK_STANDOFF_NOMINAL_MM,
+            "desk_standoff_print_tolerance_mm": DESK_STANDOFF_PRINT_TOLERANCE_MM,
+            "desk_datum_z_mm": DESK_DATUM_Z_MM,
+            "minimum_open_component_to_desk_nominal_clearance_mm": round(
+                min(
+                    HOUSING_HEIGHT_MM
+                    - float(depth)
+                    + DESK_STANDOFF_NOMINAL_MM
+                    for depth in (
+                        CHOC_SOCKET_OFFICIAL_BODY_DEPTH_MAX_MM + CHOC_SOCKET_ASSEMBLY_ALLOWANCE_MM,
+                        DIODE_OFFICIAL_BODY_DEPTH_MAX_MM + DIODE_SOLDER_FILLET_DEPTH_ALLOWANCE_MM,
+                    )
+                ),
+                2,
+            ),
+            "minimum_open_component_to_desk_clearance_mm": round(
+                min(
+                    HOUSING_HEIGHT_MM
+                    - float(depth)
+                    + DESK_STANDOFF_NOMINAL_MM
+                    - DESK_STANDOFF_PRINT_TOLERANCE_MM
+                    for depth in (
+                        CHOC_SOCKET_OFFICIAL_BODY_DEPTH_MAX_MM + CHOC_SOCKET_ASSEMBLY_ALLOWANCE_MM,
+                        DIODE_OFFICIAL_BODY_DEPTH_MAX_MM + DIODE_SOLDER_FILLET_DEPTH_ALLOWANCE_MM,
+                    )
+                ),
+                2,
+            ),
+            "desk_contacts": plan["desk_contacts"],
+            "desk_contacts_hidden_in_top_view": plan["housing_outline"].covers(
+                plan["desk_contact_geometry"]
+            ),
+            "desk_contact_component_cutout_collision_count": int(
+                plan["desk_contact_geometry"].intersects(plan["all_component_cutouts"])
+            ),
+            "desk_contacts_statically_stable": all(
+                part["desk_contacts_statically_stable"] for part in printable_parts
+            ),
             "rail": {
                 "top_z_mm": PCB_BOTTOM_Z_MM,
                 "nominal_vertical_gap_mm": 0.0,
@@ -996,6 +1632,7 @@ def generate_outputs(output_dir: Path, kicad_python: Path) -> Path:
             },
             "component_cutouts": component_cutout_manifest(plan),
             "support_posts": plan["support_posts"],
+            "mounting_system": mounting_system,
             "maximum_load_point_to_support_mm": round(_maximum_load_distance(shp, plan), 4),
             "maximum_seam_load_point_to_support_mm": round(
                 _maximum_seam_support_distance(shp, side, plan),

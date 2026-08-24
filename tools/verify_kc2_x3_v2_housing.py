@@ -18,9 +18,23 @@ if str(ROOT / "tools") not in sys.path:
 
 import generate_kc2_housings as geometry_helpers  # noqa: E402
 import generate_kc2_x3_v2_housings as generator  # noqa: E402
+from canonical_hash import HASH_POLICY, sha256_file  # noqa: E402
 
 
 REPORT_PATH = generator.OUTPUT_DIR / "kc2_x3_v2_housing_clearance.json"
+ORDER_READINESS_BLOCKER = (
+    "CON-ARCH-006 AC-7 physical coupon evidence is pending: exact screw MPN and "
+    "drawing; minimum and maximum head diameter and height; maximum finished PCB-hole "
+    "diameter and minimum radial bearing width or equivalent pull-through/clamp-retention "
+    "evidence; exact driver MPN, maximum shaft diameter, and runout; printed pilot "
+    "diameter, actual PCB thickness, installed penetration, and tip clearance; tapping "
+    "torque, stripping torque with at least 2.0 ratio and 3.0 target, and selected "
+    "installation torque; ten install/remove cycles without cracking, spin, or pull-out; "
+    "full-pattern assembly without sequential forcing; actual installed switch and "
+    "keycap-skirt clearance; and a 2.0 N deflection test at every worst-case support span "
+    "with no more than 0.30 mm displacement, rocking, permanent deformation, support "
+    "disengagement, or fastener loosening."
+)
 COLLISION_CLASSES = {
     "choc_socket_body",
     "choc_socket_fillets",
@@ -33,6 +47,68 @@ COLLISION_CLASSES = {
     "battery_slot",
     "switch_key_travel",
 }
+
+# Independent CON-ARCH-006 vertical contract.  Keep these verifier values
+# separate from generator constants so a coupled generator/manifest mutation
+# cannot manufacture a larger clearance result.
+VERIFIED_STRUCTURAL_PLATE_HEIGHT_MM = 2.50
+VERIFIED_ES1B_DEPTH_MAX_MM = 2.20
+VERIFIED_ES1B_SOLDER_ALLOWANCE_MM = 0.30
+VERIFIED_DESK_STANDOFF_MM = 0.80
+VERIFIED_DESK_STANDOFF_PRINT_TOLERANCE_MM = 0.30
+VERIFIED_ES1B_PLATE_BOTTOM_CLEARANCE_MM = (
+    VERIFIED_STRUCTURAL_PLATE_HEIGHT_MM
+    - VERIFIED_ES1B_DEPTH_MAX_MM
+    - VERIFIED_ES1B_SOLDER_ALLOWANCE_MM
+)
+VERIFIED_ES1B_NOMINAL_DESK_CLEARANCE_MM = (
+    VERIFIED_ES1B_PLATE_BOTTOM_CLEARANCE_MM + VERIFIED_DESK_STANDOFF_MM
+)
+VERIFIED_ES1B_WORST_DESK_CLEARANCE_MM = (
+    VERIFIED_ES1B_NOMINAL_DESK_CLEARANCE_MM
+    - VERIFIED_DESK_STANDOFF_PRINT_TOLERANCE_MM
+)
+VERIFIED_MOUNTING_COORDINATES_MM = {
+    "left": [
+        [142.6125, 68.0000],
+        [128.6125, 86.5000],
+        [100.1125, 93.5000],
+        [57.1125, 99.0000],
+        [133.6125, 131.5000],
+        [55.1125, 144.0000],
+        [165.6125, 145.0000],
+        [102.6125, 147.0000],
+    ],
+    "right": [
+        [71.6875, 68.0000],
+        [181.1875, 85.5000],
+        [147.6875, 93.5000],
+        [109.6875, 96.5000],
+        [71.6875, 105.5000],
+        [42.1875, 106.0000],
+        [181.1875, 134.5000],
+        [143.1875, 134.5000],
+        [51.6875, 144.0000],
+        [95.6875, 147.0000],
+    ],
+}
+VERIFIED_MOUNTING_PART_DISTRIBUTION = {
+    "left": {"whole": 8},
+    "right": {"part_a": 4, "part_b": 6},
+}
+VERIFIED_DISTRIBUTED_SUPPORT_COUNTS = {"left": 14, "right": 11}
+VERIFIED_PRIMARY_SUPPORT_LOAD_SPAN_MM = {"left": 15.4640, "right": 18.9619}
+VERIFIED_MOUNTING_NPTH_DIAMETER_MM = 1.60
+VERIFIED_MOUNTING_SUPPORT_LAND_DIAMETER_MM = 3.00
+VERIFIED_MOUNTING_PILOT_DIAMETER_MM = 1.10
+VERIFIED_MOUNTING_PILOT_DEPTH_MM = 2.80
+VERIFIED_MOUNTING_PILOT_BOTTOM_Z_MM = -0.30
+VERIFIED_MOUNTING_CLOSED_BOTTOM_MM = 0.50
+VERIFIED_MOUNTING_HEAD_ENVELOPE_MM = [2.00, 0.50]
+VERIFIED_MOUNTING_DRIVER_DIAMETER_MM = 3.00
+VERIFIED_PROVISIONAL_SCREW_UNDER_HEAD_LENGTH_MM = 4.00
+VERIFIED_PCB_TOLERANCE_PENETRATION_RANGE_MM = [2.24, 2.56]
+VERIFIED_MINIMUM_TIP_CLEARANCE_MM = 0.24
 
 
 def has_trailing_horizontal_whitespace(path: Path) -> bool:
@@ -75,12 +151,45 @@ def inspect_ascii_stl(path: Path) -> dict[str, Any]:
             stack.extend(neighbors)
     mins = [min(vertex[index] for vertex in vertices) for index in range(3)]
     maxs = [max(vertex[index] for vertex in vertices) for index in range(3)]
+    bottom_z = mins[2]
+    bottom_adjacency: dict[tuple[float, float, float], set[tuple[float, float, float]]] = defaultdict(set)
+    for index in range(0, len(vertices), 3):
+        triangle = [tuple(round(value, 6) for value in vertex) for vertex in vertices[index : index + 3]]
+        if not all(abs(vertex[2] - bottom_z) <= 1e-5 for vertex in triangle):
+            continue
+        for start, end in zip(triangle, (triangle[1], triangle[2], triangle[0])):
+            bottom_adjacency[start].add(end)
+            bottom_adjacency[end].add(start)
+    bottom_components: list[set[tuple[float, float, float]]] = []
+    unseen_bottom = set(bottom_adjacency)
+    while unseen_bottom:
+        component = {unseen_bottom.pop()}
+        stack = list(component)
+        while stack:
+            current = stack.pop()
+            neighbors = bottom_adjacency[current] & unseen_bottom
+            unseen_bottom.difference_update(neighbors)
+            component.update(neighbors)
+            stack.extend(neighbors)
+        bottom_components.append(component)
+    bottom_centers = sorted(
+        [
+            [
+                round((min(vertex[0] for vertex in component) + max(vertex[0] for vertex in component)) / 2.0, 4),
+                round((min(vertex[1] for vertex in component) + max(vertex[1] for vertex in component)) / 2.0, 4),
+            ]
+            for component in bottom_components
+        ]
+    )
     return {
         "solid_count": solid_count,
         "watertight": bool(edge_counts) and all(count == 2 for count in edge_counts.values()),
         "shell_count": shell_count,
         "bounds_xyz_mm": [round(value, 4) for value in (*mins, *maxs)],
         "size_xyz_mm": [round(maxs[index] - mins[index], 4) for index in range(3)],
+        "desk_contact_z_mm": round(bottom_z, 4),
+        "desk_contact_count": len(bottom_components),
+        "desk_contact_centers_mm": bottom_centers,
     }
 
 
@@ -122,12 +231,17 @@ def analyze_v2_housing() -> dict[str, Any]:
         "requirement": manifest["requirement"],
         "variant": manifest["variant"],
         "manifest": str(generator.MANIFEST_PATH.relative_to(ROOT)).replace("\\", "/"),
-        "generator_sha256_matches": generator.sha256_path(generator.GENERATOR_PATH)
+        "hash_policy": manifest.get("hash_policy"),
+        "generator_sha256_matches": sha256_file(generator.GENERATOR_PATH)
         == manifest.get("generator_sha256"),
+        "order_ready": bool(manifest.get("order_ready", False)),
+        "physical_registration_status": manifest.get("retention", {}).get(
+            "physical_registration_status"
+        ),
         "sides": {},
         "physical_deflection_test": manifest["physical_deflection_test"],
         "fabrication_or_order_ready": False,
-        "order_readiness_blocker": "CON-ARCH-006 AC-7 physical 2.0 N deflection evidence is pending.",
+        "order_readiness_blocker": ORDER_READINESS_BLOCKER,
         "stale_monolithic_right_stl_present": (
             generator.OUTPUT_DIR / "kc2_right_x3_v2_lower_housing.stl"
         ).exists(),
@@ -137,6 +251,9 @@ def analyze_v2_housing() -> dict[str, Any]:
         board_data = extracted["boards"][side]
         output = manifest["outputs"][side]
         plan = generator.build_plan_geometry(shp, side, board_data)
+        desk_contact_manifest_matches_generator = output.get("desk_contacts") == plan[
+            "desk_contacts"
+        ]
         posts = output["support_posts"]
         contacts = _support_union(shp, posts).union(plan["rail"])
         collision_checks = {
@@ -172,16 +289,49 @@ def analyze_v2_housing() -> dict[str, Any]:
         step_bounds = None if not step_solids else step_model.val().BoundingBox()
         step_volume = sum(float(solid.Volume()) for solid in step_solids)
         expected_contact = plan["support_surface"]
+        expected_part_plans = [plan["support_surface"]]
         if side == "right":
             split_plan = generator.build_right_split_plan(shp, plan)
             expected_contact = split_plan["part_a_plan"].union(split_plan["part_b_plan"])
-        # The generated plate is a constant-Z extrusion. Importing the actual
-        # STEP and dividing its measured volume by its exact height verifies the
-        # complete top/bottom plan without repeated expensive 3D intersections.
-        actual_contact_area = (
-            0.0 if step_bounds is None else step_volume / generator.HOUSING_HEIGHT_MM
+            expected_part_plans = [split_plan["part_a_plan"], split_plan["part_b_plan"]]
+        expected_mounting = generator.mounting_system_manifest(
+            shp,
+            side,
+            plan,
+            expected_part_plans,
         )
-        contact_area_error = abs(actual_contact_area - float(expected_contact.area))
+        expected_desk_contact_geometry = plan["desk_contact_geometry"].intersection(expected_contact)
+        expected_pilot_geometry = plan["mounting_pilot_geometry"].intersection(
+            expected_contact
+        )
+        expected_step_volume = (
+            float(expected_contact.area) * generator.HOUSING_HEIGHT_MM
+            + float(expected_desk_contact_geometry.area) * generator.DESK_STANDOFF_NOMINAL_MM
+            - float(expected_pilot_geometry.area) * generator.MOUNTING_PILOT_DEPTH_MM
+        )
+        # Subtract the independently planned underside-contact volume before
+        # dividing by the structural height, so the imported STEP still proves
+        # the complete zero-gap PCB support plan after feet are added.
+        actual_support_surface_area = (
+            0.0
+            if step_bounds is None
+            else (
+                step_volume
+                - float(expected_desk_contact_geometry.area)
+                * generator.DESK_STANDOFF_NOMINAL_MM
+                + float(expected_pilot_geometry.area)
+                * generator.MOUNTING_PILOT_DEPTH_MM
+            )
+            / generator.HOUSING_HEIGHT_MM
+        )
+        actual_contact_area = actual_support_surface_area - float(
+            expected_pilot_geometry.area
+        )
+        expected_top_contact_area = float(
+            expected_contact.difference(expected_pilot_geometry).area
+        )
+        contact_area_error = abs(actual_contact_area - expected_top_contact_area)
+        step_volume_error = abs(step_volume - expected_step_volume)
         component_cutouts: dict[str, Any] = {}
         for name, cutout_geometry in plan["component_cutout_geometries"].items():
             raw_geometry = plan["component_geometries"][name]
@@ -243,7 +393,7 @@ def analyze_v2_housing() -> dict[str, Any]:
                 **diode_perimeter_fields,
             }
         printable_parts = []
-        for part in output["printable_parts"]:
+        for part, part_plan in zip(output["printable_parts"], expected_part_plans):
             stl_path = ROOT / part["stl"]
             inspected = inspect_ascii_stl(stl_path) if stl_path.is_file() else {
                 "solid_count": 0,
@@ -251,18 +401,73 @@ def analyze_v2_housing() -> dict[str, Any]:
                 "shell_count": 0,
                 "bounds_xyz_mm": [],
                 "size_xyz_mm": [],
+                "desk_contact_z_mm": None,
+                "desk_contact_count": 0,
+                "desk_contact_centers_mm": [],
             }
+            expected_contacts = generator.desk_contacts_for_part(shp, plan, part_plan)
+            expected_ids = [item["id"] for item in expected_contacts]
+            manifest_ids = list(part.get("desk_contact_ids", []))
+            expected_centers = sorted(
+                [[round(float(item["x_mm"]), 4), round(float(item["y_mm"]), 4)] for item in expected_contacts]
+            )
+            actual_centers = inspected["desk_contact_centers_mm"]
+            actual_centers_match = len(actual_centers) == len(expected_centers) and all(
+                abs(float(actual_value) - float(expected_value)) <= 0.05
+                for actual, expected in zip(actual_centers, expected_centers)
+                for actual_value, expected_value in zip(actual, expected)
+            )
+            actual_contact_records = [
+                {
+                    "id": f"ACTUAL-{index + 1:02d}",
+                    "x_mm": center[0],
+                    "y_mm": center[1],
+                    "diameter_mm": generator.DESK_CONTACT_DIAMETER_MM,
+                    "bottom_z_mm": inspected["desk_contact_z_mm"],
+                }
+                for index, center in enumerate(actual_centers)
+            ]
+            actual_stability = generator.desk_contact_stability_manifest(
+                shp,
+                part_plan,
+                actual_contact_records,
+            )
             printable_parts.append(
                 {
                     "name": part["name"],
                     "stl": part["stl"],
                     "sha256_matches": stl_path.is_file()
-                    and generator.sha256_path(stl_path) == part["stl_sha256"],
+                    and sha256_file(stl_path) == part["stl_sha256"],
                     "solid_count": inspected["solid_count"],
                     "watertight": inspected["watertight"],
                     "shell_count": inspected["shell_count"],
                     "bounds_xyz_mm": inspected["bounds_xyz_mm"],
                     "size_xyz_mm": inspected["size_xyz_mm"],
+                    "desk_contact_count": int(part.get("desk_contact_count", 0)),
+                    "expected_desk_contact_count": len(expected_contacts),
+                    "actual_desk_contact_count": inspected["desk_contact_count"],
+                    "expected_desk_contact_ids": expected_ids,
+                    "manifest_desk_contact_ids": manifest_ids,
+                    "expected_desk_contact_centers_mm": expected_centers,
+                    "actual_desk_contact_centers_mm": actual_centers,
+                    "desk_contact_z_mm": inspected["desk_contact_z_mm"],
+                    "desk_contact_coplanarity_mm": actual_stability[
+                        "desk_contact_coplanarity_mm"
+                    ],
+                    "projected_centroid_inside_contact_hull": actual_stability[
+                        "projected_centroid_inside_contact_hull"
+                    ],
+                    "desk_contacts_match_plan": bool(
+                        actual_centers_match
+                        and manifest_ids == expected_ids
+                        and int(part.get("desk_contact_count", 0)) == len(expected_contacts)
+                    ),
+                    "desk_contacts_statically_stable": bool(
+                        actual_centers_match
+                        and manifest_ids == expected_ids
+                        and part.get("desk_contacts_statically_stable")
+                        and actual_stability["desk_contacts_statically_stable"]
+                    ),
                     "bounds_match_manifest": len(inspected["bounds_xyz_mm"]) == 6
                     and all(
                         abs(float(actual) - float(expected)) <= 0.001
@@ -274,7 +479,11 @@ def analyze_v2_housing() -> dict[str, Any]:
         if side == "right" and output["split_joint"].get("type") == "full_depth_vertical_keyed_puzzle":
             split = output["split_joint"]
             split_plan = generator.build_right_split_plan(shp, plan)
-            explicit_supports = _support_union(shp, posts).union(plan["rail"])
+            explicit_supports = (
+                _support_union(shp, posts)
+                .union(plan["rail"])
+                .union(plan["mounting_land_geometry"])
+            )
             feature_collisions = int(
                 split_plan["slot_union"].intersects(plan["all_component_cutouts"])
             )
@@ -294,13 +503,86 @@ def analyze_v2_housing() -> dict[str, Any]:
                     abs_tol=0.0001,
                 ),
             }
+        manifest_mounting = output.get("mounting_system", {})
+        manifest_holes = {
+            item.get("ref"): item
+            for item in manifest_mounting.get("holes", [])
+        }
+        mounting_holes = []
+        for expected_hole in expected_mounting["holes"]:
+            manifest_hole = manifest_holes.get(expected_hole["ref"], {})
+            center_x, center_y = expected_hole["housing_center_mm"]
+
+            def step_contains(z_mm: float) -> bool:
+                return any(
+                    solid.isInside(
+                        cq.Vector(center_x, center_y, z_mm),
+                        1e-6,
+                    )
+                    for solid in step_solids
+                )
+
+            mounting_holes.append(
+                {
+                    **manifest_hole,
+                    "geometry_collision_checks": expected_hole["collision_checks"],
+                    "geometry_collision_count": expected_hole["collision_count"],
+                    "geometry_printable_part": expected_hole["printable_part"],
+                    "geometry_board_feature_matches": expected_hole[
+                        "board_feature_matches"
+                    ],
+                    "step_pilot_open_at_z_2_49": not step_contains(2.49),
+                    "step_pilot_open_at_z_minus_0_25": not step_contains(-0.25),
+                    "step_pilot_closed_at_z_minus_0_35": step_contains(-0.35),
+                    "step_pilot_closed_at_z_minus_0_79": step_contains(-0.79),
+                }
+            )
+        mounting_report = {
+            **manifest_mounting,
+            "holes": mounting_holes,
+            "manifest_matches_generator": manifest_mounting == expected_mounting,
+            "geometry_part_distribution": expected_mounting["part_distribution"],
+            "geometry_part_distribution_matches_plan": expected_mounting[
+                "part_distribution_matches_plan"
+            ],
+            "geometry_primary_support_load_span_unchanged": expected_mounting[
+                "primary_support_load_span_unchanged"
+            ],
+        }
         report["sides"][side] = {
             "source_board": output["source_board"],
-            "source_board_sha256_matches": generator.sha256_path(source_path) == output["source_board_sha256"],
+            "source_board_sha256_matches": sha256_file(source_path) == output["source_board_sha256"],
             "key_count": len(board_data["switches"]),
             "legacy_registration_refs": board_data["legacy_registration_refs"],
             "exterior_bottom_z_mm": generator.EXTERIOR_BOTTOM_Z_MM,
             "housing_height_mm": generator.HOUSING_HEIGHT_MM,
+            "desk_standoff_nominal_mm": float(output["desk_standoff_nominal_mm"]),
+            "desk_standoff_print_tolerance_mm": float(
+                output["desk_standoff_print_tolerance_mm"]
+            ),
+            "desk_datum_z_mm": float(output["desk_datum_z_mm"]),
+            "minimum_open_component_to_desk_nominal_clearance_mm": float(
+                output["minimum_open_component_to_desk_nominal_clearance_mm"]
+            ),
+            "minimum_open_component_to_desk_clearance_mm": float(
+                output["minimum_open_component_to_desk_clearance_mm"]
+            ),
+            "desk_contacts_hidden_in_top_view": bool(
+                plan["housing_outline"].covers(plan["desk_contact_geometry"])
+            )
+            and bool(output.get("desk_contacts_hidden_in_top_view")),
+            "desk_contact_component_cutout_collision_count": int(
+                not plan["desk_contact_geometry"].intersection(
+                    plan["all_component_cutouts"]
+                ).is_empty
+            ),
+            "desk_contact_manifest_matches_generator": bool(
+                desk_contact_manifest_matches_generator
+            ),
+            "desk_contacts_statically_stable": all(
+                part["desk_contacts_statically_stable"] for part in printable_parts
+            )
+            and bool(output.get("desk_contacts_statically_stable")),
             "raised_key_field_bezel_present": False,
             "rail_top_z_mm": float(output["rail"]["top_z_mm"]),
             "pcb_bottom_z_mm": generator.PCB_BOTTOM_Z_MM,
@@ -317,18 +599,21 @@ def analyze_v2_housing() -> dict[str, Any]:
             "rail_segment_count": output["rail"]["segment_count"],
             "support_posts": posts,
             "support_plan_matches_generator": posts == plan["support_posts"],
+            "mounting_system": mounting_report,
             "maximum_load_point_to_support_mm": float(output["maximum_load_point_to_support_mm"]),
             "maximum_seam_load_point_to_support_mm": float(
                 output["maximum_seam_load_point_to_support_mm"]
             ),
             "registration_peg_count": int(manifest["retention"]["registration_peg_count"]),
-            "screw_pilot_count": int(manifest["retention"]["screw_pilot_count"]),
+            "screw_pilot_count": int(
+                manifest["retention"]["screw_pilot_count_by_side"][side]
+            ),
             "fastener_boss_count": int(manifest["retention"]["fastener_boss_count"]),
             "glue_assumed": bool(manifest["retention"]["glue_assumed"]),
             "component_cutouts": component_cutouts,
             "collision_checks": collision_checks,
             "step": output["step"],
-            "step_sha256_matches": step_path.is_file() and generator.sha256_path(step_path) == output["step_sha256"],
+            "step_sha256_matches": step_path.is_file() and sha256_file(step_path) == output["step_sha256"],
             "step_has_trailing_whitespace": has_trailing_horizontal_whitespace(step_path),
             "step_whitespace_contract_matches_manifest": output.get(
                 "step_has_trailing_whitespace"
@@ -340,12 +625,11 @@ def analyze_v2_housing() -> dict[str, Any]:
             if step_bounds is None
             else [round(float(step_bounds.zmin), 4), round(float(step_bounds.zmax), 4)],
             "step_volume_mm3": round(step_volume, 4),
-            "planned_step_volume_mm3": round(
-                float(expected_contact.area) * generator.HOUSING_HEIGHT_MM,
-                4,
-            ),
+            "planned_step_volume_mm3": round(expected_step_volume, 4),
+            "step_volume_error_mm3": round(step_volume_error, 4),
+            "step_volume_matches_plan": step_volume_error <= 0.20,
             "step_top_contact_area_mm2": round(actual_contact_area, 4),
-            "planned_top_contact_area_mm2": round(float(expected_contact.area), 4),
+            "planned_top_contact_area_mm2": round(expected_top_contact_area, 4),
             "step_top_contact_area_error_mm2": round(contact_area_error, 4),
             "step_top_contact_area_matches_plan": contact_area_error <= 0.20,
             "printable_parts": printable_parts,
@@ -368,8 +652,16 @@ def verify_report(report: dict[str, Any]) -> list[str]:
         errors.append(f"wrong requirement: {report.get('requirement')}")
     if report.get("variant") != generator.VARIANT:
         errors.append(f"wrong variant: {report.get('variant')}")
+    if report.get("hash_policy") != HASH_POLICY:
+        errors.append(f"wrong hash policy: {report.get('hash_policy')}")
     if not report.get("generator_sha256_matches"):
         errors.append("housing generator SHA is stale")
+    if report.get("order_ready"):
+        errors.append("order readiness must remain false for the provisional mounting interface")
+    if report.get("physical_registration_status") != "pending":
+        errors.append("physical registration status must remain pending")
+    if report.get("order_readiness_blocker") != ORDER_READINESS_BLOCKER:
+        errors.append("order-readiness blocker does not enumerate the full AC-7 physical coupon gate")
     for side in ("left", "right"):
         data = report["sides"][side]
         if not data["source_board_sha256_matches"]:
@@ -378,10 +670,41 @@ def verify_report(report: dict[str, Any]) -> list[str]:
             errors.append(f"{side}: legacy registration refs {data['legacy_registration_refs']}")
         if data.get("exterior_bottom_z_mm") != generator.EXTERIOR_BOTTOM_Z_MM:
             errors.append(f"{side}: wrong exterior bottom Z")
-        if data.get("housing_height_mm") != generator.HOUSING_HEIGHT_MM:
+        if data.get("housing_height_mm") != VERIFIED_STRUCTURAL_PLATE_HEIGHT_MM:
             errors.append(f"{side}: housing height is not 2.50 mm")
         if data.get("pcb_bottom_z_mm") != generator.PCB_BOTTOM_Z_MM:
             errors.append(f"{side}: PCB support plane is not 2.50 mm")
+        if data.get("desk_standoff_nominal_mm") != VERIFIED_DESK_STANDOFF_MM:
+            errors.append(f"{side}: desk standoff is not 0.80 mm")
+        if (
+            data.get("desk_standoff_print_tolerance_mm")
+            != VERIFIED_DESK_STANDOFF_PRINT_TOLERANCE_MM
+        ):
+            errors.append(f"{side}: desk standoff print tolerance is wrong")
+        if data.get("desk_datum_z_mm") != generator.DESK_DATUM_Z_MM:
+            errors.append(f"{side}: desk datum Z is wrong")
+        if float(data.get("minimum_open_component_to_desk_clearance_mm", -99.0)) + 1e-6 < 0.50:
+            errors.append(f"{side}: open-component-to-desk clearance is below 0.50 mm")
+        if not math.isclose(
+            float(data.get("minimum_open_component_to_desk_nominal_clearance_mm", -99.0)),
+            VERIFIED_ES1B_NOMINAL_DESK_CLEARANCE_MM,
+            abs_tol=1e-9,
+        ):
+            errors.append(f"{side}: open-component nominal desk-clearance formula is stale")
+        if not math.isclose(
+            float(data.get("minimum_open_component_to_desk_clearance_mm", -99.0)),
+            VERIFIED_ES1B_WORST_DESK_CLEARANCE_MM,
+            abs_tol=1e-9,
+        ):
+            errors.append(f"{side}: open-component worst-case desk-clearance formula is stale")
+        if not data.get("desk_contacts_hidden_in_top_view"):
+            errors.append(f"{side}: desk contacts widen the visible top-view outline")
+        if int(data.get("desk_contact_component_cutout_collision_count", 99)) != 0:
+            errors.append(f"{side}: desk contact collides with an exterior-open component cutout")
+        if not data.get("desk_contacts_statically_stable"):
+            errors.append(f"{side}: desk contacts are not statically stable")
+        if not data.get("desk_contact_manifest_matches_generator"):
+            errors.append(f"{side}: desk-contact manifest differs from generator")
         if data.get("raised_key_field_bezel_present"):
             errors.append(f"{side}: raised key-field bezel is present")
         if data["maximum_rail_vertical_gap_mm"] > 1e-6:
@@ -396,8 +719,11 @@ def verify_report(report: dict[str, Any]) -> list[str]:
         missing = {"thumb", "span"} - categories
         if missing:
             errors.append(f"{side}: missing support categories {sorted(missing)}")
-        if len(data["support_posts"]) < 6:
-            errors.append(f"{side}: only {len(data['support_posts'])} supports")
+        if len(data["support_posts"]) != VERIFIED_DISTRIBUTED_SUPPORT_COUNTS[side]:
+            errors.append(
+                f"{side}: distributed support count {len(data['support_posts'])} "
+                f"!= {VERIFIED_DISTRIBUTED_SUPPORT_COUNTS[side]}"
+            )
         for post in data["support_posts"]:
             expected = (
                 float(post["diameter_mm"]) == generator.POST_DIAMETER_MM
@@ -416,17 +742,124 @@ def verify_report(report: dict[str, Any]) -> list[str]:
                 f"{side}: seam load point support distance "
                 f"{data['maximum_seam_load_point_to_support_mm']} mm"
             )
+        if not math.isclose(
+            float(data["maximum_load_point_to_support_mm"]),
+            VERIFIED_PRIMARY_SUPPORT_LOAD_SPAN_MM[side],
+            abs_tol=0.0001,
+        ):
+            errors.append(
+                f"{side}: primary-support load span changed from "
+                f"{VERIFIED_PRIMARY_SUPPORT_LOAD_SPAN_MM[side]} mm"
+            )
         for name in COLLISION_CLASSES:
             result = data["collision_checks"].get(name)
             if result is None:
                 errors.append(f"{side}: missing collision class {name}")
             elif result["collision_count"] != 0:
                 errors.append(f"{side}: {name} collisions={result['collision_count']}")
-        for field in ("registration_peg_count", "screw_pilot_count", "fastener_boss_count"):
+        for field in ("registration_peg_count", "fastener_boss_count"):
             if data[field] != 0:
                 errors.append(f"{side}: {field}={data[field]}")
+        if data["screw_pilot_count"] != len(VERIFIED_MOUNTING_COORDINATES_MM[side]):
+            errors.append(f"{side}: wrong screw-pilot count {data['screw_pilot_count']}")
         if data["glue_assumed"]:
             errors.append(f"{side}: glue must not be assumed")
+
+        mounting = data.get("mounting_system", {})
+        if mounting.get("physical_registration_status") != "pending":
+            errors.append(f"{side}: mounting physical registration status is not pending")
+        if int(mounting.get("count", 0)) != len(VERIFIED_MOUNTING_COORDINATES_MM[side]):
+            errors.append(f"{side}: wrong mounting-hole count")
+        if mounting.get("board_coordinates_mm") != VERIFIED_MOUNTING_COORDINATES_MM[side]:
+            errors.append(f"{side}: board coordinate contract differs from CON-ARCH-006")
+        if not mounting.get("board_features_match_selected_pattern"):
+            errors.append(f"{side}: board MH features do not match the selected pattern")
+        if not mounting.get("manifest_matches_generator"):
+            errors.append(f"{side}: mounting manifest differs from generator")
+        if mounting.get("part_distribution") != VERIFIED_MOUNTING_PART_DISTRIBUTION[side]:
+            errors.append(f"{side}: part distribution is wrong")
+        if mounting.get("geometry_part_distribution") != VERIFIED_MOUNTING_PART_DISTRIBUTION[side]:
+            errors.append(f"{side}: geometry part distribution is wrong")
+        if not mounting.get("part_distribution_matches_plan") or not mounting.get(
+            "geometry_part_distribution_matches_plan"
+        ):
+            errors.append(f"{side}: part distribution does not match the split plan")
+        if int(mounting.get("distributed_support_count", 0)) != VERIFIED_DISTRIBUTED_SUPPORT_COUNTS[side]:
+            errors.append(f"{side}: mounting contract changed the distributed support count")
+        if not mounting.get("primary_support_load_span_unchanged") or not mounting.get(
+            "geometry_primary_support_load_span_unchanged"
+        ):
+            errors.append(f"{side}: primary-support load span changed")
+        mounting_holes = mounting.get("holes", [])
+        if len(mounting_holes) != len(VERIFIED_MOUNTING_COORDINATES_MM[side]):
+            errors.append(f"{side}: mounting-hole manifest length is wrong")
+        for index, expected_center in enumerate(VERIFIED_MOUNTING_COORDINATES_MM[side]):
+            if index >= len(mounting_holes):
+                break
+            hole = mounting_holes[index]
+            expected_ref = f"MH{index + 1}"
+            if hole.get("ref") != expected_ref or hole.get("board_center_mm") != expected_center:
+                errors.append(f"{side}:{expected_ref}: board coordinate is wrong")
+            if hole.get("pcb_npth_diameter_mm") != VERIFIED_MOUNTING_NPTH_DIAMETER_MM:
+                errors.append(f"{side}:{expected_ref}: PCB NPTH diameter is wrong")
+            if not hole.get("board_feature_matches") or not hole.get(
+                "geometry_board_feature_matches"
+            ):
+                errors.append(f"{side}:{expected_ref}: PCB MH feature does not match")
+            if (
+                hole.get("support_land_diameter_mm")
+                != VERIFIED_MOUNTING_SUPPORT_LAND_DIAMETER_MM
+                or hole.get("support_land_annular_width_mm") != 0.95
+                or hole.get("support_land_top_z_mm") != VERIFIED_STRUCTURAL_PLATE_HEIGHT_MM
+                or hole.get("support_land_vertical_gap_mm") != 0.0
+                or hole.get("desk_column_diameter_mm")
+                != VERIFIED_MOUNTING_SUPPORT_LAND_DIAMETER_MM
+                or hole.get("desk_column_bottom_z_mm") != -VERIFIED_DESK_STANDOFF_MM
+            ):
+                errors.append(f"{side}:{expected_ref}: support land/desk column contract is wrong")
+            if hole.get("pilot_diameter_mm") != VERIFIED_MOUNTING_PILOT_DIAMETER_MM:
+                errors.append(f"{side}:{expected_ref}: pilot diameter is wrong")
+            if (
+                hole.get("pilot_depth_mm") != VERIFIED_MOUNTING_PILOT_DEPTH_MM
+                or hole.get("pilot_top_z_mm") != VERIFIED_STRUCTURAL_PLATE_HEIGHT_MM
+                or hole.get("pilot_bottom_z_mm") != VERIFIED_MOUNTING_PILOT_BOTTOM_Z_MM
+                or hole.get("pilot_extension_below_plate_mm") != 0.30
+                or hole.get("closed_bottom_to_desk_datum_mm")
+                != VERIFIED_MOUNTING_CLOSED_BOTTOM_MM
+            ):
+                errors.append(f"{side}:{expected_ref}: pilot depth/Z/closed-bottom contract is wrong")
+            if hole.get("pilot_breaks_desk_contact_bottom"):
+                errors.append(f"{side}:{expected_ref}: pilot bottom break reaches the desk datum")
+            if not (
+                hole.get("step_pilot_open_at_z_2_49")
+                and hole.get("step_pilot_open_at_z_minus_0_25")
+                and hole.get("step_pilot_closed_at_z_minus_0_35")
+                and hole.get("step_pilot_closed_at_z_minus_0_79")
+            ):
+                errors.append(
+                    f"{side}:{expected_ref}: pilot STEP depth or closed bottom is wrong"
+                )
+            if (
+                hole.get("provisional_screw_under_head_length_mm")
+                != VERIFIED_PROVISIONAL_SCREW_UNDER_HEAD_LENGTH_MM
+                or hole.get("pcb_tolerance_penetration_range_mm")
+                != VERIFIED_PCB_TOLERANCE_PENETRATION_RANGE_MM
+                or hole.get("minimum_tip_clearance_mm")
+                != VERIFIED_MINIMUM_TIP_CLEARANCE_MM
+            ):
+                errors.append(f"{side}:{expected_ref}: provisional screw penetration contract is wrong")
+            if hole.get("head_envelope_mm") != VERIFIED_MOUNTING_HEAD_ENVELOPE_MM:
+                errors.append(f"{side}:{expected_ref}: head envelope is wrong")
+            if hole.get("driver_envelope_diameter_mm") != VERIFIED_MOUNTING_DRIVER_DIAMETER_MM:
+                errors.append(f"{side}:{expected_ref}: driver envelope is wrong")
+            if hole.get("service_condition") != "keycaps-off, switches-installed":
+                errors.append(f"{side}:{expected_ref}: service condition is wrong")
+            if int(hole.get("collision_count", 99)) != 0 or int(
+                hole.get("geometry_collision_count", 99)
+            ) != 0:
+                errors.append(f"{side}:{expected_ref}: mounting collision remains")
+            if hole.get("printable_part") != hole.get("geometry_printable_part"):
+                errors.append(f"{side}:{expected_ref}: mounting part assignment is stale")
         required_cutouts = {
             "choc_socket_body_fillets",
             "switch_mechanical_pins",
@@ -470,12 +903,40 @@ def verify_report(report: dict[str, Any]) -> list[str]:
         if float(socket.get("minimum_exterior_bottom_clearance_mm", -99.0)) + 1e-6 < 0.10:
             errors.append(f"{side}: Choc socket exterior clearance is below 0.10 mm")
         diode = cutouts.get("diode_body_pads_fillets", {})
-        if diode.get("official_body_depth_max_mm") != generator.DIODE_OFFICIAL_BODY_DEPTH_MAX_MM:
+        if diode.get("manufacturer") != generator.DIODE_MANUFACTURER:
+            errors.append(f"{side}: wrong diode manufacturer")
+        if diode.get("mpn") != generator.DIODE_MPN or diode.get("lcsc") != generator.DIODE_LCSC:
+            errors.append(f"{side}: wrong ES1B ordering identity")
+        if diode.get("official_body_depth_max_mm") != VERIFIED_ES1B_DEPTH_MAX_MM:
             errors.append(f"{side}: wrong official diode depth")
-        if diode.get("solder_fillet_allowance_mm") != generator.DIODE_SOLDER_FILLET_DEPTH_ALLOWANCE_MM:
+        if diode.get("official_plan_envelope_max_mm") != list(
+            generator.DIODE_OFFICIAL_PLAN_ENVELOPE_MAX_MM
+        ):
+            errors.append(f"{side}: wrong official ES1B plan envelope")
+        if diode.get("solder_fillet_allowance_mm") != VERIFIED_ES1B_SOLDER_ALLOWANCE_MM:
             errors.append(f"{side}: wrong diode solder-fillet allowance")
-        if float(diode.get("minimum_exterior_bottom_clearance_mm", -99.0)) + 1e-6 < 0.50:
-            errors.append(f"{side}: diode exterior clearance is below 0.50 mm")
+        if float(diode.get("minimum_plate_bottom_clearance_mm", -99.0)) < -1e-6:
+            errors.append(f"{side}: diode plate-bottom clearance is negative")
+        if float(diode.get("minimum_desk_clearance_mm", -99.0)) + 1e-6 < 0.50:
+            errors.append(f"{side}: diode desk clearance is below 0.50 mm")
+        if not math.isclose(
+            float(diode.get("minimum_plate_bottom_clearance_mm", -99.0)),
+            VERIFIED_ES1B_PLATE_BOTTOM_CLEARANCE_MM,
+            abs_tol=1e-9,
+        ):
+            errors.append(f"{side}: diode plate-bottom clearance formula is stale")
+        if not math.isclose(
+            float(diode.get("nominal_desk_clearance_mm", -99.0)),
+            VERIFIED_ES1B_NOMINAL_DESK_CLEARANCE_MM,
+            abs_tol=1e-9,
+        ):
+            errors.append(f"{side}: diode nominal desk-clearance formula is stale")
+        if not math.isclose(
+            float(diode.get("minimum_desk_clearance_mm", -99.0)),
+            VERIFIED_ES1B_WORST_DESK_CLEARANCE_MM,
+            abs_tol=1e-9,
+        ):
+            errors.append(f"{side}: diode worst-case desk-clearance formula is stale")
         if diode.get("breaks_lateral_housing_perimeter"):
             errors.append(f"{side}: diode cutout breaks the lateral perimeter")
         if (
@@ -494,8 +955,12 @@ def verify_report(report: dict[str, Any]) -> list[str]:
         expected_step_solids = 1 if side == "left" else 2
         if data["step_solid_count"] != expected_step_solids:
             errors.append(f"{side}: STEP solid count {data['step_solid_count']}")
-        if data["step_bounds_z_mm"] != [0.0, generator.PCB_BOTTOM_Z_MM]:
+        if data["step_bounds_z_mm"] != [generator.DESK_DATUM_Z_MM, generator.PCB_BOTTOM_Z_MM]:
             errors.append(f"{side}: STEP Z bounds {data['step_bounds_z_mm']}")
+        if not data.get("step_volume_matches_plan"):
+            errors.append(
+                f"{side}: STEP volume differs by {data.get('step_volume_error_mm3')} mm3"
+            )
         if not data["step_top_contact_area_matches_plan"]:
             errors.append(
                 f"{side}: STEP top contact area differs by "
@@ -516,6 +981,32 @@ def verify_report(report: dict[str, Any]) -> list[str]:
                 errors.append(f"{side}:{part['name']}: STL bounds differ from manifest")
             if any(value > generator.PRINT_VOLUME_LIMIT_MM for value in part["size_xyz_mm"]):
                 errors.append(f"{side}:{part['name']}: exceeds 150 mm cube {part['size_xyz_mm']}")
+            if int(part.get("desk_contact_count", 0)) < 3:
+                errors.append(f"{side}:{part['name']}: fewer than 3 desk contacts")
+            if int(part.get("desk_contact_count", 0)) != int(
+                part.get("expected_desk_contact_count", -1)
+            ):
+                errors.append(f"{side}:{part['name']}: planned desk-contact count is stale")
+            if int(part.get("actual_desk_contact_count", 0)) != int(
+                part.get("expected_desk_contact_count", -1)
+            ):
+                errors.append(f"{side}:{part['name']}: STL desk-contact count is stale")
+            if part.get("manifest_desk_contact_ids") != part.get("expected_desk_contact_ids"):
+                errors.append(f"{side}:{part['name']}: desk-contact IDs differ from plan")
+            if len(part.get("actual_desk_contact_centers_mm", [])) != int(
+                part.get("expected_desk_contact_count", -1)
+            ):
+                errors.append(f"{side}:{part['name']}: actual desk-contact center count is stale")
+            if part.get("desk_contact_z_mm") != generator.DESK_DATUM_Z_MM:
+                errors.append(f"{side}:{part['name']}: desk-contact Z is wrong")
+            if float(part.get("desk_contact_coplanarity_mm", 99.0)) > 1e-6:
+                errors.append(f"{side}:{part['name']}: desk contacts are not coplanar")
+            if not part.get("desk_contacts_match_plan"):
+                errors.append(f"{side}:{part['name']}: STL desk contacts differ from plan")
+            if not part.get("projected_centroid_inside_contact_hull"):
+                errors.append(f"{side}:{part['name']}: projected centroid leaves desk-contact hull")
+            if not part.get("desk_contacts_statically_stable"):
+                errors.append(f"{side}:{part['name']}: desk contacts are not statically stable")
         if side == "right":
             joint = data.get("split_joint", {})
             if joint.get("type") != "full_depth_vertical_keyed_puzzle":

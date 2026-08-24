@@ -313,9 +313,9 @@
 <text x="626.85" y="341.14" text-anchor="middle" font-family="Arial" font-size="10" fill="#101010">9</text>
 <rect x="697.02" y="274.50" width="126.35" height="126.35" rx="2" ry="2" fill="#eef5ff" stroke="#467cc0" stroke-width="1"/>
 <text x="760.20" y="341.14" text-anchor="middle" font-family="Arial" font-size="10" fill="#101010">0</text>
-<rect x="830.37" y="274.50" width="126.35" height="126.35" rx="2" ry="2" fill="#eef5ff" stroke="#467cc0" stroke-width="1"/>
+<rect x="830.38" y="274.50" width="126.35" height="126.35" rx="2" ry="2" fill="#eef5ff" stroke="#467cc0" stroke-width="1"/>
 <text x="893.55" y="341.14" text-anchor="middle" font-family="Arial" font-size="10" fill="#101010">-</text>
-<rect x="963.72" y="274.50" width="126.35" height="126.35" rx="2" ry="2" fill="#eef5ff" stroke="#467cc0" stroke-width="1"/>
+<rect x="963.73" y="274.50" width="126.35" height="126.35" rx="2" ry="2" fill="#eef5ff" stroke="#467cc0" stroke-width="1"/>
 <text x="1026.90" y="341.14" text-anchor="middle" font-family="Arial" font-size="10" fill="#101010">=</text>
 <rect x="1097.08" y="274.50" width="159.69" height="126.35" rx="2" ry="2" fill="#eef5ff" stroke="#467cc0" stroke-width="1"/>
 <text x="1176.92" y="341.14" text-anchor="middle" font-family="Arial" font-size="10" fill="#101010">BSPC</text>
