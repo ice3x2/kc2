@@ -12,13 +12,19 @@ from typing import Sequence
 import pcbnew
 
 from tools.canonical_hash import HASH_POLICY, sha256_file
-from tools.generate_kc2_pcbs import x3_v2_join_geometry_by_row
+from tools.generate_kc2_pcbs import (
+    X3_V2_CONTROLLER_SERVICE_POSITIONS_MM,
+    X3_V2_RESET_ROTATION_DEGREES,
+    X3_V2_TOP_EDGE_Y_MM,
+    x3_v2_join_geometry_by_row,
+)
 
 
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_FOOTPRINT = ROOT / "third_party" / "kc2.pretty" / "SW_Choc_V2_Socket_MX_THT.kicad_mod"
 DEFAULT_DIODE_FOOTPRINT = ROOT / "third_party" / "kc2.pretty" / "D_ES1B_SMA_HandSolder_C437840.kicad_mod"
 DEFAULT_MOUNT_FOOTPRINT = ROOT / "third_party" / "kc2.pretty" / "MH_M1.4_NPTH_1.60.kicad_mod"
+DEFAULT_RESET_FOOTPRINT = ROOT / "third_party" / "kc2.pretty" / "SW_NW3_A06_B3_SMD.kicad_mod"
 DEFAULT_CONTROLLER_FOOTPRINTS = {
     "left": ROOT / "third_party" / "kc2.pretty" / "NiceNanoV2_Socket_24Pin_USB_OUT_LEFT.kicad_mod",
     "right": ROOT / "third_party" / "kc2.pretty" / "NiceNanoV2_Socket_24Pin_USB_OUT_RIGHT.kicad_mod",
@@ -30,6 +36,9 @@ DEFAULT_BOARDS = (
 )
 DEFAULT_MANIFEST = V2_ROOT / "kc2_x3_v2_generation_manifest.json"
 DEFAULT_DRC_EVIDENCE = V2_ROOT / "kc2_x3_v2_drc_evidence.json"
+DEFAULT_HOUSING_MANIFEST = (
+    ROOT / "hardware" / "case" / "draft" / "x3-v2" / "kc2_x3_v2_housing_manifest.json"
+)
 EXPECTED_IGNORED_DRC_CHECKS = [
     "footprint_filters_mismatch",
     "footprint_type_mismatch",
@@ -395,6 +404,50 @@ def normalized_diode_graphics(
     return sorted(signatures, key=repr)
 
 
+def normalized_footprint_graphics(
+    footprint: pcbnew.FOOTPRINT,
+) -> list[tuple[object, ...]]:
+    """Return owned local graphic geometry without using shape GetLength()."""
+    normalized = pcbnew.FOOTPRINT(footprint)
+    normalized.SetPosition(pcbnew.VECTOR2I(0, 0))
+    normalized.SetOrientationDegrees(0)
+    signatures: list[tuple[object, ...]] = []
+    for item in normalized.GraphicalItems():
+        layer = pcbnew.LayerName(item.GetLayer())
+        if layer not in {"F.Fab", "F.Courtyard", "F.Silkscreen"}:
+            continue
+        if isinstance(item, pcbnew.PCB_SHAPE):
+            start = item.GetStart()
+            end = item.GetEnd()
+            signatures.append(
+                (
+                    "shape",
+                    layer,
+                    int(item.GetShape()),
+                    mm(start.x),
+                    mm(start.y),
+                    mm(end.x),
+                    mm(end.y),
+                    mm(item.GetWidth()),
+                )
+            )
+        elif isinstance(item, pcbnew.PCB_TEXT):
+            position = item.GetPosition()
+            signatures.append(
+                (
+                    "text",
+                    layer,
+                    item.GetText(),
+                    mm(position.x),
+                    mm(position.y),
+                    mm(item.GetTextSize().x),
+                    mm(item.GetTextSize().y),
+                    mm(item.GetTextThickness()),
+                )
+            )
+    return sorted(signatures, key=repr)
+
+
 def verify_placed_footprint_contracts(
     board: pcbnew.BOARD,
     switches: Sequence[pcbnew.FOOTPRINT],
@@ -443,6 +496,16 @@ def verify_placed_footprint_contracts(
             controller_errors.append(
                 "U1 pad labels/positions/sizes/drills/layers differ from the side-specific owned footprint"
             )
+        expected_position = X3_V2_CONTROLLER_SERVICE_POSITIONS_MM[side]["u1"]
+        controller_position = controller.GetPosition()
+        actual_position = (
+            round(pcbnew.ToMM(controller_position.x), 4),
+            round(pcbnew.ToMM(controller_position.y), 4),
+        )
+        if actual_position != expected_position:
+            controller_errors.append(
+                f"U1 position {actual_position} differs from exact V2 position {expected_position}"
+            )
     expected_usb_text = f"USB_OUT_{side.upper()}"
     usb_labels = [
         item
@@ -458,6 +521,29 @@ def verify_placed_footprint_contracts(
     if reset is None:
         reset_errors.append("SW_RST1 is missing")
     else:
+        reset_source = load_footprint(DEFAULT_RESET_FOOTPRINT)
+        if str(reset.GetFPID().GetLibItemName()) != "SW_NW3_A06_B3_SMD":
+            reset_errors.append("SW_RST1 must use the owned SW_NW3_A06_B3_SMD footprint")
+        if normalized_pad_signatures(reset) != normalized_pad_signatures(reset_source):
+            reset_errors.append("SW_RST1 pad geometry differs from the owned footprint")
+        if normalized_footprint_graphics(reset) != normalized_footprint_graphics(reset_source):
+            reset_errors.append("SW_RST1 Fab/courtyard/silkscreen geometry differs from the owned footprint")
+        expected_position = X3_V2_CONTROLLER_SERVICE_POSITIONS_MM[side]["reset"]
+        reset_position = reset.GetPosition()
+        actual_position = (
+            round(pcbnew.ToMM(reset_position.x), 4),
+            round(pcbnew.ToMM(reset_position.y), 4),
+        )
+        if actual_position != expected_position:
+            reset_errors.append(
+                f"SW_RST1 position {actual_position} differs from exact V2 position {expected_position}"
+            )
+        actual_rotation = round(reset.GetOrientation().AsDegrees() % 360.0, 3)
+        if actual_rotation != X3_V2_RESET_ROTATION_DEGREES:
+            reset_errors.append(
+                f"SW_RST1 rotation {actual_rotation} differs from exact V2 rotation "
+                f"{X3_V2_RESET_ROTATION_DEGREES}"
+            )
         reset_pads = {pad.GetNumber(): pad.GetNetname() for pad in reset.Pads()}
         expected_reset_net = "RST"
         if reset_pads != {"1": expected_reset_net, "2": "GND"}:
@@ -485,6 +571,12 @@ def expected_m1_4_mount_manifest() -> dict[str, object]:
             "unnetted": True,
             "copper_free": True,
         },
+        "front_silkscreen_reference": {
+            "visible": True,
+            "text_height_mm": 0.8,
+            "stroke_mm": 0.1,
+            "relative_position_mm": {"x": 0.0, "y": -1.5},
+        },
         "screw_head_envelope_mm": {"diameter": 2.0, "height": 0.5},
         "vertical_driver_envelope_mm": {"diameter": 3.0},
         "provisional_under_head_screw_length_mm": 4.0,
@@ -493,7 +585,7 @@ def expected_m1_4_mount_manifest() -> dict[str, object]:
             "zero_gap_support_land_diameter": 3.0,
             "provisional_blind_pilot_diameter": 1.1,
             "provisional_blind_pilot_depth": 2.8,
-            "desk_column_closed_bottom": 0.5,
+            "desk_column_closed_bottom": 0.7,
         },
         "registration_status": "pending_full_pattern_physical_fit",
         "physical_validation": "pending",
@@ -509,8 +601,10 @@ def verify_m1_4_mounting_holes(
     list[tuple[str, float, float]],
     dict[str, float | None],
     list[str],
+    list[str],
 ]:
     errors: list[str] = []
+    silkscreen_errors: list[str] = []
     holes = matrix_footprints(board, "MH")
     positions = [
         (
@@ -529,6 +623,22 @@ def verify_m1_4_mounting_holes(
     source = load_footprint(DEFAULT_MOUNT_FOOTPRINT)
     expected_pads = normalized_pad_signatures(source)
     for hole in holes:
+        reference = hole.Reference()
+        reference_position = reference.GetFPRelativePosition()
+        reference_signature = (
+            reference.IsVisible(),
+            reference.GetLayer(),
+            mm(reference.GetTextHeight()),
+            mm(reference.GetTextThickness()),
+            mm(reference_position.x),
+            mm(reference_position.y),
+        )
+        if reference_signature != (True, pcbnew.F_SilkS, 0.8, 0.1, 0.0, -1.5):
+            silkscreen_errors.append(
+                f"{hole.GetReference()}: visible F.SilkS reference must be "
+                "0.80 mm high / 0.10 mm stroke at relative (0.0,-1.5) mm; "
+                f"found {reference_signature}"
+            )
         if str(hole.GetFPID().GetLibItemName()) != "MH_M1.4_NPTH_1.60":
             errors.append(f"{hole.GetReference()}: unexpected mounting footprint")
         if str(hole.GetValue()) != "M1.4_NPTH_1.60":
@@ -689,7 +799,7 @@ def verify_m1_4_mounting_holes(
         "minimum_driver_to_copper_mm": round(minimum_driver_copper_clearance, 4),
         "minimum_driver_to_installed_body_mm": round(minimum_driver_clearance, 4),
         "minimum_head_to_edge_cuts_mm": round(minimum_head_edge_clearance, 4),
-    }, driver_copper_errors
+    }, driver_copper_errors, silkscreen_errors
 
 
 def project_default_clearance_mm(project_path: Path) -> float:
@@ -734,20 +844,24 @@ def verify_canonical_route_evidence(
         if not isinstance(record, dict):
             errors.append(f"{side}: canonical route evidence is missing")
             continue
-        expected_dsn = f"hardware/kicad/draft/x3-v2/autoroute/kc2_{side}-x3-v2-70-es1b-mh-r2.dsn"
-        expected_session_source_dsn = (
-            f"hardware/kicad/draft/x3-v2/autoroute/kc2_{side}-x3-v2-70-es1b-r1.dsn"
+        expected_dsn = (
+            f"hardware/kicad/draft/x3-v2/autoroute/"
+            f"kc2_{side}-x3-v2-70-es1b-controller-r3.dsn"
         )
-        expected_ses = f"hardware/kicad/draft/x3-v2/autoroute/kc2_{side}-x3-v2-70-es1b-r1.ses"
+        expected_session_source_dsn = expected_dsn
+        expected_ses = (
+            f"hardware/kicad/draft/x3-v2/autoroute/"
+            f"kc2_{side}-x3-v2-70-es1b-controller-r3.ses"
+        )
         if record.get("dsn") != expected_dsn:
             errors.append(f"{side}: canonical DSN path mismatch")
         if record.get("ses") != expected_ses:
             errors.append(f"{side}: canonical SES path mismatch")
         if record.get("session_source_dsn") != expected_session_source_dsn:
             errors.append(f"{side}: reviewed SES source DSN path mismatch")
-        if record.get("dsn_role") != "current_mh_trackless_routing_input":
+        if record.get("dsn_role") != "current_mh_compact_controller_trackless_routing_input":
             errors.append(f"{side}: current MH DSN role mismatch")
-        if record.get("ses_role") != "reviewed_pre_mh_r1_import_plus_exact_m1_4_driver_detours":
+        if record.get("ses_role") != "reviewed_compact_controller_import_plus_exact_edge_cleanup":
             errors.append(f"{side}: reviewed SES/detour role mismatch")
         try:
             dsn_path = ROOT / str(record.get("dsn"))
@@ -864,6 +978,7 @@ def analyze_v2_board(path: Path) -> dict[str, object]:
         mounting_hole_positions_mm,
         mounting_hole_clearances,
         mounting_hole_driver_copper_errors,
+        mounting_hole_silkscreen_errors,
     ) = verify_m1_4_mounting_holes(board, side)
     (
         diode_footprint_geometry_errors,
@@ -1277,6 +1392,7 @@ def analyze_v2_board(path: Path) -> dict[str, object]:
         "mounting_hole_errors": mounting_hole_errors,
         "mounting_hole_clearances": mounting_hole_clearances,
         "mounting_hole_driver_copper_errors": mounting_hole_driver_copper_errors,
+        "mounting_hole_silkscreen_errors": mounting_hole_silkscreen_errors,
         "route_track_via_count": sum(route_signatures.values()),
         "route_digest_sha256": _route_counter_digest(route_signatures),
         "registration_label_layers": registration_label_layers,
@@ -1492,6 +1608,7 @@ def verify_v2_release_candidate(
     board_paths: Sequence[Path] = DEFAULT_BOARDS,
     manifest_path: Path = DEFAULT_MANIFEST,
     drc_evidence_path: Path = DEFAULT_DRC_EVIDENCE,
+    housing_manifest_path: Path = DEFAULT_HOUSING_MANIFEST,
 ) -> dict[str, object]:
     from tools.verify_kc2_antenna_keepout import check_board as check_antenna_keepout
     from tools.verify_kc2_compact_controller import check_side as check_compact_controller
@@ -1500,6 +1617,7 @@ def verify_v2_release_candidate(
     errors = [f"footprint: {error}" for error in verify_v2_footprint(footprint_path)]
     manifest = analyze_v2_manifest(manifest_path)
     drc_evidence = analyze_v2_manifest(drc_evidence_path)
+    housing_manifest = analyze_v2_manifest(housing_manifest_path)
     if drc_evidence.get("requirement_ids") != ["CON-ARCH-004", "CON-ARCH-006"]:
         errors.append("DRC evidence: requirement IDs are missing or stale")
     if drc_evidence.get("variant") != "x3-v2":
@@ -1549,6 +1667,18 @@ def verify_v2_release_candidate(
         errors.append("manifest: V2 autoroute edge-clearance boundary policy is missing")
     if manifest.get("pcb_fastener_holes") != expected_m1_4_mount_manifest():
         errors.append("manifest: exact selected M1.4 MH pattern and service envelope are missing or stale")
+    pcb_closed_bottom = (
+        (manifest.get("pcb_fastener_holes") or {})
+        .get("housing_interface_mm", {})
+        .get("desk_column_closed_bottom")
+    )
+    housing_closed_bottom = (housing_manifest.get("parameters") or {}).get(
+        "mounting_closed_bottom_mm"
+    )
+    if pcb_closed_bottom != housing_closed_bottom:
+        errors.append("manifest: PCB/housing mounting closed-bottom contract mismatch")
+    if manifest.get("x3_tact_battery_clearance_mm") is not None:
+        errors.append("manifest: legacy X3 tact-to-battery scalar is forbidden for V2")
     if manifest.get("screwless_registration_holes") is not None:
         errors.append("manifest: legacy H1-H9 registration holes are forbidden on V2")
     if manifest.get("controller_socket_geometry_mm") != {
@@ -1611,6 +1741,9 @@ def verify_v2_release_candidate(
             "registration hole safety": not report["registration_hole_errors"],
             "no legacy H-series mounting holes": not report["legacy_mount_hole_refs"],
             "exact copper-free M1.4 MH pattern": not report["mounting_hole_errors"],
+            "visible numbered M1.4 MH front silkscreen": not report[
+                "mounting_hole_silkscreen_errors"
+            ],
             "M1.4 driver-to-copper clearance": not report[
                 "mounting_hole_driver_copper_errors"
             ],
@@ -1682,12 +1815,14 @@ def main() -> None:
     parser.add_argument("--boards", type=Path, nargs="*", default=DEFAULT_BOARDS)
     parser.add_argument("--manifest", type=Path, default=DEFAULT_MANIFEST)
     parser.add_argument("--drc-evidence", type=Path, default=DEFAULT_DRC_EVIDENCE)
+    parser.add_argument("--housing-manifest", type=Path, default=DEFAULT_HOUSING_MANIFEST)
     args = parser.parse_args()
     report = verify_v2_release_candidate(
         args.footprint,
         args.boards,
         args.manifest,
         args.drc_evidence,
+        args.housing_manifest,
     )
     errors = report["errors"]
     if errors:

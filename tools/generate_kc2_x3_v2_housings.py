@@ -50,6 +50,7 @@ COMPONENT_MINIMUM_CLEARANCE_MM = 0.30
 COMPONENT_CUTOUT_CLEARANCE_MM = 0.35
 COMPONENT_CUTOUT_SIMPLIFY_MM = 0.02
 MIN_DIODE_HOUSING_PERIMETER_LAND_MM = 0.85
+MIN_BATTERY_HOUSING_PERIMETER_LAND_MM = 0.85
 CHOC_SOCKET_OFFICIAL_BODY_DEPTH_MAX_MM = 2.30
 CHOC_SOCKET_ASSEMBLY_ALLOWANCE_MM = 0.10
 DIODE_MANUFACTURER = "Jingdao Microelectronics"
@@ -65,6 +66,15 @@ DIODE_OFFICIAL_SOURCE = (
 )
 TRACK_CLEARANCE_MM = 0.15
 BATTERY_ACCESS_CLEARANCE_MM = 0.70
+BATTERY_REFERENCE = "TW301525"
+BATTERY_BOARD_LABEL = "TW301525 80mAh"
+BATTERY_NOMINAL_PLAN_ENVELOPE_MM = (15.00, 25.00)
+BATTERY_MODELED_DEPTH_MM = 3.00
+BATTERY_LABEL_TO_CENTER_X_MM = 7.00
+RESET_REFERENCE = "SW_RST1"
+RESET_BODY_ENVELOPE_MM = (6.10, 3.70)
+RESET_ACTUATOR_ENVELOPE_MM = (2.70, 1.30)
+RESET_LOCAL_SUPPORT_DIAMETER_MM = 3.00
 MAX_LOAD_POINT_TO_SUPPORT_MM = 24.0
 PRINT_VOLUME_LIMIT_MM = 150.0
 RIGHT_SPLIT_CLEARANCE_MM = 0.20
@@ -73,7 +83,7 @@ PUZZLE_NECK_WIDTH_MM = 2.00
 PUZZLE_HEAD_DIAMETER_MM = 4.50
 PUZZLE_NECK_LENGTH_MM = 3.00
 PUZZLE_MIN_CAPTURE_PER_SIDE_MM = 1.00
-DESK_STANDOFF_NOMINAL_MM = 0.80
+DESK_STANDOFF_NOMINAL_MM = 1.00
 DESK_STANDOFF_PRINT_TOLERANCE_MM = 0.30
 DESK_DATUM_Z_MM = EXTERIOR_BOTTOM_Z_MM - DESK_STANDOFF_NOMINAL_MM
 DESK_CONTACT_DIAMETER_MM = POST_DIAMETER_MM
@@ -178,13 +188,66 @@ def extract_board(pcbnew: Any, path: Path) -> dict[str, Any]:
         "diode_body_pads_fillets": [],
         "bottom_copper_tracks": [],
         "vias": [],
-        "controller_reset": [],
+        "controller_socket": [],
+        "reset_topside": [],
+        "battery_body": [],
         "battery_slot": [],
     }
     switches: list[dict[str, Any]] = []
     mounting_holes: list[dict[str, Any]] = []
     routed_copper_exact: list[dict[str, Any]] = []
     legacy_refs: list[str] = []
+    reset_topside: dict[str, Any] | None = None
+
+    battery_labels = [
+        item
+        for item in board.GetDrawings()
+        if isinstance(item, pcbnew.PCB_TEXT)
+        and item.GetLayer() == pcbnew.B_Fab
+        and item.GetText() == BATTERY_BOARD_LABEL
+    ]
+    if len(battery_labels) != 1:
+        raise RuntimeError(
+            f"{path.name}: expected one exact {BATTERY_BOARD_LABEL!r} B.Fab battery label, "
+            f"found {len(battery_labels)}"
+        )
+    label_x, label_y = _point(pcbnew, battery_labels[0].GetPosition())
+    battery_center = [label_x + BATTERY_LABEL_TO_CENTER_X_MM, label_y]
+    battery_bounds = [
+        battery_center[0] - BATTERY_NOMINAL_PLAN_ENVELOPE_MM[0] / 2.0,
+        battery_center[1] - BATTERY_NOMINAL_PLAN_ENVELOPE_MM[1] / 2.0,
+        battery_center[0] + BATTERY_NOMINAL_PLAN_ENVELOPE_MM[0] / 2.0,
+        battery_center[1] + BATTERY_NOMINAL_PLAN_ENVELOPE_MM[1] / 2.0,
+    ]
+    expected_battery_edges = {
+        tuple(sorted((tuple(battery_bounds[0:2]), (battery_bounds[2], battery_bounds[1])))),
+        tuple(sorted(((battery_bounds[0], battery_bounds[3]), tuple(battery_bounds[0:2])))),
+        tuple(sorted(((battery_bounds[2], battery_bounds[1]), tuple(battery_bounds[2:4])))),
+        tuple(sorted((tuple(battery_bounds[2:4]), (battery_bounds[0], battery_bounds[3])))),
+    }
+    actual_battery_edges = set()
+    for item in board.GetDrawings():
+        if item.GetLayer() != pcbnew.B_Fab or not hasattr(item, "GetStart"):
+            continue
+        start = tuple(round(value, 6) for value in _point(pcbnew, item.GetStart()))
+        end = tuple(round(value, 6) for value in _point(pcbnew, item.GetEnd()))
+        signature = tuple(sorted((start, end)))
+        if signature in expected_battery_edges:
+            actual_battery_edges.add(signature)
+    if actual_battery_edges != expected_battery_edges:
+        raise RuntimeError(
+            f"{path.name}: exact {BATTERY_REFERENCE} 15 x 25 mm B.Fab rectangle is missing "
+            f"or malformed ({len(actual_battery_edges)}/4 edges)"
+        )
+    classes["battery_body"].append(
+        {
+            "kind": "box",
+            "bounds": battery_bounds,
+            "ref": BATTERY_REFERENCE,
+            "board_feature": f"B.Fab:{BATTERY_BOARD_LABEL}",
+            "center": battery_center,
+        }
+    )
 
     for footprint in board.GetFootprints():
         ref = footprint.GetReference()
@@ -328,16 +391,18 @@ def extract_board(pcbnew: Any, path: Path) -> dict[str, Any]:
                 )
             continue
 
-        # nice!nano socket pads and body include the controller and reset/service
-        # geometry. Keep every such feature away from a rail or support contact.
-        if ref == "U1" or "RESET" in ref.upper():
+        # The nice!nano socket has underside PTH/service geometry and therefore
+        # receives an exterior-open cutout.  The top-side SMD reset is modeled
+        # separately below so it receives local backing instead of a false
+        # bottom-component opening.
+        if ref == "U1":
             for item in graphics:
                 if item.GetLayer() in (pcbnew.B_Fab, pcbnew.B_SilkS, pcbnew.F_Fab, pcbnew.F_SilkS):
-                    classes["controller_reset"].append(
+                    classes["controller_socket"].append(
                         {"kind": "box", "bounds": _box(pcbnew, item), "ref": ref}
                     )
             for pad in pads:
-                classes["controller_reset"].append(
+                classes["controller_socket"].append(
                     {
                         "kind": "box",
                         "bounds": _box(pcbnew, pad),
@@ -345,6 +410,63 @@ def extract_board(pcbnew: Any, path: Path) -> dict[str, Any]:
                         "ref": ref,
                     }
                 )
+            continue
+
+        if ref == RESET_REFERENCE:
+            center = _point(pcbnew, footprint.GetPosition())
+            angle = float(footprint.GetOrientationDegrees())
+            pad_layers = {
+                pad.GetNumber(): {
+                    "front_copper": bool(pad.IsOnLayer(pcbnew.F_Cu)),
+                    "bottom_copper": bool(pad.IsOnLayer(pcbnew.B_Cu)),
+                    "net": pad.GetNetname(),
+                }
+                for pad in pads
+            }
+            reset_topside = {
+                "ref": ref,
+                "center": center,
+                "angle_deg": angle,
+                "footprint_side": "top",
+                "body_size_mm": list(RESET_BODY_ENVELOPE_MM),
+                # The footprint is portrait at 90 degrees, so record the
+                # assembled board-axis projection explicitly.
+                "actuator_projection_size_mm": [
+                    RESET_ACTUATOR_ENVELOPE_MM[1],
+                    RESET_ACTUATOR_ENVELOPE_MM[0],
+                ],
+                "pad_layers": pad_layers,
+                "bottom_exposed_pad_count": sum(
+                    1 for item in pad_layers.values() if item["bottom_copper"]
+                ),
+            }
+            classes["reset_topside"].append(
+                {
+                    "kind": "oriented_box",
+                    "center": center,
+                    "size_x_mm": RESET_BODY_ENVELOPE_MM[0],
+                    "size_y_mm": RESET_BODY_ENVELOPE_MM[1],
+                    "angle_deg": angle,
+                    "ref": ref,
+                    "role": "body",
+                }
+            )
+            classes["reset_topside"].append(
+                {
+                    "kind": "oriented_box",
+                    "center": center,
+                    "size_x_mm": RESET_ACTUATOR_ENVELOPE_MM[0],
+                    "size_y_mm": RESET_ACTUATOR_ENVELOPE_MM[1],
+                    "angle_deg": angle,
+                    "ref": ref,
+                    "role": "actuator_projection",
+                }
+            )
+            for pad in pads:
+                classes["reset_topside"].append(
+                    {"kind": "box", "bounds": _box(pcbnew, pad), "ref": ref, "role": "top_pad"}
+                )
+            continue
 
     for track in board.GetTracks():
         if track.GetClass() == "PCB_VIA":
@@ -374,6 +496,9 @@ def extract_board(pcbnew: Any, path: Path) -> dict[str, Any]:
             }
         )
 
+    if reset_topside is None:
+        raise RuntimeError(f"{path.name}: exact {RESET_REFERENCE} footprint is missing")
+
     return {
         "path": str(path.relative_to(ROOT)).replace("\\", "/"),
         "edge_segments": edge_segments,
@@ -383,6 +508,14 @@ def extract_board(pcbnew: Any, path: Path) -> dict[str, Any]:
             key=lambda item: int(item["ref"][2:]),
         ),
         "routed_copper_exact": routed_copper_exact,
+        "reset_topside": reset_topside,
+        "battery_body": {
+            "ref": BATTERY_REFERENCE,
+            "board_feature": f"B.Fab:{BATTERY_BOARD_LABEL}",
+            "center": battery_center,
+            "bounds": battery_bounds,
+            "size_mm": list(BATTERY_NOMINAL_PLAN_ENVELOPE_MM),
+        },
         "legacy_registration_refs": sorted(legacy_refs),
         "feature_classes": classes,
     }
@@ -543,7 +676,8 @@ def build_plan_geometry(shp: dict[str, Any], side: str, board_data: dict[str, An
         "switch_mechanical_pins": ("switch_mechanical_pins",),
         "mx_pins_pads_fillets": ("mx_pins_pads_fillets",),
         "diode_body_pads_fillets": ("diode_body_pads_fillets",),
-        "controller_reset": ("controller_reset",),
+        "controller_socket": ("controller_socket",),
+        "battery_body": ("battery_body",),
         "battery_slot": ("battery_slot",),
     }
     component_geometries: dict[str, Any] = {}
@@ -664,6 +798,80 @@ def build_plan_geometry(shp: dict[str, Any], side: str, board_data: dict[str, An
     if not support_surface.covers(mounting_land_geometry):
         raise RuntimeError(f"{side}: an MH support land leaves the structural support surface")
 
+    reset_board = board_data["reset_topside"]
+    reset_x, reset_y = _reflect_xy(bounds, *reset_board["center"])
+    reset_actuator_geometry = shp["box"](
+        reset_x - RESET_ACTUATOR_ENVELOPE_MM[0] / 2.0,
+        reset_y - RESET_ACTUATOR_ENVELOPE_MM[1] / 2.0,
+        reset_x + RESET_ACTUATOR_ENVELOPE_MM[0] / 2.0,
+        reset_y + RESET_ACTUATOR_ENVELOPE_MM[1] / 2.0,
+    )
+    reset_angle = -float(reset_board["angle_deg"])
+    if abs(reset_angle) > 1e-9:
+        reset_actuator_geometry = shp["affinity"].rotate(
+            reset_actuator_geometry,
+            reset_angle,
+            origin=(reset_x, reset_y),
+        )
+    reset_local_support_geometry = shp["Point"](reset_x, reset_y).buffer(
+        RESET_LOCAL_SUPPORT_DIAMETER_MM / 2.0,
+        quad_segs=64,
+    )
+    if not reset_local_support_geometry.covers(reset_actuator_geometry):
+        raise RuntimeError(f"{side}: reset support does not cover the actuator projection")
+    if not support_surface.covers(reset_local_support_geometry):
+        raise RuntimeError(f"{side}: reset local support leaves the structural support surface")
+    reset_via_collision_count = sum(
+        int(
+            reset_local_support_geometry.intersects(
+                _feature_geometry(shp, feature, bounds)
+            )
+        )
+        for feature in board_data["feature_classes"]["vias"]
+    )
+    reset_bottom_route_overlap_count = sum(
+        int(
+            feature.get("layer") == "B.Cu"
+            and reset_local_support_geometry.intersects(
+                _feature_geometry(shp, feature, bounds)
+            )
+        )
+        for feature in board_data.get("routed_copper_exact", [])
+    )
+    reset_component_cutout_collision_count = int(
+        reset_local_support_geometry.intersects(all_component_cutouts)
+    )
+    reset_electrically_safe = bool(
+        int(reset_board["bottom_exposed_pad_count"]) == 0
+        and reset_via_collision_count == 0
+        and reset_component_cutout_collision_count == 0
+    )
+    if not reset_electrically_safe:
+        raise RuntimeError(f"{side}: reset local support is not electrically safe")
+    reset_local_support = {
+        "ref": RESET_REFERENCE,
+        "board_center_mm": [round(float(value), 4) for value in reset_board["center"]],
+        "housing_center_mm": [round(reset_x, 4), round(reset_y, 4)],
+        "footprint_side": "top",
+        "actuator_projection_size_mm": list(reset_board["actuator_projection_size_mm"]),
+        "support_diameter_mm": RESET_LOCAL_SUPPORT_DIAMETER_MM,
+        "support_top_z_mm": PCB_BOTTOM_Z_MM,
+        "support_vertical_gap_mm": 0.0,
+        "desk_column_bottom_z_mm": DESK_DATUM_Z_MM,
+        "actuator_projection_covered": True,
+        "support_surface_covered": True,
+        "component_cutout_collision_count": reset_component_cutout_collision_count,
+        "bottom_exposed_pad_collision_count": int(reset_board["bottom_exposed_pad_count"]),
+        "via_collision_count": reset_via_collision_count,
+        "bottom_routed_copper_overlap_count": reset_bottom_route_overlap_count,
+        "bottom_routed_copper_solder_mask_protected": True,
+        "electrically_safe": reset_electrically_safe,
+        "electrical_safety_basis": (
+            "SW_RST1 pads are F.Cu-only; no via or exterior-open cutout intersects the "
+            "support, and any B.Cu route overlap remains inside the PCB stack under solder mask."
+        ),
+    }
+
     distributed_desk_contacts = [
         {
             "id": post["id"].replace("-SUP-", "-FOOT-"),
@@ -692,7 +900,20 @@ def build_plan_geometry(shp: dict[str, Any], side: str, board_data: dict[str, An
         }
         for item in mounting_holes
     ]
-    desk_contacts = distributed_desk_contacts + mounting_desk_contacts
+    reset_desk_contacts = [
+        {
+            "id": f"{side.upper()}-RESET-COLUMN",
+            "source_support_id": RESET_REFERENCE,
+            "category": "reset",
+            "x_mm": round(reset_x, 4),
+            "y_mm": round(reset_y, 4),
+            "diameter_mm": RESET_LOCAL_SUPPORT_DIAMETER_MM,
+            "top_z_mm": EXTERIOR_BOTTOM_Z_MM,
+            "bottom_z_mm": DESK_DATUM_Z_MM,
+            "height_mm": DESK_STANDOFF_NOMINAL_MM,
+        }
+    ]
+    desk_contacts = distributed_desk_contacts + mounting_desk_contacts + reset_desk_contacts
     desk_contact_geometry = shp["unary_union"](
         [
             shp["Point"](contact["x_mm"], contact["y_mm"]).buffer(
@@ -724,8 +945,12 @@ def build_plan_geometry(shp: dict[str, Any], side: str, board_data: dict[str, An
         "mounting_land_geometry": mounting_land_geometry,
         "mounting_pilot_geometry": mounting_pilot_geometry,
         "mounting_driver_geometry": mounting_driver_geometry,
+        "reset_actuator_geometry": reset_actuator_geometry,
+        "reset_local_support_geometry": reset_local_support_geometry,
+        "reset_local_support": reset_local_support,
         "distributed_desk_contacts": distributed_desk_contacts,
         "mounting_desk_contacts": mounting_desk_contacts,
+        "reset_desk_contacts": reset_desk_contacts,
         "desk_contacts": desk_contacts,
         "desk_contact_geometry": desk_contact_geometry,
     }
@@ -1126,11 +1351,17 @@ def build_right_split_plan(shp: dict[str, Any], plan: dict[str, Any]) -> dict[st
         _support_plan_union(shp, plan["support_posts"])
         .union(plan["rail"])
         .union(plan["mounting_land_geometry"])
+        .union(plan["reset_local_support_geometry"])
     )
     component_cutouts = plan["all_component_cutouts"]
     capture_points: list[dict[str, float]] = []
     keys: list[Any] = []
-    for target_offset in (78.0, 91.0):
+    # Preserve the proven absolute board-Y capture locations when the compact
+    # controller crop changes the board-local minimum Y.  Offsets from the
+    # housing top would silently move the joint relative to the fixed key/MH
+    # datum after CON-ARCH-006 AC-11.
+    for target_board_y in (113.10, 125.60):
+        target_y = target_board_y - float(plan["raw_bounds"][1])
         found = False
         for y_offset in (
             0.0,
@@ -1151,7 +1382,7 @@ def build_right_split_plan(shp: dict[str, Any], plan: dict[str, Any]) -> dict[st
             5.0,
             -5.0,
         ):
-            y = min_y + target_offset + y_offset
+            y = target_y + y_offset
             key = _puzzle_key_geometry(shp, split_x, y)
             slot = key.buffer(RIGHT_SPLIT_CLEARANCE_MM, join_style="round", quad_segs=20)
             if not plan["housing_outline"].covers(slot):
@@ -1170,7 +1401,9 @@ def build_right_split_plan(shp: dict[str, Any], plan: dict[str, Any]) -> dict[st
             found = True
             break
         if not found:
-            raise RuntimeError(f"right: could not place keyed puzzle feature near Y={min_y + target_offset}")
+            raise RuntimeError(
+                f"right: could not place keyed puzzle feature near board Y={target_board_y}"
+            )
     if len(keys) != PUZZLE_CAPTURE_FEATURE_COUNT:
         raise RuntimeError(f"right: expected {PUZZLE_CAPTURE_FEATURE_COUNT} puzzle keys, got {len(keys)}")
 
@@ -1368,10 +1601,22 @@ def component_cutout_manifest(plan: dict[str, Any]) -> dict[str, Any]:
             ),
             "official_source": DIODE_OFFICIAL_SOURCE,
         },
-        "controller_reset": {
+        "controller_socket": {
             "official_body_depth_max_mm": None,
             "assembly_allowance_mm": None,
             "modeled_max_depth_mm": None,
+        },
+        "battery_body": {
+            "reference": BATTERY_REFERENCE,
+            "board_feature": f"B.Fab:{BATTERY_BOARD_LABEL}",
+            "nominal_plan_envelope_mm": list(BATTERY_NOMINAL_PLAN_ENVELOPE_MM),
+            "modeled_max_depth_mm": BATTERY_MODELED_DEPTH_MM,
+            "cutout_allowance_mm": COMPONENT_CUTOUT_CLEARANCE_MM,
+            "physical_tolerance_status": "pending",
+            "physical_gate": (
+                "Maximum thickness/swelling, adhesive retention, lead bend, strain relief, "
+                "abrasion protection, and actual placement tolerance remain pending."
+            ),
         },
         "battery_slot": {
             "official_body_depth_max_mm": None,
@@ -1395,10 +1640,10 @@ def component_cutout_manifest(plan: dict[str, Any]) -> dict[str, Any]:
             if nominal_desk_clearance is None
             else nominal_desk_clearance - DESK_STANDOFF_PRINT_TOLERANCE_MM
         )
-        diode_perimeter_fields: dict[str, Any] = {}
-        if name == "diode_body_pads_fillets":
+        perimeter_fields: dict[str, Any] = {}
+        if name in {"diode_body_pads_fillets", "battery_body"}:
             breaks_perimeter = not plan["housing_outline"].covers(geometry)
-            diode_perimeter_fields = {
+            perimeter_fields = {
                 "breaks_lateral_housing_perimeter": breaks_perimeter,
                 "minimum_housing_perimeter_land_mm": round(
                     0.0 if breaks_perimeter else float(geometry.distance(plan["housing_outline"].boundary)),
@@ -1424,7 +1669,7 @@ def component_cutout_manifest(plan: dict[str, Any]) -> dict[str, Any]:
             "minimum_desk_clearance_mm": (
                 None if minimum_desk_clearance is None else round(minimum_desk_clearance, 2)
             ),
-            **diode_perimeter_fields,
+            **perimeter_fields,
             **modeled_depths[name],
         }
     return result
@@ -1459,6 +1704,15 @@ def generate_outputs(output_dir: Path, kicad_python: Path) -> Path:
             "component_cutout_clearance_mm": COMPONENT_CUTOUT_CLEARANCE_MM,
             "component_cutout_simplify_mm": COMPONENT_CUTOUT_SIMPLIFY_MM,
             "minimum_diode_housing_perimeter_land_mm": MIN_DIODE_HOUSING_PERIMETER_LAND_MM,
+            "minimum_battery_housing_perimeter_land_mm": MIN_BATTERY_HOUSING_PERIMETER_LAND_MM,
+            "battery_reference": BATTERY_REFERENCE,
+            "battery_board_label": BATTERY_BOARD_LABEL,
+            "battery_nominal_plan_envelope_mm": list(
+                BATTERY_NOMINAL_PLAN_ENVELOPE_MM
+            ),
+            "battery_modeled_depth_mm": BATTERY_MODELED_DEPTH_MM,
+            "reset_reference": RESET_REFERENCE,
+            "reset_local_support_diameter_mm": RESET_LOCAL_SUPPORT_DIAMETER_MM,
             "maximum_load_point_to_support_mm": MAX_LOAD_POINT_TO_SUPPORT_MM,
             "print_volume_limit_mm": PRINT_VOLUME_LIMIT_MM,
             "desk_standoff_nominal_mm": DESK_STANDOFF_NOMINAL_MM,
@@ -1595,23 +1849,39 @@ def generate_outputs(output_dir: Path, kicad_python: Path) -> Path:
                     for depth in (
                         CHOC_SOCKET_OFFICIAL_BODY_DEPTH_MAX_MM + CHOC_SOCKET_ASSEMBLY_ALLOWANCE_MM,
                         DIODE_OFFICIAL_BODY_DEPTH_MAX_MM + DIODE_SOLDER_FILLET_DEPTH_ALLOWANCE_MM,
+                        BATTERY_MODELED_DEPTH_MM,
                     )
                 ),
                 2,
             ),
             "minimum_open_component_to_desk_clearance_mm": round(
                 min(
+                    min(
+                        HOUSING_HEIGHT_MM
+                        - float(depth)
+                        + DESK_STANDOFF_NOMINAL_MM
+                        - DESK_STANDOFF_PRINT_TOLERANCE_MM
+                        for depth in (
+                            CHOC_SOCKET_OFFICIAL_BODY_DEPTH_MAX_MM
+                            + CHOC_SOCKET_ASSEMBLY_ALLOWANCE_MM,
+                            DIODE_OFFICIAL_BODY_DEPTH_MAX_MM
+                            + DIODE_SOLDER_FILLET_DEPTH_ALLOWANCE_MM,
+                        )
+                    ),
+                    # AC-11 deliberately treats the 3.00 mm battery as a
+                    # nominal digital envelope; its swelling/placement/print
+                    # stack remains a named physical gate.
                     HOUSING_HEIGHT_MM
-                    - float(depth)
-                    + DESK_STANDOFF_NOMINAL_MM
-                    - DESK_STANDOFF_PRINT_TOLERANCE_MM
-                    for depth in (
-                        CHOC_SOCKET_OFFICIAL_BODY_DEPTH_MAX_MM + CHOC_SOCKET_ASSEMBLY_ALLOWANCE_MM,
-                        DIODE_OFFICIAL_BODY_DEPTH_MAX_MM + DIODE_SOLDER_FILLET_DEPTH_ALLOWANCE_MM,
-                    )
+                    - BATTERY_MODELED_DEPTH_MM
+                    + DESK_STANDOFF_NOMINAL_MM,
                 ),
                 2,
             ),
+            "minimum_open_component_to_desk_clearance_basis": (
+                "minimum of controlled bottom-component post-print clearance and the "
+                "AC-11 nominal 3.00 mm battery-to-desk clearance; battery tolerance is pending"
+            ),
+            "reset_local_support": plan["reset_local_support"],
             "desk_contacts": plan["desk_contacts"],
             "desk_contacts_hidden_in_top_view": plan["housing_outline"].covers(
                 plan["desk_contact_geometry"]

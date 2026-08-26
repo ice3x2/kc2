@@ -25,9 +25,9 @@ DRAFT_ROOT = KICAD_ROOT / "draft"
 
 def canonical_x3_v2_route_record(side: str, final_count: int, route_digest: str) -> dict[str, object]:
     base = Path("hardware/kicad/draft/x3-v2/autoroute")
-    dsn_relative = base / f"kc2_{side}-x3-v2-70-es1b-mh-r2.dsn"
-    session_source_dsn_relative = base / f"kc2_{side}-x3-v2-70-es1b-r1.dsn"
-    ses_relative = base / f"kc2_{side}-x3-v2-70-es1b-r1.ses"
+    dsn_relative = base / f"kc2_{side}-x3-v2-70-es1b-controller-r3.dsn"
+    session_source_dsn_relative = dsn_relative
+    ses_relative = base / f"kc2_{side}-x3-v2-70-es1b-controller-r3.ses"
     dsn_path = ROOT / dsn_relative
     session_source_dsn_path = ROOT / session_source_dsn_relative
     ses_path = ROOT / ses_relative
@@ -51,12 +51,12 @@ def canonical_x3_v2_route_record(side: str, final_count: int, route_digest: str)
     }
     return {
         "dsn": dsn_relative.as_posix(),
-        "dsn_role": "current_mh_trackless_routing_input",
+        "dsn_role": "current_mh_compact_controller_trackless_routing_input",
         "dsn_mounting_hole_count": len(re.findall(r"\(place\s+MH\d+\b", dsn_text)),
         "session_source_dsn": session_source_dsn_relative.as_posix(),
         "session_source_dsn_sha256": sha256_file(session_source_dsn_path),
         "ses": ses_relative.as_posix(),
-        "ses_role": "reviewed_pre_mh_r1_import_plus_exact_m1_4_driver_detours",
+        "ses_role": "reviewed_compact_controller_import_plus_exact_edge_cleanup",
         "dsn_sha256": sha256_file(dsn_path),
         "ses_sha256": sha256_file(ses_path),
         "dsn_default_clearance_internal_units": min(default_clearances.values()),
@@ -148,13 +148,36 @@ X3_V2_TOP_OTHER_DIODE_ROTATION = 270.0
 X3_V2_BOTTOM_FIRST_DIODE_OFFSET = (9.5, 3.25)
 X3_V2_MIN_DIODE_EDGE_CLEARANCE = 1.30
 X3_V2_OUTLINE_POLICY = "keycap_concealed_except_controller_service"
+X3_V2_TOP_EDGE_Y_MM = 39.25
+X3_V2_BOARD_DATUM_DY_MM = 68.0
+X3_V2_CONTROLLER_Y_MM = 50.75
+X3_V2_RESET_Y_MM = 63.45
+X3_V2_RESET_ROTATION_DEGREES = 90.0
+X3_V2_BATTERY_Y_MM = 53.05
+X3_V2_CONTROLLER_SERVICE_POSITIONS_MM = {
+    "left": {
+        "u1": (132.7125, X3_V2_CONTROLLER_Y_MM),
+        "battery_slot": (117.9125, X3_V2_CONTROLLER_Y_MM),
+        "battery": (133.2125, X3_V2_BATTERY_Y_MM),
+        "reset": (115.8125, X3_V2_RESET_Y_MM),
+    },
+    "right": {
+        "u1": (77.4000, X3_V2_CONTROLLER_Y_MM),
+        "battery_slot": (92.2000, X3_V2_CONTROLLER_Y_MM),
+        "battery": (76.9000, X3_V2_BATTERY_Y_MM),
+        "reset": (94.3000, X3_V2_RESET_Y_MM),
+    },
+}
 X3_V2_MOUNT_HOLE_DIAMETER_MM = 1.60
 X3_V2_MOUNT_HEAD_ENVELOPE_MM = (2.00, 0.50)
 X3_V2_MOUNT_DRIVER_DIAMETER_MM = 3.00
 X3_V2_MOUNT_SUPPORT_LAND_DIAMETER_MM = 3.00
 X3_V2_MOUNT_PILOT_ENVELOPE_MM = (1.10, 2.80)
 X3_V2_MOUNT_UNDER_HEAD_LENGTH_MM = 4.00
-X3_V2_MOUNT_CLOSED_BOTTOM_MM = 0.50
+X3_V2_MOUNT_CLOSED_BOTTOM_MM = 0.70
+X3_V2_MOUNT_REFERENCE_TEXT_SIZE_MM = 0.80
+X3_V2_MOUNT_REFERENCE_STROKE_MM = 0.10
+X3_V2_MOUNT_REFERENCE_OFFSET_MM = (0.0, -1.50)
 X3_V2_MOUNTING_POINTS = {
     "left": [
         (142.6125, 68.0000),
@@ -872,7 +895,11 @@ def raw_outline(
     tab_left_span, tab_right_span = controller_tab_spans(side, variant)
     tab_left = ctrl_cx - tab_left_span
     tab_right = ctrl_cx + tab_right_span
-    tab_top = CONTROLLER_CENTER_Y - CONTROLLER_TAB_H / 2.0
+    tab_top = (
+        X3_V2_TOP_EDGE_Y_MM - X3_V2_BOARD_DATUM_DY_MM
+        if variant == "x3-v2"
+        else CONTROLLER_CENTER_Y - CONTROLLER_TAB_H / 2.0
+    )
 
     r0 = rows[0]
     top_start = min(lefts[r0], tab_left)
@@ -1040,10 +1067,16 @@ def make_project_file(project_dir: Path, name: str, variant: str = "soldered") -
                 },
                 "rule_severities": {
                     "courtyards_overlap": "warning",
-                    "npth_inside_courtyard": "ignore",
-                    "pth_inside_courtyard": "ignore",
                     "silk_over_copper": "warning",
                     "silk_edge_clearance": "warning",
+                    **(
+                        {}
+                        if variant == "x3-v2"
+                        else {
+                            "npth_inside_courtyard": "ignore",
+                            "pth_inside_courtyard": "ignore",
+                        }
+                    ),
                 },
                 "rules": {
                     "min_clearance": 0.20,
@@ -1224,14 +1257,30 @@ def create_controller(
     )
     usb_x = cx - direction * CONTROLLER_LEN / 2.0
     ant_x = cx + direction * CONTROLLER_LEN / 2.0
-    add_board_text(board, "USB_OUT_LEFT" if direction == 1 else "USB_OUT_RIGHT", usb_x, cy - 10.5, pcbnew.F_SilkS, 1.0)
+    if variant == "x3-v2":
+        # The shortened top edge has no room for the former horizontal labels.
+        # Keep the exact USB direction visible in the clear outer service lane.
+        add_board_text(
+            board,
+            "USB_OUT_LEFT" if direction == 1 else "USB_OUT_RIGHT",
+            usb_x - direction * 3.2,
+            cy,
+            pcbnew.F_SilkS,
+            0.8,
+            0.10,
+            90.0,
+        )
+    else:
+        add_board_text(board, "USB_OUT_LEFT" if direction == 1 else "USB_OUT_RIGHT", usb_x, cy - 10.5, pcbnew.F_SilkS, 1.0)
     add_board_text(
         board,
         "ANTENNA_INWARD",
-        ant_x,
-        cy - 10.5,
+        ant_x - direction * 1.2 if variant == "x3-v2" else ant_x,
+        cy if variant == "x3-v2" else cy - 10.5,
         pcbnew.F_Fab if variant == "x3-v2" else pcbnew.F_SilkS,
-        1.0,
+        0.6 if variant == "x3-v2" else 1.0,
+        0.10 if variant == "x3-v2" else 0.15,
+        90.0 if variant == "x3-v2" else 0.0,
     )
 
     keepout_start = cx + direction * ANTENNA_KEEP_START_FROM_CENTER
@@ -1239,7 +1288,16 @@ def create_controller(
     keepout_x2 = keepout_start + direction * ANTENNA_KEEP_LENGTH
     keepout = (min(keepout_x1, keepout_x2), cy - CONTROLLER_W / 2.0, max(keepout_x1, keepout_x2), cy + CONTROLLER_W / 2.0)
     add_rect_lines(board, *keepout, pcbnew.Dwgs_User, width=0.12)
-    add_board_text(board, "ANT KEEPOUT", (keepout[0] + keepout[2]) / 2.0, keepout[1] - 1.6, pcbnew.Dwgs_User, 0.9)
+    add_board_text(
+        board,
+        "ANT KEEPOUT",
+        ant_x - direction * 0.4 if variant == "x3-v2" else (keepout[0] + keepout[2]) / 2.0,
+        cy if variant == "x3-v2" else keepout[1] - 1.6,
+        pcbnew.Dwgs_User,
+        0.6 if variant == "x3-v2" else 0.9,
+        0.10 if variant == "x3-v2" else 0.15,
+        90.0 if variant == "x3-v2" else 0.0,
+    )
     return fp, pad_pos, keepout
 
 
@@ -1392,14 +1450,14 @@ def make_board(
     min_x = min(x for x, _ in rounded)
     min_y = min(y for _, y in rounded)
     dx = 35.0 - min_x
-    dy = 35.0 - min_y
+    dy = X3_V2_BOARD_DATUM_DY_MM if variant == "x3-v2" else 35.0 - min_y
 
     shifted_keys = [
         Key(k.label, k.row, k.col, k.x_u + dx / UNIT, k.y_u + dy / UNIT, k.w_u, k.h_u)
         for k in keys
     ]
     ctrl_cx += dx
-    ctrl_cy = CONTROLLER_CENTER_Y + dy
+    ctrl_cy = X3_V2_CONTROLLER_Y_MM if variant == "x3-v2" else CONTROLLER_CENTER_Y + dy
     shifted_outline = shift_points(rounded, dx, dy)
 
     board = pcbnew.BOARD()
@@ -1478,7 +1536,7 @@ def make_board(
 
     batt_w, batt_h = 15.0, 25.0
     batt_cx = ctrl_cx + (usb_direction * X3_BATTERY_CENTER_OFFSET_FROM_CONTROLLER if is_x3_family(variant) else -usb_direction * 7.0)
-    batt_cy = ctrl_cy + 2.0
+    batt_cy = X3_V2_BATTERY_Y_MM if variant == "x3-v2" else ctrl_cy + 2.0
     add_rect_lines(board, batt_cx - batt_w / 2, batt_cy - batt_h / 2, batt_cx + batt_w / 2, batt_cy + batt_h / 2, pcbnew.B_Fab, 0.10)
     add_board_text(board, "TW301525 80mAh", batt_cx - 7.0, batt_cy, pcbnew.B_Fab, 0.9, mirrored=True)
 
@@ -1511,13 +1569,25 @@ def make_board(
         )
         add_board_text(board, "BAT LEAD EXIT", slot_x - 4.5, slot_y + 3.2, pcbnew.Cmts_User, 0.7)
 
-    if is_x3_family(variant):
+    if variant == "x3-v2":
+        tact_x = ctrl_cx - usb_direction * CONTROLLER_LEN / 2.0
+    elif is_x3_family(variant):
         tact_x = batt_cx + usb_direction * (batt_w / 2.0 + X3_TACT_BATTERY_CLEARANCE + X3_TACT_BODY_W / 2.0)
     else:
         tact_offset_from_center = CONTROLLER_LEN / 2.0 - 7.0
         tact_x = ctrl_cx - usb_direction * tact_offset_from_center
-    tact_y = ctrl_cy + CONTROLLER_W / 2.0 + 4.0
-    tact = load_footprint(board, TACT_LIB, TACT_FP, "SW_RST1", "NW3-A06-B3 RST", tact_x, tact_y, 0)
+    tact_y = X3_V2_RESET_Y_MM if variant == "x3-v2" else ctrl_cy + CONTROLLER_W / 2.0 + 4.0
+    tact_rotation = X3_V2_RESET_ROTATION_DEGREES if variant == "x3-v2" else 0.0
+    tact = load_footprint(
+        board,
+        TACT_LIB,
+        TACT_FP,
+        "SW_RST1",
+        "NW3-A06-B3 RST",
+        tact_x,
+        tact_y,
+        tact_rotation,
+    )
 
     registration_points = x3_registration_points(side, shifted_keys) if variant == "x3" else []
     v2_mount_points = X3_V2_MOUNTING_POINTS[side] if variant == "x3-v2" else []
@@ -1541,7 +1611,17 @@ def make_board(
             mx,
             my,
         )
-        fp.Reference().SetVisible(False)
+        reference = fp.Reference()
+        reference.SetVisible(True)
+        reference.SetLayer(pcbnew.F_SilkS)
+        reference.SetTextSize(
+            vxy(
+                X3_V2_MOUNT_REFERENCE_TEXT_SIZE_MM,
+                X3_V2_MOUNT_REFERENCE_TEXT_SIZE_MM,
+            )
+        )
+        reference.SetTextThickness(mm(X3_V2_MOUNT_REFERENCE_STROKE_MM))
+        reference.SetFPRelativePosition(vxy(*X3_V2_MOUNT_REFERENCE_OFFSET_MM))
         fp.Value().SetVisible(False)
     for idx, (rx, ry) in enumerate(registration_points, start=1):
         fp = load_footprint(board, REGISTRATION_LIB, REGISTRATION_FP, f"REG{idx}", REGISTRATION_VALUE, rx, ry)
@@ -2113,6 +2193,11 @@ def generate_variant(variant: str, output_dir: Path | None = None) -> dict[str, 
         notes.append("X3 V2 contains no legacy H1-H9 or REG1-REG9 key-field through-holes.")
         notes.append("The netless battery-lead slot is at the nice!nano USB/B+ end; insulated B+ and GND/B- leads must use strain relief and remain outside the antenna keepout.")
         notes.append(
+            "X3 V2 supersedes only the historical antenna-side reset placement: SW_RST1 is "
+            "portrait-oriented directly below USB while the no-carrier-power and direct-lead "
+            "contracts remain unchanged. USB/reset/keycap/battery physical validation is pending."
+        )
+        notes.append(
             "X3 V2 uses the exact Jingdao ES1B / LCSC C437840 / Eleparts 9475342 "
             "manufacturer-recommended SMA land on B.Cu: 1.8 x 1.8 mm pads, 2.4 mm "
             "inner gap, pin 1 cathode to row and pin 2 anode to the per-key switch net."
@@ -2133,7 +2218,7 @@ def generate_variant(variant: str, output_dir: Path | None = None) -> dict[str, 
         notes.append(f"Controller protrusion tab width is {CONTROLLER_TAB_W:g} mm and grows away from the inner joining edge.")
     switch_footprint_file_present = (switch_lib / f"{switch_fp}.kicad_mod").exists()
     manifest: dict[str, object] = {
-        "generated": "2026-08-25" if variant == "x3-v2" else "2026-06-08",
+        "generated": "2026-08-26" if variant == "x3-v2" else "2026-06-08",
         "variant": variant,
         **({"hash_policy": HASH_POLICY} if variant == "x3-v2" else {}),
         "generator": "tools/generate_kc2_pcbs.py",
@@ -2195,12 +2280,12 @@ def generate_variant(variant: str, output_dir: Path | None = None) -> dict[str, 
         "canonical_route_evidence": (
             {
                 "left": canonical_x3_v2_route_record(
-                    "left", 564,
-                    "ba48ff17dd7f447e4cbededba09c1889b82713b1defef18d63aace4e59f92c7d",
+                    "left", 543,
+                    "9bc9cbf981da8d452b82e52d54a4e8ab3cafcc6121ec578f36a4cf43f3dde19d",
                 ),
                 "right": canonical_x3_v2_route_record(
-                    "right", 732,
-                    "1592744e711eda0eef59d51062c3c2bab87e5ae05c8156f0708f0544a09b7e38",
+                    "right", 706,
+                    "83dcc6f764670b379b6c9104d643925cd6eff3c0b16286f12bae14dd1397c67f",
                 ),
             }
             if variant == "x3-v2"
@@ -2268,6 +2353,42 @@ def generate_variant(variant: str, output_dir: Path | None = None) -> dict[str, 
             if variant == "x3-v2"
             else None
         ),
+        "controller_service_region": (
+            {
+                "top_edge_y_mm": X3_V2_TOP_EDGE_Y_MM,
+                "nominal_board_height_mm": 122.50,
+                "controller_body_mm": [CONTROLLER_LEN, CONTROLLER_W],
+                "positions_mm": {
+                    side: {
+                        name: [position[0], position[1]]
+                        for name, position in positions.items()
+                    }
+                    for side, positions in X3_V2_CONTROLLER_SERVICE_POSITIONS_MM.items()
+                },
+                "reset": {
+                    "footprint": f"{KC2_FP_LIB.name}:{TACT_FP}",
+                    "rotation_degrees": X3_V2_RESET_ROTATION_DEGREES,
+                    "pad_1": "RST_key_side",
+                    "pad_2": "GND_controller_side",
+                    "probe_max_diameter_mm": 3.0,
+                    "actuator_corridor_diameter_mm": 4.0,
+                    "service_usb_state": "disconnected",
+                },
+                "nominal_clearances_mm": {
+                    "controller_body_to_reset_body": 0.50,
+                    "reset_body_to_keycap": 2.00,
+                    "reset_courtyard_to_keycap": 0.075,
+                    "reset_pad_to_keycap": 0.30,
+                    "controller_body_to_top_edge": 2.35,
+                    "battery_body_to_top_edge": 1.30,
+                    "battery_housing_perimeter_land": 0.85,
+                },
+                "physical_validation": "pending_usb_reset_keycap_battery_first_article",
+                "order_ready": False,
+            }
+            if variant == "x3-v2"
+            else None
+        ),
         "carrier_power_pads": not is_x3_family(variant),
         "battery_lead_pass_through_slot": (
             {
@@ -2316,6 +2437,15 @@ def generate_variant(variant: str, output_dir: Path | None = None) -> dict[str, 
                     "unnetted": True,
                     "copper_free": True,
                 },
+                "front_silkscreen_reference": {
+                    "visible": True,
+                    "text_height_mm": X3_V2_MOUNT_REFERENCE_TEXT_SIZE_MM,
+                    "stroke_mm": X3_V2_MOUNT_REFERENCE_STROKE_MM,
+                    "relative_position_mm": {
+                        "x": X3_V2_MOUNT_REFERENCE_OFFSET_MM[0],
+                        "y": X3_V2_MOUNT_REFERENCE_OFFSET_MM[1],
+                    },
+                },
                 "screw_head_envelope_mm": {
                     "diameter": X3_V2_MOUNT_HEAD_ENVELOPE_MM[0],
                     "height": X3_V2_MOUNT_HEAD_ENVELOPE_MM[1],
@@ -2363,7 +2493,11 @@ def generate_variant(variant: str, output_dir: Path | None = None) -> dict[str, 
         "x3_controller_tab_inner_span_mm": X3_CONTROLLER_TAB_INNER_SPAN if is_x3_family(variant) else None,
         "x3_controller_tab_outer_span_mm": X3_CONTROLLER_TAB_OUTER_SPAN if is_x3_family(variant) else None,
         "x3_controller_anchor_inner_span_mm": X3_CONTROLLER_ANCHOR_INNER_SPAN if is_x3_family(variant) else None,
-        "x3_tact_battery_clearance_mm": X3_TACT_BATTERY_CLEARANCE if is_x3_family(variant) else None,
+        "x3_tact_battery_clearance_mm": (
+            X3_TACT_BATTERY_CLEARANCE
+            if is_x3_family(variant) and variant != "x3-v2"
+            else None
+        ),
         "key_count": {
             "left": len(left_keys),
             "right": len(right_keys),

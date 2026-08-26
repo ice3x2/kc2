@@ -202,18 +202,18 @@
     "left": {
       "path": "hardware/kicad/draft/x3-v2/mechanical/kc2_left_x3_v2_1to1.svg",
       "declared_width_mm": 135.1026,
-      "declared_height_mm": 126.746,
+      "declared_height_mm": 122.4788,
       "edge_cuts_width_mm": 135.1125,
-      "edge_cuts_height_mm": 126.75,
-      "maximum_dimension_error_mm": 0.0099
+      "edge_cuts_height_mm": 122.5,
+      "maximum_dimension_error_mm": 0.0212
     },
     "right": {
       "path": "hardware/kicad/draft/x3-v2/mechanical/kc2_right_x3_v2_1to1.svg",
       "declared_width_mm": 163.6776,
-      "declared_height_mm": 126.746,
+      "declared_height_mm": 122.4788,
       "edge_cuts_width_mm": 163.6875,
-      "edge_cuts_height_mm": 126.75,
-      "maximum_dimension_error_mm": 0.0099
+      "edge_cuts_height_mm": 122.5,
+      "maximum_dimension_error_mm": 0.0212
     }
   },
   "errors": []

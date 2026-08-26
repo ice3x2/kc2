@@ -78,10 +78,11 @@ between diode and switch-assembly fillet envelopes, 0.213 mm to an unrelated
 route, and 1.475 mm from the diode fillet envelope to Edge.Cuts. Every diode
 pad has an unobstructed 1.50 mm cardinal solder-tool approach. These PCB
 measurements supersede the old SOD-123 D2 values. Regenerated ES1B housing
-evidence reports 0.3299 mm minimum cutout XY clearance overall, 0.3311 mm for
-ES1B, and 1.0250 mm minimum diode perimeter land on both halves. The 2.50 mm
-structural plate plus 0.80 mm underside feet provides 0.80 mm nominal and
-0.50 mm post-print-tolerance diode-to-desk clearance. This remains digital
+evidence reports 0.3279 mm minimum cutout XY clearance overall, 0.3282 mm for
+ES1B, and 1.0250 mm minimum diode perimeter land on both halves. The compact
+controller revision extends the common desk datum to Z=-1.00 mm, providing
+1.00 mm nominal diode-to-desk clearance while the provisional 3.00 mm battery
+envelope retains 0.50 mm nominal desk clearance. This remains digital
 evidence only; physical retention, deflection, and populated-coupon tests are
 still required before ordering.
 
@@ -89,7 +90,9 @@ still required before ordering.
 
 The PCB contains eight left and ten right `MH*` features using the owned
 `MH_M1.4_NPTH_1.60` footprint. Each is an unnetted, copper-free `1.60 mm`
-round NPTH. Service is modeled with keycaps removed and either supported switch
+round NPTH. Each hole is visibly numbered `MH1..MH8` on the left and
+`MH1..MH10` on the right using `0.80 mm` / `0.10 mm` front-silkscreen text.
+Service is modeled with keycaps removed and either supported switch
 type still installed. A final `3.00 mm` vertical PH0 driver envelope and a
 `2.00 x 0.50 mm` head envelope clear the modeled Choc V2 and MX assemblies;
 the driver envelope already includes the search reserve and must not be
@@ -97,7 +100,8 @@ buffered a second time.
 
 The matching lower housing provides a `3.00 mm` zero-gap support land and desk
 column at every hole, with a provisional `1.10 x 2.80 mm` blind pilot and a
-`0.50 mm` closed bottom. The original 14-left/11-right distributed supports
+`0.70 mm` closed bottom at the common Z=-1.00 mm desk datum. The original
+14-left/11-right distributed supports
 remain the primary typing-load path. The provisional 4.00 mm under-head screw
 length, exact screw and driver, full-pattern registration, installation and
 stripping torque, ten service cycles, keycap-skirt clearance, and 2.0 N
@@ -111,6 +115,22 @@ The direct battery wires do not use carrier-PCB power copper. The netless
 official nice!nano v2 battery-pad location. Route insulated B+ and GND/B-
 leads between socket rows, deburr the slot, add strain relief, and keep the
 wire path outside the antenna keepout.
+
+## Compact controller tab
+
+The V2-only compact-controller layout keeps all 70 key centers and all 18
+numbered mounting-hole centers fixed. Each U1 is at `Y=50.7500 mm`, the
+portrait reset switch is directly below the USB end at `Y=63.4500 mm`, the
+battery reference is at `Y=53.0500 mm`, and the top Edge.Cuts centerline is
+`Y=39.2500 mm`. The board height is therefore `122.50 mm`, 4.25 mm shorter
+than the preceding prototype. The modeled controller-to-reset body gap is
+0.50 mm and the reset-body-to-nearest-keycap-plan gap is 2.00 mm.
+
+This is a V2-only supersession of the older antenna-side reset placement; the
+no-carrier-power and direct battery-lead rules remain unchanged. Reset
+courtyard/pad projection, actual USB shell/cable, keycap skirt, battery pouch,
+lead strain relief, and actuation support still require a populated first
+article. The digital package remains not orderable.
 
 ## Outputs
 
@@ -177,32 +197,33 @@ When only the generated outline policy changes, use
 The command rejects non-rigid switch geometry, replaces only Edge.Cuts, and is
 covered by route/footprint-preservation and idempotence tests.
 
-The current mounting-hole-aware trackless inputs are
-`autoroute/kc2_left-x3-v2-70-es1b-mh-r2.dsn` and
-`autoroute/kc2_right-x3-v2-70-es1b-mh-r2.dsn`; they contain exactly eight and
-ten M1.4 NPTHs. The reviewed sessions remain the pre-MH r1 SES files. Against
-empty-track generated boards, the finalizer imports those sessions and then
-applies exact, precondition-checked driver-clearance detours:
+The current compact-controller, mounting-hole-aware trackless inputs are
+`autoroute/kc2_left-x3-v2-70-es1b-controller-r3.dsn` and
+`autoroute/kc2_right-x3-v2-70-es1b-controller-r3.dsn`; they contain exactly
+eight and ten visibly numbered M1.4 NPTHs. Their reviewed r3 sessions bind the
+moved controller/reset fanout and shortened outline. Against empty-track
+generated boards, the finalizer imports those sessions and applies only the
+exact, precondition-checked edge cleanup:
 
 ```powershell
 & "C:\Program Files\KiCad\10.0\bin\python.exe" -B -m tools.finalize_kc2_x3_v2_routes `
   hardware/kicad/draft/x3-v2/kc2_left-x3-v2/kc2_left-x3-v2.kicad_pcb `
-  --import-es1b-session hardware/kicad/draft/x3-v2/autoroute/kc2_left-x3-v2-70-es1b-r1.ses
+  --import-controller-compact-session hardware/kicad/draft/x3-v2/autoroute/kc2_left-x3-v2-70-es1b-controller-r3.ses
 & "C:\Program Files\KiCad\10.0\bin\python.exe" -B -m tools.finalize_kc2_x3_v2_routes `
   hardware/kicad/draft/x3-v2/kc2_right-x3-v2/kc2_right-x3-v2.kicad_pcb `
-  --import-es1b-session hardware/kicad/draft/x3-v2/autoroute/kc2_right-x3-v2-70-es1b-r1.ses
+  --import-controller-compact-session hardware/kicad/draft/x3-v2/autoroute/kc2_right-x3-v2-70-es1b-controller-r3.ses
 ```
 
-The helper rejects wrong ES1B/switch geometry, stale sessions, and partial or
-unexpected nonempty routes. Both importers verify complete matrix connectivity,
+The helper rejects wrong controller/reset/switch geometry, stale sessions, and
+partial or unexpected nonempty routes. Both importers verify complete matrix connectivity,
 reproduce the committed route exactly, and are covered by second-run
-idempotence tests. The deterministic final track/via counts are 564 left and
-732 right, with route digests
-`ba48ff17dd7f447e4cbededba09c1889b82713b1defef18d63aace4e59f92c7d`
-and `1592744e711eda0eef59d51062c3c2bab87e5ae05c8156f0708f0544a09b7e38`.
+idempotence tests. The deterministic final track/via counts are 543 left and
+706 right, with route digests
+`9bc9cbf981da8d452b82e52d54a4e8ab3cafcc6121ec578f36a4cf43f3dde19d`
+and `83dcc6f764670b379b6c9104d643925cd6eff3c0b16286f12bae14dd1397c67f`.
 Running either command against its already exact committed board is a verified
-no-op. The generation manifest separately binds the current MH-aware DSN, the
-pre-MH r1 source DSN, and the reviewed r1 SES by SHA-256. It also verifies both
+no-op. The generation manifest binds each current controller-r3 DSN and
+reviewed controller-r3 SES by SHA-256. It also verifies both
 current DSN global/default clearance rules remain at least `300` internal units
 (`0.30 mm` at the recorded DSN resolution).
 

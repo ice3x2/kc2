@@ -20,9 +20,11 @@ REG/H registration pattern.
   `15.4640 mm` left and `18.9619 mm` right; seam distance is `2.85 mm`
   on both halves.
 - A `2.00 mm` diameter foot continues downward from every distributed support
-  datum to desk datum Z `-0.80 mm`. The eight left and ten right mounting
-  points add coaxial `3.00 mm` desk-contact columns. The left part therefore
-  has 22 coplanar desk contacts; right parts A/B have 10/11. Each set is
+  datum to desk datum Z `-1.00 mm`. The eight left and ten right mounting
+  points add coaxial `3.00 mm` desk-contact columns. A separate `3.00 mm`
+  column also backs the exact top-side `SW_RST1` actuator at zero gap. The
+  left part therefore has 23 coplanar desk contacts; right parts A/B have
+  10/12. Each set is
   non-collinear and its contact hull contains
   the projected plate centroid, so every printable part has an independent
   no-rocking digital support proof. Feet remain inside the housing silhouette
@@ -30,8 +32,8 @@ REG/H registration pattern.
 - There are no legacy REG/H pegs or separate fastener bosses. The exact
   `MH1..MH8` left and `MH1..MH10` right M1.4 pattern adds `3.00 mm` zero-gap
   annular support lands at Z `2.50 mm`, aligned `3.00 mm` columns to Z
-  `-0.80 mm`, and provisional `1.10 mm x 2.80 mm` blind pilots. Each pilot
-  ends at Z `-0.30 mm`, leaving a nominal `0.50 mm` closed column bottom.
+  `-1.00 mm`, and provisional `1.10 mm x 2.80 mm` blind pilots. Each pilot
+  ends at Z `-0.30 mm`, leaving a nominal `0.70 mm` closed column bottom.
   The provisional 4.00 mm under-head screw length yields `2.24..2.56 mm`
   penetration across the PCB thickness tolerance and at least `0.24 mm`
   nominal tip clearance. The exact screw MPN, printed pilot, torque, repeated
@@ -55,11 +57,19 @@ The verified openings cover:
 - all switch center and locator NPTH/mechanical-pin continuations;
 - MX electrical pins, pads, solder joints, and lead-trimming access;
 - all 70 Jingdao ES1B SMA maximum lead/body, pad, and solder-fillet envelopes;
-- nice!nano/controller/reset/service geometry; and
+- nice!nano/controller socket/service geometry;
+- the exact B.Fab `TW301525 80mAh` `15.00 x 25.00 mm` battery body with
+  `0.35 mm` XY allowance; and
 - battery-lead access.
 
+`SW_RST1` is intentionally absent from this underside-cutout list. Its pads
+are F.Cu-only, and the exact actuator projection is backed by the local
+zero-gap support/desk column. The support intersects no via, bottom-exposed
+pad, or exterior-open cutout. The right support lies over two B.Cu routes that
+remain inside the PCB stack under solder mask; the left overlaps none.
+
 Every class has at least `0.30 mm` nominal XY clearance. The measured overall
-minimum is `0.3299 mm`; the ES1B openings retain at least `0.3311 mm`. No diode
+minimum is `0.3279 mm`; the ES1B openings retain at least `0.3282 mm`. No diode
 opening breaks the lateral housing perimeter: the limiting opening leaves
 `1.0250 mm` of housing material on both sides, against the `0.85 mm` release
 gate. The
@@ -67,8 +77,12 @@ vertical model uses the official Kailh CPG135001S30 maximum socket depth
 `2.30 mm` plus `0.10 mm` assembly allowance, leaving `0.10 mm` to the
 plate bottom. It uses Jingdao's ES1B maximum `5.20 x 2.70 x 2.20 mm`
 lead/body envelope plus `0.30 mm` solder allowance. This consumes the full
-`2.50 mm` plate depth, but the feet provide `0.80 mm` nominal diode-to-desk
-clearance and `0.50 mm` after the documented `0.30 mm` print allowance.
+`2.50 mm` plate depth, but the feet provide `1.00 mm` nominal diode-to-desk
+clearance and `0.70 mm` after the documented `0.30 mm` print allowance. The
+modeled `3.00 mm` battery retains `0.50 mm` nominal desk clearance and exactly
+`0.85 mm` top-edge housing land. Maximum battery thickness/swelling, adhesive
+retention, lead bend, strain relief, abrasion protection, placement tolerance,
+and post-print desk clearance remain physical gates.
 
 - Kailh drawing:
   <https://www.kailhswitch.com/uploads/15927/files/CPG135001S30.pdf>
@@ -83,9 +97,9 @@ plane. Their electrical/mask state remains covered by the V2 board verifier.
 The left housing is one printable part. The right housing is exactly two parts
 and has no stale monolithic STL:
 
-- left: `134.9125 x 126.5500 x 3.3001 mm`;
-- right part A: `86.9938 x 92.0500 x 3.3001 mm`;
-- right part B: `81.6438 x 126.5500 x 3.3001 mm`.
+- left: `134.9125 x 122.3000 x 3.5000 mm`;
+- right part A: `86.9938 x 92.0500 x 3.5000 mm`;
+- right part B: `81.6438 x 122.3000 x 3.5000 mm`.
 
 Every STL is one watertight shell and fits the `150 mm` cube. The two right
 parts use two full-depth neck-and-head puzzle captures. They assemble
@@ -119,5 +133,9 @@ This is digital clearance and geometry evidence only. `CON-ARCH-006` AC-7 is
 still pending: the printed, assembled housing must pass the 2.0 N load test at
 the worst spans with no more than 0.30 mm downward PCB displacement, while PCB
 registration, pilot/torque/ten-cycle behavior, switch/keycap clearance, and
-real component insertion are checked. `order_ready` remains false. These draft files are not
-fabrication/order-readiness approval.
+real component insertion are checked. AC-11 additionally requires the exact
+reset supplier Z/travel/force/reflow limits, socketed-controller and
+nonconductive-probe service, USB shell/cable clearance, ten double-reset and
+bootloader-enumeration cycles, plus the battery physical gates above.
+`order_ready` remains false. These draft files are not fabrication/order-readiness
+approval.

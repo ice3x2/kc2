@@ -9,7 +9,14 @@ import sys
 from tempfile import TemporaryDirectory
 import unittest
 
-from tools.verify_kc2_x3_v2_fabrication import MANIFEST, ROOT, analyze_fabrication
+from tools.verify_kc2_x3_v2_fabrication import (
+    EXPECTED_MOUNTING_REFERENCE_CENTERS_MM,
+    MANIFEST,
+    ROOT,
+    analyze_fabrication,
+    inspect_gerber,
+    inspect_mounting_reference_glyphs,
+)
 
 
 def materialize_index_fabrication_snapshot(root: Path) -> Path:
@@ -62,6 +69,7 @@ class V2FabricationTests(unittest.TestCase):
                 self.assertTrue(product_report["archive_sha256_matches"])
                 self.assertEqual(product_report["file_hash_mismatches"], [])
                 self.assertEqual(product_report["gerber_geometry_errors"], [])
+                self.assertEqual(product_report["mounting_reference_glyph_errors"], [])
                 self.assertTrue(product_report["drill_geometry_matches"])
                 self.assertEqual(
                     product_report["drill_tools_mm"],
@@ -72,6 +80,23 @@ class V2FabricationTests(unittest.TestCase):
         self.assertEqual(report["products"]["left"]["bottom_paste_flash_count"], 124)
         self.assertEqual(report["products"]["right"]["bottom_paste_flash_count"], 156)
         self.assertEqual(report["products"]["coupon"]["bottom_paste_flash_count"], 12)
+        self.assertEqual(
+            report["products"]["left"]["mounting_reference_labels"],
+            [f"MH{index}" for index in range(1, 9)],
+        )
+        self.assertEqual(
+            report["products"]["right"]["mounting_reference_labels"],
+            [f"MH{index}" for index in range(1, 11)],
+        )
+        self.assertEqual(report["products"]["coupon"]["mounting_reference_labels"], [])
+        self.assertEqual(
+            list(report["products"]["left"]["mounting_reference_glyphs"]),
+            [f"MH{index}" for index in range(1, 9)],
+        )
+        self.assertEqual(
+            list(report["products"]["right"]["mounting_reference_glyphs"]),
+            [f"MH{index}" for index in range(1, 11)],
+        )
 
         left_product = report["products"]["left"]
         self.assertEqual(left_product["drill_tools_mm"]["PTH"]["0.950"], 24)
@@ -160,6 +185,45 @@ class V2FabricationTests(unittest.TestCase):
 
         self.assertFalse(report["hash_policy_matches"])
         self.assertTrue(report["products"]["left"]["output_file_hash_mismatches"])
+
+        payload = (
+            ROOT
+            / "hardware/kicad/draft/x3-v2/fabrication/left/"
+            "kc2_left-x3-v2-F_Silkscreen.gto"
+        ).read_bytes()
+        original = b"X141545833Y-66064895D01*"
+        self.assertEqual(payload.count(original), 1)
+
+        baseline = inspect_mounting_reference_glyphs(
+            payload,
+            EXPECTED_MOUNTING_REFERENCE_CENTERS_MM["left"],
+        )
+        self.assertEqual(baseline["errors"], [])
+        self.assertEqual(list(baseline["glyphs"]), [f"MH{index}" for index in range(1, 9)])
+        self.assertEqual(baseline["glyphs"]["MH1"]["stroke_width_mm"], 0.1)
+        self.assertEqual(baseline["glyphs"]["MH1"]["ink_height_mm"], 0.9)
+
+        mutations = {
+            "deleted actual glyph stroke": payload.replace(original, b"", 1),
+            "changed actual glyph stroke endpoint": payload.replace(
+                original,
+                b"X141545833Y-66074895D01*",
+                1,
+            ),
+        }
+        for name, mutated in mutations.items():
+            with self.subTest(name=name):
+                # The X2 component attribute survives both mutations, so the old
+                # attribute-only check would false-pass.
+                self.assertIn("MH1", inspect_gerber(mutated)["component_references"])
+                inspection = inspect_mounting_reference_glyphs(
+                    mutated,
+                    EXPECTED_MOUNTING_REFERENCE_CENTERS_MM["left"],
+                )
+                self.assertTrue(
+                    any(error.startswith("MH1:") for error in inspection["errors"]),
+                    inspection,
+                )
 
 
 if __name__ == "__main__":

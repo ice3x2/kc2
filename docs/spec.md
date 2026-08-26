@@ -253,7 +253,7 @@ Row 5: Ctrl GUI Alt Fn Space     |  B  Space RAlt Fn RCtrl Left Down Right
 - `col2row` 기준 diode의 cathode, 즉 표시선 쪽은 row net으로 둔다.
 - X3 SOD-123 diode assembly orientation: solder side/B.Cu가 보이게 PCB를 뒤집고 controller tab이 위로 가게 놓으면, 좌우 half 모두 diode의 흰색 cathode band를 왼쪽으로 둔다. KiCad top/front view에서는 pad 1(row net, cathode)이 오른쪽(+X)에 있지만, bottom-side soldering view에서는 좌우가 mirror되어 왼쪽으로 보인다. PCB를 손에서 돌린 경우에는 left/right보다 `pad 1 = row net = cathode band`를 기준으로 맞춘다. 이 문장은 verified 77-key X3용 historical/current-main 조립 기준이다.
 - X3 V2 ES1B assembly orientation: exact Jingdao datasheet 기준 pin/pad 1은 cathode/row net, pin/pad 2는 anode/per-key switch net이다. B.Cu mirrored assembly drawing에서 cathode band가 pad 1을 향하는지 확인한다; generic `ES1B` 이름만으로 다른 제조사 부품을 섞지 않는다.
-- active draft `kc2-x3-v2`의 이전 SOD-123 70개 DRC, 수납땜 접근, 라우팅, 하우징 증거는 ES1B 전환으로 superseded 상태이다. 새 SMA 풋프린트, 70개 배치, 양쪽 canonical `70-es1b-r1` 라우팅, fresh DRC, fabrication/mechanical/housing 산출물은 현재 ES1B board에 맞춰 재생성·디지털 검증했다. 다만 populated 물리 coupon과 최종 독립/order gate는 여전히 pending이므로 주문할 수 없다.
+- active draft `kc2-x3-v2`의 이전 SOD-123 70개 DRC, 수납땜 접근, 라우팅, 하우징 증거는 ES1B 전환으로 superseded 상태이다. 새 SMA 풋프린트, 70개 배치, 양쪽 canonical `70-es1b-controller-r3` 라우팅, fresh DRC, fabrication/mechanical/housing 산출물은 현재 ES1B board에 맞춰 재생성·디지털 검증했다. 다만 populated 물리 coupon과 최종 독립/order gate는 여전히 pending이므로 주문할 수 없다.
 - ES1B 전환은 firmware matrix 논리를 바꾸지 않는다. `col2row`, active-high column, active-high pull-down row, pad 1=row/cathode, pad 2=per-key/anode를 유지하며, 기존 pinned V2 firmware source와 UF2 hash도 그대로 둔다. 기록된 zero-wait scan delay를 물리 coupon 전에 임의 변경하지 않는다.
 - V2 발주 전 물리 coupon에서 기존 zero-wait firmware로 3.0 V와 3.3 V 각각의 maximum same-row 및 maximum same-column press/release stress를 실행하여 missing/false/stuck key가 없음을 확인한다. 이 증거는 현재 pending이다.
 - historical 또는 future variant에서 SOD-27(DO-35) 배치 공간이 실제로 부족하면 SMD diode로 전환한다.
@@ -367,7 +367,7 @@ Row 5: Ctrl GUI Alt Fn Space     |  B  Space RAlt Fn RCtrl Left Down Right
 - SpecKiwi SRS source of truth: `docs/spec/10.product-architecture.srs.md`의 `CON-ARCH-004`가 implemented draft `kc2-x3-v2` switch-footprint requirement를 정의한다. 요약: 현재 주문 가능한 `x3`의 Choc V1 중심 switch footprint를 대체하는 별도 V2 board이며, Choc V2/PG1353-class low-profile switch는 bottom-side Choc hot-swap socket으로만 지원하고 Cherry MX-style switch는 5-pin PCB-mount through-hole direct-solder로만 지원한다. 물리 coupon 실장 증거가 없으므로 V2는 주문 가능 상태가 아니다.
 - `kc2-x3-v2` 변형은 Choc V1/PG1350 switch, Choc V1 전용 locator/direct-solder geometry, Choc V2 direct-solder pad, MX hot-swap socket pad를 지원하지 않는다.
 - `kc2-x3-v2` 산출물은 현재 주문 가능한 `hardware/kicad/kc2_left/`, `hardware/kicad/kc2_right/`, `hardware/kicad/fabrication/kc2_left_jlcpcb.zip`, `hardware/kicad/fabrication/kc2_right_jlcpcb.zip`를 대체하지 않는다. 별도 draft 또는 V2 전용 output path에 유지하고, 모든 검증이 통과한 뒤에도 별도 SRS promotion requirement 없이는 orderable X3 산출물로 승격하지 않는다.
-- active V2의 현재 M1.4-hole-aware trackless route input은 `kc2_left-x3-v2-70-es1b-mh-r2.dsn` 및 `kc2_right-x3-v2-70-es1b-mh-r2.dsn`이다. 검토된 pre-MH `70-es1b-r1` SES는 source DSN과 함께 별도 SHA로 보존하고 exact driver-clearance detour를 적용해 최종 보드를 재현한다. 이전 left `70-v5-r1` / right `71-r12` route는 SOD-123 historical evidence이며 active V2 재현에 사용하지 않는다.
+- active V2의 현재 M1.4-hole-aware compact-controller route input/session은 `kc2_left-x3-v2-70-es1b-controller-r3.dsn/.ses` 및 `kc2_right-x3-v2-70-es1b-controller-r3.dsn/.ses`이다. Exact service geometry와 precondition-checked edge cleanup을 적용해 최종 보드를 재현한다. 이전 `70-es1b-mh-r2`, pre-MH `70-es1b-r1`, left `70-v5-r1`, right `71-r12`는 historical evidence이며 active V2 재현에 사용하지 않는다.
 - `x3` 변형은 `2u 이상` 키가 없으므로 stabilizer footprint를 생성하지 않는다.
 - `x3` 오른쪽 half는 5개 row 모두 9개 matrix column을 사용한다. 기존 `R_COL8=D20`, `R_COL7=D21` pin mapping은 유지하되, firmware keymap에서는 duplicate legend physical key를 별도 위치로 구분해야 한다.
 - `x3` outline은 증가한 matrix 밀도 때문에 양쪽 half의 inner edge에 `0.8 mm` routing relief를 추가한다.
@@ -387,7 +387,7 @@ Row 5: Ctrl GUI Alt Fn Space     |  B  Space RAlt Fn RCtrl Left Down Right
 - 왼쪽 half는 USB-C가 왼쪽 바깥쪽을 향하고, antenna end는 오른쪽 결합 edge 쪽을 향한다.
 - 오른쪽 half는 USB-C가 오른쪽 바깥쪽을 향하고, antenna end는 왼쪽 결합 edge 쪽을 향한다.
 - KiCad 배치에는 `USB_OUT_LEFT`, `USB_OUT_RIGHT`, `ANTENNA_INWARD` silkscreen 또는 Dwgs.User 표시를 넣어 footprint 회전 오류를 검증한다.
-- USB-C 포트 아래쪽은 각 half의 key-side, 즉 숫자열을 향한 쪽으로 정의한다. X3 compact controller tab의 프로그래밍용 tact switch는 antenna-side controller-tab edge 쪽 상면에 두며, nice!nano socket과 TW301525 battery reference area 안쪽으로 들어가지 않고 누를 수 있는 공간을 반드시 확보한다.
+- USB-C 포트 아래쪽은 각 half의 key-side, 즉 숫자열을 향한 쪽으로 정의한다. Promoted/historical X3의 프로그래밍용 tact switch는 antenna-side controller-tab edge 쪽 상면에 둔다. X3 V2에서는 `CON-ARCH-004` AC-12가 reset 위치만 USB-side로 supersede한다.
 - 핸드와이어링 버전의 배열은 유지하되, PCB outline과 controller/USB 주변 외형은 PCB화에 맞춰 조정할 수 있다.
 - USB는 nice!nano v2 자체 USB-C만 사용한다. 기존 USB-C guide/extension/외부 USB board 구조는 유지하지 않는다.
 - USB-C 포트는 결합 상태와 분리 상태 모두에서 케이블을 꽂기 쉬운 방향으로 둔다.
@@ -396,7 +396,7 @@ Row 5: Ctrl GUI Alt Fn Space     |  B  Space RAlt Fn RCtrl Left Down Right
 - 이 keepout 값은 공식 pinout/schematic과 실물 측정 후 조정할 수 있으나, 1차 PCB 초안에서는 10 mm keepout을 기본값으로 둔다.
 - 배터리를 controller 아래에 둘 수는 있지만, 안테나 바로 아래에는 두지 않는다.
 - Li-Po pouch와 배선은 2.4 GHz 안테나를 detune하거나 감쇠시킬 수 있으므로, 배터리는 MCU/USB 쪽 아래로 치우치게 배치하고 안테나 아래는 비워 둔다.
-- 프로그래밍용 tact switch는 antenna-side controller-tab edge 쪽으로 이동하되, top-side tact switch body가 nice!nano socket, bottom-side battery reference, 하부 바닥판 고정 구조와 간섭하지 않도록 한다.
+- Promoted/historical X3의 프로그래밍용 tact switch는 antenna-side controller-tab edge 쪽으로 이동한다. X3 V2에서는 `CON-ARCH-004` AC-12가 reset 위치만 USB-side로 supersede한다. 두 경우 모두 top-side tact switch body가 nice!nano socket, bottom-side battery reference, 하부 바닥판 고정 구조와 간섭하지 않도록 한다.
 - controller와 tact switch는 손에 노출되는 상부 조건으로 배치하고, battery와 nice!nano 직접 납땜부는 하부 바닥판과 간섭하지 않게 배치한다.
 - keycap 간섭, USB 삽입 간섭, 바닥면 쇼트 가능성을 1:1 출력물로 확인한다.
 
@@ -411,7 +411,7 @@ Row 5: Ctrl GUI Alt Fn Space     |  B  Space RAlt Fn RCtrl Left Down Right
 - nice!nano v2 `B+`/`B-` 직접 납땜부의 service loop, strain relief, 절연 방식
 - 전원 차단이 필요한 정비 상황에서 사용할 배터리 lead desolder 또는 외부 lead 분리 방식
 - controller 아래 배터리 배치 시 antenna keepout 확보 방식
-- `NW3-A06-B3` SMD tact switch의 antenna-side 상면 위치와 1:1 출력물 기반 조작 검증
+- Promoted/historical X3의 `NW3-A06-B3` SMD tact switch antenna-side 상면 위치와 1:1 출력물 기반 조작 검증; X3 V2는 `CON-ARCH-004` AC-12의 USB-side 물리 service gate 적용
 - X3 screwless rail/capture 하부 바닥판의 실제 레일, 턱, peg, rib 치수
 - X3 screwless 구조에서 접착제가 필요한 경우의 보조 적용 위치와 서비스성
 - 3D 프린터 하부 바닥판 형상과 PCB 지지점

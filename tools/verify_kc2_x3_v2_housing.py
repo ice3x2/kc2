@@ -33,7 +33,12 @@ ORDER_READINESS_BLOCKER = (
     "full-pattern assembly without sequential forcing; actual installed switch and "
     "keycap-skirt clearance; and a 2.0 N deflection test at every worst-case support span "
     "with no more than 0.30 mm displacement, rocking, permanent deformation, support "
-    "disengagement, or fastener loosening."
+    "disengagement, or fastener loosening. CON-ARCH-006 AC-11 controller-service "
+    "physical evidence is also pending: exact reset supplier Z/travel/force/reflow limits, "
+    "actual socketed-controller and nonconductive-probe service, USB shell/cable clearance, "
+    "ten successful double-reset cycles and bootloader enumeration, plus battery maximum "
+    "thickness/swelling, adhesive retention, lead bend, strain relief, abrasion protection, "
+    "actual placement tolerance, and desk clearance."
 )
 COLLISION_CLASSES = {
     "choc_socket_body",
@@ -43,7 +48,9 @@ COLLISION_CLASSES = {
     "diode_body_pads_fillets",
     "bottom_copper_tracks",
     "vias",
-    "controller_reset",
+    "controller_socket",
+    "reset_topside",
+    "battery_body",
     "battery_slot",
     "switch_key_travel",
 }
@@ -54,7 +61,7 @@ COLLISION_CLASSES = {
 VERIFIED_STRUCTURAL_PLATE_HEIGHT_MM = 2.50
 VERIFIED_ES1B_DEPTH_MAX_MM = 2.20
 VERIFIED_ES1B_SOLDER_ALLOWANCE_MM = 0.30
-VERIFIED_DESK_STANDOFF_MM = 0.80
+VERIFIED_DESK_STANDOFF_MM = 1.00
 VERIFIED_DESK_STANDOFF_PRINT_TOLERANCE_MM = 0.30
 VERIFIED_ES1B_PLATE_BOTTOM_CLEARANCE_MM = (
     VERIFIED_STRUCTURAL_PLATE_HEIGHT_MM
@@ -68,6 +75,24 @@ VERIFIED_ES1B_WORST_DESK_CLEARANCE_MM = (
     VERIFIED_ES1B_NOMINAL_DESK_CLEARANCE_MM
     - VERIFIED_DESK_STANDOFF_PRINT_TOLERANCE_MM
 )
+VERIFIED_BATTERY_NOMINAL_PLAN_ENVELOPE_MM = [15.00, 25.00]
+VERIFIED_BATTERY_MODELED_DEPTH_MM = 3.00
+VERIFIED_BATTERY_NOMINAL_DESK_CLEARANCE_MM = 0.50
+VERIFIED_BATTERY_MINIMUM_HOUSING_LAND_MM = 0.85
+VERIFIED_OPEN_COMPONENT_NOMINAL_DESK_CLEARANCE_MM = min(
+    VERIFIED_ES1B_NOMINAL_DESK_CLEARANCE_MM,
+    VERIFIED_BATTERY_NOMINAL_DESK_CLEARANCE_MM,
+)
+VERIFIED_OPEN_COMPONENT_MINIMUM_DESK_CLEARANCE_MM = min(
+    VERIFIED_ES1B_WORST_DESK_CLEARANCE_MM,
+    VERIFIED_BATTERY_NOMINAL_DESK_CLEARANCE_MM,
+)
+VERIFIED_RESET_CENTERS_MM = {
+    "left": [115.8125, 63.4500],
+    "right": [94.3000, 63.4500],
+}
+VERIFIED_RESET_ACTUATOR_PROJECTION_MM = [1.30, 2.70]
+VERIFIED_RESET_SUPPORT_DIAMETER_MM = 3.00
 VERIFIED_MOUNTING_COORDINATES_MM = {
     "left": [
         [142.6125, 68.0000],
@@ -103,7 +128,7 @@ VERIFIED_MOUNTING_SUPPORT_LAND_DIAMETER_MM = 3.00
 VERIFIED_MOUNTING_PILOT_DIAMETER_MM = 1.10
 VERIFIED_MOUNTING_PILOT_DEPTH_MM = 2.80
 VERIFIED_MOUNTING_PILOT_BOTTOM_Z_MM = -0.30
-VERIFIED_MOUNTING_CLOSED_BOTTOM_MM = 0.50
+VERIFIED_MOUNTING_CLOSED_BOTTOM_MM = 0.70
 VERIFIED_MOUNTING_HEAD_ENVELOPE_MM = [2.00, 0.50]
 VERIFIED_MOUNTING_DRIVER_DIAMETER_MM = 3.00
 VERIFIED_PROVISIONAL_SCREW_UNDER_HEAD_LENGTH_MM = 4.00
@@ -345,10 +370,10 @@ def analyze_v2_housing() -> dict[str, Any]:
             )
             residual_volume = residual_plan_area * generator.HOUSING_HEIGHT_MM
             manifest_cutout = output["component_cutouts"][name]
-            diode_perimeter_fields: dict[str, Any] = {}
-            if name == "diode_body_pads_fillets":
+            perimeter_fields: dict[str, Any] = {}
+            if name in {"diode_body_pads_fillets", "battery_body"}:
                 breaks_perimeter = not plan["housing_outline"].covers(cutout_geometry)
-                diode_perimeter_fields = {
+                perimeter_fields = {
                     "breaks_lateral_housing_perimeter": breaks_perimeter,
                     "minimum_housing_perimeter_land_mm": round(
                         0.0
@@ -390,7 +415,7 @@ def analyze_v2_housing() -> dict[str, Any]:
                     float(manifest_cutout["opening_plan_area_mm2"]),
                     abs_tol=0.0001,
                 ),
-                **diode_perimeter_fields,
+                **perimeter_fields,
             }
         printable_parts = []
         for part, part_plan in zip(output["printable_parts"], expected_part_plans):
@@ -483,6 +508,7 @@ def analyze_v2_housing() -> dict[str, Any]:
                 _support_union(shp, posts)
                 .union(plan["rail"])
                 .union(plan["mounting_land_geometry"])
+                .union(plan["reset_local_support_geometry"])
             )
             feature_collisions = int(
                 split_plan["slot_union"].intersects(plan["all_component_cutouts"])
@@ -535,6 +561,7 @@ def analyze_v2_housing() -> dict[str, Any]:
                     "step_pilot_open_at_z_minus_0_25": not step_contains(-0.25),
                     "step_pilot_closed_at_z_minus_0_35": step_contains(-0.35),
                     "step_pilot_closed_at_z_minus_0_79": step_contains(-0.79),
+                    "step_pilot_closed_at_z_minus_0_99": step_contains(-0.99),
                 }
             )
         mounting_report = {
@@ -548,6 +575,27 @@ def analyze_v2_housing() -> dict[str, Any]:
             "geometry_primary_support_load_span_unchanged": expected_mounting[
                 "primary_support_load_span_unchanged"
             ],
+        }
+        manifest_reset_support = output.get("reset_local_support", {})
+        expected_reset_support = plan["reset_local_support"]
+        reset_local_support_report = {
+            **manifest_reset_support,
+            "manifest_matches_generator": manifest_reset_support == expected_reset_support,
+            "geometry_board_center_mm": expected_reset_support["board_center_mm"],
+            "geometry_actuator_projection_covered": expected_reset_support[
+                "actuator_projection_covered"
+            ],
+            "geometry_support_surface_covered": expected_reset_support[
+                "support_surface_covered"
+            ],
+            "geometry_component_cutout_collision_count": expected_reset_support[
+                "component_cutout_collision_count"
+            ],
+            "geometry_bottom_exposed_pad_collision_count": expected_reset_support[
+                "bottom_exposed_pad_collision_count"
+            ],
+            "geometry_via_collision_count": expected_reset_support["via_collision_count"],
+            "geometry_electrically_safe": expected_reset_support["electrically_safe"],
         }
         report["sides"][side] = {
             "source_board": output["source_board"],
@@ -599,6 +647,7 @@ def analyze_v2_housing() -> dict[str, Any]:
             "rail_segment_count": output["rail"]["segment_count"],
             "support_posts": posts,
             "support_plan_matches_generator": posts == plan["support_posts"],
+            "reset_local_support": reset_local_support_report,
             "mounting_system": mounting_report,
             "maximum_load_point_to_support_mm": float(output["maximum_load_point_to_support_mm"]),
             "maximum_seam_load_point_to_support_mm": float(
@@ -675,7 +724,7 @@ def verify_report(report: dict[str, Any]) -> list[str]:
         if data.get("pcb_bottom_z_mm") != generator.PCB_BOTTOM_Z_MM:
             errors.append(f"{side}: PCB support plane is not 2.50 mm")
         if data.get("desk_standoff_nominal_mm") != VERIFIED_DESK_STANDOFF_MM:
-            errors.append(f"{side}: desk standoff is not 0.80 mm")
+            errors.append(f"{side}: desk standoff is not 1.00 mm")
         if (
             data.get("desk_standoff_print_tolerance_mm")
             != VERIFIED_DESK_STANDOFF_PRINT_TOLERANCE_MM
@@ -687,13 +736,13 @@ def verify_report(report: dict[str, Any]) -> list[str]:
             errors.append(f"{side}: open-component-to-desk clearance is below 0.50 mm")
         if not math.isclose(
             float(data.get("minimum_open_component_to_desk_nominal_clearance_mm", -99.0)),
-            VERIFIED_ES1B_NOMINAL_DESK_CLEARANCE_MM,
+            VERIFIED_OPEN_COMPONENT_NOMINAL_DESK_CLEARANCE_MM,
             abs_tol=1e-9,
         ):
             errors.append(f"{side}: open-component nominal desk-clearance formula is stale")
         if not math.isclose(
             float(data.get("minimum_open_component_to_desk_clearance_mm", -99.0)),
-            VERIFIED_ES1B_WORST_DESK_CLEARANCE_MM,
+            VERIFIED_OPEN_COMPONENT_MINIMUM_DESK_CLEARANCE_MM,
             abs_tol=1e-9,
         ):
             errors.append(f"{side}: open-component worst-case desk-clearance formula is stale")
@@ -765,6 +814,48 @@ def verify_report(report: dict[str, Any]) -> list[str]:
         if data["glue_assumed"]:
             errors.append(f"{side}: glue must not be assumed")
 
+        reset = data.get("reset_local_support", {})
+        if reset.get("ref") != generator.RESET_REFERENCE:
+            errors.append(f"{side}: reset local support is not bound to exact SW_RST1")
+        if reset.get("board_center_mm") != VERIFIED_RESET_CENTERS_MM[side]:
+            errors.append(f"{side}: reset local support board coordinate is wrong")
+        if reset.get("footprint_side") != "top":
+            errors.append(f"{side}: reset local support is not top-side")
+        if reset.get("actuator_projection_size_mm") != VERIFIED_RESET_ACTUATOR_PROJECTION_MM:
+            errors.append(f"{side}: reset local support actuator projection is wrong")
+        if (
+            reset.get("support_diameter_mm") != VERIFIED_RESET_SUPPORT_DIAMETER_MM
+            or reset.get("support_top_z_mm") != VERIFIED_STRUCTURAL_PLATE_HEIGHT_MM
+            or reset.get("support_vertical_gap_mm") != 0.0
+            or reset.get("desk_column_bottom_z_mm") != -VERIFIED_DESK_STANDOFF_MM
+        ):
+            errors.append(f"{side}: reset local support diameter/Z contract is wrong")
+        if not reset.get("manifest_matches_generator"):
+            errors.append(f"{side}: reset local support manifest differs from generator")
+        if reset.get("geometry_board_center_mm") != VERIFIED_RESET_CENTERS_MM[side]:
+            errors.append(f"{side}: reset local support geometry coordinate is wrong")
+        if not reset.get("actuator_projection_covered") or not reset.get(
+            "geometry_actuator_projection_covered"
+        ):
+            errors.append(f"{side}: reset local support does not cover the actuator")
+        if not reset.get("support_surface_covered") or not reset.get(
+            "geometry_support_surface_covered"
+        ):
+            errors.append(f"{side}: reset local support leaves the zero-gap support surface")
+        if (
+            int(reset.get("component_cutout_collision_count", 99)) != 0
+            or int(reset.get("geometry_component_cutout_collision_count", 99)) != 0
+            or int(reset.get("bottom_exposed_pad_collision_count", 99)) != 0
+            or int(reset.get("geometry_bottom_exposed_pad_collision_count", 99)) != 0
+            or int(reset.get("via_collision_count", 99)) != 0
+            or int(reset.get("geometry_via_collision_count", 99)) != 0
+        ):
+            errors.append(f"{side}: reset local support has an electrical/mechanical collision")
+        if not reset.get("bottom_routed_copper_solder_mask_protected"):
+            errors.append(f"{side}: reset local support bottom-route protection is not documented")
+        if not reset.get("electrically_safe") or not reset.get("geometry_electrically_safe"):
+            errors.append(f"{side}: reset local support is not electrically safe")
+
         mounting = data.get("mounting_system", {})
         if mounting.get("physical_registration_status") != "pending":
             errors.append(f"{side}: mounting physical registration status is not pending")
@@ -835,6 +926,7 @@ def verify_report(report: dict[str, Any]) -> list[str]:
                 and hole.get("step_pilot_open_at_z_minus_0_25")
                 and hole.get("step_pilot_closed_at_z_minus_0_35")
                 and hole.get("step_pilot_closed_at_z_minus_0_79")
+                and hole.get("step_pilot_closed_at_z_minus_0_99")
             ):
                 errors.append(
                     f"{side}:{expected_ref}: pilot STEP depth or closed bottom is wrong"
@@ -865,7 +957,8 @@ def verify_report(report: dict[str, Any]) -> list[str]:
             "switch_mechanical_pins",
             "mx_pins_pads_fillets",
             "diode_body_pads_fillets",
-            "controller_reset",
+            "controller_socket",
+            "battery_body",
             "battery_slot",
         }
         cutouts = data.get("component_cutouts", {})
@@ -876,7 +969,8 @@ def verify_report(report: dict[str, Any]) -> list[str]:
             "switch_mechanical_pins": int(data["key_count"]),
             "mx_pins_pads_fillets": int(data["key_count"]),
             "diode_body_pads_fillets": int(data["key_count"]),
-            "controller_reset": 1,
+            "controller_socket": 1,
+            "battery_body": 1,
             "battery_slot": 1,
         }
         for name in required_cutouts:
@@ -946,6 +1040,41 @@ def verify_report(report: dict[str, Any]) -> list[str]:
             errors.append(f"{side}: diode perimeter land is below 0.85 mm")
         if not diode.get("perimeter_land_matches_manifest"):
             errors.append(f"{side}: diode perimeter land manifest is stale")
+        battery = cutouts.get("battery_body", {})
+        if battery.get("reference") != generator.BATTERY_REFERENCE:
+            errors.append(f"{side}: battery body is not bound to exact TW301525 reference")
+        if battery.get("board_feature") != f"B.Fab:{generator.BATTERY_BOARD_LABEL}":
+            errors.append(f"{side}: battery body is not bound to the exact B.Fab label")
+        if "official_plan_envelope_max_mm" in battery:
+            errors.append(f"{side}: battery body retains the forbidden official plan-envelope alias")
+        if any(key.startswith("official_") for key in battery):
+            errors.append(f"{side}: nominal battery body uses unsupported official wording")
+        if (
+            battery.get("nominal_plan_envelope_mm")
+            != VERIFIED_BATTERY_NOMINAL_PLAN_ENVELOPE_MM
+        ):
+            errors.append(f"{side}: battery nominal plan envelope is not 15x25 mm")
+        if battery.get("modeled_max_depth_mm") != VERIFIED_BATTERY_MODELED_DEPTH_MM:
+            errors.append(f"{side}: battery body modeled depth is not 3.00 mm")
+        if battery.get("cutout_allowance_mm") != generator.COMPONENT_CUTOUT_CLEARANCE_MM:
+            errors.append(f"{side}: battery cutout allowance is not 0.35 mm")
+        if not math.isclose(
+            float(battery.get("nominal_desk_clearance_mm", -99.0)),
+            VERIFIED_BATTERY_NOMINAL_DESK_CLEARANCE_MM,
+            abs_tol=1e-9,
+        ):
+            errors.append(f"{side}: battery nominal desk-clearance formula is stale")
+        if battery.get("breaks_lateral_housing_perimeter"):
+            errors.append(f"{side}: battery cutout breaks the lateral perimeter")
+        if (
+            float(battery.get("minimum_housing_perimeter_land_mm", -99.0)) + 1e-6
+            < VERIFIED_BATTERY_MINIMUM_HOUSING_LAND_MM
+        ):
+            errors.append(f"{side}: battery perimeter land is below 0.85 mm")
+        if not battery.get("perimeter_land_matches_manifest"):
+            errors.append(f"{side}: battery perimeter land manifest is stale")
+        if battery.get("physical_tolerance_status") != "pending":
+            errors.append(f"{side}: battery physical tolerance gate must remain pending")
         if not data["step_sha256_matches"] or not data["stl_sha256_matches"]:
             errors.append(f"{side}: stale or missing STEP/STL")
         if data.get("step_has_trailing_whitespace"):

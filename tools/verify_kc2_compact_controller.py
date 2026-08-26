@@ -35,6 +35,12 @@ BATTERY_CLEARANCE = 0.75
 SLOT_POSITION_TOLERANCE = 0.03
 SLOT_DIMENSION_TOLERANCE = 0.02
 SLOT_EDGE_CLEARANCE_MIN = 1.0
+V2_CONTROLLER_SERVICE_POSITIONS_MM = {
+    "left": {"u1": (132.7125, 50.75), "reset": (115.8125, 63.45)},
+    "right": {"u1": (77.4, 50.75), "reset": (94.3, 63.45)},
+}
+V2_POSITION_TOLERANCE_MM = 0.001
+V2_RESET_ROTATION_DEGREES = 90.0
 FORBIDDEN_POWER_NETS = {"BAT+", "BAT-", "NN_B+", "NN_B-"}
 
 
@@ -208,15 +214,34 @@ def check_side(side: str, board_path: Path) -> list[str]:
     u1_x, u1_y = fp_center(u1)
     tact_x, tact_y = fp_center(tact)
     usb_direction = 1 if side == "left" else -1
-    antenna_edge_x = u1_x + usb_direction * (CONTROLLER_LEN / 2.0)
-    antenna_side_distance = abs(tact_x - antenna_edge_x)
-    if antenna_side_distance > ANTENNA_SIDE_CENTER_MAX_FROM_ANTENNA_EDGE:
-        errors.append(
-            f"{side}: SW_RST1 center is {antenna_side_distance:.3f} mm from antenna-side edge, "
-            f"expected <= {ANTENNA_SIDE_CENTER_MAX_FROM_ANTENNA_EDGE:.3f} mm"
-        )
-    if (tact_x - u1_x) * usb_direction <= 0:
-        errors.append(f"{side}: SW_RST1 is not on the antenna-side half of U1")
+    is_v2 = "x3-v2" in str(board_path).lower()
+    if is_v2:
+        expected = V2_CONTROLLER_SERVICE_POSITIONS_MM[side]
+        for label, actual, target in (
+            ("U1", (u1_x, u1_y), expected["u1"]),
+            ("SW_RST1", (tact_x, tact_y), expected["reset"]),
+        ):
+            if max(abs(actual[index] - target[index]) for index in (0, 1)) > V2_POSITION_TOLERANCE_MM:
+                errors.append(
+                    f"{side}: {label} center ({actual[0]:.4f}, {actual[1]:.4f}) mm, "
+                    f"expected ({target[0]:.4f}, {target[1]:.4f}) mm"
+                )
+        rotation = tact.GetOrientation().AsDegrees() % 360.0
+        if abs(rotation - V2_RESET_ROTATION_DEGREES) > 0.001:
+            errors.append(
+                f"{side}: SW_RST1 rotation is {rotation:.3f} deg, expected "
+                f"{V2_RESET_ROTATION_DEGREES:.3f} deg"
+            )
+    else:
+        antenna_edge_x = u1_x + usb_direction * (CONTROLLER_LEN / 2.0)
+        antenna_side_distance = abs(tact_x - antenna_edge_x)
+        if antenna_side_distance > ANTENNA_SIDE_CENTER_MAX_FROM_ANTENNA_EDGE:
+            errors.append(
+                f"{side}: SW_RST1 center is {antenna_side_distance:.3f} mm from antenna-side edge, "
+                f"expected <= {ANTENNA_SIDE_CENTER_MAX_FROM_ANTENNA_EDGE:.3f} mm"
+            )
+        if (tact_x - u1_x) * usb_direction <= 0:
+            errors.append(f"{side}: SW_RST1 is not on the antenna-side half of U1")
 
     key_side_gap = tact_y - (u1_y + CONTROLLER_W / 2.0)
     if key_side_gap < KEY_SIDE_MIN_GAP or key_side_gap > KEY_SIDE_MAX_GAP:
@@ -232,11 +257,16 @@ def check_side(side: str, board_path: Path) -> list[str]:
     if len(gnd_pads) != 1 or gnd_pads[0].GetNetname() != "GND":
         errors.append(f"{side}: SW_RST1 pad 2 is not exactly GND")
 
+    tact_w, tact_h = (
+        (TACT_BODY_H, TACT_BODY_W)
+        if round(tact.GetOrientation().AsDegrees() % 180.0, 3) == 90.0
+        else (TACT_BODY_W, TACT_BODY_H)
+    )
     tact_rect = (
-        tact_x - TACT_BODY_W / 2.0,
-        tact_y - TACT_BODY_H / 2.0,
-        tact_x + TACT_BODY_W / 2.0,
-        tact_y + TACT_BODY_H / 2.0,
+        tact_x - tact_w / 2.0,
+        tact_y - tact_h / 2.0,
+        tact_x + tact_w / 2.0,
+        tact_y + tact_h / 2.0,
     )
     battery_rect = board_rect_bbox(board, pcbnew.B_Fab)
     if battery_rect is None:

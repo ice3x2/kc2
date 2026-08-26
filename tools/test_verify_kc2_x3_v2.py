@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import re
 import unittest
 import shutil
 import struct
@@ -39,6 +40,18 @@ class V2FootprintTests(unittest.TestCase):
         footprint = pcbnew.FootprintLoad(str(MOUNT_FOOTPRINT.parent), MOUNT_FOOTPRINT.stem)
         self.assertIsNotNone(footprint)
         self.assertEqual(str(footprint.GetValue()), "M1.4_NPTH_1.60")
+        reference = footprint.Reference()
+        self.assertTrue(reference.IsVisible())
+        self.assertEqual(reference.GetLayer(), pcbnew.F_SilkS)
+        self.assertEqual(
+            (
+                round(pcbnew.ToMM(reference.GetTextHeight()), 3),
+                round(pcbnew.ToMM(reference.GetTextThickness()), 3),
+                round(pcbnew.ToMM(reference.GetFPRelativePosition().x), 3),
+                round(pcbnew.ToMM(reference.GetFPRelativePosition().y), 3),
+            ),
+            (0.8, 0.1, 0.0, -1.5),
+        )
         pads = list(footprint.Pads())
         self.assertEqual(len(pads), 1)
         pad = pads[0]
@@ -174,7 +187,10 @@ class V2GeneratorTests(unittest.TestCase):
         self.assertEqual(generator.X3_V2_MOUNT_SUPPORT_LAND_DIAMETER_MM, 3.0)
         self.assertEqual(generator.X3_V2_MOUNT_PILOT_ENVELOPE_MM, (1.1, 2.8))
         self.assertEqual(generator.X3_V2_MOUNT_UNDER_HEAD_LENGTH_MM, 4.0)
-        self.assertEqual(generator.X3_V2_MOUNT_CLOSED_BOTTOM_MM, 0.5)
+        self.assertEqual(generator.X3_V2_MOUNT_CLOSED_BOTTOM_MM, 0.7)
+        self.assertEqual(generator.X3_V2_MOUNT_REFERENCE_TEXT_SIZE_MM, 0.8)
+        self.assertEqual(generator.X3_V2_MOUNT_REFERENCE_STROKE_MM, 0.1)
+        self.assertEqual(generator.X3_V2_MOUNT_REFERENCE_OFFSET_MM, (0.0, -1.5))
 
     def test_generator_uses_the_fixed_70_key_v5_layout(self) -> None:
         from tools import generate_kc2_pcbs as generator
@@ -231,6 +247,29 @@ class V2GeneratorTests(unittest.TestCase):
         self.assertEqual(generator.X3_V2_JOIN_CENTER_PITCH, 19.85)
         self.assertEqual(generator.X3_V2_MIN_JOINED_EDGE_CLEARANCE, 1.0)
         self.assertEqual(generator.X3_V2_OUTLINE_POLICY, "keycap_concealed_except_controller_service")
+        self.assertEqual(generator.X3_V2_TOP_EDGE_Y_MM, 39.25)
+        self.assertEqual(generator.X3_V2_BOARD_DATUM_DY_MM, 68.0)
+        self.assertEqual(generator.X3_V2_CONTROLLER_Y_MM, 50.75)
+        self.assertEqual(generator.X3_V2_RESET_Y_MM, 63.45)
+        self.assertEqual(generator.X3_V2_RESET_ROTATION_DEGREES, 90.0)
+        self.assertEqual(generator.X3_V2_BATTERY_Y_MM, 53.05)
+        self.assertEqual(
+            generator.X3_V2_CONTROLLER_SERVICE_POSITIONS_MM,
+            {
+                "left": {
+                    "u1": (132.7125, 50.75),
+                    "battery_slot": (117.9125, 50.75),
+                    "battery": (133.2125, 53.05),
+                    "reset": (115.8125, 63.45),
+                },
+                "right": {
+                    "u1": (77.4, 50.75),
+                    "battery_slot": (92.2, 50.75),
+                    "battery": (76.9, 53.05),
+                    "reset": (94.3, 63.45),
+                },
+            },
+        )
         self.assertEqual(
             generator.variant_outline_margins("x3-v2"),
             {
@@ -583,6 +622,11 @@ class V2GeneratorTests(unittest.TestCase):
         self.assertIn("actual selected keycap envelope for each corresponding physical key", product_srs)
         self.assertIn("-m tools.render_kc2_x3_joined", v2_readme)
         self.assertIn("KC2_HEADLESS_BROWSER", v2_readme)
+        self.assertIn("visibly numbered `MH1..MH8`", v2_readme)
+        self.assertIn("`MH1..MH10` on the right", v2_readme)
+        self.assertIn("supersedes_for_v2_reset_only", product_srs)
+        self.assertIn("`SW_RST1` centers shall be `(115.8125, 63.4500)` and `(94.3000, 63.4500)`", product_srs)
+        self.assertIn("top Edge.Cuts centerline to `Y=39.2500 mm`", product_srs)
 
     def test_generator_accepts_an_isolated_output_override(self) -> None:
         from tools import generate_kc2_pcbs as generator
@@ -602,6 +646,77 @@ class V2GeneratorTests(unittest.TestCase):
                 import pcbnew
 
                 generated_board = pcbnew.LoadBoard(str(board_path))
+                expected_service = generator.X3_V2_CONTROLLER_SERVICE_POSITIONS_MM[side]
+                for reference, key in (
+                    ("U1", "u1"),
+                    ("BAT_LEAD_SLOT1", "battery_slot"),
+                    ("SW_RST1", "reset"),
+                ):
+                    footprint = generated_board.FindFootprintByReference(reference)
+                    self.assertIsNotNone(footprint)
+                    self.assertEqual(
+                        (
+                            round(pcbnew.ToMM(footprint.GetPosition().x), 4),
+                            round(pcbnew.ToMM(footprint.GetPosition().y), 4),
+                        ),
+                        expected_service[key],
+                    )
+                reset = generated_board.FindFootprintByReference("SW_RST1")
+                self.assertEqual(round(reset.GetOrientation().AsDegrees(), 3), 90.0)
+                self.assertEqual(
+                    {
+                        pad.GetNumber(): (
+                            round(pcbnew.ToMM(pad.GetPosition().x), 4),
+                            round(pcbnew.ToMM(pad.GetPosition().y), 4),
+                            pad.GetNetname(),
+                        )
+                        for pad in reset.Pads()
+                    },
+                    {
+                        "1": (expected_service["reset"][0], 67.325, "RST"),
+                        "2": (expected_service["reset"][0], 59.575, "GND"),
+                    },
+                )
+                from tools.verify_kc2_compact_controller import board_rect_bbox
+
+                self.assertEqual(
+                    tuple(round(value, 4) for value in board_rect_bbox(generated_board, pcbnew.B_Fab)),
+                    (
+                        expected_service["battery"][0] - 7.5,
+                        expected_service["battery"][1] - 12.5,
+                        expected_service["battery"][0] + 7.5,
+                        expected_service["battery"][1] + 12.5,
+                    ),
+                )
+                from tools.verify_kc2_x3_v2 import board_outline_segments_mm
+
+                outline_segments = board_outline_segments_mm(generated_board)
+                self.assertAlmostEqual(
+                    min(point[1] for segment in outline_segments for point in segment),
+                    39.25,
+                    places=3,
+                )
+                top_row_y = sorted(
+                    round(pcbnew.ToMM(fp.GetPosition().y), 4)
+                    for fp in generated_board.GetFootprints()
+                    if fp.GetReference().startswith("SW") and fp.GetReference() != "SW_RST1"
+                )[0]
+                self.assertEqual(top_row_y, 77.525)
+                from tools.verify_kc2_compact_controller import check_side
+
+                self.assertEqual(check_side(side, board_path), [])
+                from tools.verify_kc2_x3_v2 import (
+                    matrix_footprints,
+                    verify_placed_footprint_contracts,
+                )
+
+                contract_errors = verify_placed_footprint_contracts(
+                    generated_board,
+                    matrix_footprints(generated_board, "SW"),
+                    matrix_footprints(generated_board, "D"),
+                    side,
+                )
+                self.assertEqual(contract_errors, ([], [], [], []))
                 generated_mounts = sorted(
                     (
                         footprint
@@ -629,6 +744,32 @@ class V2GeneratorTests(unittest.TestCase):
                             generator.X3_V2_MOUNTING_POINTS[side], start=1
                         )
                     ],
+                )
+                for footprint in generated_mounts:
+                    reference = footprint.Reference()
+                    self.assertTrue(reference.IsVisible())
+                    self.assertEqual(reference.GetLayer(), pcbnew.F_SilkS)
+                    self.assertEqual(
+                        (
+                            round(pcbnew.ToMM(reference.GetTextHeight()), 3),
+                            round(pcbnew.ToMM(reference.GetTextThickness()), 3),
+                            round(pcbnew.ToMM(reference.GetFPRelativePosition().x), 3),
+                            round(pcbnew.ToMM(reference.GetFPRelativePosition().y), 3),
+                        ),
+                        (0.8, 0.1, 0.0, -1.5),
+                    )
+                usb_label = next(
+                    item
+                    for item in generated_board.GetDrawings()
+                    if isinstance(item, pcbnew.PCB_TEXT)
+                    and item.GetText() == f"USB_OUT_{side.upper()}"
+                )
+                self.assertEqual(
+                    (
+                        round(pcbnew.ToMM(usb_label.GetTextHeight()), 3),
+                        round(usb_label.GetTextAngle().AsDegrees(), 3),
+                    ),
+                    (0.8, 90.0),
                 )
                 project = json.loads(
                     (
@@ -672,6 +813,48 @@ class V2GeneratorTests(unittest.TestCase):
             self.assertEqual(manifest["minimum_joined_edge_clearance_mm"], 1.0)
             self.assertEqual(manifest["seam_transition_stagger_mm"], 0.55)
             self.assertEqual(manifest["outline_policy"], "keycap_concealed_except_controller_service")
+            self.assertEqual(
+                manifest["controller_service_region"],
+                {
+                    "top_edge_y_mm": 39.25,
+                    "nominal_board_height_mm": 122.5,
+                    "controller_body_mm": [33.8, 18.3],
+                    "positions_mm": {
+                        "left": {
+                            "u1": [132.7125, 50.75],
+                            "battery_slot": [117.9125, 50.75],
+                            "battery": [133.2125, 53.05],
+                            "reset": [115.8125, 63.45],
+                        },
+                        "right": {
+                            "u1": [77.4, 50.75],
+                            "battery_slot": [92.2, 50.75],
+                            "battery": [76.9, 53.05],
+                            "reset": [94.3, 63.45],
+                        },
+                    },
+                    "reset": {
+                        "footprint": "kc2.pretty:SW_NW3_A06_B3_SMD",
+                        "rotation_degrees": 90.0,
+                        "pad_1": "RST_key_side",
+                        "pad_2": "GND_controller_side",
+                        "probe_max_diameter_mm": 3.0,
+                        "actuator_corridor_diameter_mm": 4.0,
+                        "service_usb_state": "disconnected",
+                    },
+                    "nominal_clearances_mm": {
+                        "controller_body_to_reset_body": 0.5,
+                        "reset_body_to_keycap": 2.0,
+                        "reset_courtyard_to_keycap": 0.075,
+                        "reset_pad_to_keycap": 0.3,
+                        "controller_body_to_top_edge": 2.35,
+                        "battery_body_to_top_edge": 1.3,
+                        "battery_housing_perimeter_land": 0.85,
+                    },
+                    "physical_validation": "pending_usb_reset_keycap_battery_first_article",
+                    "order_ready": False,
+                },
+            )
             self.assertEqual(
                 manifest["autoroute_boundary_policy"],
                 {
@@ -988,6 +1171,7 @@ class V2GeneratorTests(unittest.TestCase):
                 report = analyze_v2_board(board_path)
                 self.assertEqual(report["mounting_hole_positions_mm"], expected[side])
                 self.assertEqual(report["mounting_hole_errors"], [])
+                self.assertEqual(report["mounting_hole_silkscreen_errors"], [])
                 self.assertEqual(report["mounting_hole_driver_copper_errors"], [])
                 self.assertGreaterEqual(
                     report["mounting_hole_clearances"][
@@ -1050,29 +1234,39 @@ class V2GeneratorTests(unittest.TestCase):
                 report = analyze_v2_board(copy)
                 self.assertTrue(report["mounting_hole_errors"])
 
-    def test_mounting_hole_gate_rejects_driver_to_route_intersection(self) -> None:
+    def test_mounting_hole_gate_rejects_hidden_or_wrong_layer_numbering(self) -> None:
         import pcbnew
 
-        from tools.finalize_kc2_x3_v2_routes import (
-            M1_4_DRIVER_ROUTE_ADDITIONS,
-            M1_4_DRIVER_ROUTE_REMOVALS,
-            _add_route_spec,
-            _route_signature,
+        mutations = (
+            ("hidden", lambda board: board.FindFootprintByReference("MH1").Reference().SetVisible(False)),
+            (
+                "wrong layer",
+                lambda board: board.FindFootprintByReference("MH1").Reference().SetLayer(pcbnew.F_Fab),
+            ),
         )
+        for label, mutate in mutations:
+            with self.subTest(label=label), TemporaryDirectory(dir=ROOT) as temporary:
+                copy = Path(temporary) / LEFT_BOARD.name
+                board = pcbnew.LoadBoard(str(LEFT_BOARD))
+                mutate(board)
+                pcbnew.SaveBoard(str(copy), board)
+                report = analyze_v2_board(copy)
+                self.assertTrue(report["mounting_hole_silkscreen_errors"])
+
+    def test_mounting_hole_gate_rejects_driver_to_route_intersection(self) -> None:
+        import pcbnew
 
         with TemporaryDirectory(dir=ROOT) as temporary:
             copy = Path(temporary) / LEFT_BOARD.name
             board = pcbnew.LoadBoard(str(LEFT_BOARD))
-            additions = Counter(M1_4_DRIVER_ROUTE_ADDITIONS["left"])
-            for item in list(board.GetTracks()):
-                signature = _route_signature(item)
-                if additions[signature] <= 0:
-                    continue
-                board.Delete(item)
-                additions[signature] -= 1
-            self.assertFalse(any(additions.values()))
-            for spec in M1_4_DRIVER_ROUTE_REMOVALS["left"]:
-                _add_route_spec(board, spec)
+            center = board.FindFootprintByReference("MH1").GetPosition()
+            track = pcbnew.PCB_TRACK(board)
+            track.SetStart(center - pcbnew.VECTOR2I(pcbnew.FromMM(3.0), 0))
+            track.SetEnd(center + pcbnew.VECTOR2I(pcbnew.FromMM(3.0), 0))
+            track.SetLayer(pcbnew.F_Cu)
+            track.SetWidth(pcbnew.FromMM(0.25))
+            track.SetNetCode(board.FindNet("L_COL5").GetNetCode())
+            board.Add(track)
             pcbnew.SaveBoard(str(copy), board)
             report = analyze_v2_board(copy)
             self.assertTrue(report["mounting_hole_driver_copper_errors"])
@@ -1154,6 +1348,25 @@ class V2GeneratorTests(unittest.TestCase):
                     pcbnew.VECTOR2I(pcbnew.FromMM(-11.33), pcbnew.FromMM(7.62))
                 ),
                 "controller_contract_errors",
+            ),
+            (
+                "controller position",
+                lambda board: board.FindFootprintByReference("U1").SetPosition(
+                    pcbnew.VECTOR2I(pcbnew.FromMM(132.7125), pcbnew.FromMM(50.8))
+                ),
+                "controller_contract_errors",
+            ),
+            (
+                "reset position",
+                lambda board: board.FindFootprintByReference("SW_RST1").SetPosition(
+                    pcbnew.VECTOR2I(pcbnew.FromMM(115.8125), pcbnew.FromMM(63.5))
+                ),
+                "reset_contract_errors",
+            ),
+            (
+                "reset rotation",
+                lambda board: board.FindFootprintByReference("SW_RST1").SetOrientationDegrees(270),
+                "reset_contract_errors",
             ),
             (
                 "reset pad2 net",
@@ -1270,7 +1483,7 @@ class V2GeneratorTests(unittest.TestCase):
         report = analyze_v2_manifest(MANIFEST)
         self.assertEqual(report["hash_policy"], HASH_POLICY)
         self.assertNotIn(b"\r\n", MANIFEST.read_bytes())
-        self.assertEqual(report["generated"], "2026-08-25")
+        self.assertEqual(report["generated"], "2026-08-26")
         self.assertEqual(report["variant"], "x3-v2")
         self.assertEqual(report["key_count"], {"left": 31, "right": 39, "total": 70})
         self.assertEqual(report["max_key_width_u"], 1.75)
@@ -1283,6 +1496,7 @@ class V2GeneratorTests(unittest.TestCase):
         self.assertNotIn("join_center_pitch_mm", report)
         self.assertEqual(report["minimum_joined_edge_clearance_mm"], 1.0)
         self.assertEqual(report["outline_policy"], "keycap_concealed_except_controller_service")
+        self.assertIsNone(report.get("x3_tact_battery_clearance_mm"))
         self.assertEqual(
             report["autoroute_boundary_policy"],
             {
@@ -1327,6 +1541,12 @@ class V2GeneratorTests(unittest.TestCase):
                     "unnetted": True,
                     "copper_free": True,
                 },
+                "front_silkscreen_reference": {
+                    "visible": True,
+                    "text_height_mm": 0.8,
+                    "stroke_mm": 0.1,
+                    "relative_position_mm": {"x": 0.0, "y": -1.5},
+                },
                 "screw_head_envelope_mm": {"diameter": 2.0, "height": 0.5},
                 "vertical_driver_envelope_mm": {"diameter": 3.0},
                 "provisional_under_head_screw_length_mm": 4.0,
@@ -1335,7 +1555,7 @@ class V2GeneratorTests(unittest.TestCase):
                     "zero_gap_support_land_diameter": 3.0,
                     "provisional_blind_pilot_diameter": 1.1,
                     "provisional_blind_pilot_depth": 2.8,
-                    "desk_column_closed_bottom": 0.5,
+                    "desk_column_closed_bottom": 0.7,
                 },
                 "registration_status": "pending_full_pattern_physical_fit",
                 "physical_validation": "pending",
@@ -1393,34 +1613,34 @@ class V2GeneratorTests(unittest.TestCase):
             report["canonical_route_evidence"],
             {
                 "left": {
-                    "dsn": "hardware/kicad/draft/x3-v2/autoroute/kc2_left-x3-v2-70-es1b-mh-r2.dsn",
-                    "dsn_role": "current_mh_trackless_routing_input",
+                    "dsn": "hardware/kicad/draft/x3-v2/autoroute/kc2_left-x3-v2-70-es1b-controller-r3.dsn",
+                    "dsn_role": "current_mh_compact_controller_trackless_routing_input",
                     "dsn_mounting_hole_count": 8,
-                    "session_source_dsn": "hardware/kicad/draft/x3-v2/autoroute/kc2_left-x3-v2-70-es1b-r1.dsn",
-                    "session_source_dsn_sha256": "34878f2da21192a3c8dcd4189428a395a458cdb8c2afcadcbb2071130276f292",
-                    "ses": "hardware/kicad/draft/x3-v2/autoroute/kc2_left-x3-v2-70-es1b-r1.ses",
-                    "ses_role": "reviewed_pre_mh_r1_import_plus_exact_m1_4_driver_detours",
-                    "dsn_sha256": "53b5196d3b5b28ba3cc09be1f16e9b9ca5565931de982c5626cd32e485d87d97",
-                    "ses_sha256": "8db5143f81fbf2f339c7d53baeb3ea4bafba56bfff5a05ca587705f95b82f1d6",
+                    "session_source_dsn": "hardware/kicad/draft/x3-v2/autoroute/kc2_left-x3-v2-70-es1b-controller-r3.dsn",
+                    "session_source_dsn_sha256": "0f1da995d92a6a121142125933e21ce0c1f1db05e5c1ef924f2a7c6dd38fa3db",
+                    "ses": "hardware/kicad/draft/x3-v2/autoroute/kc2_left-x3-v2-70-es1b-controller-r3.ses",
+                    "ses_role": "reviewed_compact_controller_import_plus_exact_edge_cleanup",
+                    "dsn_sha256": "0f1da995d92a6a121142125933e21ce0c1f1db05e5c1ef924f2a7c6dd38fa3db",
+                    "ses_sha256": "41ba7adf4db9881cf6065b592fd81127de5753b7b23a94012a16e1230cdbf0b8",
                     "dsn_default_clearance_internal_units": 300,
                     "dsn_clearances_internal_units": {"global": 300, "kicad_default": 300},
-                    "final_track_via_count": 564,
-                    "route_digest_sha256": "ba48ff17dd7f447e4cbededba09c1889b82713b1defef18d63aace4e59f92c7d",
+                    "final_track_via_count": 543,
+                    "route_digest_sha256": "9bc9cbf981da8d452b82e52d54a4e8ab3cafcc6121ec578f36a4cf43f3dde19d",
                 },
                 "right": {
-                    "dsn": "hardware/kicad/draft/x3-v2/autoroute/kc2_right-x3-v2-70-es1b-mh-r2.dsn",
-                    "dsn_role": "current_mh_trackless_routing_input",
+                    "dsn": "hardware/kicad/draft/x3-v2/autoroute/kc2_right-x3-v2-70-es1b-controller-r3.dsn",
+                    "dsn_role": "current_mh_compact_controller_trackless_routing_input",
                     "dsn_mounting_hole_count": 10,
-                    "session_source_dsn": "hardware/kicad/draft/x3-v2/autoroute/kc2_right-x3-v2-70-es1b-r1.dsn",
-                    "session_source_dsn_sha256": "6598f0e6d7be2cb18c04a5d4a93b1a668d4960eb7f671d9b3313a47086732750",
-                    "ses": "hardware/kicad/draft/x3-v2/autoroute/kc2_right-x3-v2-70-es1b-r1.ses",
-                    "ses_role": "reviewed_pre_mh_r1_import_plus_exact_m1_4_driver_detours",
-                    "dsn_sha256": "9321cb704423e07e3028a5df88cbc2ccd1831fdb9e4acac5a1c3767bc780fdd6",
-                    "ses_sha256": "b42a6efed10d657a0aa9b5bb8fa3e5a795b3d6b2b3f9b9652ca6a1b5101ee62c",
+                    "session_source_dsn": "hardware/kicad/draft/x3-v2/autoroute/kc2_right-x3-v2-70-es1b-controller-r3.dsn",
+                    "session_source_dsn_sha256": "45f3bbf61f54d417ab97aeff137aa91db5f323a24ff3473011aaa84ccc9d7e45",
+                    "ses": "hardware/kicad/draft/x3-v2/autoroute/kc2_right-x3-v2-70-es1b-controller-r3.ses",
+                    "ses_role": "reviewed_compact_controller_import_plus_exact_edge_cleanup",
+                    "dsn_sha256": "45f3bbf61f54d417ab97aeff137aa91db5f323a24ff3473011aaa84ccc9d7e45",
+                    "ses_sha256": "58823efa51c642107623d60180f2431eff572c50a11f1dbad8091c35e82ef2fb",
                     "dsn_default_clearance_internal_units": 300,
                     "dsn_clearances_internal_units": {"global": 300, "kicad_default": 300},
-                    "final_track_via_count": 732,
-                    "route_digest_sha256": "1592744e711eda0eef59d51062c3c2bab87e5ae05c8156f0708f0544a09b7e38",
+                    "final_track_via_count": 706,
+                    "route_digest_sha256": "83dcc6f764670b379b6c9104d643925cd6eff3c0b16286f12bae14dd1397c67f",
                 },
             },
         )
@@ -1443,24 +1663,25 @@ class V2GeneratorTests(unittest.TestCase):
             },
         )
 
-    def test_canonical_dsn_truthfully_binds_current_mh_board_and_pre_mh_session(self) -> None:
+    def test_canonical_dsn_truthfully_binds_compact_controller_board_and_session(self) -> None:
         manifest = analyze_v2_manifest(MANIFEST)
         for side, expected_count in (("left", 8), ("right", 10)):
             with self.subTest(side=side):
                 record = manifest["canonical_route_evidence"][side]
-                self.assertTrue(record["dsn"].endswith("-mh-r2.dsn"))
-                self.assertEqual(record["dsn_role"], "current_mh_trackless_routing_input")
+                self.assertTrue(record["dsn"].endswith("-controller-r3.dsn"))
+                self.assertEqual(record["dsn_role"], "current_mh_compact_controller_trackless_routing_input")
                 self.assertEqual(record["dsn_mounting_hole_count"], expected_count)
-                self.assertTrue(record["session_source_dsn"].endswith("-r1.dsn"))
+                self.assertEqual(record["session_source_dsn"], record["dsn"])
                 self.assertEqual(
                     record["ses_role"],
-                    "reviewed_pre_mh_r1_import_plus_exact_m1_4_driver_detours",
+                    "reviewed_compact_controller_import_plus_exact_edge_cleanup",
                 )
 
-    def test_current_mh_trackless_dsn_export_is_reproducible(self) -> None:
+    def test_current_mh_trackless_dsn_export_preserves_compact_controller_contract(self) -> None:
         import pcbnew
 
         from tools.finalize_kc2_x3_v2_routes import export_current_mh_trackless_dsn
+        from tools.verify_kc2_x3_v2 import _dsn_default_clearances
 
         manifest = analyze_v2_manifest(MANIFEST)
         with TemporaryDirectory(dir=ROOT) as temporary:
@@ -1472,7 +1693,18 @@ class V2GeneratorTests(unittest.TestCase):
                     exported = Path(temporary) / f"{side}.dsn"
                     export_current_mh_trackless_dsn(board, exported, side)
                     canonical = ROOT / manifest["canonical_route_evidence"][side]["dsn"]
-                    self.assertEqual(sha256_file(exported), sha256_file(canonical))
+                    exported_text = exported.read_text(encoding="utf-8")
+                    canonical_text = canonical.read_text(encoding="utf-8")
+                    self.assertTrue(
+                        exported_text.startswith(
+                            f'(pcb "kc2_{side}-x3-v2-70-es1b-controller-r3.dsn"'
+                        )
+                    )
+                    self.assertEqual(_dsn_default_clearances(exported), _dsn_default_clearances(canonical))
+                    self.assertEqual(
+                        len(re.findall(r"\(place\s+MH\d+\b", exported_text)),
+                        manifest["canonical_route_evidence"][side]["dsn_mounting_hole_count"],
+                    )
 
     def test_release_candidate_verifier_covers_both_routed_boards(self) -> None:
         report = verify_v2_release_candidate(
@@ -1516,6 +1748,27 @@ class V2GeneratorTests(unittest.TestCase):
                         report["errors"],
                     )
 
+    def test_release_gate_cross_binds_pcb_and_housing_closed_bottom(self) -> None:
+        with TemporaryDirectory(dir=ROOT) as temporary:
+            housing = json.loads(
+                (ROOT / "hardware/case/draft/x3-v2/kc2_x3_v2_housing_manifest.json")
+                .read_text(encoding="utf-8")
+            )
+            housing["parameters"]["mounting_closed_bottom_mm"] = 0.5
+            path = Path(temporary) / "stale-housing-manifest.json"
+            path.write_text(json.dumps(housing), encoding="utf-8")
+
+            report = verify_v2_release_candidate(
+                footprint_path=FOOTPRINT,
+                board_paths=(LEFT_BOARD, RIGHT_BOARD),
+                manifest_path=MANIFEST,
+                housing_manifest_path=path,
+            )
+            self.assertIn(
+                "manifest: PCB/housing mounting closed-bottom contract mismatch",
+                report["errors"],
+            )
+
     def test_route_finalizer_is_idempotent_on_committed_route(self) -> None:
         import pcbnew
 
@@ -1535,151 +1788,110 @@ class V2GeneratorTests(unittest.TestCase):
             self.assertEqual(first["v2_key_labels_moved_to_fab"], 0)
             self.assertEqual(second, first)
 
-    def test_m1_4_driver_route_detours_are_exact_and_idempotent(self) -> None:
+    def test_controller_compact_sessions_reconstruct_exactly_and_are_idempotent(self) -> None:
         import pcbnew
 
+        from tools import generate_kc2_pcbs as generator
         from tools.finalize_kc2_x3_v2_routes import (
-            M1_4_DRIVER_ROUTE_ADDITIONS,
-            M1_4_DRIVER_ROUTE_REMOVALS,
-            _add_route_spec,
+            CONTROLLER_COMPACT_ROUTE_ITEM_COUNTS,
+            CONTROLLER_COMPACT_ROUTE_SHA256,
+            _route_counter_digest,
             _route_signature,
-            apply_m1_4_driver_route_detours,
-        )
-
-        expected = {
-            "left": {"removed": 2, "added": 3},
-            "right": {"removed": 1, "added": 3},
-        }
-        for side, source in (("left", LEFT_BOARD), ("right", RIGHT_BOARD)):
-            with self.subTest(side=side):
-                board = pcbnew.LoadBoard(str(source))
-                additions = Counter(M1_4_DRIVER_ROUTE_ADDITIONS[side])
-                for item in list(board.GetTracks()):
-                    signature = _route_signature(item)
-                    if additions[signature] <= 0:
-                        continue
-                    board.Delete(item)
-                    additions[signature] -= 1
-                self.assertFalse(any(additions.values()))
-                for spec in M1_4_DRIVER_ROUTE_REMOVALS[side]:
-                    _add_route_spec(board, spec)
-                first = apply_m1_4_driver_route_detours(board, side)
-                second = apply_m1_4_driver_route_detours(board, side)
-                self.assertEqual(first, expected[side])
-                self.assertEqual(second, {"removed": 0, "added": 0})
-
-    def test_left_es1b_route_session_reconstructs_exactly_and_is_idempotent(self) -> None:
-        import pcbnew
-
-        from tools.finalize_kc2_x3_v2_routes import (
-            _route_signature,
-            import_reviewed_es1b_session,
+            import_reviewed_controller_compact_session,
         )
         from tools.verify_kc2_connectivity import verify_board as verify_connectivity
 
         with TemporaryDirectory(dir=ROOT) as temporary:
-            copy = Path(temporary) / "kc2_left-x3-v2.kicad_pcb"
-            board = pcbnew.LoadBoard(str(LEFT_BOARD))
-            for item in list(board.GetTracks()):
-                board.Delete(item)
-            session = (
-                ROOT
-                / "hardware/kicad/draft/x3-v2/autoroute/kc2_left-x3-v2-70-es1b-r1.ses"
-            )
+            output_dir = Path(temporary) / "x3-v2"
+            generator.generate_variant("x3-v2", output_dir=output_dir)
+            for side, expected in (
+                ("left", {"imported": 539, "removed": 5, "added": 9, "final": 543}),
+                ("right", {"imported": 703, "removed": 9, "added": 12, "final": 706}),
+            ):
+                with self.subTest(side=side):
+                    board_path = (
+                        output_dir
+                        / f"kc2_{side}-x3-v2"
+                        / f"kc2_{side}-x3-v2.kicad_pcb"
+                    )
+                    board = pcbnew.LoadBoard(str(board_path))
+                    for item in list(board.GetTracks()):
+                        board.Delete(item)
+                    session = (
+                        V2_ROOT
+                        / "autoroute"
+                        / f"kc2_{side}-x3-v2-70-es1b-controller-r3.ses"
+                    )
+                    first = import_reviewed_controller_compact_session(board, session, side)
+                    second = import_reviewed_controller_compact_session(board, session, side)
+                    pcbnew.SaveBoard(str(board_path), board)
 
-            first = import_reviewed_es1b_session(board, session, "left")
-            second = import_reviewed_es1b_session(board, session, "left")
-            pcbnew.SaveBoard(str(copy), board)
+                    self.assertEqual(
+                        first,
+                        {
+                            "imported_track_and_via_items": expected["imported"],
+                            "reviewed_items_removed": expected["removed"],
+                            "reviewed_items_added": expected["added"],
+                            "final_track_and_via_items": expected["final"],
+                        },
+                    )
+                    self.assertEqual(
+                        second,
+                        {
+                            "imported_track_and_via_items": 0,
+                            "reviewed_items_removed": 0,
+                            "reviewed_items_added": 0,
+                            "final_track_and_via_items": expected["final"],
+                        },
+                    )
+                    signatures = Counter(_route_signature(item) for item in board.GetTracks())
+                    self.assertEqual(sum(signatures.values()), CONTROLLER_COMPACT_ROUTE_ITEM_COUNTS[side])
+                    self.assertEqual(
+                        _route_counter_digest(signatures),
+                        CONTROLLER_COMPACT_ROUTE_SHA256[side],
+                    )
+                    self.assertEqual(verify_connectivity(board_path), [])
 
-            self.assertEqual(first, {
-                "imported_track_and_via_items": 560,
-                "reviewed_items_removed": 4,
-                "reviewed_items_added": 8,
-                "final_track_and_via_items": 564,
-            })
-            self.assertEqual(second, {
-                "imported_track_and_via_items": 0,
-                "reviewed_items_removed": 0,
-                "reviewed_items_added": 0,
-                "final_track_and_via_items": 564,
-            })
-            self.assertEqual(verify_connectivity(copy), [])
-            self.assertEqual(
-                Counter(_route_signature(item) for item in board.GetTracks()),
-                Counter(_route_signature(item) for item in pcbnew.LoadBoard(str(LEFT_BOARD)).GetTracks()),
-            )
+                    stale = pcbnew.LoadBoard(str(board_path))
+                    for item in list(stale.GetTracks()):
+                        stale.Delete(item)
+                    reset = stale.FindFootprintByReference("SW_RST1")
+                    reset.Move(pcbnew.VECTOR2I(pcbnew.FromMM(0.1), 0))
+                    with self.assertRaisesRegex(RuntimeError, "controller service geometry mismatch"):
+                        import_reviewed_controller_compact_session(stale, session, side)
 
-    def test_right_es1b_route_session_reconstructs_exactly_and_is_idempotent(self) -> None:
+    def test_controller_route_import_rejects_partial_and_stale_session(self) -> None:
         import pcbnew
 
-        from tools.finalize_kc2_x3_v2_routes import (
-            _route_signature,
-            import_reviewed_es1b_session,
-        )
-        from tools.verify_kc2_connectivity import verify_board as verify_connectivity
+        from tools.finalize_kc2_x3_v2_routes import import_reviewed_controller_compact_session
 
-        with TemporaryDirectory(dir=ROOT) as temporary:
-            copy = Path(temporary) / "kc2_right-x3-v2.kicad_pcb"
-            board = pcbnew.LoadBoard(str(RIGHT_BOARD))
-            for item in list(board.GetTracks()):
-                board.Delete(item)
-            session = V2_ROOT / "autoroute/kc2_right-x3-v2-70-es1b-r1.ses"
-
-            first = import_reviewed_es1b_session(board, session, "right")
-            second = import_reviewed_es1b_session(board, session, "right")
-            pcbnew.SaveBoard(str(copy), board)
-
-            self.assertEqual(first["imported_track_and_via_items"], 729)
-            self.assertEqual(first["reviewed_items_removed"], 13)
-            self.assertEqual(first["reviewed_items_added"], 16)
-            self.assertEqual(first["final_track_and_via_items"], 732)
-            self.assertEqual(
-                second,
-                {
-                    "imported_track_and_via_items": 0,
-                    "reviewed_items_removed": 0,
-                    "reviewed_items_added": 0,
-                    "final_track_and_via_items": 732,
-                },
-            )
-            self.assertEqual(verify_connectivity(copy), [])
-            self.assertEqual(
-                Counter(_route_signature(item) for item in board.GetTracks()),
-                Counter(_route_signature(item) for item in pcbnew.LoadBoard(str(RIGHT_BOARD)).GetTracks()),
-            )
-
-    def test_es1b_route_import_rejects_partial_stale_and_wrong_geometry(self) -> None:
-        import pcbnew
-
-        from tools.finalize_kc2_x3_v2_routes import import_reviewed_es1b_session
-
-        session = V2_ROOT / "autoroute/kc2_right-x3-v2-70-es1b-r1.ses"
+        session = V2_ROOT / "autoroute/kc2_right-x3-v2-70-es1b-controller-r3.ses"
         partial = pcbnew.LoadBoard(str(RIGHT_BOARD))
         partial.Delete(next(iter(partial.GetTracks())))
-        with self.assertRaisesRegex(RuntimeError, "nonempty.*exact reviewed right ES1B route"):
-            import_reviewed_es1b_session(partial, session, "right")
+        with self.assertRaisesRegex(RuntimeError, "nonempty.*exact reviewed right controller-compaction route"):
+            import_reviewed_controller_compact_session(partial, session, "right")
 
         wrong_geometry = pcbnew.LoadBoard(str(RIGHT_BOARD))
         for item in list(wrong_geometry.GetTracks()):
             wrong_geometry.Delete(item)
-        switch = wrong_geometry.FindFootprintByReference("SW1")
-        switch.SetPosition(switch.GetPosition() + pcbnew.VECTOR2I(pcbnew.FromMM(0.1), 0))
-        with self.assertRaisesRegex(RuntimeError, "right ES1B switch geometry mismatch"):
-            import_reviewed_es1b_session(wrong_geometry, session, "right")
+        reset = wrong_geometry.FindFootprintByReference("SW_RST1")
+        reset.SetPosition(reset.GetPosition() + pcbnew.VECTOR2I(pcbnew.FromMM(0.1), 0))
+        with self.assertRaisesRegex(RuntimeError, "controller service geometry mismatch"):
+            import_reviewed_controller_compact_session(wrong_geometry, session, "right")
 
         with TemporaryDirectory(dir=ROOT) as temporary:
             stale_session = Path(temporary) / session.name
             source = session.read_text(encoding="utf-8")
             stale_session.write_text(
-                source.replace("603056 -801004", "603056 -801005", 1),
+                source.replace("1134000 -834250", "1134000 -834251", 1),
                 encoding="utf-8",
             )
             self.assertNotEqual(stale_session.read_bytes(), session.read_bytes())
             stale_board = pcbnew.LoadBoard(str(RIGHT_BOARD))
             for item in list(stale_board.GetTracks()):
                 stale_board.Delete(item)
-            with self.assertRaisesRegex(RuntimeError, "reviewed right ES1B"):
-                import_reviewed_es1b_session(stale_board, stale_session, "right")
+            with self.assertRaisesRegex(RuntimeError, "reviewed right controller"):
+                import_reviewed_controller_compact_session(stale_board, stale_session, "right")
 
     def test_drc_evidence_binds_current_boards_and_reports(self) -> None:
         from tools.verify_kc2_x3_v2 import build_drc_evidence
@@ -1731,6 +1943,51 @@ class V2GeneratorTests(unittest.TestCase):
         for stale_claim in stale_current_claims:
             self.assertNotIn(stale_claim, product_spec)
 
+    def test_product_spec_and_srs_scope_the_v2_reset_and_battery_exceptions(self) -> None:
+        product_spec = PRODUCT_SPEC.read_text(encoding="utf-8")
+        srs = (ROOT / "docs/spec/10.product-architecture.srs.md").read_text(
+            encoding="utf-8"
+        )
+
+        self.assertGreaterEqual(
+            product_spec.count(
+                "X3 V2에서는 `CON-ARCH-004` AC-12가 reset 위치만 USB-side로 supersede한다."
+            ),
+            2,
+        )
+        self.assertNotIn(
+            "X3 compact controller tab의 프로그래밍용 tact switch는 antenna-side controller-tab edge 쪽 상면에 두며",
+            product_spec,
+        )
+        self.assertNotIn(
+            "프로그래밍용 tact switch는 antenna-side controller-tab edge 쪽으로 이동하되",
+            product_spec,
+        )
+        self.assertIn(
+            "Promoted/historical X3의 `NW3-A06-B3` SMD tact switch antenna-side 상면 위치와 1:1 출력물 기반 조작 검증; X3 V2는 `CON-ARCH-004` AC-12의 USB-side 물리 service gate 적용",
+            product_spec,
+        )
+        self.assertNotIn(
+            "`NW3-A06-B3` SMD tact switch의 antenna-side 상면 위치와 1:1 출력물 기반 조작 검증",
+            product_spec,
+        )
+        self.assertIn(
+            "The top-side `SW_RST1` actuator support required by AC-11 is an explicit exception",
+            srs,
+        )
+        self.assertIn(
+            "the provisional battery clearance is the AC-11 nominal value and remains subject to the pending physical tolerance gate",
+            srs,
+        )
+        self.assertIn(
+            "Their 564/732 driver-clearance result is the pre-controller-compaction M1.4 baseline and is superseded by the current controller-r3 543/706 route evidence",
+            srs,
+        )
+        self.assertNotIn(
+            "The implemented driver-clearance detours produce the current 564/732 route-item result.",
+            srs,
+        )
+
     def test_drc_evidence_rejects_self_consistent_invalid_metadata(self) -> None:
         from tools.verify_kc2_x3_v2 import (
             build_drc_evidence,
@@ -1778,10 +2035,10 @@ class V2GeneratorTests(unittest.TestCase):
             RIGHT_BOARD.with_suffix(".kicad_pro"),
             LEFT_BOARD.with_suffix(".drc.json"),
             RIGHT_BOARD.with_suffix(".drc.json"),
-            ROOT / "hardware/kicad/draft/x3-v2/autoroute/kc2_left-x3-v2-70-es1b-r1.dsn",
-            ROOT / "hardware/kicad/draft/x3-v2/autoroute/kc2_left-x3-v2-70-es1b-r1.ses",
-            ROOT / "hardware/kicad/draft/x3-v2/autoroute/kc2_right-x3-v2-70-es1b-r1.dsn",
-            ROOT / "hardware/kicad/draft/x3-v2/autoroute/kc2_right-x3-v2-70-es1b-r1.ses",
+            ROOT / "hardware/kicad/draft/x3-v2/autoroute/kc2_left-x3-v2-70-es1b-controller-r3.dsn",
+            ROOT / "hardware/kicad/draft/x3-v2/autoroute/kc2_left-x3-v2-70-es1b-controller-r3.ses",
+            ROOT / "hardware/kicad/draft/x3-v2/autoroute/kc2_right-x3-v2-70-es1b-controller-r3.dsn",
+            ROOT / "hardware/kicad/draft/x3-v2/autoroute/kc2_right-x3-v2-70-es1b-controller-r3.ses",
         )
         for path in paths:
             relative = path.relative_to(ROOT).as_posix()

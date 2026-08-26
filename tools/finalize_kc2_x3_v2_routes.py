@@ -127,6 +127,61 @@ ES1B_ROUTE_SHA256 = {
     "left": "ba48ff17dd7f447e4cbededba09c1889b82713b1defef18d63aace4e59f92c7d",
     "right": "1592744e711eda0eef59d51062c3c2bab87e5ae05c8156f0708f0544a09b7e38",
 }
+
+
+CONTROLLER_COMPACT_IMPORTED_ITEM_COUNTS = {"left": 539, "right": 703}
+CONTROLLER_COMPACT_ROUTE_ITEM_COUNTS = {"left": 543, "right": 706}
+CONTROLLER_COMPACT_ROUTE_SHA256 = {
+    "left": "9bc9cbf981da8d452b82e52d54a4e8ab3cafcc6121ec578f36a4cf43f3dde19d",
+    "right": "83dcc6f764670b379b6c9104d643925cd6eff3c0b16286f12bae14dd1397c67f",
+}
+CONTROLLER_COMPACT_ROUTE_REMOVALS = {
+    "left": (
+        ("track", "L_COL6", "B.Cu", 155.0477, 72.4450, 146.6825, 64.0798, 0.250),
+        ("track", "L_ROW1", "B.Cu", 149.6467, 60.3252, 150.9160, 61.5945, 0.250),
+        ("track", "L_ROW1", "F.Cu", 150.9160, 76.0243, 150.9160, 61.5945, 0.250),
+        ("via", "L_COL2", 90.3462, 70.1926, 0.600, 0.300),
+        ("via", "L_ROW1", 150.9160, 61.5945, 0.600, 0.300),
+    ),
+    "right": (
+        ("track", "R_COL0", "B.Cu", 43.7521, 109.7250, 40.4850, 106.4579, 0.250),
+        ("track", "R_COL1", "F.Cu", 63.4300, 61.8416, 70.9719, 69.3834, 0.250),
+        ("track", "R_COL1", "F.Cu", 64.3743, 75.9810, 70.9719, 69.3834, 0.250),
+        ("track", "R_COL1", "F.Cu", 70.9719, 69.3834, 74.0334, 72.4450, 0.250),
+        ("track", "R_COL6", "B.Cu", 97.3280, 89.1791, 96.8259, 89.1791, 0.250),
+        ("track", "R_COL6", "F.Cu", 96.8259, 89.1791, 94.1212, 86.4744, 0.250),
+        ("track", "R_ROW3", "F.Cu", 100.4593, 62.9144, 91.7219, 54.1770, 0.250),
+        ("track", "R_ROW3", "F.Cu", 100.4593, 91.6911, 100.4593, 62.9144, 0.250),
+        ("via", "R_COL6", 96.8259, 89.1791, 0.600, 0.300),
+    ),
+}
+CONTROLLER_COMPACT_ROUTE_ADDITIONS = {
+    "left": (
+        ("track", "L_COL2", "B.Cu", 90.3462, 70.1926, 91.5000, 70.3000, 0.250),
+        ("track", "L_COL2", "F.Cu", 90.3462, 70.1926, 91.5000, 70.3000, 0.250),
+        ("track", "L_COL6", "B.Cu", 146.6825, 64.0798, 150.9000, 68.2973, 0.250),
+        ("track", "L_COL6", "B.Cu", 150.9000, 68.2973, 150.9000, 70.2000, 0.250),
+        ("track", "L_COL6", "B.Cu", 150.9000, 70.2000, 155.0477, 72.4450, 0.250),
+        ("track", "L_ROW1", "B.Cu", 149.6467, 60.3252, 150.8500, 61.5945, 0.250),
+        ("track", "L_ROW1", "F.Cu", 150.9160, 76.0243, 150.8500, 61.5945, 0.250),
+        ("via", "L_COL2", 91.5000, 70.3000, 0.600, 0.300),
+        ("via", "L_ROW1", 150.8500, 61.5945, 0.600, 0.300),
+    ),
+    "right": (
+        ("track", "R_COL0", "B.Cu", 40.4000, 108.0000, 43.7521, 109.7250, 0.250),
+        ("track", "R_COL0", "B.Cu", 40.4850, 106.4579, 40.4000, 108.0000, 0.250),
+        ("track", "R_COL1", "F.Cu", 63.4300, 61.8416, 69.5000, 67.0000, 0.250),
+        ("track", "R_COL1", "F.Cu", 69.5000, 67.0000, 69.5000, 70.0000, 0.250),
+        ("track", "R_COL1", "F.Cu", 69.5000, 70.0000, 64.3743, 75.9810, 0.250),
+        ("track", "R_COL1", "F.Cu", 69.5000, 70.0000, 74.0334, 72.4450, 0.250),
+        ("track", "R_COL6", "B.Cu", 97.3280, 89.1791, 97.0500, 89.1791, 0.250),
+        ("track", "R_COL6", "F.Cu", 97.0500, 89.1791, 94.1212, 86.4744, 0.250),
+        ("track", "R_ROW3", "F.Cu", 91.7219, 54.1770, 100.2000, 62.6551, 0.250),
+        ("track", "R_ROW3", "F.Cu", 100.2000, 62.6551, 100.2000, 91.6911, 0.250),
+        ("track", "R_ROW3", "F.Cu", 100.2000, 91.6911, 100.4593, 91.6911, 0.250),
+        ("via", "R_COL6", 97.0500, 89.1791, 0.600, 0.300),
+    ),
+}
 ES1B_IMPORTED_ITEM_COUNTS = {"left": 560, "right": 729}
 ES1B_ROUTE_REMOVALS = {
     "left": (
@@ -324,7 +379,7 @@ def export_current_mh_trackless_dsn(
     output_path: Path,
     side: str,
 ) -> None:
-    """Export a deterministic current-MH routing input from a trackless board."""
+    """Export the deterministic compact-controller routing input from a trackless board."""
     expected_holes = 8 if side == "left" else 10 if side == "right" else None
     if expected_holes is None:
         raise RuntimeError(f"unsupported current-MH DSN side {side!r}")
@@ -343,7 +398,7 @@ def export_current_mh_trackless_dsn(
     if not pcbnew.ExportSpecctraDSN(board, str(output_path)):
         raise RuntimeError(f"failed to export current-MH DSN {output_path}")
     text = output_path.read_text(encoding="utf-8")
-    canonical_name = f"kc2_{side}-x3-v2-70-es1b-mh-r2.dsn"
+    canonical_name = f"kc2_{side}-x3-v2-70-es1b-controller-r3.dsn"
     normalized, count = re.subn(
         r'^\(pcb\s+(?:"[^"]*"|[^\r\n]+)',
         f'(pcb "{canonical_name}"',
@@ -362,6 +417,127 @@ def _has_exact_reviewed_es1b_route(board: pcbnew.BOARD, side: str) -> bool:
         and _route_counter_digest(signatures) == ES1B_ROUTE_SHA256[side]
         and _matrix_pads_are_fully_connected(board, side)
     )
+
+
+def _has_exact_reviewed_controller_compact_route(
+    board: pcbnew.BOARD,
+    side: str,
+) -> bool:
+    signatures = Counter(_route_signature(item) for item in board.GetTracks())
+    return (
+        sum(signatures.values()) == CONTROLLER_COMPACT_ROUTE_ITEM_COUNTS[side]
+        and _route_counter_digest(signatures) == CONTROLLER_COMPACT_ROUTE_SHA256[side]
+        and _matrix_pads_are_fully_connected(board, side)
+    )
+
+
+def _verify_controller_compact_service_geometry(
+    board: pcbnew.BOARD,
+    side: str,
+) -> None:
+    if side not in {"left", "right"}:
+        raise RuntimeError(f"unsupported controller-compaction route side {side!r}")
+    expected = gen.X3_V2_CONTROLLER_SERVICE_POSITIONS_MM[side]
+    for reference, key in (
+        ("U1", "u1"),
+        ("BAT_LEAD_SLOT1", "battery_slot"),
+        ("SW_RST1", "reset"),
+    ):
+        footprint = board.FindFootprintByReference(reference)
+        if footprint is None:
+            raise RuntimeError(
+                f"controller service geometry mismatch: missing {side} {reference}"
+            )
+        position = footprint.GetPosition()
+        actual = (
+            round(pcbnew.ToMM(position.x), 4),
+            round(pcbnew.ToMM(position.y), 4),
+        )
+        if actual != expected[key]:
+            raise RuntimeError(
+                "controller service geometry mismatch: "
+                f"{side} {reference} expected {expected[key]}, found {actual}"
+            )
+    reset = board.FindFootprintByReference("SW_RST1")
+    rotation = round(reset.GetOrientation().AsDegrees() % 360.0, 3)
+    if rotation != gen.X3_V2_RESET_ROTATION_DEGREES:
+        raise RuntimeError(
+            "controller service geometry mismatch: "
+            f"{side} SW_RST1 expected R{gen.X3_V2_RESET_ROTATION_DEGREES:g}, "
+            f"found R{rotation:g}"
+        )
+
+
+def import_reviewed_controller_compact_session(
+    board: pcbnew.BOARD,
+    session_path: Path,
+    side: str,
+) -> dict[str, int]:
+    """Import the reviewed compact-controller route and exact edge-safe cleanup."""
+    _verify_controller_compact_service_geometry(board, side)
+    existing = list(board.GetTracks())
+    if existing:
+        if not _has_exact_reviewed_controller_compact_route(board, side):
+            raise RuntimeError(
+                f"refusing a nonempty board that is not the exact reviewed {side} "
+                "controller-compaction route"
+            )
+        return {
+            "imported_track_and_via_items": 0,
+            "reviewed_items_removed": 0,
+            "reviewed_items_added": 0,
+            "final_track_and_via_items": len(existing),
+        }
+    if not session_path.is_file():
+        raise RuntimeError(
+            f"missing reviewed {side} controller-compaction session: {session_path}"
+        )
+    if not pcbnew.ImportSpecctraSES(board, str(session_path)):
+        raise RuntimeError(
+            f"failed to import reviewed {side} controller-compaction session: "
+            f"{session_path}"
+        )
+
+    imported = list(board.GetTracks())
+    imported_signatures = Counter(_route_signature(item) for item in imported)
+    expected_removals = Counter(CONTROLLER_COMPACT_ROUTE_REMOVALS[side])
+    expected_count = CONTROLLER_COMPACT_IMPORTED_ITEM_COUNTS[side]
+    if len(imported) != expected_count:
+        raise RuntimeError(
+            f"reviewed {side} controller-compaction session item count changed: "
+            f"expected {expected_count}, found {len(imported)}"
+        )
+    if imported_signatures & expected_removals != expected_removals:
+        raise RuntimeError(
+            f"reviewed {side} controller-compaction cleanup precondition failed"
+        )
+
+    remaining = expected_removals.copy()
+    removed = 0
+    for item in list(board.GetTracks()):
+        signature = _route_signature(item)
+        if remaining[signature] <= 0:
+            continue
+        board.Delete(item)
+        remaining[signature] -= 1
+        removed += 1
+    if any(remaining.values()):
+        raise RuntimeError(
+            f"reviewed {side} controller-compaction removal was incomplete"
+        )
+    for spec in CONTROLLER_COMPACT_ROUTE_ADDITIONS[side]:
+        _add_route_spec(board, spec)
+    if not _has_exact_reviewed_controller_compact_route(board, side):
+        raise RuntimeError(
+            f"reviewed {side} controller-compaction session did not reconstruct "
+            "the exact route"
+        )
+    return {
+        "imported_track_and_via_items": len(imported),
+        "reviewed_items_removed": removed,
+        "reviewed_items_added": len(CONTROLLER_COMPACT_ROUTE_ADDITIONS[side]),
+        "final_track_and_via_items": len(list(board.GetTracks())),
+    }
 
 
 def import_reviewed_es1b_session(
@@ -692,10 +868,17 @@ def main() -> None:
     parser.add_argument("--import-left-v5-session", type=Path)
     parser.add_argument("--import-right-r12-session", type=Path)
     parser.add_argument("--import-es1b-session", type=Path)
+    parser.add_argument("--import-controller-compact-session", type=Path)
     args = parser.parse_args()
     board = pcbnew.LoadBoard(str(args.board))
     side = "left" if "left" in args.board.name.lower() else "right"
     result: dict[str, object] = {}
+    if args.import_controller_compact_session:
+        result["controller_compact_session"] = import_reviewed_controller_compact_session(
+            board,
+            args.import_controller_compact_session,
+            side,
+        )
     if args.import_es1b_session:
         result["es1b_session"] = import_reviewed_es1b_session(
             board,
@@ -726,7 +909,8 @@ def main() -> None:
     if not result:
         parser.error(
             "provide --drc, --restore-left-controller-columns, --import-left-v5-session, "
-            "--import-right-r12-session, and/or --import-es1b-session"
+            "--import-right-r12-session, --import-es1b-session, and/or "
+            "--import-controller-compact-session"
         )
     pcbnew.SaveBoard(str(args.board), board)
     print(f"{side}: {result}")

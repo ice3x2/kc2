@@ -6,9 +6,8 @@
 	(descr "KC2 X3 V2 M1.4 service mounting hole, 1.60 mm copper-free NPTH")
 	(tags "KC2 X3 V2 M1.4 mounting NPTH copper-free")
 	(property "Reference" "MH**"
-		(at 0 0 0)
-		(layer "F.Fab")
-		(hide yes)
+		(at 0 -1.5 0)
+		(layer "F.SilkS")
 		(effects
 			(font
 				(size 0.8 0.8)

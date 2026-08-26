@@ -3,7 +3,7 @@
   "variant": "x3-v2",
   "generated_by": "tools/generate_kc2_x3_v2_housings.py",
   "hash_policy": "lf-normalized-utf8-text-else-raw-v1",
-  "generator_sha256": "f8ef4ca4f56591fe787549fe890d5485575253cb7186d1a20c29edd62e0fdee9",
+  "generator_sha256": "7260fdef5c93ba9bf18aa82fc9d52da170587251263704a494b070ed6edf9ce6",
   "coordinate_system": "board-local, X-reflected physical lower-housing assembly view",
   "order_ready": false,
   "parameters": {
@@ -21,18 +21,28 @@
     "component_cutout_clearance_mm": 0.35,
     "component_cutout_simplify_mm": 0.02,
     "minimum_diode_housing_perimeter_land_mm": 0.85,
+    "minimum_battery_housing_perimeter_land_mm": 0.85,
+    "battery_reference": "TW301525",
+    "battery_board_label": "TW301525 80mAh",
+    "battery_nominal_plan_envelope_mm": [
+      15.0,
+      25.0
+    ],
+    "battery_modeled_depth_mm": 3.0,
+    "reset_reference": "SW_RST1",
+    "reset_local_support_diameter_mm": 3.0,
     "maximum_load_point_to_support_mm": 24.0,
     "print_volume_limit_mm": 150.0,
-    "desk_standoff_nominal_mm": 0.8,
+    "desk_standoff_nominal_mm": 1.0,
     "desk_standoff_print_tolerance_mm": 0.3,
-    "desk_datum_z_mm": -0.8,
+    "desk_datum_z_mm": -1.0,
     "desk_contact_diameter_mm": 2.0,
     "mounting_npth_diameter_mm": 1.6,
     "mounting_support_land_diameter_mm": 3.0,
     "mounting_pilot_diameter_mm": 1.1,
     "mounting_pilot_depth_mm": 2.8,
     "mounting_pilot_bottom_z_mm": -0.3,
-    "mounting_closed_bottom_mm": 0.5,
+    "mounting_closed_bottom_mm": 0.7,
     "mounting_head_envelope_mm": [
       2.0,
       0.5
@@ -67,19 +77,19 @@
   "outputs": {
     "left": {
       "source_board": "hardware/kicad/draft/x3-v2/kc2_left-x3-v2/kc2_left-x3-v2.kicad_pcb",
-      "source_board_sha256": "ed338c5839a4cf0c1197611a4cdaf7ca339a54cbc7aa3297d5963d52a1b25148",
+      "source_board_sha256": "7622bf2fc7e6e4f67d4a863bc1486b3c8851989cdde88a8253ae439b1bd694ca",
       "key_count": 31,
       "legacy_registration_refs": [],
       "step": "hardware/case/draft/x3-v2/kc2_left_x3_v2_lower_housing.step",
-      "step_sha256": "7cd845d99528cad1278e058a528218c05305de0be5c0470251b5025a6bb36372",
+      "step_sha256": "dbeb66d56fb3eded0f5219077df541d04e9b6474ce97f101af2529a59b966521",
       "step_has_trailing_whitespace": false,
       "printable_parts": [
         {
           "name": "whole",
           "stl": "hardware/case/draft/x3-v2/kc2_left_x3_v2_lower_housing.stl",
-          "stl_sha256": "25092d757a6592f293106f7a44acc7e91d87399615d01d1480cb0e8dfe443e04",
+          "stl_sha256": "9d59cd50306f741308006285a91cb433f3eb300d7157666b4fcd7e5e0fc17018",
           "solid_count": 1,
-          "volume_mm3": 18021.411,
+          "volume_mm3": 16947.51,
           "desk_contact_ids": [
             "LEFT-FOOT-01",
             "LEFT-FOOT-02",
@@ -102,15 +112,16 @@
             "LEFT-MH5-COLUMN",
             "LEFT-MH6-COLUMN",
             "LEFT-MH7-COLUMN",
-            "LEFT-MH8-COLUMN"
+            "LEFT-MH8-COLUMN",
+            "LEFT-RESET-COLUMN"
           ],
-          "desk_contact_count": 22,
-          "desk_contact_z_mm": -0.8,
+          "desk_contact_count": 23,
+          "desk_contact_z_mm": -1.0,
           "desk_contact_coplanarity_mm": 0.0,
-          "desk_contact_hull_area_mm2": 6766.5854,
+          "desk_contact_hull_area_mm2": 7329.3988,
           "projected_plate_centroid_mm": [
-            65.4736,
-            72.752
+            67.2652,
+            72.3658
           ],
           "projected_centroid_inside_contact_hull": true,
           "desk_contacts_non_collinear": true,
@@ -118,265 +129,306 @@
           "bounds_xyz_mm": [
             0.1,
             0.1,
-            -0.8,
+            -1.0,
             135.0125,
-            126.65,
+            122.4,
             2.5001
           ],
           "size_xyz_mm": [
             134.9125,
-            126.55,
-            3.3001
+            122.3,
+            3.5001
           ]
         }
       ],
-      "desk_standoff_nominal_mm": 0.8,
+      "desk_standoff_nominal_mm": 1.0,
       "desk_standoff_print_tolerance_mm": 0.3,
-      "desk_datum_z_mm": -0.8,
-      "minimum_open_component_to_desk_nominal_clearance_mm": 0.8,
+      "desk_datum_z_mm": -1.0,
+      "minimum_open_component_to_desk_nominal_clearance_mm": 0.5,
       "minimum_open_component_to_desk_clearance_mm": 0.5,
+      "minimum_open_component_to_desk_clearance_basis": "minimum of controlled bottom-component post-print clearance and the AC-11 nominal 3.00 mm battery-to-desk clearance; battery tolerance is pending",
+      "reset_local_support": {
+        "ref": "SW_RST1",
+        "board_center_mm": [
+          115.8125,
+          63.45
+        ],
+        "housing_center_mm": [
+          54.3,
+          24.2
+        ],
+        "footprint_side": "top",
+        "actuator_projection_size_mm": [
+          1.3,
+          2.7
+        ],
+        "support_diameter_mm": 3.0,
+        "support_top_z_mm": 2.5,
+        "support_vertical_gap_mm": 0.0,
+        "desk_column_bottom_z_mm": -1.0,
+        "actuator_projection_covered": true,
+        "support_surface_covered": true,
+        "component_cutout_collision_count": 0,
+        "bottom_exposed_pad_collision_count": 0,
+        "via_collision_count": 0,
+        "bottom_routed_copper_overlap_count": 0,
+        "bottom_routed_copper_solder_mask_protected": true,
+        "electrically_safe": true,
+        "electrical_safety_basis": "SW_RST1 pads are F.Cu-only; no via or exterior-open cutout intersects the support, and any B.Cu route overlap remains inside the PCB stack under solder mask."
+      },
       "desk_contacts": [
         {
           "id": "LEFT-FOOT-01",
           "source_support_id": "LEFT-SUP-01",
           "category": "seam",
           "x_mm": 22.6,
-          "y_mm": 52.121,
+          "y_mm": 47.871,
           "diameter_mm": 2.0,
           "top_z_mm": 0.0,
-          "bottom_z_mm": -0.8,
-          "height_mm": 0.8
+          "bottom_z_mm": -1.0,
+          "height_mm": 1.0
         },
         {
           "id": "LEFT-FOOT-02",
           "source_support_id": "LEFT-SUP-02",
           "category": "seam",
           "x_mm": 18.6,
-          "y_mm": 72.149,
+          "y_mm": 67.899,
           "diameter_mm": 2.0,
           "top_z_mm": 0.0,
-          "bottom_z_mm": -0.8,
-          "height_mm": 0.8
+          "bottom_z_mm": -1.0,
+          "height_mm": 1.0
         },
         {
           "id": "LEFT-FOOT-03",
           "source_support_id": "LEFT-SUP-03",
           "category": "seam",
           "x_mm": 18.1,
-          "y_mm": 108.081,
+          "y_mm": 103.831,
           "diameter_mm": 2.0,
           "top_z_mm": 0.0,
-          "bottom_z_mm": -0.8,
-          "height_mm": 0.8
+          "bottom_z_mm": -1.0,
+          "height_mm": 1.0
         },
         {
           "id": "LEFT-FOOT-04",
           "source_support_id": "LEFT-SUP-04",
           "category": "thumb",
           "x_mm": 7.1687,
-          "y_mm": 111.225,
+          "y_mm": 106.975,
           "diameter_mm": 2.0,
           "top_z_mm": 0.0,
-          "bottom_z_mm": -0.8,
-          "height_mm": 0.8
+          "bottom_z_mm": -1.0,
+          "height_mm": 1.0
         },
         {
           "id": "LEFT-FOOT-05",
           "source_support_id": "LEFT-SUP-05",
           "category": "thumb",
           "x_mm": 78.0812,
-          "y_mm": 110.225,
+          "y_mm": 105.975,
           "diameter_mm": 2.0,
           "top_z_mm": 0.0,
-          "bottom_z_mm": -0.8,
-          "height_mm": 0.8
+          "bottom_z_mm": -1.0,
+          "height_mm": 1.0
         },
         {
           "id": "LEFT-FOOT-06",
           "source_support_id": "LEFT-SUP-06",
           "category": "thumb",
           "x_mm": 131.7062,
-          "y_mm": 109.225,
+          "y_mm": 104.975,
           "diameter_mm": 2.0,
           "top_z_mm": 0.0,
-          "bottom_z_mm": -0.8,
-          "height_mm": 0.8
+          "bottom_z_mm": -1.0,
+          "height_mm": 1.0
         },
         {
           "id": "LEFT-FOOT-07",
           "source_support_id": "LEFT-SUP-07",
           "category": "span",
           "x_mm": 31.8375,
-          "y_mm": 61.099,
+          "y_mm": 56.849,
           "diameter_mm": 2.0,
           "top_z_mm": 0.0,
-          "bottom_z_mm": -0.8,
-          "height_mm": 0.8
+          "bottom_z_mm": -1.0,
+          "height_mm": 1.0
         },
         {
           "id": "LEFT-FOOT-08",
           "source_support_id": "LEFT-SUP-08",
           "category": "span",
           "x_mm": 28.8375,
-          "y_mm": 89.531,
+          "y_mm": 85.281,
           "diameter_mm": 2.0,
           "top_z_mm": 0.0,
-          "bottom_z_mm": -0.8,
-          "height_mm": 0.8
+          "bottom_z_mm": -1.0,
+          "height_mm": 1.0
         },
         {
           "id": "LEFT-FOOT-09",
           "source_support_id": "LEFT-SUP-09",
           "category": "span",
           "x_mm": 51.5313,
-          "y_mm": 61.099,
+          "y_mm": 56.849,
           "diameter_mm": 2.0,
           "top_z_mm": 0.0,
-          "bottom_z_mm": -0.8,
-          "height_mm": 0.8
+          "bottom_z_mm": -1.0,
+          "height_mm": 1.0
         },
         {
           "id": "LEFT-FOOT-10",
           "source_support_id": "LEFT-SUP-10",
           "category": "span",
           "x_mm": 57.0313,
-          "y_mm": 97.031,
+          "y_mm": 92.781,
           "diameter_mm": 2.0,
           "top_z_mm": 0.0,
-          "bottom_z_mm": -0.8,
-          "height_mm": 0.8
+          "bottom_z_mm": -1.0,
+          "height_mm": 1.0
         },
         {
           "id": "LEFT-FOOT-11",
           "source_support_id": "LEFT-SUP-11",
           "category": "span",
           "x_mm": 88.225,
-          "y_mm": 60.599,
+          "y_mm": 56.349,
           "diameter_mm": 2.0,
           "top_z_mm": 0.0,
-          "bottom_z_mm": -0.8,
-          "height_mm": 0.8
+          "bottom_z_mm": -1.0,
+          "height_mm": 1.0
         },
         {
           "id": "LEFT-FOOT-12",
           "source_support_id": "LEFT-SUP-12",
           "category": "span",
           "x_mm": 84.225,
-          "y_mm": 90.531,
+          "y_mm": 86.281,
           "diameter_mm": 2.0,
           "top_z_mm": 0.0,
-          "bottom_z_mm": -0.8,
-          "height_mm": 0.8
+          "bottom_z_mm": -1.0,
+          "height_mm": 1.0
         },
         {
           "id": "LEFT-FOOT-13",
           "source_support_id": "LEFT-SUP-13",
           "category": "span",
           "x_mm": 108.0375,
-          "y_mm": 61.099,
+          "y_mm": 56.849,
           "diameter_mm": 2.0,
           "top_z_mm": 0.0,
-          "bottom_z_mm": -0.8,
-          "height_mm": 0.8
+          "bottom_z_mm": -1.0,
+          "height_mm": 1.0
         },
         {
           "id": "LEFT-FOOT-14",
           "source_support_id": "LEFT-SUP-14",
           "category": "span",
           "x_mm": 107.0375,
-          "y_mm": 90.031,
+          "y_mm": 85.781,
           "diameter_mm": 2.0,
           "top_z_mm": 0.0,
-          "bottom_z_mm": -0.8,
-          "height_mm": 0.8
+          "bottom_z_mm": -1.0,
+          "height_mm": 1.0
         },
         {
           "id": "LEFT-MH1-COLUMN",
           "source_support_id": "MH1",
           "category": "mounting",
           "x_mm": 27.5,
-          "y_mm": 33.0,
+          "y_mm": 28.75,
           "diameter_mm": 3.0,
           "top_z_mm": 0.0,
-          "bottom_z_mm": -0.8,
-          "height_mm": 0.8
+          "bottom_z_mm": -1.0,
+          "height_mm": 1.0
         },
         {
           "id": "LEFT-MH2-COLUMN",
           "source_support_id": "MH2",
           "category": "mounting",
           "x_mm": 41.5,
-          "y_mm": 51.5,
+          "y_mm": 47.25,
           "diameter_mm": 3.0,
           "top_z_mm": 0.0,
-          "bottom_z_mm": -0.8,
-          "height_mm": 0.8
+          "bottom_z_mm": -1.0,
+          "height_mm": 1.0
         },
         {
           "id": "LEFT-MH3-COLUMN",
           "source_support_id": "MH3",
           "category": "mounting",
           "x_mm": 70.0,
-          "y_mm": 58.5,
+          "y_mm": 54.25,
           "diameter_mm": 3.0,
           "top_z_mm": 0.0,
-          "bottom_z_mm": -0.8,
-          "height_mm": 0.8
+          "bottom_z_mm": -1.0,
+          "height_mm": 1.0
         },
         {
           "id": "LEFT-MH4-COLUMN",
           "source_support_id": "MH4",
           "category": "mounting",
           "x_mm": 113.0,
-          "y_mm": 64.0,
+          "y_mm": 59.75,
           "diameter_mm": 3.0,
           "top_z_mm": 0.0,
-          "bottom_z_mm": -0.8,
-          "height_mm": 0.8
+          "bottom_z_mm": -1.0,
+          "height_mm": 1.0
         },
         {
           "id": "LEFT-MH5-COLUMN",
           "source_support_id": "MH5",
           "category": "mounting",
           "x_mm": 36.5,
-          "y_mm": 96.5,
+          "y_mm": 92.25,
           "diameter_mm": 3.0,
           "top_z_mm": 0.0,
-          "bottom_z_mm": -0.8,
-          "height_mm": 0.8
+          "bottom_z_mm": -1.0,
+          "height_mm": 1.0
         },
         {
           "id": "LEFT-MH6-COLUMN",
           "source_support_id": "MH6",
           "category": "mounting",
           "x_mm": 115.0,
-          "y_mm": 109.0,
+          "y_mm": 104.75,
           "diameter_mm": 3.0,
           "top_z_mm": 0.0,
-          "bottom_z_mm": -0.8,
-          "height_mm": 0.8
+          "bottom_z_mm": -1.0,
+          "height_mm": 1.0
         },
         {
           "id": "LEFT-MH7-COLUMN",
           "source_support_id": "MH7",
           "category": "mounting",
           "x_mm": 4.5,
-          "y_mm": 110.0,
+          "y_mm": 105.75,
           "diameter_mm": 3.0,
           "top_z_mm": 0.0,
-          "bottom_z_mm": -0.8,
-          "height_mm": 0.8
+          "bottom_z_mm": -1.0,
+          "height_mm": 1.0
         },
         {
           "id": "LEFT-MH8-COLUMN",
           "source_support_id": "MH8",
           "category": "mounting",
           "x_mm": 67.5,
-          "y_mm": 112.0,
+          "y_mm": 107.75,
           "diameter_mm": 3.0,
           "top_z_mm": 0.0,
-          "bottom_z_mm": -0.8,
-          "height_mm": 0.8
+          "bottom_z_mm": -1.0,
+          "height_mm": 1.0
+        },
+        {
+          "id": "LEFT-RESET-COLUMN",
+          "source_support_id": "SW_RST1",
+          "category": "reset",
+          "x_mm": 54.3,
+          "y_mm": 24.2,
+          "diameter_mm": 3.0,
+          "top_z_mm": 0.0,
+          "bottom_z_mm": -1.0,
+          "height_mm": 1.0
         }
       ],
       "desk_contacts_hidden_in_top_view": true,
@@ -385,7 +437,7 @@
       "rail": {
         "top_z_mm": 2.5,
         "nominal_vertical_gap_mm": 0.0,
-        "plan_area_mm2": 300.9893,
+        "plan_area_mm2": 295.4643,
         "segment_count": 5,
         "near_continuous": true,
         "clearance_cut_around_board_features": true
@@ -402,9 +454,9 @@
           "opening_plan_area_mm2": 3142.4059,
           "minimum_exterior_bottom_clearance_mm": 0.1,
           "minimum_plate_bottom_clearance_mm": 0.1,
-          "nominal_desk_clearance_mm": 0.9,
+          "nominal_desk_clearance_mm": 1.1,
           "desk_standoff_print_tolerance_mm": 0.3,
-          "minimum_desk_clearance_mm": 0.6,
+          "minimum_desk_clearance_mm": 0.8,
           "official_body_depth_max_mm": 2.3,
           "assembly_allowance_mm": 0.1,
           "modeled_max_depth_mm": 2.4,
@@ -459,9 +511,9 @@
           "opening_plan_area_mm2": 741.6109,
           "minimum_exterior_bottom_clearance_mm": 0.0,
           "minimum_plate_bottom_clearance_mm": 0.0,
-          "nominal_desk_clearance_mm": 0.8,
+          "nominal_desk_clearance_mm": 1.0,
           "desk_standoff_print_tolerance_mm": 0.3,
-          "minimum_desk_clearance_mm": 0.5,
+          "minimum_desk_clearance_mm": 0.7,
           "breaks_lateral_housing_perimeter": false,
           "minimum_housing_perimeter_land_mm": 1.025,
           "manufacturer": "Jingdao Microelectronics",
@@ -476,7 +528,7 @@
           "modeled_max_depth_mm": 2.5,
           "official_source": "https://datasheet.lcsc.com/datasheet/pdf/2343098076327222563a84c9a80dbd7d.pdf?productCode=C437840"
         },
-        "controller_reset": {
+        "controller_socket": {
           "opening_count": 1,
           "minimum_xy_clearance_mm": 0.35,
           "exterior_open": true,
@@ -493,6 +545,33 @@
           "official_body_depth_max_mm": null,
           "assembly_allowance_mm": null,
           "modeled_max_depth_mm": null
+        },
+        "battery_body": {
+          "opening_count": 1,
+          "minimum_xy_clearance_mm": 0.35,
+          "exterior_open": true,
+          "through_opening_z_mm": [
+            0.0,
+            2.5
+          ],
+          "opening_plan_area_mm2": 403.375,
+          "minimum_exterior_bottom_clearance_mm": -0.5,
+          "minimum_plate_bottom_clearance_mm": -0.5,
+          "nominal_desk_clearance_mm": 0.5,
+          "desk_standoff_print_tolerance_mm": 0.3,
+          "minimum_desk_clearance_mm": 0.2,
+          "breaks_lateral_housing_perimeter": false,
+          "minimum_housing_perimeter_land_mm": 0.85,
+          "reference": "TW301525",
+          "board_feature": "B.Fab:TW301525 80mAh",
+          "nominal_plan_envelope_mm": [
+            15.0,
+            25.0
+          ],
+          "modeled_max_depth_mm": 3.0,
+          "cutout_allowance_mm": 0.35,
+          "physical_tolerance_status": "pending",
+          "physical_gate": "Maximum thickness/swelling, adhesive retention, lead bend, strain relief, abrasion protection, and actual placement tolerance remain pending."
         },
         "battery_slot": {
           "opening_count": 1,
@@ -518,169 +597,169 @@
           "id": "LEFT-SUP-01",
           "category": "seam",
           "x_mm": 22.6,
-          "y_mm": 52.121,
+          "y_mm": 47.871,
           "diameter_mm": 2.0,
           "bottom_z_mm": 0.0,
           "top_z_mm": 2.5,
           "nominal_vertical_gap_mm": 0.0,
           "target_x_mm": 14.1,
-          "target_y_mm": 48.621
+          "target_y_mm": 44.371
         },
         {
           "id": "LEFT-SUP-02",
           "category": "seam",
           "x_mm": 18.6,
-          "y_mm": 72.149,
+          "y_mm": 67.899,
           "diameter_mm": 2.0,
           "bottom_z_mm": 0.0,
           "top_z_mm": 2.5,
           "nominal_vertical_gap_mm": 0.0,
           "target_x_mm": 14.1,
-          "target_y_mm": 82.149
+          "target_y_mm": 77.899
         },
         {
           "id": "LEFT-SUP-03",
           "category": "seam",
           "x_mm": 18.1,
-          "y_mm": 108.081,
+          "y_mm": 103.831,
           "diameter_mm": 2.0,
           "bottom_z_mm": 0.0,
           "top_z_mm": 2.5,
           "nominal_vertical_gap_mm": 0.0,
           "target_x_mm": 14.1,
-          "target_y_mm": 109.581
+          "target_y_mm": 105.331
         },
         {
           "id": "LEFT-SUP-04",
           "category": "thumb",
           "x_mm": 7.1687,
-          "y_mm": 111.225,
+          "y_mm": 106.975,
           "diameter_mm": 2.0,
           "bottom_z_mm": 0.0,
           "top_z_mm": 2.5,
           "nominal_vertical_gap_mm": 0.0,
           "target_x_mm": 15.1687,
-          "target_y_mm": 112.725
+          "target_y_mm": 108.475
         },
         {
           "id": "LEFT-SUP-05",
           "category": "thumb",
           "x_mm": 78.0812,
-          "y_mm": 110.225,
+          "y_mm": 105.975,
           "diameter_mm": 2.0,
           "bottom_z_mm": 0.0,
           "top_z_mm": 2.5,
           "nominal_vertical_gap_mm": 0.0,
           "target_x_mm": 77.0812,
-          "target_y_mm": 112.725
+          "target_y_mm": 108.475
         },
         {
           "id": "LEFT-SUP-06",
           "category": "thumb",
           "x_mm": 131.7062,
-          "y_mm": 109.225,
+          "y_mm": 104.975,
           "diameter_mm": 2.0,
           "bottom_z_mm": 0.0,
           "top_z_mm": 2.5,
           "nominal_vertical_gap_mm": 0.0,
           "target_x_mm": 124.7062,
-          "target_y_mm": 112.725
+          "target_y_mm": 108.475
         },
         {
           "id": "LEFT-SUP-07",
           "category": "span",
           "x_mm": 31.8375,
-          "y_mm": 61.099,
+          "y_mm": 56.849,
           "diameter_mm": 2.0,
           "bottom_z_mm": 0.0,
           "top_z_mm": 2.5,
           "nominal_vertical_gap_mm": 0.0,
           "target_x_mm": 31.8375,
-          "target_y_mm": 63.099
+          "target_y_mm": 58.849
         },
         {
           "id": "LEFT-SUP-08",
           "category": "span",
           "x_mm": 28.8375,
-          "y_mm": 89.531,
+          "y_mm": 85.281,
           "diameter_mm": 2.0,
           "bottom_z_mm": 0.0,
           "top_z_mm": 2.5,
           "nominal_vertical_gap_mm": 0.0,
           "target_x_mm": 31.8375,
-          "target_y_mm": 90.531
+          "target_y_mm": 86.281
         },
         {
           "id": "LEFT-SUP-09",
           "category": "span",
           "x_mm": 51.5313,
-          "y_mm": 61.099,
+          "y_mm": 56.849,
           "diameter_mm": 2.0,
           "bottom_z_mm": 0.0,
           "top_z_mm": 2.5,
           "nominal_vertical_gap_mm": 0.0,
           "target_x_mm": 58.0313,
-          "target_y_mm": 63.099
+          "target_y_mm": 58.849
         },
         {
           "id": "LEFT-SUP-10",
           "category": "span",
           "x_mm": 57.0313,
-          "y_mm": 97.031,
+          "y_mm": 92.781,
           "diameter_mm": 2.0,
           "bottom_z_mm": 0.0,
           "top_z_mm": 2.5,
           "nominal_vertical_gap_mm": 0.0,
           "target_x_mm": 58.0313,
-          "target_y_mm": 90.531
+          "target_y_mm": 86.281
         },
         {
           "id": "LEFT-SUP-11",
           "category": "span",
           "x_mm": 88.225,
-          "y_mm": 60.599,
+          "y_mm": 56.349,
           "diameter_mm": 2.0,
           "bottom_z_mm": 0.0,
           "top_z_mm": 2.5,
           "nominal_vertical_gap_mm": 0.0,
           "target_x_mm": 84.225,
-          "target_y_mm": 63.099
+          "target_y_mm": 58.849
         },
         {
           "id": "LEFT-SUP-12",
           "category": "span",
           "x_mm": 84.225,
-          "y_mm": 90.531,
+          "y_mm": 86.281,
           "diameter_mm": 2.0,
           "bottom_z_mm": 0.0,
           "top_z_mm": 2.5,
           "nominal_vertical_gap_mm": 0.0,
           "target_x_mm": 84.225,
-          "target_y_mm": 90.531
+          "target_y_mm": 86.281
         },
         {
           "id": "LEFT-SUP-13",
           "category": "span",
           "x_mm": 108.0375,
-          "y_mm": 61.099,
+          "y_mm": 56.849,
           "diameter_mm": 2.0,
           "bottom_z_mm": 0.0,
           "top_z_mm": 2.5,
           "nominal_vertical_gap_mm": 0.0,
           "target_x_mm": 108.0375,
-          "target_y_mm": 63.099
+          "target_y_mm": 58.849
         },
         {
           "id": "LEFT-SUP-14",
           "category": "span",
           "x_mm": 107.0375,
-          "y_mm": 90.031,
+          "y_mm": 85.781,
           "diameter_mm": 2.0,
           "bottom_z_mm": 0.0,
           "top_z_mm": 2.5,
           "nominal_vertical_gap_mm": 0.0,
           "target_x_mm": 108.0375,
-          "target_y_mm": 90.531
+          "target_y_mm": 86.281
         }
       ],
       "mounting_system": {
@@ -731,7 +810,7 @@
             ],
             "housing_center_mm": [
               27.5,
-              33.0
+              28.75
             ],
             "printable_part": "whole",
             "pcb_npth_diameter_mm": 1.6,
@@ -741,13 +820,13 @@
             "support_land_top_z_mm": 2.5,
             "support_land_vertical_gap_mm": 0.0,
             "desk_column_diameter_mm": 3.0,
-            "desk_column_bottom_z_mm": -0.8,
+            "desk_column_bottom_z_mm": -1.0,
             "pilot_diameter_mm": 1.1,
             "pilot_depth_mm": 2.8,
             "pilot_top_z_mm": 2.5,
             "pilot_bottom_z_mm": -0.3,
             "pilot_extension_below_plate_mm": 0.3,
-            "closed_bottom_to_desk_datum_mm": 0.5,
+            "closed_bottom_to_desk_datum_mm": 0.7,
             "pilot_breaks_desk_contact_bottom": false,
             "provisional_screw_under_head_length_mm": 4.0,
             "pcb_tolerance_penetration_range_mm": [
@@ -784,7 +863,7 @@
             ],
             "housing_center_mm": [
               41.5,
-              51.5
+              47.25
             ],
             "printable_part": "whole",
             "pcb_npth_diameter_mm": 1.6,
@@ -794,13 +873,13 @@
             "support_land_top_z_mm": 2.5,
             "support_land_vertical_gap_mm": 0.0,
             "desk_column_diameter_mm": 3.0,
-            "desk_column_bottom_z_mm": -0.8,
+            "desk_column_bottom_z_mm": -1.0,
             "pilot_diameter_mm": 1.1,
             "pilot_depth_mm": 2.8,
             "pilot_top_z_mm": 2.5,
             "pilot_bottom_z_mm": -0.3,
             "pilot_extension_below_plate_mm": 0.3,
-            "closed_bottom_to_desk_datum_mm": 0.5,
+            "closed_bottom_to_desk_datum_mm": 0.7,
             "pilot_breaks_desk_contact_bottom": false,
             "provisional_screw_under_head_length_mm": 4.0,
             "pcb_tolerance_penetration_range_mm": [
@@ -837,7 +916,7 @@
             ],
             "housing_center_mm": [
               70.0,
-              58.5
+              54.25
             ],
             "printable_part": "whole",
             "pcb_npth_diameter_mm": 1.6,
@@ -847,13 +926,13 @@
             "support_land_top_z_mm": 2.5,
             "support_land_vertical_gap_mm": 0.0,
             "desk_column_diameter_mm": 3.0,
-            "desk_column_bottom_z_mm": -0.8,
+            "desk_column_bottom_z_mm": -1.0,
             "pilot_diameter_mm": 1.1,
             "pilot_depth_mm": 2.8,
             "pilot_top_z_mm": 2.5,
             "pilot_bottom_z_mm": -0.3,
             "pilot_extension_below_plate_mm": 0.3,
-            "closed_bottom_to_desk_datum_mm": 0.5,
+            "closed_bottom_to_desk_datum_mm": 0.7,
             "pilot_breaks_desk_contact_bottom": false,
             "provisional_screw_under_head_length_mm": 4.0,
             "pcb_tolerance_penetration_range_mm": [
@@ -890,7 +969,7 @@
             ],
             "housing_center_mm": [
               113.0,
-              64.0
+              59.75
             ],
             "printable_part": "whole",
             "pcb_npth_diameter_mm": 1.6,
@@ -900,13 +979,13 @@
             "support_land_top_z_mm": 2.5,
             "support_land_vertical_gap_mm": 0.0,
             "desk_column_diameter_mm": 3.0,
-            "desk_column_bottom_z_mm": -0.8,
+            "desk_column_bottom_z_mm": -1.0,
             "pilot_diameter_mm": 1.1,
             "pilot_depth_mm": 2.8,
             "pilot_top_z_mm": 2.5,
             "pilot_bottom_z_mm": -0.3,
             "pilot_extension_below_plate_mm": 0.3,
-            "closed_bottom_to_desk_datum_mm": 0.5,
+            "closed_bottom_to_desk_datum_mm": 0.7,
             "pilot_breaks_desk_contact_bottom": false,
             "provisional_screw_under_head_length_mm": 4.0,
             "pcb_tolerance_penetration_range_mm": [
@@ -943,7 +1022,7 @@
             ],
             "housing_center_mm": [
               36.5,
-              96.5
+              92.25
             ],
             "printable_part": "whole",
             "pcb_npth_diameter_mm": 1.6,
@@ -953,13 +1032,13 @@
             "support_land_top_z_mm": 2.5,
             "support_land_vertical_gap_mm": 0.0,
             "desk_column_diameter_mm": 3.0,
-            "desk_column_bottom_z_mm": -0.8,
+            "desk_column_bottom_z_mm": -1.0,
             "pilot_diameter_mm": 1.1,
             "pilot_depth_mm": 2.8,
             "pilot_top_z_mm": 2.5,
             "pilot_bottom_z_mm": -0.3,
             "pilot_extension_below_plate_mm": 0.3,
-            "closed_bottom_to_desk_datum_mm": 0.5,
+            "closed_bottom_to_desk_datum_mm": 0.7,
             "pilot_breaks_desk_contact_bottom": false,
             "provisional_screw_under_head_length_mm": 4.0,
             "pcb_tolerance_penetration_range_mm": [
@@ -996,7 +1075,7 @@
             ],
             "housing_center_mm": [
               115.0,
-              109.0
+              104.75
             ],
             "printable_part": "whole",
             "pcb_npth_diameter_mm": 1.6,
@@ -1006,13 +1085,13 @@
             "support_land_top_z_mm": 2.5,
             "support_land_vertical_gap_mm": 0.0,
             "desk_column_diameter_mm": 3.0,
-            "desk_column_bottom_z_mm": -0.8,
+            "desk_column_bottom_z_mm": -1.0,
             "pilot_diameter_mm": 1.1,
             "pilot_depth_mm": 2.8,
             "pilot_top_z_mm": 2.5,
             "pilot_bottom_z_mm": -0.3,
             "pilot_extension_below_plate_mm": 0.3,
-            "closed_bottom_to_desk_datum_mm": 0.5,
+            "closed_bottom_to_desk_datum_mm": 0.7,
             "pilot_breaks_desk_contact_bottom": false,
             "provisional_screw_under_head_length_mm": 4.0,
             "pcb_tolerance_penetration_range_mm": [
@@ -1049,7 +1128,7 @@
             ],
             "housing_center_mm": [
               4.5,
-              110.0
+              105.75
             ],
             "printable_part": "whole",
             "pcb_npth_diameter_mm": 1.6,
@@ -1059,13 +1138,13 @@
             "support_land_top_z_mm": 2.5,
             "support_land_vertical_gap_mm": 0.0,
             "desk_column_diameter_mm": 3.0,
-            "desk_column_bottom_z_mm": -0.8,
+            "desk_column_bottom_z_mm": -1.0,
             "pilot_diameter_mm": 1.1,
             "pilot_depth_mm": 2.8,
             "pilot_top_z_mm": 2.5,
             "pilot_bottom_z_mm": -0.3,
             "pilot_extension_below_plate_mm": 0.3,
-            "closed_bottom_to_desk_datum_mm": 0.5,
+            "closed_bottom_to_desk_datum_mm": 0.7,
             "pilot_breaks_desk_contact_bottom": false,
             "provisional_screw_under_head_length_mm": 4.0,
             "pcb_tolerance_penetration_range_mm": [
@@ -1102,7 +1181,7 @@
             ],
             "housing_center_mm": [
               67.5,
-              112.0
+              107.75
             ],
             "printable_part": "whole",
             "pcb_npth_diameter_mm": 1.6,
@@ -1112,13 +1191,13 @@
             "support_land_top_z_mm": 2.5,
             "support_land_vertical_gap_mm": 0.0,
             "desk_column_diameter_mm": 3.0,
-            "desk_column_bottom_z_mm": -0.8,
+            "desk_column_bottom_z_mm": -1.0,
             "pilot_diameter_mm": 1.1,
             "pilot_depth_mm": 2.8,
             "pilot_top_z_mm": 2.5,
             "pilot_bottom_z_mm": -0.3,
             "pilot_extension_below_plate_mm": 0.3,
-            "closed_bottom_to_desk_datum_mm": 0.5,
+            "closed_bottom_to_desk_datum_mm": 0.7,
             "pilot_breaks_desk_contact_bottom": false,
             "provisional_screw_under_head_length_mm": 4.0,
             "pcb_tolerance_penetration_range_mm": [
@@ -1161,23 +1240,23 @@
       "maximum_load_point_to_support_mm": 15.464,
       "maximum_seam_load_point_to_support_mm": 2.85,
       "solid_count": 1,
-      "volume_mm3": 18021.411
+      "volume_mm3": 16947.51
     },
     "right": {
       "source_board": "hardware/kicad/draft/x3-v2/kc2_right-x3-v2/kc2_right-x3-v2.kicad_pcb",
-      "source_board_sha256": "ee0cfd269733169f397fb33a7c435fa1d87a1d37483a698705c1575138a477ca",
+      "source_board_sha256": "9818536131f80864ff3c7f58682a6a3f45b0281e5c0290b47242f11e8680efac",
       "key_count": 39,
       "legacy_registration_refs": [],
       "step": "hardware/case/draft/x3-v2/kc2_right_x3_v2_lower_housing.step",
-      "step_sha256": "a61097a10c65e46f38480c443574e74cc3c4d1f82569823bf661abb6c0aeeca1",
+      "step_sha256": "d93b5c67708393eb6c56809963deba7dde6821fde8fa6081a7a269acfcb37a46",
       "step_has_trailing_whitespace": false,
       "printable_parts": [
         {
           "name": "part_a",
           "stl": "hardware/case/draft/x3-v2/kc2_right_x3_v2_lower_housing_part_a.stl",
-          "stl_sha256": "48b11c843954261dc09fbd414d5bfcb1fae14a6b889dee9c2232c11fdd3cbab9",
+          "stl_sha256": "3c510b4f2265e6a54e9f22cb4cfef348b390b0e1f730abed626d8068396cbbcb",
           "solid_count": 1,
-          "volume_mm3": 9701.776,
+          "volume_mm3": 9711.198,
           "desk_contact_ids": [
             "RIGHT-FOOT-01",
             "RIGHT-FOOT-02",
@@ -1191,36 +1270,36 @@
             "RIGHT-MH8-COLUMN"
           ],
           "desk_contact_count": 10,
-          "desk_contact_z_mm": -0.8,
+          "desk_contact_z_mm": -1.0,
           "desk_contact_coplanarity_mm": 0.0,
           "desk_contact_hull_area_mm2": 2804.1801,
           "projected_plate_centroid_mm": [
-            40.1805,
-            79.2671
+            40.1807,
+            75.0169
           ],
           "projected_centroid_inside_contact_hull": true,
           "desk_contacts_non_collinear": true,
           "desk_contacts_statically_stable": true,
           "bounds_xyz_mm": [
             0.1,
-            34.6,
-            -0.8,
+            30.35,
+            -1.0,
             87.0938,
-            126.65,
+            122.4,
             2.5001
           ],
           "size_xyz_mm": [
             86.9938,
             92.05,
-            3.3001
+            3.5001
           ]
         },
         {
           "name": "part_b",
           "stl": "hardware/case/draft/x3-v2/kc2_right_x3_v2_lower_housing_part_b.stl",
-          "stl_sha256": "aa990d7d5c8af94723856f54b93cb1755c541c42d86306a8d810b44f5c053932",
+          "stl_sha256": "1ec636a8d09dfe159bc3360f222a956d517a5c9d0f3c6debaa507e8c24a27c2b",
           "solid_count": 1,
-          "volume_mm3": 10504.751,
+          "volume_mm3": 9422.496,
           "desk_contact_ids": [
             "RIGHT-FOOT-03",
             "RIGHT-FOOT-08",
@@ -1232,15 +1311,16 @@
             "RIGHT-MH5-COLUMN",
             "RIGHT-MH6-COLUMN",
             "RIGHT-MH9-COLUMN",
-            "RIGHT-MH10-COLUMN"
+            "RIGHT-MH10-COLUMN",
+            "RIGHT-RESET-COLUMN"
           ],
-          "desk_contact_count": 11,
-          "desk_contact_z_mm": -0.8,
+          "desk_contact_count": 12,
+          "desk_contact_z_mm": -1.0,
           "desk_contact_coplanarity_mm": 0.0,
-          "desk_contact_hull_area_mm2": 3615.0125,
+          "desk_contact_hull_area_mm2": 4023.6906,
           "projected_plate_centroid_mm": [
-            118.3846,
-            63.376
+            118.1178,
+            64.9831
           ],
           "projected_centroid_inside_contact_hull": true,
           "desk_contacts_non_collinear": true,
@@ -1248,254 +1328,295 @@
           "bounds_xyz_mm": [
             81.9437,
             0.1,
-            -0.8,
+            -1.0,
             163.5875,
-            126.65,
+            122.4,
             2.5001
           ],
           "size_xyz_mm": [
             81.6438,
-            126.55,
-            3.3001
+            122.3,
+            3.5001
           ]
         }
       ],
-      "desk_standoff_nominal_mm": 0.8,
+      "desk_standoff_nominal_mm": 1.0,
       "desk_standoff_print_tolerance_mm": 0.3,
-      "desk_datum_z_mm": -0.8,
-      "minimum_open_component_to_desk_nominal_clearance_mm": 0.8,
+      "desk_datum_z_mm": -1.0,
+      "minimum_open_component_to_desk_nominal_clearance_mm": 0.5,
       "minimum_open_component_to_desk_clearance_mm": 0.5,
+      "minimum_open_component_to_desk_clearance_basis": "minimum of controlled bottom-component post-print clearance and the AC-11 nominal 3.00 mm battery-to-desk clearance; battery tolerance is pending",
+      "reset_local_support": {
+        "ref": "SW_RST1",
+        "board_center_mm": [
+          94.3,
+          63.45
+        ],
+        "housing_center_mm": [
+          104.3875,
+          24.2
+        ],
+        "footprint_side": "top",
+        "actuator_projection_size_mm": [
+          1.3,
+          2.7
+        ],
+        "support_diameter_mm": 3.0,
+        "support_top_z_mm": 2.5,
+        "support_vertical_gap_mm": 0.0,
+        "desk_column_bottom_z_mm": -1.0,
+        "actuator_projection_covered": true,
+        "support_surface_covered": true,
+        "component_cutout_collision_count": 0,
+        "bottom_exposed_pad_collision_count": 0,
+        "via_collision_count": 0,
+        "bottom_routed_copper_overlap_count": 2,
+        "bottom_routed_copper_solder_mask_protected": true,
+        "electrically_safe": true,
+        "electrical_safety_basis": "SW_RST1 pads are F.Cu-only; no via or exterior-open cutout intersects the support, and any B.Cu route overlap remains inside the PCB stack under solder mask."
+      },
       "desk_contacts": [
         {
           "id": "RIGHT-FOOT-01",
           "source_support_id": "RIGHT-SUP-01",
           "category": "thumb",
           "x_mm": 16.525,
-          "y_mm": 115.725,
+          "y_mm": 111.475,
           "diameter_mm": 2.0,
           "top_z_mm": 0.0,
-          "bottom_z_mm": -0.8,
-          "height_mm": 0.8
+          "bottom_z_mm": -1.0,
+          "height_mm": 1.0
         },
         {
           "id": "RIGHT-FOOT-02",
           "source_support_id": "RIGHT-SUP-02",
           "category": "thumb",
           "x_mm": 59.175,
-          "y_mm": 109.725,
+          "y_mm": 105.475,
           "diameter_mm": 2.0,
           "top_z_mm": 0.0,
-          "bottom_z_mm": -0.8,
-          "height_mm": 0.8
+          "bottom_z_mm": -1.0,
+          "height_mm": 1.0
         },
         {
           "id": "RIGHT-FOOT-03",
           "source_support_id": "RIGHT-SUP-03",
           "category": "thumb",
           "x_mm": 130.375,
-          "y_mm": 110.725,
+          "y_mm": 106.475,
           "diameter_mm": 2.0,
           "top_z_mm": 0.0,
-          "bottom_z_mm": -0.8,
-          "height_mm": 0.8
+          "bottom_z_mm": -1.0,
+          "height_mm": 1.0
         },
         {
           "id": "RIGHT-FOOT-04",
           "source_support_id": "RIGHT-SUP-04",
           "category": "span",
           "x_mm": 33.5525,
-          "y_mm": 64.599,
+          "y_mm": 60.349,
           "diameter_mm": 2.0,
           "top_z_mm": 0.0,
-          "bottom_z_mm": -0.8,
-          "height_mm": 0.8
+          "bottom_z_mm": -1.0,
+          "height_mm": 1.0
         },
         {
           "id": "RIGHT-FOOT-05",
           "source_support_id": "RIGHT-SUP-05",
           "category": "span",
           "x_mm": 42.0525,
-          "y_mm": 90.031,
+          "y_mm": 85.781,
           "diameter_mm": 2.0,
           "top_z_mm": 0.0,
-          "bottom_z_mm": -0.8,
-          "height_mm": 0.8
+          "bottom_z_mm": -1.0,
+          "height_mm": 1.0
         },
         {
           "id": "RIGHT-FOOT-06",
           "source_support_id": "RIGHT-SUP-06",
           "category": "span",
           "x_mm": 70.0327,
-          "y_mm": 61.099,
+          "y_mm": 56.849,
           "diameter_mm": 2.0,
           "top_z_mm": 0.0,
-          "bottom_z_mm": -0.8,
-          "height_mm": 0.8
+          "bottom_z_mm": -1.0,
+          "height_mm": 1.0
         },
         {
           "id": "RIGHT-FOOT-07",
           "source_support_id": "RIGHT-SUP-07",
           "category": "span",
           "x_mm": 67.0327,
-          "y_mm": 89.531,
+          "y_mm": 85.281,
           "diameter_mm": 2.0,
           "top_z_mm": 0.0,
-          "bottom_z_mm": -0.8,
-          "height_mm": 0.8
+          "bottom_z_mm": -1.0,
+          "height_mm": 1.0
         },
         {
           "id": "RIGHT-FOOT-08",
           "source_support_id": "RIGHT-SUP-08",
           "category": "span",
           "x_mm": 107.013,
-          "y_mm": 60.099,
+          "y_mm": 55.849,
           "diameter_mm": 2.0,
           "top_z_mm": 0.0,
-          "bottom_z_mm": -0.8,
-          "height_mm": 0.8
+          "bottom_z_mm": -1.0,
+          "height_mm": 1.0
         },
         {
           "id": "RIGHT-FOOT-09",
           "source_support_id": "RIGHT-SUP-09",
           "category": "span",
           "x_mm": 103.513,
-          "y_mm": 90.531,
+          "y_mm": 86.281,
           "diameter_mm": 2.0,
           "top_z_mm": 0.0,
-          "bottom_z_mm": -0.8,
-          "height_mm": 0.8
+          "bottom_z_mm": -1.0,
+          "height_mm": 1.0
         },
         {
           "id": "RIGHT-FOOT-10",
           "source_support_id": "RIGHT-SUP-10",
           "category": "span",
           "x_mm": 127.5405,
-          "y_mm": 61.099,
+          "y_mm": 56.849,
           "diameter_mm": 2.0,
           "top_z_mm": 0.0,
-          "bottom_z_mm": -0.8,
-          "height_mm": 0.8
+          "bottom_z_mm": -1.0,
+          "height_mm": 1.0
         },
         {
           "id": "RIGHT-FOOT-11",
           "source_support_id": "RIGHT-SUP-11",
           "category": "span",
           "x_mm": 124.0405,
-          "y_mm": 89.531,
+          "y_mm": 85.281,
           "diameter_mm": 2.0,
           "top_z_mm": 0.0,
-          "bottom_z_mm": -0.8,
-          "height_mm": 0.8
+          "bottom_z_mm": -1.0,
+          "height_mm": 1.0
         },
         {
           "id": "RIGHT-MH1-COLUMN",
           "source_support_id": "MH1",
           "category": "mounting",
           "x_mm": 127.0,
-          "y_mm": 33.0,
+          "y_mm": 28.75,
           "diameter_mm": 3.0,
           "top_z_mm": 0.0,
-          "bottom_z_mm": -0.8,
-          "height_mm": 0.8
+          "bottom_z_mm": -1.0,
+          "height_mm": 1.0
         },
         {
           "id": "RIGHT-MH2-COLUMN",
           "source_support_id": "MH2",
           "category": "mounting",
           "x_mm": 17.5,
-          "y_mm": 50.5,
+          "y_mm": 46.25,
           "diameter_mm": 3.0,
           "top_z_mm": 0.0,
-          "bottom_z_mm": -0.8,
-          "height_mm": 0.8
+          "bottom_z_mm": -1.0,
+          "height_mm": 1.0
         },
         {
           "id": "RIGHT-MH3-COLUMN",
           "source_support_id": "MH3",
           "category": "mounting",
           "x_mm": 51.0,
-          "y_mm": 58.5,
+          "y_mm": 54.25,
           "diameter_mm": 3.0,
           "top_z_mm": 0.0,
-          "bottom_z_mm": -0.8,
-          "height_mm": 0.8
+          "bottom_z_mm": -1.0,
+          "height_mm": 1.0
         },
         {
           "id": "RIGHT-MH4-COLUMN",
           "source_support_id": "MH4",
           "category": "mounting",
           "x_mm": 89.0,
-          "y_mm": 61.5,
+          "y_mm": 57.25,
           "diameter_mm": 3.0,
           "top_z_mm": 0.0,
-          "bottom_z_mm": -0.8,
-          "height_mm": 0.8
+          "bottom_z_mm": -1.0,
+          "height_mm": 1.0
         },
         {
           "id": "RIGHT-MH5-COLUMN",
           "source_support_id": "MH5",
           "category": "mounting",
           "x_mm": 127.0,
-          "y_mm": 70.5,
+          "y_mm": 66.25,
           "diameter_mm": 3.0,
           "top_z_mm": 0.0,
-          "bottom_z_mm": -0.8,
-          "height_mm": 0.8
+          "bottom_z_mm": -1.0,
+          "height_mm": 1.0
         },
         {
           "id": "RIGHT-MH6-COLUMN",
           "source_support_id": "MH6",
           "category": "mounting",
           "x_mm": 156.5,
-          "y_mm": 71.0,
+          "y_mm": 66.75,
           "diameter_mm": 3.0,
           "top_z_mm": 0.0,
-          "bottom_z_mm": -0.8,
-          "height_mm": 0.8
+          "bottom_z_mm": -1.0,
+          "height_mm": 1.0
         },
         {
           "id": "RIGHT-MH7-COLUMN",
           "source_support_id": "MH7",
           "category": "mounting",
           "x_mm": 17.5,
-          "y_mm": 99.5,
+          "y_mm": 95.25,
           "diameter_mm": 3.0,
           "top_z_mm": 0.0,
-          "bottom_z_mm": -0.8,
-          "height_mm": 0.8
+          "bottom_z_mm": -1.0,
+          "height_mm": 1.0
         },
         {
           "id": "RIGHT-MH8-COLUMN",
           "source_support_id": "MH8",
           "category": "mounting",
           "x_mm": 55.5,
-          "y_mm": 99.5,
+          "y_mm": 95.25,
           "diameter_mm": 3.0,
           "top_z_mm": 0.0,
-          "bottom_z_mm": -0.8,
-          "height_mm": 0.8
+          "bottom_z_mm": -1.0,
+          "height_mm": 1.0
         },
         {
           "id": "RIGHT-MH9-COLUMN",
           "source_support_id": "MH9",
           "category": "mounting",
           "x_mm": 147.0,
-          "y_mm": 109.0,
+          "y_mm": 104.75,
           "diameter_mm": 3.0,
           "top_z_mm": 0.0,
-          "bottom_z_mm": -0.8,
-          "height_mm": 0.8
+          "bottom_z_mm": -1.0,
+          "height_mm": 1.0
         },
         {
           "id": "RIGHT-MH10-COLUMN",
           "source_support_id": "MH10",
           "category": "mounting",
           "x_mm": 103.0,
-          "y_mm": 112.0,
+          "y_mm": 107.75,
           "diameter_mm": 3.0,
           "top_z_mm": 0.0,
-          "bottom_z_mm": -0.8,
-          "height_mm": 0.8
+          "bottom_z_mm": -1.0,
+          "height_mm": 1.0
+        },
+        {
+          "id": "RIGHT-RESET-COLUMN",
+          "source_support_id": "SW_RST1",
+          "category": "reset",
+          "x_mm": 104.3875,
+          "y_mm": 24.2,
+          "diameter_mm": 3.0,
+          "top_z_mm": 0.0,
+          "bottom_z_mm": -1.0,
+          "height_mm": 1.0
         }
       ],
       "desk_contacts_hidden_in_top_view": true,
@@ -1504,7 +1625,7 @@
       "rail": {
         "top_z_mm": 2.5,
         "nominal_vertical_gap_mm": 0.0,
-        "plan_area_mm2": 309.9553,
+        "plan_area_mm2": 304.4303,
         "segment_count": 7,
         "near_continuous": true,
         "clearance_cut_around_board_features": true
@@ -1521,9 +1642,9 @@
           "opening_plan_area_mm2": 3953.3493,
           "minimum_exterior_bottom_clearance_mm": 0.1,
           "minimum_plate_bottom_clearance_mm": 0.1,
-          "nominal_desk_clearance_mm": 0.9,
+          "nominal_desk_clearance_mm": 1.1,
           "desk_standoff_print_tolerance_mm": 0.3,
-          "minimum_desk_clearance_mm": 0.6,
+          "minimum_desk_clearance_mm": 0.8,
           "official_body_depth_max_mm": 2.3,
           "assembly_allowance_mm": 0.1,
           "modeled_max_depth_mm": 2.4,
@@ -1578,9 +1699,9 @@
           "opening_plan_area_mm2": 932.9944,
           "minimum_exterior_bottom_clearance_mm": 0.0,
           "minimum_plate_bottom_clearance_mm": 0.0,
-          "nominal_desk_clearance_mm": 0.8,
+          "nominal_desk_clearance_mm": 1.0,
           "desk_standoff_print_tolerance_mm": 0.3,
-          "minimum_desk_clearance_mm": 0.5,
+          "minimum_desk_clearance_mm": 0.7,
           "breaks_lateral_housing_perimeter": false,
           "minimum_housing_perimeter_land_mm": 1.025,
           "manufacturer": "Jingdao Microelectronics",
@@ -1595,7 +1716,7 @@
           "modeled_max_depth_mm": 2.5,
           "official_source": "https://datasheet.lcsc.com/datasheet/pdf/2343098076327222563a84c9a80dbd7d.pdf?productCode=C437840"
         },
-        "controller_reset": {
+        "controller_socket": {
           "opening_count": 1,
           "minimum_xy_clearance_mm": 0.35,
           "exterior_open": true,
@@ -1612,6 +1733,33 @@
           "official_body_depth_max_mm": null,
           "assembly_allowance_mm": null,
           "modeled_max_depth_mm": null
+        },
+        "battery_body": {
+          "opening_count": 1,
+          "minimum_xy_clearance_mm": 0.35,
+          "exterior_open": true,
+          "through_opening_z_mm": [
+            0.0,
+            2.5
+          ],
+          "opening_plan_area_mm2": 403.375,
+          "minimum_exterior_bottom_clearance_mm": -0.5,
+          "minimum_plate_bottom_clearance_mm": -0.5,
+          "nominal_desk_clearance_mm": 0.5,
+          "desk_standoff_print_tolerance_mm": 0.3,
+          "minimum_desk_clearance_mm": 0.2,
+          "breaks_lateral_housing_perimeter": false,
+          "minimum_housing_perimeter_land_mm": 0.85,
+          "reference": "TW301525",
+          "board_feature": "B.Fab:TW301525 80mAh",
+          "nominal_plan_envelope_mm": [
+            15.0,
+            25.0
+          ],
+          "modeled_max_depth_mm": 3.0,
+          "cutout_allowance_mm": 0.35,
+          "physical_tolerance_status": "pending",
+          "physical_gate": "Maximum thickness/swelling, adhesive retention, lead bend, strain relief, abrasion protection, and actual placement tolerance remain pending."
         },
         "battery_slot": {
           "opening_count": 1,
@@ -1637,133 +1785,133 @@
           "id": "RIGHT-SUP-01",
           "category": "thumb",
           "x_mm": 16.525,
-          "y_mm": 115.725,
+          "y_mm": 111.475,
           "diameter_mm": 2.0,
           "bottom_z_mm": 0.0,
           "top_z_mm": 2.5,
           "nominal_vertical_gap_mm": 0.0,
           "target_x_mm": 8.025,
-          "target_y_mm": 112.725
+          "target_y_mm": 108.475
         },
         {
           "id": "RIGHT-SUP-02",
           "category": "thumb",
           "x_mm": 59.175,
-          "y_mm": 109.725,
+          "y_mm": 105.475,
           "diameter_mm": 2.0,
           "bottom_z_mm": 0.0,
           "top_z_mm": 2.5,
           "nominal_vertical_gap_mm": 0.0,
           "target_x_mm": 65.175,
-          "target_y_mm": 112.725
+          "target_y_mm": 108.475
         },
         {
           "id": "RIGHT-SUP-03",
           "category": "thumb",
           "x_mm": 130.375,
-          "y_mm": 110.725,
+          "y_mm": 106.475,
           "diameter_mm": 2.0,
           "bottom_z_mm": 0.0,
           "top_z_mm": 2.5,
           "nominal_vertical_gap_mm": 0.0,
           "target_x_mm": 141.375,
-          "target_y_mm": 112.725
+          "target_y_mm": 108.475
         },
         {
           "id": "RIGHT-SUP-04",
           "category": "span",
           "x_mm": 33.5525,
-          "y_mm": 64.599,
+          "y_mm": 60.349,
           "diameter_mm": 2.0,
           "bottom_z_mm": 0.0,
           "top_z_mm": 2.5,
           "nominal_vertical_gap_mm": 0.0,
           "target_x_mm": 37.5525,
-          "target_y_mm": 63.099
+          "target_y_mm": 58.849
         },
         {
           "id": "RIGHT-SUP-05",
           "category": "span",
           "x_mm": 42.0525,
-          "y_mm": 90.031,
+          "y_mm": 85.781,
           "diameter_mm": 2.0,
           "bottom_z_mm": 0.0,
           "top_z_mm": 2.5,
           "nominal_vertical_gap_mm": 0.0,
           "target_x_mm": 37.5525,
-          "target_y_mm": 90.531
+          "target_y_mm": 86.281
         },
         {
           "id": "RIGHT-SUP-06",
           "category": "span",
           "x_mm": 70.0327,
-          "y_mm": 61.099,
+          "y_mm": 56.849,
           "diameter_mm": 2.0,
           "bottom_z_mm": 0.0,
           "top_z_mm": 2.5,
           "nominal_vertical_gap_mm": 0.0,
           "target_x_mm": 70.0327,
-          "target_y_mm": 63.099
+          "target_y_mm": 58.849
         },
         {
           "id": "RIGHT-SUP-07",
           "category": "span",
           "x_mm": 67.0327,
-          "y_mm": 89.531,
+          "y_mm": 85.281,
           "diameter_mm": 2.0,
           "bottom_z_mm": 0.0,
           "top_z_mm": 2.5,
           "nominal_vertical_gap_mm": 0.0,
           "target_x_mm": 70.0327,
-          "target_y_mm": 90.531
+          "target_y_mm": 86.281
         },
         {
           "id": "RIGHT-SUP-08",
           "category": "span",
           "x_mm": 107.013,
-          "y_mm": 60.099,
+          "y_mm": 55.849,
           "diameter_mm": 2.0,
           "bottom_z_mm": 0.0,
           "top_z_mm": 2.5,
           "nominal_vertical_gap_mm": 0.0,
           "target_x_mm": 102.513,
-          "target_y_mm": 63.099
+          "target_y_mm": 58.849
         },
         {
           "id": "RIGHT-SUP-09",
           "category": "span",
           "x_mm": 103.513,
-          "y_mm": 90.531,
+          "y_mm": 86.281,
           "diameter_mm": 2.0,
           "bottom_z_mm": 0.0,
           "top_z_mm": 2.5,
           "nominal_vertical_gap_mm": 0.0,
           "target_x_mm": 102.513,
-          "target_y_mm": 90.531
+          "target_y_mm": 86.281
         },
         {
           "id": "RIGHT-SUP-10",
           "category": "span",
           "x_mm": 127.5405,
-          "y_mm": 61.099,
+          "y_mm": 56.849,
           "diameter_mm": 2.0,
           "bottom_z_mm": 0.0,
           "top_z_mm": 2.5,
           "nominal_vertical_gap_mm": 0.0,
           "target_x_mm": 132.0405,
-          "target_y_mm": 63.099
+          "target_y_mm": 58.849
         },
         {
           "id": "RIGHT-SUP-11",
           "category": "span",
           "x_mm": 124.0405,
-          "y_mm": 89.531,
+          "y_mm": 85.281,
           "diameter_mm": 2.0,
           "bottom_z_mm": 0.0,
           "top_z_mm": 2.5,
           "nominal_vertical_gap_mm": 0.0,
           "target_x_mm": 132.0405,
-          "target_y_mm": 90.531
+          "target_y_mm": 86.281
         }
       ],
       "mounting_system": {
@@ -1822,7 +1970,7 @@
             ],
             "housing_center_mm": [
               127.0,
-              33.0
+              28.75
             ],
             "printable_part": "part_b",
             "pcb_npth_diameter_mm": 1.6,
@@ -1832,13 +1980,13 @@
             "support_land_top_z_mm": 2.5,
             "support_land_vertical_gap_mm": 0.0,
             "desk_column_diameter_mm": 3.0,
-            "desk_column_bottom_z_mm": -0.8,
+            "desk_column_bottom_z_mm": -1.0,
             "pilot_diameter_mm": 1.1,
             "pilot_depth_mm": 2.8,
             "pilot_top_z_mm": 2.5,
             "pilot_bottom_z_mm": -0.3,
             "pilot_extension_below_plate_mm": 0.3,
-            "closed_bottom_to_desk_datum_mm": 0.5,
+            "closed_bottom_to_desk_datum_mm": 0.7,
             "pilot_breaks_desk_contact_bottom": false,
             "provisional_screw_under_head_length_mm": 4.0,
             "pcb_tolerance_penetration_range_mm": [
@@ -1875,7 +2023,7 @@
             ],
             "housing_center_mm": [
               17.5,
-              50.5
+              46.25
             ],
             "printable_part": "part_a",
             "pcb_npth_diameter_mm": 1.6,
@@ -1885,13 +2033,13 @@
             "support_land_top_z_mm": 2.5,
             "support_land_vertical_gap_mm": 0.0,
             "desk_column_diameter_mm": 3.0,
-            "desk_column_bottom_z_mm": -0.8,
+            "desk_column_bottom_z_mm": -1.0,
             "pilot_diameter_mm": 1.1,
             "pilot_depth_mm": 2.8,
             "pilot_top_z_mm": 2.5,
             "pilot_bottom_z_mm": -0.3,
             "pilot_extension_below_plate_mm": 0.3,
-            "closed_bottom_to_desk_datum_mm": 0.5,
+            "closed_bottom_to_desk_datum_mm": 0.7,
             "pilot_breaks_desk_contact_bottom": false,
             "provisional_screw_under_head_length_mm": 4.0,
             "pcb_tolerance_penetration_range_mm": [
@@ -1928,7 +2076,7 @@
             ],
             "housing_center_mm": [
               51.0,
-              58.5
+              54.25
             ],
             "printable_part": "part_a",
             "pcb_npth_diameter_mm": 1.6,
@@ -1938,13 +2086,13 @@
             "support_land_top_z_mm": 2.5,
             "support_land_vertical_gap_mm": 0.0,
             "desk_column_diameter_mm": 3.0,
-            "desk_column_bottom_z_mm": -0.8,
+            "desk_column_bottom_z_mm": -1.0,
             "pilot_diameter_mm": 1.1,
             "pilot_depth_mm": 2.8,
             "pilot_top_z_mm": 2.5,
             "pilot_bottom_z_mm": -0.3,
             "pilot_extension_below_plate_mm": 0.3,
-            "closed_bottom_to_desk_datum_mm": 0.5,
+            "closed_bottom_to_desk_datum_mm": 0.7,
             "pilot_breaks_desk_contact_bottom": false,
             "provisional_screw_under_head_length_mm": 4.0,
             "pcb_tolerance_penetration_range_mm": [
@@ -1981,7 +2129,7 @@
             ],
             "housing_center_mm": [
               89.0,
-              61.5
+              57.25
             ],
             "printable_part": "part_b",
             "pcb_npth_diameter_mm": 1.6,
@@ -1991,13 +2139,13 @@
             "support_land_top_z_mm": 2.5,
             "support_land_vertical_gap_mm": 0.0,
             "desk_column_diameter_mm": 3.0,
-            "desk_column_bottom_z_mm": -0.8,
+            "desk_column_bottom_z_mm": -1.0,
             "pilot_diameter_mm": 1.1,
             "pilot_depth_mm": 2.8,
             "pilot_top_z_mm": 2.5,
             "pilot_bottom_z_mm": -0.3,
             "pilot_extension_below_plate_mm": 0.3,
-            "closed_bottom_to_desk_datum_mm": 0.5,
+            "closed_bottom_to_desk_datum_mm": 0.7,
             "pilot_breaks_desk_contact_bottom": false,
             "provisional_screw_under_head_length_mm": 4.0,
             "pcb_tolerance_penetration_range_mm": [
@@ -2034,7 +2182,7 @@
             ],
             "housing_center_mm": [
               127.0,
-              70.5
+              66.25
             ],
             "printable_part": "part_b",
             "pcb_npth_diameter_mm": 1.6,
@@ -2044,13 +2192,13 @@
             "support_land_top_z_mm": 2.5,
             "support_land_vertical_gap_mm": 0.0,
             "desk_column_diameter_mm": 3.0,
-            "desk_column_bottom_z_mm": -0.8,
+            "desk_column_bottom_z_mm": -1.0,
             "pilot_diameter_mm": 1.1,
             "pilot_depth_mm": 2.8,
             "pilot_top_z_mm": 2.5,
             "pilot_bottom_z_mm": -0.3,
             "pilot_extension_below_plate_mm": 0.3,
-            "closed_bottom_to_desk_datum_mm": 0.5,
+            "closed_bottom_to_desk_datum_mm": 0.7,
             "pilot_breaks_desk_contact_bottom": false,
             "provisional_screw_under_head_length_mm": 4.0,
             "pcb_tolerance_penetration_range_mm": [
@@ -2087,7 +2235,7 @@
             ],
             "housing_center_mm": [
               156.5,
-              71.0
+              66.75
             ],
             "printable_part": "part_b",
             "pcb_npth_diameter_mm": 1.6,
@@ -2097,13 +2245,13 @@
             "support_land_top_z_mm": 2.5,
             "support_land_vertical_gap_mm": 0.0,
             "desk_column_diameter_mm": 3.0,
-            "desk_column_bottom_z_mm": -0.8,
+            "desk_column_bottom_z_mm": -1.0,
             "pilot_diameter_mm": 1.1,
             "pilot_depth_mm": 2.8,
             "pilot_top_z_mm": 2.5,
             "pilot_bottom_z_mm": -0.3,
             "pilot_extension_below_plate_mm": 0.3,
-            "closed_bottom_to_desk_datum_mm": 0.5,
+            "closed_bottom_to_desk_datum_mm": 0.7,
             "pilot_breaks_desk_contact_bottom": false,
             "provisional_screw_under_head_length_mm": 4.0,
             "pcb_tolerance_penetration_range_mm": [
@@ -2140,7 +2288,7 @@
             ],
             "housing_center_mm": [
               17.5,
-              99.5
+              95.25
             ],
             "printable_part": "part_a",
             "pcb_npth_diameter_mm": 1.6,
@@ -2150,13 +2298,13 @@
             "support_land_top_z_mm": 2.5,
             "support_land_vertical_gap_mm": 0.0,
             "desk_column_diameter_mm": 3.0,
-            "desk_column_bottom_z_mm": -0.8,
+            "desk_column_bottom_z_mm": -1.0,
             "pilot_diameter_mm": 1.1,
             "pilot_depth_mm": 2.8,
             "pilot_top_z_mm": 2.5,
             "pilot_bottom_z_mm": -0.3,
             "pilot_extension_below_plate_mm": 0.3,
-            "closed_bottom_to_desk_datum_mm": 0.5,
+            "closed_bottom_to_desk_datum_mm": 0.7,
             "pilot_breaks_desk_contact_bottom": false,
             "provisional_screw_under_head_length_mm": 4.0,
             "pcb_tolerance_penetration_range_mm": [
@@ -2193,7 +2341,7 @@
             ],
             "housing_center_mm": [
               55.5,
-              99.5
+              95.25
             ],
             "printable_part": "part_a",
             "pcb_npth_diameter_mm": 1.6,
@@ -2203,13 +2351,13 @@
             "support_land_top_z_mm": 2.5,
             "support_land_vertical_gap_mm": 0.0,
             "desk_column_diameter_mm": 3.0,
-            "desk_column_bottom_z_mm": -0.8,
+            "desk_column_bottom_z_mm": -1.0,
             "pilot_diameter_mm": 1.1,
             "pilot_depth_mm": 2.8,
             "pilot_top_z_mm": 2.5,
             "pilot_bottom_z_mm": -0.3,
             "pilot_extension_below_plate_mm": 0.3,
-            "closed_bottom_to_desk_datum_mm": 0.5,
+            "closed_bottom_to_desk_datum_mm": 0.7,
             "pilot_breaks_desk_contact_bottom": false,
             "provisional_screw_under_head_length_mm": 4.0,
             "pcb_tolerance_penetration_range_mm": [
@@ -2246,7 +2394,7 @@
             ],
             "housing_center_mm": [
               147.0,
-              109.0
+              104.75
             ],
             "printable_part": "part_b",
             "pcb_npth_diameter_mm": 1.6,
@@ -2256,13 +2404,13 @@
             "support_land_top_z_mm": 2.5,
             "support_land_vertical_gap_mm": 0.0,
             "desk_column_diameter_mm": 3.0,
-            "desk_column_bottom_z_mm": -0.8,
+            "desk_column_bottom_z_mm": -1.0,
             "pilot_diameter_mm": 1.1,
             "pilot_depth_mm": 2.8,
             "pilot_top_z_mm": 2.5,
             "pilot_bottom_z_mm": -0.3,
             "pilot_extension_below_plate_mm": 0.3,
-            "closed_bottom_to_desk_datum_mm": 0.5,
+            "closed_bottom_to_desk_datum_mm": 0.7,
             "pilot_breaks_desk_contact_bottom": false,
             "provisional_screw_under_head_length_mm": 4.0,
             "pcb_tolerance_penetration_range_mm": [
@@ -2299,7 +2447,7 @@
             ],
             "housing_center_mm": [
               103.0,
-              112.0
+              107.75
             ],
             "printable_part": "part_b",
             "pcb_npth_diameter_mm": 1.6,
@@ -2309,13 +2457,13 @@
             "support_land_top_z_mm": 2.5,
             "support_land_vertical_gap_mm": 0.0,
             "desk_column_diameter_mm": 3.0,
-            "desk_column_bottom_z_mm": -0.8,
+            "desk_column_bottom_z_mm": -1.0,
             "pilot_diameter_mm": 1.1,
             "pilot_depth_mm": 2.8,
             "pilot_top_z_mm": 2.5,
             "pilot_bottom_z_mm": -0.3,
             "pilot_extension_below_plate_mm": 0.3,
-            "closed_bottom_to_desk_datum_mm": 0.5,
+            "closed_bottom_to_desk_datum_mm": 0.7,
             "pilot_breaks_desk_contact_bottom": false,
             "provisional_screw_under_head_length_mm": 4.0,
             "pcb_tolerance_penetration_range_mm": [
@@ -2360,7 +2508,7 @@
       "maximum_load_point_to_support_mm": 18.9619,
       "maximum_seam_load_point_to_support_mm": 2.85,
       "solid_count": 2,
-      "volume_mm3": 20206.526,
+      "volume_mm3": 19133.694,
       "split_joint": {
         "type": "full_depth_vertical_keyed_puzzle",
         "part_count": 2,
@@ -2372,11 +2520,11 @@
         "capture_points": [
           {
             "x_mm": 84.8438,
-            "y_mm": 78.1
+            "y_mm": 73.85
           },
           {
             "x_mm": 84.8438,
-            "y_mm": 90.6
+            "y_mm": 86.35
           }
         ],
         "neck_width_mm": 2.0,
@@ -2387,7 +2535,7 @@
         "fastener_count": 0,
         "discarded_island_area_ratio": [
           0.0,
-          3.6e-05
+          4e-05
         ],
         "discarded_island_volume_ratio": [
           0.0,
@@ -2396,7 +2544,7 @@
         "glue_assumed": false,
         "feature_collision_count": 0,
         "support_collision_count": 0,
-        "planned_top_contact_area_mm2": 8050.1086,
+        "planned_top_contact_area_mm2": 7609.7402,
         "assembly": "Lower the two full-depth housing parts together vertically so both keyed neck-and-head features enter their print-cleared sockets; no screw or adhesive is used."
       }
     }

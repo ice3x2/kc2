@@ -99,10 +99,10 @@ class V2LoadBearingHousingTests(unittest.TestCase):
             self.assertEqual(housing["exterior_bottom_z_mm"], 0.0)
             self.assertEqual(housing["housing_height_mm"], 2.50)
             self.assertEqual(housing["pcb_bottom_z_mm"], 2.50)
-            self.assertEqual(housing["desk_standoff_nominal_mm"], 0.80)
+            self.assertEqual(housing["desk_standoff_nominal_mm"], 1.00)
             self.assertEqual(housing["desk_standoff_print_tolerance_mm"], 0.30)
-            self.assertEqual(housing["desk_datum_z_mm"], -0.80)
-            self.assertEqual(housing["minimum_open_component_to_desk_nominal_clearance_mm"], 0.80)
+            self.assertEqual(housing["desk_datum_z_mm"], -1.00)
+            self.assertEqual(housing["minimum_open_component_to_desk_nominal_clearance_mm"], 0.50)
             self.assertGreaterEqual(housing["minimum_open_component_to_desk_clearance_mm"], 0.50)
             self.assertTrue(housing["desk_contacts_statically_stable"])
             self.assertTrue(housing["desk_contacts_hidden_in_top_view"])
@@ -111,7 +111,7 @@ class V2LoadBearingHousingTests(unittest.TestCase):
                 self.assertGreaterEqual(part["desk_contact_count"], 3)
                 self.assertEqual(part["actual_desk_contact_count"], part["desk_contact_count"])
                 self.assertTrue(part["desk_contacts_match_plan"])
-                self.assertEqual(part["desk_contact_z_mm"], -0.80)
+                self.assertEqual(part["desk_contact_z_mm"], -1.00)
                 self.assertEqual(part["desk_contact_coplanarity_mm"], 0.0)
                 self.assertTrue(part["projected_centroid_inside_contact_hull"])
                 self.assertTrue(part["desk_contacts_statically_stable"])
@@ -133,13 +133,34 @@ class V2LoadBearingHousingTests(unittest.TestCase):
                 self.assertEqual(post["top_z_mm"], housing["pcb_bottom_z_mm"])
                 self.assertEqual(post["nominal_vertical_gap_mm"], 0.0)
 
+            reset = housing["reset_local_support"]
+            expected_reset_center = (
+                [115.8125, 63.4500] if side == "left" else [94.3000, 63.4500]
+            )
+            self.assertEqual(reset["ref"], "SW_RST1")
+            self.assertEqual(reset["board_center_mm"], expected_reset_center)
+            self.assertEqual(reset["footprint_side"], "top")
+            self.assertEqual(reset["actuator_projection_size_mm"], [1.30, 2.70])
+            self.assertEqual(reset["support_diameter_mm"], 3.00)
+            self.assertEqual(reset["support_top_z_mm"], 2.50)
+            self.assertEqual(reset["support_vertical_gap_mm"], 0.0)
+            self.assertEqual(reset["desk_column_bottom_z_mm"], -1.00)
+            self.assertTrue(reset["actuator_projection_covered"])
+            self.assertTrue(reset["support_surface_covered"])
+            self.assertEqual(reset["component_cutout_collision_count"], 0)
+            self.assertEqual(reset["bottom_exposed_pad_collision_count"], 0)
+            self.assertEqual(reset["via_collision_count"], 0)
+            self.assertTrue(reset["bottom_routed_copper_solder_mask_protected"])
+            self.assertTrue(reset["electrically_safe"])
+
     def test_bottom_component_cutouts_are_exterior_open_and_3d_clear(self) -> None:
         required = {
             "choc_socket_body_fillets",
             "switch_mechanical_pins",
             "mx_pins_pads_fillets",
             "diode_body_pads_fillets",
-            "controller_reset",
+            "controller_socket",
+            "battery_body",
             "battery_slot",
         }
         for side in ("left", "right"):
@@ -154,8 +175,11 @@ class V2LoadBearingHousingTests(unittest.TestCase):
                 "diode_body_pads_fillets",
             ):
                 self.assertEqual(cutouts[name]["opening_count"], key_count, name)
-            self.assertEqual(cutouts["controller_reset"]["opening_count"], 1)
+            self.assertEqual(cutouts["controller_socket"]["opening_count"], 1)
+            self.assertEqual(cutouts["battery_body"]["opening_count"], 1)
             self.assertEqual(cutouts["battery_slot"]["opening_count"], 1)
+            self.assertNotIn("controller_reset", cutouts)
+            self.assertNotIn("reset_topside", cutouts)
             for name, result in cutouts.items():
                 self.assertGreater(result["opening_count"], 0, name)
                 self.assertTrue(result["exterior_open"], name)
@@ -188,6 +212,18 @@ class V2LoadBearingHousingTests(unittest.TestCase):
                 cutouts["diode_body_pads_fillets"]["minimum_housing_perimeter_land_mm"],
                 0.85,
             )
+            battery = cutouts["battery_body"]
+            self.assertEqual(battery["reference"], "TW301525")
+            self.assertEqual(battery["board_feature"], "B.Fab:TW301525 80mAh")
+            self.assertEqual(battery["nominal_plan_envelope_mm"], [15.00, 25.00])
+            self.assertNotIn("official_plan_envelope_max_mm", battery)
+            self.assertFalse(any(key.startswith("official_") for key in battery))
+            self.assertEqual(battery["modeled_max_depth_mm"], 3.00)
+            self.assertEqual(battery["cutout_allowance_mm"], 0.35)
+            self.assertEqual(battery["nominal_desk_clearance_mm"], 0.50)
+            self.assertFalse(battery["breaks_lateral_housing_perimeter"])
+            self.assertGreaterEqual(battery["minimum_housing_perimeter_land_mm"], 0.85)
+            self.assertEqual(battery["physical_tolerance_status"], "pending")
 
     def test_m1_4_mounting_columns_preserve_the_primary_support_network(self) -> None:
         expected_coordinates = {
@@ -249,13 +285,13 @@ class V2LoadBearingHousingTests(unittest.TestCase):
                 self.assertEqual(hole["support_land_top_z_mm"], 2.50)
                 self.assertEqual(hole["support_land_vertical_gap_mm"], 0.0)
                 self.assertEqual(hole["desk_column_diameter_mm"], 3.00)
-                self.assertEqual(hole["desk_column_bottom_z_mm"], -0.80)
+                self.assertEqual(hole["desk_column_bottom_z_mm"], -1.00)
                 self.assertEqual(hole["pilot_diameter_mm"], 1.10)
                 self.assertEqual(hole["pilot_depth_mm"], 2.80)
                 self.assertEqual(hole["pilot_top_z_mm"], 2.50)
                 self.assertEqual(hole["pilot_bottom_z_mm"], -0.30)
                 self.assertEqual(hole["pilot_extension_below_plate_mm"], 0.30)
-                self.assertEqual(hole["closed_bottom_to_desk_datum_mm"], 0.50)
+                self.assertEqual(hole["closed_bottom_to_desk_datum_mm"], 0.70)
                 self.assertFalse(hole["pilot_breaks_desk_contact_bottom"])
                 self.assertEqual(hole["provisional_screw_under_head_length_mm"], 4.00)
                 self.assertEqual(hole["pcb_tolerance_penetration_range_mm"], [2.24, 2.56])
@@ -264,6 +300,7 @@ class V2LoadBearingHousingTests(unittest.TestCase):
                 self.assertTrue(hole["step_pilot_open_at_z_minus_0_25"])
                 self.assertTrue(hole["step_pilot_closed_at_z_minus_0_35"])
                 self.assertTrue(hole["step_pilot_closed_at_z_minus_0_79"])
+                self.assertTrue(hole["step_pilot_closed_at_z_minus_0_99"])
                 self.assertEqual(hole["head_envelope_mm"], [2.00, 0.50])
                 self.assertEqual(hole["driver_envelope_diameter_mm"], 3.00)
                 self.assertEqual(hole["collision_count"], 0)
@@ -312,6 +349,21 @@ class V2LoadBearingHousingTests(unittest.TestCase):
         report["physical_registration_status"] = "verified"
         self.assertTrue(any("physical registration" in error for error in verify_report(report)))
 
+        report = copy.deepcopy(self.report)
+        report["sides"]["right"]["reset_local_support"]["electrically_safe"] = False
+        self.assertTrue(any("reset local support" in error for error in verify_report(report)))
+
+        report = copy.deepcopy(self.report)
+        report["sides"]["right"]["component_cutouts"]["battery_body"][
+            "minimum_housing_perimeter_land_mm"
+        ] = 0.84
+        self.assertTrue(any("battery perimeter land" in error for error in verify_report(report)))
+
+        report = copy.deepcopy(self.report)
+        battery = report["sides"]["right"]["component_cutouts"]["battery_body"]
+        battery["official_plan_envelope_max_mm"] = battery["nominal_plan_envelope_mm"]
+        self.assertTrue(any("forbidden official" in error for error in verify_report(report)))
+
     def test_every_printable_part_fits_150_mm_cube(self) -> None:
         for side in ("left", "right"):
             parts = self.report["sides"][side]["printable_parts"]
@@ -359,7 +411,9 @@ class V2LoadBearingHousingTests(unittest.TestCase):
             "diode_body_pads_fillets",
             "bottom_copper_tracks",
             "vias",
-            "controller_reset",
+            "controller_socket",
+            "reset_topside",
+            "battery_body",
             "battery_slot",
             "switch_key_travel",
         }
@@ -391,7 +445,7 @@ class V2LoadBearingHousingTests(unittest.TestCase):
     def test_verifier_rejects_missing_or_unstable_desk_contacts(self) -> None:
         report = copy.deepcopy(self.report)
         left = report["sides"]["left"]
-        left["desk_standoff_nominal_mm"] = 0.4
+        left["desk_standoff_nominal_mm"] = 0.8
         left["minimum_open_component_to_desk_clearance_mm"] = 0.4
         left["desk_contacts_statically_stable"] = False
         left["desk_contact_component_cutout_collision_count"] = 1
@@ -453,7 +507,7 @@ class V2LoadBearingHousingTests(unittest.TestCase):
             self.assertTrue(housing["step_sha256_matches"])
             self.assertTrue(housing["stl_sha256_matches"])
             self.assertEqual(housing["step_solid_count"], 1 if side == "left" else 2)
-            self.assertAlmostEqual(housing["step_bounds_z_mm"][0], -0.80, places=4)
+            self.assertAlmostEqual(housing["step_bounds_z_mm"][0], -1.00, places=4)
             self.assertAlmostEqual(housing["step_bounds_z_mm"][1], 2.50, places=4)
             self.assertTrue(housing["step_top_contact_area_matches_plan"])
             self.assertLessEqual(housing["step_top_contact_area_error_mm2"], 0.20)
@@ -470,7 +524,12 @@ class V2LoadBearingHousingTests(unittest.TestCase):
             "full-pattern assembly without sequential forcing; actual installed switch and "
             "keycap-skirt clearance; and a 2.0 N deflection test at every worst-case support span "
             "with no more than 0.30 mm displacement, rocking, permanent deformation, support "
-            "disengagement, or fastener loosening."
+            "disengagement, or fastener loosening. CON-ARCH-006 AC-11 controller-service "
+            "physical evidence is also pending: exact reset supplier Z/travel/force/reflow limits, "
+            "actual socketed-controller and nonconductive-probe service, USB shell/cable clearance, "
+            "ten successful double-reset cycles and bootloader enumeration, plus battery maximum "
+            "thickness/swelling, adhesive retention, lead bend, strain relief, abrasion protection, "
+            "actual placement tolerance, and desk clearance."
         )
         self.assertEqual(self.report["order_readiness_blocker"], expected_blocker)
         mutated = copy.deepcopy(self.report)
