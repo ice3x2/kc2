@@ -119,12 +119,14 @@ wire path outside the antenna keepout.
 ## Compact controller tab
 
 The V2-only compact-controller layout keeps all 70 key centers and all 18
-numbered mounting-hole centers fixed. Each U1 is at `Y=50.7500 mm`, the
-portrait reset switch is directly below the USB end at `Y=63.4500 mm`, the
+numbered mounting-hole centers fixed. Each U1 is at `Y=50.7500 mm`, and each
+portrait reset switch is stacked beneath the socket-elevated USB end at
+`Y=50.7500 mm`, offset `2.05 mm` toward the USB-facing board edge. The
 battery reference is at `Y=53.0500 mm`, and the top Edge.Cuts centerline is
 `Y=39.2500 mm`. The board height is therefore `122.50 mm`, 4.25 mm shorter
-than the preceding prototype. The modeled controller-to-reset body gap is
-0.50 mm and the reset-body-to-nearest-keycap-plan gap is 2.00 mm.
+than the preceding prototype. The reset body retains `0.50 mm` nominal planar
+clearance to the battery-lead slot; controller-to-reset Z clearance remains a
+socketed-controller physical gate.
 
 This is a V2-only supersession of the older antenna-side reset placement; the
 no-carrier-power and direct battery-lead rules remain unchanged. Reset

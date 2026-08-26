@@ -56,7 +56,7 @@ def canonical_x3_v2_route_record(side: str, final_count: int, route_digest: str)
         "session_source_dsn": session_source_dsn_relative.as_posix(),
         "session_source_dsn_sha256": sha256_file(session_source_dsn_path),
         "ses": ses_relative.as_posix(),
-        "ses_role": "reviewed_compact_controller_import_plus_exact_edge_cleanup",
+        "ses_role": "reviewed_compact_controller_import_plus_exact_edge_cleanup_and_usb_under_reset_replacement",
         "dsn_sha256": sha256_file(dsn_path),
         "ses_sha256": sha256_file(ses_path),
         "dsn_default_clearance_internal_units": min(default_clearances.values()),
@@ -151,21 +151,22 @@ X3_V2_OUTLINE_POLICY = "keycap_concealed_except_controller_service"
 X3_V2_TOP_EDGE_Y_MM = 39.25
 X3_V2_BOARD_DATUM_DY_MM = 68.0
 X3_V2_CONTROLLER_Y_MM = 50.75
-X3_V2_RESET_Y_MM = 63.45
+X3_V2_RESET_Y_MM = X3_V2_CONTROLLER_Y_MM
 X3_V2_RESET_ROTATION_DEGREES = 90.0
+X3_V2_RESET_USB_OUTWARD_OFFSET_MM = 2.05
 X3_V2_BATTERY_Y_MM = 53.05
 X3_V2_CONTROLLER_SERVICE_POSITIONS_MM = {
     "left": {
         "u1": (132.7125, X3_V2_CONTROLLER_Y_MM),
         "battery_slot": (117.9125, X3_V2_CONTROLLER_Y_MM),
         "battery": (133.2125, X3_V2_BATTERY_Y_MM),
-        "reset": (115.8125, X3_V2_RESET_Y_MM),
+        "reset": (113.7625, X3_V2_RESET_Y_MM),
     },
     "right": {
         "u1": (77.4000, X3_V2_CONTROLLER_Y_MM),
         "battery_slot": (92.2000, X3_V2_CONTROLLER_Y_MM),
         "battery": (76.9000, X3_V2_BATTERY_Y_MM),
-        "reset": (94.3000, X3_V2_RESET_Y_MM),
+        "reset": (96.3500, X3_V2_RESET_Y_MM),
     },
 }
 X3_V2_MOUNT_HOLE_DIAMETER_MM = 1.60
@@ -1570,7 +1571,9 @@ def make_board(
         add_board_text(board, "BAT LEAD EXIT", slot_x - 4.5, slot_y + 3.2, pcbnew.Cmts_User, 0.7)
 
     if variant == "x3-v2":
-        tact_x = ctrl_cx - usb_direction * CONTROLLER_LEN / 2.0
+        tact_x = ctrl_cx - usb_direction * (
+            CONTROLLER_LEN / 2.0 + X3_V2_RESET_USB_OUTWARD_OFFSET_MM
+        )
     elif is_x3_family(variant):
         tact_x = batt_cx + usb_direction * (batt_w / 2.0 + X3_TACT_BATTERY_CLEARANCE + X3_TACT_BODY_W / 2.0)
     else:
@@ -2194,7 +2197,7 @@ def generate_variant(variant: str, output_dir: Path | None = None) -> dict[str, 
         notes.append("The netless battery-lead slot is at the nice!nano USB/B+ end; insulated B+ and GND/B- leads must use strain relief and remain outside the antenna keepout.")
         notes.append(
             "X3 V2 supersedes only the historical antenna-side reset placement: SW_RST1 is "
-            "portrait-oriented directly below USB while the no-carrier-power and direct-lead "
+            "portrait-oriented in plan beneath the socket-elevated USB end while the no-carrier-power and direct-lead "
             "contracts remain unchanged. USB/reset/keycap/battery physical validation is pending."
         )
         notes.append(
@@ -2280,12 +2283,12 @@ def generate_variant(variant: str, output_dir: Path | None = None) -> dict[str, 
         "canonical_route_evidence": (
             {
                 "left": canonical_x3_v2_route_record(
-                    "left", 543,
-                    "9bc9cbf981da8d452b82e52d54a4e8ab3cafcc6121ec578f36a4cf43f3dde19d",
+                    "left", 544,
+                    "79dd509ceb68960691a012721ce8a29ad159c2191950d090ada1fd2bceed92aa",
                 ),
                 "right": canonical_x3_v2_route_record(
-                    "right", 706,
-                    "83dcc6f764670b379b6c9104d643925cd6eff3c0b16286f12bae14dd1397c67f",
+                    "right", 711,
+                    "20009ce9a43c88167aba0d88ccef84df46b53a7c633b62937286535245ea9127",
                 ),
             }
             if variant == "x3-v2"
@@ -2371,14 +2374,14 @@ def generate_variant(variant: str, output_dir: Path | None = None) -> dict[str, 
                     "pad_1": "RST_key_side",
                     "pad_2": "GND_controller_side",
                     "probe_max_diameter_mm": 3.0,
-                    "actuator_corridor_diameter_mm": 4.0,
+                    "usb_outward_offset_mm": X3_V2_RESET_USB_OUTWARD_OFFSET_MM,
+                    "placement_mode": "under_usb_vertical_stack",
+                    "service_access": "usb_edge_beneath_socketed_controller",
+                    "controller_to_reset_z_clearance": "physical_gate",
                     "service_usb_state": "disconnected",
                 },
                 "nominal_clearances_mm": {
-                    "controller_body_to_reset_body": 0.50,
-                    "reset_body_to_keycap": 2.00,
-                    "reset_courtyard_to_keycap": 0.075,
-                    "reset_pad_to_keycap": 0.30,
+                    "reset_body_to_keycap_min": 2.00,
                     "controller_body_to_top_edge": 2.35,
                     "battery_body_to_top_edge": 1.30,
                     "battery_housing_perimeter_land": 0.85,

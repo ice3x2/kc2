@@ -135,7 +135,7 @@ class V2LoadBearingHousingTests(unittest.TestCase):
 
             reset = housing["reset_local_support"]
             expected_reset_center = (
-                [115.8125, 63.4500] if side == "left" else [94.3000, 63.4500]
+                [113.7625, 50.7500] if side == "left" else [96.3500, 50.7500]
             )
             self.assertEqual(reset["ref"], "SW_RST1")
             self.assertEqual(reset["board_center_mm"], expected_reset_center)

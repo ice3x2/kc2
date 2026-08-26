@@ -27,6 +27,7 @@ BATTERY_LEAD_SLOT_VALUE = "BAT_LEAD_NPTH_SLOT_3.6x2.2"
 BATTERY_LEAD_SLOT_LEN = 3.6
 BATTERY_LEAD_SLOT_W = 2.2
 BATTERY_LEAD_SLOT_KEEP_OUT_GAP = 0.3
+V2_RESET_SLOT_CLEARANCE_MIN = 0.50
 COMPACT_TOP_STRAIGHT_SPAN_MAX = 39.0
 ANTENNA_SIDE_CENTER_MAX_FROM_ANTENNA_EDGE = 8.0
 KEY_SIDE_MIN_GAP = 1.0
@@ -36,8 +37,8 @@ SLOT_POSITION_TOLERANCE = 0.03
 SLOT_DIMENSION_TOLERANCE = 0.02
 SLOT_EDGE_CLEARANCE_MIN = 1.0
 V2_CONTROLLER_SERVICE_POSITIONS_MM = {
-    "left": {"u1": (132.7125, 50.75), "reset": (115.8125, 63.45)},
-    "right": {"u1": (77.4, 50.75), "reset": (94.3, 63.45)},
+    "left": {"u1": (132.7125, 50.75), "reset": (113.7625, 50.75)},
+    "right": {"u1": (77.4, 50.75), "reset": (96.35, 50.75)},
 }
 V2_POSITION_TOLERANCE_MM = 0.001
 V2_RESET_ROTATION_DEGREES = 90.0
@@ -243,12 +244,13 @@ def check_side(side: str, board_path: Path) -> list[str]:
         if (tact_x - u1_x) * usb_direction <= 0:
             errors.append(f"{side}: SW_RST1 is not on the antenna-side half of U1")
 
-    key_side_gap = tact_y - (u1_y + CONTROLLER_W / 2.0)
-    if key_side_gap < KEY_SIDE_MIN_GAP or key_side_gap > KEY_SIDE_MAX_GAP:
-        errors.append(
-            f"{side}: SW_RST1 key-side gap {key_side_gap:.3f} mm is outside "
-            f"{KEY_SIDE_MIN_GAP:.3f}-{KEY_SIDE_MAX_GAP:.3f} mm"
-        )
+    if not is_v2:
+        key_side_gap = tact_y - (u1_y + CONTROLLER_W / 2.0)
+        if key_side_gap < KEY_SIDE_MIN_GAP or key_side_gap > KEY_SIDE_MAX_GAP:
+            errors.append(
+                f"{side}: SW_RST1 key-side gap {key_side_gap:.3f} mm is outside "
+                f"{KEY_SIDE_MIN_GAP:.3f}-{KEY_SIDE_MAX_GAP:.3f} mm"
+            )
 
     rst_pads = pads_by_number(tact, "1")
     gnd_pads = pads_by_number(tact, "2")
@@ -334,7 +336,13 @@ def check_side(side: str, board_path: Path) -> list[str]:
         errors.append(f"{side}: {BATTERY_LEAD_SLOT_REF} overlaps antenna keepout")
     if battery_rect is not None and rects_overlap(slot_rect, expanded(battery_rect, BATTERY_CLEARANCE)):
         errors.append(f"{side}: {BATTERY_LEAD_SLOT_REF} overlaps battery reference clearance")
-    if rects_overlap(slot_rect, tact_rect):
+    if is_v2:
+        if rects_overlap(slot_rect, expanded(tact_rect, V2_RESET_SLOT_CLEARANCE_MIN)):
+            errors.append(
+                f"{side}: {BATTERY_LEAD_SLOT_REF} is closer than "
+                f"{V2_RESET_SLOT_CLEARANCE_MIN:.2f} mm to SW_RST1 body"
+            )
+    elif rects_overlap(slot_rect, tact_rect):
         errors.append(f"{side}: {BATTERY_LEAD_SLOT_REF} overlaps SW_RST1 body")
     clearance = slot_edge_clearance(board, slot_x, slot_y)
     if clearance < SLOT_EDGE_CLEARANCE_MIN:

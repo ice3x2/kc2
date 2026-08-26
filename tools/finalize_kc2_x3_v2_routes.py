@@ -130,10 +130,10 @@ ES1B_ROUTE_SHA256 = {
 
 
 CONTROLLER_COMPACT_IMPORTED_ITEM_COUNTS = {"left": 539, "right": 703}
-CONTROLLER_COMPACT_ROUTE_ITEM_COUNTS = {"left": 543, "right": 706}
+CONTROLLER_COMPACT_ROUTE_ITEM_COUNTS = {"left": 544, "right": 711}
 CONTROLLER_COMPACT_ROUTE_SHA256 = {
-    "left": "9bc9cbf981da8d452b82e52d54a4e8ab3cafcc6121ec578f36a4cf43f3dde19d",
-    "right": "83dcc6f764670b379b6c9104d643925cd6eff3c0b16286f12bae14dd1397c67f",
+    "left": "79dd509ceb68960691a012721ce8a29ad159c2191950d090ada1fd2bceed92aa",
+    "right": "20009ce9a43c88167aba0d88ccef84df46b53a7c633b62937286535245ea9127",
 }
 CONTROLLER_COMPACT_ROUTE_REMOVALS = {
     "left": (
@@ -180,6 +180,32 @@ CONTROLLER_COMPACT_ROUTE_ADDITIONS = {
         ("track", "R_ROW3", "F.Cu", 100.2000, 62.6551, 100.2000, 91.6911, 0.250),
         ("track", "R_ROW3", "F.Cu", 100.2000, 91.6911, 100.4593, 91.6911, 0.250),
         ("via", "R_COL6", 97.0500, 89.1791, 0.600, 0.300),
+    ),
+}
+V2_USB_UNDER_RESET_ROUTES = {
+    "left": (
+        ("track", "RST", "F.Cu", 113.7625, 54.6250, 115.1000, 48.8000, 0.250),
+        ("track", "RST", "F.Cu", 115.1000, 48.8000, 122.4000, 44.5000, 0.250),
+        ("track", "RST", "F.Cu", 122.4000, 44.5000, 122.6000, 44.5000, 0.250),
+        ("track", "RST", "F.Cu", 122.6000, 44.5000, 123.8225, 43.1300, 0.250),
+        ("track", "GND", "F.Cu", 113.7625, 46.8750, 116.0000, 46.6000, 0.250),
+        ("via", "GND", 116.0000, 46.6000, 0.800, 0.400),
+        ("track", "GND", "B.Cu", 116.0000, 46.6000, 120.0000, 44.5000, 0.250),
+        ("track", "GND", "B.Cu", 120.0000, 44.5000, 121.2825, 43.1300, 0.250),
+    ),
+    "right": (
+        ("track", "RST", "F.Cu", 96.3500, 54.6250, 93.9000, 54.7000, 0.250),
+        ("via", "RST", 93.9000, 54.7000, 0.800, 0.400),
+        ("track", "RST", "B.Cu", 93.9000, 54.7000, 92.7000, 55.5000, 0.250),
+        ("track", "RST", "B.Cu", 92.7000, 55.5000, 89.7000, 56.9000, 0.250),
+        ("track", "RST", "B.Cu", 89.7000, 56.9000, 87.6000, 57.0000, 0.250),
+        ("track", "RST", "B.Cu", 87.6000, 57.0000, 86.2900, 58.3700, 0.250),
+        ("track", "GND", "F.Cu", 96.3500, 46.8750, 95.0000, 52.7000, 0.250),
+        ("track", "GND", "F.Cu", 95.0000, 52.7000, 94.1000, 53.6000, 0.250),
+        ("via", "GND", 94.1000, 53.6000, 0.800, 0.400),
+        ("track", "GND", "B.Cu", 94.1000, 53.6000, 90.0000, 55.7000, 0.250),
+        ("via", "GND", 90.0000, 55.7000, 0.800, 0.400),
+        ("track", "GND", "F.Cu", 90.0000, 55.7000, 88.8300, 58.3700, 0.250),
     ),
 }
 ES1B_IMPORTED_ITEM_COUNTS = {"left": 560, "right": 729}
@@ -336,6 +362,49 @@ def _add_route_spec(board: pcbnew.BOARD, spec: tuple[object, ...]) -> None:
         item.SetWidth(pcbnew.FromMM(width))
     item.SetNet(net)
     board.Add(item)
+
+
+def replace_v2_usb_under_reset_routes(
+    board: pcbnew.BOARD,
+    side: str,
+) -> dict[str, int]:
+    """Replace only RST/GND fanout with the reviewed USB-under-controller routes."""
+
+    existing = [
+        item for item in board.GetTracks() if item.GetNetname() in {"RST", "GND"}
+    ]
+    expected = Counter(V2_USB_UNDER_RESET_ROUTES[side])
+    if Counter(_route_signature(item) for item in existing) == expected:
+        return {"removed": 0, "added": 0}
+    for item in existing:
+        board.Delete(item)
+    for spec in V2_USB_UNDER_RESET_ROUTES[side]:
+        _add_route_spec(board, spec)
+    return {
+        "removed": len(existing),
+        "added": len(V2_USB_UNDER_RESET_ROUTES[side]),
+    }
+
+
+def restore_v2_controller_service_placements(
+    board: pcbnew.BOARD,
+    side: str,
+) -> None:
+    """Restore placements that the historical controller-r3 SES carries."""
+
+    expected = gen.X3_V2_CONTROLLER_SERVICE_POSITIONS_MM[side]
+    for reference, key, rotation in (
+        ("SW_RST1", "reset", gen.X3_V2_RESET_ROTATION_DEGREES),
+        ("BAT_LEAD_SLOT1", "battery_slot", 0.0),
+    ):
+        footprint = board.FindFootprintByReference(reference)
+        if footprint is None:
+            raise RuntimeError(f"missing controller service footprint {reference}")
+        x, y = expected[key]
+        footprint.SetPosition(
+            pcbnew.VECTOR2I(pcbnew.FromMM(x), pcbnew.FromMM(y))
+        )
+        footprint.SetOrientationDegrees(rotation)
 
 
 def apply_m1_4_driver_route_detours(
@@ -497,6 +566,7 @@ def import_reviewed_controller_compact_session(
             f"failed to import reviewed {side} controller-compaction session: "
             f"{session_path}"
         )
+    restore_v2_controller_service_placements(board, side)
 
     imported = list(board.GetTracks())
     imported_signatures = Counter(_route_signature(item) for item in imported)
@@ -527,6 +597,7 @@ def import_reviewed_controller_compact_session(
         )
     for spec in CONTROLLER_COMPACT_ROUTE_ADDITIONS[side]:
         _add_route_spec(board, spec)
+    reset_route = replace_v2_usb_under_reset_routes(board, side)
     if not _has_exact_reviewed_controller_compact_route(board, side):
         raise RuntimeError(
             f"reviewed {side} controller-compaction session did not reconstruct "
@@ -534,8 +605,10 @@ def import_reviewed_controller_compact_session(
         )
     return {
         "imported_track_and_via_items": len(imported),
-        "reviewed_items_removed": removed,
-        "reviewed_items_added": len(CONTROLLER_COMPACT_ROUTE_ADDITIONS[side]),
+        "reviewed_items_removed": removed + reset_route["removed"],
+        "reviewed_items_added": (
+            len(CONTROLLER_COMPACT_ROUTE_ADDITIONS[side]) + reset_route["added"]
+        ),
         "final_track_and_via_items": len(list(board.GetTracks())),
     }
 

@@ -250,7 +250,7 @@ class V2GeneratorTests(unittest.TestCase):
         self.assertEqual(generator.X3_V2_TOP_EDGE_Y_MM, 39.25)
         self.assertEqual(generator.X3_V2_BOARD_DATUM_DY_MM, 68.0)
         self.assertEqual(generator.X3_V2_CONTROLLER_Y_MM, 50.75)
-        self.assertEqual(generator.X3_V2_RESET_Y_MM, 63.45)
+        self.assertEqual(generator.X3_V2_RESET_Y_MM, 50.75)
         self.assertEqual(generator.X3_V2_RESET_ROTATION_DEGREES, 90.0)
         self.assertEqual(generator.X3_V2_BATTERY_Y_MM, 53.05)
         self.assertEqual(
@@ -260,16 +260,19 @@ class V2GeneratorTests(unittest.TestCase):
                     "u1": (132.7125, 50.75),
                     "battery_slot": (117.9125, 50.75),
                     "battery": (133.2125, 53.05),
-                    "reset": (115.8125, 63.45),
+                    "reset": (113.7625, 50.75),
                 },
                 "right": {
                     "u1": (77.4, 50.75),
                     "battery_slot": (92.2, 50.75),
                     "battery": (76.9, 53.05),
-                    "reset": (94.3, 63.45),
+                    "reset": (96.35, 50.75),
                 },
             },
         )
+        for positions in generator.X3_V2_CONTROLLER_SERVICE_POSITIONS_MM.values():
+            self.assertEqual(positions["reset"][1], positions["u1"][1])
+            self.assertAlmostEqual(abs(positions["battery_slot"][0] - positions["reset"][0]), 4.15)
         self.assertEqual(
             generator.variant_outline_margins("x3-v2"),
             {
@@ -625,7 +628,8 @@ class V2GeneratorTests(unittest.TestCase):
         self.assertIn("visibly numbered `MH1..MH8`", v2_readme)
         self.assertIn("`MH1..MH10` on the right", v2_readme)
         self.assertIn("supersedes_for_v2_reset_only", product_srs)
-        self.assertIn("`SW_RST1` centers shall be `(115.8125, 63.4500)` and `(94.3000, 63.4500)`", product_srs)
+        self.assertIn("`SW_RST1` centers shall be `(113.7625, 50.7500)` and `(96.3500, 50.7500)`", product_srs)
+        self.assertIn("`BAT_LEAD_SLOT1` centers shall be `(117.9125, 50.7500)` and `(92.2000, 50.7500)`", product_srs)
         self.assertIn("top Edge.Cuts centerline to `Y=39.2500 mm`", product_srs)
 
     def test_generator_accepts_an_isolated_output_override(self) -> None:
@@ -673,8 +677,16 @@ class V2GeneratorTests(unittest.TestCase):
                         for pad in reset.Pads()
                     },
                     {
-                        "1": (expected_service["reset"][0], 67.325, "RST"),
-                        "2": (expected_service["reset"][0], 59.575, "GND"),
+                        "1": (
+                            expected_service["reset"][0],
+                            expected_service["reset"][1] + 3.875,
+                            "RST",
+                        ),
+                        "2": (
+                            expected_service["reset"][0],
+                            expected_service["reset"][1] - 3.875,
+                            "GND",
+                        ),
                     },
                 )
                 from tools.verify_kc2_compact_controller import board_rect_bbox
@@ -705,6 +717,7 @@ class V2GeneratorTests(unittest.TestCase):
                 from tools.verify_kc2_compact_controller import check_side
 
                 self.assertEqual(check_side(side, board_path), [])
+
                 from tools.verify_kc2_x3_v2 import (
                     matrix_footprints,
                     verify_placed_footprint_contracts,
@@ -824,13 +837,13 @@ class V2GeneratorTests(unittest.TestCase):
                             "u1": [132.7125, 50.75],
                             "battery_slot": [117.9125, 50.75],
                             "battery": [133.2125, 53.05],
-                            "reset": [115.8125, 63.45],
+                            "reset": [113.7625, 50.75],
                         },
                         "right": {
                             "u1": [77.4, 50.75],
                             "battery_slot": [92.2, 50.75],
                             "battery": [76.9, 53.05],
-                            "reset": [94.3, 63.45],
+                            "reset": [96.35, 50.75],
                         },
                     },
                     "reset": {
@@ -839,14 +852,14 @@ class V2GeneratorTests(unittest.TestCase):
                         "pad_1": "RST_key_side",
                         "pad_2": "GND_controller_side",
                         "probe_max_diameter_mm": 3.0,
-                        "actuator_corridor_diameter_mm": 4.0,
+                        "usb_outward_offset_mm": 2.05,
+                        "placement_mode": "under_usb_vertical_stack",
+                        "service_access": "usb_edge_beneath_socketed_controller",
+                        "controller_to_reset_z_clearance": "physical_gate",
                         "service_usb_state": "disconnected",
                     },
                     "nominal_clearances_mm": {
-                        "controller_body_to_reset_body": 0.5,
-                        "reset_body_to_keycap": 2.0,
-                        "reset_courtyard_to_keycap": 0.075,
-                        "reset_pad_to_keycap": 0.3,
+                        "reset_body_to_keycap_min": 2.0,
                         "controller_body_to_top_edge": 2.35,
                         "battery_body_to_top_edge": 1.3,
                         "battery_housing_perimeter_land": 0.85,
@@ -871,6 +884,36 @@ class V2GeneratorTests(unittest.TestCase):
                     "bottom_first_key": {"x": 9.5, "y": 3.25},
                 },
             )
+
+    def test_usb_under_reset_manifest_note_is_v2_only(self) -> None:
+        from tools import generate_kc2_pcbs as generator
+
+        with TemporaryDirectory(dir=ROOT) as temporary:
+            for variant, expected, forbidden in (
+                (
+                    "x3",
+                    "places SW_RST1 on the antenna side outside the TW301525 battery reference clearance",
+                    "stacks SW_RST1 beneath the elevated nice!nano USB end",
+                ),
+                (
+                    "x3-v2",
+                    "portrait-oriented in plan beneath the socket-elevated USB end",
+                    "places SW_RST1 on the antenna side outside the TW301525 battery reference clearance",
+                ),
+            ):
+                output_dir = Path(temporary) / variant
+                generator.generate_variant(variant, output_dir=output_dir)
+                manifest_name = (
+                    "kc2_generation_manifest.json"
+                    if variant == "x3"
+                    else "kc2_x3_v2_generation_manifest.json"
+                )
+                manifest = json.loads(
+                    (output_dir / manifest_name).read_text(encoding="utf-8")
+                )
+                notes = "\n".join(manifest["notes"])
+                self.assertIn(expected, notes)
+                self.assertNotIn(forbidden, notes)
 
     def test_compact_edge_repair_is_idempotent_against_generated_diode_positions(self) -> None:
         from tools import generate_kc2_pcbs as generator
@@ -1359,7 +1402,7 @@ class V2GeneratorTests(unittest.TestCase):
             (
                 "reset position",
                 lambda board: board.FindFootprintByReference("SW_RST1").SetPosition(
-                    pcbnew.VECTOR2I(pcbnew.FromMM(115.8125), pcbnew.FromMM(63.5))
+                    pcbnew.VECTOR2I(pcbnew.FromMM(113.7625), pcbnew.FromMM(50.8))
                 ),
                 "reset_contract_errors",
             ),
@@ -1619,13 +1662,13 @@ class V2GeneratorTests(unittest.TestCase):
                     "session_source_dsn": "hardware/kicad/draft/x3-v2/autoroute/kc2_left-x3-v2-70-es1b-controller-r3.dsn",
                     "session_source_dsn_sha256": "0f1da995d92a6a121142125933e21ce0c1f1db05e5c1ef924f2a7c6dd38fa3db",
                     "ses": "hardware/kicad/draft/x3-v2/autoroute/kc2_left-x3-v2-70-es1b-controller-r3.ses",
-                    "ses_role": "reviewed_compact_controller_import_plus_exact_edge_cleanup",
+                    "ses_role": "reviewed_compact_controller_import_plus_exact_edge_cleanup_and_usb_under_reset_replacement",
                     "dsn_sha256": "0f1da995d92a6a121142125933e21ce0c1f1db05e5c1ef924f2a7c6dd38fa3db",
                     "ses_sha256": "41ba7adf4db9881cf6065b592fd81127de5753b7b23a94012a16e1230cdbf0b8",
                     "dsn_default_clearance_internal_units": 300,
                     "dsn_clearances_internal_units": {"global": 300, "kicad_default": 300},
-                    "final_track_via_count": 543,
-                    "route_digest_sha256": "9bc9cbf981da8d452b82e52d54a4e8ab3cafcc6121ec578f36a4cf43f3dde19d",
+                    "final_track_via_count": 544,
+                    "route_digest_sha256": "79dd509ceb68960691a012721ce8a29ad159c2191950d090ada1fd2bceed92aa",
                 },
                 "right": {
                     "dsn": "hardware/kicad/draft/x3-v2/autoroute/kc2_right-x3-v2-70-es1b-controller-r3.dsn",
@@ -1634,13 +1677,13 @@ class V2GeneratorTests(unittest.TestCase):
                     "session_source_dsn": "hardware/kicad/draft/x3-v2/autoroute/kc2_right-x3-v2-70-es1b-controller-r3.dsn",
                     "session_source_dsn_sha256": "45f3bbf61f54d417ab97aeff137aa91db5f323a24ff3473011aaa84ccc9d7e45",
                     "ses": "hardware/kicad/draft/x3-v2/autoroute/kc2_right-x3-v2-70-es1b-controller-r3.ses",
-                    "ses_role": "reviewed_compact_controller_import_plus_exact_edge_cleanup",
+                    "ses_role": "reviewed_compact_controller_import_plus_exact_edge_cleanup_and_usb_under_reset_replacement",
                     "dsn_sha256": "45f3bbf61f54d417ab97aeff137aa91db5f323a24ff3473011aaa84ccc9d7e45",
                     "ses_sha256": "58823efa51c642107623d60180f2431eff572c50a11f1dbad8091c35e82ef2fb",
                     "dsn_default_clearance_internal_units": 300,
                     "dsn_clearances_internal_units": {"global": 300, "kicad_default": 300},
-                    "final_track_via_count": 706,
-                    "route_digest_sha256": "83dcc6f764670b379b6c9104d643925cd6eff3c0b16286f12bae14dd1397c67f",
+                    "final_track_via_count": 711,
+                    "route_digest_sha256": "20009ce9a43c88167aba0d88ccef84df46b53a7c633b62937286535245ea9127",
                 },
             },
         )
@@ -1674,7 +1717,7 @@ class V2GeneratorTests(unittest.TestCase):
                 self.assertEqual(record["session_source_dsn"], record["dsn"])
                 self.assertEqual(
                     record["ses_role"],
-                    "reviewed_compact_controller_import_plus_exact_edge_cleanup",
+                    "reviewed_compact_controller_import_plus_exact_edge_cleanup_and_usb_under_reset_replacement",
                 )
 
     def test_current_mh_trackless_dsn_export_preserves_compact_controller_contract(self) -> None:
@@ -1805,8 +1848,8 @@ class V2GeneratorTests(unittest.TestCase):
             output_dir = Path(temporary) / "x3-v2"
             generator.generate_variant("x3-v2", output_dir=output_dir)
             for side, expected in (
-                ("left", {"imported": 539, "removed": 5, "added": 9, "final": 543}),
-                ("right", {"imported": 703, "removed": 9, "added": 12, "final": 706}),
+                ("left", {"imported": 539, "removed": 12, "added": 17, "final": 544}),
+                ("right", {"imported": 703, "removed": 16, "added": 24, "final": 711}),
             ):
                 with self.subTest(side=side):
                     board_path = (
@@ -1980,7 +2023,7 @@ class V2GeneratorTests(unittest.TestCase):
             srs,
         )
         self.assertIn(
-            "Their 564/732 driver-clearance result is the pre-controller-compaction M1.4 baseline and is superseded by the current controller-r3 543/706 route evidence",
+            "Their 564/732 driver-clearance result is the pre-controller-compaction M1.4 baseline and is superseded by the current controller-r3-plus-reset 544/711 route evidence",
             srs,
         )
         self.assertNotIn(
