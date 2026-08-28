@@ -1,0 +1,18 @@
+{
+  "iter": 1,
+  "changes": [
+    "Corrected POWER-to-RESET body clearance from 1.00 mm to 2.20 mm.",
+    "Reworded 8 mm as the user's unverified visual estimate and required caliper evidence.",
+    "Added 2026-08-28 Change Notes to CON-ARCH-004 and CON-ARCH-006 through MCP status mutations.",
+    "Added code addition-site traces for CON-ARCH-007 and REL-ARCH-001.",
+    "Moved the new requirements to planned because the MCP does not implement the skill's proposed status.",
+    "Added official IMMS, nice!nano and Nordic references.",
+    "Defined BAT_LEAD_SLOT1 as the retained J_BAT1 strain-relief feature.",
+    "Specified deterministic carrier lead separation and RF/power test sampling conditions.",
+    "Changed protected-pack wording to require documented single-cell protection status before ordering.",
+    "Recorded multi-aspect work as valid per-requirement 4-way classifications.",
+    "Removed pre-implementation addition-site traces after the MCP rejected the skill's proposed status; planned now has no addition-site trace cap conflict.",
+    "Removed duplicate reverse requirement traces and retained new-requirement-to-existing trace direction.",
+    "Defined packet-loss denominator, sample counts, battery test voltages, hand position and physical service tools."
+  ]
+}

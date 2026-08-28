@@ -1,0 +1,1 @@
+{"iter":2,"changes":["Added the failed and successful initial add_requirement calls, initial traces, status/stability result, and validation to srs_delta.","Changed AC-8 to require sentinel absence before and after the reversible E2E, with no recreation."],"via":"speckiwi MCP only for SRS"}

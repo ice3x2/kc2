@@ -9,7 +9,161 @@ from pathlib import Path
 
 from tools.canonical_hash import HASH_POLICY, sha256_bytes, sha256_file
 from tools import generate_kc2_x3_v2_housings as generator
+from tools import verify_kc2_x3_v2_housing as housing_verifier
 from tools.verify_kc2_x3_v2_housing import analyze_v2_housing, verify_report
+
+
+class ServiceInterfaceContractUnitTests(unittest.TestCase):
+    def test_housing_manifest_traces_all_active_mechanical_requirements(self) -> None:
+        manifest = json.loads(generator.MANIFEST_PATH.read_text(encoding="utf-8"))
+        self.assertEqual(
+            manifest["requirement_ids"],
+            ["CON-ARCH-006", "CON-ARCH-007", "REL-ARCH-001"],
+        )
+
+    def test_reset_support_centers_match_final_mirrored_service_layout(self) -> None:
+        self.assertEqual(
+            housing_verifier.VERIFIED_RESET_CENTERS_MM,
+            {
+                "left": [126.0625, 63.4500],
+                "right": [84.0500, 63.4500],
+            },
+        )
+
+    def test_j_bat1_requires_two_plated_pth_envelopes_inside_the_union_cutout(self) -> None:
+        pads = [
+            {
+                "number": "1",
+                "is_plated_through_hole": True,
+                "shape": "circle",
+                "drill_mm": [1.0, 1.0],
+                "size_mm": [2.20, 2.20],
+                "center": [0.0, 0.0],
+            },
+            {
+                "number": "2",
+                "is_plated_through_hole": True,
+                "shape": "circle",
+                "drill_mm": [1.0, 1.0],
+                "size_mm": [2.20, 2.20],
+                "center": [2.54, 0.0],
+            },
+        ]
+        contract = generator.validate_battery_termination_pad_records("unit", pads)
+        self.assertEqual(contract["pad_count"], 2)
+        self.assertEqual(contract["plated_pth_count"], 2)
+        self.assertEqual(contract["required_pad_envelope_count"], 2)
+        self.assertTrue(contract["cutout_envelopes_overlap"])
+        self.assertEqual(contract["expected_union_opening_count"], 1)
+        self.assertNotIn("required_opening_count", contract)
+
+        for mutate in (
+            lambda items: items.pop(),
+            lambda items: items[0].__setitem__("is_plated_through_hole", False),
+        ):
+            with self.subTest(mutate=mutate):
+                invalid = copy.deepcopy(pads)
+                mutate(invalid)
+                with self.assertRaises(RuntimeError):
+                    generator.validate_battery_termination_pad_records("unit", invalid)
+
+    def test_sw_pwr1_requires_three_round_plated_080_pth_at_254_pitch(self) -> None:
+        pads = [
+            {
+                "number": str(index + 1),
+                "is_plated_through_hole": True,
+                "shape": "circle",
+                "drill_mm": [0.80, 0.80],
+                "center": [index * 2.54, 0.0],
+            }
+            for index in range(3)
+        ]
+        contract = generator.validate_power_switch_pad_records("unit", pads)
+        self.assertEqual(contract["pad_count"], 3)
+        self.assertTrue(contract["all_round_plated_pth"])
+        self.assertEqual(contract["drill_diameter_mm"], 0.80)
+        self.assertEqual(contract["pitch_mm"], 2.54)
+
+        mutations = (
+            lambda items: items.pop(),
+            lambda items: items[0].__setitem__("is_plated_through_hole", False),
+            lambda items: items[0].__setitem__("shape", "oval"),
+            lambda items: items[0].__setitem__("drill_mm", [0.80, 0.90]),
+            lambda items: items[2].__setitem__("center", [5.20, 0.0]),
+        )
+        for mutate in mutations:
+            with self.subTest(mutate=mutate):
+                invalid = copy.deepcopy(pads)
+                mutate(invalid)
+                with self.assertRaises(RuntimeError):
+                    generator.validate_power_switch_pad_records("unit", invalid)
+
+    def test_bat1_extraction_is_side_specific_and_source_bound(self) -> None:
+        for side, center in (
+            ("left", [131.7125, 50.7500]),
+            ("right", [78.4000, 50.7500]),
+        ):
+            with self.subTest(side=side):
+                record = {
+                    "ref": "BAT1",
+                    "center": center,
+                    "size_mm": [30.0, 12.0],
+                    "modeled_depth_mm": 3.0,
+                    "housing_body_cutout": False,
+                }
+                bound = generator.bind_battery_extraction_record(
+                    side,
+                    record,
+                    f"hardware/{side}.kicad_pcb",
+                    f"{side}-sha256",
+                )
+                self.assertEqual(bound["side"], side)
+                self.assertEqual(bound["center"], center)
+                self.assertEqual(bound["source_board_sha256"], f"{side}-sha256")
+
+                wrong = copy.deepcopy(record)
+                wrong["center"][0] += 0.1
+                with self.assertRaises(RuntimeError):
+                    generator.bind_battery_extraction_record(
+                        side,
+                        wrong,
+                        f"hardware/{side}.kicad_pcb",
+                        f"{side}-sha256",
+                    )
+
+    def test_every_service_opening_has_a_perimeter_and_structure_land_gate(self) -> None:
+        for name in ("battery_termination", "power_switch_leads", "battery_slot"):
+            with self.subTest(name=name):
+                valid = {
+                    "breaks_lateral_housing_perimeter": False,
+                    "minimum_housing_perimeter_land_mm": 0.85,
+                    "perimeter_land_matches_manifest": True,
+                }
+                self.assertEqual(
+                    housing_verifier.service_cutout_contract_errors("left", name, valid),
+                    [],
+                )
+                invalid = copy.deepcopy(valid)
+                invalid["breaks_lateral_housing_perimeter"] = True
+                invalid["minimum_housing_perimeter_land_mm"] = 0.0
+                invalid["perimeter_land_matches_manifest"] = False
+                errors = housing_verifier.service_cutout_contract_errors(
+                    "left", name, invalid
+                )
+                self.assertTrue(any("breaks the lateral perimeter" in error for error in errors))
+                self.assertTrue(any("structural land" in error for error in errors))
+                self.assertTrue(any("manifest is stale" in error for error in errors))
+
+    def test_order_blocker_names_rel_arch_001_transition_radio_and_charging_gates(self) -> None:
+        blocker = housing_verifier.ORDER_READINESS_BLOCKER
+        for required in (
+            "REL-ARCH-001",
+            "20 cold OFF-to-ON",
+            "RSSI",
+            "packet-loss",
+            "USB charging",
+        ):
+            self.assertIn(required, blocker)
 
 
 class V2LoadBearingHousingTests(unittest.TestCase):
@@ -102,7 +256,8 @@ class V2LoadBearingHousingTests(unittest.TestCase):
             self.assertEqual(housing["desk_standoff_nominal_mm"], 1.00)
             self.assertEqual(housing["desk_standoff_print_tolerance_mm"], 0.30)
             self.assertEqual(housing["desk_datum_z_mm"], -1.00)
-            self.assertEqual(housing["minimum_open_component_to_desk_nominal_clearance_mm"], 0.50)
+            self.assertEqual(housing["minimum_open_component_to_desk_nominal_clearance_mm"], 1.00)
+            self.assertEqual(housing["minimum_open_component_to_desk_clearance_mm"], 0.70)
             self.assertGreaterEqual(housing["minimum_open_component_to_desk_clearance_mm"], 0.50)
             self.assertTrue(housing["desk_contacts_statically_stable"])
             self.assertTrue(housing["desk_contacts_hidden_in_top_view"])
@@ -135,7 +290,7 @@ class V2LoadBearingHousingTests(unittest.TestCase):
 
             reset = housing["reset_local_support"]
             expected_reset_center = (
-                [113.7625, 50.7500] if side == "left" else [96.3500, 50.7500]
+                [126.0625, 63.4500] if side == "left" else [84.0500, 63.4500]
             )
             self.assertEqual(reset["ref"], "SW_RST1")
             self.assertEqual(reset["board_center_mm"], expected_reset_center)
@@ -160,7 +315,8 @@ class V2LoadBearingHousingTests(unittest.TestCase):
             "mx_pins_pads_fillets",
             "diode_body_pads_fillets",
             "controller_socket",
-            "battery_body",
+            "battery_termination",
+            "power_switch_leads",
             "battery_slot",
         }
         for side in ("left", "right"):
@@ -176,8 +332,10 @@ class V2LoadBearingHousingTests(unittest.TestCase):
             ):
                 self.assertEqual(cutouts[name]["opening_count"], key_count, name)
             self.assertEqual(cutouts["controller_socket"]["opening_count"], 1)
-            self.assertEqual(cutouts["battery_body"]["opening_count"], 1)
+            self.assertEqual(cutouts["battery_termination"]["opening_count"], 1)
+            self.assertEqual(cutouts["power_switch_leads"]["opening_count"], 1)
             self.assertEqual(cutouts["battery_slot"]["opening_count"], 1)
+            self.assertNotIn("battery_body", cutouts)
             self.assertNotIn("controller_reset", cutouts)
             self.assertNotIn("reset_topside", cutouts)
             for name, result in cutouts.items():
@@ -212,18 +370,45 @@ class V2LoadBearingHousingTests(unittest.TestCase):
                 cutouts["diode_body_pads_fillets"]["minimum_housing_perimeter_land_mm"],
                 0.85,
             )
-            battery = cutouts["battery_body"]
-            self.assertEqual(battery["reference"], "TW301525")
-            self.assertEqual(battery["board_feature"], "B.Fab:TW301525 80mAh")
-            self.assertEqual(battery["nominal_plan_envelope_mm"], [15.00, 25.00])
-            self.assertNotIn("official_plan_envelope_max_mm", battery)
-            self.assertFalse(any(key.startswith("official_") for key in battery))
-            self.assertEqual(battery["modeled_max_depth_mm"], 3.00)
-            self.assertEqual(battery["cutout_allowance_mm"], 0.35)
-            self.assertEqual(battery["nominal_desk_clearance_mm"], 0.50)
-            self.assertFalse(battery["breaks_lateral_housing_perimeter"])
-            self.assertGreaterEqual(battery["minimum_housing_perimeter_land_mm"], 0.85)
-            self.assertEqual(battery["physical_tolerance_status"], "pending")
+            termination = cutouts["battery_termination"]
+            self.assertEqual(termination["reference"], "J_BAT1")
+            self.assertEqual(termination["pad_count"], 2)
+            self.assertEqual(termination["plated_pth_count"], 2)
+            self.assertEqual(termination["required_pad_envelope_count"], 2)
+            self.assertTrue(termination["cutout_envelopes_overlap"])
+            self.assertEqual(termination["expected_union_opening_count"], 1)
+            self.assertEqual(termination["pad_envelope_count"], 2)
+            self.assertEqual(termination["covered_pad_envelope_count"], 2)
+            self.assertEqual(termination["uncovered_pad_envelope_count"], 0)
+            self.assertEqual(termination["opening_count"], 1)
+            self.assertTrue(termination["exterior_open"])
+            self.assertEqual(termination["residual_collision_volume_mm3"], 0.0)
+            power = cutouts["power_switch_leads"]
+            self.assertEqual(power["reference"], "SW_PWR1")
+            self.assertEqual(power["opening_count"], 1)
+            self.assertEqual(power["pad_count"], 3)
+            self.assertTrue(power["all_round_plated_pth"])
+            self.assertEqual(power["drill_count"], 3)
+            self.assertEqual(power["drill_diameter_mm"], 0.80)
+            self.assertEqual(power["pitch_mm"], 2.54)
+            for name in ("battery_termination", "power_switch_leads", "battery_slot"):
+                service = cutouts[name]
+                self.assertFalse(service["breaks_lateral_housing_perimeter"])
+                self.assertGreaterEqual(
+                    service["minimum_housing_perimeter_land_mm"],
+                    generator.MIN_SERVICE_HOUSING_PERIMETER_LAND_MM,
+                )
+                self.assertTrue(service["perimeter_land_matches_manifest"])
+            battery = housing["battery_above_carrier"]
+            self.assertEqual(battery["ref"], "BAT1")
+            self.assertEqual(
+                battery["center"],
+                [131.7125, 50.7500] if side == "left" else [78.4000, 50.7500],
+            )
+            self.assertEqual(battery["size_mm"], [30.0, 12.0])
+            self.assertEqual(battery["modeled_depth_mm"], 3.0)
+            self.assertFalse(battery["housing_body_cutout"])
+            self.assertTrue(battery["fresh_extraction_manifest_binding"])
 
     def test_m1_4_mounting_columns_preserve_the_primary_support_network(self) -> None:
         expected_coordinates = {
@@ -354,15 +539,10 @@ class V2LoadBearingHousingTests(unittest.TestCase):
         self.assertTrue(any("reset local support" in error for error in verify_report(report)))
 
         report = copy.deepcopy(self.report)
-        report["sides"]["right"]["component_cutouts"]["battery_body"][
-            "minimum_housing_perimeter_land_mm"
-        ] = 0.84
-        self.assertTrue(any("battery perimeter land" in error for error in verify_report(report)))
-
-        report = copy.deepcopy(self.report)
-        battery = report["sides"]["right"]["component_cutouts"]["battery_body"]
-        battery["official_plan_envelope_max_mm"] = battery["nominal_plan_envelope_mm"]
-        self.assertTrue(any("forbidden official" in error for error in verify_report(report)))
+        report["sides"]["right"]["component_cutouts"]["power_switch_leads"][
+            "residual_collision_volume_mm3"
+        ] = 0.1
+        self.assertTrue(any("power_switch_leads 3D collision" in error for error in verify_report(report)))
 
     def test_every_printable_part_fits_150_mm_cube(self) -> None:
         for side in ("left", "right"):
@@ -413,7 +593,8 @@ class V2LoadBearingHousingTests(unittest.TestCase):
             "vias",
             "controller_socket",
             "reset_topside",
-            "battery_body",
+            "battery_termination",
+            "power_switch_leads",
             "battery_slot",
             "switch_key_travel",
         }
@@ -441,6 +622,88 @@ class V2LoadBearingHousingTests(unittest.TestCase):
         self.assertTrue(any("diode_body_pads_fillets 3D collision" in error for error in errors))
         self.assertTrue(any("diode plate-bottom clearance" in error for error in errors))
         self.assertTrue(any("diode desk clearance" in error for error in errors))
+
+    def test_verifier_rejects_service_pad_opening_binding_and_land_mutations(self) -> None:
+        mutations = (
+            (
+                "J_BAT1 does not contain exactly two pads",
+                lambda report: report["sides"]["left"]["component_cutouts"][
+                    "battery_termination"
+                ].__setitem__("pad_count", 1),
+            ),
+            (
+                "J_BAT1 pads are not both plated PTH",
+                lambda report: report["sides"]["left"]["component_cutouts"][
+                    "battery_termination"
+                ].__setitem__("plated_pth_count", 1),
+            ),
+            (
+                "battery_termination opening count",
+                lambda report: report["sides"]["left"]["component_cutouts"][
+                    "battery_termination"
+                ].__setitem__("opening_count", 2),
+            ),
+            (
+                "J_BAT1 lead/solder envelopes are not all covered",
+                lambda report: report["sides"]["left"]["component_cutouts"][
+                    "battery_termination"
+                ].__setitem__("covered_pad_envelope_count", 1),
+            ),
+            (
+                "J_BAT1 union opening contract",
+                lambda report: report["sides"]["left"]["component_cutouts"][
+                    "battery_termination"
+                ].__setitem__("expected_union_opening_count", 2),
+            ),
+            (
+                "power-switch pads are not round plated PTH",
+                lambda report: report["sides"]["right"]["component_cutouts"][
+                    "power_switch_leads"
+                ].__setitem__("all_round_plated_pth", False),
+            ),
+            (
+                "power-switch pad pitch",
+                lambda report: report["sides"]["right"]["component_cutouts"][
+                    "power_switch_leads"
+                ].__setitem__("pitch_mm", 2.50),
+            ),
+            (
+                "above-carrier BAT1 center",
+                lambda report: report["sides"]["right"]["battery_above_carrier"].__setitem__(
+                    "center", [78.5, 50.75]
+                ),
+            ),
+            (
+                "BAT1 extraction-manifest binding",
+                lambda report: report["sides"]["right"]["battery_above_carrier"].__setitem__(
+                    "fresh_extraction_manifest_binding", False
+                ),
+            ),
+        )
+        for expected_error, mutate in mutations:
+            with self.subTest(expected_error=expected_error):
+                report = copy.deepcopy(self.report)
+                mutate(report)
+                self.assertTrue(
+                    any(expected_error in error for error in verify_report(report)),
+                    verify_report(report),
+                )
+
+        for name in ("battery_termination", "power_switch_leads", "battery_slot"):
+            with self.subTest(perimeter=name):
+                report = copy.deepcopy(self.report)
+                cutout = report["sides"]["left"]["component_cutouts"][name]
+                cutout["breaks_lateral_housing_perimeter"] = True
+                cutout["minimum_housing_perimeter_land_mm"] = 0.0
+                cutout["perimeter_land_matches_manifest"] = False
+                errors = verify_report(report)
+                self.assertTrue(
+                    any(f"{name} cutout breaks the lateral perimeter" in error for error in errors)
+                )
+                self.assertTrue(any(f"{name} structural land" in error for error in errors))
+                self.assertTrue(
+                    any(f"{name} perimeter-land manifest is stale" in error for error in errors)
+                )
 
     def test_verifier_rejects_missing_or_unstable_desk_contacts(self) -> None:
         report = copy.deepcopy(self.report)
@@ -527,9 +790,13 @@ class V2LoadBearingHousingTests(unittest.TestCase):
             "disengagement, or fastener loosening. CON-ARCH-006 AC-11 controller-service "
             "physical evidence is also pending: exact reset supplier Z/travel/force/reflow limits, "
             "actual socketed-controller and nonconductive-probe service, USB shell/cable clearance, "
-            "ten successful double-reset cycles and bootloader enumeration, plus battery maximum "
-            "thickness/swelling, adhesive retention, lead bend, strain relief, abrasion protection, "
-            "actual placement tolerance, and desk clearance."
+            "ten successful double-reset cycles and bootloader enumeration, plus exact protected-pack "
+            "MPN, maximum swollen thickness, socket/controller stack clearance, insulation, lead bend, "
+            "strain relief, J_BAT1/IMMS solder protrusion, and actual POWER/RESET access. "
+            "REL-ARCH-001 AC-3/4/5 evidence is also pending: 20 cold OFF-to-ON and 20 "
+            "ON-to-OFF transitions at each required pack voltage, final-assembly RSSI and "
+            "packet-loss/disconnect A/B limits, and battery-only, USB charging, charge-complete, "
+            "and USB-unplug state coverage."
         )
         self.assertEqual(self.report["order_readiness_blocker"], expected_blocker)
         mutated = copy.deepcopy(self.report)
@@ -543,8 +810,10 @@ class V2LoadBearingHousingTests(unittest.TestCase):
         srs = (generator.ROOT / "docs/spec/10.product-architecture.srs.md").read_text(
             encoding="utf-8"
         )
-        self.assertIn("Seventeen focused housing tests pass", srs)
-        self.assertNotIn("Fourteen focused housing tests pass", srs)
+        con_arch_006 = srs.split("### CON-ARCH-006", 1)[1].split("### CON-ARCH-007", 1)[0]
+        self.assertIn("| VE-3 | current-mount-housing-cad |", con_arch_006)
+        self.assertIn("Physical validation remains required; order_ready=false", con_arch_006)
+        self.assertIn("`order_ready` and `fabrication_or_order_ready` remain false", con_arch_006)
 
 
 if __name__ == "__main__":

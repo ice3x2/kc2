@@ -1,0 +1,68 @@
+(footprint "BAT_2Pin_PTH_DirectSolder"
+  (version 20241229)
+  (generator "kicad-mcp")
+  (generator_version "9.0")
+  (layer "F.Cu")
+  (descr "Two-pad direct-solder termination for pre-attached insulated 301230 battery leads. Pad 1 BAT+, pad 2 GND/B-. Provisional 0.90 mm drills; purchased lead drawing remains order gate.")
+  (tags "battery LiPo direct solder 2pin PTH 301230")
+
+  (property "Reference" "REF**" (at 1.27 -2 0)
+    (layer "F.SilkS")
+    (uuid "f11ae20f-6c07-443f-a12d-e393c165ad63")
+    (effects (font (size 1 1) (thickness 0.15)))
+  )
+  (property "Value" "BAT_2Pin_PTH_DirectSolder" (at 1.27 2 0)
+    (layer "F.Fab")
+    (uuid "14bfa272-204b-4b87-a714-17d8c99b742d")
+    (effects (font (size 1 1) (thickness 0.15)))
+  )
+  (property "Datasheet" "" (at 0 0 0)
+    (layer "F.Fab")
+    (uuid "e1de366c-6ce3-4a87-8966-87cdd46979d4")
+    (effects (font (size 1 1) (thickness 0.15)))
+  )
+
+  (fp_rect
+    (start -1.55 -1.15)
+    (end 4.09 1.15)
+    (stroke (width 0.05) (type default))
+    (fill none)
+    (layer "F.CrtYd")
+    (uuid "de3c0d7c-6a13-4309-9e90-8c103e52c874")
+  )
+
+  (fp_rect
+    (start -1.4 -1)
+    (end 3.94 1)
+    (stroke (width 0.12) (type default))
+    (fill none)
+    (layer "F.SilkS")
+    (uuid "ccc74135-4f57-4aca-a43a-b540cee05554")
+  )
+
+  (fp_rect
+    (start -1.3 -0.9)
+    (end 3.84 0.9)
+    (stroke (width 0.1) (type default))
+    (fill none)
+    (layer "F.Fab")
+    (uuid "a1264362-52a7-4216-8691-e910e9cf6bd2")
+  )
+
+  (pad "1" thru_hole oval
+    (at 0 0)
+    (size 2.2 1.8)
+    (drill 0.9)
+    (layers "*.Cu" "*.Mask")
+    (uuid "36e92a1e-c9a5-42ec-bbec-0a410db11068")
+  )
+
+  (pad "2" thru_hole oval
+    (at 2.54 0)
+    (size 2.2 1.8)
+    (drill 0.9)
+    (layers "*.Cu" "*.Mask")
+    (uuid "8656890c-d425-46a5-a690-7cba88063c6c")
+  )
+
+)

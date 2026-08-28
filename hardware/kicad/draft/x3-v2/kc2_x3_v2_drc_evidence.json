@@ -1,7 +1,9 @@
 {
   "requirement_ids": [
     "CON-ARCH-004",
-    "CON-ARCH-006"
+    "CON-ARCH-006",
+    "CON-ARCH-007",
+    "REL-ARCH-001"
   ],
   "variant": "x3-v2",
   "status": "draft_not_orderable_pending_physical_evidence",
@@ -9,16 +11,16 @@
   "boards": {
     "left": {
       "board_path": "hardware/kicad/draft/x3-v2/kc2_left-x3-v2/kc2_left-x3-v2.kicad_pcb",
-      "board_sha256": "68026a5dff6e88283aae6913bb11369403bc8cd40f18c19f3d8c97fdaa249e3e",
+      "board_sha256": "90430a97aa2e13dbf8325525f9841b60e0b64d058406dd218162970b01f8e6f6",
       "drc_report_path": "hardware/kicad/draft/x3-v2/kc2_left-x3-v2/kc2_left-x3-v2.drc.json",
-      "drc_report_sha256": "923767bb2beb53834d04273b7c1a5b6512cc7c79ce1e17487b51b9a3f28120b4",
+      "drc_report_sha256": "83ffcb668bc231b0c4353b6d03023f43035e5a0163da28094dfb049091e4cff1",
       "project_path": "hardware/kicad/draft/x3-v2/kc2_left-x3-v2/kc2_left-x3-v2.kicad_pro",
       "project_sha256": "5e5af47c7276271a7a1a860315f2d95f479e25038427d54b345fb4f4d9469850",
       "default_clearance_mm": 0.3,
       "schema": "https://schemas.kicad.org/drc.v1.json",
       "source": "kc2_left-x3-v2.kicad_pcb",
       "kicad_version": "10.0.3",
-      "date": "2026-08-26T12:56:55",
+      "date": "2026-08-29T02:00:39",
       "included_severities": [
         "error",
         "warning",
@@ -27,16 +29,16 @@
     },
     "right": {
       "board_path": "hardware/kicad/draft/x3-v2/kc2_right-x3-v2/kc2_right-x3-v2.kicad_pcb",
-      "board_sha256": "c286eedc99f889ae496f0658ee01e8f77a6aa78a246ef03f1a237c5e8feacc3a",
+      "board_sha256": "a6a49f8875e506064ce4bf9e11839b4d932d326ee271fcf4b6bf863c8270b374",
       "drc_report_path": "hardware/kicad/draft/x3-v2/kc2_right-x3-v2/kc2_right-x3-v2.drc.json",
-      "drc_report_sha256": "730e319a200b0d3d541b22d0ad6a994513d1cd156d05819a817751425c9f9a04",
+      "drc_report_sha256": "834d84726c4f5fc34d9625a3c82f7b89833db22799306917f6daf26a1a5e1d9c",
       "project_path": "hardware/kicad/draft/x3-v2/kc2_right-x3-v2/kc2_right-x3-v2.kicad_pro",
       "project_sha256": "19ffa6073af88be736eafeedcb8d2d048d420be909a3f24085dbd7be52784dbb",
       "default_clearance_mm": 0.3,
       "schema": "https://schemas.kicad.org/drc.v1.json",
       "source": "kc2_right-x3-v2.kicad_pcb",
       "kicad_version": "10.0.3",
-      "date": "2026-08-26T16:31:51",
+      "date": "2026-08-29T02:00:41",
       "included_severities": [
         "error",
         "warning",

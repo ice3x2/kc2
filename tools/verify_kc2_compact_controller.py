@@ -37,12 +37,26 @@ SLOT_POSITION_TOLERANCE = 0.03
 SLOT_DIMENSION_TOLERANCE = 0.02
 SLOT_EDGE_CLEARANCE_MIN = 1.0
 V2_CONTROLLER_SERVICE_POSITIONS_MM = {
-    "left": {"u1": (132.7125, 50.75), "reset": (113.7625, 50.75)},
-    "right": {"u1": (77.4, 50.75), "reset": (96.35, 50.75)},
+    "left": {
+        "u1": (132.7125, 50.75),
+        "battery": (131.7125, 50.75),
+        "j_bat": (115.8125, 59.40),
+        "power": (115.8125, 63.45),
+        "reset": (126.0625, 63.45),
+    },
+    "right": {
+        "u1": (77.4, 50.75),
+        "battery": (78.4, 50.75),
+        "j_bat": (94.3, 59.40),
+        "power": (94.3, 63.45),
+        "reset": (84.05, 63.45),
+    },
 }
 V2_POSITION_TOLERANCE_MM = 0.001
-V2_RESET_ROTATION_DEGREES = 90.0
+V2_RESET_ROTATIONS_DEGREES = {"left": 0.0, "right": 180.0}
+V2_J_BAT1_ROTATIONS_DEGREES = {"left": 180.0, "right": 0.0}
 FORBIDDEN_POWER_NETS = {"BAT+", "BAT-", "NN_B+", "NN_B-"}
+V2_EXPECTED_POWER_NETS = {"BAT+", "NN_B+", "GND"}
 
 
 def to_mm_vec(vec: pcbnew.VECTOR2I) -> tuple[float, float]:
@@ -90,6 +104,24 @@ def board_rect_bbox(board: pcbnew.BOARD, layer: int) -> tuple[float, float, floa
                 x, y = to_mm_vec(point)
                 xs.append(x)
                 ys.append(y)
+    if not xs:
+        return None
+    return min(xs), min(ys), max(xs), max(ys)
+
+
+def footprint_rect_bbox(
+    footprint: pcbnew.FOOTPRINT,
+    layer: int,
+) -> tuple[float, float, float, float] | None:
+    xs: list[float] = []
+    ys: list[float] = []
+    for item in footprint.GraphicalItems():
+        if item.GetLayer() != layer or not hasattr(item, "GetStart"):
+            continue
+        for point in (item.GetStart(), item.GetEnd()):
+            x, y = to_mm_vec(point)
+            xs.append(x)
+            ys.append(y)
     if not xs:
         return None
     return min(xs), min(ys), max(xs), max(ys)
@@ -175,24 +207,26 @@ def check_side(side: str, board_path: Path) -> list[str]:
     errors: list[str] = []
     board = pcbnew.LoadBoard(str(board_path))
     fps = {fp.GetReference(): fp for fp in board.GetFootprints()}
+    is_v2 = "x3-v2" in str(board_path).lower()
 
-    if "J_PWR1" in fps:
+    if not is_v2 and "J_PWR1" in fps:
         errors.append(f"{side}: J_PWR1 carrier power pad footprint is still present")
 
-    declared_power_nets = text_contains_power_net_declaration(board_path)
-    if declared_power_nets:
-        errors.append(f"{side}: carrier board still declares power nets {declared_power_nets}")
+    if not is_v2:
+        declared_power_nets = text_contains_power_net_declaration(board_path)
+        if declared_power_nets:
+            errors.append(f"{side}: carrier board still declares power nets {declared_power_nets}")
 
-    used_power_nets: set[str] = set()
-    for fp in board.GetFootprints():
-        for pad in fp.Pads():
-            if pad.GetNetname() in FORBIDDEN_POWER_NETS:
-                used_power_nets.add(pad.GetNetname())
-    for track in board.GetTracks():
-        if track.GetNetname() in FORBIDDEN_POWER_NETS:
-            used_power_nets.add(track.GetNetname())
-    if used_power_nets:
-        errors.append(f"{side}: carrier board still uses power nets {sorted(used_power_nets)}")
+        used_power_nets: set[str] = set()
+        for fp in board.GetFootprints():
+            for pad in fp.Pads():
+                if pad.GetNetname() in FORBIDDEN_POWER_NETS:
+                    used_power_nets.add(pad.GetNetname())
+        for track in board.GetTracks():
+            if track.GetNetname() in FORBIDDEN_POWER_NETS:
+                used_power_nets.add(track.GetNetname())
+        if used_power_nets:
+            errors.append(f"{side}: carrier board still uses power nets {sorted(used_power_nets)}")
 
     top_span = controller_top_straight_span(board)
     if top_span <= 0:
@@ -215,24 +249,74 @@ def check_side(side: str, board_path: Path) -> list[str]:
     u1_x, u1_y = fp_center(u1)
     tact_x, tact_y = fp_center(tact)
     usb_direction = 1 if side == "left" else -1
-    is_v2 = "x3-v2" in str(board_path).lower()
     if is_v2:
         expected = V2_CONTROLLER_SERVICE_POSITIONS_MM[side]
-        for label, actual, target in (
+        required_v2 = {
+            "BAT1": "battery",
+            "J_BAT1": "j_bat",
+            "SW_PWR1": "power",
+            "SW_RST1": "reset",
+        }
+        for reference in required_v2:
+            if reference not in fps:
+                errors.append(f"{side}: missing {reference}")
+        for label, actual, target in [
             ("U1", (u1_x, u1_y), expected["u1"]),
-            ("SW_RST1", (tact_x, tact_y), expected["reset"]),
-        ):
+            *(
+                (reference, fp_center(fps[reference]), expected[key])
+                for reference, key in required_v2.items()
+                if reference in fps
+            ),
+        ]:
             if max(abs(actual[index] - target[index]) for index in (0, 1)) > V2_POSITION_TOLERANCE_MM:
                 errors.append(
                     f"{side}: {label} center ({actual[0]:.4f}, {actual[1]:.4f}) mm, "
                     f"expected ({target[0]:.4f}, {target[1]:.4f}) mm"
                 )
         rotation = tact.GetOrientation().AsDegrees() % 360.0
-        if abs(rotation - V2_RESET_ROTATION_DEGREES) > 0.001:
+        expected_reset_rotation = V2_RESET_ROTATIONS_DEGREES[side]
+        if abs(rotation - expected_reset_rotation) > 0.001:
             errors.append(
                 f"{side}: SW_RST1 rotation is {rotation:.3f} deg, expected "
-                f"{V2_RESET_ROTATION_DEGREES:.3f} deg"
+                f"{expected_reset_rotation:.3f} deg"
             )
+        power = fps.get("SW_PWR1")
+        j_bat = fps.get("J_BAT1")
+        battery = fps.get("BAT1")
+        if power is not None:
+            expected_rotation = 0.0 if side == "left" else 180.0
+            if abs((power.GetOrientation().AsDegrees() % 360.0) - expected_rotation) > 0.001:
+                errors.append(f"{side}: SW_PWR1 rotation is not {expected_rotation:.1f} deg")
+            power_nets = {pad.GetNumber(): pad.GetNetname() for pad in power.Pads()}
+            if power_nets != {"2": "NN_B+", "1": "BAT+", "3": ""}:
+                errors.append(f"{side}: SW_PWR1 pad nets differ from BAT+/NN_B+/NC: {power_nets}")
+        if j_bat is not None:
+            expected_rotation = V2_J_BAT1_ROTATIONS_DEGREES[side]
+            if abs((j_bat.GetOrientation().AsDegrees() % 360.0) - expected_rotation) > 0.001:
+                errors.append(f"{side}: J_BAT1 rotation is not {expected_rotation:.1f} deg")
+            j_bat_nets = {pad.GetNumber(): pad.GetNetname() for pad in j_bat.Pads()}
+            if j_bat_nets != {"1": "BAT+", "2": "GND"}:
+                errors.append(f"{side}: J_BAT1 pad nets differ from BAT+/GND: {j_bat_nets}")
+        u1_power_nets = {
+            pad.GetNumber(): pad.GetNetname()
+            for pad in u1.Pads()
+            if pad.GetNumber() in {"RAW", "GND_C"}
+        }
+        if u1_power_nets != {"RAW": "NN_B+", "GND_C": "GND"}:
+            errors.append(f"{side}: U1 RAW/GND_C power contract differs: {u1_power_nets}")
+        if battery is not None:
+            battery_rect = footprint_rect_bbox(battery, pcbnew.F_Fab)
+            if battery_rect is None:
+                errors.append(f"{side}: BAT1 has no F.Fab 301230 body")
+            else:
+                expected_rect = (
+                    expected["battery"][0] - 15.0,
+                    expected["battery"][1] - 6.0,
+                    expected["battery"][0] + 15.0,
+                    expected["battery"][1] + 6.0,
+                )
+                if max(abs(a - b) for a, b in zip(battery_rect, expected_rect)) > 0.001:
+                    errors.append(f"{side}: BAT1 body is not exact 30 x 12 mm at the target center")
     else:
         antenna_edge_x = u1_x + usb_direction * (CONTROLLER_LEN / 2.0)
         antenna_side_distance = abs(tact_x - antenna_edge_x)
@@ -270,9 +354,15 @@ def check_side(side: str, board_path: Path) -> list[str]:
         tact_x + tact_w / 2.0,
         tact_y + tact_h / 2.0,
     )
-    battery_rect = board_rect_bbox(board, pcbnew.B_Fab)
+    battery_rect = (
+        footprint_rect_bbox(fps["BAT1"], pcbnew.F_Fab)
+        if is_v2 and "BAT1" in fps
+        else board_rect_bbox(board, pcbnew.B_Fab)
+    )
     if battery_rect is None:
-        errors.append(f"{side}: missing TW301525 B.Fab battery reference rectangle")
+        errors.append(
+            f"{side}: missing {'BAT1 F.Fab 301230' if is_v2 else 'TW301525 B.Fab'} battery reference rectangle"
+        )
     elif rects_overlap(tact_rect, expanded(battery_rect, BATTERY_CLEARANCE)):
         errors.append(
             f"{side}: SW_RST1 body overlaps battery reference clearance; "
@@ -334,15 +424,13 @@ def check_side(side: str, board_path: Path) -> list[str]:
     )
     if rects_overlap(slot_rect, antenna_keepout):
         errors.append(f"{side}: {BATTERY_LEAD_SLOT_REF} overlaps antenna keepout")
-    if battery_rect is not None and rects_overlap(slot_rect, expanded(battery_rect, BATTERY_CLEARANCE)):
+    if (
+        not is_v2
+        and battery_rect is not None
+        and rects_overlap(slot_rect, expanded(battery_rect, BATTERY_CLEARANCE))
+    ):
         errors.append(f"{side}: {BATTERY_LEAD_SLOT_REF} overlaps battery reference clearance")
-    if is_v2:
-        if rects_overlap(slot_rect, expanded(tact_rect, V2_RESET_SLOT_CLEARANCE_MIN)):
-            errors.append(
-                f"{side}: {BATTERY_LEAD_SLOT_REF} is closer than "
-                f"{V2_RESET_SLOT_CLEARANCE_MIN:.2f} mm to SW_RST1 body"
-            )
-    elif rects_overlap(slot_rect, tact_rect):
+    if not is_v2 and rects_overlap(slot_rect, tact_rect):
         errors.append(f"{side}: {BATTERY_LEAD_SLOT_REF} overlaps SW_RST1 body")
     clearance = slot_edge_clearance(board, slot_x, slot_y)
     if clearance < SLOT_EDGE_CLEARANCE_MIN:

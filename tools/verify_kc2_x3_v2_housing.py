@@ -36,9 +36,13 @@ ORDER_READINESS_BLOCKER = (
     "disengagement, or fastener loosening. CON-ARCH-006 AC-11 controller-service "
     "physical evidence is also pending: exact reset supplier Z/travel/force/reflow limits, "
     "actual socketed-controller and nonconductive-probe service, USB shell/cable clearance, "
-    "ten successful double-reset cycles and bootloader enumeration, plus battery maximum "
-    "thickness/swelling, adhesive retention, lead bend, strain relief, abrasion protection, "
-    "actual placement tolerance, and desk clearance."
+    "ten successful double-reset cycles and bootloader enumeration, plus exact protected-pack "
+    "MPN, maximum swollen thickness, socket/controller stack clearance, insulation, lead bend, "
+    "strain relief, J_BAT1/IMMS solder protrusion, and actual POWER/RESET access. "
+    "REL-ARCH-001 AC-3/4/5 evidence is also pending: 20 cold OFF-to-ON and 20 "
+    "ON-to-OFF transitions at each required pack voltage, final-assembly RSSI and "
+    "packet-loss/disconnect A/B limits, and battery-only, USB charging, charge-complete, "
+    "and USB-unplug state coverage."
 )
 COLLISION_CLASSES = {
     "choc_socket_body",
@@ -50,7 +54,8 @@ COLLISION_CLASSES = {
     "vias",
     "controller_socket",
     "reset_topside",
-    "battery_body",
+    "battery_termination",
+    "power_switch_leads",
     "battery_slot",
     "switch_key_travel",
 }
@@ -75,24 +80,15 @@ VERIFIED_ES1B_WORST_DESK_CLEARANCE_MM = (
     VERIFIED_ES1B_NOMINAL_DESK_CLEARANCE_MM
     - VERIFIED_DESK_STANDOFF_PRINT_TOLERANCE_MM
 )
-VERIFIED_BATTERY_NOMINAL_PLAN_ENVELOPE_MM = [15.00, 25.00]
-VERIFIED_BATTERY_MODELED_DEPTH_MM = 3.00
-VERIFIED_BATTERY_NOMINAL_DESK_CLEARANCE_MM = 0.50
-VERIFIED_BATTERY_MINIMUM_HOUSING_LAND_MM = 0.85
-VERIFIED_OPEN_COMPONENT_NOMINAL_DESK_CLEARANCE_MM = min(
-    VERIFIED_ES1B_NOMINAL_DESK_CLEARANCE_MM,
-    VERIFIED_BATTERY_NOMINAL_DESK_CLEARANCE_MM,
-)
-VERIFIED_OPEN_COMPONENT_MINIMUM_DESK_CLEARANCE_MM = min(
-    VERIFIED_ES1B_WORST_DESK_CLEARANCE_MM,
-    VERIFIED_BATTERY_NOMINAL_DESK_CLEARANCE_MM,
-)
+VERIFIED_OPEN_COMPONENT_NOMINAL_DESK_CLEARANCE_MM = VERIFIED_ES1B_NOMINAL_DESK_CLEARANCE_MM
+VERIFIED_OPEN_COMPONENT_MINIMUM_DESK_CLEARANCE_MM = VERIFIED_ES1B_WORST_DESK_CLEARANCE_MM
 VERIFIED_RESET_CENTERS_MM = {
-    "left": [113.7625, 50.7500],
-    "right": [96.3500, 50.7500],
+    "left": [126.0625, 63.4500],
+    "right": [84.0500, 63.4500],
 }
 VERIFIED_RESET_ACTUATOR_PROJECTION_MM = [1.30, 2.70]
 VERIFIED_RESET_SUPPORT_DIAMETER_MM = 3.00
+VERIFIED_SERVICE_MINIMUM_HOUSING_LAND_MM = 0.85
 VERIFIED_MOUNTING_COORDINATES_MM = {
     "left": [
         [142.6125, 68.0000],
@@ -117,6 +113,27 @@ VERIFIED_MOUNTING_COORDINATES_MM = {
         [95.6875, 147.0000],
     ],
 }
+
+
+def service_cutout_contract_errors(
+    side: str, name: str, cutout: dict[str, Any]
+) -> list[str]:
+    errors: list[str] = []
+    if cutout.get("breaks_lateral_housing_perimeter"):
+        errors.append(f"{side}: {name} cutout breaks the lateral perimeter")
+    if (
+        float(cutout.get("minimum_housing_perimeter_land_mm", -99.0)) + 1e-6
+        < VERIFIED_SERVICE_MINIMUM_HOUSING_LAND_MM
+    ):
+        errors.append(
+            f"{side}: {name} structural land is below "
+            f"{VERIFIED_SERVICE_MINIMUM_HOUSING_LAND_MM:.2f} mm"
+        )
+    if not cutout.get("perimeter_land_matches_manifest"):
+        errors.append(f"{side}: {name} perimeter-land manifest is stale")
+    return errors
+
+
 VERIFIED_MOUNTING_PART_DISTRIBUTION = {
     "left": {"whole": 8},
     "right": {"part_a": 4, "part_b": 6},
@@ -371,7 +388,11 @@ def analyze_v2_housing() -> dict[str, Any]:
             residual_volume = residual_plan_area * generator.HOUSING_HEIGHT_MM
             manifest_cutout = output["component_cutouts"][name]
             perimeter_fields: dict[str, Any] = {}
-            if name in {"diode_body_pads_fillets", "battery_body"}:
+            if name == "diode_body_pads_fillets" or name in {
+                "battery_termination",
+                "power_switch_leads",
+                "battery_slot",
+            }:
                 breaks_perimeter = not plan["housing_outline"].covers(cutout_geometry)
                 perimeter_fields = {
                     "breaks_lateral_housing_perimeter": breaks_perimeter,
@@ -599,9 +620,25 @@ def analyze_v2_housing() -> dict[str, Any]:
         }
         report["sides"][side] = {
             "source_board": output["source_board"],
+            "source_board_sha256": output["source_board_sha256"],
             "source_board_sha256_matches": sha256_file(source_path) == output["source_board_sha256"],
             "key_count": len(board_data["switches"]),
             "legacy_registration_refs": board_data["legacy_registration_refs"],
+            "battery_above_carrier": {
+                **output.get("battery_above_carrier", {}),
+                "fresh_extraction_manifest_binding": bool(
+                    output.get("battery_above_carrier", {}).get("source_board")
+                    == output.get("source_board")
+                    and output.get("battery_above_carrier", {}).get(
+                        "source_board_sha256"
+                    )
+                    == output.get("source_board_sha256")
+                    and output.get("battery_above_carrier", {}).get(
+                        "source_board_sha256"
+                    )
+                    == sha256_file(source_path)
+                ),
+            },
             "exterior_bottom_z_mm": generator.EXTERIOR_BOTTOM_Z_MM,
             "housing_height_mm": generator.HOUSING_HEIGHT_MM,
             "desk_standoff_nominal_mm": float(output["desk_standoff_nominal_mm"]),
@@ -732,6 +769,23 @@ def verify_report(report: dict[str, Any]) -> list[str]:
             errors.append(f"{side}: desk standoff print tolerance is wrong")
         if data.get("desk_datum_z_mm") != generator.DESK_DATUM_Z_MM:
             errors.append(f"{side}: desk datum Z is wrong")
+        battery = data.get("battery_above_carrier", {})
+        if battery.get("ref") != generator.BATTERY_REFERENCE:
+            errors.append(f"{side}: above-carrier battery is not bound to exact BAT1")
+        if battery.get("center") != generator.BATTERY_CENTERS_MM[side]:
+            errors.append(f"{side}: above-carrier BAT1 center is wrong")
+        if battery.get("size_mm") != list(generator.BATTERY_NOMINAL_PLAN_ENVELOPE_MM):
+            errors.append(f"{side}: above-carrier battery plan envelope is not 30x12 mm")
+        if battery.get("modeled_depth_mm") != generator.BATTERY_MODELED_DEPTH_MM:
+            errors.append(f"{side}: above-carrier battery depth is not 3.00 mm")
+        if battery.get("housing_body_cutout") is not False:
+            errors.append(f"{side}: lower housing still declares a battery-body cutout")
+        if battery.get("source_board") != data.get("source_board"):
+            errors.append(f"{side}: BAT1 extraction source board is stale")
+        if battery.get("source_board_sha256") != data.get("source_board_sha256"):
+            errors.append(f"{side}: BAT1 extraction source hash is stale")
+        if not battery.get("fresh_extraction_manifest_binding"):
+            errors.append(f"{side}: BAT1 extraction-manifest binding is not fresh")
         if float(data.get("minimum_open_component_to_desk_clearance_mm", -99.0)) + 1e-6 < 0.50:
             errors.append(f"{side}: open-component-to-desk clearance is below 0.50 mm")
         if not math.isclose(
@@ -958,7 +1012,8 @@ def verify_report(report: dict[str, Any]) -> list[str]:
             "mx_pins_pads_fillets",
             "diode_body_pads_fillets",
             "controller_socket",
-            "battery_body",
+            "battery_termination",
+            "power_switch_leads",
             "battery_slot",
         }
         cutouts = data.get("component_cutouts", {})
@@ -970,7 +1025,8 @@ def verify_report(report: dict[str, Any]) -> list[str]:
             "mx_pins_pads_fillets": int(data["key_count"]),
             "diode_body_pads_fillets": int(data["key_count"]),
             "controller_socket": 1,
-            "battery_body": 1,
+            "battery_termination": 1,
+            "power_switch_leads": 1,
             "battery_slot": 1,
         }
         for name in required_cutouts:
@@ -1040,41 +1096,49 @@ def verify_report(report: dict[str, Any]) -> list[str]:
             errors.append(f"{side}: diode perimeter land is below 0.85 mm")
         if not diode.get("perimeter_land_matches_manifest"):
             errors.append(f"{side}: diode perimeter land manifest is stale")
-        battery = cutouts.get("battery_body", {})
-        if battery.get("reference") != generator.BATTERY_REFERENCE:
-            errors.append(f"{side}: battery body is not bound to exact TW301525 reference")
-        if battery.get("board_feature") != f"B.Fab:{generator.BATTERY_BOARD_LABEL}":
-            errors.append(f"{side}: battery body is not bound to the exact B.Fab label")
-        if "official_plan_envelope_max_mm" in battery:
-            errors.append(f"{side}: battery body retains the forbidden official plan-envelope alias")
-        if any(key.startswith("official_") for key in battery):
-            errors.append(f"{side}: nominal battery body uses unsupported official wording")
+        termination = cutouts.get("battery_termination", {})
+        if termination.get("reference") != generator.BATTERY_TERMINATION_REFERENCE:
+            errors.append(f"{side}: battery termination is not bound to exact J_BAT1")
+        if termination.get("pad_count") != 2:
+            errors.append(f"{side}: J_BAT1 does not contain exactly two pads")
+        if termination.get("plated_pth_count") != 2:
+            errors.append(f"{side}: J_BAT1 pads are not both plated PTH")
+        if termination.get("required_pad_envelope_count") != 2:
+            errors.append(f"{side}: J_BAT1 does not require both lead/solder envelopes")
+        if termination.get("cutout_envelopes_overlap") is not True:
+            errors.append(f"{side}: J_BAT1 2.54 mm cutout envelopes do not overlap")
+        if termination.get("expected_union_opening_count") != 1:
+            errors.append(f"{side}: J_BAT1 union opening contract is not one")
+        if termination.get("pad_envelope_count") != 2:
+            errors.append(f"{side}: J_BAT1 pad-envelope count is not two")
         if (
-            battery.get("nominal_plan_envelope_mm")
-            != VERIFIED_BATTERY_NOMINAL_PLAN_ENVELOPE_MM
+            termination.get("covered_pad_envelope_count") != 2
+            or termination.get("uncovered_pad_envelope_count") != 0
         ):
-            errors.append(f"{side}: battery nominal plan envelope is not 15x25 mm")
-        if battery.get("modeled_max_depth_mm") != VERIFIED_BATTERY_MODELED_DEPTH_MM:
-            errors.append(f"{side}: battery body modeled depth is not 3.00 mm")
-        if battery.get("cutout_allowance_mm") != generator.COMPONENT_CUTOUT_CLEARANCE_MM:
-            errors.append(f"{side}: battery cutout allowance is not 0.35 mm")
-        if not math.isclose(
-            float(battery.get("nominal_desk_clearance_mm", -99.0)),
-            VERIFIED_BATTERY_NOMINAL_DESK_CLEARANCE_MM,
-            abs_tol=1e-9,
+            errors.append(f"{side}: J_BAT1 lead/solder envelopes are not all covered")
+        power = cutouts.get("power_switch_leads", {})
+        if power.get("reference") != generator.POWER_SWITCH_REFERENCE:
+            errors.append(f"{side}: power-switch opening is not bound to exact SW_PWR1")
+        if power.get("pad_count") != generator.POWER_SWITCH_DRILL_COUNT:
+            errors.append(f"{side}: power-switch does not contain exactly three pads")
+        if power.get("all_round_plated_pth") is not True:
+            errors.append(f"{side}: power-switch pads are not round plated PTH")
+        if power.get("drill_count") != generator.POWER_SWITCH_DRILL_COUNT:
+            errors.append(f"{side}: power-switch opening does not cover three drills")
+        if power.get("drill_diameter_mm") != generator.POWER_SWITCH_DRILL_DIAMETER_MM:
+            errors.append(f"{side}: power-switch drill diameter is not 0.80 mm")
+        if power.get("pitch_mm") != generator.POWER_SWITCH_PITCH_MM:
+            errors.append(f"{side}: power-switch pad pitch is not 2.54 mm")
+        for service_name in (
+            "battery_termination",
+            "power_switch_leads",
+            "battery_slot",
         ):
-            errors.append(f"{side}: battery nominal desk-clearance formula is stale")
-        if battery.get("breaks_lateral_housing_perimeter"):
-            errors.append(f"{side}: battery cutout breaks the lateral perimeter")
-        if (
-            float(battery.get("minimum_housing_perimeter_land_mm", -99.0)) + 1e-6
-            < VERIFIED_BATTERY_MINIMUM_HOUSING_LAND_MM
-        ):
-            errors.append(f"{side}: battery perimeter land is below 0.85 mm")
-        if not battery.get("perimeter_land_matches_manifest"):
-            errors.append(f"{side}: battery perimeter land manifest is stale")
-        if battery.get("physical_tolerance_status") != "pending":
-            errors.append(f"{side}: battery physical tolerance gate must remain pending")
+            errors.extend(
+                service_cutout_contract_errors(
+                    side, service_name, cutouts.get(service_name, {})
+                )
+            )
         if not data["step_sha256_matches"] or not data["stl_sha256_matches"]:
             errors.append(f"{side}: stale or missing STEP/STL")
         if data.get("step_has_trailing_whitespace"):

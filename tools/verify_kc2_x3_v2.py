@@ -1,20 +1,26 @@
 from __future__ import annotations
 
 import argparse
+import heapq
 import json
 from collections import Counter
 from datetime import datetime
 import math
 from pathlib import Path
 import re
-from typing import Sequence
+from typing import Iterable, Sequence
 
 import pcbnew
 
 from tools.canonical_hash import HASH_POLICY, sha256_file
 from tools.generate_kc2_pcbs import (
     X3_V2_CONTROLLER_SERVICE_POSITIONS_MM,
-    X3_V2_RESET_ROTATION_DEGREES,
+    X3_V2_J_BAT1_ROTATIONS_DEGREES,
+    X3_V2_RESET_BODY_SIZE_MM,
+    X3_V2_RESET_BODY_TO_KEYCAP_MIN_MM,
+    X3_V2_RESET_COURTYARD_TO_U1_SOCKET_COPPER_MIN_MM,
+    X3_V2_RESET_KEYCAP_ENVELOPE_MM,
+    X3_V2_RESET_ROTATIONS_DEGREES,
     X3_V2_TOP_EDGE_Y_MM,
     x3_v2_join_geometry_by_row,
 )
@@ -25,6 +31,9 @@ DEFAULT_FOOTPRINT = ROOT / "third_party" / "kc2.pretty" / "SW_Choc_V2_Socket_MX_
 DEFAULT_DIODE_FOOTPRINT = ROOT / "third_party" / "kc2.pretty" / "D_ES1B_SMA_HandSolder_C437840.kicad_mod"
 DEFAULT_MOUNT_FOOTPRINT = ROOT / "third_party" / "kc2.pretty" / "MH_M1.4_NPTH_1.60.kicad_mod"
 DEFAULT_RESET_FOOTPRINT = ROOT / "third_party" / "kc2.pretty" / "SW_NW3_A06_B3_SMD.kicad_mod"
+DEFAULT_POWER_SWITCH_FOOTPRINT = ROOT / "third_party" / "kc2.pretty" / "SW_IMMS_12V_BSI10_THT.kicad_mod"
+DEFAULT_BATTERY_TERMINATION_FOOTPRINT = ROOT / "third_party" / "kc2.pretty" / "BAT_2Pin_PTH_DirectSolder.kicad_mod"
+DEFAULT_BATTERY_BODY_FOOTPRINT = ROOT / "third_party" / "kc2.pretty" / "BAT_301230_30x12mm.kicad_mod"
 DEFAULT_CONTROLLER_FOOTPRINTS = {
     "left": ROOT / "third_party" / "kc2.pretty" / "NiceNanoV2_Socket_24Pin_USB_OUT_LEFT.kicad_mod",
     "right": ROOT / "third_party" / "kc2.pretty" / "NiceNanoV2_Socket_24Pin_USB_OUT_RIGHT.kicad_mod",
@@ -52,6 +61,11 @@ KICAD_10_VERSION_RE = re.compile(r"^10(?:\.\d+)+(?:[-+][0-9A-Za-z.-]+)?$")
 ISO_TIMESTAMP_RE = re.compile(
     r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[+-]\d{2}:\d{2})?$"
 )
+FORBIDDEN_ACTIVE_V2_BOARD_TEXTS = {
+    "Battery solders directly to nice!nano B+/B-; no carrier power pads",
+    "BAT LEAD EXIT",
+}
+REQUIRED_ACTIVE_V2_BOARD_TEXTS = {"BAT STRAIN RELIEF"}
 EXPECTED_M1_4_MOUNTING_POINTS = {
     "left": [
         ("MH1", 142.6125, 68.0000),
@@ -87,9 +101,438 @@ def pad_position(pad: pcbnew.PAD) -> tuple[float, float]:
     return mm(position.x), mm(position.y)
 
 
+def padless_footprint_position(footprint: pcbnew.FOOTPRINT) -> tuple[float, float]:
+    position = footprint.GetPosition()
+    return pcbnew.ToMM(position.x), pcbnew.ToMM(position.y)
+
+
 def pad_size(pad: pcbnew.PAD) -> tuple[float, float]:
     size = pad.GetSize()
     return mm(size.x), mm(size.y)
+
+
+def _point_key(point: tuple[float, float]) -> tuple[float, float]:
+    return round(point[0], 4), round(point[1], 4)
+
+
+def _pad_point(footprint: pcbnew.FOOTPRINT, number: str) -> tuple[float, float]:
+    pad = next((item for item in footprint.Pads() if item.GetNumber() == number), None)
+    if pad is None:
+        raise ValueError(f"{footprint.GetReference()} pad {number} is missing")
+    position = pad.GetPosition()
+    return _point_key((pcbnew.ToMM(position.x), pcbnew.ToMM(position.y)))
+
+
+def _net_path_points(
+    board: pcbnew.BOARD,
+    net_name: str,
+    start: tuple[float, float],
+    end: tuple[float, float],
+) -> list[tuple[float, float]]:
+    adjacency: dict[tuple[float, float], list[tuple[tuple[float, float], float]]] = {}
+    for item in board.GetTracks():
+        if item.GetClass() == "PCB_VIA" or item.GetNetname() != net_name:
+            continue
+        a = _point_key((pcbnew.ToMM(item.GetStart().x), pcbnew.ToMM(item.GetStart().y)))
+        b = _point_key((pcbnew.ToMM(item.GetEnd().x), pcbnew.ToMM(item.GetEnd().y)))
+        length = math.dist(a, b)
+        adjacency.setdefault(a, []).append((b, length))
+        adjacency.setdefault(b, []).append((a, length))
+    start = _point_key(start)
+    end = _point_key(end)
+    if start not in adjacency or end not in adjacency:
+        raise ValueError(f"{net_name} route does not terminate at {start} and {end}")
+    queue: list[tuple[float, tuple[float, float], list[tuple[float, float]]]] = [
+        (0.0, start, [start])
+    ]
+    best: dict[tuple[float, float], float] = {start: 0.0}
+    while queue:
+        distance, point, path = heapq.heappop(queue)
+        if point == end:
+            return path
+        if distance > best.get(point, math.inf) + 1e-9:
+            continue
+        for neighbor, length in adjacency.get(point, []):
+            candidate = distance + length
+            if candidate + 1e-9 < best.get(neighbor, math.inf):
+                best[neighbor] = candidate
+                heapq.heappush(queue, (candidate, neighbor, [*path, neighbor]))
+    raise ValueError(f"{net_name} route is disconnected between {start} and {end}")
+
+
+def _segments(points: Sequence[tuple[float, float]]) -> list[tuple[tuple[float, float], tuple[float, float]]]:
+    return list(zip(points, points[1:]))
+
+
+def _parallel_separations(
+    positive_segments: Sequence[tuple[tuple[float, float], tuple[float, float]]],
+    ground_segments: Sequence[tuple[tuple[float, float], tuple[float, float]]],
+) -> list[float]:
+    separations: list[float] = []
+    for start, end in positive_segments:
+        dx, dy = end[0] - start[0], end[1] - start[1]
+        length = math.hypot(dx, dy)
+        if length <= 1e-9:
+            continue
+        ux, uy = dx / length, dy / length
+        matches = []
+        for other_start, other_end in ground_segments:
+            odx, ody = other_end[0] - other_start[0], other_end[1] - other_start[1]
+            other_length = math.hypot(odx, ody)
+            if other_length <= 1e-9:
+                continue
+            oux, ouy = odx / other_length, ody / other_length
+            if abs(ux * ouy - uy * oux) > 1e-3:
+                continue
+            projection = sorted(
+                (
+                    (other_start[0] - start[0]) * ux + (other_start[1] - start[1]) * uy,
+                    (other_end[0] - start[0]) * ux + (other_end[1] - start[1]) * uy,
+                )
+            )
+            overlap = min(length, projection[1]) - max(0.0, projection[0])
+            if overlap <= 0.10:
+                continue
+            matches.append(
+                abs((other_start[0] - start[0]) * uy - (other_start[1] - start[1]) * ux)
+            )
+        if matches:
+            separations.append(min(matches))
+    return separations
+
+
+def _rect_distance(
+    first: tuple[float, float, float, float],
+    second: tuple[float, float, float, float],
+) -> float:
+    dx = max(first[0] - second[2], second[0] - first[2], 0.0)
+    dy = max(first[1] - second[3], second[1] - first[3], 0.0)
+    return math.hypot(dx, dy)
+
+
+def _defining_box_mm(items: Iterable[object]) -> tuple[float, float, float, float] | None:
+    points = [
+        (mm(point.x), mm(point.y))
+        for item in items
+        if hasattr(item, "GetStart") and hasattr(item, "GetEnd")
+        for point in (item.GetStart(), item.GetEnd())
+    ]
+    if not points:
+        return None
+    return (
+        min(point[0] for point in points),
+        min(point[1] for point in points),
+        max(point[0] for point in points),
+        max(point[1] for point in points),
+    )
+
+
+def controller_service_clearance_report(board: pcbnew.BOARD) -> dict[str, object]:
+    errors: list[str] = []
+    reset = board.FindFootprintByReference("SW_RST1")
+    u1 = board.FindFootprintByReference("U1")
+    switches = matrix_footprints(board, "SW")
+    if reset is None:
+        errors.append("SW_RST1 is missing from controller service clearance check")
+    if u1 is None:
+        errors.append("U1 is missing from controller service clearance check")
+    if not switches:
+        errors.append("matrix switches are missing from controller service clearance check")
+
+    body_box = None
+    courtyard_box = None
+    if reset is not None:
+        body_candidates: list[object] = []
+        for item in reset.GraphicalItems():
+            if (
+                isinstance(item, pcbnew.PCB_SHAPE)
+                and item.GetLayer() == pcbnew.F_Fab
+                and item.GetShape() == pcbnew.SHAPE_T_RECT
+            ):
+                start = item.GetStart()
+                end = item.GetEnd()
+                dimensions = sorted(
+                    (
+                        abs(mm(end.x - start.x)),
+                        abs(mm(end.y - start.y)),
+                    )
+                )
+                if all(
+                    math.isclose(actual, expected, abs_tol=1e-6)
+                    for actual, expected in zip(
+                        dimensions,
+                        sorted(X3_V2_RESET_BODY_SIZE_MM),
+                        strict=True,
+                    )
+                ):
+                    body_candidates.append(item)
+        if len(body_candidates) != 1:
+            errors.append(
+                "SW_RST1 must contain exactly one controlled 6.10 x 3.70 mm F.Fab body"
+            )
+        else:
+            body_box = _defining_box_mm(body_candidates)
+
+        courtyard_box = _defining_box_mm(
+            item
+            for item in reset.GraphicalItems()
+            if isinstance(item, pcbnew.PCB_SHAPE)
+            and item.GetLayer() == pcbnew.F_CrtYd
+        )
+        if courtyard_box is None:
+            errors.append("SW_RST1 F.CrtYd defining geometry is missing")
+
+    body_clearance: float | None = None
+    nearest_reference: str | None = None
+    if body_box is not None and switches:
+        keycap_half = X3_V2_RESET_KEYCAP_ENVELOPE_MM / 2.0
+        keycap_clearances = []
+        for switch in switches:
+            position = switch.GetPosition()
+            x = mm(position.x)
+            y = mm(position.y)
+            keycap_box = (
+                x - keycap_half,
+                y - keycap_half,
+                x + keycap_half,
+                y + keycap_half,
+            )
+            keycap_clearances.append(
+                (_rect_distance(body_box, keycap_box), switch.GetReference())
+            )
+        body_clearance, nearest_reference = min(keycap_clearances)
+        if not math.isclose(
+            body_clearance,
+            X3_V2_RESET_BODY_TO_KEYCAP_MIN_MM,
+            abs_tol=1e-6,
+        ):
+            errors.append(
+                "SW_RST1 controlled body to nearest 18.05 mm keycap envelope is "
+                f"{body_clearance:.3f} mm; expected exactly "
+                f"{X3_V2_RESET_BODY_TO_KEYCAP_MIN_MM:.3f} mm"
+            )
+
+    courtyard_to_copper: float | None = None
+    if courtyard_box is not None and u1 is not None:
+        socket_pad_boxes = [
+            bounding_box_mm(pad)
+            for pad in u1.Pads()
+            if pad.IsOnLayer(pcbnew.F_Cu) or pad.IsOnLayer(pcbnew.B_Cu)
+        ]
+        if not socket_pad_boxes:
+            errors.append("U1 socket copper pads are missing")
+        else:
+            courtyard_to_copper = min(
+                _rect_distance(courtyard_box, pad_box)
+                for pad_box in socket_pad_boxes
+            )
+            if (
+                courtyard_to_copper
+                < X3_V2_RESET_COURTYARD_TO_U1_SOCKET_COPPER_MIN_MM - 1e-6
+            ):
+                errors.append(
+                    "SW_RST1 courtyard to U1 socket copper is "
+                    f"{courtyard_to_copper:.3f} mm; expected at least "
+                    f"{X3_V2_RESET_COURTYARD_TO_U1_SOCKET_COPPER_MIN_MM:.3f} mm"
+                )
+
+    return {
+        "reset_body_to_nearest_18_05_keycap_mm": (
+            round(body_clearance, 3) if body_clearance is not None else None
+        ),
+        "nearest_keycap_reference": nearest_reference,
+        "reset_courtyard_to_u1_socket_copper_mm": (
+            round(courtyard_to_copper, 3)
+            if courtyard_to_copper is not None
+            else None
+        ),
+        "errors": errors,
+    }
+
+
+def verify_controller_service_manifest_clearances(
+    manifest: dict[str, object],
+) -> list[str]:
+    expected = {
+        "reset_keycap_envelope_mm": X3_V2_RESET_KEYCAP_ENVELOPE_MM,
+        "reset_body_to_keycap_min": X3_V2_RESET_BODY_TO_KEYCAP_MIN_MM,
+        "reset_courtyard_to_u1_socket_copper_min": (
+            X3_V2_RESET_COURTYARD_TO_U1_SOCKET_COPPER_MIN_MM
+        ),
+    }
+    service = manifest.get("controller_service_region")
+    clearances = (
+        service.get("nominal_clearances_mm")
+        if isinstance(service, dict)
+        else None
+    )
+    if not isinstance(clearances, dict):
+        return ["manifest: controller service nominal clearances are missing or stale"]
+    return [
+        f"manifest: controller service {field} is missing or stale"
+        for field, value in expected.items()
+        if clearances.get(field) != value
+    ]
+
+
+def controller_power_geometry_report(board: pcbnew.BOARD, side: str) -> dict[str, object]:
+    errors: list[str] = []
+    references = {
+        reference: board.FindFootprintByReference(reference)
+        for reference in ("U1", "BAT1", "J_BAT1", "SW_PWR1")
+    }
+    missing = [reference for reference, footprint in references.items() if footprint is None]
+    if missing:
+        return {"errors": [f"missing power geometry references {missing}"]}
+    u1 = references["U1"]
+    battery = references["BAT1"]
+    j_bat = references["J_BAT1"]
+    power = references["SW_PWR1"]
+    assert u1 is not None and battery is not None and j_bat is not None and power is not None
+
+    fab_points = [
+        (pcbnew.ToMM(point.x), pcbnew.ToMM(point.y))
+        for item in battery.GraphicalItems()
+        if item.GetLayer() == pcbnew.F_Fab and hasattr(item, "GetStart")
+        for point in (item.GetStart(), item.GetEnd())
+    ]
+    battery_box = (
+        min(point[0] for point in fab_points),
+        min(point[1] for point in fab_points),
+        max(point[0] for point in fab_points),
+        max(point[1] for point in fab_points),
+    )
+    antenna_zones = [
+        zone for zone in board.Zones() if "ANTENNA_10MM" in zone.GetZoneName()
+    ]
+    if len(antenna_zones) != 1:
+        errors.append(f"expected one antenna keepout, found {len(antenna_zones)}")
+        antenna_clearance = -1.0
+        antenna_box = None
+    else:
+        antenna_box = bounding_box_mm(antenna_zones[0])
+        antenna_clearance = _rect_distance(battery_box, antenna_box)
+
+    service_clearances: dict[str, float] = {}
+    for reference in ("J_BAT1", "SW_PWR1", "SW_RST1", "BAT_LEAD_SLOT1"):
+        footprint = board.FindFootprintByReference(reference)
+        if footprint is None:
+            errors.append(f"{reference} is missing from antenna service check")
+            continue
+        boxes = [
+            bounding_box_mm(item)
+            for item in footprint.GraphicalItems()
+            if item.GetLayer() in {pcbnew.F_Fab, pcbnew.B_Fab}
+        ]
+        boxes.extend(bounding_box_mm(pad) for pad in footprint.Pads())
+        if not boxes:
+            errors.append(f"{reference} has no mechanical antenna envelope")
+            continue
+        feature_box = (
+            min(box[0] for box in boxes),
+            min(box[1] for box in boxes),
+            max(box[2] for box in boxes),
+            max(box[3] for box in boxes),
+        )
+        clearance = -1.0 if antenna_box is None else _rect_distance(feature_box, antenna_box)
+        service_clearances[reference] = clearance
+        if clearance <= 1e-6:
+            errors.append(f"{reference} antenna clearance {clearance:.3f} mm is not positive")
+    minimum_service_clearance = min(service_clearances.values(), default=-1.0)
+
+    socket_clearances = []
+    for pad in u1.Pads():
+        pad_box = bounding_box_mm(pad)
+        socket_clearances.append(_rect_distance(battery_box, pad_box))
+    socket_clearance = min(socket_clearances)
+
+    try:
+        bat_path = _net_path_points(board, "BAT+", _pad_point(j_bat, "1"), _pad_point(power, "1"))
+        switched_path = _net_path_points(
+            board,
+            "NN_B+",
+            _pad_point(power, "2"),
+            _pad_point(u1, "RAW"),
+        )
+        ground_path = _net_path_points(
+            board,
+            "GND",
+            _pad_point(j_bat, "2"),
+            _pad_point(u1, "GND_C"),
+        )
+    except ValueError as error:
+        errors.append(str(error))
+        bat_path = switched_path = ground_path = []
+
+    positive_segments = [*_segments(bat_path), *_segments(switched_path)]
+    ground_segments = _segments(ground_path)
+    all_positive_segments = [
+        (
+            _point_key((pcbnew.ToMM(item.GetStart().x), pcbnew.ToMM(item.GetStart().y))),
+            _point_key((pcbnew.ToMM(item.GetEnd().x), pcbnew.ToMM(item.GetEnd().y))),
+        )
+        for item in board.GetTracks()
+        if item.GetClass() != "PCB_VIA" and item.GetNetname() in {"BAT+", "NN_B+"}
+    ]
+    separations = _parallel_separations(positive_segments, ground_segments)
+    maximum_parallel_separation = max(separations, default=0.0)
+    maximum_antenna_parallel_segment = max(
+        (
+            math.dist(start, end)
+            for start, end in [*all_positive_segments, *ground_segments]
+            if abs(start[0] - end[0]) <= 1e-6 or abs(start[1] - end[1]) <= 1e-6
+        ),
+        default=0.0,
+    )
+    loop_points = []
+    if bat_path and switched_path and ground_path:
+        loop_points = [
+            *bat_path,
+            _pad_point(power, "2"),
+            *switched_path[1:],
+            _pad_point(u1, "GND_C"),
+            *list(reversed(ground_path))[1:],
+        ]
+    loop_area = 0.0
+    if len(loop_points) >= 3:
+        loop_area = abs(
+            sum(
+                x1 * y2 - x2 * y1
+                for (x1, y1), (x2, y2) in zip(loop_points, [*loop_points[1:], loop_points[0]])
+            )
+        ) / 2.0
+
+    if antenna_clearance + 1e-6 < 3.97:
+        errors.append(f"battery antenna clearance {antenna_clearance:.3f} mm is below 3.97 mm")
+    if socket_clearance + 1e-6 < 0.72:
+        errors.append(f"battery socket-pad clearance {socket_clearance:.3f} mm is below 0.72 mm")
+    if maximum_parallel_separation > 2.0 + 1e-6:
+        errors.append(
+            f"power/ground parallel separation {maximum_parallel_separation:.3f} mm exceeds 2.00 mm"
+        )
+    if loop_area > 75.0 + 1e-6:
+        errors.append(f"power loop area {loop_area:.3f} mm2 exceeds 75.00 mm2")
+    if maximum_antenna_parallel_segment > 10.0 + 1e-6:
+        errors.append(
+            "power segment parallel to antenna keepout edge is "
+            f"{maximum_antenna_parallel_segment:.3f} mm, above 10.00 mm"
+        )
+    return {
+        "errors": errors,
+        "battery_to_antenna_keepout_mm": round(antenna_clearance, 3),
+        "battery_to_socket_pad_copper_mm": round(socket_clearance, 3),
+        "service_feature_to_antenna_keepout_mm": {
+            reference: round(clearance, 3)
+            for reference, clearance in sorted(service_clearances.items())
+        },
+        "minimum_service_feature_to_antenna_keepout_mm": round(
+            minimum_service_clearance,
+            3,
+        ),
+        "maximum_parallel_centerline_separation_mm": round(maximum_parallel_separation, 3),
+        "power_loop_area_mm2": round(loop_area, 3),
+        "maximum_antenna_parallel_segment_mm": round(maximum_antenna_parallel_segment, 3),
+    }
 
 
 def bounding_box_mm(item: object) -> tuple[float, float, float, float]:
@@ -539,10 +982,11 @@ def verify_placed_footprint_contracts(
                 f"SW_RST1 position {actual_position} differs from exact V2 position {expected_position}"
             )
         actual_rotation = round(reset.GetOrientation().AsDegrees() % 360.0, 3)
-        if actual_rotation != X3_V2_RESET_ROTATION_DEGREES:
+        expected_reset_rotation = X3_V2_RESET_ROTATIONS_DEGREES[side]
+        if actual_rotation != expected_reset_rotation:
             reset_errors.append(
                 f"SW_RST1 rotation {actual_rotation} differs from exact V2 rotation "
-                f"{X3_V2_RESET_ROTATION_DEGREES}"
+                f"{expected_reset_rotation}"
             )
         reset_pads = {pad.GetNumber(): pad.GetNetname() for pad in reset.Pads()}
         expected_reset_net = "RST"
@@ -550,6 +994,62 @@ def verify_placed_footprint_contracts(
             reset_errors.append(
                 f"SW_RST1 must be pad1={expected_reset_net}, pad2=GND; found {reset_pads}"
             )
+
+    expected_service = X3_V2_CONTROLLER_SERVICE_POSITIONS_MM[side]
+    battery = board.FindFootprintByReference("BAT1")
+    if battery is None:
+        controller_errors.append("BAT1 is missing")
+    else:
+        battery_source = load_footprint(DEFAULT_BATTERY_BODY_FOOTPRINT)
+        if str(battery.GetFPID().GetLibItemName()) != "BAT_301230_30x12mm":
+            controller_errors.append("BAT1 must use the owned 301230 footprint")
+        if list(battery.Pads()):
+            controller_errors.append("BAT1 mechanical envelope must have no pads")
+        if normalized_footprint_graphics(battery) != normalized_footprint_graphics(battery_source):
+            controller_errors.append("BAT1 graphics differ from the owned 301230 footprint")
+        actual = tuple(round(value, 4) for value in padless_footprint_position(battery))
+        if actual != expected_service["battery"]:
+            controller_errors.append(f"BAT1 position {actual} differs from {expected_service['battery']}")
+
+    j_bat = board.FindFootprintByReference("J_BAT1")
+    if j_bat is None:
+        controller_errors.append("J_BAT1 is missing")
+    else:
+        source = load_footprint(DEFAULT_BATTERY_TERMINATION_FOOTPRINT)
+        if str(j_bat.GetFPID().GetLibItemName()) != "BAT_2Pin_PTH_DirectSolder":
+            controller_errors.append("J_BAT1 must use the owned direct-solder footprint")
+        if normalized_pad_signatures(j_bat) != normalized_pad_signatures(source):
+            controller_errors.append("J_BAT1 pad geometry differs from the owned footprint")
+        if {pad.GetNumber(): pad.GetNetname() for pad in j_bat.Pads()} != {"1": "BAT+", "2": "GND"}:
+            controller_errors.append("J_BAT1 must be pad1=BAT+, pad2=GND")
+        actual = tuple(round(value, 4) for value in padless_footprint_position(j_bat))
+        if actual != expected_service["j_bat"]:
+            controller_errors.append(f"J_BAT1 position {actual} differs from {expected_service['j_bat']}")
+        expected_rotation = X3_V2_J_BAT1_ROTATIONS_DEGREES[side]
+        if round(j_bat.GetOrientation().AsDegrees() % 360.0, 3) != expected_rotation:
+            controller_errors.append(f"J_BAT1 rotation differs from {expected_rotation}")
+
+    power = board.FindFootprintByReference("SW_PWR1")
+    if power is None:
+        controller_errors.append("SW_PWR1 is missing")
+    else:
+        source = load_footprint(DEFAULT_POWER_SWITCH_FOOTPRINT)
+        if str(power.GetFPID().GetLibItemName()) != "SW_IMMS_12V_BSI10_THT":
+            controller_errors.append("SW_PWR1 must use the owned IMMS-12V footprint")
+        if normalized_pad_signatures(power) != normalized_pad_signatures(source):
+            controller_errors.append("SW_PWR1 pad geometry differs from the owned footprint")
+        if {pad.GetNumber(): pad.GetNetname() for pad in power.Pads()} != {
+            "2": "NN_B+",
+            "1": "BAT+",
+            "3": "",
+        }:
+            controller_errors.append("SW_PWR1 must be pad1=BAT+, pad2=NN_B+, pad3=NC")
+        actual = tuple(round(value, 4) for value in padless_footprint_position(power))
+        if actual != expected_service["power"]:
+            controller_errors.append(f"SW_PWR1 position {actual} differs from {expected_service['power']}")
+        expected_rotation = 0.0 if side == "left" else 180.0
+        if round(power.GetOrientation().AsDegrees() % 360.0, 3) != expected_rotation:
+            controller_errors.append(f"SW_PWR1 rotation differs from {expected_rotation}")
     return diode_errors, switch_errors, controller_errors, reset_errors
 
 
@@ -861,7 +1361,9 @@ def verify_canonical_route_evidence(
             errors.append(f"{side}: reviewed SES source DSN path mismatch")
         if record.get("dsn_role") != "current_mh_compact_controller_trackless_routing_input":
             errors.append(f"{side}: current MH DSN role mismatch")
-        if record.get("ses_role") != "reviewed_compact_controller_import_plus_exact_edge_cleanup":
+        if record.get("ses_role") != (
+            "reviewed_matrix_import_plus_exact_edge_cleanup_and_power_reset_service_routing"
+        ):
             errors.append(f"{side}: reviewed SES/detour role mismatch")
         try:
             dsn_path = ROOT / str(record.get("dsn"))
@@ -986,6 +1488,12 @@ def analyze_v2_board(path: Path) -> dict[str, object]:
         controller_contract_errors,
         reset_contract_errors,
     ) = verify_placed_footprint_contracts(board, switches, diodes, side)
+    power_geometry = controller_power_geometry_report(board, side)
+    service_clearance = controller_service_clearance_report(board)
+    controller_contract_errors.extend(
+        f"power geometry: {error}"
+        for error in power_geometry["errors"]
+    )
     switch_layout_errors, switch_layout_max_position_error_mm = (
         verify_switch_layout_against_generator(switches)
     )
@@ -1333,7 +1841,7 @@ def analyze_v2_board(path: Path) -> dict[str, object]:
         )
     )
 
-    forbidden_power_names = {"BAT+", "BAT-", "NN_B+", "NN_B-"}
+    forbidden_power_names = {"BAT-", "NN_B-"}
     forbidden_carrier_power_nets = sorted(
         {
             item.GetNetname()
@@ -1345,6 +1853,19 @@ def analyze_v2_board(path: Path) -> dict[str, object]:
             track.GetNetname()
             for track in board.GetTracks()
             if track.GetNetname() in forbidden_power_names
+        }
+    )
+    controller_power_nets = sorted(
+        {
+            item.GetNetname()
+            for footprint in footprints
+            for item in footprint.Pads()
+            if item.GetNetname() in {"BAT+", "NN_B+", "GND"}
+        }
+        | {
+            track.GetNetname()
+            for track in board.GetTracks()
+            if track.GetNetname() in {"BAT+", "NN_B+", "GND"}
         }
     )
     drawings = list(board.GetDrawings())
@@ -1399,12 +1920,16 @@ def analyze_v2_board(path: Path) -> dict[str, object]:
         "carrier_power_pad_refs": sorted(
             footprint.GetReference()
             for footprint in footprints
-            if footprint.GetReference().startswith("J_PWR")
+            if footprint.GetReference() in {"J_BAT1", "SW_PWR1"}
         ),
         "battery_lead_slot_count": len(battery_slots),
         "battery_lead_slot_errors": battery_lead_slot_errors,
         "battery_lead_slot_on_usb_side": battery_lead_slot_on_usb_side,
         "forbidden_carrier_power_nets": forbidden_carrier_power_nets,
+        "controller_power_nets": controller_power_nets,
+        "controller_power_geometry": power_geometry,
+        "controller_service_clearance": service_clearance,
+        "controller_service_clearance_errors": service_clearance["errors"],
         "controller_socket_row_spacing_mm": controller_socket_row_spacing_mm,
         "controller_contract_errors": controller_contract_errors,
         "reset_contract_errors": reset_contract_errors,
@@ -1457,6 +1982,110 @@ def analyze_v2_manifest(path: Path = DEFAULT_MANIFEST) -> dict[str, object]:
     return json.loads(path.read_text(encoding="utf-8"))
 
 
+def verify_active_v2_board_text_contract(board_text: Iterable[str]) -> list[str]:
+    exact_text = set(board_text)
+    errors = [
+        f"forbidden stale board text remains: {text}"
+        for text in sorted(FORBIDDEN_ACTIVE_V2_BOARD_TEXTS & exact_text)
+    ]
+    errors.extend(
+        f"required board text is missing: {text}"
+        for text in sorted(REQUIRED_ACTIVE_V2_BOARD_TEXTS - exact_text)
+    )
+    return errors
+
+
+def controller_service_order_readiness_blockers(
+    manifest: dict[str, object],
+    housing_manifest: dict[str, object] | None = None,
+) -> list[str]:
+    service = manifest.get("controller_service_region")
+    if not isinstance(service, dict):
+        return ["CON-ARCH-007 controller service manifest is missing"]
+    blockers: list[str] = []
+    termination = service.get("battery_termination")
+    if not isinstance(termination, dict) or termination.get("lead_drawing_status") != (
+        "confirmed_exact_purchased_pack"
+    ):
+        blockers.append(
+            "CON-ARCH-007 AC-4: J_BAT1 0.90 mm drill is provisional until the exact "
+            "purchased battery lead drawing is confirmed"
+        )
+    if service.get("physical_validation") != "passed_battery_power_reset_rf_first_article":
+        blockers.append(
+            "CON-ARCH-007/REL-ARCH-001: battery stack, POWER/RESET access, 20-cycle "
+            "power transition, RSSI/PER, disconnect, and USB charging-state evidence is pending"
+        )
+    if service.get("order_ready") is not True:
+        blockers.append("CON-ARCH-007: controller service order_ready is not true")
+
+    physical_scan = manifest.get("physical_scan_validation")
+    if not isinstance(physical_scan, dict) or physical_scan.get("status") != "passed":
+        blockers.append("CON-ARCH-004: physical scan validation status is not passed")
+    if not isinstance(physical_scan, dict) or physical_scan.get("orderable") is not True:
+        blockers.append("CON-ARCH-004: physical scan validation is not orderable")
+
+    if not isinstance(housing_manifest, dict):
+        blockers.append("CON-ARCH-006: housing manifest is missing or invalid")
+    else:
+        if housing_manifest.get("order_ready") is not True:
+            blockers.append("CON-ARCH-006: housing manifest order_ready is not true")
+        retention = housing_manifest.get("retention")
+        if not isinstance(retention, dict) or retention.get(
+            "physical_registration_status"
+        ) != "passed":
+            blockers.append(
+                "CON-ARCH-006: housing physical registration status is not passed"
+            )
+        deflection = housing_manifest.get("physical_deflection_test")
+        if not isinstance(deflection, dict) or deflection.get("status") != "passed":
+            blockers.append(
+                "CON-ARCH-006: housing physical deflection test status is not passed"
+            )
+    return blockers
+
+
+def verify_controller_service_model_binding(
+    manifest: dict[str, object],
+) -> list[str]:
+    service = manifest.get("controller_service_region")
+    power = service.get("power") if isinstance(service, dict) else None
+    if not isinstance(power, dict):
+        return ["manifest: controller POWER model contract is missing"]
+    expected_model = "third_party/kc2.3dshapes/SW_IMMS_12V_BSI10_THT.step"
+    expected_generator = "tools/generate_kc2_component_models.py"
+    errors: list[str] = []
+    if power.get("model") != expected_model:
+        errors.append("manifest: IMMS STEP model path is missing or stale")
+    if power.get("model_generator") != expected_generator:
+        errors.append("manifest: IMMS model generator path is missing or stale")
+    model_path = ROOT / expected_model
+    generator_path = ROOT / expected_generator
+    if not model_path.is_file() or power.get("model_sha256") != sha256_file(model_path):
+        errors.append("manifest: IMMS STEP model SHA-256 is missing or stale")
+    if not generator_path.is_file() or power.get("model_generator_sha256") != sha256_file(
+        generator_path
+    ):
+        errors.append("manifest: IMMS model generator SHA-256 is missing or stale")
+    if power.get("body_size_mm") != [10.0, 2.5, 6.4]:
+        errors.append("manifest: IMMS 10x2.5x6.4 mm body contract is missing")
+    if power.get("actuator_travel_mm") != 1.6:
+        errors.append("manifest: IMMS 1.60 mm actuator travel is missing")
+    return errors
+
+
+def release_candidate_exit_code(report: dict[str, object]) -> int:
+    errors = report.get("errors")
+    blockers = report.get("order_readiness_blockers")
+    if not isinstance(errors, list) or not isinstance(blockers, list):
+        return 1
+    if errors:
+        return 1
+    if blockers:
+        return 2
+    return 0
+
+
 def build_drc_evidence(
     board_paths: Sequence[Path] = DEFAULT_BOARDS,
 ) -> dict[str, object]:
@@ -1484,7 +2113,12 @@ def build_drc_evidence(
             "included_severities": report.get("included_severities"),
         }
     return {
-        "requirement_ids": ["CON-ARCH-004", "CON-ARCH-006"],
+        "requirement_ids": [
+            "CON-ARCH-004",
+            "CON-ARCH-006",
+            "CON-ARCH-007",
+            "REL-ARCH-001",
+        ],
         "variant": "x3-v2",
         "status": "draft_not_orderable_pending_physical_evidence",
         "hash_policy": HASH_POLICY,
@@ -1614,11 +2248,42 @@ def verify_v2_release_candidate(
     from tools.verify_kc2_compact_controller import check_side as check_compact_controller
     from tools.verify_kc2_connectivity import detect_side, verify_board as verify_connectivity
 
+    board_paths = tuple(board_paths)
+    detected_sides: list[str] = []
+    board_set_errors: list[str] = []
+    for board_path in board_paths:
+        try:
+            detected_sides.append(detect_side(board_path))
+        except ValueError as error:
+            board_set_errors.append(f"boards: {error}")
+    if Counter(detected_sides) != Counter({"left": 1, "right": 1}):
+        board_set_errors.append(
+            "boards: expected exactly one detected left and one detected right board"
+        )
+    if board_set_errors:
+        return {
+            "requirement": "CON-ARCH-004",
+            "status": "invalid_release_candidate",
+            "boards": {},
+            "connectivity_errors": {},
+            "drc_evidence": {},
+            "canonical_route_evidence": {},
+            "order_readiness_blockers": [],
+            "errors": board_set_errors,
+        }
+
     errors = [f"footprint: {error}" for error in verify_v2_footprint(footprint_path)]
     manifest = analyze_v2_manifest(manifest_path)
+    errors.extend(verify_controller_service_model_binding(manifest))
+    errors.extend(verify_controller_service_manifest_clearances(manifest))
     drc_evidence = analyze_v2_manifest(drc_evidence_path)
     housing_manifest = analyze_v2_manifest(housing_manifest_path)
-    if drc_evidence.get("requirement_ids") != ["CON-ARCH-004", "CON-ARCH-006"]:
+    if drc_evidence.get("requirement_ids") != [
+        "CON-ARCH-004",
+        "CON-ARCH-006",
+        "CON-ARCH-007",
+        "REL-ARCH-001",
+    ]:
         errors.append("DRC evidence: requirement IDs are missing or stale")
     if drc_evidence.get("variant") != "x3-v2":
         errors.append("DRC evidence: variant is missing or stale")
@@ -1722,6 +2387,10 @@ def verify_v2_release_candidate(
         expected_keys = 31 if side == "left" else 39
         report = analyze_v2_board(board_path)
         board_reports[side] = report
+        errors.extend(
+            f"{side}: board text: {error}"
+            for error in verify_active_v2_board_text_contract(report["board_text"])
+        )
         checks = {
             "switch count": report["switch_count"] == expected_keys,
             "diode count": report["diode_count"] == expected_keys,
@@ -1761,13 +2430,19 @@ def verify_v2_release_candidate(
                     for text in report["board_text"]
                 )
             ),
-            "no carrier power pads": not report["carrier_power_pad_refs"],
+            "exact carrier power interfaces": report["carrier_power_pad_refs"]
+            == ["J_BAT1", "SW_PWR1"],
             "one battery lead slot": report["battery_lead_slot_count"] == 1,
             "copper-free battery lead slot": not report["battery_lead_slot_errors"],
             "battery slot on USB/B+ side": report["battery_lead_slot_on_usb_side"],
-            "no carrier power nets": not report["forbidden_carrier_power_nets"],
+            "controller power nets": report["controller_power_nets"]
+            == ["BAT+", "GND", "NN_B+"],
+            "no obsolete carrier power nets": not report["forbidden_carrier_power_nets"],
             "side-specific controller footprint and USB label": not report["controller_contract_errors"],
             "reset pad contract": not report["reset_contract_errors"],
+            "controller service mechanical clearances": not report[
+                "controller_service_clearance_errors"
+            ],
             "diode hand-solder clearance": not report["diode_hand_solder_clearance_errors"],
             "diode unrelated-route clearance": not report["diode_to_unrelated_route_errors"],
             "diode Edge.Cuts clearance": not report["diode_edge_clearance_errors"],
@@ -1797,6 +2472,10 @@ def verify_v2_release_candidate(
         "connectivity_errors": connectivity_errors,
         "drc_evidence": drc_evidence_reports,
         "canonical_route_evidence": route_evidence_reports,
+        "order_readiness_blockers": controller_service_order_readiness_blockers(
+            manifest,
+            housing_manifest,
+        ),
         "reviewed_drc_exclusions": {
             "checks": EXPECTED_IGNORED_DRC_CHECKS,
             "rationale": (
@@ -1825,10 +2504,15 @@ def main() -> None:
         args.housing_manifest,
     )
     errors = report["errors"]
-    if errors:
+    exit_code = release_candidate_exit_code(report)
+    if exit_code == 1:
         raise SystemExit("FAIL: KC2 X3 V2 routed draft verification\n- " + "\n- ".join(errors))
     print(json.dumps(report, indent=2, default=list))
-    print("PASS: CON-ARCH-004 routed boards, connectivity, controller, and antenna checks")
+    if exit_code == 2:
+        print("DIGITAL PASS: routed boards, connectivity, controller, antenna, and housing bindings")
+        print("NOT ORDER READY:\n- " + "\n- ".join(report["order_readiness_blockers"]))
+        raise SystemExit(2)
+    print("PASS: digital checks and order-readiness gates")
 
 
 if __name__ == "__main__":

@@ -1,0 +1,12 @@
+{
+  "status": "resolved-from-conversation",
+  "questions_asked": 0,
+  "resolutions": [
+    "The user selected direct soldering instead of an A2501 connector.",
+    "Direct soldering means pre-attached insulated leads, never bare pouch tabs.",
+    "The user visually estimated about 8 mm but the estimate is not fit evidence.",
+    "The user selected left PWR|RST and right RST|PWR in top/component-side view.",
+    "The user requested SRS update, review/improvement, and implementation."
+  ],
+  "remaining_user_required_questions": []
+}

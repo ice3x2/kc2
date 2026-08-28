@@ -1,0 +1,13 @@
+{
+  "implementability": "medium",
+  "product_fit": "core",
+  "rationale": "Existing typed GetItems/UpdateItems/DeleteItems and guarded Reference-field transaction patterns cover most mechanics; nested Pad.net mutation and deletion compensation require new focused tests.",
+  "code_evidence": [
+    "C:/Users/beom/AppData/Local/Temp/konnect-reference-search/crates/konnect-ipc/src/client.rs:748-850",
+    "C:/Users/beom/AppData/Local/Temp/konnect-reference-search/crates/konnect-ipc/src/client.rs:1627-1754"
+  ],
+  "blockers": [],
+  "conditions": ["KiCad IPC must be running for mutation and reversible E2E."],
+  "external_module_required": true,
+  "external_module_approved": true
+}

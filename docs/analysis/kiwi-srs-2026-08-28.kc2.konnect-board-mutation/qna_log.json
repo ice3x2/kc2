@@ -1,0 +1,4 @@
+{
+  "skipped": true,
+  "reason": "Intent ambiguities are empty and the user explicitly approved the external Konnect implementation and installation."
+}

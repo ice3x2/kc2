@@ -1,0 +1,2 @@
+e6bb135ced6821f3cb00034f4d42fa3e5a7ccbeb PARTIAL: the user explicitly wrote that the gap looks about 8 mm. The SRS now labels it a visual estimate and requires caliper verification; the fact itself is not fabricated.
+df3f3e3b00b6f6691755cc0b73a3808871c2ef2 REJECTED: the user explicitly requested proceeding with implementation after requirements were reflected.

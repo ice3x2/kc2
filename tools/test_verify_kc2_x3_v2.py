@@ -10,6 +10,7 @@ import sys
 from collections import Counter
 from pathlib import Path
 from tempfile import TemporaryDirectory
+from unittest.mock import patch
 
 from tools.canonical_hash import HASH_POLICY, sha256_bytes, sha256_file
 
@@ -25,6 +26,10 @@ ROOT = Path(__file__).resolve().parents[1]
 FOOTPRINT = ROOT / "third_party" / "kc2.pretty" / "SW_Choc_V2_Socket_MX_THT.kicad_mod"
 DIODE_FOOTPRINT = ROOT / "third_party" / "kc2.pretty" / "D_ES1B_SMA_HandSolder_C437840.kicad_mod"
 MOUNT_FOOTPRINT = ROOT / "third_party" / "kc2.pretty" / "MH_M1.4_NPTH_1.60.kicad_mod"
+POWER_SWITCH_FOOTPRINT = ROOT / "third_party" / "kc2.pretty" / "SW_IMMS_12V_BSI10_THT.kicad_mod"
+POWER_SWITCH_MODEL = ROOT / "third_party" / "kc2.3dshapes" / "SW_IMMS_12V_BSI10_THT.step"
+BATTERY_TERMINATION_FOOTPRINT = ROOT / "third_party" / "kc2.pretty" / "BAT_2Pin_PTH_DirectSolder.kicad_mod"
+BATTERY_BODY_FOOTPRINT = ROOT / "third_party" / "kc2.pretty" / "BAT_301230_30x12mm.kicad_mod"
 V2_ROOT = ROOT / "hardware" / "kicad" / "draft" / "x3-v2"
 LEFT_BOARD = V2_ROOT / "kc2_left-x3-v2" / "kc2_left-x3-v2.kicad_pcb"
 RIGHT_BOARD = V2_ROOT / "kc2_right-x3-v2" / "kc2_right-x3-v2.kicad_pcb"
@@ -34,6 +39,117 @@ PRODUCT_SPEC = ROOT / "docs/spec.md"
 
 
 class V2FootprintTests(unittest.TestCase):
+    def test_generation_manifest_traces_all_active_digital_requirements(self) -> None:
+        manifest = json.loads(MANIFEST.read_text(encoding="utf-8"))
+        self.assertEqual(
+            manifest["requirement_ids"],
+            ["CON-ARCH-004", "CON-ARCH-007", "REL-ARCH-001"],
+        )
+
+    def test_controller_power_footprints_match_con_arch_007(self) -> None:
+        import pcbnew
+
+        power = pcbnew.FootprintLoad(
+            str(POWER_SWITCH_FOOTPRINT.parent), POWER_SWITCH_FOOTPRINT.stem
+        )
+        self.assertIsNotNone(power)
+        self.assertEqual(str(power.GetValue()), "SW_IMMS_12V_BSI10_THT")
+        self.assertIn("6.40 mm nominal installed height", power.GetLibDescription())
+        self.assertIn("1.60 mm actuator travel", power.GetLibDescription())
+        self.assertIn("amec-gmbh.de", power.GetLibDescription())
+        self.assertTrue(POWER_SWITCH_MODEL.is_file())
+        self.assertEqual(
+            [model.m_Filename for model in power.Models()],
+            [
+                "${KIPRJMOD}/../../../../../third_party/kc2.3dshapes/"
+                "SW_IMMS_12V_BSI10_THT.step"
+            ],
+        )
+        power_pads = {
+            pad.GetNumber(): (
+                round(pcbnew.ToMM(pad.GetPosition().x), 3),
+                round(pcbnew.ToMM(pad.GetPosition().y), 3),
+                round(pcbnew.ToMM(pad.GetSize().x), 3),
+                round(pcbnew.ToMM(pad.GetDrillSize().x), 3),
+            )
+            for pad in power.Pads()
+        }
+        self.assertEqual(
+            power_pads,
+            {
+                "2": (-2.54, 0.0, 1.6, 0.8),
+                "1": (0.0, 0.0, 1.6, 0.8),
+                "3": (2.54, 0.0, 1.6, 0.8),
+            },
+        )
+
+        fab_points = [
+            (round(pcbnew.ToMM(point.x), 3), round(pcbnew.ToMM(point.y), 3))
+            for item in power.GraphicalItems()
+            if item.GetLayer() == pcbnew.F_Fab and hasattr(item, "GetStart")
+            for point in (item.GetStart(), item.GetEnd())
+        ]
+        self.assertEqual(
+            (
+                min(point[0] for point in fab_points),
+                min(point[1] for point in fab_points),
+                max(point[0] for point in fab_points),
+                max(point[1] for point in fab_points),
+            ),
+            (-5.0, -1.25, 5.0, 1.25),
+        )
+
+        battery = pcbnew.FootprintLoad(
+            str(BATTERY_TERMINATION_FOOTPRINT.parent), BATTERY_TERMINATION_FOOTPRINT.stem
+        )
+        self.assertIsNotNone(battery)
+        self.assertEqual(str(battery.GetValue()), "BAT_2Pin_PTH_DirectSolder")
+        battery_pads = {
+            pad.GetNumber(): (
+                round(pcbnew.ToMM(pad.GetPosition().x), 3),
+                round(pcbnew.ToMM(pad.GetPosition().y), 3),
+                round(pcbnew.ToMM(pad.GetSize().x), 3),
+                round(pcbnew.ToMM(pad.GetSize().y), 3),
+                round(pcbnew.ToMM(pad.GetDrillSize().x), 3),
+            )
+            for pad in battery.Pads()
+        }
+        self.assertEqual(
+            battery_pads,
+            {
+                "1": (0.0, 0.0, 2.2, 1.8, 0.9),
+                "2": (2.54, 0.0, 2.2, 1.8, 0.9),
+            },
+        )
+        battery_pad_edge_gap = (
+            battery_pads["2"][0]
+            - battery_pads["2"][2] / 2.0
+            - (battery_pads["1"][0] + battery_pads["1"][2] / 2.0)
+        )
+        self.assertGreaterEqual(battery_pad_edge_gap, 0.30)
+
+        body = pcbnew.FootprintLoad(
+            str(BATTERY_BODY_FOOTPRINT.parent), BATTERY_BODY_FOOTPRINT.stem
+        )
+        self.assertIsNotNone(body)
+        self.assertEqual(str(body.GetValue()), "BAT_301230_30x12mm")
+        self.assertEqual(len(list(body.Pads())), 0)
+        body_fab = [
+            (round(pcbnew.ToMM(point.x), 3), round(pcbnew.ToMM(point.y), 3))
+            for item in body.GraphicalItems()
+            if item.GetLayer() == pcbnew.F_Fab and hasattr(item, "GetStart")
+            for point in (item.GetStart(), item.GetEnd())
+        ]
+        self.assertEqual(
+            (
+                min(point[0] for point in body_fab),
+                min(point[1] for point in body_fab),
+                max(point[0] for point in body_fab),
+                max(point[1] for point in body_fab),
+            ),
+            (-15.0, -6.0, 15.0, 6.0),
+        )
+
     def test_m1_4_mounting_hole_is_owned_copper_free_npth(self) -> None:
         import pcbnew
 
@@ -250,29 +366,43 @@ class V2GeneratorTests(unittest.TestCase):
         self.assertEqual(generator.X3_V2_TOP_EDGE_Y_MM, 39.25)
         self.assertEqual(generator.X3_V2_BOARD_DATUM_DY_MM, 68.0)
         self.assertEqual(generator.X3_V2_CONTROLLER_Y_MM, 50.75)
-        self.assertEqual(generator.X3_V2_RESET_Y_MM, 50.75)
-        self.assertEqual(generator.X3_V2_RESET_ROTATION_DEGREES, 90.0)
-        self.assertEqual(generator.X3_V2_BATTERY_Y_MM, 53.05)
+        self.assertEqual(generator.X3_V2_RESET_Y_MM, 63.45)
+        self.assertEqual(
+            generator.X3_V2_RESET_ROTATIONS_DEGREES,
+            {"left": 0.0, "right": 180.0},
+        )
+        self.assertEqual(
+            generator.X3_V2_J_BAT1_ROTATIONS_DEGREES,
+            {"left": 180.0, "right": 0.0},
+        )
+        self.assertEqual(generator.X3_V2_POWER_Y_MM, 63.45)
+        self.assertEqual(generator.X3_V2_BATTERY_SIZE_MM, (30.0, 12.0, 3.0))
+        self.assertEqual(generator.X3_V2_BATTERY_Y_MM, 50.75)
         self.assertEqual(
             generator.X3_V2_CONTROLLER_SERVICE_POSITIONS_MM,
             {
                 "left": {
                     "u1": (132.7125, 50.75),
                     "battery_slot": (117.9125, 50.75),
-                    "battery": (133.2125, 53.05),
-                    "reset": (113.7625, 50.75),
+                    "battery": (131.7125, 50.75),
+                    "j_bat": (115.8125, 59.4),
+                    "power": (115.8125, 63.45),
+                    "reset": (126.0625, 63.45),
                 },
                 "right": {
                     "u1": (77.4, 50.75),
                     "battery_slot": (92.2, 50.75),
-                    "battery": (76.9, 53.05),
-                    "reset": (96.35, 50.75),
+                    "battery": (78.4, 50.75),
+                    "j_bat": (94.3, 59.4),
+                    "power": (94.3, 63.45),
+                    "reset": (84.05, 63.45),
                 },
             },
         )
         for positions in generator.X3_V2_CONTROLLER_SERVICE_POSITIONS_MM.values():
-            self.assertEqual(positions["reset"][1], positions["u1"][1])
-            self.assertAlmostEqual(abs(positions["battery_slot"][0] - positions["reset"][0]), 4.15)
+            self.assertEqual(positions["reset"][1], positions["power"][1])
+            self.assertAlmostEqual(abs(positions["reset"][0] - positions["power"][0]), 10.25)
+            self.assertAlmostEqual(abs(positions["battery"][1] - positions["u1"][1]), 0.0)
         self.assertEqual(
             generator.variant_outline_margins("x3-v2"),
             {
@@ -627,9 +757,11 @@ class V2GeneratorTests(unittest.TestCase):
         self.assertIn("KC2_HEADLESS_BROWSER", v2_readme)
         self.assertIn("visibly numbered `MH1..MH8`", v2_readme)
         self.assertIn("`MH1..MH10` on the right", v2_readme)
-        self.assertIn("supersedes_for_v2_reset_only", product_srs)
-        self.assertIn("`SW_RST1` centers shall be `(113.7625, 50.7500)` and `(96.3500, 50.7500)`", product_srs)
-        self.assertIn("`BAT_LEAD_SLOT1` centers shall be `(117.9125, 50.7500)` and `(92.2000, 50.7500)`", product_srs)
+        self.assertIn("CON-ARCH-007", product_srs)
+        self.assertIn("SW_PWR1 is (115.8125, 63.4500) mm left and (94.3000, 63.4500) mm right", product_srs)
+        self.assertIn("SW_RST1 is (126.0625, 63.4500) mm left and (84.0500, 63.4500) mm right", product_srs)
+        self.assertIn("BAT_LEAD_SLOT1 is retained only as the electrically unconnected", product_srs)
+        self.assertNotIn("supersedes_for_v2_reset_only", product_srs)
         self.assertIn("top Edge.Cuts centerline to `Y=39.2500 mm`", product_srs)
 
     def test_generator_accepts_an_isolated_output_override(self) -> None:
@@ -653,7 +785,10 @@ class V2GeneratorTests(unittest.TestCase):
                 expected_service = generator.X3_V2_CONTROLLER_SERVICE_POSITIONS_MM[side]
                 for reference, key in (
                     ("U1", "u1"),
+                    ("BAT1", "battery"),
                     ("BAT_LEAD_SLOT1", "battery_slot"),
+                    ("J_BAT1", "j_bat"),
+                    ("SW_PWR1", "power"),
                     ("SW_RST1", "reset"),
                 ):
                     footprint = generated_board.FindFootprintByReference(reference)
@@ -665,8 +800,25 @@ class V2GeneratorTests(unittest.TestCase):
                         ),
                         expected_service[key],
                     )
+                for reference in ("J_BAT1", "SW_PWR1", "SW_RST1"):
+                    footprint = generated_board.FindFootprintByReference(reference)
+                    self.assertEqual(footprint.GetReference(), reference)
+                    self.assertFalse(footprint.Reference().IsVisible())
                 reset = generated_board.FindFootprintByReference("SW_RST1")
-                self.assertEqual(round(reset.GetOrientation().AsDegrees(), 3), 90.0)
+                self.assertEqual(
+                    round(reset.GetOrientation().AsDegrees() % 360.0, 3),
+                    0.0 if side == "left" else 180.0,
+                )
+                power = generated_board.FindFootprintByReference("SW_PWR1")
+                self.assertEqual(
+                    round(power.GetOrientation().AsDegrees(), 3),
+                    0.0 if side == "left" else 180.0,
+                )
+                j_bat = generated_board.FindFootprintByReference("J_BAT1")
+                self.assertEqual(
+                    round(j_bat.GetOrientation().AsDegrees(), 3),
+                    180.0 if side == "left" else 0.0,
+                )
                 self.assertEqual(
                     {
                         pad.GetNumber(): (
@@ -678,28 +830,102 @@ class V2GeneratorTests(unittest.TestCase):
                     },
                     {
                         "1": (
-                            expected_service["reset"][0],
-                            expected_service["reset"][1] + 3.875,
+                            expected_service["reset"][0]
+                            + (-3.875 if side == "left" else 3.875),
+                            expected_service["reset"][1],
                             "RST",
                         ),
                         "2": (
-                            expected_service["reset"][0],
-                            expected_service["reset"][1] - 3.875,
+                            expected_service["reset"][0]
+                            + (3.875 if side == "left" else -3.875),
+                            expected_service["reset"][1],
                             "GND",
                         ),
                     },
                 )
-                from tools.verify_kc2_compact_controller import board_rect_bbox
+                self.assertEqual(
+                    {
+                        pad.GetNumber(): pad.GetNetname()
+                        for pad in power.Pads()
+                    },
+                    {"1": "BAT+", "2": "NN_B+", "3": ""},
+                )
+                self.assertEqual(
+                    {pad.GetNumber(): pad.GetNetname() for pad in j_bat.Pads()},
+                    {"1": "BAT+", "2": "GND"},
+                )
+                u1 = generated_board.FindFootprintByReference("U1")
+                self.assertEqual(
+                    {
+                        pad.GetNumber(): pad.GetNetname()
+                        for pad in u1.Pads()
+                        if pad.GetNumber() in {"RAW", "GND_C"}
+                    },
+                    {"RAW": "NN_B+", "GND_C": "GND"},
+                )
+                battery = generated_board.FindFootprintByReference("BAT1")
+                battery_fab = [
+                    (
+                        round(pcbnew.ToMM(point.x), 4),
+                        round(pcbnew.ToMM(point.y), 4),
+                    )
+                    for item in battery.GraphicalItems()
+                    if item.GetLayer() == pcbnew.F_Fab and hasattr(item, "GetStart")
+                    for point in (item.GetStart(), item.GetEnd())
+                ]
 
                 self.assertEqual(
-                    tuple(round(value, 4) for value in board_rect_bbox(generated_board, pcbnew.B_Fab)),
                     (
-                        expected_service["battery"][0] - 7.5,
-                        expected_service["battery"][1] - 12.5,
-                        expected_service["battery"][0] + 7.5,
-                        expected_service["battery"][1] + 12.5,
+                        min(point[0] for point in battery_fab),
+                        min(point[1] for point in battery_fab),
+                        max(point[0] for point in battery_fab),
+                        max(point[1] for point in battery_fab),
+                    ),
+                    (
+                        round(expected_service["battery"][0] - 15.0, 4),
+                        round(expected_service["battery"][1] - 6.0, 4),
+                        round(expected_service["battery"][0] + 15.0, 4),
+                        round(expected_service["battery"][1] + 6.0, 4),
                     ),
                 )
+                self.assertFalse(
+                    any(
+                        isinstance(item, pcbnew.PCB_TEXT)
+                        and "TW301525" in item.GetText()
+                        for item in generated_board.GetDrawings()
+                    )
+                )
+                service_texts = {
+                    item.GetText()
+                    for item in generated_board.GetDrawings()
+                    if isinstance(item, pcbnew.PCB_TEXT)
+                }
+                self.assertIn("BAT STRAIN RELIEF", service_texts)
+                self.assertNotIn("BAT LEAD EXIT", service_texts)
+                self.assertIn("RST", service_texts)
+                service_legends = [
+                    item
+                    for item in generated_board.GetDrawings()
+                    if isinstance(item, pcbnew.PCB_TEXT)
+                    and (item.GetText() == "RST" or "PWR" in item.GetText())
+                ]
+                self.assertEqual(
+                    sorted(item.GetText() for item in service_legends),
+                    sorted(
+                        [
+                            "RST",
+                            "PWR OFF< >ON" if side == "left" else "ON< >OFF PWR",
+                        ]
+                    ),
+                )
+                for legend in service_legends:
+                    self.assertEqual(
+                        (
+                            round(pcbnew.ToMM(legend.GetTextSize().x), 3),
+                            round(pcbnew.ToMM(legend.GetTextSize().y), 3),
+                        ),
+                        (0.8, 0.8),
+                    )
                 from tools.verify_kc2_x3_v2 import board_outline_segments_mm
 
                 outline_segments = board_outline_segments_mm(generated_board)
@@ -711,7 +937,8 @@ class V2GeneratorTests(unittest.TestCase):
                 top_row_y = sorted(
                     round(pcbnew.ToMM(fp.GetPosition().y), 4)
                     for fp in generated_board.GetFootprints()
-                    if fp.GetReference().startswith("SW") and fp.GetReference() != "SW_RST1"
+                    if fp.GetReference().startswith("SW")
+                    and fp.GetReference() not in {"SW_RST1", "SW_PWR1"}
                 )[0]
                 self.assertEqual(top_row_y, 77.525)
                 from tools.verify_kc2_compact_controller import check_side
@@ -719,6 +946,7 @@ class V2GeneratorTests(unittest.TestCase):
                 self.assertEqual(check_side(side, board_path), [])
 
                 from tools.verify_kc2_x3_v2 import (
+                    controller_power_geometry_report,
                     matrix_footprints,
                     verify_placed_footprint_contracts,
                 )
@@ -730,6 +958,29 @@ class V2GeneratorTests(unittest.TestCase):
                     side,
                 )
                 self.assertEqual(contract_errors, ([], [], [], []))
+                power_geometry = controller_power_geometry_report(generated_board, side)
+                self.assertEqual(power_geometry["errors"], [])
+                self.assertGreaterEqual(
+                    power_geometry["battery_to_antenna_keepout_mm"],
+                    3.97,
+                )
+                self.assertGreaterEqual(
+                    power_geometry["battery_to_socket_pad_copper_mm"],
+                    0.72,
+                )
+                self.assertGreater(
+                    power_geometry["minimum_service_feature_to_antenna_keepout_mm"],
+                    0.0,
+                )
+                self.assertLessEqual(
+                    power_geometry["maximum_parallel_centerline_separation_mm"],
+                    2.0,
+                )
+                self.assertLessEqual(power_geometry["power_loop_area_mm2"], 75.0)
+                self.assertLessEqual(
+                    power_geometry["maximum_antenna_parallel_segment_mm"],
+                    10.0,
+                )
                 generated_mounts = sorted(
                     (
                         footprint
@@ -836,35 +1087,75 @@ class V2GeneratorTests(unittest.TestCase):
                         "left": {
                             "u1": [132.7125, 50.75],
                             "battery_slot": [117.9125, 50.75],
-                            "battery": [133.2125, 53.05],
-                            "reset": [113.7625, 50.75],
+                            "battery": [131.7125, 50.75],
+                            "j_bat": [115.8125, 59.4],
+                            "power": [115.8125, 63.45],
+                            "reset": [126.0625, 63.45],
                         },
                         "right": {
                             "u1": [77.4, 50.75],
                             "battery_slot": [92.2, 50.75],
-                            "battery": [76.9, 53.05],
-                            "reset": [96.35, 50.75],
+                            "battery": [78.4, 50.75],
+                            "j_bat": [94.3, 59.4],
+                            "power": [94.3, 63.45],
+                            "reset": [84.05, 63.45],
                         },
+                    },
+                    "battery": {
+                        "footprint": "kc2.pretty:BAT_301230_30x12mm",
+                        "nominal_size_mm": [30.0, 12.0, 3.0],
+                        "placement": "between_carrier_and_socketed_controller",
+                        "antenna_keepout_clearance_mm": 3.97,
+                        "socket_pad_clearance_mm": 0.72,
+                        "physical_stack_measurement": "pending",
+                    },
+                    "battery_termination": {
+                        "footprint": "kc2.pretty:BAT_2Pin_PTH_DirectSolder",
+                        "left_rotation_degrees": 180.0,
+                        "right_rotation_degrees": 0.0,
+                        "pad_1": "BAT+",
+                        "pad_2": "GND",
+                        "strain_relief_ref": "BAT_LEAD_SLOT1",
+                        "lead_drawing_status": "pending_exact_purchased_pack",
+                    },
+                    "power": {
+                        "footprint": "kc2.pretty:SW_IMMS_12V_BSI10_THT",
+                        "left_rotation_degrees": 0.0,
+                        "right_rotation_degrees": 180.0,
+                        "pad_1": "BAT+_common",
+                        "pad_2": "NN_B+_on_throw",
+                        "pad_3": "NC",
+                        "body_size_mm": [10.0, 2.5, 6.4],
+                        "actuator_travel_mm": 1.6,
+                        "datasheet": "https://amec-gmbh.de/wp-content/uploads/2022/11/BSI-10.pdf",
+                        "model": "third_party/kc2.3dshapes/SW_IMMS_12V_BSI10_THT.step",
+                        "model_sha256": sha256_file(POWER_SWITCH_MODEL),
+                        "model_generator": "tools/generate_kc2_component_models.py",
+                        "model_generator_sha256": sha256_file(
+                            ROOT / "tools/generate_kc2_component_models.py"
+                        ),
                     },
                     "reset": {
                         "footprint": "kc2.pretty:SW_NW3_A06_B3_SMD",
-                        "rotation_degrees": 90.0,
-                        "pad_1": "RST_key_side",
-                        "pad_2": "GND_controller_side",
+                        "left_rotation_degrees": 0.0,
+                        "right_rotation_degrees": 180.0,
+                        "pad_1": "RST",
+                        "pad_2": "GND",
                         "probe_max_diameter_mm": 3.0,
-                        "usb_outward_offset_mm": 2.05,
-                        "placement_mode": "under_usb_vertical_stack",
-                        "service_access": "usb_edge_beneath_socketed_controller",
-                        "controller_to_reset_z_clearance": "physical_gate",
+                        "placement_mode": "controller_key_gap",
+                        "service_access": "nonconductive_probe",
                         "service_usb_state": "disconnected",
                     },
                     "nominal_clearances_mm": {
-                        "reset_body_to_keycap_min": 2.0,
+                        "reset_keycap_envelope_mm": 18.05,
+                        "reset_body_to_keycap_min": 3.2,
+                        "reset_courtyard_to_u1_socket_copper_min": 2.03,
                         "controller_body_to_top_edge": 2.35,
-                        "battery_body_to_top_edge": 1.3,
-                        "battery_housing_perimeter_land": 0.85,
+                        "battery_to_socket_pad": 0.72,
+                        "battery_to_antenna_keepout": 3.97,
+                        "power_to_reset_body": 2.2,
                     },
-                    "physical_validation": "pending_usb_reset_keycap_battery_first_article",
+                    "physical_validation": "pending_battery_power_reset_rf_first_article",
                     "order_ready": False,
                 },
             )
@@ -876,6 +1167,32 @@ class V2GeneratorTests(unittest.TestCase):
                     "edge_cuts_unchanged": True,
                 },
             )
+            from tools.verify_kc2_x3_v2 import (
+                controller_service_order_readiness_blockers,
+                release_candidate_exit_code,
+                verify_controller_service_model_binding,
+            )
+
+            blockers = controller_service_order_readiness_blockers(manifest)
+            self.assertTrue(
+                any(
+                    "J_BAT1 0.90 mm drill is provisional" in blocker
+                    for blocker in blockers
+                )
+            )
+            self.assertEqual(
+                release_candidate_exit_code(
+                    {"errors": [], "order_readiness_blockers": blockers}
+                ),
+                2,
+            )
+            self.assertEqual(
+                verify_controller_service_model_binding(manifest),
+                [],
+            )
+            stale_model = json.loads(json.dumps(manifest))
+            stale_model["controller_service_region"]["power"]["model_sha256"] = "0" * 64
+            self.assertTrue(verify_controller_service_model_binding(stale_model))
             self.assertEqual(
                 manifest["diode_placement_policy"]["edge_safe_offsets_mm"],
                 {
@@ -885,7 +1202,126 @@ class V2GeneratorTests(unittest.TestCase):
                 },
             )
 
-    def test_usb_under_reset_manifest_note_is_v2_only(self) -> None:
+    def test_v2_power_reset_routes_match_the_safe_exact_contract(self) -> None:
+        import pcbnew
+
+        from tools import generate_kc2_pcbs as generator
+
+        expected_reset = {
+            "left": ((126.0625, 63.45), 0.0),
+            "right": ((84.05, 63.45), 180.0),
+        }
+        expected_j_bat_rotation = {"left": 180.0, "right": 0.0}
+        expected_routes = {
+            "left": {
+                ("BAT+", "F.Cu", 115.8125, 59.4, 115.8125, 63.45, 0.75),
+                ("NN_B+", "F.Cu", 113.2725, 63.45, 111.3, 63.45, 0.75),
+                ("NN_B+", "F.Cu", 111.3, 63.45, 111.3, 55.0, 0.75),
+                ("NN_B+", "F.Cu", 111.3, 55.0, 111.3, 47.0, 0.75),
+                ("NN_B+", "F.Cu", 111.3, 47.0, 118.7425, 43.13, 0.75),
+                ("GND", "B.Cu", 113.2725, 59.4, 113.2725, 53.2, 0.75),
+                ("GND", "B.Cu", 113.2725, 53.2, 113.2725, 47.0, 0.75),
+                ("GND", "B.Cu", 113.2725, 47.0, 120.0125, 47.0, 0.75),
+                ("GND", "B.Cu", 120.0125, 47.0, 121.2825, 43.13, 0.75),
+                ("RST", "F.Cu", 122.1875, 63.45, 122.1875, 67.0, 0.25),
+                ("RST", "F.Cu", 122.1875, 67.0, 115.8, 67.0, 0.25),
+                ("RST", "F.Cu", 115.8, 67.0, 110.3, 67.0, 0.25),
+                ("RST", "F.Cu", 110.3, 67.0, 110.3, 60.0, 0.25),
+                ("RST", "F.Cu", 110.3, 60.0, 110.3, 53.0, 0.25),
+                ("RST", "F.Cu", 110.3, 53.0, 110.3, 46.0, 0.25),
+                ("RST", "F.Cu", 110.3, 46.0, 110.3, 40.5, 0.25),
+                ("RST", "F.Cu", 110.3, 40.5, 117.0, 40.5, 0.25),
+                ("RST", "F.Cu", 117.0, 40.5, 123.8225, 40.5, 0.25),
+                ("RST", "F.Cu", 123.8225, 40.5, 123.8225, 43.13, 0.25),
+                ("GND", "F.Cu", 129.9375, 63.45, 131.3, 63.45, 0.25),
+                ("GND", "B.Cu", 131.3, 63.45, 131.3, 65.8, 0.25),
+                ("GND", "B.Cu", 131.3, 65.8, 121.5, 65.8, 0.25),
+                ("GND", "B.Cu", 121.5, 65.8, 111.5, 65.8, 0.25),
+                ("GND", "B.Cu", 111.5, 65.8, 111.5, 60.0, 0.25),
+                ("GND", "B.Cu", 111.5, 60.0, 111.5, 54.0, 0.25),
+                ("GND", "B.Cu", 111.5, 54.0, 111.5, 47.0, 0.25),
+                ("GND", "B.Cu", 111.5, 47.0, 113.2725, 47.0, 0.25),
+            },
+            "right": {
+                ("BAT+", "F.Cu", 94.3, 59.4, 94.3, 63.45, 0.75),
+                ("NN_B+", "F.Cu", 96.84, 63.45, 98.8, 63.45, 0.75),
+                ("NN_B+", "F.Cu", 98.8, 63.45, 98.8, 56.0, 0.75),
+                ("NN_B+", "F.Cu", 98.8, 56.0, 91.37, 58.37, 0.75),
+                ("GND", "B.Cu", 96.84, 59.4, 96.84, 54.5, 0.75),
+                ("GND", "B.Cu", 96.84, 54.5, 90.1, 54.5, 0.75),
+                ("GND", "B.Cu", 90.1, 54.5, 88.83, 58.37, 0.75),
+                ("RST", "F.Cu", 87.925, 63.45, 87.925, 61.0, 0.25),
+                ("RST", "F.Cu", 87.925, 61.0, 86.29, 58.37, 0.25),
+                ("GND", "F.Cu", 80.175, 63.45, 78.8, 63.45, 0.25),
+                ("GND", "B.Cu", 78.8, 63.45, 78.8, 61.0, 0.25),
+                ("GND", "B.Cu", 78.8, 61.0, 87.56, 61.0, 0.25),
+                ("GND", "B.Cu", 87.56, 61.0, 88.83, 58.37, 0.25),
+            },
+        }
+        expected_vias = {
+            "left": {("GND", 131.3, 63.45, 0.6, 0.3)},
+            "right": {("GND", 78.8, 63.45, 0.6, 0.3)},
+        }
+
+        with TemporaryDirectory(dir=ROOT) as temporary:
+            output_dir = Path(temporary) / "x3-v2"
+            generator.generate_variant("x3-v2", output_dir=output_dir)
+            for side in ("left", "right"):
+                with self.subTest(side=side):
+                    board_path = (
+                        output_dir
+                        / f"kc2_{side}-x3-v2"
+                        / f"kc2_{side}-x3-v2.kicad_pcb"
+                    )
+                    board = pcbnew.LoadBoard(str(board_path))
+                    reset = board.FindFootprintByReference("SW_RST1")
+                    reset_position = reset.GetPosition()
+                    self.assertEqual(
+                        (
+                            round(pcbnew.ToMM(reset_position.x), 4),
+                            round(pcbnew.ToMM(reset_position.y), 4),
+                        ),
+                        expected_reset[side][0],
+                    )
+                    self.assertEqual(
+                        round(reset.GetOrientation().AsDegrees() % 360.0, 3),
+                        expected_reset[side][1],
+                    )
+                    j_bat = board.FindFootprintByReference("J_BAT1")
+                    self.assertEqual(
+                        round(j_bat.GetOrientation().AsDegrees() % 360.0, 3),
+                        expected_j_bat_rotation[side],
+                    )
+                    actual_routes = {
+                        (
+                            item.GetNetname(),
+                            board.GetLayerName(item.GetLayer()),
+                            round(pcbnew.ToMM(item.GetStart().x), 4),
+                            round(pcbnew.ToMM(item.GetStart().y), 4),
+                            round(pcbnew.ToMM(item.GetEnd().x), 4),
+                            round(pcbnew.ToMM(item.GetEnd().y), 4),
+                            round(pcbnew.ToMM(item.GetWidth()), 3),
+                        )
+                        for item in board.GetTracks()
+                        if item.GetClass() != "PCB_VIA"
+                        and item.GetNetname() in {"RST", "GND", "BAT+", "NN_B+"}
+                    }
+                    self.assertEqual(actual_routes, expected_routes[side])
+                    actual_vias = {
+                        (
+                            item.GetNetname(),
+                            round(pcbnew.ToMM(item.GetPosition().x), 4),
+                            round(pcbnew.ToMM(item.GetPosition().y), 4),
+                            round(pcbnew.ToMM(item.GetWidth(pcbnew.F_Cu)), 3),
+                            round(pcbnew.ToMM(item.GetDrill()), 3),
+                        )
+                        for item in board.GetTracks()
+                        if item.GetClass() == "PCB_VIA"
+                        and item.GetNetname() in {"RST", "GND", "BAT+", "NN_B+"}
+                    }
+                    self.assertEqual(actual_vias, expected_vias[side])
+
+    def test_controller_power_service_manifest_note_is_v2_only(self) -> None:
         from tools import generate_kc2_pcbs as generator
 
         with TemporaryDirectory(dir=ROOT) as temporary:
@@ -897,7 +1333,7 @@ class V2GeneratorTests(unittest.TestCase):
                 ),
                 (
                     "x3-v2",
-                    "portrait-oriented in plan beneath the socket-elevated USB end",
+                    "places the 301230 battery beneath socketed U1 and mirrors POWER then RESET from each USB-facing edge",
                     "places SW_RST1 on the antenna side outside the TW301525 battery reference clearance",
                 ),
             ):
@@ -914,6 +1350,118 @@ class V2GeneratorTests(unittest.TestCase):
                 notes = "\n".join(manifest["notes"])
                 self.assertIn(expected, notes)
                 self.assertNotIn(forbidden, notes)
+
+    def test_controller_power_geometry_rejects_keepout_and_route_mutations(self) -> None:
+        import pcbnew
+
+        from tools import generate_kc2_pcbs as generator
+        from tools.verify_kc2_x3_v2 import controller_power_geometry_report
+
+        with TemporaryDirectory(dir=ROOT) as temporary:
+            output_dir = Path(temporary) / "x3-v2"
+            generator.generate_variant("x3-v2", output_dir=output_dir)
+            board_path = output_dir / "kc2_left-x3-v2" / "kc2_left-x3-v2.kicad_pcb"
+
+            battery_mutation = pcbnew.LoadBoard(str(board_path))
+            battery_mutation.FindFootprintByReference("BAT1").Move(
+                pcbnew.VECTOR2I(pcbnew.FromMM(0.5), 0)
+            )
+            battery_report = controller_power_geometry_report(battery_mutation, "left")
+            self.assertTrue(
+                any("antenna clearance" in error for error in battery_report["errors"])
+            )
+
+            socket_mutation = pcbnew.LoadBoard(str(board_path))
+            socket_mutation.FindFootprintByReference("BAT1").Move(
+                pcbnew.VECTOR2I(0, pcbnew.FromMM(0.5))
+            )
+            socket_report = controller_power_geometry_report(socket_mutation, "left")
+            self.assertTrue(
+                any("socket-pad clearance" in error for error in socket_report["errors"])
+            )
+
+            service_mutation = pcbnew.LoadBoard(str(board_path))
+            service_mutation.FindFootprintByReference("SW_PWR1").SetPosition(
+                pcbnew.VECTOR2I(pcbnew.FromMM(155.0), pcbnew.FromMM(50.0))
+            )
+            service_report = controller_power_geometry_report(service_mutation, "left")
+            self.assertTrue(
+                any("SW_PWR1 antenna clearance" in error for error in service_report["errors"])
+            )
+
+            parallel_mutation = pcbnew.LoadBoard(str(board_path))
+            ground_corridor_points = {(113.2725, 53.2), (113.2725, 47.0)}
+            for item in parallel_mutation.GetTracks():
+                if item.GetClass() == "PCB_VIA" or item.GetNetname() != "GND":
+                    continue
+                for getter, setter in (
+                    (item.GetStart, item.SetStart),
+                    (item.GetEnd, item.SetEnd),
+                ):
+                    point = getter()
+                    point_mm = (
+                        round(pcbnew.ToMM(point.x), 4),
+                        round(pcbnew.ToMM(point.y), 4),
+                    )
+                    if point_mm in ground_corridor_points:
+                        setter(point + pcbnew.VECTOR2I(pcbnew.FromMM(3.0), 0))
+            parallel_report = controller_power_geometry_report(parallel_mutation, "left")
+            self.assertTrue(
+                any("parallel separation" in error for error in parallel_report["errors"])
+            )
+
+            loop_mutation = pcbnew.LoadBoard(str(board_path))
+            termination = loop_mutation.FindFootprintByReference("J_BAT1")
+            old_pad_points = {
+                pad.GetNumber(): pad.GetPosition()
+                for pad in termination.Pads()
+            }
+            termination.Move(pcbnew.VECTOR2I(pcbnew.FromMM(20.0), 0))
+            new_pad_points = {
+                pad.GetNumber(): pad.GetPosition()
+                for pad in termination.Pads()
+            }
+            for item in loop_mutation.GetTracks():
+                if item.GetClass() == "PCB_VIA":
+                    continue
+                number = "1" if item.GetNetname() == "BAT+" else "2" if item.GetNetname() == "GND" else None
+                if number is None:
+                    continue
+                if item.GetStart() == old_pad_points[number]:
+                    item.SetStart(new_pad_points[number])
+                if item.GetEnd() == old_pad_points[number]:
+                    item.SetEnd(new_pad_points[number])
+            loop_report = controller_power_geometry_report(loop_mutation, "left")
+            self.assertTrue(
+                any("loop area" in error for error in loop_report["errors"]),
+                loop_report,
+            )
+
+            antenna_parallel_mutation = pcbnew.LoadBoard(str(board_path))
+            switch_on = next(
+                pad
+                for pad in antenna_parallel_mutation.FindFootprintByReference("SW_PWR1").Pads()
+                if pad.GetNumber() == "2"
+            )
+            branch = pcbnew.PCB_TRACK(antenna_parallel_mutation)
+            branch.SetStart(switch_on.GetPosition())
+            branch.SetEnd(
+                switch_on.GetPosition() + pcbnew.VECTOR2I(pcbnew.FromMM(11.0), 0)
+            )
+            branch.SetLayer(pcbnew.F_Cu)
+            branch.SetWidth(pcbnew.FromMM(0.5))
+            branch.SetNetCode(antenna_parallel_mutation.FindNet("NN_B+").GetNetCode())
+            antenna_parallel_mutation.Add(branch)
+            antenna_parallel_report = controller_power_geometry_report(
+                antenna_parallel_mutation,
+                "left",
+            )
+            self.assertTrue(
+                any(
+                    "parallel to antenna keepout edge" in error
+                    for error in antenna_parallel_report["errors"]
+                )
+            )
 
     def test_compact_edge_repair_is_idempotent_against_generated_diode_positions(self) -> None:
         from tools import generate_kc2_pcbs as generator
@@ -1041,11 +1589,12 @@ class V2GeneratorTests(unittest.TestCase):
                 self.assertEqual(report["registration_hole_count"], 0)
                 self.assertEqual(report["registration_hole_errors"], [])
                 self.assertEqual(report["legacy_mount_hole_refs"], [])
-                self.assertEqual(report["carrier_power_pad_refs"], [])
+                self.assertEqual(report["carrier_power_pad_refs"], ["J_BAT1", "SW_PWR1"])
                 self.assertEqual(report["battery_lead_slot_count"], 1)
                 self.assertEqual(report["battery_lead_slot_errors"], [])
                 self.assertTrue(report["battery_lead_slot_on_usb_side"])
                 self.assertEqual(report["forbidden_carrier_power_nets"], [])
+                self.assertEqual(report["controller_power_nets"], ["BAT+", "GND", "NN_B+"])
                 self.assertEqual(report["controller_socket_row_spacing_mm"], 15.24)
                 self.assertEqual(report["switch_layout_errors"], [])
                 self.assertLessEqual(report["switch_layout_max_position_error_mm"], 0.001)
@@ -1463,6 +2012,93 @@ class V2GeneratorTests(unittest.TestCase):
             self.assertRegex(route_reports[side]["dsn_sha256"], r"^[0-9a-f]{64}$")
             self.assertRegex(route_reports[side]["ses_sha256"], r"^[0-9a-f]{64}$")
 
+    def test_controller_service_clearances_are_board_derived_and_mutation_sensitive(self) -> None:
+        import pcbnew
+
+        from tools.verify_kc2_x3_v2 import controller_service_clearance_report
+
+        for side, board_path, nearest_key in (
+            ("left", LEFT_BOARD, "SW5"),
+            ("right", RIGHT_BOARD, "SW3"),
+        ):
+            with self.subTest(side=side):
+                board = pcbnew.LoadBoard(str(board_path))
+                report = controller_service_clearance_report(board)
+                self.assertEqual(report["errors"], [])
+                self.assertEqual(report["reset_body_to_nearest_18_05_keycap_mm"], 3.2)
+                self.assertEqual(report["nearest_keycap_reference"], nearest_key)
+                self.assertEqual(
+                    report["reset_courtyard_to_u1_socket_copper_mm"],
+                    2.03,
+                )
+
+                keycap_mutation = pcbnew.LoadBoard(str(board_path))
+                key = keycap_mutation.FindFootprintByReference(nearest_key)
+                key_position = key.GetPosition()
+                key.SetPosition(
+                    pcbnew.VECTOR2I(
+                        key_position.x,
+                        key_position.y - pcbnew.FromMM(0.1),
+                    )
+                )
+                keycap_report = controller_service_clearance_report(keycap_mutation)
+                self.assertEqual(
+                    keycap_report["reset_body_to_nearest_18_05_keycap_mm"],
+                    3.1,
+                )
+                self.assertTrue(
+                    any("keycap envelope" in error for error in keycap_report["errors"])
+                )
+
+                copper_mutation = pcbnew.LoadBoard(str(board_path))
+                u1 = copper_mutation.FindFootprintByReference("U1")
+                lower_socket_y = max(pad.GetPosition().y for pad in u1.Pads())
+                for pad in u1.Pads():
+                    if pad.GetPosition().y == lower_socket_y:
+                        position = pad.GetPosition()
+                        pad.SetPosition(
+                            pcbnew.VECTOR2I(
+                                position.x,
+                                position.y + pcbnew.FromMM(0.1),
+                            )
+                        )
+                copper_report = controller_service_clearance_report(copper_mutation)
+                self.assertEqual(
+                    copper_report["reset_courtyard_to_u1_socket_copper_mm"],
+                    1.93,
+                )
+                self.assertTrue(
+                    any("socket copper" in error for error in copper_report["errors"])
+                )
+
+    def test_controller_service_manifest_clearances_reject_missing_or_stale_fields(self) -> None:
+        from tools.verify_kc2_x3_v2 import verify_controller_service_manifest_clearances
+
+        manifest = json.loads(MANIFEST.read_text(encoding="utf-8"))
+        expected = {
+            "reset_keycap_envelope_mm": 18.05,
+            "reset_body_to_keycap_min": 3.2,
+            "reset_courtyard_to_u1_socket_copper_min": 2.03,
+        }
+        self.assertEqual(
+            {
+                key: manifest["controller_service_region"]["nominal_clearances_mm"].get(key)
+                for key in expected
+            },
+            expected,
+        )
+        self.assertEqual(verify_controller_service_manifest_clearances(manifest), [])
+
+        for field in expected:
+            with self.subTest(field=field, mutation="missing"):
+                mutated = json.loads(json.dumps(manifest))
+                del mutated["controller_service_region"]["nominal_clearances_mm"][field]
+                self.assertTrue(verify_controller_service_manifest_clearances(mutated))
+            with self.subTest(field=field, mutation="stale"):
+                mutated = json.loads(json.dumps(manifest))
+                mutated["controller_service_region"]["nominal_clearances_mm"][field] = 0.0
+                self.assertTrue(verify_controller_service_manifest_clearances(mutated))
+
     def test_clearance_bindings_reject_029_project_299_dsn_and_stale_route_hash(self) -> None:
         from tools.verify_kc2_x3_v2 import (
             build_drc_evidence,
@@ -1526,7 +2162,7 @@ class V2GeneratorTests(unittest.TestCase):
         report = analyze_v2_manifest(MANIFEST)
         self.assertEqual(report["hash_policy"], HASH_POLICY)
         self.assertNotIn(b"\r\n", MANIFEST.read_bytes())
-        self.assertEqual(report["generated"], "2026-08-26")
+        self.assertEqual(report["generated"], "2026-08-29")
         self.assertEqual(report["variant"], "x3-v2")
         self.assertEqual(report["key_count"], {"left": 31, "right": 39, "total": 70})
         self.assertEqual(report["max_key_width_u"], 1.75)
@@ -1615,6 +2251,76 @@ class V2GeneratorTests(unittest.TestCase):
                 "pins_per_row": 12,
             },
         )
+        self.assertEqual(
+            report["controller_service_region"]["positions_mm"],
+            {
+                "left": {
+                    "u1": [132.7125, 50.75],
+                    "battery_slot": [117.9125, 50.75],
+                    "battery": [131.7125, 50.75],
+                    "j_bat": [115.8125, 59.4],
+                    "power": [115.8125, 63.45],
+                    "reset": [126.0625, 63.45],
+                },
+                "right": {
+                    "u1": [77.4, 50.75],
+                    "battery_slot": [92.2, 50.75],
+                    "battery": [78.4, 50.75],
+                    "j_bat": [94.3, 59.4],
+                    "power": [94.3, 63.45],
+                    "reset": [84.05, 63.45],
+                },
+            },
+        )
+        self.assertEqual(
+            report["controller_service_region"]["power"],
+            {
+                "footprint": "kc2.pretty:SW_IMMS_12V_BSI10_THT",
+                "left_rotation_degrees": 0.0,
+                "right_rotation_degrees": 180.0,
+                "pad_1": "BAT+_common",
+                "pad_2": "NN_B+_on_throw",
+                "pad_3": "NC",
+                "body_size_mm": [10.0, 2.5, 6.4],
+                "actuator_travel_mm": 1.6,
+                "datasheet": "https://amec-gmbh.de/wp-content/uploads/2022/11/BSI-10.pdf",
+                "model": "third_party/kc2.3dshapes/SW_IMMS_12V_BSI10_THT.step",
+                "model_sha256": sha256_file(POWER_SWITCH_MODEL),
+                "model_generator": "tools/generate_kc2_component_models.py",
+                "model_generator_sha256": sha256_file(
+                    ROOT / "tools/generate_kc2_component_models.py"
+                ),
+            },
+        )
+        self.assertEqual(
+            report["controller_service_region"]["reset"],
+            {
+                "footprint": "kc2.pretty:SW_NW3_A06_B3_SMD",
+                "left_rotation_degrees": 0.0,
+                "right_rotation_degrees": 180.0,
+                "pad_1": "RST",
+                "pad_2": "GND",
+                "probe_max_diameter_mm": 3.0,
+                "placement_mode": "controller_key_gap",
+                "service_access": "nonconductive_probe",
+                "service_usb_state": "disconnected",
+            },
+        )
+        self.assertTrue(report["carrier_power_pads"])
+        self.assertEqual(
+            report["battery_lead_pass_through_slot"],
+            {
+                "footprint": "kc2.pretty:BAT_LEAD_NPTH_SLOT_3.6x2.2",
+                "value": "BAT_LEAD_NPTH_SLOT_3.6x2.2",
+                "size_mm": [3.6, 2.2],
+                "count_per_half": 1,
+                "layers": "mask-only NPTH, no copper",
+                "purpose": (
+                    "J_BAT1 strain relief for pre-attached insulated battery leads; "
+                    "not a bottom battery exit"
+                ),
+            },
+        )
         self.assertEqual(report["diode_placement_policy"]["minimum_unused_feature_clearance_mm"], 1.0)
         self.assertEqual(
             report["diode_placement_policy"]["edge_safe_offsets_mm"],
@@ -1662,13 +2368,13 @@ class V2GeneratorTests(unittest.TestCase):
                     "session_source_dsn": "hardware/kicad/draft/x3-v2/autoroute/kc2_left-x3-v2-70-es1b-controller-r3.dsn",
                     "session_source_dsn_sha256": "0f1da995d92a6a121142125933e21ce0c1f1db05e5c1ef924f2a7c6dd38fa3db",
                     "ses": "hardware/kicad/draft/x3-v2/autoroute/kc2_left-x3-v2-70-es1b-controller-r3.ses",
-                    "ses_role": "reviewed_compact_controller_import_plus_exact_edge_cleanup_and_usb_under_reset_replacement",
+                    "ses_role": "reviewed_matrix_import_plus_exact_edge_cleanup_and_power_reset_service_routing",
                     "dsn_sha256": "0f1da995d92a6a121142125933e21ce0c1f1db05e5c1ef924f2a7c6dd38fa3db",
                     "ses_sha256": "41ba7adf4db9881cf6065b592fd81127de5753b7b23a94012a16e1230cdbf0b8",
                     "dsn_default_clearance_internal_units": 300,
                     "dsn_clearances_internal_units": {"global": 300, "kicad_default": 300},
-                    "final_track_via_count": 544,
-                    "route_digest_sha256": "79dd509ceb68960691a012721ce8a29ad159c2191950d090ada1fd2bceed92aa",
+                    "final_track_via_count": 580,
+                    "route_digest_sha256": "7eda6d670a2fd3b99ab06548be4c635dbff03904ec251197f547110864fcb5e6",
                 },
                 "right": {
                     "dsn": "hardware/kicad/draft/x3-v2/autoroute/kc2_right-x3-v2-70-es1b-controller-r3.dsn",
@@ -1677,13 +2383,13 @@ class V2GeneratorTests(unittest.TestCase):
                     "session_source_dsn": "hardware/kicad/draft/x3-v2/autoroute/kc2_right-x3-v2-70-es1b-controller-r3.dsn",
                     "session_source_dsn_sha256": "45f3bbf61f54d417ab97aeff137aa91db5f323a24ff3473011aaa84ccc9d7e45",
                     "ses": "hardware/kicad/draft/x3-v2/autoroute/kc2_right-x3-v2-70-es1b-controller-r3.ses",
-                    "ses_role": "reviewed_compact_controller_import_plus_exact_edge_cleanup_and_usb_under_reset_replacement",
+                    "ses_role": "reviewed_matrix_import_plus_exact_edge_cleanup_and_power_reset_service_routing",
                     "dsn_sha256": "45f3bbf61f54d417ab97aeff137aa91db5f323a24ff3473011aaa84ccc9d7e45",
                     "ses_sha256": "58823efa51c642107623d60180f2431eff572c50a11f1dbad8091c35e82ef2fb",
                     "dsn_default_clearance_internal_units": 300,
                     "dsn_clearances_internal_units": {"global": 300, "kicad_default": 300},
-                    "final_track_via_count": 711,
-                    "route_digest_sha256": "20009ce9a43c88167aba0d88ccef84df46b53a7c633b62937286535245ea9127",
+                    "final_track_via_count": 739,
+                    "route_digest_sha256": "fc2a819d9ce840ffc0c9e9b5ac6fc7dac54d51a441addb5b0005b4fa89cdbf1a",
                 },
             },
         )
@@ -1717,7 +2423,7 @@ class V2GeneratorTests(unittest.TestCase):
                 self.assertEqual(record["session_source_dsn"], record["dsn"])
                 self.assertEqual(
                     record["ses_role"],
-                    "reviewed_compact_controller_import_plus_exact_edge_cleanup_and_usb_under_reset_replacement",
+                    "reviewed_matrix_import_plus_exact_edge_cleanup_and_power_reset_service_routing",
                 )
 
     def test_current_mh_trackless_dsn_export_preserves_compact_controller_contract(self) -> None:
@@ -1759,6 +2465,207 @@ class V2GeneratorTests(unittest.TestCase):
         self.assertEqual(report["requirement"], "CON-ARCH-004")
         self.assertEqual(report["errors"], [])
         self.assertEqual(report["connectivity_errors"], {"left": [], "right": []})
+
+    def test_release_candidate_verifier_wires_exact_board_text_contract_per_side(self) -> None:
+        forbidden = "Battery solders directly to nice!nano B+/B-; no carrier power pads"
+        required = "BAT STRAIN RELIEF"
+        left_report = analyze_v2_board(LEFT_BOARD)
+        right_report = analyze_v2_board(RIGHT_BOARD)
+        self.assertNotIn(forbidden, left_report["board_text"])
+        self.assertIn(required, right_report["board_text"])
+        left_report["board_text"] = {*left_report["board_text"], forbidden}
+        right_report["board_text"] = {
+            text for text in right_report["board_text"] if text != required
+        }
+
+        with patch(
+            "tools.verify_kc2_x3_v2.analyze_v2_board",
+            side_effect=(left_report, right_report),
+        ):
+            report = verify_v2_release_candidate(
+                footprint_path=FOOTPRINT,
+                board_paths=(LEFT_BOARD, RIGHT_BOARD),
+                manifest_path=MANIFEST,
+            )
+
+        self.assertEqual(
+            [error for error in report["errors"] if ": board text: " in error],
+            [
+                f"left: board text: forbidden stale board text remains: {forbidden}",
+                f"right: board text: required board text is missing: {required}",
+            ],
+        )
+
+    def test_release_candidate_verifier_requires_exact_left_and_right_board_set(self) -> None:
+        invalid_board_sets = (
+            (),
+            (Path("candidate_left.kicad_pcb"),),
+            (
+                Path("candidate_left.kicad_pcb"),
+                Path("duplicate_left.kicad_pcb"),
+            ),
+        )
+
+        for board_paths in invalid_board_sets:
+            with self.subTest(board_paths=board_paths), patch(
+                "tools.verify_kc2_x3_v2.verify_v2_footprint",
+                side_effect=AssertionError("invalid board set touched footprint input"),
+            ), patch(
+                "tools.verify_kc2_x3_v2.analyze_v2_manifest",
+                side_effect=AssertionError("invalid board set touched manifest input"),
+            ), patch(
+                "tools.verify_kc2_x3_v2.analyze_v2_board",
+                side_effect=AssertionError("invalid board set touched board input"),
+            ):
+                report = verify_v2_release_candidate(
+                    footprint_path=Path("missing-footprint.kicad_mod"),
+                    board_paths=board_paths,
+                    manifest_path=Path("missing-generation-manifest.json"),
+                    drc_evidence_path=Path("missing-drc-evidence.json"),
+                    housing_manifest_path=Path("missing-housing-manifest.json"),
+                )
+
+            self.assertEqual(
+                report["errors"],
+                ["boards: expected exactly one detected left and one detected right board"],
+            )
+            self.assertEqual(report["boards"], {})
+
+    def test_release_exit_code_fails_closed_for_malformed_report(self) -> None:
+        from tools.verify_kc2_x3_v2 import release_candidate_exit_code
+
+        malformed_reports = (
+            {},
+            {"errors": []},
+            {"order_readiness_blockers": []},
+            {"errors": None, "order_readiness_blockers": []},
+            {"errors": [], "order_readiness_blockers": {}},
+        )
+
+        for report in malformed_reports:
+            with self.subTest(report=report):
+                self.assertEqual(release_candidate_exit_code(report), 1)
+
+    def test_release_gate_requires_valid_housing_manifest(self) -> None:
+        from tools.verify_kc2_x3_v2 import controller_service_order_readiness_blockers
+
+        manifest = json.loads(MANIFEST.read_text(encoding="utf-8"))
+        expected = "CON-ARCH-006: housing manifest is missing or invalid"
+        for housing_manifest in (None, []):
+            with self.subTest(housing_manifest=housing_manifest):
+                blockers = controller_service_order_readiness_blockers(
+                    manifest,
+                    housing_manifest,
+                )
+                self.assertIn(expected, blockers)
+
+    def test_release_gate_aggregates_physical_order_blockers(self) -> None:
+        from tools.verify_kc2_x3_v2 import (
+            controller_service_order_readiness_blockers,
+            release_candidate_exit_code,
+        )
+
+        manifest = json.loads(MANIFEST.read_text(encoding="utf-8"))
+        service = manifest["controller_service_region"]
+        service["battery_termination"]["lead_drawing_status"] = (
+            "confirmed_exact_purchased_pack"
+        )
+        service["physical_validation"] = (
+            "passed_battery_power_reset_rf_first_article"
+        )
+        service["order_ready"] = True
+        manifest["physical_scan_validation"].update(
+            status="passed",
+            orderable=True,
+        )
+        housing = json.loads(
+            (ROOT / "hardware/case/draft/x3-v2/kc2_x3_v2_housing_manifest.json")
+            .read_text(encoding="utf-8")
+        )
+        housing["order_ready"] = True
+        housing["retention"]["physical_registration_status"] = "passed"
+        housing["physical_deflection_test"]["status"] = "passed"
+
+        self.assertEqual(
+            controller_service_order_readiness_blockers(manifest, housing),
+            [],
+        )
+        for label, mutate, expected in (
+            (
+                "physical scan pending",
+                lambda generation, _housing: generation[
+                    "physical_scan_validation"
+                ].update(status="pending"),
+                "physical scan validation status is not passed",
+            ),
+            (
+                "physical scan not orderable",
+                lambda generation, _housing: generation[
+                    "physical_scan_validation"
+                ].update(orderable=False),
+                "physical scan validation is not orderable",
+            ),
+            (
+                "housing not order ready",
+                lambda _generation, case_housing: case_housing.update(
+                    order_ready=False
+                ),
+                "housing manifest order_ready is not true",
+            ),
+            (
+                "retention registration pending",
+                lambda _generation, case_housing: case_housing["retention"].update(
+                    physical_registration_status="pending"
+                ),
+                "housing physical registration status is not passed",
+            ),
+            (
+                "deflection test pending",
+                lambda _generation, case_housing: case_housing[
+                    "physical_deflection_test"
+                ].update(status="pending"),
+                "housing physical deflection test status is not passed",
+            ),
+        ):
+            with self.subTest(label=label):
+                case_manifest = json.loads(json.dumps(manifest))
+                case_housing = json.loads(json.dumps(housing))
+                mutate(case_manifest, case_housing)
+                blockers = controller_service_order_readiness_blockers(
+                    case_manifest,
+                    case_housing,
+                )
+                self.assertTrue(any(expected in blocker for blocker in blockers))
+                self.assertEqual(
+                    release_candidate_exit_code(
+                        {"errors": [], "order_readiness_blockers": blockers}
+                    ),
+                    2,
+                )
+
+    def test_active_v2_board_text_contract_rejects_exact_stale_service_texts(self) -> None:
+        from tools.verify_kc2_x3_v2 import verify_active_v2_board_text_contract
+
+        required = "BAT STRAIN RELIEF"
+        forbidden = (
+            "Battery solders directly to nice!nano B+/B-; no carrier power pads",
+            "BAT LEAD EXIT",
+        )
+        self.assertEqual(verify_active_v2_board_text_contract({required}), [])
+        for stale_text in forbidden:
+            with self.subTest(stale_text=stale_text):
+                errors = verify_active_v2_board_text_contract(
+                    {required, stale_text}
+                )
+                self.assertTrue(
+                    any(stale_text in error and "forbidden" in error for error in errors)
+                )
+        self.assertTrue(
+            any(
+                required in error and "required" in error
+                for error in verify_active_v2_board_text_contract(set())
+            )
+        )
 
     def test_release_gate_rejects_stale_m1_4_mount_manifest(self) -> None:
         with TemporaryDirectory(dir=ROOT) as temporary:
@@ -1848,8 +2755,8 @@ class V2GeneratorTests(unittest.TestCase):
             output_dir = Path(temporary) / "x3-v2"
             generator.generate_variant("x3-v2", output_dir=output_dir)
             for side, expected in (
-                ("left", {"imported": 539, "removed": 12, "added": 17, "final": 544}),
-                ("right", {"imported": 703, "removed": 16, "added": 24, "final": 711}),
+                ("left", {"imported": 539, "removed": 25, "added": 66, "final": 580}),
+                ("right", {"imported": 703, "removed": 27, "added": 63, "final": 739}),
             ):
                 with self.subTest(side=side):
                     board_path = (
@@ -1903,26 +2810,414 @@ class V2GeneratorTests(unittest.TestCase):
                     with self.assertRaisesRegex(RuntimeError, "controller service geometry mismatch"):
                         import_reviewed_controller_compact_session(stale, session, side)
 
+    def test_controller_import_pins_complete_imported_route_before_transformations(self) -> None:
+        import pcbnew
+
+        from tools import generate_kc2_pcbs as generator
+        from tools.finalize_kc2_x3_v2_routes import (
+            CONTROLLER_COMPACT_IMPORTED_ROUTE_SHA256,
+            _route_counter_digest,
+            _route_signature,
+            import_reviewed_controller_compact_session,
+        )
+
+        with TemporaryDirectory(dir=ROOT) as temporary:
+            output_dir = Path(temporary) / "x3-v2"
+            generator.generate_variant("x3-v2", output_dir=output_dir)
+            for side, original, replacement in (
+                ("left", "1167392 -673250", "1166392 -673250"),
+                ("right", "933733 -673250", "932733 -673250"),
+            ):
+                with self.subTest(side=side):
+                    board_path = (
+                        output_dir
+                        / f"kc2_{side}-x3-v2"
+                        / f"kc2_{side}-x3-v2.kicad_pcb"
+                    )
+                    board = pcbnew.LoadBoard(str(board_path))
+                    for item in list(board.GetTracks()):
+                        board.Delete(item)
+                    session = (
+                        V2_ROOT
+                        / "autoroute"
+                        / f"kc2_{side}-x3-v2-70-es1b-controller-r3.ses"
+                    )
+                    mutated_session = Path(temporary) / f"mutated-{side}.ses"
+                    source = session.read_text(encoding="utf-8")
+                    self.assertGreaterEqual(source.count(original), 2)
+                    mutated_session.write_text(
+                        source.replace(original, replacement, 1),
+                        encoding="utf-8",
+                    )
+
+                    with self.assertRaisesRegex(
+                        RuntimeError,
+                        f"reviewed {side} controller-compaction imported route digest changed",
+                    ):
+                        import_reviewed_controller_compact_session(
+                            board,
+                            mutated_session,
+                            side,
+                        )
+
+                    imported = Counter(
+                        _route_signature(item) for item in board.GetTracks()
+                    )
+                    self.assertNotEqual(
+                        _route_counter_digest(imported),
+                        CONTROLLER_COMPACT_IMPORTED_ROUTE_SHA256[side],
+                    )
+                    reset = board.FindFootprintByReference("SW_RST1")
+                    reset_position = reset.GetPosition()
+                    self.assertNotEqual(
+                        (
+                            round(pcbnew.ToMM(reset_position.x), 4),
+                            round(pcbnew.ToMM(reset_position.y), 4),
+                        ),
+                        generator.X3_V2_CONTROLLER_SERVICE_POSITIONS_MM[side]["reset"],
+                    )
+
+    def test_controller_idempotent_path_rejects_service_rotation_and_pad_disconnects(self) -> None:
+        import pcbnew
+
+        from tools import generate_kc2_pcbs as generator
+        from tools.finalize_kc2_x3_v2_routes import (
+            import_reviewed_controller_compact_session,
+        )
+
+        expected_rotations = {
+            "left": {
+                "U1": 0.0,
+                "BAT1": 0.0,
+                "J_BAT1": 180.0,
+                "SW_PWR1": 0.0,
+                "BAT_LEAD_SLOT1": 0.0,
+                "SW_RST1": 0.0,
+            },
+            "right": {
+                "U1": 0.0,
+                "BAT1": 0.0,
+                "J_BAT1": 0.0,
+                "SW_PWR1": 180.0,
+                "BAT_LEAD_SLOT1": 0.0,
+                "SW_RST1": 180.0,
+            },
+        }
+        disconnected_pads = (
+            ("U1", "RST", "RST"),
+            ("U1", "GND_C", "GND"),
+            ("J_BAT1", "1", "BAT+"),
+            ("U1", "RAW", "NN_B+"),
+        )
+
+        with TemporaryDirectory(dir=ROOT) as temporary:
+            output_dir = Path(temporary) / "x3-v2"
+            generator.generate_variant("x3-v2", output_dir=output_dir)
+            for side in ("left", "right"):
+                board_path = (
+                    output_dir
+                    / f"kc2_{side}-x3-v2"
+                    / f"kc2_{side}-x3-v2.kicad_pcb"
+                )
+                board = pcbnew.LoadBoard(str(board_path))
+                for item in list(board.GetTracks()):
+                    board.Delete(item)
+                session = (
+                    V2_ROOT
+                    / "autoroute"
+                    / f"kc2_{side}-x3-v2-70-es1b-controller-r3.ses"
+                )
+                import_reviewed_controller_compact_session(board, session, side)
+                final_path = Path(temporary) / f"final-{side}.kicad_pcb"
+                pcbnew.SaveBoard(str(final_path), board)
+
+                for reference, rotation in expected_rotations[side].items():
+                    with self.subTest(side=side, rotated=reference):
+                        rotated = pcbnew.LoadBoard(str(final_path))
+                        rotated.FindFootprintByReference(reference).SetOrientationDegrees(
+                            (rotation + 90.0) % 360.0
+                        )
+                        with self.assertRaisesRegex(
+                            RuntimeError,
+                            "controller service geometry mismatch",
+                        ):
+                            import_reviewed_controller_compact_session(
+                                rotated,
+                                session,
+                                side,
+                            )
+
+                for reference, number, net_name in disconnected_pads:
+                    with self.subTest(side=side, disconnected=net_name):
+                        disconnected = pcbnew.LoadBoard(str(final_path))
+                        footprint = disconnected.FindFootprintByReference(reference)
+                        pad = next(
+                            item
+                            for item in footprint.Pads()
+                            if item.GetNumber() == number
+                        )
+                        pad.Move(pcbnew.VECTOR2I(pcbnew.FromMM(5.0), 0))
+                        with self.assertRaisesRegex(
+                            RuntimeError,
+                            f"nonempty.*exact reviewed {side} controller-compaction route",
+                        ):
+                            import_reviewed_controller_compact_session(
+                                disconnected,
+                                session,
+                                side,
+                            )
+
+    def test_left_matrix_service_detours_replace_only_cataloged_signatures(self) -> None:
+        import pcbnew
+
+        from tools import generate_kc2_pcbs as generator
+        from tools.finalize_kc2_x3_v2_routes import (
+            _add_route_spec,
+            _route_signature,
+            apply_matrix_service_detours,
+        )
+
+        with TemporaryDirectory(dir=ROOT) as temporary:
+            output_dir = Path(temporary) / "x3-v2"
+            generator.generate_variant("x3-v2", output_dir=output_dir)
+            board_path = output_dir / "kc2_left-x3-v2" / "kc2_left-x3-v2.kicad_pcb"
+            board = pcbnew.LoadBoard(str(board_path))
+            for item in list(board.GetTracks()):
+                board.Delete(item)
+            expected_removed = {
+                ("track", "L_COL0", "F.Cu", 131.4425, 58.37, 117.9254, 71.8871, 0.25),
+                ("track", "L_COL1", "F.Cu", 132.069, 59.7698, 119.2058, 72.633, 0.25),
+                ("track", "L_COL2", "B.Cu", 122.1599, 70.1926, 133.9825, 58.37, 0.25),
+            }
+            expected_added = {
+                ("track", "L_COL0", "B.Cu", 131.4425, 58.37, 132.1, 60.0, 0.25),
+                ("track", "L_COL0", "B.Cu", 132.1, 60.0, 132.1, 67.0, 0.25),
+                ("track", "L_COL0", "B.Cu", 132.1, 67.0, 117.9254, 71.8871, 0.25),
+                ("via", "L_COL0", 117.9254, 71.8871, 0.6, 0.3),
+                ("track", "L_COL1", "B.Cu", 132.069, 59.7698, 133.1, 60.5, 0.25),
+                ("via", "L_COL1", 132.069, 59.7698, 0.6, 0.3),
+                ("track", "L_COL1", "B.Cu", 133.1, 60.5, 133.1, 67.5, 0.25),
+                ("track", "L_COL1", "B.Cu", 133.1, 67.5, 119.2058, 72.633, 0.25),
+                ("via", "L_COL1", 119.2058, 72.633, 0.6, 0.3),
+                ("track", "L_COL2", "B.Cu", 133.9825, 58.37, 134.5, 59.0, 0.25),
+                ("track", "L_COL2", "B.Cu", 134.5, 59.0, 134.5, 68.0, 0.25),
+                ("track", "L_COL2", "B.Cu", 134.5, 68.0, 122.1599, 70.1926, 0.25),
+            }
+            for spec in expected_removed:
+                _add_route_spec(board, spec)
+            before = Counter(_route_signature(item) for item in board.GetTracks())
+            self.assertTrue(expected_removed <= set(before))
+
+            result = apply_matrix_service_detours(board, "left")
+            after = Counter(_route_signature(item) for item in board.GetTracks())
+            self.assertEqual(result, {"removed": 3, "added": 12})
+            self.assertFalse(expected_removed & set(after))
+            self.assertTrue(expected_added <= set(after))
+            self.assertEqual(
+                sum(after.values()),
+                sum(before.values()) - len(expected_removed) + len(expected_added),
+            )
+
+    def test_left_cycle3_matrix_connectivity_detours_replace_only_minimum_hitting_set(self) -> None:
+        import pcbnew
+
+        from tools import generate_kc2_pcbs as generator
+        from tools.finalize_kc2_x3_v2_routes import (
+            MATRIX_CONNECTIVITY_ROUTE_ADDITIONS,
+            MATRIX_CONNECTIVITY_ROUTE_REMOVALS,
+            _add_route_spec,
+            _route_signature,
+            apply_matrix_connectivity_detours,
+        )
+
+        expected_removed = {
+            ("track", "L_COL0", "B.Cu", 131.4425, 58.37, 132.1, 60.0, 0.25),
+            ("track", "L_COL0", "B.Cu", 132.1, 60.0, 132.1, 67.0, 0.25),
+            ("track", "L_COL0", "B.Cu", 132.1, 67.0, 117.9254, 71.8871, 0.25),
+            ("via", "L_COL0", 117.9254, 71.8871, 0.6, 0.3),
+            ("track", "L_COL1", "F.Cu", 135.1227, 59.7698, 132.069, 59.7698, 0.25),
+            ("track", "L_COL1", "B.Cu", 132.069, 59.7698, 133.1, 60.5, 0.25),
+            ("via", "L_COL1", 132.069, 59.7698, 0.6, 0.3),
+            ("track", "L_COL1", "B.Cu", 133.1, 60.5, 133.1, 67.5, 0.25),
+            ("track", "L_COL1", "B.Cu", 133.1, 67.5, 119.2058, 72.633, 0.25),
+            ("via", "L_COL1", 119.2058, 72.633, 0.6, 0.3),
+        }
+        expected_added = {
+            ("track", "L_COL0", "B.Cu", 131.4425, 58.37, 132.2, 60.0, 0.25),
+            ("track", "L_COL0", "B.Cu", 132.2, 60.0, 132.2, 66.5, 0.25),
+            ("track", "L_COL0", "B.Cu", 132.2, 66.5, 129.0, 68.0, 0.25),
+            ("via", "L_COL0", 129.0, 68.0, 0.6, 0.3),
+            ("track", "L_COL0", "F.Cu", 129.0, 68.0, 117.9254, 71.8871, 0.25),
+            ("track", "L_COL1", "F.Cu", 135.1227, 59.7698, 136.5, 59.4, 0.25),
+            ("via", "L_COL1", 136.5, 59.4, 0.6, 0.3),
+            ("track", "L_COL1", "B.Cu", 136.5, 59.4, 136.5, 68.5, 0.25),
+            ("track", "L_COL1", "B.Cu", 136.5, 68.5, 134.8, 68.7, 0.25),
+            ("track", "L_COL1", "B.Cu", 134.8, 68.7, 132.0, 69.15, 0.25),
+            ("track", "L_COL1", "B.Cu", 132.0, 69.15, 129.0, 69.75, 0.25),
+            ("track", "L_COL1", "B.Cu", 129.0, 69.75, 128.5, 70.0, 0.25),
+            ("via", "L_COL1", 128.5, 70.0, 0.6, 0.3),
+            ("track", "L_COL1", "F.Cu", 128.5, 70.0, 125.6, 70.5, 0.25),
+            ("track", "L_COL1", "F.Cu", 125.6, 70.5, 125.6, 74.5, 0.25),
+            ("track", "L_COL1", "F.Cu", 125.6, 74.5, 119.5, 74.5, 0.25),
+            ("track", "L_COL1", "F.Cu", 119.5, 74.5, 119.2058, 72.633, 0.25),
+        }
+        self.assertEqual(set(MATRIX_CONNECTIVITY_ROUTE_REMOVALS["left"]), expected_removed)
+        self.assertEqual(set(MATRIX_CONNECTIVITY_ROUTE_ADDITIONS["left"]), expected_added)
+        self.assertEqual(
+            generator.X3_V2_MATRIX_CONNECTIVITY_DETOURS["left"],
+            {
+                "removals": MATRIX_CONNECTIVITY_ROUTE_REMOVALS["left"],
+                "additions": MATRIX_CONNECTIVITY_ROUTE_ADDITIONS["left"],
+            },
+        )
+
+        with TemporaryDirectory(dir=ROOT) as temporary:
+            output_dir = Path(temporary) / "x3-v2"
+            generator.generate_variant("x3-v2", output_dir=output_dir)
+            board_path = output_dir / "kc2_left-x3-v2" / "kc2_left-x3-v2.kicad_pcb"
+            board = pcbnew.LoadBoard(str(board_path))
+            for item in list(board.GetTracks()):
+                board.Delete(item)
+            for spec in expected_removed:
+                _add_route_spec(board, spec)
+            before = Counter(_route_signature(item) for item in board.GetTracks())
+
+            result = apply_matrix_connectivity_detours(board, "left")
+            after = Counter(_route_signature(item) for item in board.GetTracks())
+            self.assertEqual(result, {"removed": 10, "added": 17})
+            self.assertFalse(expected_removed & set(after))
+            self.assertTrue(expected_added <= set(after))
+            self.assertEqual(sum(after.values()), sum(before.values()) + 7)
+
+            second = apply_matrix_connectivity_detours(board, "left")
+            self.assertEqual(second, {"removed": 0, "added": 0})
+
+    def test_right_service_matrix_detours_replace_only_colliding_fanout(self) -> None:
+        import pcbnew
+
+        from tools import generate_kc2_pcbs as generator
+        from tools.finalize_kc2_x3_v2_routes import (
+            MATRIX_CONNECTIVITY_ROUTE_ADDITIONS,
+            MATRIX_CONNECTIVITY_ROUTE_REMOVALS,
+            _add_route_spec,
+            _route_signature,
+            apply_matrix_connectivity_detours,
+        )
+
+        expected_removed = {
+            ("track", "R_COL5", "F.Cu", 73.59, 58.37, 83.162, 67.942, 0.25),
+            ("track", "R_COL6", "F.Cu", 94.1212, 76.3612, 76.13, 58.37, 0.25),
+            ("track", "R_COL7", "B.Cu", 90.9461, 59.9321, 82.7721, 59.9321, 0.25),
+            ("track", "R_COL7", "B.Cu", 101.1625, 70.1485, 90.9461, 59.9321, 0.25),
+            ("track", "R_COL2", "B.Cu", 71.2975, 63.6975, 84.4425, 63.6975, 0.25),
+            ("track", "R_COL2", "B.Cu", 84.4425, 63.6975, 93.19, 72.445, 0.25),
+            ("track", "R_COL3", "B.Cu", 71.8386, 61.6986, 90.4512, 61.6986, 0.25),
+            ("track", "R_COL3", "B.Cu", 90.4512, 61.6986, 99.4528, 70.7002, 0.25),
+            ("track", "R_ROW0", "F.Cu", 91.6389, 54.9233, 98.7624, 62.0468, 0.25),
+            ("track", "R_ROW0", "F.Cu", 98.7624, 62.0468, 98.7624, 71.4811, 0.25),
+            ("track", "R_ROW3", "F.Cu", 91.7219, 54.177, 100.2, 62.6551, 0.25),
+        }
+        expected_added = {
+            ("track", "R_COL3", "B.Cu", 71.8386, 61.6986, 80.5, 65.0, 0.25),
+            ("track", "R_COL3", "B.Cu", 80.5, 65.0, 99.4528, 70.7002, 0.25),
+            ("track", "R_COL2", "B.Cu", 71.2975, 63.6975, 79.5, 65.5, 0.25),
+            ("via", "R_COL2", 79.5, 65.5, 0.6, 0.3),
+            ("track", "R_COL2", "F.Cu", 79.5, 65.5, 83.0, 65.5, 0.25),
+            ("track", "R_COL2", "F.Cu", 83.0, 65.5, 86.0, 68.5, 0.25),
+            ("via", "R_COL2", 86.0, 68.5, 0.6, 0.3),
+            ("track", "R_COL2", "B.Cu", 86.0, 68.5, 90.5, 70.5, 0.25),
+            ("via", "R_COL2", 90.5, 70.5, 0.6, 0.3),
+            ("track", "R_COL2", "F.Cu", 90.5, 70.5, 93.19, 72.445, 0.25),
+            ("track", "R_COL7", "B.Cu", 82.7721, 59.9321, 84.0, 60.0, 0.25),
+            ("via", "R_COL7", 84.0, 60.0, 0.6, 0.3),
+            ("track", "R_COL7", "F.Cu", 84.0, 60.0, 87.0, 62.0, 0.25),
+            ("via", "R_COL7", 87.0, 62.0, 0.6, 0.3),
+            ("track", "R_COL7", "B.Cu", 87.0, 62.0, 88.5, 62.0, 0.25),
+            ("track", "R_COL7", "B.Cu", 88.5, 62.0, 92.0, 65.5, 0.25),
+            ("track", "R_COL7", "B.Cu", 92.0, 65.5, 101.1625, 70.1485, 0.25),
+            ("track", "R_COL6", "F.Cu", 76.13, 58.37, 85.0, 65.0, 0.25),
+            ("track", "R_COL6", "F.Cu", 85.0, 65.0, 94.1212, 76.3612, 0.25),
+            ("track", "R_COL5", "F.Cu", 73.59, 58.37, 73.5, 59.5, 0.25),
+            ("via", "R_COL5", 73.5, 59.5, 0.6, 0.3),
+            ("track", "R_COL5", "B.Cu", 73.5, 59.5, 72.5, 61.0, 0.25),
+            ("via", "R_COL5", 72.5, 61.0, 0.6, 0.3),
+            ("track", "R_COL5", "F.Cu", 72.5, 61.0, 77.5, 66.0, 0.25),
+            ("via", "R_COL5", 77.5, 66.0, 0.6, 0.3),
+            ("track", "R_COL5", "B.Cu", 77.5, 66.0, 82.0, 67.5, 0.25),
+            ("via", "R_COL5", 82.0, 67.5, 0.6, 0.3),
+            ("track", "R_COL5", "F.Cu", 82.0, 67.5, 83.162, 67.942, 0.25),
+            ("track", "R_ROW0", "F.Cu", 91.6389, 54.9233, 98.0, 55.0, 0.25),
+            ("via", "R_ROW0", 98.0, 55.0, 0.6, 0.3),
+            ("track", "R_ROW0", "B.Cu", 98.0, 55.0, 98.5, 60.5, 0.25),
+            ("track", "R_ROW0", "B.Cu", 98.5, 60.5, 98.5, 67.5, 0.25),
+            ("via", "R_ROW0", 98.5, 67.5, 0.6, 0.3),
+            ("track", "R_ROW0", "F.Cu", 98.5, 67.5, 98.7624, 71.4811, 0.25),
+            ("track", "R_ROW3", "F.Cu", 91.7219, 54.177, 92.5, 54.2, 0.25),
+            ("track", "R_ROW3", "F.Cu", 92.5, 54.2, 100.2, 54.2, 0.25),
+            ("track", "R_ROW3", "F.Cu", 100.2, 54.2, 100.2, 62.6551, 0.25),
+        }
+        self.assertEqual(set(MATRIX_CONNECTIVITY_ROUTE_REMOVALS["right"]), expected_removed)
+        self.assertEqual(set(MATRIX_CONNECTIVITY_ROUTE_ADDITIONS["right"]), expected_added)
+        self.assertEqual(
+            generator.X3_V2_MATRIX_CONNECTIVITY_DETOURS["right"],
+            {
+                "removals": MATRIX_CONNECTIVITY_ROUTE_REMOVALS["right"],
+                "additions": MATRIX_CONNECTIVITY_ROUTE_ADDITIONS["right"],
+            },
+        )
+
+        with TemporaryDirectory(dir=ROOT) as temporary:
+            output_dir = Path(temporary) / "x3-v2"
+            generator.generate_variant("x3-v2", output_dir=output_dir)
+            board_path = output_dir / "kc2_right-x3-v2" / "kc2_right-x3-v2.kicad_pcb"
+            board = pcbnew.LoadBoard(str(board_path))
+            for item in list(board.GetTracks()):
+                board.Delete(item)
+            for spec in expected_removed:
+                _add_route_spec(board, spec)
+            before = Counter(_route_signature(item) for item in board.GetTracks())
+
+            result = apply_matrix_connectivity_detours(board, "right")
+            after = Counter(_route_signature(item) for item in board.GetTracks())
+            self.assertEqual(result, {"removed": 11, "added": 37})
+            self.assertFalse(expected_removed & set(after))
+            self.assertTrue(expected_added <= set(after))
+            self.assertEqual(sum(after.values()), sum(before.values()) + 26)
+
+            second = apply_matrix_connectivity_detours(board, "right")
+            self.assertEqual(second, {"removed": 0, "added": 0})
+
     def test_controller_route_import_rejects_partial_and_stale_session(self) -> None:
         import pcbnew
 
+        from tools import generate_kc2_pcbs as generator
         from tools.finalize_kc2_x3_v2_routes import import_reviewed_controller_compact_session
 
         session = V2_ROOT / "autoroute/kc2_right-x3-v2-70-es1b-controller-r3.ses"
-        partial = pcbnew.LoadBoard(str(RIGHT_BOARD))
-        partial.Delete(next(iter(partial.GetTracks())))
-        with self.assertRaisesRegex(RuntimeError, "nonempty.*exact reviewed right controller-compaction route"):
-            import_reviewed_controller_compact_session(partial, session, "right")
-
-        wrong_geometry = pcbnew.LoadBoard(str(RIGHT_BOARD))
-        for item in list(wrong_geometry.GetTracks()):
-            wrong_geometry.Delete(item)
-        reset = wrong_geometry.FindFootprintByReference("SW_RST1")
-        reset.SetPosition(reset.GetPosition() + pcbnew.VECTOR2I(pcbnew.FromMM(0.1), 0))
-        with self.assertRaisesRegex(RuntimeError, "controller service geometry mismatch"):
-            import_reviewed_controller_compact_session(wrong_geometry, session, "right")
-
         with TemporaryDirectory(dir=ROOT) as temporary:
+            output_dir = Path(temporary) / "x3-v2"
+            generator.generate_variant("x3-v2", output_dir=output_dir)
+            board_path = output_dir / "kc2_right-x3-v2" / "kc2_right-x3-v2.kicad_pcb"
+
+            partial = pcbnew.LoadBoard(str(board_path))
+            for item in list(partial.GetTracks()):
+                partial.Delete(item)
+            import_reviewed_controller_compact_session(partial, session, "right")
+            partial.Delete(next(iter(partial.GetTracks())))
+            with self.assertRaisesRegex(
+                RuntimeError,
+                "nonempty.*exact reviewed right controller-compaction route",
+            ):
+                import_reviewed_controller_compact_session(partial, session, "right")
+
+            wrong_geometry = pcbnew.LoadBoard(str(board_path))
+            for item in list(wrong_geometry.GetTracks()):
+                wrong_geometry.Delete(item)
+            reset = wrong_geometry.FindFootprintByReference("SW_RST1")
+            reset.SetPosition(reset.GetPosition() + pcbnew.VECTOR2I(pcbnew.FromMM(0.1), 0))
+            with self.assertRaisesRegex(RuntimeError, "controller service geometry mismatch"):
+                import_reviewed_controller_compact_session(wrong_geometry, session, "right")
+
             stale_session = Path(temporary) / session.name
             source = session.read_text(encoding="utf-8")
             stale_session.write_text(
@@ -1930,7 +3225,7 @@ class V2GeneratorTests(unittest.TestCase):
                 encoding="utf-8",
             )
             self.assertNotEqual(stale_session.read_bytes(), session.read_bytes())
-            stale_board = pcbnew.LoadBoard(str(RIGHT_BOARD))
+            stale_board = pcbnew.LoadBoard(str(board_path))
             for item in list(stale_board.GetTracks()):
                 stale_board.Delete(item)
             with self.assertRaisesRegex(RuntimeError, "reviewed right controller"):
@@ -1941,7 +3236,10 @@ class V2GeneratorTests(unittest.TestCase):
 
         evidence = json.loads(DRC_EVIDENCE.read_text(encoding="utf-8"))
         self.assertEqual(evidence, build_drc_evidence())
-        self.assertEqual(evidence["requirement_ids"], ["CON-ARCH-004", "CON-ARCH-006"])
+        self.assertEqual(
+            evidence["requirement_ids"],
+            ["CON-ARCH-004", "CON-ARCH-006", "CON-ARCH-007", "REL-ARCH-001"],
+        )
         self.assertEqual(evidence["hash_policy"], HASH_POLICY)
         self.assertEqual(evidence["variant"], "x3-v2")
         self.assertEqual(set(evidence["boards"]), {"left", "right"})
@@ -1961,11 +3259,11 @@ class V2GeneratorTests(unittest.TestCase):
         product_spec = PRODUCT_SPEC.read_text(encoding="utf-8")
 
         current_claims = (
-            "implemented draft `kc2-x3-v2`는 `CON-ARCH-004`의 70-key v5 배열(왼쪽 31, 오른쪽 39)",
-            "70 for implemented draft `kc2-x3-v2` under `CON-ARCH-004` (31 left / 39 right)",
+            "디지털 검증을 통과했지만 물리 검증 대기 중인 `kc2-x3-v2` draft는 `CON-ARCH-004`의 70-key v5 배열(왼쪽 31, 오른쪽 39)",
+            "70 for digitally verified but not orderable `kc2-x3-v2` under `CON-ARCH-004` (31 left / 39 right)",
             "current X3 V2 v5 rows 15 / 14 / 14 / 15 / 12",
             "active draft `kc2-x3-v2` uses exact Jingdao `ES1B`, LCSC `C437840`, Eleparts goods `9475342`, bottom-side SMA at each of its 70 positions",
-            "implemented draft `kc2-x3-v2`는 `CON-ARCH-004`의 70개 switch/diode 배치를 기준으로 별도 검증한다",
+            "물리 검증 대기 중인 `kc2-x3-v2` draft는 `CON-ARCH-004`의 70개 switch/diode 배치를 기준으로 별도 검증한다",
             "| KC2 X3 V2 target switch | Kailh Deep Sea Whale low-profile Choc V2 / PG1353-class, 70개.",
             "| KC2 X3 V2 socket | Kailh Choc hot-swap socket `CPG135001S30` class, 70개",
             "| KC2 X3 V2 MX alternative | Cherry MX-style 5-pin PCB-mount switches, 70개",
@@ -1992,11 +3290,13 @@ class V2GeneratorTests(unittest.TestCase):
             encoding="utf-8"
         )
 
-        self.assertGreaterEqual(
-            product_spec.count(
-                "X3 V2에서는 `CON-ARCH-004` AC-12가 reset 위치만 USB-side로 supersede한다."
-            ),
-            2,
+        self.assertIn(
+            "X3 V2에서는 `CON-ARCH-007`에 따라 controller-key gap에 mirrored POWER/RESET pair를 둔다.",
+            product_spec,
+        )
+        self.assertIn(
+            "Lower housing에는 TW301525 또는 301230 battery-body cavity를 만들지 않는다.",
+            product_spec,
         )
         self.assertNotIn(
             "X3 compact controller tab의 프로그래밍용 tact switch는 antenna-side controller-tab edge 쪽 상면에 두며",
@@ -2007,7 +3307,7 @@ class V2GeneratorTests(unittest.TestCase):
             product_spec,
         )
         self.assertIn(
-            "Promoted/historical X3의 `NW3-A06-B3` SMD tact switch antenna-side 상면 위치와 1:1 출력물 기반 조작 검증; X3 V2는 `CON-ARCH-004` AC-12의 USB-side 물리 service gate 적용",
+            "Promoted/historical X3의 `NW3-A06-B3` antenna-side 상면 위치 검증; X3 V2는 `CON-ARCH-007`의 mirrored controller-key-gap service gate 적용",
             product_spec,
         )
         self.assertNotIn(
@@ -2015,15 +3315,15 @@ class V2GeneratorTests(unittest.TestCase):
             product_spec,
         )
         self.assertIn(
-            "The top-side `SW_RST1` actuator support required by AC-11 is an explicit exception",
+            "The top-side SW_RST1 actuator support is an explicit exception",
             srs,
         )
         self.assertIn(
-            "the provisional battery clearance is the AC-11 nominal value and remains subject to the pending physical tolerance gate",
+            "The 8 mm estimate is not fit evidence and remains subject to AC-3 caliper and first-article gates.",
             srs,
         )
         self.assertIn(
-            "Their 564/732 driver-clearance result is the pre-controller-compaction M1.4 baseline and is superseded by the current controller-r3-plus-reset 544/711 route evidence",
+            "Old TW301525, no-carrier-power, USB-under-reset, battery-body-cutout and controller-r3 route hashes are historical only.",
             srs,
         )
         self.assertNotIn(

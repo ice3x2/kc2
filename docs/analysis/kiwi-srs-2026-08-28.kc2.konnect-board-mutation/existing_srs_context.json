@@ -1,0 +1,9 @@
+{
+  "candidate_matches": [
+    {"id":"OPS-ARCH-003","scope":"ARCH","title":"Live MCP editing of placed footprint Reference fields","relation_hint":"closest operational precedent; preserve and add a sibling requirement","similarity_score":0.98},
+    {"id":"CON-ARCH-007","scope":"ARCH","title":"X3 V2 socketed 301230 battery, local hard power switch, and mirrored reset service","relation_hint":"new-feature dependency enabled by the new MCP capability","similarity_score":0.96},
+    {"id":"CON-ARCH-006","scope":"ARCH","title":"X3 V2 concealed bezel, tight join, and load-bearing housing support","relation_hint":"evidence regeneration dependency","similarity_score":0.76}
+  ],
+  "relevant_scopes": ["ARCH"],
+  "no_match_reason": null
+}

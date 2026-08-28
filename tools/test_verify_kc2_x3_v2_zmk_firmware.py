@@ -376,6 +376,9 @@ class V2FirmwareContractTests(unittest.TestCase):
         hardware_readme = (
             verifier.ROOT / "hardware/kicad/draft/x3-v2/README.md"
         ).read_text(encoding="utf-8")
+        housing_readme = (
+            verifier.ROOT / "hardware/case/draft/x3-v2/README.md"
+        ).read_text(encoding="utf-8")
         summary = (verifier.ROOT / "docs/spec.md").read_text(encoding="utf-8")
         srs = (
             verifier.ROOT / "docs/spec/10.product-architecture.srs.md"
@@ -419,11 +422,13 @@ class V2FirmwareContractTests(unittest.TestCase):
         self.assertIn("zero-wait", firmware_readme)
         self.assertIn("physical coupon", firmware_readme)
 
-        self.assertIn("`0.3279 mm` overall", srs)
-        self.assertIn("`0.3282 mm` for ES1B", srs)
-        self.assertIn("1.0250 mm", srs)
-        self.assertIn("retaining the 14/11 distributed supports", srs)
-        self.assertIn("Seventeen focused housing tests pass", srs)
+        self.assertIn("`0.3279 mm`", housing_readme)
+        self.assertIn("`0.3282 mm`", housing_readme)
+        self.assertIn("`1.0250 mm`", housing_readme)
+        self.assertIn("retained 14/11 distributed supports", housing_readme)
+        self.assertIn("25/25 tests", srs)
+        self.assertIn("physical Z, fit, fastener, deflection, service, and RF gates remain open", srs)
+        self.assertNotIn("Seventeen focused housing tests pass", srs)
         self.assertNotIn("Fourteen focused housing tests pass", srs)
         self.assertNotIn("Twelve focused housing tests pass", srs)
 
@@ -437,7 +442,7 @@ class V2FirmwareContractTests(unittest.TestCase):
                     "session_source_dsn": "hardware/kicad/draft/x3-v2/autoroute/kc2_left-x3-v2-70-es1b-controller-r3.dsn",
                     "session_source_dsn_sha256": "0f1da995d92a6a121142125933e21ce0c1f1db05e5c1ef924f2a7c6dd38fa3db",
                     "ses": "hardware/kicad/draft/x3-v2/autoroute/kc2_left-x3-v2-70-es1b-controller-r3.ses",
-                    "ses_role": "reviewed_compact_controller_import_plus_exact_edge_cleanup",
+                    "ses_role": "reviewed_matrix_import_plus_exact_edge_cleanup_and_power_reset_service_routing",
                     "dsn_sha256": "0f1da995d92a6a121142125933e21ce0c1f1db05e5c1ef924f2a7c6dd38fa3db",
                     "ses_sha256": "41ba7adf4db9881cf6065b592fd81127de5753b7b23a94012a16e1230cdbf0b8",
                     "dsn_default_clearance_internal_units": 300,
@@ -445,8 +450,8 @@ class V2FirmwareContractTests(unittest.TestCase):
                         "global": 300,
                         "kicad_default": 300,
                     },
-                    "final_track_via_count": 543,
-                    "route_digest_sha256": "9bc9cbf981da8d452b82e52d54a4e8ab3cafcc6121ec578f36a4cf43f3dde19d",
+                    "final_track_via_count": 580,
+                    "route_digest_sha256": "7eda6d670a2fd3b99ab06548be4c635dbff03904ec251197f547110864fcb5e6",
                 },
                 "right": {
                     "dsn": "hardware/kicad/draft/x3-v2/autoroute/kc2_right-x3-v2-70-es1b-controller-r3.dsn",
@@ -455,7 +460,7 @@ class V2FirmwareContractTests(unittest.TestCase):
                     "session_source_dsn": "hardware/kicad/draft/x3-v2/autoroute/kc2_right-x3-v2-70-es1b-controller-r3.dsn",
                     "session_source_dsn_sha256": "45f3bbf61f54d417ab97aeff137aa91db5f323a24ff3473011aaa84ccc9d7e45",
                     "ses": "hardware/kicad/draft/x3-v2/autoroute/kc2_right-x3-v2-70-es1b-controller-r3.ses",
-                    "ses_role": "reviewed_compact_controller_import_plus_exact_edge_cleanup",
+                    "ses_role": "reviewed_matrix_import_plus_exact_edge_cleanup_and_power_reset_service_routing",
                     "dsn_sha256": "45f3bbf61f54d417ab97aeff137aa91db5f323a24ff3473011aaa84ccc9d7e45",
                     "ses_sha256": "58823efa51c642107623d60180f2431eff572c50a11f1dbad8091c35e82ef2fb",
                     "dsn_default_clearance_internal_units": 300,
@@ -463,8 +468,8 @@ class V2FirmwareContractTests(unittest.TestCase):
                         "global": 300,
                         "kicad_default": 300,
                     },
-                    "final_track_via_count": 706,
-                    "route_digest_sha256": "83dcc6f764670b379b6c9104d643925cd6eff3c0b16286f12bae14dd1397c67f",
+                    "final_track_via_count": 739,
+                    "route_digest_sha256": "fc2a819d9ce840ffc0c9e9b5ac6fc7dac54d51a441addb5b0005b4fa89cdbf1a",
                 },
             },
         )

@@ -1,0 +1,22 @@
+{
+  "target": "kc2-x3-v2",
+  "classification": "new-feature",
+  "rationale": "The capability has distinct selectors, invariants, and rollback behavior from OPS-ARCH-003 and enables rather than changes CON-ARCH-007.",
+  "evidence_paths": [
+    "C:/Users/beom/AppData/Local/Temp/konnect-reference-search/crates/konnect-core/src/tools/pcb_components.rs:1755-2010",
+    "C:/Users/beom/AppData/Local/Temp/konnect-reference-search/crates/konnect-core/src/tools/pcb_board.rs:603-899"
+  ],
+  "affected_existing_reqs": [
+    {"id":"OPS-ARCH-003","relation":"extends","diff_summary":"Adds separate pad-net and board-graphic mutations without changing Reference-field behavior."},
+    {"id":"CON-ARCH-007","relation":"depends_on","diff_summary":"Enables protected-board application of the approved controller power design."}
+  ],
+  "proposed_scope": "ARCH",
+  "proposed_prefix": "OPS",
+  "proposed_type": "operational",
+  "confidence": "high",
+  "scope_boundary_impact": null,
+  "external_module_impact": {
+    "path": "C:/Users/beom/AppData/Local/Temp/konnect-reference-search",
+    "approved_by_user": true
+  }
+}

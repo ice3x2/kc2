@@ -1,6 +1,11 @@
 {
-  "generated": "2026-08-26",
+  "generated": "2026-08-29",
   "variant": "x3-v2",
+  "requirement_ids": [
+    "CON-ARCH-004",
+    "CON-ARCH-007",
+    "REL-ARCH-001"
+  ],
   "hash_policy": "lf-normalized-utf8-text-else-raw-v1",
   "generator": "tools/generate_kc2_pcbs.py",
   "generation_command": "python tools/generate_kc2_pcbs.py --variant x3-v2",
@@ -80,7 +85,7 @@
       "session_source_dsn": "hardware/kicad/draft/x3-v2/autoroute/kc2_left-x3-v2-70-es1b-controller-r3.dsn",
       "session_source_dsn_sha256": "0f1da995d92a6a121142125933e21ce0c1f1db05e5c1ef924f2a7c6dd38fa3db",
       "ses": "hardware/kicad/draft/x3-v2/autoroute/kc2_left-x3-v2-70-es1b-controller-r3.ses",
-      "ses_role": "reviewed_compact_controller_import_plus_exact_edge_cleanup_and_usb_under_reset_replacement",
+      "ses_role": "reviewed_matrix_import_plus_exact_edge_cleanup_and_power_reset_service_routing",
       "dsn_sha256": "0f1da995d92a6a121142125933e21ce0c1f1db05e5c1ef924f2a7c6dd38fa3db",
       "ses_sha256": "41ba7adf4db9881cf6065b592fd81127de5753b7b23a94012a16e1230cdbf0b8",
       "dsn_default_clearance_internal_units": 300,
@@ -88,8 +93,8 @@
         "global": 300,
         "kicad_default": 300
       },
-      "final_track_via_count": 544,
-      "route_digest_sha256": "79dd509ceb68960691a012721ce8a29ad159c2191950d090ada1fd2bceed92aa"
+      "final_track_via_count": 580,
+      "route_digest_sha256": "7eda6d670a2fd3b99ab06548be4c635dbff03904ec251197f547110864fcb5e6"
     },
     "right": {
       "dsn": "hardware/kicad/draft/x3-v2/autoroute/kc2_right-x3-v2-70-es1b-controller-r3.dsn",
@@ -98,7 +103,7 @@
       "session_source_dsn": "hardware/kicad/draft/x3-v2/autoroute/kc2_right-x3-v2-70-es1b-controller-r3.dsn",
       "session_source_dsn_sha256": "45f3bbf61f54d417ab97aeff137aa91db5f323a24ff3473011aaa84ccc9d7e45",
       "ses": "hardware/kicad/draft/x3-v2/autoroute/kc2_right-x3-v2-70-es1b-controller-r3.ses",
-      "ses_role": "reviewed_compact_controller_import_plus_exact_edge_cleanup_and_usb_under_reset_replacement",
+      "ses_role": "reviewed_matrix_import_plus_exact_edge_cleanup_and_power_reset_service_routing",
       "dsn_sha256": "45f3bbf61f54d417ab97aeff137aa91db5f323a24ff3473011aaa84ccc9d7e45",
       "ses_sha256": "58823efa51c642107623d60180f2431eff572c50a11f1dbad8091c35e82ef2fb",
       "dsn_default_clearance_internal_units": 300,
@@ -106,8 +111,8 @@
         "global": 300,
         "kicad_default": 300
       },
-      "final_track_via_count": 711,
-      "route_digest_sha256": "20009ce9a43c88167aba0d88ccef84df46b53a7c633b62937286535245ea9127"
+      "final_track_via_count": 739,
+      "route_digest_sha256": "fc2a819d9ce840ffc0c9e9b5ac6fc7dac54d51a441addb5b0005b4fa89cdbf1a"
     }
   },
   "firmware_matrix_compatibility": {
@@ -183,12 +188,20 @@
           50.75
         ],
         "battery": [
-          133.2125,
-          53.05
+          131.7125,
+          50.75
+        ],
+        "j_bat": [
+          115.8125,
+          59.4
+        ],
+        "power": [
+          115.8125,
+          63.45
         ],
         "reset": [
-          113.7625,
-          50.75
+          126.0625,
+          63.45
         ]
       },
       "right": {
@@ -201,37 +214,87 @@
           50.75
         ],
         "battery": [
-          76.9,
-          53.05
+          78.4,
+          50.75
+        ],
+        "j_bat": [
+          94.3,
+          59.4
+        ],
+        "power": [
+          94.3,
+          63.45
         ],
         "reset": [
-          96.35,
-          50.75
+          84.05,
+          63.45
         ]
       }
     },
+    "battery": {
+      "footprint": "kc2.pretty:BAT_301230_30x12mm",
+      "nominal_size_mm": [
+        30,
+        12,
+        3
+      ],
+      "placement": "between_carrier_and_socketed_controller",
+      "antenna_keepout_clearance_mm": 3.97,
+      "socket_pad_clearance_mm": 0.72,
+      "physical_stack_measurement": "pending"
+    },
+    "battery_termination": {
+      "footprint": "kc2.pretty:BAT_2Pin_PTH_DirectSolder",
+      "left_rotation_degrees": 180,
+      "right_rotation_degrees": 0,
+      "pad_1": "BAT+",
+      "pad_2": "GND",
+      "strain_relief_ref": "BAT_LEAD_SLOT1",
+      "lead_drawing_status": "pending_exact_purchased_pack"
+    },
+    "power": {
+      "footprint": "kc2.pretty:SW_IMMS_12V_BSI10_THT",
+      "left_rotation_degrees": 0,
+      "right_rotation_degrees": 180,
+      "pad_1": "BAT+_common",
+      "pad_2": "NN_B+_on_throw",
+      "pad_3": "NC",
+      "body_size_mm": [
+        10,
+        2.5,
+        6.4
+      ],
+      "actuator_travel_mm": 1.6,
+      "datasheet": "https://amec-gmbh.de/wp-content/uploads/2022/11/BSI-10.pdf",
+      "model": "third_party/kc2.3dshapes/SW_IMMS_12V_BSI10_THT.step",
+      "model_sha256": "ddcbbb8770ebe56f11ab60598e0d4760cc7812d9b6cd466d5c9b5f29cc40b570",
+      "model_generator": "tools/generate_kc2_component_models.py",
+      "model_generator_sha256": "474902d50ff8d86e59179782bb5aa7b9f38cae6f67bacbe2156b3e9b63cf255c"
+    },
     "reset": {
       "footprint": "kc2.pretty:SW_NW3_A06_B3_SMD",
-      "rotation_degrees": 90,
-      "pad_1": "RST_key_side",
-      "pad_2": "GND_controller_side",
+      "left_rotation_degrees": 0,
+      "right_rotation_degrees": 180,
+      "pad_1": "RST",
+      "pad_2": "GND",
       "probe_max_diameter_mm": 3,
-      "usb_outward_offset_mm": 2.05,
-      "placement_mode": "under_usb_vertical_stack",
-      "service_access": "usb_edge_beneath_socketed_controller",
-      "controller_to_reset_z_clearance": "physical_gate",
+      "placement_mode": "controller_key_gap",
+      "service_access": "nonconductive_probe",
       "service_usb_state": "disconnected"
     },
     "nominal_clearances_mm": {
-      "reset_body_to_keycap_min": 2,
       "controller_body_to_top_edge": 2.35,
-      "battery_body_to_top_edge": 1.3,
-      "battery_housing_perimeter_land": 0.85
+      "battery_to_socket_pad": 0.72,
+      "battery_to_antenna_keepout": 3.97,
+      "power_to_reset_body": 2.2,
+      "reset_keycap_envelope_mm": 18.05,
+      "reset_body_to_keycap_min": 3.2,
+      "reset_courtyard_to_u1_socket_copper_min": 2.03
     },
-    "physical_validation": "pending_usb_reset_keycap_battery_first_article",
+    "physical_validation": "pending_battery_power_reset_rf_first_article",
     "order_ready": false
   },
-  "carrier_power_pads": false,
+  "carrier_power_pads": true,
   "battery_lead_pass_through_slot": {
     "footprint": "kc2.pretty:BAT_LEAD_NPTH_SLOT_3.6x2.2",
     "value": "BAT_LEAD_NPTH_SLOT_3.6x2.2",
@@ -240,8 +303,8 @@
       2.2
     ],
     "count_per_half": 1,
-    "layers": "mask-only NPTH, no carrier power copper",
-    "purpose": "USB-end lead exit below the nice!nano battery-pad end; route insulated B+ and GND/B- leads between the socket rows and provide strain relief"
+    "layers": "mask-only NPTH, no copper",
+    "purpose": "J_BAT1 strain relief for pre-attached insulated battery leads; not a bottom battery exit"
   },
   "pcb_thickness_mm": 1.6,
   "housing_assumption": "FDM PLA+ lower tray with external perimeter capture and independent underside supports",
@@ -489,8 +552,8 @@
     "X3 V2 uses the fixed 70-key v5 no-stabilizer layout: 31 left keys and 39 right keys, with no key wider than 1.75U.",
     "X3 V2 insets every non-controller key-field edge 1.5 mm from the nominal switch-cell perimeter. Rows 0-3 use 8.025 mm center-to-edge offsets on both sides; bottom Space-B uses 15.16875 mm left / 8.02500 mm right.",
     "X3 V2 contains no legacy H1-H9 or REG1-REG9 key-field through-holes.",
-    "The netless battery-lead slot is at the nice!nano USB/B+ end; insulated B+ and GND/B- leads must use strain relief and remain outside the antenna keepout.",
-    "X3 V2 supersedes only the historical antenna-side reset placement: SW_RST1 is portrait-oriented in plan beneath the socket-elevated USB end while the no-carrier-power and direct-lead contracts remain unchanged. USB/reset/keycap/battery physical validation is pending.",
+    "BAT_LEAD_SLOT1 is retained as a netless copper-free strain-relief slot; the 301230 battery remains above the carrier beneath socketed U1.",
+    "X3 V2 places the 301230 battery beneath socketed U1 and mirrors POWER then RESET from each USB-facing edge. J_BAT1 direct-solders insulated leads, SW_PWR1 switches BAT+ into U1 RAW/NN_B+, and B- remains on local GND. Physical stack, service, and RF validation are pending.",
     "X3 V2 uses the exact Jingdao ES1B / LCSC C437840 / Eleparts 9475342 manufacturer-recommended SMA land on B.Cu: 1.8 x 1.8 mm pads, 2.4 mm inner gap, pin 1 cathode to row and pin 2 anode to the per-key switch net.",
     "The ES1B placements and rotations preserve at least 1.30 mm to Edge.Cuts, 1.00 mm to switch copper/unused NPTH/unrelated exposed copper, and one unobstructed 1.50 mm cardinal hand-solder approach per pad.",
     "X3 V2 uses the selected 8-left / 10-right M1.4 retention prototype: 1.60 mm copper-free NPTHs, keycaps removed and switches installed for PH0 service. Physical pilot, torque, full-pattern fit, and deflection evidence remain pending; the board is not order-ready."

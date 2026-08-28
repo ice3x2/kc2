@@ -1,0 +1,145 @@
+{
+  "classification": "new-feature",
+  "classification_parts": [
+    "CON-ARCH-007:new-feature",
+    "REL-ARCH-001:new-feature"
+  ],
+  "mode": "live",
+  "mcp_calls": [
+    {
+      "tool": "add_requirement",
+      "result_id": "CON-ARCH-007",
+      "ok": true
+    },
+    {
+      "tool": "add_requirement",
+      "result_id": "REL-ARCH-001",
+      "ok": true
+    },
+    {
+      "tool": "replace_acceptance_criteria",
+      "args": {
+        "id": "CON-ARCH-004"
+      },
+      "ok": true
+    },
+    {
+      "tool": "edit_requirement_fields",
+      "args": {
+        "id": "CON-ARCH-006"
+      },
+      "ok": true
+    },
+    {
+      "tool": "replace_acceptance_criteria",
+      "args": {
+        "id": "CON-ARCH-006"
+      },
+      "ok": true
+    },
+    {
+      "tool": "add_trace_link",
+      "args": {
+        "id": "CON-ARCH-007",
+        "reference": "CON-ARCH-004",
+        "relation": "extends"
+      },
+      "ok": true
+    },
+    {
+      "tool": "add_trace_link",
+      "args": {
+        "id": "CON-ARCH-007",
+        "reference": "CON-ARCH-006",
+        "relation": "extends"
+      },
+      "ok": true
+    },
+    {
+      "tool": "add_trace_link",
+      "args": {
+        "id": "CON-ARCH-007",
+        "reference": "CON-ARCH-002",
+        "relation": "supersedes"
+      },
+      "ok": true
+    },
+    {
+      "tool": "add_trace_link",
+      "args": {
+        "id": "REL-ARCH-001",
+        "reference": "CON-ARCH-007",
+        "relation": "depends_on"
+      },
+      "ok": true
+    },
+    {
+      "tool": "edit_requirement_table_rows",
+      "args": {
+        "ids": [
+          "CON-ARCH-004",
+          "CON-ARCH-006",
+          "CON-ARCH-007",
+          "REL-ARCH-001"
+        ],
+        "purpose": "remove duplicate reverse and pre-implementation addition-site trace rows"
+      },
+      "ok": true
+    },
+    {
+      "tool": "add_trace_link",
+      "args": {
+        "id": "CON-ARCH-007",
+        "reference": "tools/generate_kc2_pcbs.py:1529-1544",
+        "relation": "negative",
+        "trace_intent": "negative"
+      },
+      "ok": true
+    },
+    {
+      "tool": "add_trace_link",
+      "args": {
+        "id": "REL-ARCH-001",
+        "reference": "tools/verify_kc2_x3_v2.py:1337-1410",
+        "relation": "negative",
+        "trace_intent": "negative"
+      },
+      "ok": true
+    },
+    {
+      "tool": "update_status",
+      "args": {
+        "id": "CON-ARCH-007",
+        "status": "planned"
+      },
+      "ok": true
+    },
+    {
+      "tool": "update_status",
+      "args": {
+        "id": "REL-ARCH-001",
+        "status": "planned"
+      },
+      "ok": true
+    },
+    {
+      "tool": "validate_spec",
+      "ok": true
+    }
+  ],
+  "scope_doc_edits": [],
+  "manual_srs_edits": [],
+  "added_ids": [
+    "CON-ARCH-007",
+    "REL-ARCH-001"
+  ],
+  "updated_ids": [
+    "CON-ARCH-004",
+    "CON-ARCH-006"
+  ],
+  "discarded_ids": [],
+  "validate_spec_result": {
+    "ok": true,
+    "diagnostics": []
+  }
+}

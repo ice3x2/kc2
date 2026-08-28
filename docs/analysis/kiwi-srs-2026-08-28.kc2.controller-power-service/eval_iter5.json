@@ -1,0 +1,19 @@
+{
+  "evaluator": "verify-pass-1",
+  "iter": 5,
+  "summary": {
+    "CRITICAL": 0,
+    "HIGH": 0,
+    "MEDIUM": 0,
+    "LOW": 1
+  },
+  "remaining_findings": [
+    {
+      "finding_hash": "8c0aa2a84700e1433f03a235d18925f4d68049f1",
+      "severity": "LOW",
+      "axis": "delta",
+      "description": "Historical planned-status rows preserve both the temporary addition-site rationale and the final negative-trace rationale. This is accurate history but mildly repetitive."
+    }
+  ],
+  "gate": "PASS_NORMAL"
+}

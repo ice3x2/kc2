@@ -9,16 +9,40 @@
   "sides": {
     "left": {
       "source_board": "hardware/kicad/draft/x3-v2/kc2_left-x3-v2/kc2_left-x3-v2.kicad_pcb",
+      "source_board_sha256": "90430a97aa2e13dbf8325525f9841b60e0b64d058406dd218162970b01f8e6f6",
       "source_board_sha256_matches": true,
       "key_count": 31,
       "legacy_registration_refs": [],
+      "battery_above_carrier": {
+        "ref": "BAT1",
+        "center": [
+          131.7125,
+          50.75
+        ],
+        "bounds": [
+          116.7125,
+          44.75,
+          146.7125,
+          56.75
+        ],
+        "size_mm": [
+          30.0,
+          12.0
+        ],
+        "modeled_depth_mm": 3.0,
+        "housing_body_cutout": false,
+        "side": "left",
+        "source_board": "hardware/kicad/draft/x3-v2/kc2_left-x3-v2/kc2_left-x3-v2.kicad_pcb",
+        "source_board_sha256": "90430a97aa2e13dbf8325525f9841b60e0b64d058406dd218162970b01f8e6f6",
+        "fresh_extraction_manifest_binding": true
+      },
       "exterior_bottom_z_mm": 0.0,
       "housing_height_mm": 2.5,
       "desk_standoff_nominal_mm": 1.0,
       "desk_standoff_print_tolerance_mm": 0.3,
       "desk_datum_z_mm": -1.0,
-      "minimum_open_component_to_desk_nominal_clearance_mm": 0.5,
-      "minimum_open_component_to_desk_clearance_mm": 0.5,
+      "minimum_open_component_to_desk_nominal_clearance_mm": 1.0,
+      "minimum_open_component_to_desk_clearance_mm": 0.7,
       "desk_contacts_hidden_in_top_view": true,
       "desk_contact_component_cutout_collision_count": 0,
       "desk_contact_manifest_matches_generator": true,
@@ -205,11 +229,11 @@
       "reset_local_support": {
         "ref": "SW_RST1",
         "board_center_mm": [
-          115.8125,
+          126.0625,
           63.45
         ],
         "housing_center_mm": [
-          54.3,
+          44.05,
           24.2
         ],
         "footprint_side": "top",
@@ -232,7 +256,7 @@
         "electrical_safety_basis": "SW_RST1 pads are F.Cu-only; no via or exterior-open cutout intersects the support, and any B.Cu route overlap remains inside the PCB stack under solder mask.",
         "manifest_matches_generator": true,
         "geometry_board_center_mm": [
-          115.8125,
+          126.0625,
           63.45
         ],
         "geometry_actuator_projection_covered": true,
@@ -998,7 +1022,7 @@
         },
         "controller_socket": {
           "opening_count": 1,
-          "minimum_xy_clearance_mm": 0.3279,
+          "minimum_xy_clearance_mm": 0.3311,
           "exterior_open": true,
           "through_opening_z_mm": [
             0.0,
@@ -1017,32 +1041,75 @@
           "three_dimensional_proof": "source-hash-bound constant-Z STEP extrusion; imported STEP volume/height matches the cutout-differenced support plan",
           "opening_plan_area_matches_manifest": true
         },
-        "battery_body": {
+        "battery_termination": {
           "opening_count": 1,
-          "minimum_xy_clearance_mm": 0.3433,
+          "minimum_xy_clearance_mm": 0.3311,
           "exterior_open": true,
           "through_opening_z_mm": [
             0.0,
             2.5
           ],
-          "opening_plan_area_mm2": 403.375,
-          "minimum_exterior_bottom_clearance_mm": -0.5,
-          "minimum_plate_bottom_clearance_mm": -0.5,
-          "nominal_desk_clearance_mm": 0.5,
+          "opening_plan_area_mm2": 18.3341,
+          "minimum_exterior_bottom_clearance_mm": null,
+          "minimum_plate_bottom_clearance_mm": null,
+          "nominal_desk_clearance_mm": null,
           "desk_standoff_print_tolerance_mm": 0.3,
-          "minimum_desk_clearance_mm": 0.2,
+          "minimum_desk_clearance_mm": null,
           "breaks_lateral_housing_perimeter": false,
-          "minimum_housing_perimeter_land_mm": 0.85,
-          "reference": "TW301525",
-          "board_feature": "B.Fab:TW301525 80mAh",
-          "nominal_plan_envelope_mm": [
-            15.0,
-            25.0
+          "minimum_housing_perimeter_land_mm": 2.21,
+          "reference": "J_BAT1",
+          "pad_count": 2,
+          "plated_pth_count": 2,
+          "pad_numbers": [
+            "1",
+            "2"
           ],
-          "modeled_max_depth_mm": 3.0,
-          "cutout_allowance_mm": 0.35,
-          "physical_tolerance_status": "pending",
-          "physical_gate": "Maximum thickness/swelling, adhesive retention, lead bend, strain relief, abrasion protection, and actual placement tolerance remain pending.",
+          "required_pad_envelope_count": 2,
+          "cutout_envelopes_overlap": true,
+          "expected_union_opening_count": 1,
+          "pad_envelope_count": 2,
+          "covered_pad_envelope_count": 2,
+          "uncovered_pad_envelope_count": 0,
+          "official_body_depth_max_mm": null,
+          "assembly_allowance_mm": 0.3,
+          "modeled_max_depth_mm": null,
+          "assembly_note": "Exterior-open cutout clears both direct-solder lead holes and solder fillets.",
+          "residual_collision_volume_mm3": 0.0,
+          "three_dimensional_proof": "source-hash-bound constant-Z STEP extrusion; imported STEP volume/height matches the cutout-differenced support plan",
+          "opening_plan_area_matches_manifest": true,
+          "perimeter_land_matches_manifest": true
+        },
+        "power_switch_leads": {
+          "opening_count": 1,
+          "minimum_xy_clearance_mm": 0.3311,
+          "exterior_open": true,
+          "through_opening_z_mm": [
+            0.0,
+            2.5
+          ],
+          "opening_plan_area_mm2": 22.5056,
+          "minimum_exterior_bottom_clearance_mm": null,
+          "minimum_plate_bottom_clearance_mm": null,
+          "nominal_desk_clearance_mm": null,
+          "desk_standoff_print_tolerance_mm": 0.3,
+          "minimum_desk_clearance_mm": null,
+          "breaks_lateral_housing_perimeter": false,
+          "minimum_housing_perimeter_land_mm": 2.51,
+          "reference": "SW_PWR1",
+          "pad_count": 3,
+          "all_round_plated_pth": true,
+          "drill_count": 3,
+          "drill_diameter_mm": 0.8,
+          "pitch_mm": 2.54,
+          "pad_numbers": [
+            "1",
+            "2",
+            "3"
+          ],
+          "official_body_depth_max_mm": null,
+          "assembly_allowance_mm": 0.3,
+          "modeled_max_depth_mm": null,
+          "assembly_note": "Exterior-open cutout clears all three IMMS-12V leads and solder fillets.",
           "residual_collision_volume_mm3": 0.0,
           "three_dimensional_proof": "source-hash-bound constant-Z STEP extrusion; imported STEP volume/height matches the cutout-differenced support plan",
           "opening_plan_area_matches_manifest": true,
@@ -1062,12 +1129,15 @@
           "nominal_desk_clearance_mm": null,
           "desk_standoff_print_tolerance_mm": 0.3,
           "minimum_desk_clearance_mm": null,
+          "breaks_lateral_housing_perimeter": false,
+          "minimum_housing_perimeter_land_mm": 5.7515,
           "official_body_depth_max_mm": null,
           "assembly_allowance_mm": null,
           "modeled_max_depth_mm": null,
           "residual_collision_volume_mm3": 0.0,
           "three_dimensional_proof": "source-hash-bound constant-Z STEP extrusion; imported STEP volume/height matches the cutout-differenced support plan",
-          "opening_plan_area_matches_manifest": true
+          "opening_plan_area_matches_manifest": true,
+          "perimeter_land_matches_manifest": true
         }
       },
       "collision_checks": {
@@ -1114,12 +1184,17 @@
         "reset_topside": {
           "collision_count": 0,
           "intersection_area_mm2": 0.0,
-          "minimum_plan_clearance_mm": 4.0
+          "minimum_plan_clearance_mm": 11.35
         },
-        "battery_body": {
+        "battery_termination": {
           "collision_count": 0,
           "intersection_area_mm2": 0.0,
-          "minimum_plan_clearance_mm": 0.55
+          "minimum_plan_clearance_mm": 1.91
+        },
+        "power_switch_leads": {
+          "collision_count": 0,
+          "intersection_area_mm2": 0.0,
+          "minimum_plan_clearance_mm": 2.21
         },
         "battery_slot": {
           "collision_count": 0,
@@ -1142,12 +1217,12 @@
         -1.0,
         2.5
       ],
-      "step_volume_mm3": 16947.5096,
-      "planned_step_volume_mm3": 16947.5117,
+      "step_volume_mm3": 17498.6831,
+      "planned_step_volume_mm3": 17498.6852,
       "step_volume_error_mm3": 0.0021,
       "step_volume_matches_plan": true,
-      "step_top_contact_area_mm2": 6736.9205,
-      "planned_top_contact_area_mm2": 6736.9213,
+      "step_top_contact_area_mm2": 6957.3899,
+      "planned_top_contact_area_mm2": 6957.3907,
       "step_top_contact_area_error_mm2": 0.0009,
       "step_top_contact_area_matches_plan": true,
       "printable_parts": [
@@ -1266,12 +1341,12 @@
               47.25
             ],
             [
-              51.5313,
-              56.849
+              44.05,
+              24.2
             ],
             [
-              54.3,
-              24.2
+              51.5313,
+              56.849
             ],
             [
               57.0313,
@@ -1360,12 +1435,12 @@
               47.25
             ],
             [
-              51.5313,
-              56.849
+              44.05,
+              24.2
             ],
             [
-              54.3,
-              24.2
+              51.5313,
+              56.849
             ],
             [
               57.0313,
@@ -1424,16 +1499,40 @@
     },
     "right": {
       "source_board": "hardware/kicad/draft/x3-v2/kc2_right-x3-v2/kc2_right-x3-v2.kicad_pcb",
+      "source_board_sha256": "a6a49f8875e506064ce4bf9e11839b4d932d326ee271fcf4b6bf863c8270b374",
       "source_board_sha256_matches": true,
       "key_count": 39,
       "legacy_registration_refs": [],
+      "battery_above_carrier": {
+        "ref": "BAT1",
+        "center": [
+          78.4,
+          50.75
+        ],
+        "bounds": [
+          63.4,
+          44.75,
+          93.4,
+          56.75
+        ],
+        "size_mm": [
+          30.0,
+          12.0
+        ],
+        "modeled_depth_mm": 3.0,
+        "housing_body_cutout": false,
+        "side": "right",
+        "source_board": "hardware/kicad/draft/x3-v2/kc2_right-x3-v2/kc2_right-x3-v2.kicad_pcb",
+        "source_board_sha256": "a6a49f8875e506064ce4bf9e11839b4d932d326ee271fcf4b6bf863c8270b374",
+        "fresh_extraction_manifest_binding": true
+      },
       "exterior_bottom_z_mm": 0.0,
       "housing_height_mm": 2.5,
       "desk_standoff_nominal_mm": 1.0,
       "desk_standoff_print_tolerance_mm": 0.3,
       "desk_datum_z_mm": -1.0,
-      "minimum_open_component_to_desk_nominal_clearance_mm": 0.5,
-      "minimum_open_component_to_desk_clearance_mm": 0.5,
+      "minimum_open_component_to_desk_nominal_clearance_mm": 1.0,
+      "minimum_open_component_to_desk_clearance_mm": 0.7,
       "desk_contacts_hidden_in_top_view": true,
       "desk_contact_component_cutout_collision_count": 0,
       "desk_contact_manifest_matches_generator": true,
@@ -1584,11 +1683,11 @@
       "reset_local_support": {
         "ref": "SW_RST1",
         "board_center_mm": [
-          94.3,
+          84.05,
           63.45
         ],
         "housing_center_mm": [
-          104.3875,
+          114.6375,
           24.2
         ],
         "footprint_side": "top",
@@ -1605,13 +1704,13 @@
         "component_cutout_collision_count": 0,
         "bottom_exposed_pad_collision_count": 0,
         "via_collision_count": 0,
-        "bottom_routed_copper_overlap_count": 2,
+        "bottom_routed_copper_overlap_count": 0,
         "bottom_routed_copper_solder_mask_protected": true,
         "electrically_safe": true,
         "electrical_safety_basis": "SW_RST1 pads are F.Cu-only; no via or exterior-open cutout intersects the support, and any B.Cu route overlap remains inside the PCB stack under solder mask.",
         "manifest_matches_generator": true,
         "geometry_board_center_mm": [
-          94.3,
+          84.05,
           63.45
         ],
         "geometry_actuator_projection_covered": true,
@@ -2536,7 +2635,7 @@
         },
         "controller_socket": {
           "opening_count": 1,
-          "minimum_xy_clearance_mm": 0.3279,
+          "minimum_xy_clearance_mm": 0.3311,
           "exterior_open": true,
           "through_opening_z_mm": [
             0.0,
@@ -2555,32 +2654,75 @@
           "three_dimensional_proof": "source-hash-bound constant-Z STEP extrusion; imported STEP volume/height matches the cutout-differenced support plan",
           "opening_plan_area_matches_manifest": true
         },
-        "battery_body": {
+        "battery_termination": {
           "opening_count": 1,
-          "minimum_xy_clearance_mm": 0.3433,
+          "minimum_xy_clearance_mm": 0.3341,
           "exterior_open": true,
           "through_opening_z_mm": [
             0.0,
             2.5
           ],
-          "opening_plan_area_mm2": 403.375,
-          "minimum_exterior_bottom_clearance_mm": -0.5,
-          "minimum_plate_bottom_clearance_mm": -0.5,
-          "nominal_desk_clearance_mm": 0.5,
+          "opening_plan_area_mm2": 18.3341,
+          "minimum_exterior_bottom_clearance_mm": null,
+          "minimum_plate_bottom_clearance_mm": null,
+          "nominal_desk_clearance_mm": null,
           "desk_standoff_print_tolerance_mm": 0.3,
-          "minimum_desk_clearance_mm": 0.2,
+          "minimum_desk_clearance_mm": null,
           "breaks_lateral_housing_perimeter": false,
-          "minimum_housing_perimeter_land_mm": 0.85,
-          "reference": "TW301525",
-          "board_feature": "B.Fab:TW301525 80mAh",
-          "nominal_plan_envelope_mm": [
-            15.0,
-            25.0
+          "minimum_housing_perimeter_land_mm": 2.21,
+          "reference": "J_BAT1",
+          "pad_count": 2,
+          "plated_pth_count": 2,
+          "pad_numbers": [
+            "1",
+            "2"
           ],
-          "modeled_max_depth_mm": 3.0,
-          "cutout_allowance_mm": 0.35,
-          "physical_tolerance_status": "pending",
-          "physical_gate": "Maximum thickness/swelling, adhesive retention, lead bend, strain relief, abrasion protection, and actual placement tolerance remain pending.",
+          "required_pad_envelope_count": 2,
+          "cutout_envelopes_overlap": true,
+          "expected_union_opening_count": 1,
+          "pad_envelope_count": 2,
+          "covered_pad_envelope_count": 2,
+          "uncovered_pad_envelope_count": 0,
+          "official_body_depth_max_mm": null,
+          "assembly_allowance_mm": 0.3,
+          "modeled_max_depth_mm": null,
+          "assembly_note": "Exterior-open cutout clears both direct-solder lead holes and solder fillets.",
+          "residual_collision_volume_mm3": 0.0,
+          "three_dimensional_proof": "source-hash-bound constant-Z STEP extrusion; imported STEP volume/height matches the cutout-differenced support plan",
+          "opening_plan_area_matches_manifest": true,
+          "perimeter_land_matches_manifest": true
+        },
+        "power_switch_leads": {
+          "opening_count": 1,
+          "minimum_xy_clearance_mm": 0.3311,
+          "exterior_open": true,
+          "through_opening_z_mm": [
+            0.0,
+            2.5
+          ],
+          "opening_plan_area_mm2": 22.5056,
+          "minimum_exterior_bottom_clearance_mm": null,
+          "minimum_plate_bottom_clearance_mm": null,
+          "nominal_desk_clearance_mm": null,
+          "desk_standoff_print_tolerance_mm": 0.3,
+          "minimum_desk_clearance_mm": null,
+          "breaks_lateral_housing_perimeter": false,
+          "minimum_housing_perimeter_land_mm": 2.51,
+          "reference": "SW_PWR1",
+          "pad_count": 3,
+          "all_round_plated_pth": true,
+          "drill_count": 3,
+          "drill_diameter_mm": 0.8,
+          "pitch_mm": 2.54,
+          "pad_numbers": [
+            "1",
+            "2",
+            "3"
+          ],
+          "official_body_depth_max_mm": null,
+          "assembly_allowance_mm": 0.3,
+          "modeled_max_depth_mm": null,
+          "assembly_note": "Exterior-open cutout clears all three IMMS-12V leads and solder fillets.",
           "residual_collision_volume_mm3": 0.0,
           "three_dimensional_proof": "source-hash-bound constant-Z STEP extrusion; imported STEP volume/height matches the cutout-differenced support plan",
           "opening_plan_area_matches_manifest": true,
@@ -2600,12 +2742,15 @@
           "nominal_desk_clearance_mm": null,
           "desk_standoff_print_tolerance_mm": 0.3,
           "minimum_desk_clearance_mm": null,
+          "breaks_lateral_housing_perimeter": false,
+          "minimum_housing_perimeter_land_mm": 5.7515,
           "official_body_depth_max_mm": null,
           "assembly_allowance_mm": null,
           "modeled_max_depth_mm": null,
           "residual_collision_volume_mm3": 0.0,
           "three_dimensional_proof": "source-hash-bound constant-Z STEP extrusion; imported STEP volume/height matches the cutout-differenced support plan",
-          "opening_plan_area_matches_manifest": true
+          "opening_plan_area_matches_manifest": true,
+          "perimeter_land_matches_manifest": true
         }
       },
       "collision_checks": {
@@ -2652,12 +2797,17 @@
         "reset_topside": {
           "collision_count": 0,
           "intersection_area_mm2": 0.0,
-          "minimum_plan_clearance_mm": 4.0
+          "minimum_plan_clearance_mm": 11.35
         },
-        "battery_body": {
+        "battery_termination": {
           "collision_count": 0,
           "intersection_area_mm2": 0.0,
-          "minimum_plan_clearance_mm": 0.55
+          "minimum_plan_clearance_mm": 1.91
+        },
+        "power_switch_leads": {
+          "collision_count": 0,
+          "intersection_area_mm2": 0.0,
+          "minimum_plan_clearance_mm": 2.21
         },
         "battery_slot": {
           "collision_count": 0,
@@ -2680,12 +2830,12 @@
         -1.0,
         2.5
       ],
-      "step_volume_mm3": 19133.6936,
-      "planned_step_volume_mm3": 19133.6962,
+      "step_volume_mm3": 19684.8167,
+      "planned_step_volume_mm3": 19684.8193,
       "step_volume_error_mm3": 0.0027,
       "step_volume_matches_plan": true,
-      "step_top_contact_area_mm2": 7609.7391,
-      "planned_top_contact_area_mm2": 7609.7402,
+      "step_top_contact_area_mm2": 7830.1883,
+      "planned_top_contact_area_mm2": 7830.1894,
       "step_top_contact_area_error_mm2": 0.0011,
       "step_top_contact_area_matches_plan": true,
       "printable_parts": [
@@ -2892,12 +3042,12 @@
               86.281
             ],
             [
-              104.3875,
-              24.2
-            ],
-            [
               107.013,
               55.849
+            ],
+            [
+              114.6375,
+              24.2
             ],
             [
               124.0405,
@@ -2942,12 +3092,12 @@
               86.281
             ],
             [
-              104.3875,
-              24.2
-            ],
-            [
               107.013,
               55.849
+            ],
+            [
+              114.6375,
+              24.2
             ],
             [
               124.0405,
@@ -3013,7 +3163,7 @@
         "fastener_count": 0,
         "discarded_island_area_ratio": [
           0.0,
-          4e-05
+          3.8e-05
         ],
         "discarded_island_volume_ratio": [
           0.0,
@@ -3022,7 +3172,7 @@
         "glue_assumed": false,
         "feature_collision_count": 0,
         "support_collision_count": 0,
-        "planned_top_contact_area_mm2": 7609.7402,
+        "planned_top_contact_area_mm2": 7830.1894,
         "assembly": "Lower the two full-depth housing parts together vertically so both keyed neck-and-head features enter their print-cleared sockets; no screw or adhesive is used.",
         "support_load_path_preserved": true
       }
@@ -3034,6 +3184,6 @@
     "maximum_displacement_mm": 0.3
   },
   "fabrication_or_order_ready": false,
-  "order_readiness_blocker": "CON-ARCH-006 AC-7 physical coupon evidence is pending: exact screw MPN and drawing; minimum and maximum head diameter and height; maximum finished PCB-hole diameter and minimum radial bearing width or equivalent pull-through/clamp-retention evidence; exact driver MPN, maximum shaft diameter, and runout; printed pilot diameter, actual PCB thickness, installed penetration, and tip clearance; tapping torque, stripping torque with at least 2.0 ratio and 3.0 target, and selected installation torque; ten install/remove cycles without cracking, spin, or pull-out; full-pattern assembly without sequential forcing; actual installed switch and keycap-skirt clearance; and a 2.0 N deflection test at every worst-case support span with no more than 0.30 mm displacement, rocking, permanent deformation, support disengagement, or fastener loosening. CON-ARCH-006 AC-11 controller-service physical evidence is also pending: exact reset supplier Z/travel/force/reflow limits, actual socketed-controller and nonconductive-probe service, USB shell/cable clearance, ten successful double-reset cycles and bootloader enumeration, plus battery maximum thickness/swelling, adhesive retention, lead bend, strain relief, abrasion protection, actual placement tolerance, and desk clearance.",
+  "order_readiness_blocker": "CON-ARCH-006 AC-7 physical coupon evidence is pending: exact screw MPN and drawing; minimum and maximum head diameter and height; maximum finished PCB-hole diameter and minimum radial bearing width or equivalent pull-through/clamp-retention evidence; exact driver MPN, maximum shaft diameter, and runout; printed pilot diameter, actual PCB thickness, installed penetration, and tip clearance; tapping torque, stripping torque with at least 2.0 ratio and 3.0 target, and selected installation torque; ten install/remove cycles without cracking, spin, or pull-out; full-pattern assembly without sequential forcing; actual installed switch and keycap-skirt clearance; and a 2.0 N deflection test at every worst-case support span with no more than 0.30 mm displacement, rocking, permanent deformation, support disengagement, or fastener loosening. CON-ARCH-006 AC-11 controller-service physical evidence is also pending: exact reset supplier Z/travel/force/reflow limits, actual socketed-controller and nonconductive-probe service, USB shell/cable clearance, ten successful double-reset cycles and bootloader enumeration, plus exact protected-pack MPN, maximum swollen thickness, socket/controller stack clearance, insulation, lead bend, strain relief, J_BAT1/IMMS solder protrusion, and actual POWER/RESET access. REL-ARCH-001 AC-3/4/5 evidence is also pending: 20 cold OFF-to-ON and 20 ON-to-OFF transitions at each required pack voltage, final-assembly RSSI and packet-loss/disconnect A/B limits, and battery-only, USB charging, charge-complete, and USB-unplug state coverage.",
   "stale_monolithic_right_stl_present": false
 }

@@ -1,0 +1,1 @@
+{"iter":1,"changes":["Created a complete MCP-call sidecar with manual_srs_edits empty.","Defined empty/exact non-empty net-name semantics without invented local normalization.","Replaced temporary traces with fixed-commit GitHub URLs.","Fixed exact tool-count deltas and the sentinel selector contract."],"via":"speckiwi MCP only for SRS"}

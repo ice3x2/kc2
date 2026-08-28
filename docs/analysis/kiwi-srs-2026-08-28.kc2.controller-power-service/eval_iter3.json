@@ -1,0 +1,17 @@
+{
+  "evaluator": "verify-pass-1",
+  "iter": 3,
+  "summary": {
+    "CRITICAL": 0,
+    "HIGH": 3,
+    "MEDIUM": 2,
+    "LOW": 1
+  },
+  "resolved": [
+    "Made classification.json and srs_delta.json use new-feature as the valid top-level 4-way classification.",
+    "Recorded existing requirement changes as consistency synchronization rather than replacement updates.",
+    "Added negative code traces for current noncompliant code without triggering the addition-site status cap.",
+    "Corrected packet loss to missing sequence numbers divided by actual N >= 10000.",
+    "Replaced analysis-directory Related Docs with concrete evidence files."
+  ]
+}

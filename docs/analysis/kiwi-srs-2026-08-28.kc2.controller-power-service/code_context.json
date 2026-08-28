@@ -1,0 +1,71 @@
+{
+  "relevant_files": [
+    {
+      "path": "tools/generate_kc2_pcbs.py",
+      "line_range": "151-169,1196-1605,2183-2408",
+      "signature": "controller service generation and manifest",
+      "relevance": "Currently emits TW301525, no carrier power and USB-under-controller reset; must generate the new power, battery and reset contract."
+    },
+    {
+      "path": "tools/test_verify_kc2_x3_v2.py",
+      "line_range": "249-275,630-714,828-901,1045-1050,1321-1422,1541-1720",
+      "signature": "controller-service TDD contract",
+      "relevance": "Must be changed test-first to reject the old power and placement contract."
+    },
+    {
+      "path": "tools/verify_kc2_x3_v2.py",
+      "line_range": "460-553,987-1050,1326-1410,1660-1690,1765-1770",
+      "signature": "routed PCB verifier",
+      "relevance": "Needs exact power-switch pads/nets, battery pads, reset mirror placement and RF keepout gates."
+    },
+    {
+      "path": "tools/finalize_kc2_x3_v2_routes.py",
+      "line_range": "24-133,185-410,451-610,804-986",
+      "signature": "deterministic controller routing",
+      "relevance": "Current routes and digests encode USB-under-reset and no carrier power."
+    },
+    {
+      "path": "tools/generate_kc2_x3_v2_housings.py",
+      "line_range": "39-77,183-250,375-520,674-939,1568-1915",
+      "signature": "housing component envelopes",
+      "relevance": "Must remove the bottom battery-body cavity and add IMMS lead/solder clearance plus relocated reset support."
+    },
+    {
+      "path": "tools/test_verify_kc2_x3_v2_housing.py; tools/verify_kc2_x3_v2_housing.py",
+      "line_range": "battery/reset/cutout contracts",
+      "signature": "housing TDD and release gate",
+      "relevance": "Must reject the historical TW301525 cavity and verify the new controller-service underside features."
+    },
+    {
+      "path": "third_party/kc2.pretty",
+      "line_range": "owned footprint library",
+      "signature": "KC2 footprints",
+      "relevance": "Requires an exact IMMS-12V footprint and a direct-solder battery/strain-relief footprint; the existing NW3 reset footprint is reused."
+    },
+    {
+      "path": "docs/spec/10.product-architecture.srs.md",
+      "line_range": "396-505,567-680",
+      "signature": "CON-ARCH-004 and CON-ARCH-006",
+      "relevance": "Contains the active contradictory battery, reset, carrier-power and housing-cavity clauses."
+    }
+  ],
+  "related_modules": [
+    "requirements_ssot",
+    "pcb_generation_and_owned_library",
+    "pcb_contract_verification",
+    "deterministic_routing",
+    "housing_cad_and_verification",
+    "derived_outputs"
+  ],
+  "missing_evidence": [
+    "Exact purchased 301230 cell MPN, protected-pack drawing, swollen thickness and lead exit",
+    "Physical 8 mm stack measurement with insulation and no pouch compression",
+    "Final IMMS switch-center coordinates and first-article accessibility",
+    "Final assembled RSSI/PER and charging-state comparison",
+    "Power-transition VBAT/VDD evidence"
+  ],
+  "external_paths_detected": [],
+  "rejected_findings": [
+    "A prior code-context report inferred an A2501 connector. The user instead selected direct soldering, so no A2501 footprint, housing or polarity contract belongs to this change."
+  ]
+}

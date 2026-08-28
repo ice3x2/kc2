@@ -1,0 +1,41 @@
+{
+  "summary": "Give each KC2 X3 V2 half a protected 301230-class 3.7 V 100 mAh battery beneath its socketed nice!nano, direct-solder the insulated battery leads to the carrier, switch BAT+ with an IMMS-12V, return reset to the controller-key gap, mirror POWER/RESET outside-in, remove the obsolete lower-housing battery cavity, and preserve antenna/RF gates.",
+  "intent_type_hint": "new-feature",
+  "key_entities": [
+    "301230 protected Li-Po",
+    "nice!nano v2",
+    "IMMS-12V",
+    "NW3-A06-B3",
+    "direct-solder battery pads",
+    "BAT_LEAD_SLOT1 strain relief",
+    "antenna keepout",
+    "lower housing"
+  ],
+  "ambiguities": [],
+  "resolved_assumptions": [
+    "Direct soldering applies only to insulated leads already attached to the protected cell; soldering bare pouch tabs is forbidden.",
+    "The exact purchasable 301230 MPN, maximum swollen thickness and lead exit remain a physical procurement gate before ordering, not a blocker to digital implementation.",
+    "All absolute left/right placement statements use the PCB top/component-side view.",
+    "Each half is electrically independent and receives one battery, one power switch and one reset switch.",
+    "The existing lead slot may remain only as an unnetted strain-relief feature; the lower housing shall not contain a battery-body cavity.",
+    "No A2501 board connector or A2501-02Y housing is installed in this design."
+  ],
+  "implied_requirements": [
+    "BAT+ passes through the local power switch; B- remains unswitched.",
+    "IMMS common pad 1 and selected throw pad 2 are used; pad 3 remains no-connect.",
+    "Outside-to-inside order is POWER, RESET, antenna on both halves.",
+    "The battery, switch metal, pads, traces and leads remain outside the antenna keepout volume.",
+    "The socketed controller remains removable with the battery installed.",
+    "First-article BLE and power-transition tests remain mandatory."
+  ],
+  "semantic_equivalences": [
+    {
+      "prompt_term": "under the controller",
+      "normalized": "between the carrier PCB top and the socketed nice!nano underside, not below the carrier in the lower housing"
+    },
+    {
+      "prompt_term": "left/right switch placement",
+      "normalized": "left half top view PWR|RST; right half top view RST|PWR"
+    }
+  ]
+}

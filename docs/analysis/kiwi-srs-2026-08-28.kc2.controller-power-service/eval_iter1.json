@@ -1,0 +1,44 @@
+{
+  "evaluator": "verify-pass-1",
+  "iter": 1,
+  "summary": {
+    "CRITICAL": 2,
+    "HIGH": 8,
+    "MEDIUM": 3,
+    "LOW": 1
+  },
+  "top_findings": [
+    {
+      "finding_hash": "6b9d86b7333f44afe3f5ee3f74f77b277a07b4eb",
+      "severity": "CRITICAL",
+      "axis": "internal_coherence",
+      "req_id": "CON-ARCH-007",
+      "description": "The fixed switch centers provide 2.20 mm body clearance, not 1.00 mm."
+    },
+    {
+      "finding_hash": "e6bb135ced6821f3cb00034f4d42fa3e5a7ccbeb",
+      "severity": "CRITICAL",
+      "axis": "feasibility",
+      "req_id": "CON-ARCH-007",
+      "description": "The visual 8 mm estimate must not be represented as measured fit evidence."
+    },
+    {
+      "severity": "HIGH",
+      "axis": "delta",
+      "req_id": "CON-ARCH-004, CON-ARCH-006",
+      "description": "Affected requirements need their own 2026-08-28 Change Notes."
+    },
+    {
+      "severity": "HIGH",
+      "axis": "trace",
+      "req_id": "CON-ARCH-007, REL-ARCH-001",
+      "description": "Pre-implementation requirements need code addition-site traces and a pre-implementation status."
+    },
+    {
+      "severity": "HIGH",
+      "axis": "internal_coherence",
+      "req_id": "CON-ARCH-007, REL-ARCH-001",
+      "description": "Strain-relief and RF/power test conditions need deterministic criteria."
+    }
+  ]
+}

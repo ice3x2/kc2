@@ -1,0 +1,256 @@
+{
+  "classification": "new-feature",
+  "classification_parts": [
+    "OPS-ARCH-004:new-feature"
+  ],
+  "mode": "live",
+  "mcp_calls": [
+    {
+      "tool": "add_requirement",
+      "args_summary": {
+        "title": "Live MCP editing of placed pad nets and board-level graphics",
+        "target": "kc2-x3-v2",
+        "changeNotes": "invalid format"
+      },
+      "ok": false,
+      "error": "add_requirement rejected the Change Notes format"
+    },
+    {
+      "tool": "add_requirement",
+      "result_id": "OPS-ARCH-004",
+      "result_status": "planned",
+      "result_stability": "evolving",
+      "ok": true
+    },
+    {
+      "tool": "add_trace_link",
+      "args": {
+        "id": "OPS-ARCH-004",
+        "reference": "OPS-ARCH-003",
+        "relation": "extends"
+      },
+      "ok": true
+    },
+    {
+      "tool": "add_trace_link",
+      "args": {
+        "id": "CON-ARCH-007",
+        "reference": "OPS-ARCH-004",
+        "relation": "depends_on"
+      },
+      "ok": true
+    },
+    {
+      "tool": "validate_spec",
+      "args": {
+        "strict": true
+      },
+      "ok": true
+    },
+    {
+      "tool": "get_active_target",
+      "result_target": "kc2-x3-v2",
+      "ok": true
+    },
+    {
+      "tool": "get_requirement",
+      "args": {
+        "id": "OPS-ARCH-004",
+        "includeMarkdown": true
+      },
+      "ok": true
+    },
+    {
+      "tool": "replace_acceptance_criteria",
+      "args": {
+        "id": "OPS-ARCH-004",
+        "dryRun": true
+      },
+      "ok": true
+    },
+    {
+      "tool": "replace_acceptance_criteria",
+      "args": {
+        "id": "OPS-ARCH-004"
+      },
+      "ok": true
+    },
+    {
+      "tool": "edit_requirement_fields",
+      "args": {
+        "id": "OPS-ARCH-004",
+        "field": "relatedDocs",
+        "dryRun": true
+      },
+      "ok": true
+    },
+    {
+      "tool": "edit_requirement_fields",
+      "args": {
+        "id": "OPS-ARCH-004",
+        "field": "relatedDocs"
+      },
+      "ok": true
+    },
+    {
+      "tool": "edit_requirement_table_rows",
+      "args": {
+        "id": "OPS-ARCH-004",
+        "section": "trace_links",
+        "purpose": "delete two temporary-path Code rows",
+        "dryRun": true
+      },
+      "ok": true
+    },
+    {
+      "tool": "edit_requirement_table_rows",
+      "args": {
+        "id": "OPS-ARCH-004",
+        "section": "trace_links",
+        "purpose": "delete two temporary-path Code rows"
+      },
+      "ok": true
+    },
+    {
+      "tool": "add_trace_link",
+      "args": {
+        "id": "OPS-ARCH-004",
+        "reference": "https://github.com/ice3x2/Konnect/blob/8039dd79bdcda92e5512896cbee2939f4cadfc04/crates/konnect-core/src/tools/pcb_components.rs#L1755-L2010",
+        "relation": "negative"
+      },
+      "ok": true
+    },
+    {
+      "tool": "add_trace_link",
+      "args": {
+        "id": "OPS-ARCH-004",
+        "reference": "https://github.com/ice3x2/Konnect/blob/8039dd79bdcda92e5512896cbee2939f4cadfc04/crates/konnect-core/src/tools/pcb_board.rs#L603-L899",
+        "relation": "negative"
+      },
+      "ok": true
+    },
+    {
+      "tool": "validate_spec",
+      "args": {
+        "strict": true,
+        "failOnWarning": true
+      },
+      "ok": true
+    },
+    {
+      "tool": "get_requirement",
+      "args": {
+        "id": "OPS-ARCH-004",
+        "includeMarkdown": false,
+        "purpose": "iteration-1 readback"
+      },
+      "ok": true
+    },
+    {
+      "tool": "validate_spec",
+      "args": {
+        "strict": true,
+        "failOnWarning": true,
+        "purpose": "iteration-1 final validation"
+      },
+      "ok": true
+    },
+    {
+      "tool": "get_requirement",
+      "args": {
+        "id": "OPS-ARCH-004",
+        "includeMarkdown": false,
+        "purpose": "iteration-2 precondition"
+      },
+      "ok": true
+    },
+    {
+      "tool": "replace_acceptance_criteria",
+      "args": {
+        "id": "OPS-ARCH-004",
+        "dryRun": true,
+        "purpose": "make AC-8 sentinel E2E fully reversible"
+      },
+      "ok": true
+    },
+    {
+      "tool": "replace_acceptance_criteria",
+      "args": {
+        "id": "OPS-ARCH-004",
+        "purpose": "make AC-8 sentinel E2E fully reversible"
+      },
+      "ok": true
+    },
+    {
+      "tool": "validate_spec",
+      "args": {
+        "strict": true,
+        "failOnWarning": true,
+        "purpose": "iteration-2 final validation"
+      },
+      "ok": true
+    },
+    {
+      "tool": "get_requirement",
+      "args": {
+        "id": "CON-ARCH-007",
+        "includeMarkdown": false,
+        "purpose": "iteration-3 relation-direction precondition"
+      },
+      "ok": true
+    },
+    {
+      "tool": "edit_requirement_table_rows",
+      "args": {
+        "id": "CON-ARCH-007",
+        "section": "trace_links",
+        "purpose": "delete reverse CON-ARCH-007 to OPS-ARCH-004 dependency",
+        "dryRun": true
+      },
+      "ok": true
+    },
+    {
+      "tool": "edit_requirement_table_rows",
+      "args": {
+        "id": "CON-ARCH-007",
+        "section": "trace_links",
+        "purpose": "delete reverse CON-ARCH-007 to OPS-ARCH-004 dependency"
+      },
+      "ok": true
+    },
+    {
+      "tool": "add_trace_link",
+      "args": {
+        "id": "OPS-ARCH-004",
+        "reference": "CON-ARCH-007",
+        "relation": "depends_on"
+      },
+      "ok": true
+    },
+    {
+      "tool": "validate_spec",
+      "args": {
+        "strict": true,
+        "failOnWarning": true,
+        "purpose": "iteration-3 final validation"
+      },
+      "ok": true
+    }
+  ],
+  "scope_doc_edits": [],
+  "manual_srs_edits": [],
+  "added_ids": [
+    "OPS-ARCH-004"
+  ],
+  "updated_ids": [
+    "CON-ARCH-007",
+    "OPS-ARCH-004"
+  ],
+  "discarded_ids": [],
+  "validate_spec_result": {
+    "ok": true,
+    "errors": 0,
+    "warnings": 0,
+    "diagnostics": []
+  }
+}

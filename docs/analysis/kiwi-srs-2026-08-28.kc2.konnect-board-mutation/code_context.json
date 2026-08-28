@@ -1,0 +1,18 @@
+{
+  "relevant_files": [
+    {"path":"C:/Users/beom/AppData/Local/Temp/konnect-reference-search/crates/konnect-ipc/src/client.rs","line_range":"493-579;748-850;937-1068;1276-1403;1627-1754","signature":"board-specific query/update/delete and Reference transaction","relevance":"Primary IPC transaction addition site."},
+    {"path":"C:/Users/beom/AppData/Local/Temp/konnect-reference-search/crates/konnect-ipc/src/types.rs","line_range":"19-33;57-87;203-230","signature":"IpcPad, Reference state, IpcFootprintGraphic, IpcNet","relevance":"Public pad-net and board-graphic records."},
+    {"path":"C:/Users/beom/AppData/Local/Temp/konnect-reference-search/crates/konnect-core/src/tools/pcb_components.rs","line_range":"1755-2010;2274-2331;3158-3355;6437-6640","signature":"pad queries and Reference handler","relevance":"edit_placed_pad_net schema and handler."},
+    {"path":"C:/Users/beom/AppData/Local/Temp/konnect-reference-search/crates/konnect-core/src/tools/pcb_board.rs","line_range":"181-280;603-772;786-899","signature":"board-path IPC gate and shape decoding","relevance":"list_board_graphics and delete_board_items schemas and handlers."},
+    {"path":"C:/Users/beom/AppData/Local/Temp/konnect-reference-search/crates/konnect-ipc/tests/reference_field_transaction_test.rs","line_range":"1-542","signature":"stateful transaction/readback/restore mock","relevance":"Pad-net transaction test template."},
+    {"path":"C:/Users/beom/AppData/Local/Temp/konnect-reference-search/crates/konnect-core/src/router/registry.rs","line_range":"69-80;137-151","signature":"toolset registry metadata","relevance":"Tool counts and descriptions."}
+  ],
+  "related_modules": ["placed_pad_net_edit", "board_graphic_query_delete", "public_registry_docs"],
+  "missing_evidence": [
+    "No placed-pad net mutation transaction exists.",
+    "No board-path-specific delete_items_in exists.",
+    "No board-level graphic list/delete public tools exist.",
+    "No reversible installed-runtime E2E covers either capability."
+  ],
+  "external_paths_detected": ["C:/Users/beom/AppData/Local/Temp/konnect-reference-search"]
+}

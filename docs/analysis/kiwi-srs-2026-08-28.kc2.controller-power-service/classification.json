@@ -1,0 +1,33 @@
+{
+  "target": "kc2-x3-v2",
+  "classification": "new-feature",
+  "rationale": "The user decision adds a controller power/service architecture constraint and a dependent RF/power reliability requirement. Existing evolving requirements are synchronized through MCP so that they delegate controller-service behavior to the new source of truth; the verified historical requirement remains unchanged and is superseded only through the new requirement's V2-scoped trace.",
+  "affected_existing_reqs": [
+    {
+      "id": "CON-ARCH-004",
+      "relation": "extends",
+      "diff_summary": "Delegate the changed controller-service clauses to the new requirement without replacing the switch/diode requirement."
+    },
+    {
+      "id": "CON-ARCH-006",
+      "relation": "extends",
+      "diff_summary": "Delegate battery/service envelopes to the new requirement without replacing the housing requirement."
+    },
+    {
+      "id": "CON-ARCH-002",
+      "relation": "supersedes",
+      "diff_summary": "Preserve the verified historical X3 rule while overriding it only for target kc2-x3-v2."
+    }
+  ],
+  "proposed_scope": "ARCH",
+  "proposed_prefix": "ARCH",
+  "proposed_type": "constraint",
+  "confidence": "high",
+  "scope_boundary_impact": {
+    "section": "Assumptions and Constraints",
+    "removed_items": ["V2 no-carrier-power", "V2 lower-housing battery body"],
+    "added_items": ["V2 switched carrier BAT+", "V2 between-board 301230 battery", "mirrored power/reset service"],
+    "rationale": "The user explicitly approved the new architecture and requested SRS update followed by implementation."
+  },
+  "external_module_impact": null
+}

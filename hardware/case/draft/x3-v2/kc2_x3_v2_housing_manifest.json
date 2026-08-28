@@ -1,9 +1,14 @@
 {
   "requirement": "CON-ARCH-006",
+  "requirement_ids": [
+    "CON-ARCH-006",
+    "CON-ARCH-007",
+    "REL-ARCH-001"
+  ],
   "variant": "x3-v2",
   "generated_by": "tools/generate_kc2_x3_v2_housings.py",
   "hash_policy": "lf-normalized-utf8-text-else-raw-v1",
-  "generator_sha256": "7260fdef5c93ba9bf18aa82fc9d52da170587251263704a494b070ed6edf9ce6",
+  "generator_sha256": "b997a5313a95c446bb376e70b3d08a1f560c273998afe02ec4ef84bd83e6c3eb",
   "coordinate_system": "board-local, X-reflected physical lower-housing assembly view",
   "order_ready": false,
   "parameters": {
@@ -21,14 +26,18 @@
     "component_cutout_clearance_mm": 0.35,
     "component_cutout_simplify_mm": 0.02,
     "minimum_diode_housing_perimeter_land_mm": 0.85,
-    "minimum_battery_housing_perimeter_land_mm": 0.85,
-    "battery_reference": "TW301525",
-    "battery_board_label": "TW301525 80mAh",
+    "minimum_service_housing_perimeter_land_mm": 0.85,
+    "battery_reference": "BAT1",
     "battery_nominal_plan_envelope_mm": [
-      15.0,
-      25.0
+      30.0,
+      12.0
     ],
     "battery_modeled_depth_mm": 3.0,
+    "battery_housing_body_cutout": false,
+    "battery_termination_reference": "J_BAT1",
+    "power_switch_reference": "SW_PWR1",
+    "power_switch_drill_count": 3,
+    "power_switch_drill_diameter_mm": 0.8,
     "reset_reference": "SW_RST1",
     "reset_local_support_diameter_mm": 3.0,
     "maximum_load_point_to_support_mm": 24.0,
@@ -77,19 +86,41 @@
   "outputs": {
     "left": {
       "source_board": "hardware/kicad/draft/x3-v2/kc2_left-x3-v2/kc2_left-x3-v2.kicad_pcb",
-      "source_board_sha256": "7622bf2fc7e6e4f67d4a863bc1486b3c8851989cdde88a8253ae439b1bd694ca",
+      "source_board_sha256": "90430a97aa2e13dbf8325525f9841b60e0b64d058406dd218162970b01f8e6f6",
       "key_count": 31,
       "legacy_registration_refs": [],
+      "battery_above_carrier": {
+        "ref": "BAT1",
+        "center": [
+          131.7125,
+          50.75
+        ],
+        "bounds": [
+          116.7125,
+          44.75,
+          146.7125,
+          56.75
+        ],
+        "size_mm": [
+          30.0,
+          12.0
+        ],
+        "modeled_depth_mm": 3.0,
+        "housing_body_cutout": false,
+        "side": "left",
+        "source_board": "hardware/kicad/draft/x3-v2/kc2_left-x3-v2/kc2_left-x3-v2.kicad_pcb",
+        "source_board_sha256": "90430a97aa2e13dbf8325525f9841b60e0b64d058406dd218162970b01f8e6f6"
+      },
       "step": "hardware/case/draft/x3-v2/kc2_left_x3_v2_lower_housing.step",
-      "step_sha256": "dbeb66d56fb3eded0f5219077df541d04e9b6474ce97f101af2529a59b966521",
+      "step_sha256": "f9a0148aefc9389f7432642063529796cd614e2475a2f9f50008c3bccbc03295",
       "step_has_trailing_whitespace": false,
       "printable_parts": [
         {
           "name": "whole",
           "stl": "hardware/case/draft/x3-v2/kc2_left_x3_v2_lower_housing.stl",
-          "stl_sha256": "9d59cd50306f741308006285a91cb433f3eb300d7157666b4fcd7e5e0fc17018",
+          "stl_sha256": "c60fd28097e9953545372ad54b3185acdffe01cbf9b242b127365e54dc70ea2b",
           "solid_count": 1,
-          "volume_mm3": 16947.51,
+          "volume_mm3": 17498.683,
           "desk_contact_ids": [
             "LEFT-FOOT-01",
             "LEFT-FOOT-02",
@@ -118,10 +149,10 @@
           "desk_contact_count": 23,
           "desk_contact_z_mm": -1.0,
           "desk_contact_coplanarity_mm": 0.0,
-          "desk_contact_hull_area_mm2": 7329.3988,
+          "desk_contact_hull_area_mm2": 7182.3274,
           "projected_plate_centroid_mm": [
-            67.2652,
-            72.3658
+            66.2011,
+            70.5119
           ],
           "projected_centroid_inside_contact_hull": true,
           "desk_contacts_non_collinear": true,
@@ -144,17 +175,17 @@
       "desk_standoff_nominal_mm": 1.0,
       "desk_standoff_print_tolerance_mm": 0.3,
       "desk_datum_z_mm": -1.0,
-      "minimum_open_component_to_desk_nominal_clearance_mm": 0.5,
-      "minimum_open_component_to_desk_clearance_mm": 0.5,
-      "minimum_open_component_to_desk_clearance_basis": "minimum of controlled bottom-component post-print clearance and the AC-11 nominal 3.00 mm battery-to-desk clearance; battery tolerance is pending",
+      "minimum_open_component_to_desk_nominal_clearance_mm": 1.0,
+      "minimum_open_component_to_desk_clearance_mm": 0.7,
+      "minimum_open_component_to_desk_clearance_basis": "minimum controlled post-print clearance beneath bottom-side Choc socket and ES1B envelopes; BAT1 is above the carrier and has no lower-housing body cutout",
       "reset_local_support": {
         "ref": "SW_RST1",
         "board_center_mm": [
-          115.8125,
+          126.0625,
           63.45
         ],
         "housing_center_mm": [
-          54.3,
+          44.05,
           24.2
         ],
         "footprint_side": "top",
@@ -423,7 +454,7 @@
           "id": "LEFT-RESET-COLUMN",
           "source_support_id": "SW_RST1",
           "category": "reset",
-          "x_mm": 54.3,
+          "x_mm": 44.05,
           "y_mm": 24.2,
           "diameter_mm": 3.0,
           "top_z_mm": 0.0,
@@ -546,7 +577,7 @@
           "assembly_allowance_mm": null,
           "modeled_max_depth_mm": null
         },
-        "battery_body": {
+        "battery_termination": {
           "opening_count": 1,
           "minimum_xy_clearance_mm": 0.35,
           "exterior_open": true,
@@ -554,24 +585,63 @@
             0.0,
             2.5
           ],
-          "opening_plan_area_mm2": 403.375,
-          "minimum_exterior_bottom_clearance_mm": -0.5,
-          "minimum_plate_bottom_clearance_mm": -0.5,
-          "nominal_desk_clearance_mm": 0.5,
+          "opening_plan_area_mm2": 18.3341,
+          "minimum_exterior_bottom_clearance_mm": null,
+          "minimum_plate_bottom_clearance_mm": null,
+          "nominal_desk_clearance_mm": null,
           "desk_standoff_print_tolerance_mm": 0.3,
-          "minimum_desk_clearance_mm": 0.2,
+          "minimum_desk_clearance_mm": null,
           "breaks_lateral_housing_perimeter": false,
-          "minimum_housing_perimeter_land_mm": 0.85,
-          "reference": "TW301525",
-          "board_feature": "B.Fab:TW301525 80mAh",
-          "nominal_plan_envelope_mm": [
-            15.0,
-            25.0
+          "minimum_housing_perimeter_land_mm": 2.21,
+          "reference": "J_BAT1",
+          "pad_count": 2,
+          "plated_pth_count": 2,
+          "pad_numbers": [
+            "1",
+            "2"
           ],
-          "modeled_max_depth_mm": 3.0,
-          "cutout_allowance_mm": 0.35,
-          "physical_tolerance_status": "pending",
-          "physical_gate": "Maximum thickness/swelling, adhesive retention, lead bend, strain relief, abrasion protection, and actual placement tolerance remain pending."
+          "required_pad_envelope_count": 2,
+          "cutout_envelopes_overlap": true,
+          "expected_union_opening_count": 1,
+          "pad_envelope_count": 2,
+          "covered_pad_envelope_count": 2,
+          "uncovered_pad_envelope_count": 0,
+          "official_body_depth_max_mm": null,
+          "assembly_allowance_mm": 0.3,
+          "modeled_max_depth_mm": null,
+          "assembly_note": "Exterior-open cutout clears both direct-solder lead holes and solder fillets."
+        },
+        "power_switch_leads": {
+          "opening_count": 1,
+          "minimum_xy_clearance_mm": 0.35,
+          "exterior_open": true,
+          "through_opening_z_mm": [
+            0.0,
+            2.5
+          ],
+          "opening_plan_area_mm2": 22.5056,
+          "minimum_exterior_bottom_clearance_mm": null,
+          "minimum_plate_bottom_clearance_mm": null,
+          "nominal_desk_clearance_mm": null,
+          "desk_standoff_print_tolerance_mm": 0.3,
+          "minimum_desk_clearance_mm": null,
+          "breaks_lateral_housing_perimeter": false,
+          "minimum_housing_perimeter_land_mm": 2.51,
+          "reference": "SW_PWR1",
+          "pad_count": 3,
+          "all_round_plated_pth": true,
+          "drill_count": 3,
+          "drill_diameter_mm": 0.8,
+          "pitch_mm": 2.54,
+          "pad_numbers": [
+            "1",
+            "2",
+            "3"
+          ],
+          "official_body_depth_max_mm": null,
+          "assembly_allowance_mm": 0.3,
+          "modeled_max_depth_mm": null,
+          "assembly_note": "Exterior-open cutout clears all three IMMS-12V leads and solder fillets."
         },
         "battery_slot": {
           "opening_count": 1,
@@ -587,6 +657,8 @@
           "nominal_desk_clearance_mm": null,
           "desk_standoff_print_tolerance_mm": 0.3,
           "minimum_desk_clearance_mm": null,
+          "breaks_lateral_housing_perimeter": false,
+          "minimum_housing_perimeter_land_mm": 5.7515,
           "official_body_depth_max_mm": null,
           "assembly_allowance_mm": null,
           "modeled_max_depth_mm": null
@@ -1240,23 +1312,45 @@
       "maximum_load_point_to_support_mm": 15.464,
       "maximum_seam_load_point_to_support_mm": 2.85,
       "solid_count": 1,
-      "volume_mm3": 16947.51
+      "volume_mm3": 17498.683
     },
     "right": {
       "source_board": "hardware/kicad/draft/x3-v2/kc2_right-x3-v2/kc2_right-x3-v2.kicad_pcb",
-      "source_board_sha256": "9818536131f80864ff3c7f58682a6a3f45b0281e5c0290b47242f11e8680efac",
+      "source_board_sha256": "a6a49f8875e506064ce4bf9e11839b4d932d326ee271fcf4b6bf863c8270b374",
       "key_count": 39,
       "legacy_registration_refs": [],
+      "battery_above_carrier": {
+        "ref": "BAT1",
+        "center": [
+          78.4,
+          50.75
+        ],
+        "bounds": [
+          63.4,
+          44.75,
+          93.4,
+          56.75
+        ],
+        "size_mm": [
+          30.0,
+          12.0
+        ],
+        "modeled_depth_mm": 3.0,
+        "housing_body_cutout": false,
+        "side": "right",
+        "source_board": "hardware/kicad/draft/x3-v2/kc2_right-x3-v2/kc2_right-x3-v2.kicad_pcb",
+        "source_board_sha256": "a6a49f8875e506064ce4bf9e11839b4d932d326ee271fcf4b6bf863c8270b374"
+      },
       "step": "hardware/case/draft/x3-v2/kc2_right_x3_v2_lower_housing.step",
-      "step_sha256": "d93b5c67708393eb6c56809963deba7dde6821fde8fa6081a7a269acfcb37a46",
+      "step_sha256": "c78306990d61f1938cd946d2828d9b5308a2a5df4657c20bfb2bf65cd693c985",
       "step_has_trailing_whitespace": false,
       "printable_parts": [
         {
           "name": "part_a",
           "stl": "hardware/case/draft/x3-v2/kc2_right_x3_v2_lower_housing_part_a.stl",
-          "stl_sha256": "3c510b4f2265e6a54e9f22cb4cfef348b390b0e1f730abed626d8068396cbbcb",
+          "stl_sha256": "b15b26e0398697583d32ef12c8676c32b53fbe2075f6e7421b484427faefc2e4",
           "solid_count": 1,
-          "volume_mm3": 9711.198,
+          "volume_mm3": 9711.15,
           "desk_contact_ids": [
             "RIGHT-FOOT-01",
             "RIGHT-FOOT-02",
@@ -1274,8 +1368,8 @@
           "desk_contact_coplanarity_mm": 0.0,
           "desk_contact_hull_area_mm2": 2804.1801,
           "projected_plate_centroid_mm": [
-            40.1807,
-            75.0169
+            40.1803,
+            75.017
           ],
           "projected_centroid_inside_contact_hull": true,
           "desk_contacts_non_collinear": true,
@@ -1297,9 +1391,9 @@
         {
           "name": "part_b",
           "stl": "hardware/case/draft/x3-v2/kc2_right_x3_v2_lower_housing_part_b.stl",
-          "stl_sha256": "1ec636a8d09dfe159bc3360f222a956d517a5c9d0f3c6debaa507e8c24a27c2b",
+          "stl_sha256": "531e4561c260c2e86bf38df1998782cf135712af47a12c6334d4ebf2b860d325",
           "solid_count": 1,
-          "volume_mm3": 9422.496,
+          "volume_mm3": 9973.667,
           "desk_contact_ids": [
             "RIGHT-FOOT-03",
             "RIGHT-FOOT-08",
@@ -1317,10 +1411,10 @@
           "desk_contact_count": 12,
           "desk_contact_z_mm": -1.0,
           "desk_contact_coplanarity_mm": 0.0,
-          "desk_contact_hull_area_mm2": 4023.6906,
+          "desk_contact_hull_area_mm2": 3877.6281,
           "projected_plate_centroid_mm": [
-            118.1178,
-            64.9831
+            118.5024,
+            62.1331
           ],
           "projected_centroid_inside_contact_hull": true,
           "desk_contacts_non_collinear": true,
@@ -1343,17 +1437,17 @@
       "desk_standoff_nominal_mm": 1.0,
       "desk_standoff_print_tolerance_mm": 0.3,
       "desk_datum_z_mm": -1.0,
-      "minimum_open_component_to_desk_nominal_clearance_mm": 0.5,
-      "minimum_open_component_to_desk_clearance_mm": 0.5,
-      "minimum_open_component_to_desk_clearance_basis": "minimum of controlled bottom-component post-print clearance and the AC-11 nominal 3.00 mm battery-to-desk clearance; battery tolerance is pending",
+      "minimum_open_component_to_desk_nominal_clearance_mm": 1.0,
+      "minimum_open_component_to_desk_clearance_mm": 0.7,
+      "minimum_open_component_to_desk_clearance_basis": "minimum controlled post-print clearance beneath bottom-side Choc socket and ES1B envelopes; BAT1 is above the carrier and has no lower-housing body cutout",
       "reset_local_support": {
         "ref": "SW_RST1",
         "board_center_mm": [
-          94.3,
+          84.05,
           63.45
         ],
         "housing_center_mm": [
-          104.3875,
+          114.6375,
           24.2
         ],
         "footprint_side": "top",
@@ -1370,7 +1464,7 @@
         "component_cutout_collision_count": 0,
         "bottom_exposed_pad_collision_count": 0,
         "via_collision_count": 0,
-        "bottom_routed_copper_overlap_count": 2,
+        "bottom_routed_copper_overlap_count": 0,
         "bottom_routed_copper_solder_mask_protected": true,
         "electrically_safe": true,
         "electrical_safety_basis": "SW_RST1 pads are F.Cu-only; no via or exterior-open cutout intersects the support, and any B.Cu route overlap remains inside the PCB stack under solder mask."
@@ -1611,7 +1705,7 @@
           "id": "RIGHT-RESET-COLUMN",
           "source_support_id": "SW_RST1",
           "category": "reset",
-          "x_mm": 104.3875,
+          "x_mm": 114.6375,
           "y_mm": 24.2,
           "diameter_mm": 3.0,
           "top_z_mm": 0.0,
@@ -1734,7 +1828,7 @@
           "assembly_allowance_mm": null,
           "modeled_max_depth_mm": null
         },
-        "battery_body": {
+        "battery_termination": {
           "opening_count": 1,
           "minimum_xy_clearance_mm": 0.35,
           "exterior_open": true,
@@ -1742,24 +1836,63 @@
             0.0,
             2.5
           ],
-          "opening_plan_area_mm2": 403.375,
-          "minimum_exterior_bottom_clearance_mm": -0.5,
-          "minimum_plate_bottom_clearance_mm": -0.5,
-          "nominal_desk_clearance_mm": 0.5,
+          "opening_plan_area_mm2": 18.3341,
+          "minimum_exterior_bottom_clearance_mm": null,
+          "minimum_plate_bottom_clearance_mm": null,
+          "nominal_desk_clearance_mm": null,
           "desk_standoff_print_tolerance_mm": 0.3,
-          "minimum_desk_clearance_mm": 0.2,
+          "minimum_desk_clearance_mm": null,
           "breaks_lateral_housing_perimeter": false,
-          "minimum_housing_perimeter_land_mm": 0.85,
-          "reference": "TW301525",
-          "board_feature": "B.Fab:TW301525 80mAh",
-          "nominal_plan_envelope_mm": [
-            15.0,
-            25.0
+          "minimum_housing_perimeter_land_mm": 2.21,
+          "reference": "J_BAT1",
+          "pad_count": 2,
+          "plated_pth_count": 2,
+          "pad_numbers": [
+            "1",
+            "2"
           ],
-          "modeled_max_depth_mm": 3.0,
-          "cutout_allowance_mm": 0.35,
-          "physical_tolerance_status": "pending",
-          "physical_gate": "Maximum thickness/swelling, adhesive retention, lead bend, strain relief, abrasion protection, and actual placement tolerance remain pending."
+          "required_pad_envelope_count": 2,
+          "cutout_envelopes_overlap": true,
+          "expected_union_opening_count": 1,
+          "pad_envelope_count": 2,
+          "covered_pad_envelope_count": 2,
+          "uncovered_pad_envelope_count": 0,
+          "official_body_depth_max_mm": null,
+          "assembly_allowance_mm": 0.3,
+          "modeled_max_depth_mm": null,
+          "assembly_note": "Exterior-open cutout clears both direct-solder lead holes and solder fillets."
+        },
+        "power_switch_leads": {
+          "opening_count": 1,
+          "minimum_xy_clearance_mm": 0.35,
+          "exterior_open": true,
+          "through_opening_z_mm": [
+            0.0,
+            2.5
+          ],
+          "opening_plan_area_mm2": 22.5056,
+          "minimum_exterior_bottom_clearance_mm": null,
+          "minimum_plate_bottom_clearance_mm": null,
+          "nominal_desk_clearance_mm": null,
+          "desk_standoff_print_tolerance_mm": 0.3,
+          "minimum_desk_clearance_mm": null,
+          "breaks_lateral_housing_perimeter": false,
+          "minimum_housing_perimeter_land_mm": 2.51,
+          "reference": "SW_PWR1",
+          "pad_count": 3,
+          "all_round_plated_pth": true,
+          "drill_count": 3,
+          "drill_diameter_mm": 0.8,
+          "pitch_mm": 2.54,
+          "pad_numbers": [
+            "1",
+            "2",
+            "3"
+          ],
+          "official_body_depth_max_mm": null,
+          "assembly_allowance_mm": 0.3,
+          "modeled_max_depth_mm": null,
+          "assembly_note": "Exterior-open cutout clears all three IMMS-12V leads and solder fillets."
         },
         "battery_slot": {
           "opening_count": 1,
@@ -1775,6 +1908,8 @@
           "nominal_desk_clearance_mm": null,
           "desk_standoff_print_tolerance_mm": 0.3,
           "minimum_desk_clearance_mm": null,
+          "breaks_lateral_housing_perimeter": false,
+          "minimum_housing_perimeter_land_mm": 5.7515,
           "official_body_depth_max_mm": null,
           "assembly_allowance_mm": null,
           "modeled_max_depth_mm": null
@@ -2508,7 +2643,7 @@
       "maximum_load_point_to_support_mm": 18.9619,
       "maximum_seam_load_point_to_support_mm": 2.85,
       "solid_count": 2,
-      "volume_mm3": 19133.694,
+      "volume_mm3": 19684.817,
       "split_joint": {
         "type": "full_depth_vertical_keyed_puzzle",
         "part_count": 2,
@@ -2535,7 +2670,7 @@
         "fastener_count": 0,
         "discarded_island_area_ratio": [
           0.0,
-          4e-05
+          3.8e-05
         ],
         "discarded_island_volume_ratio": [
           0.0,
@@ -2544,7 +2679,7 @@
         "glue_assumed": false,
         "feature_collision_count": 0,
         "support_collision_count": 0,
-        "planned_top_contact_area_mm2": 7609.7402,
+        "planned_top_contact_area_mm2": 7830.1894,
         "assembly": "Lower the two full-depth housing parts together vertically so both keyed neck-and-head features enter their print-cleared sockets; no screw or adhesive is used."
       }
     }

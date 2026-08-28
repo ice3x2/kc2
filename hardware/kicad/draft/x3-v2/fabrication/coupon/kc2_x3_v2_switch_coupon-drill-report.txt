@@ -1,5 +1,5 @@
 Drill report for kc2_x3_v2_switch_coupon.kicad_pcb
-Created on 2026-08-26T08:57:10
+Created on 2026-08-29T02:59:52
 
 Copper Layer Stackup:
     =============================================================

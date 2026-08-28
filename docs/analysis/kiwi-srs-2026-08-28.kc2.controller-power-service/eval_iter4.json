@@ -1,0 +1,16 @@
+{
+  "evaluator": "verify-pass-1",
+  "iter": 4,
+  "summary": {
+    "CRITICAL": 0,
+    "HIGH": 1,
+    "MEDIUM": 2,
+    "LOW": 1
+  },
+  "resolved": [
+    "Added the final negative Code trace calls to srs_delta.json.",
+    "Changed affected requirement relation labels to canonical extends and supersedes.",
+    "Aligned protection wording to documentation of actual status before ordering.",
+    "Kept historical planned-status notes and added a superseding negative-trace note."
+  ]
+}

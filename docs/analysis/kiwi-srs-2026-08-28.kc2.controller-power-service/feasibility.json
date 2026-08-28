@@ -1,0 +1,19 @@
+{
+  "implementability": "medium",
+  "product_fit": "core",
+  "rationale": "The repository already has controller generation, a direct-solder power-pad primitive, the exact reset footprint, deterministic geometry tests and housing regeneration. New owned IMMS and battery termination footprints, power nets, routing, housing envelopes and evidence regeneration are required but do not require an external module.",
+  "code_evidence": [
+    "tools/generate_kc2_pcbs.py:1196-1605",
+    "tools/test_verify_kc2_x3_v2.py:630-714",
+    "tools/generate_kc2_x3_v2_housings.py:183-250",
+    "third_party/kc2.pretty/SW_NW3_A06_B3_SMD.kicad_mod"
+  ],
+  "blockers": [],
+  "conditions": [
+    "Keep order_ready false until the exact protected 301230 pack and physical stack are measured.",
+    "Use test-first changes and route all protected KiCad source mutations through Konnect.",
+    "Regenerate and rebind all DRC, mechanical, housing, render and fabrication evidence.",
+    "Run final assembled BLE and power-transition tests before fabrication approval."
+  ],
+  "external_module_required": false
+}

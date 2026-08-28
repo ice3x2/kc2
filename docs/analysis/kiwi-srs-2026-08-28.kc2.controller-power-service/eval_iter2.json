@@ -1,0 +1,22 @@
+{
+  "evaluator": "verify-pass-1",
+  "iter": 2,
+  "summary": {
+    "CRITICAL": 0,
+    "HIGH": 4,
+    "MEDIUM": 5,
+    "LOW": 0
+  },
+  "resolved_high_findings": [
+    "Replaced the non-enum aggregate classification with per-requirement 4-way classification entries.",
+    "Removed addition-site code traces until implementation evidence exists, preserving planned status.",
+    "Defined a 10000-report packet-loss denominator and 30-minute workload.",
+    "Removed duplicate reverse requirement trace rows."
+  ],
+  "medium_improvements": [
+    "Specified fingertip/fingernail POWER access and <=3 mm nonconductive RESET probe.",
+    "Specified 4.20 V and 3.30 V power-test states and repeat counts.",
+    "Specified RSSI sample count and reproducible hand placement.",
+    "Changed protection from an inferred required pack type to mandatory documentation of actual protection status."
+  ]
+}

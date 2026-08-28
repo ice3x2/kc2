@@ -50,7 +50,7 @@ COMPONENT_MINIMUM_CLEARANCE_MM = 0.30
 COMPONENT_CUTOUT_CLEARANCE_MM = 0.35
 COMPONENT_CUTOUT_SIMPLIFY_MM = 0.02
 MIN_DIODE_HOUSING_PERIMETER_LAND_MM = 0.85
-MIN_BATTERY_HOUSING_PERIMETER_LAND_MM = 0.85
+MIN_SERVICE_HOUSING_PERIMETER_LAND_MM = 0.85
 CHOC_SOCKET_OFFICIAL_BODY_DEPTH_MAX_MM = 2.30
 CHOC_SOCKET_ASSEMBLY_ALLOWANCE_MM = 0.10
 DIODE_MANUFACTURER = "Jingdao Microelectronics"
@@ -66,11 +66,18 @@ DIODE_OFFICIAL_SOURCE = (
 )
 TRACK_CLEARANCE_MM = 0.15
 BATTERY_ACCESS_CLEARANCE_MM = 0.70
-BATTERY_REFERENCE = "TW301525"
-BATTERY_BOARD_LABEL = "TW301525 80mAh"
-BATTERY_NOMINAL_PLAN_ENVELOPE_MM = (15.00, 25.00)
+BATTERY_REFERENCE = "BAT1"
+BATTERY_NOMINAL_PLAN_ENVELOPE_MM = (30.00, 12.00)
 BATTERY_MODELED_DEPTH_MM = 3.00
-BATTERY_LABEL_TO_CENTER_X_MM = 7.00
+BATTERY_CENTERS_MM = {
+    "left": [131.7125, 50.7500],
+    "right": [78.4000, 50.7500],
+}
+BATTERY_TERMINATION_REFERENCE = "J_BAT1"
+POWER_SWITCH_REFERENCE = "SW_PWR1"
+POWER_SWITCH_DRILL_COUNT = 3
+POWER_SWITCH_DRILL_DIAMETER_MM = 0.80
+POWER_SWITCH_PITCH_MM = 2.54
 RESET_REFERENCE = "SW_RST1"
 RESET_BODY_ENVELOPE_MM = (6.10, 3.70)
 RESET_ACTUATOR_ENVELOPE_MM = (2.70, 1.30)
@@ -169,6 +176,142 @@ def _point(pcbnew: Any, value: Any) -> list[float]:
     return [pcbnew.ToMM(value.x), pcbnew.ToMM(value.y)]
 
 
+def validate_battery_termination_pad_records(
+    source_name: str, pads: list[dict[str, Any]]
+) -> dict[str, Any]:
+    if len(pads) != 2:
+        raise RuntimeError(
+            f"{source_name}: {BATTERY_TERMINATION_REFERENCE} must have exactly two pads"
+        )
+    plated_count = sum(bool(pad.get("is_plated_through_hole")) for pad in pads)
+    if plated_count != 2:
+        raise RuntimeError(
+            f"{source_name}: {BATTERY_TERMINATION_REFERENCE} must have two plated PTH pads"
+        )
+    centers = [pad.get("center", []) for pad in pads]
+    sizes = [pad.get("size_mm", []) for pad in pads]
+    if any(len(center) != 2 for center in centers) or any(len(size) != 2 for size in sizes):
+        raise RuntimeError(
+            f"{source_name}: {BATTERY_TERMINATION_REFERENCE} pad envelope is missing"
+        )
+    center_distance = math.hypot(
+        float(centers[1][0]) - float(centers[0][0]),
+        float(centers[1][1]) - float(centers[0][1]),
+    )
+    cutout_radii = [
+        max(float(size[0]), float(size[1])) / 2.0
+        + FILLET_ALLOWANCE_MM
+        + COMPONENT_CUTOUT_CLEARANCE_MM
+        for size in sizes
+    ]
+    cutout_envelopes_overlap = center_distance < sum(cutout_radii) - 1e-6
+    return {
+        "pad_count": 2,
+        "plated_pth_count": 2,
+        "pad_numbers": sorted(str(pad.get("number", "")) for pad in pads),
+        "required_pad_envelope_count": 2,
+        "cutout_envelopes_overlap": cutout_envelopes_overlap,
+        "expected_union_opening_count": 1 if cutout_envelopes_overlap else 2,
+    }
+
+
+def validate_power_switch_pad_records(
+    source_name: str, pads: list[dict[str, Any]]
+) -> dict[str, Any]:
+    if len(pads) != POWER_SWITCH_DRILL_COUNT:
+        raise RuntimeError(
+            f"{source_name}: {POWER_SWITCH_REFERENCE} must have exactly three pads"
+        )
+    if any(
+        not pad.get("is_plated_through_hole") or pad.get("shape") != "circle"
+        for pad in pads
+    ):
+        raise RuntimeError(
+            f"{source_name}: {POWER_SWITCH_REFERENCE} pads must be round plated PTH"
+        )
+    for pad in pads:
+        drill = pad.get("drill_mm", [])
+        if len(drill) != 2 or any(
+            abs(float(value) - POWER_SWITCH_DRILL_DIAMETER_MM) > 1e-6
+            for value in drill
+        ):
+            raise RuntimeError(
+                f"{source_name}: {POWER_SWITCH_REFERENCE} drills must be round "
+                f"{POWER_SWITCH_DRILL_DIAMETER_MM:.2f} mm"
+            )
+    centers = [pad.get("center", []) for pad in pads]
+    if any(len(center) != 2 for center in centers):
+        raise RuntimeError(f"{source_name}: {POWER_SWITCH_REFERENCE} pad center is missing")
+    distances = sorted(
+        round(
+            math.hypot(
+                float(centers[right][0]) - float(centers[left][0]),
+                float(centers[right][1]) - float(centers[left][1]),
+            ),
+            4,
+        )
+        for left in range(3)
+        for right in range(left + 1, 3)
+    )
+    expected_distances = [POWER_SWITCH_PITCH_MM, POWER_SWITCH_PITCH_MM, 5.08]
+    if any(
+        abs(actual - expected) > 1e-4
+        for actual, expected in zip(distances, expected_distances, strict=True)
+    ):
+        raise RuntimeError(
+            f"{source_name}: {POWER_SWITCH_REFERENCE} pad distances are {distances}, "
+            f"expected {expected_distances} mm"
+        )
+    return {
+        "pad_count": 3,
+        "all_round_plated_pth": True,
+        "drill_count": 3,
+        "drill_diameter_mm": POWER_SWITCH_DRILL_DIAMETER_MM,
+        "pitch_mm": POWER_SWITCH_PITCH_MM,
+        "pad_numbers": sorted(str(pad.get("number", "")) for pad in pads),
+    }
+
+
+def bind_battery_extraction_record(
+    side: str,
+    record: dict[str, Any],
+    source_board: str,
+    source_board_sha256: str,
+) -> dict[str, Any]:
+    expected_center = BATTERY_CENTERS_MM.get(side)
+    if expected_center is None:
+        raise RuntimeError(f"unknown X3 V2 side: {side}")
+    center = record.get("center", [])
+    if len(center) != 2 or any(
+        abs(float(actual) - expected) > 1e-6
+        for actual, expected in zip(center, expected_center, strict=True)
+    ):
+        raise RuntimeError(
+            f"{side}: {BATTERY_REFERENCE} center is {center}, expected {expected_center}"
+        )
+    if not source_board or not source_board_sha256:
+        raise RuntimeError(f"{side}: {BATTERY_REFERENCE} source binding is missing")
+    return {
+        **record,
+        "side": side,
+        "source_board": source_board,
+        "source_board_sha256": source_board_sha256,
+    }
+
+
+def _normalized_service_pad(pcbnew: Any, pad: Any) -> dict[str, Any]:
+    drill = pad.GetDrillSize()
+    size = pad.GetSize()
+    return {
+        "number": pad.GetNumber(),
+        "is_plated_through_hole": pad.GetAttribute() == pcbnew.PAD_ATTRIB_PTH,
+        "shape": "circle" if pad.GetShape() == pcbnew.PAD_SHAPE_CIRCLE else "other",
+        "drill_mm": [pcbnew.ToMM(drill.x), pcbnew.ToMM(drill.y)],
+        "size_mm": [pcbnew.ToMM(size.x), pcbnew.ToMM(size.y)],
+        "center": _point(pcbnew, pad.GetPosition()),
+    }
+
+
 def extract_board(pcbnew: Any, path: Path) -> dict[str, Any]:
     board = pcbnew.LoadBoard(str(path))
     if board is None:
@@ -190,7 +333,8 @@ def extract_board(pcbnew: Any, path: Path) -> dict[str, Any]:
         "vias": [],
         "controller_socket": [],
         "reset_topside": [],
-        "battery_body": [],
+        "battery_termination": [],
+        "power_switch_leads": [],
         "battery_slot": [],
     }
     switches: list[dict[str, Any]] = []
@@ -198,56 +342,15 @@ def extract_board(pcbnew: Any, path: Path) -> dict[str, Any]:
     routed_copper_exact: list[dict[str, Any]] = []
     legacy_refs: list[str] = []
     reset_topside: dict[str, Any] | None = None
-
-    battery_labels = [
-        item
-        for item in board.GetDrawings()
-        if isinstance(item, pcbnew.PCB_TEXT)
-        and item.GetLayer() == pcbnew.B_Fab
-        and item.GetText() == BATTERY_BOARD_LABEL
-    ]
-    if len(battery_labels) != 1:
-        raise RuntimeError(
-            f"{path.name}: expected one exact {BATTERY_BOARD_LABEL!r} B.Fab battery label, "
-            f"found {len(battery_labels)}"
-        )
-    label_x, label_y = _point(pcbnew, battery_labels[0].GetPosition())
-    battery_center = [label_x + BATTERY_LABEL_TO_CENTER_X_MM, label_y]
-    battery_bounds = [
-        battery_center[0] - BATTERY_NOMINAL_PLAN_ENVELOPE_MM[0] / 2.0,
-        battery_center[1] - BATTERY_NOMINAL_PLAN_ENVELOPE_MM[1] / 2.0,
-        battery_center[0] + BATTERY_NOMINAL_PLAN_ENVELOPE_MM[0] / 2.0,
-        battery_center[1] + BATTERY_NOMINAL_PLAN_ENVELOPE_MM[1] / 2.0,
-    ]
-    expected_battery_edges = {
-        tuple(sorted((tuple(battery_bounds[0:2]), (battery_bounds[2], battery_bounds[1])))),
-        tuple(sorted(((battery_bounds[0], battery_bounds[3]), tuple(battery_bounds[0:2])))),
-        tuple(sorted(((battery_bounds[2], battery_bounds[1]), tuple(battery_bounds[2:4])))),
-        tuple(sorted((tuple(battery_bounds[2:4]), (battery_bounds[0], battery_bounds[3])))),
-    }
-    actual_battery_edges = set()
-    for item in board.GetDrawings():
-        if item.GetLayer() != pcbnew.B_Fab or not hasattr(item, "GetStart"):
-            continue
-        start = tuple(round(value, 6) for value in _point(pcbnew, item.GetStart()))
-        end = tuple(round(value, 6) for value in _point(pcbnew, item.GetEnd()))
-        signature = tuple(sorted((start, end)))
-        if signature in expected_battery_edges:
-            actual_battery_edges.add(signature)
-    if actual_battery_edges != expected_battery_edges:
-        raise RuntimeError(
-            f"{path.name}: exact {BATTERY_REFERENCE} 15 x 25 mm B.Fab rectangle is missing "
-            f"or malformed ({len(actual_battery_edges)}/4 edges)"
-        )
-    classes["battery_body"].append(
-        {
-            "kind": "box",
-            "bounds": battery_bounds,
-            "ref": BATTERY_REFERENCE,
-            "board_feature": f"B.Fab:{BATTERY_BOARD_LABEL}",
-            "center": battery_center,
-        }
-    )
+    battery_above_carrier: dict[str, Any] | None = None
+    battery_termination_contract: dict[str, Any] | None = None
+    power_switch_contract: dict[str, Any] | None = None
+    matching_sides = [side for side, board_path in BOARD_PATHS.items() if path.resolve() == board_path.resolve()]
+    if len(matching_sides) != 1:
+        raise RuntimeError(f"{path.name}: cannot bind board to one X3 V2 side")
+    side = matching_sides[0]
+    source_board = str(path.relative_to(ROOT)).replace("\\", "/")
+    source_board_sha256 = sha256_file(path)
 
     for footprint in board.GetFootprints():
         ref = footprint.GetReference()
@@ -391,6 +494,77 @@ def extract_board(pcbnew: Any, path: Path) -> dict[str, Any]:
                 )
             continue
 
+        if ref == BATTERY_REFERENCE:
+            fab_points = [
+                point
+                for item in graphics
+                if item.GetLayer() == pcbnew.F_Fab
+                and hasattr(item, "GetStart")
+                and hasattr(item, "GetEnd")
+                for point in (
+                    _point(pcbnew, item.GetStart()),
+                    _point(pcbnew, item.GetEnd()),
+                )
+            ]
+            if not fab_points:
+                raise RuntimeError(f"{path.name}: {BATTERY_REFERENCE} has no F.Fab body")
+            bounds = [
+                min(item[0] for item in fab_points),
+                min(item[1] for item in fab_points),
+                max(item[0] for item in fab_points),
+                max(item[1] for item in fab_points),
+            ]
+            size = [round(bounds[2] - bounds[0], 4), round(bounds[3] - bounds[1], 4)]
+            if size != list(BATTERY_NOMINAL_PLAN_ENVELOPE_MM):
+                raise RuntimeError(
+                    f"{path.name}: {BATTERY_REFERENCE} F.Fab body is {size}, expected "
+                    f"{list(BATTERY_NOMINAL_PLAN_ENVELOPE_MM)} mm"
+                )
+            battery_above_carrier = bind_battery_extraction_record(
+                side,
+                {
+                    "ref": ref,
+                    "center": _point(pcbnew, footprint.GetPosition()),
+                    "bounds": bounds,
+                    "size_mm": size,
+                    "modeled_depth_mm": BATTERY_MODELED_DEPTH_MM,
+                    "housing_body_cutout": False,
+                },
+                source_board,
+                source_board_sha256,
+            )
+            continue
+
+        if ref == BATTERY_TERMINATION_REFERENCE:
+            pad_records = [_normalized_service_pad(pcbnew, pad) for pad in pads]
+            battery_termination_contract = validate_battery_termination_pad_records(
+                path.name, pad_records
+            )
+            for pad in pads:
+                classes["battery_termination"].append(
+                    {
+                        "kind": "box",
+                        "bounds": _box(pcbnew, pad),
+                        "allowance_mm": FILLET_ALLOWANCE_MM,
+                        "ref": ref,
+                    }
+                )
+            continue
+
+        if ref == POWER_SWITCH_REFERENCE:
+            pad_records = [_normalized_service_pad(pcbnew, pad) for pad in pads]
+            power_switch_contract = validate_power_switch_pad_records(path.name, pad_records)
+            for pad in pads:
+                classes["power_switch_leads"].append(
+                    {
+                        "kind": "box",
+                        "bounds": _box(pcbnew, pad),
+                        "allowance_mm": FILLET_ALLOWANCE_MM,
+                        "ref": ref,
+                    }
+                )
+            continue
+
         # The nice!nano socket has underside PTH/service geometry and therefore
         # receives an exterior-open cutout.  The top-side SMD reset is modeled
         # separately below so it receives local backing instead of a false
@@ -498,9 +672,15 @@ def extract_board(pcbnew: Any, path: Path) -> dict[str, Any]:
 
     if reset_topside is None:
         raise RuntimeError(f"{path.name}: exact {RESET_REFERENCE} footprint is missing")
+    if battery_above_carrier is None:
+        raise RuntimeError(f"{path.name}: exact {BATTERY_REFERENCE} footprint is missing")
+    if battery_termination_contract is None:
+        raise RuntimeError(f"{path.name}: exact {BATTERY_TERMINATION_REFERENCE} footprint is missing")
+    if power_switch_contract is None:
+        raise RuntimeError(f"{path.name}: exact {POWER_SWITCH_REFERENCE} footprint is missing")
 
     return {
-        "path": str(path.relative_to(ROOT)).replace("\\", "/"),
+        "path": source_board,
         "edge_segments": edge_segments,
         "switches": sorted(switches, key=lambda item: int(item["ref"][2:])),
         "mounting_holes": sorted(
@@ -509,12 +689,10 @@ def extract_board(pcbnew: Any, path: Path) -> dict[str, Any]:
         ),
         "routed_copper_exact": routed_copper_exact,
         "reset_topside": reset_topside,
-        "battery_body": {
-            "ref": BATTERY_REFERENCE,
-            "board_feature": f"B.Fab:{BATTERY_BOARD_LABEL}",
-            "center": battery_center,
-            "bounds": battery_bounds,
-            "size_mm": list(BATTERY_NOMINAL_PLAN_ENVELOPE_MM),
+        "battery_above_carrier": battery_above_carrier,
+        "service_pad_contracts": {
+            "battery_termination": battery_termination_contract,
+            "power_switch_leads": power_switch_contract,
         },
         "legacy_registration_refs": sorted(legacy_refs),
         "feature_classes": classes,
@@ -677,12 +855,14 @@ def build_plan_geometry(shp: dict[str, Any], side: str, board_data: dict[str, An
         "mx_pins_pads_fillets": ("mx_pins_pads_fillets",),
         "diode_body_pads_fillets": ("diode_body_pads_fillets",),
         "controller_socket": ("controller_socket",),
-        "battery_body": ("battery_body",),
+        "battery_termination": ("battery_termination",),
+        "power_switch_leads": ("power_switch_leads",),
         "battery_slot": ("battery_slot",),
     }
     component_geometries: dict[str, Any] = {}
     component_cutout_geometries: dict[str, Any] = {}
     component_cutout_counts: dict[str, int] = {}
+    component_envelope_coverage: dict[str, dict[str, int]] = {}
     for name, source_names in cutout_sources.items():
         sources = [feature_geometries[source] for source in source_names]
         raw = shp["unary_union"]([geometry for geometry in sources if not geometry.is_empty])
@@ -703,6 +883,21 @@ def build_plan_geometry(shp: dict[str, Any], side: str, board_data: dict[str, An
             if feature.get("ref")
         }
         component_cutout_counts[name] = len(refs)
+        feature_envelopes = [
+            _feature_geometry(shp, feature, bounds)
+            for source in source_names
+            for feature in board_data["feature_classes"][source]
+        ]
+        covered_envelope_count = sum(
+            component_cutout_geometries[name].covers(envelope)
+            for envelope in feature_envelopes
+        )
+        component_envelope_coverage[name] = {
+            "envelope_count": len(feature_envelopes),
+            "covered_envelope_count": covered_envelope_count,
+            "uncovered_envelope_count": len(feature_envelopes)
+            - covered_envelope_count,
+        }
 
     housing_outline = board.buffer(-OUTLINE_INSET_MM, join_style="round", quad_segs=8)
     all_component_cutouts = shp["unary_union"](
@@ -936,6 +1131,8 @@ def build_plan_geometry(shp: dict[str, Any], side: str, board_data: dict[str, An
         "component_geometries": component_geometries,
         "component_cutout_geometries": component_cutout_geometries,
         "component_cutout_counts": component_cutout_counts,
+        "component_envelope_coverage": component_envelope_coverage,
+        "service_pad_contracts": board_data["service_pad_contracts"],
         "all_component_cutouts": all_component_cutouts,
         "switches": switches,
         "switch_service_body_geometry": switch_service_body_geometry,
@@ -1566,6 +1763,11 @@ def _maximum_seam_support_distance(shp: dict[str, Any], side: str, plan: dict[st
 
 
 def component_cutout_manifest(plan: dict[str, Any]) -> dict[str, Any]:
+    battery_termination_contract = plan["service_pad_contracts"]["battery_termination"]
+    power_switch_contract = plan["service_pad_contracts"]["power_switch_leads"]
+    battery_termination_coverage = plan["component_envelope_coverage"][
+        "battery_termination"
+    ]
     modeled_depths = {
         "choc_socket_body_fillets": {
             "official_body_depth_max_mm": CHOC_SOCKET_OFFICIAL_BODY_DEPTH_MAX_MM,
@@ -1606,16 +1808,31 @@ def component_cutout_manifest(plan: dict[str, Any]) -> dict[str, Any]:
             "assembly_allowance_mm": None,
             "modeled_max_depth_mm": None,
         },
-        "battery_body": {
-            "reference": BATTERY_REFERENCE,
-            "board_feature": f"B.Fab:{BATTERY_BOARD_LABEL}",
-            "nominal_plan_envelope_mm": list(BATTERY_NOMINAL_PLAN_ENVELOPE_MM),
-            "modeled_max_depth_mm": BATTERY_MODELED_DEPTH_MM,
-            "cutout_allowance_mm": COMPONENT_CUTOUT_CLEARANCE_MM,
-            "physical_tolerance_status": "pending",
-            "physical_gate": (
-                "Maximum thickness/swelling, adhesive retention, lead bend, strain relief, "
-                "abrasion protection, and actual placement tolerance remain pending."
+        "battery_termination": {
+            "reference": BATTERY_TERMINATION_REFERENCE,
+            **battery_termination_contract,
+            "pad_envelope_count": battery_termination_coverage["envelope_count"],
+            "covered_pad_envelope_count": battery_termination_coverage[
+                "covered_envelope_count"
+            ],
+            "uncovered_pad_envelope_count": battery_termination_coverage[
+                "uncovered_envelope_count"
+            ],
+            "official_body_depth_max_mm": None,
+            "assembly_allowance_mm": FILLET_ALLOWANCE_MM,
+            "modeled_max_depth_mm": None,
+            "assembly_note": (
+                "Exterior-open cutout clears both direct-solder lead holes and solder fillets."
+            ),
+        },
+        "power_switch_leads": {
+            "reference": POWER_SWITCH_REFERENCE,
+            **power_switch_contract,
+            "official_body_depth_max_mm": None,
+            "assembly_allowance_mm": FILLET_ALLOWANCE_MM,
+            "modeled_max_depth_mm": None,
+            "assembly_note": (
+                "Exterior-open cutout clears all three IMMS-12V leads and solder fillets."
             ),
         },
         "battery_slot": {
@@ -1641,7 +1858,11 @@ def component_cutout_manifest(plan: dict[str, Any]) -> dict[str, Any]:
             else nominal_desk_clearance - DESK_STANDOFF_PRINT_TOLERANCE_MM
         )
         perimeter_fields: dict[str, Any] = {}
-        if name in {"diode_body_pads_fillets", "battery_body"}:
+        if name == "diode_body_pads_fillets" or name in {
+            "battery_termination",
+            "power_switch_leads",
+            "battery_slot",
+        }:
             breaks_perimeter = not plan["housing_outline"].covers(geometry)
             perimeter_fields = {
                 "breaks_lateral_housing_perimeter": breaks_perimeter,
@@ -1683,6 +1904,7 @@ def generate_outputs(output_dir: Path, kicad_python: Path) -> Path:
     output_dir.mkdir(parents=True, exist_ok=True)
     manifest: dict[str, Any] = {
         "requirement": REQUIREMENT,
+        "requirement_ids": ["CON-ARCH-006", "CON-ARCH-007", "REL-ARCH-001"],
         "variant": VARIANT,
         "generated_by": "tools/generate_kc2_x3_v2_housings.py",
         "hash_policy": HASH_POLICY,
@@ -1704,13 +1926,17 @@ def generate_outputs(output_dir: Path, kicad_python: Path) -> Path:
             "component_cutout_clearance_mm": COMPONENT_CUTOUT_CLEARANCE_MM,
             "component_cutout_simplify_mm": COMPONENT_CUTOUT_SIMPLIFY_MM,
             "minimum_diode_housing_perimeter_land_mm": MIN_DIODE_HOUSING_PERIMETER_LAND_MM,
-            "minimum_battery_housing_perimeter_land_mm": MIN_BATTERY_HOUSING_PERIMETER_LAND_MM,
+            "minimum_service_housing_perimeter_land_mm": MIN_SERVICE_HOUSING_PERIMETER_LAND_MM,
             "battery_reference": BATTERY_REFERENCE,
-            "battery_board_label": BATTERY_BOARD_LABEL,
             "battery_nominal_plan_envelope_mm": list(
                 BATTERY_NOMINAL_PLAN_ENVELOPE_MM
             ),
             "battery_modeled_depth_mm": BATTERY_MODELED_DEPTH_MM,
+            "battery_housing_body_cutout": False,
+            "battery_termination_reference": BATTERY_TERMINATION_REFERENCE,
+            "power_switch_reference": POWER_SWITCH_REFERENCE,
+            "power_switch_drill_count": POWER_SWITCH_DRILL_COUNT,
+            "power_switch_drill_diameter_mm": POWER_SWITCH_DRILL_DIAMETER_MM,
             "reset_reference": RESET_REFERENCE,
             "reset_local_support_diameter_mm": RESET_LOCAL_SUPPORT_DIAMETER_MM,
             "maximum_load_point_to_support_mm": MAX_LOAD_POINT_TO_SUPPORT_MM,
@@ -1834,6 +2060,7 @@ def generate_outputs(output_dir: Path, kicad_python: Path) -> Path:
             "source_board_sha256": sha256_file(BOARD_PATHS[side]),
             "key_count": len(board_data["switches"]),
             "legacy_registration_refs": board_data["legacy_registration_refs"],
+            "battery_above_carrier": board_data["battery_above_carrier"],
             "step": str(step_path.relative_to(ROOT)).replace("\\", "/"),
             "step_sha256": sha256_file(step_path),
             "step_has_trailing_whitespace": has_trailing_horizontal_whitespace(step_path),
@@ -1849,37 +2076,28 @@ def generate_outputs(output_dir: Path, kicad_python: Path) -> Path:
                     for depth in (
                         CHOC_SOCKET_OFFICIAL_BODY_DEPTH_MAX_MM + CHOC_SOCKET_ASSEMBLY_ALLOWANCE_MM,
                         DIODE_OFFICIAL_BODY_DEPTH_MAX_MM + DIODE_SOLDER_FILLET_DEPTH_ALLOWANCE_MM,
-                        BATTERY_MODELED_DEPTH_MM,
                     )
                 ),
                 2,
             ),
             "minimum_open_component_to_desk_clearance_mm": round(
                 min(
-                    min(
-                        HOUSING_HEIGHT_MM
-                        - float(depth)
-                        + DESK_STANDOFF_NOMINAL_MM
-                        - DESK_STANDOFF_PRINT_TOLERANCE_MM
-                        for depth in (
-                            CHOC_SOCKET_OFFICIAL_BODY_DEPTH_MAX_MM
-                            + CHOC_SOCKET_ASSEMBLY_ALLOWANCE_MM,
-                            DIODE_OFFICIAL_BODY_DEPTH_MAX_MM
-                            + DIODE_SOLDER_FILLET_DEPTH_ALLOWANCE_MM,
-                        )
-                    ),
-                    # AC-11 deliberately treats the 3.00 mm battery as a
-                    # nominal digital envelope; its swelling/placement/print
-                    # stack remains a named physical gate.
                     HOUSING_HEIGHT_MM
-                    - BATTERY_MODELED_DEPTH_MM
-                    + DESK_STANDOFF_NOMINAL_MM,
+                    - float(depth)
+                    + DESK_STANDOFF_NOMINAL_MM
+                    - DESK_STANDOFF_PRINT_TOLERANCE_MM
+                    for depth in (
+                        CHOC_SOCKET_OFFICIAL_BODY_DEPTH_MAX_MM
+                        + CHOC_SOCKET_ASSEMBLY_ALLOWANCE_MM,
+                        DIODE_OFFICIAL_BODY_DEPTH_MAX_MM
+                        + DIODE_SOLDER_FILLET_DEPTH_ALLOWANCE_MM,
+                    )
                 ),
                 2,
             ),
             "minimum_open_component_to_desk_clearance_basis": (
-                "minimum of controlled bottom-component post-print clearance and the "
-                "AC-11 nominal 3.00 mm battery-to-desk clearance; battery tolerance is pending"
+                "minimum controlled post-print clearance beneath bottom-side Choc socket and "
+                "ES1B envelopes; BAT1 is above the carrier and has no lower-housing body cutout"
             ),
             "reset_local_support": plan["reset_local_support"],
             "desk_contacts": plan["desk_contacts"],

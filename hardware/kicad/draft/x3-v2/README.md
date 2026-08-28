@@ -1,10 +1,12 @@
 # KC2 X3 V2 routed draft
 
-Requirements: `CON-ARCH-004`, `CON-ARCH-006`
+Requirements: `CON-ARCH-004`, `CON-ARCH-006`, `CON-ARCH-007`, `REL-ARCH-001`
 
-Status: **DRAFT - NOT ORDERABLE** until the physical coupon is fabricated,
-populated, and checked with the intended switches, socket, keycaps, diode, and
-lower housing, and the printed housing passes the 2.0 N deflection test.
+Status: **DIGITAL PASS - ORDER READY: NO**. Exact V2 service geometry and nets
+and fresh KiCad 10.0.3 DRC pass digitally. Ordering remains blocked by exact
+301230 pack/protection/lead and `J_BAT1` drill selection, controller-stack fit,
+solder/strain-relief/service tests, IMMS power-transition and BLE tests,
+populated coupon/first articles, and housing/fastener/2.0 N deflection tests.
 
 These V2 files live only under `hardware/kicad/draft/x3-v2/`. The promoted
 `hardware/kicad/kc2_left/` and `hardware/kicad/kc2_right/` projects are the
@@ -74,8 +76,9 @@ The Choc socket and ES1B SMD solder-fillet models each include a 0.30 mm
 lateral allowance. The routed ES1B boards pass the current digital diode gates:
 the minima across both halves are 1.605 mm to unused switch NPTH, 1.000 mm to
 switch pads and unrelated exposed copper, 1.725 mm to socket bodies, 0.400 mm
-between diode and switch-assembly fillet envelopes, 0.213 mm to an unrelated
-route, and 1.475 mm from the diode fillet envelope to Edge.Cuts. Every diode
+between diode and switch-assembly fillet envelopes, and 1.475 mm from the
+diode fillet envelope to Edge.Cuts. The current diode-to-unrelated-route
+minimum is 0.237 mm left and 0.123 mm right, both above the 0.10 mm gate. Every diode
 pad has an unobstructed 1.50 mm cardinal solder-tool approach. These PCB
 measurements supersede the old SOD-123 D2 values. Regenerated ES1B housing
 evidence reports 0.3279 mm minimum cutout XY clearance overall, 0.3282 mm for
@@ -110,29 +113,51 @@ fastener purchase recommendation and remain not orderable.
 
 ## Battery service path
 
-The direct battery wires do not use carrier-PCB power copper. The netless
-3.6 x 2.2 mm NPTH lead slot is at the nice!nano USB/B+ end, matching the
-official nice!nano v2 battery-pad location. Route insulated B+ and GND/B-
-leads between socket rows, deburr the slot, add strain relief, and keep the
-wire path outside the antenna keepout.
+Each half uses one nominal `30.00 x 12.00 x 3.00 mm`, 3.7 V, 100 mAh
+301230-class pack above the carrier PCB and below the socketed nice!nano. The
+battery centers are left `(131.7125, 50.7500)` and right
+`(78.4000, 50.7500)` mm, with the 30 mm axis parallel to the U1 socket rows.
+The exact manufacturer/MPN, single-cell protection status, maximum swollen
+thickness, lead-exit drawing, and pull limit remain procurement gates.
+
+Only the pack's pre-attached insulated leads are soldered to `J_BAT1`; do not
+solder a bare pouch tab and do not add an A2501, JST, or other detachable
+battery connector. `J_BAT1` is left `(115.8125, 59.4000)` R180 and right
+`(94.3000, 59.4000)` R0. `BAT_LEAD_SLOT1` remains an unnetted, copper-free
+strain-relief feature identified by the exact board text
+`BAT STRAIN RELIEF`, at left `(117.9125, 50.7500)` and right
+`(92.2000, 50.7500)` mm; it is not a lower battery exit.
+
+The electrical path is
+`J_BAT1 BAT+ -> SW_PWR1 pad 1 common -> pad 2 ON -> NN_B+ -> U1 RAW`. Pad 3 is
+NC. J_BAT1 B-/GND remains directly connected to
+local GND and U1 GND. Keep BAT+ and its GND return paired in the USB-side
+corridor and outside the antenna keepout. The lower housing has no TW301525 or
+301230 battery-body cavity; it provides only the required U1, J_BAT1,
+strain-relief, IMMS lead, and solder-fillet openings.
 
 ## Compact controller tab
 
 The V2-only compact-controller layout keeps all 70 key centers and all 18
-numbered mounting-hole centers fixed. Each U1 is at `Y=50.7500 mm`, and each
-portrait reset switch is stacked beneath the socket-elevated USB end at
-`Y=50.7500 mm`, offset `2.05 mm` toward the USB-facing board edge. The
-battery reference is at `Y=53.0500 mm`, and the top Edge.Cuts centerline is
-`Y=39.2500 mm`. The board height is therefore `122.50 mm`, 4.25 mm shorter
-than the preceding prototype. The reset body retains `0.50 mm` nominal planar
-clearance to the battery-lead slot; controller-to-reset Z clearance remains a
-socketed-controller physical gate.
+numbered mounting-hole centers fixed. U1 centers are left
+`(132.7125, 50.7500)` and right `(77.4000, 50.7500)` mm. The top Edge.Cuts
+centerline is `Y=39.2500 mm`, and the nominal board height is `122.50 mm`.
 
-This is a V2-only supersession of the older antenna-side reset placement; the
-no-carrier-power and direct battery-lead rules remain unchanged. Reset
-courtyard/pad projection, actual USB shell/cable, keycap skirt, battery pouch,
-lead strain relief, and actuation support still require a populated first
-article. The digital package remains not orderable.
+POWER and RESET occupy the controller-key gap. `SW_PWR1` is left
+`(115.8125, 63.4500)` R0 and right `(94.3000, 63.4500)` R180. `SW_RST1` is
+left `(126.0625, 63.4500)` R0 and right `(84.0500, 63.4500)` R180, with pad
+1=RST on the POWER/USB-facing side and pad 2=GND on the keyboard-center side.
+Top-view absolute order is left `PWR|RST` and right `RST|PWR`; from each
+USB-facing outer edge toward the antenna, the service order is POWER then
+RESET. The centers are 10.25 mm apart, giving 2.20 mm nominal controlled-body
+clearance, 3.20 mm reset-body clearance to the nearest keycap envelope, and
+at least 2.03 mm reset-courtyard clearance to U1 socket copper.
+
+This V2 contract supersedes the historical X3 no-carrier-power,
+USB-under-reset, and antenna-side-reset instructions only for `kc2-x3-v2`.
+The exact pack stack, USB shell/cable, POWER/RESET access, controller removal,
+lead strain relief, keycap clearance, and actuation support still require
+physical first-article evidence. The digital package remains not orderable.
 
 ## Outputs
 
@@ -142,6 +167,15 @@ article. The digital package remains not orderable.
 - 1:1 top/bottom assembly PDFs: `mechanical/`
 - KiCad 3D inspection renders: `renders/`
 - Housing clearance evidence: `../../../case/draft/x3-v2/`
+
+The fabrication, mechanical, and housing derivatives were regenerated from
+the current left/right board hashes
+`90430a97aa2e13dbf8325525f9841b60e0b64d058406dd218162970b01f8e6f6` and
+`a6a49f8875e506064ce4bf9e11839b4d932d326ee271fcf4b6bf863c8270b374`.
+Their dedicated V2 verifiers pass. The joined SVG/PNG set was regenerated from
+the same current boards and reports 1.1000 mm minimum Edge.Cuts clearance and
+1.8000 mm cross-seam keycap gap. All outputs remain digital draft evidence and
+do not change **ORDER READY: NO**.
 
 The coupon contains conservative representative 0-degree and 180-degree
 bottom socket orientations plus a 5-pin MX direct-solder sample at 19.05 mm
@@ -154,6 +188,19 @@ and 3.3 V zero-wait same-row/same-column matrix stress cases.
 ## Reproduction and verification
 
 Run PCB tools with KiCad 10 Python:
+
+Run these commands from the repository root. The housing verifier additionally
+requires the documented CadQuery environment. The exact executable release
+gates for the active V2 target are `tools.verify_kc2_x3_v2` and the dedicated
+V2 fabrication, mechanical, outline, coupon, firmware, and housing verifiers
+below. Apply the `kc2-pcb-preflight` component-by-component and
+circuit-by-circuit review workflow as an additional audit. Its bundled CLI
+supports the historical `--variant x3` path only; an `ORDER READY` result from
+that historical X3 run is not evidence for `kc2-x3-v2`.
+
+`tools.verify_kc2_x3_v2` exits `0` only when every digital and physical gate
+passes, `1` on a digital error, and `2` when digital checks pass but required
+physical evidence is still pending. The current expected result is exit `2`.
 
 ```powershell
 $kpy = 'C:\Program Files\KiCad\10.0\bin\python.exe'
@@ -219,10 +266,10 @@ exact, precondition-checked edge cleanup:
 The helper rejects wrong controller/reset/switch geometry, stale sessions, and
 partial or unexpected nonempty routes. Both importers verify complete matrix connectivity,
 reproduce the committed route exactly, and are covered by second-run
-idempotence tests. The deterministic final track/via counts are 543 left and
-706 right, with route digests
-`9bc9cbf981da8d452b82e52d54a4e8ab3cafcc6121ec578f36a4cf43f3dde19d`
-and `83dcc6f764670b379b6c9104d643925cd6eff3c0b16286f12bae14dd1397c67f`.
+idempotence tests. The deterministic final track/via counts are 580 left and
+739 right, with route digests
+`7eda6d670a2fd3b99ab06548be4c635dbff03904ec251197f547110864fcb5e6`
+and `fc2a819d9ce840ffc0c9e9b5ac6fc7dac54d51a441addb5b0005b4fa89cdbf1a`.
 Running either command against its already exact committed board is a verified
 no-op. The generation manifest binds each current controller-r3 DSN and
 reviewed controller-r3 SES by SHA-256. It also verifies both

@@ -1,22 +1,22 @@
 {
   "schemaVersion": "1.0.0",
-  "generatedAt": "2026-08-26T07:32:37.072Z",
+  "generatedAt": "2026-08-28T17:23:01.426Z",
   "source": "speckiwi",
   "specFingerprint": {
     "algorithm": "sha256",
-    "value": "e5d304ec980e5cfaec02eb615126c50136e1bd767221b0cd8b666a476b77b3e2",
+    "value": "0547bdc8b20e127a324c4ca0f121ccfd7e2df185492a8ec6875f35d7f03c09b7",
     "files": [
       {
         "path": "docs/spec/00.index.md",
-        "sha256": "e4d8ec94be4664eb23dff70c7ecb543e0796715dcd74d03eb2d3affc2623ee46",
-        "size": 1934,
-        "mtimeMs": 1787729546759.4673
+        "sha256": "4cb4a00bddc4c3dc2621836c034f1d4bc5dcf4013c82654d2e58b71f1cab08e3",
+        "size": 2752,
+        "mtimeMs": 1787936899618.963
       },
       {
         "path": "docs/spec/10.product-architecture.srs.md",
-        "sha256": "359a7a025e27f6261f75827940d408f78f83119d84dc4c902e3673c204b92893",
-        "size": 141124,
-        "mtimeMs": 1787729546746.9565
+        "sha256": "b74235eb3ca2703c388e235593c33537ce5aac5f063290a02be655c80bc2a884",
+        "size": 175699,
+        "mtimeMs": 1787937781409.279
       },
       {
         "path": "docs/spec/90.appendix.md",
@@ -28,21 +28,17 @@
   },
   "idCounters": {
     "constraint": {
-      "ARCH": 6
+      "ARCH": 7
     },
     "operational": {
-      "ARCH": 3
+      "ARCH": 5
+    },
+    "reliability": {
+      "ARCH": 1
     }
   },
   "lock": {
-    "active": true,
-    "metadata": {
-      "schemaVersion": "1.0.0",
-      "owner": "DESKTOP-LCF0D3R:11020",
-      "operation": "update_status",
-      "requestId": "07ea06f5-17e2-4a78-9129-5dece384c658",
-      "acquiredAt": "2026-08-26T07:32:37.066Z",
-      "expiresAt": "2026-08-26T07:33:37.066Z"
-    }
+    "active": false,
+    "metadata": null
   }
 }

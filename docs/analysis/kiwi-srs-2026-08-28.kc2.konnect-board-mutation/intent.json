@@ -1,0 +1,18 @@
+{
+  "summary": "Create OPS-ARCH-004 and implement/install Konnect MCP operations for placed-pad net mutation and board-level graphic query/deletion.",
+  "intent_type_hint": "new-feature",
+  "key_entities": ["OPS-ARCH-004", "Konnect", "placed pad net", "board graphics", "TDD", "installed runtime"],
+  "ambiguities": [],
+  "implied_requirements": [
+    "Register the requirement before implementation.",
+    "Use test-first development.",
+    "Install the rebuilt runtime and verify tools/list plus reversible behavior."
+  ],
+  "semantic_equivalences": [
+    {
+      "prompt_term": "mcp 를 먼저 설치해야겠다",
+      "interpreted_intent": "Approval of the previously proposed OPS-ARCH-004 and Konnect implementation/install step",
+      "confidence": "high"
+    }
+  ]
+}

@@ -9,28 +9,32 @@ KC2는 KC1 핸드와이어링 키보드의 배열 철학과 결합/분리 사용
 - 이름: KC2
 - 형식: 좌우 분리형 split keyboard
 - 배열: 일반 row-stagger 기반
-- 키 수: 현재 주문 가능한 X3는 77키이고, implemented draft `kc2-x3-v2`는 `CON-ARCH-004`의 70-key v5 배열(왼쪽 31, 오른쪽 39)을 사용한다. 그보다 앞선 71키 배열 설명은 historical routed draft baseline으로만 유지한다.
+- 키 수: 현재 주문 가능한 historical X3는 77키이고, 디지털 검증을 통과했지만 물리 검증 대기 중인 `kc2-x3-v2` draft는 `CON-ARCH-004`의 70-key v5 배열(왼쪽 31, 오른쪽 39)을 사용한다. 그보다 앞선 71키 배열 설명은 historical routed draft baseline으로만 유지한다.
 - 펌웨어: ZMK
 - 컨트롤러: nice!nano v2, 좌우 각 1개
 - 연결: BLE 중심, USB는 firmware flash/debug 및 필요 시 유선 출력용
 - 백라이트/RGB: 없음
 - 컨트롤러 소켓: 디바이스마트 상품번호 5494 `싱글라운드소켓(64핀)`, 2.54 mm pitch, 1열, round socket을 절단해 사용
-- 배터리: 디바이스마트 상품번호 1376800 `TW301525`, 3.7 V, 80 mAh, Li-Po, A1251-02 출력단자, 15 mm x 25 mm급
-- 배터리/컨트롤러 전원 연결: X3 compact controller tab에서는 A2506 PCB 커넥터와 carrier-PCB 전원 solder pad를 모두 사용하지 않고, 배터리 lead를 nice!nano v2 `B+`/`B-` pad에 직접 납땜한다. Plan B의 mask-only NPTH battery-lead pass-through slot은 각 half에 1개이며 전원 pad/trace/net이 아니라 하부로 케이블을 빼는 기계 구멍이다. Promoted X3의 기존 좌표는 `CON-ARCH-002` 기록을 유지하고, implemented draft `kc2-x3-v2`는 `CON-ARCH-004`에 따라 실제 battery pad와 가까운 USB/B+ end에 slot을 두고 절연된 B+ 및 GND/B- lead를 socket row 사이로 통과시킨다.
-- PCB 전원 커넥터/패드: 사용하지 않는다. X3 carrier PCB에는 `BAT+`, `BAT-`, `NN_B+`, `NN_B-` pad, trace, exposed copper를 두지 않는다.
+- 배터리: `kc2-x3-v2`의 각 half는 301230-class, 3.7 V, 100 mAh Li-Po 1개를 사용한다. 정확한 제조사/MPN, single-cell protection 상태, 최대 팽창 두께와 lead 인출 도면을 조달 검토에 기록한다.
+- 배터리/컨트롤러 전원 연결: `CON-ARCH-007`에 따라 배터리는 carrier PCB 상면과 socketed nice!nano 사이에 두고, 이미 배터리에 부착된 절연 lead만 `J_BAT1`에 직접 납땜한다. 탈착식 A2501/JST 배터리 커넥터와 bare pouch tab 납땜은 사용하지 않는다. `BAT_LEAD_SLOT1`은 하부 배터리 출구가 아니라 copper-free strain relief로 유지한다.
+- PCB 전원 커넥터/패드: `kc2-x3-v2`에는 direct-solder `J_BAT1`, `SW_PWR1`, local `BAT+`, `NN_B+`, `GND` 경로를 둔다. `BAT+`만 IMMS-12V로 차단하고 B-는 local GND에 직접 연결한다. Promoted/historical X3의 no-carrier-power 계약은 `CON-ARCH-002` 기록으로만 유지한다.
 - 키스위치: variant별 SRS requirement가 지원 switch family와 assembly mode를 정의한다. `kc2-x3-v2`는 `CON-ARCH-004`에 따라 Choc V2 socket-only 및 MX solder-only로 제한한다.
-- 스위치 실장: 현재 주문 가능한 X3는 기존 Choc V1 중심 footprint를 유지하고, implemented draft `kc2-x3-v2`는 Choc V2 bottom-side socket assembly와 MX 5-pin direct-solder assembly만 허용한다. V2는 물리 coupon 실장 검증 전까지 주문 불가이다.
+- 스위치 실장: 현재 주문 가능한 historical X3는 기존 Choc V1 중심 footprint를 유지하고, 디지털 검증을 통과한 `kc2-x3-v2` draft는 Choc V2 bottom-side socket assembly와 MX 5-pin direct-solder assembly만 허용한다. V2는 물리 coupon 실장 검증 전까지 주문 불가이다.
 - 스위치 footprint 기준: 일반 KC2 footprint는 다중 호환 hole/pad pattern을 목표로 하되, 더 좁은 variant별 SRS requirement가 있으면 그 요구사항을 우선한다.
 - 큰 키: 현재 X3 no-stabilizer layout은 `>=2u` 키를 모두 분할하므로 stabilizer footprint를 생성하지 않는다. stabilizer가 필요한 별도 layout은 실물 체결 검증 전 generic/MX-style placeholder hole로 발주하지 않는다.
 - 프로그래밍용 택트 스위치: 디바이스마트 상품번호 1322056 `NW3-A06-B3`, SMD micro tact switch, 6.1 mm x 3.7 mm급 body, 2.55 mm급 높이
-- 전원 스위치: 없음. 일반 사용 중 hard power-off는 제공하지 않는다. 장기 보관/정비 시에는 nice!nano v2 `B+` 또는 `B-`에 직접 납땜된 배터리 lead를 desolder하거나 외부 lead 분리 구조로 차단한다.
+- 전원 스위치: `kc2-x3-v2`의 각 half에 IMMS-12V 1개를 둔다. Top/component-side view에서 USB 바깥쪽부터 POWER, RESET, antenna 순서이며, 절대 좌→우 순서는 왼쪽 `PWR|RST`, 오른쪽 `RST|PWR`이다.
 - 보강판: 없음
 - 하우징: 상부 하우징 없음. 3D 프린터 하부 바닥판을 사용한다.
 - PCB 수량: 좌우 독립 PCB 2장
 
 ## 제조 파일 제출
 
-KC2 main PCB는 검증된 X3 no-stabilizer 버전이며, 좌우 독립 PCB 2장이므로 PCB 제조사 제출 파일도 좌/우를 분리해서 다룬다. `hardware/kicad/fabrication/kc2_fabrication.zip`처럼 좌/우 산출물을 함께 담은 합본 ZIP은 저장소 내부 검증/보관용 묶음이며, JLCPCB 같은 제조사에 단일 비패널 PCB 주문으로 그대로 제출하지 않는다.
+이 절의 promoted main path와 fabrication ZIP은 검증된 historical `kc2-x3` 전용이다. 활성 `kc2-x3-v2`는 `hardware/kicad/draft/x3-v2/`에 있으며, promoted X3 Gerber/ZIP이나 주문 가능 판정을 V2 증거로 사용할 수 없다. V2의 디지털 PCB 검증은 통과했지만 `CON-ARCH-004`, `CON-ARCH-006`, `CON-ARCH-007`, `REL-ARCH-001`의 물리 gate가 남아 있으므로 **ORDER READY: NO**이다.
+
+2026-08-29 기준 V2 fabrication, 1:1 mechanical, housing STEP/STL, joined SVG/PNG 산출물은 현재 좌우 보드 SHA-256 `90430a97aa2e13dbf8325525f9841b60e0b64d058406dd218162970b01f8e6f6` / `a6a49f8875e506064ce4bf9e11839b4d932d326ee271fcf4b6bf863c8270b374`에 맞춰 재생성했다. 전용 verifier가 통과했고 joined render는 최소 Edge.Cuts clearance `1.1000 mm`, cross-seam keycap gap `1.8000 mm`를 기록한다. 이는 디지털 증거이며 주문 승인은 아니다. 활성 V2 실행 gate는 `tools.verify_kc2_x3_v2`와 V2 전용 fabrication/mechanical/housing verifier이다. `kc2-pcb-preflight` skill의 부품별·회로별 review workflow는 추가 감사에 적용하되, 번들 CLI는 historical `--variant x3`만 지원하므로 그 `ORDER READY` 결과를 V2 근거로 사용할 수 없다.
+
+Historical KC2 X3 main PCB는 좌우 독립 PCB 2장이므로 PCB 제조사 제출 파일도 좌/우를 분리해서 다룬다. `hardware/kicad/fabrication/kc2_fabrication.zip`처럼 좌/우 산출물을 함께 담은 합본 ZIP은 저장소 내부 검증/보관용 묶음이며, JLCPCB 같은 제조사에 단일 비패널 PCB 주문으로 그대로 제출하지 않는다.
 
 기본 주문 방식은 좌/우 fabrication directory를 각각 별도 ZIP으로 묶어 별도 PCB 주문으로 제출하는 것이다.
 
@@ -67,8 +71,8 @@ KC1과의 관계는 배열 철학과 사용성의 계승이며, KC2의 하드웨
 - 상부 하우징은 없다.
 - PCB 아래에는 3D 프린터로 제작한 하부 바닥판을 둔다.
 - PCB가 전기 회로이자 variant별 switch footprint, socket, 또는 solder joint의 기준 구조물이다.
-- 키스위치 고정/실장 방식은 variant별 SRS requirement를 따른다. 현재 주문 가능한 X3는 기존 Choc V1 중심 footprint를 유지하고, implemented draft `kc2-x3-v2`는 `CON-ARCH-004`에 따라 Choc V2 bottom-side socket assembly와 MX 5-pin direct-solder assembly만 허용한다.
-- Implemented draft `kc2-x3-v2`는 `CON-ARCH-006`의 조건부 M1.4 retention prototype을 사용한다. PCB에는 좌 8개/우 10개의 `1.60 mm` copper-free NPTH가 있고, 2.50 mm 하우징에는 해당 위치의 zero-gap land/desk column과 `1.10 x 2.80 mm` blind pilot가 있다. 기존 14/11 분산 지지대가 주 하중 경로이며, exact screw/driver, full-pattern fit, torque/repeat cycle, keycap skirt, 2 N deflection 실측 전에는 주문할 수 없다.
+- 키스위치 고정/실장 방식은 variant별 SRS requirement를 따른다. 현재 주문 가능한 historical X3는 기존 Choc V1 중심 footprint를 유지하고, 디지털 검증만 통과한 `kc2-x3-v2` draft는 `CON-ARCH-004`에 따라 Choc V2 bottom-side socket assembly와 MX 5-pin direct-solder assembly만 허용한다.
+- 디지털 검증만 통과한 `kc2-x3-v2` draft는 `CON-ARCH-006`의 조건부 M1.4 retention prototype을 사용한다. PCB에는 좌 8개/우 10개의 `1.60 mm` copper-free NPTH가 있고, 2.50 mm 하우징에는 해당 위치의 zero-gap land/desk column과 `1.10 x 2.80 mm` blind pilot가 있다. 기존 14/11 분산 지지대가 주 하중 경로이며, exact screw/driver, full-pattern fit, torque/repeat cycle, keycap skirt, 2 N deflection 실측 전에는 주문할 수 없다.
 - stabilizer가 필요한 별도 layout의 큰 키 stabilizer는 plate-mounted가 아니라, 무보강판에서 실제로 고정되는 PCB-mounted/PCB-retained 방식을 사용한다.
 - PCB 외곽선은 키 배열, 결합부, controller 돌출부, USB-C 접근 방향을 따라 최대한 타이트하게 잡는다.
 - 실리콘 feet는 PCB가 아니라 3D 프린터 하부 바닥판 아래에 부착한다.
@@ -83,7 +87,7 @@ KC1과의 관계는 배열 철학과 사용성의 계승이며, KC2의 하드웨
 
 KC2는 상부 보강판이 없고 PCB 또는 switch socket이 switch retention/assembly 구조의 일부가 되므로, 큰 키의 stabilizer는 단순한 plate-mounted low-profile stabilizer를 사용할 수 없다. 조사 결과 Kailh Choc V1/V2 계열 stabilizer는 일반적으로 PCB cutout과 1.2 mm급 switch plate cutout을 함께 요구한다. 따라서 KC2에서는 "PCB에 구멍만 있는 상태"로 실제 부품이 고정되는지 검증되지 않은 footprint를 발주용으로 인정하지 않는다.
 
-현재 주문 가능한 X3는 77-key no-stabilizer layout을 사용하고, implemented draft `kc2-x3-v2`는 `CON-ARCH-004`와 `docs/spec/20.kc2-no-stabilizer-layout.md`가 정의한 70-key v5 layout(왼쪽 31, 오른쪽 39)을 사용한다. 두 variant 모두 stabilizer footprint를 생성하지 않는다. 아래 2u 이상 key/stabilizer 검토 내용은 이전 71-key routed draft baseline 또는 stabilizer가 필요한 별도 layout을 위한 historical design constraint로만 유지한다.
+현재 주문 가능한 historical X3는 77-key no-stabilizer layout을 사용하고, 디지털 검증만 통과한 `kc2-x3-v2` draft는 `CON-ARCH-004`와 `docs/spec/20.kc2-no-stabilizer-layout.md`가 정의한 70-key v5 layout(왼쪽 31, 오른쪽 39)을 사용한다. 두 variant 모두 stabilizer footprint를 생성하지 않는다. 아래 2u 이상 key/stabilizer 검토 내용은 이전 71-key routed draft baseline 또는 stabilizer가 필요한 별도 layout을 위한 historical design constraint로만 유지한다.
 
 기존 71-key routed draft baseline과 stabilizer가 필요한 별도 layout에 대한 5개 서브에이전트 검토 결론:
 
@@ -238,7 +242,7 @@ Row 5: Ctrl GUI Alt Fn Space     |  B  Space RAlt Fn RCtrl Left Down Right
 
 주의:
 
-- 기존 71-key routed draft의 `fn_layer2` binding 수는 2026-06-02 검증에서 70개로 확인되어, 누락된 `&trans` 1개를 추가해 71개로 맞췄다. 현재 주문 가능한 X3 no-stabilizer 77-key keymap과 implemented draft `kc2-x3-v2` 70-key v5 keymap은 각각 별도 검증 대상이다.
+- 기존 71-key routed draft의 `fn_layer2` binding 수는 2026-06-02 검증에서 70개로 확인되어, 누락된 `&trans` 1개를 추가해 71개로 맞췄다. 현재 주문 가능한 historical X3 no-stabilizer 77-key keymap과 물리 검증 대기 중인 `kc2-x3-v2` 70-key v5 keymap은 각각 별도 검증 대상이다.
 - PCB 제작 전 `./zmk/app/build.sh`로 좌우 firmware 빌드를 검증한다.
 - 기존 `kc1` 펌웨어 식별자는 KC1 핸드와이어링/이전 설계 기록을 가리키는 이름으로만 남기며, KC2 제작용 ZMK shield id로는 사용하지 않는다.
 
@@ -246,7 +250,7 @@ Row 5: Ctrl GUI Alt Fn Space     |  B  Space RAlt Fn RCtrl Left Down Right
 
 - logical rows: 5
 - logical columns: 16
-- mapped positions: 77 for current X3 no-stabilizer; 70 for implemented draft `kc2-x3-v2` under `CON-ARCH-004` (31 left / 39 right)
+- mapped positions: 77 for current historical X3 no-stabilizer; 70 for digitally verified but not orderable `kc2-x3-v2` under `CON-ARCH-004` (31 left / 39 right)
 - transform row별 key 수: current X3 no-stabilizer physical rows 16 / 15 / 15 / 16 / 15; current X3 V2 v5 rows 15 / 14 / 14 / 15 / 12; historical earlier 71-key routed draft used 15 / 15 / 14 / 14 / 13
 - diode direction: `col2row`
 - diode: current X3 no-stabilizer main boards use 디바이스마트 상품번호 14592018 `1N4148W`, SOD-123, 총 77개; active draft `kc2-x3-v2` uses exact Jingdao `ES1B`, LCSC `C437840`, Eleparts goods `9475342`, bottom-side SMA at each of its 70 positions; historical earlier 71-key routed draft used 디바이스마트 상품번호 25 `1N4148`, SOD-27(DO-35), 71개
@@ -312,25 +316,25 @@ Row 5: Ctrl GUI Alt Fn Space     |  B  Space RAlt Fn RCtrl Left Down Right
 - nice!nano v2를 Pro Micro 호환 24핀 socket으로 장착한다.
 - socket은 디바이스마트 상품번호 5494 `싱글라운드소켓(64핀)`을 잘라 좌우 1x12 socket 2줄로 사용한다.
 - nice!nano의 `B+`/`B-` top pins에는 socket/header를 설치하지 않는다.
-- 각 half에 `TW301525` Li-Po 배터리 1개를 둔다.
-- `TW301525`는 15 mm x 25 mm급이라 nice!nano v2 폭 18.3 mm 안쪽에 들어가기 쉽고, 이전 후보 `TW302030`보다 컨트롤러 아래 배치에 유리하다.
-- `TW301525`의 80 mAh 용량은 nice!nano의 일반 권장 배터리 용량보다 작지만, 백라이트/RGB를 넣지 않는 전제로 유지한다.
-- 배터리 출력단자는 `A1251-02`로 표기되어 있다.
-- B+/B- pigtail과 A2506 PCB connector 2개 구조는 사용하지 않는다.
-- X3 compact controller tab에서는 배터리 lead를 PCB가 아니라 nice!nano v2의 `B+`/`B-` pad에 직접 납땜한다.
-- X3 carrier PCB에는 `BAT+`, `BAT-`, `NN_B+`, `NN_B-` solder pad와 이를 잇는 power trace를 만들지 않는다.
-- 배터리 lead를 nice!nano v2에 직접 납땜하므로, controller를 socket에서 완전히 분리하려면 배터리 lead를 먼저 desolder해야 한다.
-- 배터리 기본 `A1251-02` connector를 제거할 경우 한 선씩 절단/절연하고, 납땜 전 multimeter로 polarity를 실측한다.
-- 전원 lead는 nice!nano v2 solder joint가 장력을 받지 않도록 wire loop, 접착 고정, 또는 하부 바닥판의 케이블 고정 구조를 사용한다.
-- socketed nice!nano는 24핀 socket에서 분리할 수 있지만, 배터리 lead가 nice!nano v2 `B+`/`B-`에 직접 납땜되어 있으므로 완전 분리하려면 해당 lead를 desolder해야 한다.
-- slide switch는 사용하지 않는다.
-- slide switch와 전원 connector가 없으므로 일반 사용 중 hard power-off는 제공하지 않는다.
-- 전원 차단이 필요한 정비 상황에서는 nice!nano v2에 직접 납땜된 배터리 lead를 desolder하거나 외부 배터리 lead 측에서 분리한다.
+- 각 half에 301230-class 3.7 V, 100 mAh Li-Po 배터리 1개를 둔다.
+- Nominal battery body는 30.0 mm x 12.0 mm x 3.0 mm이며, 30 mm 축을 U1 pin row와 평행하게 두고 USB 쪽으로 1.0 mm 치우친다. Left center는 `(131.7125, 50.7500)`, right center는 `(78.4000, 50.7500)` mm이다.
+- 15.24 mm socket-row center와 1.80 mm pad 기준으로 battery-to-pad nominal clearance는 각 0.72 mm, battery-to-antenna-keepout plan clearance는 3.97 mm이다.
+- 사용자가 육안으로 추정한 약 8 mm stack은 fit 증거가 아니다. 완전히 체결한 carrier-to-controller 간격, pack/절연/retainer 최대 두께, pouch 팽창과 pin 돌출을 caliper와 first article로 확인한다.
+- 배터리에는 이미 부착된 절연 lead만 사용한다. Bare pouch tab 또는 pouch seal에 납땜하지 않는다.
+- 배터리 lead는 carrier의 `J_BAT1` BAT+/B- PTH에 직접 납땜하고 `BAT_LEAD_SLOT1` copper-free slot으로 strain relief한다. Board에는 exact text `BAT STRAIN RELIEF`를 표시한다. A2501, A1251, JST 등의 detachable board connector는 사용하지 않는다.
+- `J_BAT1 BAT+ -> SW_PWR1 pad 1 common -> pad 2 ON throw -> U1 RAW/NN_B+`로 연결한다. SW_PWR1 pad 3은 NC이고 B-는 local GND 및 U1 GND에 직접 연결한다.
+- 각 half의 전원은 독립적이며 좌우 배터리 전원을 교차 연결하지 않는다.
+- 각 half에 IMMS-12V power switch 1개를 둔다. Center는 left `(115.8125, 63.4500)`, right `(94.3000, 63.4500)` mm이고 rotation은 left 0도, right 180도이다. 안쪽 이동은 ON, USB 바깥쪽 이동은 OFF로 표시한다.
+- 각 half에 `NW3-A06-B3` reset switch 1개를 둔다. Center는 left `(126.0625, 63.4500)`, right `(84.0500, 63.4500)` mm이고 rotation은 left 0도, right 180도이다. POWER와 RESET의 center spacing은 10.25 mm이며, controlled body 기준 간격은 2.20 mm이다.
+- Top/component-side view의 절대 좌→우 순서는 left `PWR|RST`, right `RST|PWR`이다. 각 half의 사용자 관점에서는 USB 바깥쪽부터 POWER, RESET, antenna 순서가 같다.
+- Socketed nice!nano는 battery가 carrier에 납땜된 상태에서도 분리할 수 있어야 한다.
+- Lower housing에는 TW301525 또는 301230 battery-body cavity를 만들지 않는다. U1/J_BAT1/strain-relief/IMMS lead와 solder fillet에 필요한 하부 opening만 둔다.
+- 정확한 battery MPN과 single-cell protection 상태는 BOM과 component-by-component 조달 검토에 명시하며 size code만으로 보호회로를 추정하지 않는다.
 - 각 half에 프로그래밍용 tact switch 1개를 둔다.
 - tact switch는 디바이스마트 상품번호 1322056 `NW3-A06-B3`를 사용한다.
-- `NW3-A06-B3`는 SMD 부품이므로, 기존 6 mm THT tact switch보다 PCB 관통 구멍과 USB-C 아래 차지 면적을 줄이는 용도로 사용한다.
+- `NW3-A06-B3`는 SMD 부품이며, X3 V2에서는 `CON-ARCH-007`의 controller-key-gap RESET 위치와 10.25 mm POWER center spacing을 따른다.
 - 프로그래밍용 tact switch는 `RST`와 `GND` 사이에 연결하여 nice!nano bootloader/reset 진입에 사용한다.
-- X3 carrier PCB에는 배터리/컨트롤러 전원 solder pad를 두지 않는다. 배터리 극성은 조립 전 multimeter와 nice!nano v2 `B+`/`B-` 표시로 확인한다.
+- `kc2-x3-v2` carrier는 `CON-ARCH-007`의 J_BAT1, IMMS-12V, RAW/GND 전원 경로를 사용한다. 배터리 극성, IMMS common/throw, RAW/GND continuity는 조립 전후 multimeter로 확인한다.
 
 ## PCB 설계 제약
 
@@ -338,10 +342,10 @@ Row 5: Ctrl GUI Alt Fn Space     |  B  Space RAlt Fn RCtrl Left Down Right
 - 일반 KC2 switch footprint는 다중 호환 hole/pad pattern을 목표로 하되, `kc2-x3-v2`는 `CON-ARCH-004`에 따라 Choc V2 socket-only 및 MX solder-only로 제한한다.
 - 하나의 PCB에서 가능한 한 여러 switch family를 납땜할 수 있게 하는 목표는 SRS가 더 좁은 variant별 assembly mode를 지정하지 않은 경우에만 적용한다.
 - 단일 hole pattern이 모든 제조사/모든 switch를 물리적으로 지원할 수는 없으므로, KiCad footprint 작성 전에 지원하려는 switch family별 pin pitch, metal pin, center/locator hole, keycap 간섭 치수를 라이브러리와 실물로 검증한다.
-- `무보강판 스테빌라이저` 섹션은 stabilizer가 필요한 별도 layout에만 적용한다. 현재 X3 no-stabilizer layout 및 implemented draft `kc2-x3-v2`는 stabilizer footprint와 keepout을 생성하지 않는다.
+- `무보강판 스테빌라이저` 섹션은 stabilizer가 필요한 별도 layout에만 적용한다. Historical X3 no-stabilizer layout 및 물리 검증 대기 중인 `kc2-x3-v2` draft는 stabilizer footprint와 keepout을 생성하지 않는다.
 - 보강판에 의존하는 plate-mounted stabilizer는 KC2 기본 구조와 맞지 않으므로 final footprint로 사용하지 않는다.
 - 현 draft의 MX-style `KC2:PCB_Mount_2u_Stabilizer_NPTH`는 위치/공간 확인용 placeholder이며, low-profile 무보강판 실물 체결 검증 전에는 fabrication footprint로 사용하지 않는다.
-- 현재 주문 가능한 X3는 77개 switch/diode 배치를 기준으로 검증하고, implemented draft `kc2-x3-v2`는 `CON-ARCH-004`의 70개 switch/diode 배치를 기준으로 별도 검증한다. 그보다 앞선 71-key routed draft의 diode 공간 검토는 historical baseline으로만 유지한다.
+- 현재 주문 가능한 historical X3는 77개 switch/diode 배치를 기준으로 검증하고, 물리 검증 대기 중인 `kc2-x3-v2` draft는 `CON-ARCH-004`의 70개 switch/diode 배치를 기준으로 별도 검증한다. 그보다 앞선 71-key routed draft의 diode 공간 검토는 historical baseline으로만 유지한다.
 - Historical 또는 future variant에서 DO-35 axial diode를 검토할 경우, through-hole axial 부품은 SMD diode보다 차지하는 면적과 lead bending 공간이 크다.
 - DO-35 유지 실패 기준은 switch footprint 또는 stabilizer가 필요한 별도 layout의 stabilizer footprint와의 courtyard overlap, screwless registration hole 배치 실패, historical/separate M2 layout의 M2 hole 배치 실패, hole-to-hole clearance 위반, 결합 edge 2.5-3.0 mm 여백 침범, 하부 바닥판 지지점 간섭, lead bending 공간 부족 중 하나라도 발생하는 경우로 둔다.
 - 공간이 부족하면 diode 위치 재배치, PCB 반대면 배치, routing 재배치를 먼저 검토한다. Active V2는 exact ES1B/SMA requirement와 concealed-bezel/housing land를 함께 만족해야 하며 작은 SOD 패키지로 임의 회귀하지 않는다. Historical/future non-V2 variant에서만 `1N4148W`/SOD-123, 이후 `1N4148WS`/SOD-323 순서를 검토한다.
@@ -351,7 +355,7 @@ Row 5: Ctrl GUI Alt Fn Space     |  B  Space RAlt Fn RCtrl Left Down Right
 - `kc2-x3-v2`의 Choc V2 socket-only/MX solder-only footprint는 `CON-ARCH-004`를 따른다. V2에는 Choc V1/PG1350 switch geometry, Choc V1 전용 locator/direct-solder geometry, Choc V2 direct-solder pad, MX hot-swap socket pad를 포함하지 않는다.
 - Choc V2 hot-swap socket은 bottom-side SMD pad를 갖는 부품이므로 공식 Choc V2 switch/socket 및 5-pin MX switch 도면/데이터시트 기준으로 PCB 하부면 socket soldering 방향, MX top-side direct-solder 방향, left/right 회전 또는 mirror 배치, socket orientation, Choc V2 center/switch-pin/locator NPTH clearance, MX center/electrical-pin/locator hole clearance를 검토한다. 1:1 출력물과 실물 소켓 확인은 사전 sanity check로만 사용하며, V2 발주 가능 증거로는 인정하지 않는다.
 - 무보강판 no-stabilizer 구조에서는 Choc V2 hot-swap socket만으로 switch/keycap 흔들림과 이탈을 충분히 억제하지 못할 수 있다. 하부 바닥판, keycap, Choc V2 socket body/pad/solder fillet, MX switch pin/solder joint, nearby diode body/lead/pad 간섭과 target Choc V2 switch/socket 및 target 5-pin MX switch의 실물 fit은 intended footprint, stackup, drill, mask, paste data로 제작된 1:1 physical test coupon 또는 first-article PCB section에서 실제 부품을 장착/납땜해 검증한 뒤에만 V2를 발주 가능 상태로 본다. CAD-only render, paper check, unsoldered visual inspection은 이 gate의 충분한 증거가 아니다. stabilizer가 필요한 별도 layout에서는 stabilizer 간섭도 별도로 검증한다.
-- 아래 `x1`/`x2` 항목은 historical draft variant 기록이며, 현재 주문 가능한 X3 또는 implemented draft `kc2-x3-v2` 요구사항으로 사용하지 않는다.
+- 아래 `x1`/`x2` 항목은 historical draft variant 기록이며, 현재 주문 가능한 historical X3 또는 물리 검증 대기 중인 `kc2-x3-v2` 요구사항으로 사용하지 않는다.
 - `x1` 변형은 `hotswap` 변형을 복사한 hand-solder diode 개선판이다.
 - `x1` 변형의 diode는 디바이스마트 상품번호 14592018 `1N4148W`, SOD-123을 사용한다.
 - `x1` 변형의 diode footprint는 `kc2.pretty:D_SOD123_HandSolder_14592018`이며, KiCad 기본 `D_SOD-123`의 `0.9 mm x 1.2 mm` pad보다 큰 `1.4 mm x 1.55 mm` pad를 사용한다.
@@ -364,7 +368,7 @@ Row 5: Ctrl GUI Alt Fn Space     |  B  Space RAlt Fn RCtrl Left Down Right
 - 현재 main PCB는 기존 `x3` 변형을 승격한 no-stabilizer layout 개선판이다.
 - `x3` 변형은 switch footprint, diode footprint, diode y offset을 `x2`와 동일하게 유지하되, preflight copper-edge clearance를 위해 상단 outline relief는 왼쪽 half 0.3 mm, 오른쪽 half 0.6 mm를 사용한다.
 - `x3` 변형은 `docs/spec/20.kc2-no-stabilizer-layout.md`의 77-key layout을 사용하며, 물리 키 최대 폭은 `1.75u`이다.
-- SpecKiwi SRS source of truth: `docs/spec/10.product-architecture.srs.md`의 `CON-ARCH-004`가 implemented draft `kc2-x3-v2` switch-footprint requirement를 정의한다. 요약: 현재 주문 가능한 `x3`의 Choc V1 중심 switch footprint를 대체하는 별도 V2 board이며, Choc V2/PG1353-class low-profile switch는 bottom-side Choc hot-swap socket으로만 지원하고 Cherry MX-style switch는 5-pin PCB-mount through-hole direct-solder로만 지원한다. 물리 coupon 실장 증거가 없으므로 V2는 주문 가능 상태가 아니다.
+- SpecKiwi SRS source of truth: `docs/spec/10.product-architecture.srs.md`의 `CON-ARCH-004`가 `kc2-x3-v2` switch-footprint requirement를 정의한다. 요약: 디지털 구현/검증은 통과했지만 물리 검증은 남은 별도 V2 board이며, Choc V2/PG1353-class low-profile switch는 bottom-side Choc hot-swap socket으로만 지원하고 Cherry MX-style switch는 5-pin PCB-mount through-hole direct-solder로만 지원한다. Promoted historical X3 경로나 물리 coupon 실장 증거 없는 V2는 주문 가능 상태가 아니다.
 - `kc2-x3-v2` 변형은 Choc V1/PG1350 switch, Choc V1 전용 locator/direct-solder geometry, Choc V2 direct-solder pad, MX hot-swap socket pad를 지원하지 않는다.
 - `kc2-x3-v2` 산출물은 현재 주문 가능한 `hardware/kicad/kc2_left/`, `hardware/kicad/kc2_right/`, `hardware/kicad/fabrication/kc2_left_jlcpcb.zip`, `hardware/kicad/fabrication/kc2_right_jlcpcb.zip`를 대체하지 않는다. 별도 draft 또는 V2 전용 output path에 유지하고, 모든 검증이 통과한 뒤에도 별도 SRS promotion requirement 없이는 orderable X3 산출물로 승격하지 않는다.
 - active V2의 현재 M1.4-hole-aware compact-controller route input/session은 `kc2_left-x3-v2-70-es1b-controller-r3.dsn/.ses` 및 `kc2_right-x3-v2-70-es1b-controller-r3.dsn/.ses`이다. Exact service geometry와 precondition-checked edge cleanup을 적용해 최종 보드를 재현한다. 이전 `70-es1b-mh-r2`, pre-MH `70-es1b-r1`, left `70-v5-r1`, right `71-r12`는 historical evidence이며 active V2 재현에 사용하지 않는다.
@@ -387,7 +391,7 @@ Row 5: Ctrl GUI Alt Fn Space     |  B  Space RAlt Fn RCtrl Left Down Right
 - 왼쪽 half는 USB-C가 왼쪽 바깥쪽을 향하고, antenna end는 오른쪽 결합 edge 쪽을 향한다.
 - 오른쪽 half는 USB-C가 오른쪽 바깥쪽을 향하고, antenna end는 왼쪽 결합 edge 쪽을 향한다.
 - KiCad 배치에는 `USB_OUT_LEFT`, `USB_OUT_RIGHT`, `ANTENNA_INWARD` silkscreen 또는 Dwgs.User 표시를 넣어 footprint 회전 오류를 검증한다.
-- USB-C 포트 아래쪽은 각 half의 key-side, 즉 숫자열을 향한 쪽으로 정의한다. Promoted/historical X3의 프로그래밍용 tact switch는 antenna-side controller-tab edge 쪽 상면에 둔다. X3 V2에서는 `CON-ARCH-004` AC-12가 reset 위치만 USB-side로 supersede한다.
+- USB-C 포트 아래쪽은 각 half의 key-side, 즉 숫자열을 향한 쪽으로 정의한다. Promoted/historical X3의 프로그래밍용 tact switch는 antenna-side controller-tab edge 쪽 상면에 둔다. X3 V2에서는 `CON-ARCH-007`에 따라 controller-key gap에 mirrored POWER/RESET pair를 둔다.
 - 핸드와이어링 버전의 배열은 유지하되, PCB outline과 controller/USB 주변 외형은 PCB화에 맞춰 조정할 수 있다.
 - USB는 nice!nano v2 자체 USB-C만 사용한다. 기존 USB-C guide/extension/외부 USB board 구조는 유지하지 않는다.
 - USB-C 포트는 결합 상태와 분리 상태 모두에서 케이블을 꽂기 쉬운 방향으로 둔다.
@@ -396,22 +400,22 @@ Row 5: Ctrl GUI Alt Fn Space     |  B  Space RAlt Fn RCtrl Left Down Right
 - 이 keepout 값은 공식 pinout/schematic과 실물 측정 후 조정할 수 있으나, 1차 PCB 초안에서는 10 mm keepout을 기본값으로 둔다.
 - 배터리를 controller 아래에 둘 수는 있지만, 안테나 바로 아래에는 두지 않는다.
 - Li-Po pouch와 배선은 2.4 GHz 안테나를 detune하거나 감쇠시킬 수 있으므로, 배터리는 MCU/USB 쪽 아래로 치우치게 배치하고 안테나 아래는 비워 둔다.
-- Promoted/historical X3의 프로그래밍용 tact switch는 antenna-side controller-tab edge 쪽으로 이동한다. X3 V2에서는 `CON-ARCH-004` AC-12가 reset 위치만 USB-side로 supersede한다. 두 경우 모두 top-side tact switch body가 nice!nano socket, bottom-side battery reference, 하부 바닥판 고정 구조와 간섭하지 않도록 한다.
-- controller와 tact switch는 손에 노출되는 상부 조건으로 배치하고, battery와 nice!nano 직접 납땜부는 하부 바닥판과 간섭하지 않게 배치한다.
+- Promoted/historical X3의 tact switch는 antenna-side controller-tab 기록을 유지한다. X3 V2의 POWER/RESET pair는 antenna keepout 반대쪽 controller-key gap에 mirror 배치하고, 배터리·keycap·하우징·controller 탈착과 간섭하지 않게 한다.
+- Controller, battery, POWER/RESET 및 direct-solder lead는 `CON-ARCH-007`과 `REL-ARCH-001`의 3D keepout, strain-relief, RSSI/PER, charging-state 및 power-transition gate를 적용한다.
 - keycap 간섭, USB 삽입 간섭, 바닥면 쇼트 가능성을 1:1 출력물로 확인한다.
 
 ## 미확정 항목
 
-- CON-ARCH-004로 좁혀지지 않은 future variant용 다중 호환 switch hole/pad pattern 검증. 현재 주문 가능한 X3 switch footprint는 verified X3 evidence를 따르며, implemented draft `kc2-x3-v2`는 CON-ARCH-004의 Choc V2 socket-only/MX solder-only 제한을 따른다.
+- CON-ARCH-004로 좁혀지지 않은 future variant용 다중 호환 switch hole/pad pattern 검증. 현재 주문 가능한 historical X3 switch footprint는 verified X3 evidence를 따르며, 물리 검증 대기 중인 `kc2-x3-v2` draft는 CON-ARCH-004의 Choc V2 socket-only/MX solder-only 제한을 따른다.
 - `kc2-x3-v2` 물리 coupon에 Kailh Deep Sea Whale Choc V2와 `CPG135001S30` socket을 하단 0/180도 양방향으로 실장하고, 5-pin MX switch를 상면 직납하여 실제 fit, keycap pitch, diode, solder joint, 하우징 간섭을 확인해야 한다.
 - Historical/future non-V2 SMD 전환 시 손납땜이면 SOD-123 우선, PCBA 또는 극한 compact 배치가 필요하면 SOD-323 허용. Active V2는 larger exact Jingdao ES1B/SMA hand-solder requirement를 따른다.
 - stabilizer가 필요한 별도 layout의 keycap unit, 실제 keycap underside stem 간격, 무보강판에서 체결 가능한 PCB-mounted/PCB-retained stabilizer footprint
 - stabilizer가 필요한 별도 layout의 stabilizer 1:1 출력물 또는 test coupon 기반 실물 끼움 테스트
-- `TW301525` 배터리 위치와 하부 바닥판 고정 방식
-- nice!nano v2 `B+`/`B-` 직접 납땜부의 service loop, strain relief, 절연 방식
-- 전원 차단이 필요한 정비 상황에서 사용할 배터리 lead desolder 또는 외부 lead 분리 방식
-- controller 아래 배터리 배치 시 antenna keepout 확보 방식
-- Promoted/historical X3의 `NW3-A06-B3` SMD tact switch antenna-side 상면 위치와 1:1 출력물 기반 조작 검증; X3 V2는 `CON-ARCH-004` AC-12의 USB-side 물리 service gate 적용
+- 정확한 301230-class 제조사/MPN, single-cell protection 상태, 최대 팽창 두께, lead 인출 방향과 rated pull 조건
+- Fully seated controller stack의 caliper 간격과 battery/절연/retainer first-article fit
+- J_BAT1 drill, strain-relief 및 service pull 조건의 purchased-lead drawing 기반 확정
+- 최종 좌우 first article의 battery-only/USB charging/charge-complete RSSI, packet loss, disconnect 및 IMMS power-transition 측정
+- Promoted/historical X3의 `NW3-A06-B3` antenna-side 상면 위치 검증; X3 V2는 `CON-ARCH-007`의 mirrored controller-key-gap service gate 적용
 - X3 screwless rail/capture 하부 바닥판의 실제 레일, 턱, peg, rib 치수
 - X3 screwless 구조에서 접착제가 필요한 경우의 보조 적용 위치와 서비스성
 - 3D 프린터 하부 바닥판 형상과 PCB 지지점
@@ -429,7 +433,8 @@ Row 5: Ctrl GUI Alt Fn Space     |  B  Space RAlt Fn RCtrl Left Down Right
 | Matrix diode alternative 2 | 디바이스마트 상품번호 15106773 `1N4148WS`, SOD-323 | https://www.devicemart.co.kr/goods/view?no=15106773 |
 | Matrix diode (active X3 V2, exact part) | 70 pcs Jingdao Microelectronics `ES1B`, LCSC `C437840`, Eleparts goods `9475342`, SMA on B.Cu, 100 V, 1 A; pin 1=row/cathode, pin 2=per-key/anode; bottom view mirrored | https://www.eleparts.co.kr/goods/view?no=9475342 |
 | Controller socket | 디바이스마트 상품번호 5494 `싱글라운드소켓(64핀)`, 2.54 mm pitch, 1열 round socket | https://www.devicemart.co.kr/goods/view?no=5494 |
-| Battery | 디바이스마트 상품번호 1376800 `TW301525`, 3.7 V, 80 mAh, A1251-02, 15 mm x 25 mm급 | https://www.devicemart.co.kr/goods/view?no=1376800 |
+| Battery (X3 V2) | 301230-class, 3.7 V, 100 mAh, pre-attached insulated leads; exact protected-pack MPN pending physical gate | https://nicekeyboards.com/docs/nice-nano/ |
+| Power switch (X3 V2) | `IMMS-12V` / controlled BSI-10 straight-lead SPDT, 3 x 0.80 mm drill, 2.54 mm pitch; used as BAT+ disconnect | https://www.devicemart.co.kr/goods/view?no=2647 |
 | Programming tact switch | 디바이스마트 상품번호 1322056 `NW3-A06-B3`, SMD micro tact switch, 6.1 mm x 3.7 mm급 body, 2.55 mm급 높이 | https://www.devicemart.co.kr/goods/view?no=1322056 |
 | KC2 X3 V2 target switch | Kailh Deep Sea Whale low-profile Choc V2 / PG1353-class, 70개. Bottom-side socket assembly only. | https://www.kailhswitch.com/mechanical-keyboard-switches/key-switches/kailh-low-profile-switch-choc-v2.html |
 | KC2 X3 V2 socket | Kailh Choc hot-swap socket `CPG135001S30` class, 70개 when using Choc V2 mode. Do not populate in MX mode. | https://www.kailhswitch.com/uploads/15927/files/CPG135001S30.pdf?rnd=925 |
@@ -448,6 +453,6 @@ Historical draft hot-swap 참고 자료:
 
 | 용도 | 부품 | 상태 | 링크 |
 | --- | --- | --- | --- |
-| Battery/controller harness | 디바이스마트 상품번호 10894399 `NW3-5264-02`, 2핀, 2.5 mm pitch, 약 200 mm, AWG26, A2506 한쪽 커넥터 | KC2 X3에서는 사용하지 않음. 배터리 lead를 nice!nano v2 `B+`/`B-`에 직접 납땜 | https://www.devicemart.co.kr/goods/view?no=10894399 |
-| PCB power connector | 디바이스마트 상품번호 1357807 `NW-5268-2AW (2핀)`, A2506, Molex 5268 대응, 2.5 mm pitch, angle type | KC2 X3에서는 사용하지 않음. carrier-PCB 전원 connector/pad를 두지 않음 | https://www.devicemart.co.kr/goods/view?no=1357807 |
+| Battery/controller harness | 디바이스마트 상품번호 10894399 `NW3-5264-02`, 2핀, 2.5 mm pitch, 약 200 mm, AWG26, A2506 한쪽 커넥터 | KC2 X3 V2에서는 사용하지 않음. Pre-attached insulated battery lead를 J_BAT1에 직접 납땜 | https://www.devicemart.co.kr/goods/view?no=10894399 |
+| PCB power connector | `NW3-A2501-02AB`, `NW3/YTC-A2501-02AW`, `NW-5268-2AW` 및 mating A2501/A2506 housing | KC2 X3 V2에서는 사용하지 않음. Carrier에는 direct-solder J_BAT1만 둠 | https://www.devicemart.co.kr/goods/view?no=1322955 |
 | Programming tact switch | 디바이스마트 상품번호 34555 `ITS-1105-5mm`, DIP tact switch, 높이 5.0 mm | USB-C 아래 공간이 커서 `NW3-A06-B3` SMD tact switch로 대체 | https://www.devicemart.co.kr/goods/view?no=34555 |

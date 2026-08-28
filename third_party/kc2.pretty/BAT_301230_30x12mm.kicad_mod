@@ -1,0 +1,37 @@
+(footprint "BAT_301230_30x12mm"
+  (version 20241229)
+  (generator "kicad-mcp")
+  (generator_version "9.0")
+  (layer "F.Cu")
+  (descr "Mechanical assembly envelope for a nominal 301230-class 3.7 V 100 mAh Li-Po body, 30 x 12 x 3 mm. No electrical pads; exact pack and swelling remain physical gates.")
+  (tags "battery LiPo 301230 mechanical envelope 30x12")
+
+  (property "Reference" "REF**" (at 0 -7 0)
+    (layer "F.SilkS")
+    (uuid "8b22f762-f6d9-41d4-991d-26ec76878938")
+    (effects (font (size 1 1) (thickness 0.15)))
+  )
+  (property "Value" "BAT_301230_30x12mm" (at 0 7 0)
+    (layer "F.Fab")
+    (uuid "dd77b412-6d6a-4387-8774-7810ae6b3252")
+    (effects (font (size 1 1) (thickness 0.15)))
+    (hide yes)
+  )
+  (property "Datasheet" "" (at 0 0 0)
+    (layer "F.Fab")
+    (uuid "06217734-fdba-4508-b54a-37f5ef6e481e")
+    (effects (font (size 1 1) (thickness 0.15)))
+    (hide yes)
+  )
+
+
+  (fp_rect
+    (start -15 -6)
+    (end 15 6)
+    (stroke (width 0.1) (type default))
+    (fill none)
+    (layer "F.Fab")
+    (uuid "26d3e8ff-caef-46be-ab73-1022a2758fc6")
+  )
+
+)

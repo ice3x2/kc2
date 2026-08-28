@@ -130,10 +130,14 @@ ES1B_ROUTE_SHA256 = {
 
 
 CONTROLLER_COMPACT_IMPORTED_ITEM_COUNTS = {"left": 539, "right": 703}
-CONTROLLER_COMPACT_ROUTE_ITEM_COUNTS = {"left": 544, "right": 711}
+CONTROLLER_COMPACT_IMPORTED_ROUTE_SHA256 = {
+    "left": "4048da738ac3f3a5106ed86de5d7a8291014993daa73044c695f55f353d22967",
+    "right": "15f7dd78eb1195d4697e0d6f0457cfcdfaf347fc9be28a749ae341ce5ecbae2d",
+}
+CONTROLLER_COMPACT_ROUTE_ITEM_COUNTS = {"left": 580, "right": 739}
 CONTROLLER_COMPACT_ROUTE_SHA256 = {
-    "left": "79dd509ceb68960691a012721ce8a29ad159c2191950d090ada1fd2bceed92aa",
-    "right": "20009ce9a43c88167aba0d88ccef84df46b53a7c633b62937286535245ea9127",
+    "left": "7eda6d670a2fd3b99ab06548be4c635dbff03904ec251197f547110864fcb5e6",
+    "right": "fc2a819d9ce840ffc0c9e9b5ac6fc7dac54d51a441addb5b0005b4fa89cdbf1a",
 }
 CONTROLLER_COMPACT_ROUTE_REMOVALS = {
     "left": (
@@ -181,6 +185,39 @@ CONTROLLER_COMPACT_ROUTE_ADDITIONS = {
         ("track", "R_ROW3", "F.Cu", 100.2000, 91.6911, 100.4593, 91.6911, 0.250),
         ("via", "R_COL6", 97.0500, 89.1791, 0.600, 0.300),
     ),
+}
+MATRIX_SERVICE_ROUTE_REMOVALS = {
+    "left": (
+        ("track", "L_COL0", "F.Cu", 131.4425, 58.3700, 117.9254, 71.8871, 0.250),
+        ("track", "L_COL1", "F.Cu", 132.0690, 59.7698, 119.2058, 72.6330, 0.250),
+        ("track", "L_COL2", "B.Cu", 122.1599, 70.1926, 133.9825, 58.3700, 0.250),
+    ),
+    "right": (),
+}
+MATRIX_SERVICE_ROUTE_ADDITIONS = {
+    "left": (
+        ("track", "L_COL0", "B.Cu", 131.4425, 58.3700, 132.1000, 60.0000, 0.250),
+        ("track", "L_COL0", "B.Cu", 132.1000, 60.0000, 132.1000, 67.0000, 0.250),
+        ("track", "L_COL0", "B.Cu", 132.1000, 67.0000, 117.9254, 71.8871, 0.250),
+        ("via", "L_COL0", 117.9254, 71.8871, 0.600, 0.300),
+        ("track", "L_COL1", "B.Cu", 132.0690, 59.7698, 133.1000, 60.5000, 0.250),
+        ("via", "L_COL1", 132.0690, 59.7698, 0.600, 0.300),
+        ("track", "L_COL1", "B.Cu", 133.1000, 60.5000, 133.1000, 67.5000, 0.250),
+        ("track", "L_COL1", "B.Cu", 133.1000, 67.5000, 119.2058, 72.6330, 0.250),
+        ("via", "L_COL1", 119.2058, 72.6330, 0.600, 0.300),
+        ("track", "L_COL2", "B.Cu", 133.9825, 58.3700, 134.5000, 59.0000, 0.250),
+        ("track", "L_COL2", "B.Cu", 134.5000, 59.0000, 134.5000, 68.0000, 0.250),
+        ("track", "L_COL2", "B.Cu", 134.5000, 68.0000, 122.1599, 70.1926, 0.250),
+    ),
+    "right": (),
+}
+MATRIX_CONNECTIVITY_ROUTE_REMOVALS = {
+    side: tuple(spec["removals"])
+    for side, spec in gen.X3_V2_MATRIX_CONNECTIVITY_DETOURS.items()
+}
+MATRIX_CONNECTIVITY_ROUTE_ADDITIONS = {
+    side: tuple(spec["additions"])
+    for side, spec in gen.X3_V2_MATRIX_CONNECTIVITY_DETOURS.items()
 }
 V2_USB_UNDER_RESET_ROUTES = {
     "left": (
@@ -364,25 +401,109 @@ def _add_route_spec(board: pcbnew.BOARD, spec: tuple[object, ...]) -> None:
     board.Add(item)
 
 
+def apply_matrix_service_detours(board: pcbnew.BOARD, side: str) -> dict[str, int]:
+    if side not in MATRIX_SERVICE_ROUTE_REMOVALS:
+        raise RuntimeError(f"unsupported matrix-service detour side {side!r}")
+    removals = Counter(MATRIX_SERVICE_ROUTE_REMOVALS[side])
+    additions = Counter(MATRIX_SERVICE_ROUTE_ADDITIONS[side])
+    signatures = Counter(_route_signature(item) for item in board.GetTracks())
+    if signatures & additions == additions and not signatures & removals:
+        return {"removed": 0, "added": 0}
+    if signatures & removals != removals:
+        raise RuntimeError(f"{side} matrix-service detour precondition failed")
+    remaining = removals.copy()
+    removed = 0
+    for item in list(board.GetTracks()):
+        signature = _route_signature(item)
+        if remaining[signature] <= 0:
+            continue
+        board.Delete(item)
+        remaining[signature] -= 1
+        removed += 1
+    if any(remaining.values()):
+        raise RuntimeError(f"{side} matrix-service detour removal was incomplete")
+    for spec in MATRIX_SERVICE_ROUTE_ADDITIONS[side]:
+        _add_route_spec(board, spec)
+    return {"removed": removed, "added": len(MATRIX_SERVICE_ROUTE_ADDITIONS[side])}
+
+
+def apply_matrix_connectivity_detours(board: pcbnew.BOARD, side: str) -> dict[str, int]:
+    if side not in MATRIX_CONNECTIVITY_ROUTE_REMOVALS:
+        raise RuntimeError(f"unsupported matrix-connectivity detour side {side!r}")
+    removals = Counter(MATRIX_CONNECTIVITY_ROUTE_REMOVALS[side])
+    additions = Counter(MATRIX_CONNECTIVITY_ROUTE_ADDITIONS[side])
+    signatures = Counter(_route_signature(item) for item in board.GetTracks())
+    if signatures & additions == additions and not signatures & removals:
+        return {"removed": 0, "added": 0}
+    if signatures & removals != removals:
+        raise RuntimeError(f"{side} matrix-connectivity detour precondition failed")
+    remaining = removals.copy()
+    removed = 0
+    for item in list(board.GetTracks()):
+        signature = _route_signature(item)
+        if remaining[signature] <= 0:
+            continue
+        board.Delete(item)
+        remaining[signature] -= 1
+        removed += 1
+    if any(remaining.values()):
+        raise RuntimeError(f"{side} matrix-connectivity detour removal was incomplete")
+    for spec in MATRIX_CONNECTIVITY_ROUTE_ADDITIONS[side]:
+        _add_route_spec(board, spec)
+    return {
+        "removed": removed,
+        "added": len(MATRIX_CONNECTIVITY_ROUTE_ADDITIONS[side]),
+    }
+
+
 def replace_v2_usb_under_reset_routes(
     board: pcbnew.BOARD,
     side: str,
 ) -> dict[str, int]:
-    """Replace only RST/GND fanout with the reviewed USB-under-controller routes."""
+    """Replace controller-service RST/GND/BAT+ fanout for CON-ARCH-007."""
 
     existing = [
-        item for item in board.GetTracks() if item.GetNetname() in {"RST", "GND"}
+        item
+        for item in board.GetTracks()
+        if item.GetNetname() in {"RST", "GND", "BAT+", "NN_B+"}
     ]
-    expected = Counter(V2_USB_UNDER_RESET_ROUTES[side])
-    if Counter(_route_signature(item) for item in existing) == expected:
-        return {"removed": 0, "added": 0}
     for item in existing:
         board.Delete(item)
-    for spec in V2_USB_UNDER_RESET_ROUTES[side]:
-        _add_route_spec(board, spec)
+    tact = board.FindFootprintByReference("SW_RST1")
+    battery = board.FindFootprintByReference("J_BAT1")
+    power = board.FindFootprintByReference("SW_PWR1")
+    controller = board.FindFootprintByReference("U1")
+    if any(item is None for item in (tact, battery, power, controller)):
+        raise RuntimeError(f"{side} controller-service route is missing a required footprint")
+    controller_pads = {
+        pad.GetNumber(): gen.to_mm_vec(pad.GetPosition())
+        for pad in controller.Pads()
+    }
+    nets = {
+        name: board.FindNet(name)
+        for name in ("RST", "GND", "BAT+", "NN_B+")
+    }
+    if any(net is None for net in nets.values()):
+        raise RuntimeError(f"{side} controller-service route is missing a required net")
+    gen.connect_tact_to_controller(board, nets, tact, controller_pads, side)
+    gen.connect_x3_v2_power_service(
+        board,
+        nets,
+        battery,
+        power,
+        controller_pads,
+        side,
+    )
+    added = len(
+        [
+            item
+            for item in board.GetTracks()
+            if item.GetNetname() in {"RST", "GND", "BAT+", "NN_B+"}
+        ]
+    )
     return {
         "removed": len(existing),
-        "added": len(V2_USB_UNDER_RESET_ROUTES[side]),
+        "added": added,
     }
 
 
@@ -393,9 +514,13 @@ def restore_v2_controller_service_placements(
     """Restore placements that the historical controller-r3 SES carries."""
 
     expected = gen.X3_V2_CONTROLLER_SERVICE_POSITIONS_MM[side]
-    for reference, key, rotation in (
-        ("SW_RST1", "reset", gen.X3_V2_RESET_ROTATION_DEGREES),
-        ("BAT_LEAD_SLOT1", "battery_slot", 0.0),
+    rotations = gen.X3_V2_CONTROLLER_SERVICE_ROTATIONS_DEGREES[side]
+    for reference, key in (
+        ("BAT1", "battery"),
+        ("J_BAT1", "j_bat"),
+        ("SW_PWR1", "power"),
+        ("SW_RST1", "reset"),
+        ("BAT_LEAD_SLOT1", "battery_slot"),
     ):
         footprint = board.FindFootprintByReference(reference)
         if footprint is None:
@@ -404,7 +529,7 @@ def restore_v2_controller_service_placements(
         footprint.SetPosition(
             pcbnew.VECTOR2I(pcbnew.FromMM(x), pcbnew.FromMM(y))
         )
-        footprint.SetOrientationDegrees(rotation)
+        footprint.SetOrientationDegrees(rotations[reference])
 
 
 def apply_m1_4_driver_route_detours(
@@ -493,11 +618,92 @@ def _has_exact_reviewed_controller_compact_route(
     side: str,
 ) -> bool:
     signatures = Counter(_route_signature(item) for item in board.GetTracks())
+    expected_pad_nets = {
+        ("U1", "RAW"): "NN_B+",
+        ("U1", "GND_C"): "GND",
+        ("J_BAT1", "1"): "BAT+",
+        ("J_BAT1", "2"): "GND",
+        ("SW_PWR1", "1"): "BAT+",
+        ("SW_PWR1", "2"): "NN_B+",
+        ("SW_PWR1", "3"): "",
+        ("SW_RST1", "1"): "RST",
+        ("SW_RST1", "2"): "GND",
+    }
+    for (reference, number), net_name in expected_pad_nets.items():
+        footprint = board.FindFootprintByReference(reference)
+        if footprint is None:
+            return False
+        pad = next((item for item in footprint.Pads() if item.GetNumber() == number), None)
+        if pad is None or pad.GetNetname() != net_name:
+            return False
+    routed_service_nets = {
+        item.GetNetname()
+        for item in board.GetTracks()
+        if item.GetNetname() in {"RST", "GND", "BAT+", "NN_B+"}
+    }
     return (
         sum(signatures.values()) == CONTROLLER_COMPACT_ROUTE_ITEM_COUNTS[side]
         and _route_counter_digest(signatures) == CONTROLLER_COMPACT_ROUTE_SHA256[side]
+        and routed_service_nets == {"RST", "GND", "BAT+", "NN_B+"}
         and _matrix_pads_are_fully_connected(board, side)
+        and _controller_service_pads_are_physically_connected(board)
     )
+
+
+def _controller_service_pads_are_physically_connected(
+    board: pcbnew.BOARD,
+) -> bool:
+    endpoint_groups = {
+        "RST": (("SW_RST1", "1"), ("U1", "RST")),
+        "GND": (("J_BAT1", "2"), ("SW_RST1", "2"), ("U1", "GND_C")),
+        "BAT+": (("J_BAT1", "1"), ("SW_PWR1", "1")),
+        "NN_B+": (("SW_PWR1", "2"), ("U1", "RAW")),
+    }
+    tracks_by_net: dict[str, set[str]] = {
+        net_name: {
+            item.m_Uuid.AsString()
+            for item in board.GetTracks()
+            if item.GetNetname() == net_name
+        }
+        for net_name in endpoint_groups
+    }
+    if any(not track_ids for track_ids in tracks_by_net.values()):
+        return False
+
+    pads_by_net: dict[str, list[pcbnew.PAD]] = {}
+    for net_name, endpoints in endpoint_groups.items():
+        pads: list[pcbnew.PAD] = []
+        for reference, number in endpoints:
+            footprint = board.FindFootprintByReference(reference)
+            if footprint is None:
+                return False
+            pad = next(
+                (item for item in footprint.Pads() if item.GetNumber() == number),
+                None,
+            )
+            if pad is None or pad.GetNetname() != net_name:
+                return False
+            pads.append(pad)
+        pads_by_net[net_name] = pads
+
+    board.BuildConnectivity()
+    connectivity = board.GetConnectivity()
+    for net_name, pads in pads_by_net.items():
+        connected = {
+            item.m_Uuid.AsString()
+            for item in connectivity.GetConnectedItems(pads[0])
+        }
+        connected.add(pads[0].m_Uuid.AsString())
+        if any(pad.m_Uuid.AsString() not in connected for pad in pads):
+            return False
+        for pad in pads:
+            pad_connected = {
+                item.m_Uuid.AsString()
+                for item in connectivity.GetConnectedItems(pad)
+            }
+            if not pad_connected & tracks_by_net[net_name]:
+                return False
+    return True
 
 
 def _verify_controller_compact_service_geometry(
@@ -507,11 +713,15 @@ def _verify_controller_compact_service_geometry(
     if side not in {"left", "right"}:
         raise RuntimeError(f"unsupported controller-compaction route side {side!r}")
     expected = gen.X3_V2_CONTROLLER_SERVICE_POSITIONS_MM[side]
-    for reference, key in (
+    service_footprints = (
         ("U1", "u1"),
+        ("BAT1", "battery"),
+        ("J_BAT1", "j_bat"),
+        ("SW_PWR1", "power"),
         ("BAT_LEAD_SLOT1", "battery_slot"),
         ("SW_RST1", "reset"),
-    ):
+    )
+    for reference, key in service_footprints:
         footprint = board.FindFootprintByReference(reference)
         if footprint is None:
             raise RuntimeError(
@@ -527,14 +737,17 @@ def _verify_controller_compact_service_geometry(
                 "controller service geometry mismatch: "
                 f"{side} {reference} expected {expected[key]}, found {actual}"
             )
-    reset = board.FindFootprintByReference("SW_RST1")
-    rotation = round(reset.GetOrientation().AsDegrees() % 360.0, 3)
-    if rotation != gen.X3_V2_RESET_ROTATION_DEGREES:
-        raise RuntimeError(
-            "controller service geometry mismatch: "
-            f"{side} SW_RST1 expected R{gen.X3_V2_RESET_ROTATION_DEGREES:g}, "
-            f"found R{rotation:g}"
-        )
+    expected_rotations = gen.X3_V2_CONTROLLER_SERVICE_ROTATIONS_DEGREES[side]
+    for reference, _key in service_footprints:
+        footprint = board.FindFootprintByReference(reference)
+        rotation = round(footprint.GetOrientation().AsDegrees() % 360.0, 3)
+        expected_rotation = expected_rotations[reference]
+        if rotation != expected_rotation:
+            raise RuntimeError(
+                "controller service geometry mismatch: "
+                f"{side} {reference} expected R{expected_rotation:g}, "
+                f"found R{rotation:g}"
+            )
 
 
 def import_reviewed_controller_compact_session(
@@ -566,17 +779,25 @@ def import_reviewed_controller_compact_session(
             f"failed to import reviewed {side} controller-compaction session: "
             f"{session_path}"
         )
-    restore_v2_controller_service_placements(board, side)
-
     imported = list(board.GetTracks())
     imported_signatures = Counter(_route_signature(item) for item in imported)
-    expected_removals = Counter(CONTROLLER_COMPACT_ROUTE_REMOVALS[side])
     expected_count = CONTROLLER_COMPACT_IMPORTED_ITEM_COUNTS[side]
     if len(imported) != expected_count:
         raise RuntimeError(
             f"reviewed {side} controller-compaction session item count changed: "
             f"expected {expected_count}, found {len(imported)}"
         )
+    imported_digest = _route_counter_digest(imported_signatures)
+    expected_imported_digest = CONTROLLER_COMPACT_IMPORTED_ROUTE_SHA256[side]
+    if imported_digest != expected_imported_digest:
+        raise RuntimeError(
+            f"reviewed {side} controller-compaction imported route digest changed: "
+            f"expected {expected_imported_digest}, found {imported_digest}"
+        )
+
+    restore_v2_controller_service_placements(board, side)
+
+    expected_removals = Counter(CONTROLLER_COMPACT_ROUTE_REMOVALS[side])
     if imported_signatures & expected_removals != expected_removals:
         raise RuntimeError(
             f"reviewed {side} controller-compaction cleanup precondition failed"
@@ -598,6 +819,8 @@ def import_reviewed_controller_compact_session(
     for spec in CONTROLLER_COMPACT_ROUTE_ADDITIONS[side]:
         _add_route_spec(board, spec)
     reset_route = replace_v2_usb_under_reset_routes(board, side)
+    matrix_detours = apply_matrix_service_detours(board, side)
+    connectivity_detours = apply_matrix_connectivity_detours(board, side)
     if not _has_exact_reviewed_controller_compact_route(board, side):
         raise RuntimeError(
             f"reviewed {side} controller-compaction session did not reconstruct "
@@ -605,9 +828,17 @@ def import_reviewed_controller_compact_session(
         )
     return {
         "imported_track_and_via_items": len(imported),
-        "reviewed_items_removed": removed + reset_route["removed"],
+        "reviewed_items_removed": (
+            removed
+            + reset_route["removed"]
+            + matrix_detours["removed"]
+            + connectivity_detours["removed"]
+        ),
         "reviewed_items_added": (
-            len(CONTROLLER_COMPACT_ROUTE_ADDITIONS[side]) + reset_route["added"]
+            len(CONTROLLER_COMPACT_ROUTE_ADDITIONS[side])
+            + reset_route["added"]
+            + matrix_detours["added"]
+            + connectivity_detours["added"]
         ),
         "final_track_and_via_items": len(list(board.GetTracks())),
     }

@@ -1,5 +1,5 @@
 Drill report for kc2_left-x3-v2.kicad_pcb
-Created on 2026-08-26T08:57:09
+Created on 2026-08-29T02:59:49
 
 Copper Layer Stackup:
     =============================================================
@@ -10,11 +10,13 @@ Copper Layer Stackup:
 Drill file 'kc2_left-x3-v2-PTH.drl' contains
     plated through holes:
     =============================================================
-    T1  0.300mm  0.0118"  (17 holes))
-    T2  0.950mm  0.0374"  (24 holes))
-    T3  1.500mm  0.0591"  (62 holes))
+    T1  0.300mm  0.0118"  (21 holes))
+    T2  0.800mm  0.0315"  (3 holes))
+    T3  0.900mm  0.0354"  (2 holes))
+    T4  0.950mm  0.0374"  (24 holes))
+    T5  1.500mm  0.0591"  (62 holes))
 
-    Total plated holes count 103
+    Total plated holes count 112
 
 
 Drill file 'kc2_left-x3-v2-NPTH.drl' contains

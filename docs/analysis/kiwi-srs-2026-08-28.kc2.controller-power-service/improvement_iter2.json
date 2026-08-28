@@ -1,0 +1,10 @@
+{
+  "iter": 2,
+  "changes": [
+    "Removed non-enum aggregate classification labels.",
+    "Kept existing CON-ARCH-004/006 IDs as evolving consistency-synchronized requirements rather than pretending to execute the discard-and-replace update sequence.",
+    "Added negative current-code evidence to both new requirements.",
+    "Added a new planned-status change note explaining negative trace state.",
+    "Defined packet-loss denominator as actual N and expanded concrete related-document paths."
+  ]
+}

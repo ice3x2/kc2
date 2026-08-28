@@ -1,0 +1,27 @@
+{
+  "candidate_matches": [
+    {
+      "id": "CON-ARCH-004",
+      "scope": "ARCH",
+      "title": "X3 V2 hybrid Choc V2 socket, MX solder, 70-key layout, and hand-solderable SMA matrix diodes",
+      "relation_hint": "conflict-update: AC-7 and AC-12 hard-code no carrier power, TW301525 and USB-under-controller reset",
+      "similarity_score": 0.98
+    },
+    {
+      "id": "CON-ARCH-006",
+      "scope": "ARCH",
+      "title": "X3 V2 concealed bezel, tight join, and load-bearing housing support",
+      "relation_hint": "conflict-update: requirement body, AC-6 and AC-11 require a bottom battery cavity and desk clearance",
+      "similarity_score": 0.94
+    },
+    {
+      "id": "CON-ARCH-002",
+      "scope": "ARCH",
+      "title": "X3 compact controller tab without PCB battery pads",
+      "relation_hint": "historical stable baseline superseded only for kc2-x3-v2; do not edit",
+      "similarity_score": 0.82
+    }
+  ],
+  "relevant_scopes": ["ARCH"],
+  "no_match_reason": null
+}

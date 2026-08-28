@@ -56,7 +56,7 @@ def canonical_x3_v2_route_record(side: str, final_count: int, route_digest: str)
         "session_source_dsn": session_source_dsn_relative.as_posix(),
         "session_source_dsn_sha256": sha256_file(session_source_dsn_path),
         "ses": ses_relative.as_posix(),
-        "ses_role": "reviewed_compact_controller_import_plus_exact_edge_cleanup_and_usb_under_reset_replacement",
+        "ses_role": "reviewed_matrix_import_plus_exact_edge_cleanup_and_power_reset_service_routing",
         "dsn_sha256": sha256_file(dsn_path),
         "ses_sha256": sha256_file(ses_path),
         "dsn_default_clearance_internal_units": min(default_clearances.values()),
@@ -106,6 +106,15 @@ REGISTRATION_FP = "REG_NPTH_3.0"
 BATTERY_LEAD_SLOT_LIB = KC2_FP_LIB
 BATTERY_LEAD_SLOT_FP = "BAT_LEAD_NPTH_SLOT_3.6x2.2"
 BATTERY_LEAD_SLOT_VALUE = "BAT_LEAD_NPTH_SLOT_3.6x2.2"
+X3_V2_POWER_SWITCH_LIB = KC2_FP_LIB
+X3_V2_POWER_SWITCH_FP = "SW_IMMS_12V_BSI10_THT"
+X3_V2_POWER_SWITCH_VALUE = "IMMS-12V_BSI-10"
+X3_V2_BATTERY_TERMINATION_LIB = KC2_FP_LIB
+X3_V2_BATTERY_TERMINATION_FP = "BAT_2Pin_PTH_DirectSolder"
+X3_V2_BATTERY_TERMINATION_VALUE = "301230_DIRECT_SOLDER"
+X3_V2_BATTERY_BODY_LIB = KC2_FP_LIB
+X3_V2_BATTERY_BODY_FP = "BAT_301230_30x12mm"
+X3_V2_BATTERY_BODY_VALUE = "301230_3.7V_100mAh"
 SIDE_MOUNT_UPPER_OFFSET_FROM_BOTTOM = 61.0
 X3_H2_ADJACENT_UPPER_MOUNT_POINTS = {
     "left": (173.45, 66.50),
@@ -151,22 +160,224 @@ X3_V2_OUTLINE_POLICY = "keycap_concealed_except_controller_service"
 X3_V2_TOP_EDGE_Y_MM = 39.25
 X3_V2_BOARD_DATUM_DY_MM = 68.0
 X3_V2_CONTROLLER_Y_MM = 50.75
-X3_V2_RESET_Y_MM = X3_V2_CONTROLLER_Y_MM
-X3_V2_RESET_ROTATION_DEGREES = 90.0
-X3_V2_RESET_USB_OUTWARD_OFFSET_MM = 2.05
-X3_V2_BATTERY_Y_MM = 53.05
+X3_V2_RESET_Y_MM = 63.45
+X3_V2_POWER_Y_MM = 63.45
+X3_V2_RESET_ROTATIONS_DEGREES = {"left": 0.0, "right": 180.0}
+X3_V2_J_BAT1_ROTATIONS_DEGREES = {"left": 180.0, "right": 0.0}
+X3_V2_BATTERY_SIZE_MM = (30.0, 12.0, 3.0)
+X3_V2_POWER_SWITCH_BODY_SIZE_MM = (10.0, 2.5, 6.4)
+X3_V2_POWER_SWITCH_ACTUATOR_TRAVEL_MM = 1.6
+X3_V2_RESET_BODY_SIZE_MM = (6.1, 3.7)
+X3_V2_RESET_KEYCAP_ENVELOPE_MM = 18.05
+X3_V2_RESET_BODY_TO_KEYCAP_MIN_MM = 3.20
+X3_V2_RESET_COURTYARD_TO_U1_SOCKET_COPPER_MIN_MM = 2.03
+X3_V2_POWER_SWITCH_DATASHEET = (
+    "https://amec-gmbh.de/wp-content/uploads/2022/11/BSI-10.pdf"
+)
+X3_V2_POWER_SWITCH_MODEL = (
+    ROOT / "third_party/kc2.3dshapes/SW_IMMS_12V_BSI10_THT.step"
+)
+X3_V2_POWER_SWITCH_MODEL_GENERATOR = ROOT / "tools/generate_kc2_component_models.py"
+X3_V2_BATTERY_Y_MM = X3_V2_CONTROLLER_Y_MM
 X3_V2_CONTROLLER_SERVICE_POSITIONS_MM = {
     "left": {
         "u1": (132.7125, X3_V2_CONTROLLER_Y_MM),
         "battery_slot": (117.9125, X3_V2_CONTROLLER_Y_MM),
-        "battery": (133.2125, X3_V2_BATTERY_Y_MM),
-        "reset": (113.7625, X3_V2_RESET_Y_MM),
+        "battery": (131.7125, X3_V2_BATTERY_Y_MM),
+        "j_bat": (115.8125, 59.40),
+        "power": (115.8125, X3_V2_POWER_Y_MM),
+        "reset": (126.0625, X3_V2_RESET_Y_MM),
     },
     "right": {
         "u1": (77.4000, X3_V2_CONTROLLER_Y_MM),
         "battery_slot": (92.2000, X3_V2_CONTROLLER_Y_MM),
-        "battery": (76.9000, X3_V2_BATTERY_Y_MM),
-        "reset": (96.3500, X3_V2_RESET_Y_MM),
+        "battery": (78.4000, X3_V2_BATTERY_Y_MM),
+        "j_bat": (94.3000, 59.40),
+        "power": (94.3000, X3_V2_POWER_Y_MM),
+        "reset": (84.0500, X3_V2_RESET_Y_MM),
+    },
+}
+X3_V2_CONTROLLER_SERVICE_ROTATIONS_DEGREES = {
+    "left": {
+        "U1": 0.0,
+        "BAT1": 0.0,
+        "J_BAT1": X3_V2_J_BAT1_ROTATIONS_DEGREES["left"],
+        "SW_PWR1": 0.0,
+        "BAT_LEAD_SLOT1": 0.0,
+        "SW_RST1": X3_V2_RESET_ROTATIONS_DEGREES["left"],
+    },
+    "right": {
+        "U1": 0.0,
+        "BAT1": 0.0,
+        "J_BAT1": X3_V2_J_BAT1_ROTATIONS_DEGREES["right"],
+        "SW_PWR1": 180.0,
+        "BAT_LEAD_SLOT1": 0.0,
+        "SW_RST1": X3_V2_RESET_ROTATIONS_DEGREES["right"],
+    },
+}
+X3_V2_MATRIX_CONNECTIVITY_DETOURS = {
+    "left": {
+        "removals": (
+            ("track", "L_COL0", "B.Cu", 131.4425, 58.3700, 132.1000, 60.0000, 0.250),
+            ("track", "L_COL0", "B.Cu", 132.1000, 60.0000, 132.1000, 67.0000, 0.250),
+            ("track", "L_COL0", "B.Cu", 132.1000, 67.0000, 117.9254, 71.8871, 0.250),
+            ("via", "L_COL0", 117.9254, 71.8871, 0.600, 0.300),
+            ("track", "L_COL1", "F.Cu", 135.1227, 59.7698, 132.0690, 59.7698, 0.250),
+            ("track", "L_COL1", "B.Cu", 132.0690, 59.7698, 133.1000, 60.5000, 0.250),
+            ("via", "L_COL1", 132.0690, 59.7698, 0.600, 0.300),
+            ("track", "L_COL1", "B.Cu", 133.1000, 60.5000, 133.1000, 67.5000, 0.250),
+            ("track", "L_COL1", "B.Cu", 133.1000, 67.5000, 119.2058, 72.6330, 0.250),
+            ("via", "L_COL1", 119.2058, 72.6330, 0.600, 0.300),
+        ),
+        "additions": (
+            ("track", "L_COL0", "B.Cu", 131.4425, 58.3700, 132.2000, 60.0000, 0.250),
+            ("track", "L_COL0", "B.Cu", 132.2000, 60.0000, 132.2000, 66.5000, 0.250),
+            ("track", "L_COL0", "B.Cu", 132.2000, 66.5000, 129.0000, 68.0000, 0.250),
+            ("via", "L_COL0", 129.0000, 68.0000, 0.600, 0.300),
+            ("track", "L_COL0", "F.Cu", 129.0000, 68.0000, 117.9254, 71.8871, 0.250),
+            ("track", "L_COL1", "F.Cu", 135.1227, 59.7698, 136.5000, 59.4000, 0.250),
+            ("via", "L_COL1", 136.5000, 59.4000, 0.600, 0.300),
+            ("track", "L_COL1", "B.Cu", 136.5000, 59.4000, 136.5000, 68.5000, 0.250),
+            ("track", "L_COL1", "B.Cu", 136.5000, 68.5000, 134.8000, 68.7000, 0.250),
+            ("track", "L_COL1", "B.Cu", 134.8000, 68.7000, 132.0000, 69.1500, 0.250),
+            ("track", "L_COL1", "B.Cu", 132.0000, 69.1500, 129.0000, 69.7500, 0.250),
+            ("track", "L_COL1", "B.Cu", 129.0000, 69.7500, 128.5000, 70.0000, 0.250),
+            ("via", "L_COL1", 128.5000, 70.0000, 0.600, 0.300),
+            ("track", "L_COL1", "F.Cu", 128.5000, 70.0000, 125.6000, 70.5000, 0.250),
+            ("track", "L_COL1", "F.Cu", 125.6000, 70.5000, 125.6000, 74.5000, 0.250),
+            ("track", "L_COL1", "F.Cu", 125.6000, 74.5000, 119.5000, 74.5000, 0.250),
+            ("track", "L_COL1", "F.Cu", 119.5000, 74.5000, 119.2058, 72.6330, 0.250),
+        ),
+    },
+    "right": {
+        "removals": (
+            ("track", "R_COL5", "F.Cu", 73.5900, 58.3700, 83.1620, 67.9420, 0.250),
+            ("track", "R_COL6", "F.Cu", 94.1212, 76.3612, 76.1300, 58.3700, 0.250),
+            ("track", "R_COL7", "B.Cu", 90.9461, 59.9321, 82.7721, 59.9321, 0.250),
+            ("track", "R_COL7", "B.Cu", 101.1625, 70.1485, 90.9461, 59.9321, 0.250),
+            ("track", "R_COL2", "B.Cu", 71.2975, 63.6975, 84.4425, 63.6975, 0.250),
+            ("track", "R_COL2", "B.Cu", 84.4425, 63.6975, 93.1900, 72.4450, 0.250),
+            ("track", "R_COL3", "B.Cu", 71.8386, 61.6986, 90.4512, 61.6986, 0.250),
+            ("track", "R_COL3", "B.Cu", 90.4512, 61.6986, 99.4528, 70.7002, 0.250),
+            ("track", "R_ROW0", "F.Cu", 91.6389, 54.9233, 98.7624, 62.0468, 0.250),
+            ("track", "R_ROW0", "F.Cu", 98.7624, 62.0468, 98.7624, 71.4811, 0.250),
+            ("track", "R_ROW3", "F.Cu", 91.7219, 54.1770, 100.2000, 62.6551, 0.250),
+        ),
+        "additions": (
+            ("track", "R_COL3", "B.Cu", 71.8386, 61.6986, 80.5000, 65.0000, 0.250),
+            ("track", "R_COL3", "B.Cu", 80.5000, 65.0000, 99.4528, 70.7002, 0.250),
+            ("track", "R_COL2", "B.Cu", 71.2975, 63.6975, 79.5000, 65.5000, 0.250),
+            ("via", "R_COL2", 79.5000, 65.5000, 0.600, 0.300),
+            ("track", "R_COL2", "F.Cu", 79.5000, 65.5000, 83.0000, 65.5000, 0.250),
+            ("track", "R_COL2", "F.Cu", 83.0000, 65.5000, 86.0000, 68.5000, 0.250),
+            ("via", "R_COL2", 86.0000, 68.5000, 0.600, 0.300),
+            ("track", "R_COL2", "B.Cu", 86.0000, 68.5000, 90.5000, 70.5000, 0.250),
+            ("via", "R_COL2", 90.5000, 70.5000, 0.600, 0.300),
+            ("track", "R_COL2", "F.Cu", 90.5000, 70.5000, 93.1900, 72.4450, 0.250),
+            ("track", "R_COL7", "B.Cu", 82.7721, 59.9321, 84.0000, 60.0000, 0.250),
+            ("via", "R_COL7", 84.0000, 60.0000, 0.600, 0.300),
+            ("track", "R_COL7", "F.Cu", 84.0000, 60.0000, 87.0000, 62.0000, 0.250),
+            ("via", "R_COL7", 87.0000, 62.0000, 0.600, 0.300),
+            ("track", "R_COL7", "B.Cu", 87.0000, 62.0000, 88.5000, 62.0000, 0.250),
+            ("track", "R_COL7", "B.Cu", 88.5000, 62.0000, 92.0000, 65.5000, 0.250),
+            ("track", "R_COL7", "B.Cu", 92.0000, 65.5000, 101.1625, 70.1485, 0.250),
+            ("track", "R_COL6", "F.Cu", 76.1300, 58.3700, 85.0000, 65.0000, 0.250),
+            ("track", "R_COL6", "F.Cu", 85.0000, 65.0000, 94.1212, 76.3612, 0.250),
+            ("track", "R_COL5", "F.Cu", 73.5900, 58.3700, 73.5000, 59.5000, 0.250),
+            ("via", "R_COL5", 73.5000, 59.5000, 0.600, 0.300),
+            ("track", "R_COL5", "B.Cu", 73.5000, 59.5000, 72.5000, 61.0000, 0.250),
+            ("via", "R_COL5", 72.5000, 61.0000, 0.600, 0.300),
+            ("track", "R_COL5", "F.Cu", 72.5000, 61.0000, 77.5000, 66.0000, 0.250),
+            ("via", "R_COL5", 77.5000, 66.0000, 0.600, 0.300),
+            ("track", "R_COL5", "B.Cu", 77.5000, 66.0000, 82.0000, 67.5000, 0.250),
+            ("via", "R_COL5", 82.0000, 67.5000, 0.600, 0.300),
+            ("track", "R_COL5", "F.Cu", 82.0000, 67.5000, 83.1620, 67.9420, 0.250),
+            ("track", "R_ROW0", "F.Cu", 91.6389, 54.9233, 98.0000, 55.0000, 0.250),
+            ("via", "R_ROW0", 98.0000, 55.0000, 0.600, 0.300),
+            ("track", "R_ROW0", "B.Cu", 98.0000, 55.0000, 98.5000, 60.5000, 0.250),
+            ("track", "R_ROW0", "B.Cu", 98.5000, 60.5000, 98.5000, 67.5000, 0.250),
+            ("via", "R_ROW0", 98.5000, 67.5000, 0.600, 0.300),
+            ("track", "R_ROW0", "F.Cu", 98.5000, 67.5000, 98.7624, 71.4811, 0.250),
+            ("track", "R_ROW3", "F.Cu", 91.7219, 54.1770, 92.5000, 54.2000, 0.250),
+            ("track", "R_ROW3", "F.Cu", 92.5000, 54.2000, 100.2000, 54.2000, 0.250),
+            ("track", "R_ROW3", "F.Cu", 100.2000, 54.2000, 100.2000, 62.6551, 0.250),
+        ),
+    },
+}
+X3_V2_RESET_ROUTE_POINTS_MM = {
+    "left": {
+        "RST": [
+            (122.1875, 63.45),
+            (122.1875, 67.0),
+            (115.8, 67.0),
+            (110.3, 67.0),
+            (110.3, 60.0),
+            (110.3, 53.0),
+            (110.3, 46.0),
+            (110.3, 40.5),
+            (117.0, 40.5),
+            (123.8225, 40.5),
+            (123.8225, 43.13),
+        ],
+        "GND_F": [(129.9375, 63.45), (131.3, 63.45)],
+        "GND_VIA": [(131.3, 63.45)],
+        "GND_B": [
+            (131.3, 63.45),
+            (131.3, 65.8),
+            (121.5, 65.8),
+            (111.5, 65.8),
+            (111.5, 60.0),
+            (111.5, 54.0),
+            (111.5, 47.0),
+            (113.2725, 47.0),
+        ],
+    },
+    "right": {
+        "RST": [(87.925, 63.45), (87.925, 61.0), (86.29, 58.37)],
+        "GND_F": [(80.175, 63.45), (78.8, 63.45)],
+        "GND_VIA": [(78.8, 63.45)],
+        "GND_B": [
+            (78.8, 63.45),
+            (78.8, 61.0),
+            (87.56, 61.0),
+            (88.83, 58.37),
+        ],
+    },
+}
+X3_V2_RESET_GND_ROUTE_ENDS_MM = {
+    "left": (113.2725, 47.0),
+    "right": (88.83, 58.37),
+}
+X3_V2_POWER_ROUTE_POINTS_MM = {
+    "left": {
+        "NN_B+": [
+            (113.2725, 63.45),
+            (111.3, 63.45),
+            (111.3, 55.0),
+            (111.3, 47.0),
+            (118.7425, 43.13),
+        ],
+        "GND": [
+            (113.2725, 59.4),
+            (113.2725, 53.2),
+            (113.2725, 47.0),
+            (120.0125, 47.0),
+            (121.2825, 43.13),
+        ],
+    },
+    "right": {
+        "NN_B+": [
+            (96.84, 63.45),
+            (98.8, 63.45),
+            (98.8, 56.0),
+            (91.37, 58.37),
+        ],
+        "GND": [
+            (96.84, 59.4),
+            (96.84, 54.5),
+            (90.1, 54.5),
+            (88.83, 58.37),
+        ],
     },
 }
 X3_V2_MOUNT_HOLE_DIAMETER_MM = 1.60
@@ -623,6 +834,32 @@ def load_footprint(
     if bottom:
         fp.Flip(fp.GetPosition(), False)
     return fp
+
+
+def assign_footprint_pad_nets(
+    board: pcbnew.BOARD,
+    nets: dict[str, pcbnew.NETINFO_ITEM],
+    footprint: pcbnew.FOOTPRINT,
+    pad_net_names: dict[str, str | None],
+) -> dict[str, tuple[float, float]]:
+    positions: dict[str, tuple[float, float]] = {}
+    for pad in footprint.Pads():
+        number = pad.GetNumber()
+        if number not in pad_net_names:
+            continue
+        net_name = pad_net_names[number]
+        if net_name:
+            pad.SetNet(add_net(board, nets, net_name))
+        else:
+            pad.SetNetCode(0)
+        positions[number] = to_mm_vec(pad.GetPosition())
+    missing = set(pad_net_names) - set(positions)
+    if missing:
+        raise RuntimeError(
+            f"{footprint.GetReference()} is missing pads required by its net contract: "
+            + ", ".join(sorted(missing))
+        )
+    return positions
 
 
 def load_embedded_footprint(name: str) -> pcbnew.FOOTPRINT | None:
@@ -1473,7 +1710,10 @@ def make_board(
     nets: dict[str, pcbnew.NETINFO_ITEM] = {"": board.GetNetInfo().GetNetItem(0)}
     add_net(board, nets, "GND")
     add_net(board, nets, "RST")
-    if not is_x3_family(variant):
+    if variant == "x3-v2":
+        add_net(board, nets, "BAT+")
+        add_net(board, nets, "NN_B+")
+    elif not is_x3_family(variant):
         for pwr in ("BAT+", "BAT-"):
             add_net(board, nets, pwr)
 
@@ -1492,6 +1732,7 @@ def make_board(
             "D15": "L_ROW3",
             "D18": "L_ROW4",
             "RST": "RST",
+            **({"RAW": "NN_B+"} if variant == "x3-v2" else {}),
         }
         col_prefix = "L_COL"
         row_prefix = "L_ROW"
@@ -1513,6 +1754,7 @@ def make_board(
             "D2": "R_ROW3",
             "D7": "R_ROW4",
             "RST": "RST",
+            **({"RAW": "NN_B+"} if variant == "x3-v2" else {}),
         }
         col_prefix = "R_COL"
         row_prefix = "R_ROW"
@@ -1527,7 +1769,65 @@ def make_board(
     add_antenna_keepout_zone(board, side, antenna_keepout)
 
     power_pads: dict[str, tuple[float, float]] | None = None
-    if not is_x3_family(variant):
+    battery_termination: pcbnew.FOOTPRINT | None = None
+    power_switch: pcbnew.FOOTPRINT | None = None
+    if variant == "x3-v2":
+        service = X3_V2_CONTROLLER_SERVICE_POSITIONS_MM[side]
+        service_rotations = X3_V2_CONTROLLER_SERVICE_ROTATIONS_DEGREES[side]
+        battery_body = load_footprint(
+            board,
+            X3_V2_BATTERY_BODY_LIB,
+            X3_V2_BATTERY_BODY_FP,
+            "BAT1",
+            X3_V2_BATTERY_BODY_VALUE,
+            *service["battery"],
+            service_rotations["BAT1"],
+        )
+        battery_body.Reference().SetVisible(False)
+        battery_body.Value().SetVisible(False)
+
+        battery_termination = load_footprint(
+            board,
+            X3_V2_BATTERY_TERMINATION_LIB,
+            X3_V2_BATTERY_TERMINATION_FP,
+            "J_BAT1",
+            X3_V2_BATTERY_TERMINATION_VALUE,
+            *service["j_bat"],
+            service_rotations["J_BAT1"],
+        )
+        battery_termination.Reference().SetVisible(False)
+        assign_footprint_pad_nets(
+            board,
+            nets,
+            battery_termination,
+            {"1": "BAT+", "2": "GND"},
+        )
+        power_switch = load_footprint(
+            board,
+            X3_V2_POWER_SWITCH_LIB,
+            X3_V2_POWER_SWITCH_FP,
+            "SW_PWR1",
+            X3_V2_POWER_SWITCH_VALUE,
+            *service["power"],
+            service_rotations["SW_PWR1"],
+        )
+        power_switch.Reference().SetVisible(False)
+        assign_footprint_pad_nets(
+            board,
+            nets,
+            power_switch,
+            {"1": "BAT+", "2": "NN_B+", "3": None},
+        )
+        add_board_text(
+            board,
+            "PWR OFF< >ON" if side == "left" else "ON< >OFF PWR",
+            service["power"][0],
+            service["power"][1] + 2.8,
+            pcbnew.F_SilkS,
+            0.8,
+            0.10,
+        )
+    elif not is_x3_family(variant):
         power_y = ctrl_cy + 1.0
         power_x = ctrl_cx - usb_direction * 28.0
         power_pads = create_power_pads(board, nets, "J_PWR1", power_x, power_y)
@@ -1535,11 +1835,32 @@ def make_board(
     else:
         add_board_text(board, "Battery solders directly to nice!nano B+/B-; no carrier power pads", ctrl_cx - 23.0, ctrl_cy + 15.0, pcbnew.Cmts_User, 0.8)
 
-    batt_w, batt_h = 15.0, 25.0
-    batt_cx = ctrl_cx + (usb_direction * X3_BATTERY_CENTER_OFFSET_FROM_CONTROLLER if is_x3_family(variant) else -usb_direction * 7.0)
-    batt_cy = X3_V2_BATTERY_Y_MM if variant == "x3-v2" else ctrl_cy + 2.0
-    add_rect_lines(board, batt_cx - batt_w / 2, batt_cy - batt_h / 2, batt_cx + batt_w / 2, batt_cy + batt_h / 2, pcbnew.B_Fab, 0.10)
-    add_board_text(board, "TW301525 80mAh", batt_cx - 7.0, batt_cy, pcbnew.B_Fab, 0.9, mirrored=True)
+    if variant != "x3-v2":
+        batt_w, batt_h = 15.0, 25.0
+        batt_cx = ctrl_cx + (
+            usb_direction * X3_BATTERY_CENTER_OFFSET_FROM_CONTROLLER
+            if is_x3_family(variant)
+            else -usb_direction * 7.0
+        )
+        batt_cy = ctrl_cy + 2.0
+        add_rect_lines(
+            board,
+            batt_cx - batt_w / 2,
+            batt_cy - batt_h / 2,
+            batt_cx + batt_w / 2,
+            batt_cy + batt_h / 2,
+            pcbnew.B_Fab,
+            0.10,
+        )
+        add_board_text(
+            board,
+            "TW301525 80mAh",
+            batt_cx - 7.0,
+            batt_cy,
+            pcbnew.B_Fab,
+            0.9,
+            mirrored=True,
+        )
 
     battery_lead_slot_points: list[tuple[float, float]] = []
     if is_x3_family(variant):
@@ -1568,19 +1889,29 @@ def make_board(
             pcbnew.Cmts_User,
             0.08,
         )
-        add_board_text(board, "BAT LEAD EXIT", slot_x - 4.5, slot_y + 3.2, pcbnew.Cmts_User, 0.7)
+        add_board_text(
+            board,
+            "BAT STRAIN RELIEF" if variant == "x3-v2" else "BAT LEAD EXIT",
+            slot_x - 4.5,
+            slot_y + 3.2,
+            pcbnew.Cmts_User,
+            0.7,
+        )
 
     if variant == "x3-v2":
-        tact_x = ctrl_cx - usb_direction * (
-            CONTROLLER_LEN / 2.0 + X3_V2_RESET_USB_OUTWARD_OFFSET_MM
-        )
+        tact_x, tact_y = X3_V2_CONTROLLER_SERVICE_POSITIONS_MM[side]["reset"]
     elif is_x3_family(variant):
         tact_x = batt_cx + usb_direction * (batt_w / 2.0 + X3_TACT_BATTERY_CLEARANCE + X3_TACT_BODY_W / 2.0)
+        tact_y = ctrl_cy + CONTROLLER_W / 2.0 + 4.0
     else:
         tact_offset_from_center = CONTROLLER_LEN / 2.0 - 7.0
         tact_x = ctrl_cx - usb_direction * tact_offset_from_center
-    tact_y = X3_V2_RESET_Y_MM if variant == "x3-v2" else ctrl_cy + CONTROLLER_W / 2.0 + 4.0
-    tact_rotation = X3_V2_RESET_ROTATION_DEGREES if variant == "x3-v2" else 0.0
+        tact_y = ctrl_cy + CONTROLLER_W / 2.0 + 4.0
+    tact_rotation = (
+        X3_V2_CONTROLLER_SERVICE_ROTATIONS_DEGREES[side]["SW_RST1"]
+        if variant == "x3-v2"
+        else 0.0
+    )
     tact = load_footprint(
         board,
         TACT_LIB,
@@ -1591,6 +1922,17 @@ def make_board(
         tact_y,
         tact_rotation,
     )
+    if variant == "x3-v2":
+        tact.Reference().SetVisible(False)
+        add_board_text(
+            board,
+            "RST",
+            tact_x,
+            tact_y + 4.2,
+            pcbnew.F_SilkS,
+            0.8,
+            0.10,
+        )
 
     registration_points = x3_registration_points(side, shifted_keys) if variant == "x3" else []
     v2_mount_points = X3_V2_MOUNTING_POINTS[side] if variant == "x3-v2" else []
@@ -1754,7 +2096,22 @@ def make_board(
         shifted_outline,
     )
     connect_controller_ground_pads(board, nets, controller_pads)
-    connect_tact_to_controller(board, nets, tact, controller_pads)
+    connect_tact_to_controller(
+        board,
+        nets,
+        tact,
+        controller_pads,
+        side if variant == "x3-v2" else None,
+    )
+    if battery_termination is not None and power_switch is not None:
+        connect_x3_v2_power_service(
+            board,
+            nets,
+            battery_termination,
+            power_switch,
+            controller_pads,
+            side,
+        )
     if power_pads is not None:
         connect_power_labels(board, nets, power_pads)
 
@@ -1994,12 +2351,39 @@ def route_to_controller(
     route_manhattan(board, net, src, dst, layer, jog_y, width)
 
 
+def add_exact_service_polyline(
+    board: pcbnew.BOARD,
+    net: pcbnew.NETINFO_ITEM,
+    points: list[tuple[float, float]],
+    expected_start: tuple[float, float],
+    expected_end: tuple[float, float],
+    width: float,
+    layer: int = pcbnew.F_Cu,
+) -> None:
+    if not points:
+        raise RuntimeError(f"{net.GetNetname()} service route has no points")
+    for label, actual, expected in (
+        ("start", points[0], expected_start),
+        ("end", points[-1], expected_end),
+    ):
+        if max(abs(actual[index] - expected[index]) for index in (0, 1)) > 1e-4:
+            raise RuntimeError(
+                f"{net.GetNetname()} service route {label} {actual} does not match "
+                f"the placed pad {expected}"
+            )
+    for start, end in zip(points, points[1:]):
+        add_track(board, net, start, end, layer, width)
+
+
 def connect_tact_to_controller(
     board: pcbnew.BOARD,
     nets: dict[str, pcbnew.NETINFO_ITEM],
     tact: pcbnew.FOOTPRINT,
     controller_pads: dict[str, tuple[float, float]],
+    side: str | None = None,
 ) -> None:
+    if side is not None and side not in X3_V2_RESET_ROUTE_POINTS_MM:
+        raise RuntimeError(f"unsupported X3 V2 reset route side {side!r}")
     rst = add_net(board, nets, "RST")
     gnd = add_net(board, nets, "GND")
     rst_pad_obj = min(
@@ -2018,8 +2402,57 @@ def connect_tact_to_controller(
     gnd_pad_obj.SetNet(gnd)
     rst_pad = to_mm_vec(rst_pad_obj.GetPosition())
     gnd_pad = to_mm_vec(gnd_pad_obj.GetPosition())
-    route_to_controller(board, rst, rst_pad, controller_pads["RST"], controller_pads, pcbnew.F_Cu, jog_y=max(y for _, y in controller_pads.values()) + 2.0)
-    route_to_controller(board, gnd, gnd_pad, controller_pads["GND_C"], controller_pads, pcbnew.F_Cu, jog_y=controller_pads["GND_C"][1] + 3.0)
+    if side is None:
+        route_to_controller(
+            board,
+            rst,
+            rst_pad,
+            controller_pads["RST"],
+            controller_pads,
+            pcbnew.F_Cu,
+            jog_y=max(y for _, y in controller_pads.values()) + 2.0,
+        )
+        route_to_controller(
+            board,
+            gnd,
+            gnd_pad,
+            controller_pads["GND_C"],
+            controller_pads,
+            pcbnew.F_Cu,
+            jog_y=controller_pads["GND_C"][1] + 3.0,
+        )
+        return
+    reset_routes = X3_V2_RESET_ROUTE_POINTS_MM[side]
+    add_exact_service_polyline(
+        board,
+        rst,
+        reset_routes["RST"],
+        rst_pad,
+        controller_pads["RST"],
+        TRACK_WIDTH,
+    )
+    gnd_vias = reset_routes["GND_VIA"]
+    if len(gnd_vias) != 1:
+        raise RuntimeError(f"{side} reset GND route must contain exactly one via")
+    gnd_via = gnd_vias[0]
+    add_exact_service_polyline(
+        board,
+        gnd,
+        reset_routes["GND_F"],
+        gnd_pad,
+        gnd_via,
+        TRACK_WIDTH,
+    )
+    add_via(board, gnd, gnd_via)
+    add_exact_service_polyline(
+        board,
+        gnd,
+        reset_routes["GND_B"],
+        gnd_via,
+        X3_V2_RESET_GND_ROUTE_ENDS_MM[side],
+        TRACK_WIDTH,
+        pcbnew.B_Cu,
+    )
 
 
 def connect_power_labels(
@@ -2031,6 +2464,60 @@ def connect_power_labels(
     # Keep short wide PCB traces only between the same-polarity solder pads.
     add_board_text(board, "+", power_pads["BAT+"][0] - 1.0, power_pads["BAT+"][1] - 3.8, pcbnew.F_SilkS, 1.2)
     add_board_text(board, "-", power_pads["BAT-"][0] - 1.0, power_pads["BAT-"][1] + 3.0, pcbnew.F_SilkS, 1.2)
+
+
+def connect_x3_v2_power_service(
+    board: pcbnew.BOARD,
+    nets: dict[str, pcbnew.NETINFO_ITEM],
+    battery_termination: pcbnew.FOOTPRINT,
+    power_switch: pcbnew.FOOTPRINT,
+    controller_pads: dict[str, tuple[float, float]],
+    side: str,
+) -> None:
+    if side not in X3_V2_POWER_ROUTE_POINTS_MM:
+        raise RuntimeError(f"unsupported X3 V2 power route side {side!r}")
+    bat = add_net(board, nets, "BAT+")
+    switched = add_net(board, nets, "NN_B+")
+    gnd = add_net(board, nets, "GND")
+    j_bat_plus = to_mm_vec(pads_by_number(battery_termination, "1")[0].GetPosition())
+    j_bat_gnd = to_mm_vec(pads_by_number(battery_termination, "2")[0].GetPosition())
+    switch_common = to_mm_vec(pads_by_number(power_switch, "1")[0].GetPosition())
+    switch_on = to_mm_vec(pads_by_number(power_switch, "2")[0].GetPosition())
+    add_track(board, bat, j_bat_plus, switch_common, pcbnew.F_Cu, POWER_TRACK_WIDTH)
+    power_routes = X3_V2_POWER_ROUTE_POINTS_MM[side]
+    add_exact_service_polyline(
+        board,
+        switched,
+        power_routes["NN_B+"],
+        switch_on,
+        controller_pads["RAW"],
+        POWER_TRACK_WIDTH,
+    )
+    add_exact_service_polyline(
+        board,
+        gnd,
+        power_routes["GND"],
+        j_bat_gnd,
+        controller_pads["GND_C"],
+        POWER_TRACK_WIDTH,
+        pcbnew.B_Cu,
+    )
+    add_board_text(
+        board,
+        "+",
+        j_bat_plus[0],
+        j_bat_plus[1] - 1.8,
+        pcbnew.F_SilkS,
+        0.9,
+    )
+    add_board_text(
+        board,
+        "-",
+        j_bat_gnd[0],
+        j_bat_gnd[1] - 1.8,
+        pcbnew.F_SilkS,
+        0.9,
+    )
 
 
 def copy_license() -> None:
@@ -2194,11 +2681,11 @@ def generate_variant(variant: str, output_dir: Path | None = None) -> dict[str, 
             f"{bottom_join['right_center_to_edge_mm']:.5f} mm right."
         )
         notes.append("X3 V2 contains no legacy H1-H9 or REG1-REG9 key-field through-holes.")
-        notes.append("The netless battery-lead slot is at the nice!nano USB/B+ end; insulated B+ and GND/B- leads must use strain relief and remain outside the antenna keepout.")
+        notes.append("BAT_LEAD_SLOT1 is retained as a netless copper-free strain-relief slot; the 301230 battery remains above the carrier beneath socketed U1.")
         notes.append(
-            "X3 V2 supersedes only the historical antenna-side reset placement: SW_RST1 is "
-            "portrait-oriented in plan beneath the socket-elevated USB end while the no-carrier-power and direct-lead "
-            "contracts remain unchanged. USB/reset/keycap/battery physical validation is pending."
+            "X3 V2 places the 301230 battery beneath socketed U1 and mirrors POWER then RESET "
+            "from each USB-facing edge. J_BAT1 direct-solders insulated leads, SW_PWR1 switches "
+            "BAT+ into U1 RAW/NN_B+, and B- remains on local GND. Physical stack, service, and RF validation are pending."
         )
         notes.append(
             "X3 V2 uses the exact Jingdao ES1B / LCSC C437840 / Eleparts 9475342 "
@@ -2221,8 +2708,13 @@ def generate_variant(variant: str, output_dir: Path | None = None) -> dict[str, 
         notes.append(f"Controller protrusion tab width is {CONTROLLER_TAB_W:g} mm and grows away from the inner joining edge.")
     switch_footprint_file_present = (switch_lib / f"{switch_fp}.kicad_mod").exists()
     manifest: dict[str, object] = {
-        "generated": "2026-08-26" if variant == "x3-v2" else "2026-06-08",
+        "generated": "2026-08-29" if variant == "x3-v2" else "2026-06-08",
         "variant": variant,
+        **(
+            {"requirement_ids": ["CON-ARCH-004", "CON-ARCH-007", "REL-ARCH-001"]}
+            if variant == "x3-v2"
+            else {}
+        ),
         **({"hash_policy": HASH_POLICY} if variant == "x3-v2" else {}),
         "generator": "tools/generate_kc2_pcbs.py",
         "generation_command": f"python tools/generate_kc2_pcbs.py --variant {variant}",
@@ -2283,12 +2775,12 @@ def generate_variant(variant: str, output_dir: Path | None = None) -> dict[str, 
         "canonical_route_evidence": (
             {
                 "left": canonical_x3_v2_route_record(
-                    "left", 544,
-                    "79dd509ceb68960691a012721ce8a29ad159c2191950d090ada1fd2bceed92aa",
+                    "left", 580,
+                    "7eda6d670a2fd3b99ab06548be4c635dbff03904ec251197f547110864fcb5e6",
                 ),
                 "right": canonical_x3_v2_route_record(
-                    "right", 711,
-                    "20009ce9a43c88167aba0d88ccef84df46b53a7c633b62937286535245ea9127",
+                    "right", 739,
+                    "fc2a819d9ce840ffc0c9e9b5ac6fc7dac54d51a441addb5b0005b4fa89cdbf1a",
                 ),
             }
             if variant == "x3-v2"
@@ -2368,41 +2860,80 @@ def generate_variant(variant: str, output_dir: Path | None = None) -> dict[str, 
                     }
                     for side, positions in X3_V2_CONTROLLER_SERVICE_POSITIONS_MM.items()
                 },
+                "battery": {
+                    "footprint": f"{KC2_FP_LIB.name}:{X3_V2_BATTERY_BODY_FP}",
+                    "nominal_size_mm": list(X3_V2_BATTERY_SIZE_MM),
+                    "placement": "between_carrier_and_socketed_controller",
+                    "antenna_keepout_clearance_mm": 3.97,
+                    "socket_pad_clearance_mm": 0.72,
+                    "physical_stack_measurement": "pending",
+                },
+                "battery_termination": {
+                    "footprint": f"{KC2_FP_LIB.name}:{X3_V2_BATTERY_TERMINATION_FP}",
+                    "left_rotation_degrees": X3_V2_J_BAT1_ROTATIONS_DEGREES["left"],
+                    "right_rotation_degrees": X3_V2_J_BAT1_ROTATIONS_DEGREES["right"],
+                    "pad_1": "BAT+",
+                    "pad_2": "GND",
+                    "strain_relief_ref": "BAT_LEAD_SLOT1",
+                    "lead_drawing_status": "pending_exact_purchased_pack",
+                },
+                "power": {
+                    "footprint": f"{KC2_FP_LIB.name}:{X3_V2_POWER_SWITCH_FP}",
+                    "left_rotation_degrees": 0.0,
+                    "right_rotation_degrees": 180.0,
+                    "pad_1": "BAT+_common",
+                    "pad_2": "NN_B+_on_throw",
+                    "pad_3": "NC",
+                    "body_size_mm": list(X3_V2_POWER_SWITCH_BODY_SIZE_MM),
+                    "actuator_travel_mm": X3_V2_POWER_SWITCH_ACTUATOR_TRAVEL_MM,
+                    "datasheet": X3_V2_POWER_SWITCH_DATASHEET,
+                    "model": X3_V2_POWER_SWITCH_MODEL.relative_to(ROOT).as_posix(),
+                    "model_sha256": sha256_file(X3_V2_POWER_SWITCH_MODEL),
+                    "model_generator": X3_V2_POWER_SWITCH_MODEL_GENERATOR.relative_to(
+                        ROOT
+                    ).as_posix(),
+                    "model_generator_sha256": sha256_file(
+                        X3_V2_POWER_SWITCH_MODEL_GENERATOR
+                    ),
+                },
                 "reset": {
                     "footprint": f"{KC2_FP_LIB.name}:{TACT_FP}",
-                    "rotation_degrees": X3_V2_RESET_ROTATION_DEGREES,
-                    "pad_1": "RST_key_side",
-                    "pad_2": "GND_controller_side",
+                    "left_rotation_degrees": X3_V2_RESET_ROTATIONS_DEGREES["left"],
+                    "right_rotation_degrees": X3_V2_RESET_ROTATIONS_DEGREES["right"],
+                    "pad_1": "RST",
+                    "pad_2": "GND",
                     "probe_max_diameter_mm": 3.0,
-                    "usb_outward_offset_mm": X3_V2_RESET_USB_OUTWARD_OFFSET_MM,
-                    "placement_mode": "under_usb_vertical_stack",
-                    "service_access": "usb_edge_beneath_socketed_controller",
-                    "controller_to_reset_z_clearance": "physical_gate",
+                    "placement_mode": "controller_key_gap",
+                    "service_access": "nonconductive_probe",
                     "service_usb_state": "disconnected",
                 },
                 "nominal_clearances_mm": {
-                    "reset_body_to_keycap_min": 2.00,
                     "controller_body_to_top_edge": 2.35,
-                    "battery_body_to_top_edge": 1.30,
-                    "battery_housing_perimeter_land": 0.85,
+                    "battery_to_socket_pad": 0.72,
+                    "battery_to_antenna_keepout": 3.97,
+                    "power_to_reset_body": 2.20,
+                    "reset_keycap_envelope_mm": X3_V2_RESET_KEYCAP_ENVELOPE_MM,
+                    "reset_body_to_keycap_min": X3_V2_RESET_BODY_TO_KEYCAP_MIN_MM,
+                    "reset_courtyard_to_u1_socket_copper_min": (
+                        X3_V2_RESET_COURTYARD_TO_U1_SOCKET_COPPER_MIN_MM
+                    ),
                 },
-                "physical_validation": "pending_usb_reset_keycap_battery_first_article",
+                "physical_validation": "pending_battery_power_reset_rf_first_article",
                 "order_ready": False,
             }
             if variant == "x3-v2"
             else None
         ),
-        "carrier_power_pads": not is_x3_family(variant),
+        "carrier_power_pads": variant == "x3-v2" or not is_x3_family(variant),
         "battery_lead_pass_through_slot": (
             {
                 "footprint": f"{BATTERY_LEAD_SLOT_LIB.name}:{BATTERY_LEAD_SLOT_FP}",
                 "value": BATTERY_LEAD_SLOT_VALUE,
                 "size_mm": [BATTERY_LEAD_SLOT_LEN, BATTERY_LEAD_SLOT_W],
                 "count_per_half": 1,
-                "layers": "mask-only NPTH, no carrier power copper",
+                "layers": "mask-only NPTH, no copper",
                 "purpose": (
-                    "USB-end lead exit below the nice!nano battery-pad end; route insulated "
-                    "B+ and GND/B- leads between the socket rows and provide strain relief"
+                    "J_BAT1 strain relief for pre-attached insulated battery leads; not a bottom battery exit"
                     if variant == "x3-v2"
                     else "optional bottom-side battery lead exit"
                 ),

@@ -1,6 +1,6 @@
 # KC2 X3 V2 draft lower support plate
 
-Requirement: `CON-ARCH-006`.
+Requirements: `CON-ARCH-006`, `CON-ARCH-007`, and `REL-ARCH-001`.
 
 These files are generated only from the current 31-key left and 39-key right
 draft V2 KiCad boards. They do not reuse the promoted 77-key housing or any
@@ -58,9 +58,13 @@ The verified openings cover:
 - MX electrical pins, pads, solder joints, and lead-trimming access;
 - all 70 Jingdao ES1B SMA maximum lead/body, pad, and solder-fillet envelopes;
 - nice!nano/controller socket/service geometry;
-- the exact B.Fab `TW301525 80mAh` `15.00 x 25.00 mm` battery body with
-  `0.35 mm` XY allowance; and
-- battery-lead access.
+- both `J_BAT1` direct-solder lead/solder envelopes;
+- all three `SW_PWR1` IMMS-12V lead/solder envelopes; and
+- the copper-free `BAT_LEAD_SLOT1` strain-relief opening.
+
+The `30.00 x 12.00 x 3.00 mm` `BAT1` body sits above the carrier PCB beneath
+the socketed nice!nano, so the lower housing deliberately has no battery-body
+cavity.
 
 `SW_RST1` is intentionally absent from this underside-cutout list. Its pads
 are F.Cu-only, and the exact actuator projection is backed by the local
@@ -78,11 +82,10 @@ vertical model uses the official Kailh CPG135001S30 maximum socket depth
 plate bottom. It uses Jingdao's ES1B maximum `5.20 x 2.70 x 2.20 mm`
 lead/body envelope plus `0.30 mm` solder allowance. This consumes the full
 `2.50 mm` plate depth, but the feet provide `1.00 mm` nominal diode-to-desk
-clearance and `0.70 mm` after the documented `0.30 mm` print allowance. The
-modeled `3.00 mm` battery retains `0.50 mm` nominal desk clearance and exactly
-`0.85 mm` top-edge housing land. Maximum battery thickness/swelling, adhesive
-retention, lead bend, strain relief, abrasion protection, placement tolerance,
-and post-print desk clearance remain physical gates.
+clearance and `0.70 mm` after the documented `0.30 mm` print allowance.
+Maximum battery thickness/swelling, socket/controller stack clearance,
+insulation, retention, lead bend, strain relief, and J_BAT1/IMMS solder
+protrusion remain physical gates above the carrier and at the service openings.
 
 - Kailh drawing:
   <https://www.kailhswitch.com/uploads/15927/files/CPG135001S30.pdf>
@@ -114,9 +117,38 @@ while preserving newline bytes. The manifest and verifier hard-check
 
 ## Regeneration and verification
 
+Use a repository-local Python 3.12 virtual environment with CadQuery 2.8.0.
+The current system-default Python 3.14 environment has no CadQuery installed
+and is not the supported housing regeneration environment. First confirm that
+the Python launcher can resolve Python 3.12:
+
 ```powershell
+py -3.12 --version
+```
+
+If that command fails and `winget` is available, install Python 3.12, open a
+new PowerShell session, and confirm the launcher again:
+
+```powershell
+winget install --exact --id Python.Python.3.12
+py -3.12 --version
+```
+
+If `winget` is unavailable, download the Windows x64 Python 3.12 installer
+from <https://www.python.org/downloads/windows/>. In the installer, enable the
+Python launcher (`py.exe`) option, complete installation, open a new shell,
+and rerun `py -3.12 --version` before continuing.
+
+After the version check succeeds, run the following from the repository root:
+
+```powershell
+py -3.12 -m venv .venv-cad
+.\.venv-cad\Scripts\Activate.ps1
+python -m pip install -r requirements-cad.txt
+python -B -m tools.generate_kc2_component_models
 python -B -m tools.generate_kc2_x3_v2_housings
 python -B -m tools.verify_kc2_x3_v2_housing
+python -B -m unittest tools.test_generate_kc2_component_models -v
 python -B -m unittest tools.test_verify_kc2_x3_v2_housing -v
 ```
 
