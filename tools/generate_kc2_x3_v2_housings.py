@@ -91,7 +91,7 @@ RESET_REFERENCE = "SW_RST1"
 RESET_BODY_ENVELOPE_MM = (6.10, 3.70)
 RESET_ACTUATOR_ENVELOPE_MM = (2.70, 1.30)
 RESET_LOCAL_SUPPORT_DIAMETER_MM = 3.00
-MAX_LOAD_POINT_TO_SUPPORT_MM = 24.0
+MAX_LOAD_POINT_TO_SUPPORT_MM = 3.60
 PRINT_VOLUME_LIMIT_MM = 150.0
 RIGHT_SPLIT_CLEARANCE_MM = 0.20
 PUZZLE_CAPTURE_FEATURE_COUNT = 2
@@ -133,30 +133,28 @@ MOUNTING_MINIMUM_TIP_CLEARANCE_MM = (
     MOUNTING_PILOT_DEPTH_MM - MOUNTING_PENETRATION_RANGE_MM[1]
 )
 SWITCH_SERVICE_BODY_ENVELOPE_MM = 15.60
-EXPECTED_DISTRIBUTED_SUPPORT_COUNTS = {"left": 14, "right": 11}
-EXPECTED_PRIMARY_SUPPORT_LOAD_SPAN_MM = {"left": 15.4640, "right": 18.9619}
+EXPECTED_DISTRIBUTED_SUPPORT_COUNTS = {"left": 31, "right": 39}
+EXPECTED_PRIMARY_SUPPORT_LOAD_SPAN_MM = {"left": 3.5621, "right": 3.5621}
+KEY_LOAD_SUPPORT_TO_MOUNT_CLEARANCE_MM = 1.00
 MOUNTING_HOLE_COORDINATES_MM = {
     "left": (
-        ("MH1", 142.6125, 67.9000),
-        ("MH2", 128.6125, 86.5000),
-        ("MH3", 108.5125, 87.0000),
-        ("MH4", 57.4125, 99.0000),
-        ("MH5", 124.7125, 125.1000),
-        ("MH6", 55.1125, 144.0000),
-        ("MH7", 165.6125, 145.0000),
-        ("MH8", 102.6125, 147.0000),
+        ("MH1", 112.8625, 43.0000),
+        ("MH2", 144.1125, 66.2500),
+        ("MH3", 38.6125, 111.0000),
+        ("MH4", 63.6125, 123.0000),
+        ("MH5", 81.1125, 151.7500),
+        ("MH6", 137.3625, 153.5000),
+        ("MH7", 166.3625, 148.7500),
     ),
     "right": (
-        ("MH1", 71.6875, 67.9000),
-        ("MH2", 181.0875, 85.5000),
-        ("MH3", 156.1875, 87.0000),
-        ("MH4", 109.6875, 104.8000),
-        ("MH5", 71.6875, 105.5000),
-        ("MH6", 62.0875, 69.3000),
-        ("MH7", 181.1875, 143.0000),
-        ("MH8", 143.0875, 143.0000),
-        ("MH9", 66.8875, 153.4000),
-        ("MH10", 95.6875, 147.0000),
+        ("MH1", 96.9375, 43.2500),
+        ("MH2", 72.4375, 67.0000),
+        ("MH3", 169.9375, 95.2500),
+        ("MH4", 194.9375, 98.7500),
+        ("MH5", 156.1875, 112.5000),
+        ("MH6", 69.9375, 146.2500),
+        ("MH7", 97.4375, 152.0000),
+        ("MH8", 122.6875, 151.0000),
     ),
 }
 
@@ -1092,6 +1090,7 @@ def build_plan_geometry(shp: dict[str, Any], side: str, board_data: dict[str, An
         rail,
         all_component_cutouts,
         switches,
+        bounds,
     )
     board_mounting_contract = mounting_board_contract(side, board_data)
     mounting_holes = []
@@ -1342,83 +1341,89 @@ def choose_support_posts(
     rail: Any,
     forbidden: Any,
     switches: list[dict[str, Any]],
+    raw_bounds: tuple[float, float, float, float],
 ) -> list[dict[str, Any]]:
     radius = POST_DIAMETER_MM / 2.0
-    allowed = board.buffer(-(radius + POST_CLEARANCE_MM), join_style="round", quad_segs=16)
-    blocked = forbidden.buffer(POST_CLEARANCE_MM, join_style="round", quad_segs=12)
-    min_x, min_y, max_x, max_y = board.bounds
-    key_xs = [item["center"][0] for item in switches]
-    key_ys = [item["center"][1] for item in switches]
-    key_min_y, key_max_y = min(key_ys), max(key_ys)
-    seam_x = min_x if side == "left" else max_x
-    seam_sign = 1.0 if side == "left" else -1.0
-
-    anchors: list[tuple[str, float, float]] = []
-    for fraction in (0.08, 0.52, 0.88):
-        anchors.append(("seam", seam_x + seam_sign * 14.0, key_min_y + (key_max_y - key_min_y) * fraction))
-
-    thumbs = sorted(
-        (item for item in switches if item["center"][1] >= key_max_y - 11.0),
-        key=lambda item: item["center"][0],
+    # A center inside this inset guarantees the complete Ø2.00 support disk
+    # plus the declared 0.30 mm component/cutout reserve remains structural.
+    # The former implementation inset once and then required the complete disk
+    # inside that already-inset region, unintentionally double-counting the
+    # radius and leaving 15.46/18.96 mm key-load spans.
+    allowed_centers = board.buffer(
+        -(radius + POST_CLEARANCE_MM),
+        join_style="round",
+        quad_segs=16,
     )
-    if thumbs:
-        thumb_targets = thumbs if len(thumbs) <= 3 else [thumbs[0], thumbs[len(thumbs) // 2], thumbs[-1]]
-        anchors.extend(("thumb", item["center"][0], item["center"][1] - 6.0) for item in thumb_targets)
-
-    for x_fraction in (0.20, 0.42, 0.64, 0.84):
-        for y_fraction in (0.27, 0.63):
-            anchors.append(
-                (
-                    "span",
-                    min(key_xs) + (max(key_xs) - min(key_xs)) * x_fraction,
-                    key_min_y + (key_max_y - key_min_y) * y_fraction,
-                )
-            )
-
+    mount_centers = [
+        _reflect_xy(raw_bounds, board_x, board_y)
+        for _ref, board_x, board_y in MOUNTING_HOLE_COORDINATES_MM[side]
+    ]
+    minimum_mount_center_distance = (
+        radius
+        + MOUNTING_HEAD_DIAMETER_MM / 2.0
+        + KEY_LOAD_SUPPORT_TO_MOUNT_CLEARANCE_MM
+    )
     posts: list[dict[str, Any]] = []
-
-    def add_near(category: str, target_x: float, target_y: float) -> bool:
-        for dx, dy in _candidate_offsets():
-            x, y = target_x + dx, target_y + dy
-            circle = shp["Point"](x, y).buffer(radius, quad_segs=20)
-            if not allowed.covers(circle) or circle.intersects(blocked):
-                continue
-            if any(math.hypot(x - item["x_mm"], y - item["y_mm"]) < POST_DIAMETER_MM + 1.0 for item in posts):
-                continue
-            posts.append(
-                {
-                    "id": f"{side.upper()}-SUP-{len(posts) + 1:02d}",
-                    "category": category,
-                    "x_mm": round(x, 4),
-                    "y_mm": round(y, 4),
-                    "diameter_mm": POST_DIAMETER_MM,
-                    "bottom_z_mm": EXTERIOR_BOTTOM_Z_MM,
-                    "top_z_mm": PCB_BOTTOM_Z_MM,
-                    "nominal_vertical_gap_mm": 0.0,
-                    "target_x_mm": round(target_x, 4),
-                    "target_y_mm": round(target_y, 4),
-                }
-            )
-            return True
-        return False
-
-    for category, x, y in anchors:
-        add_near(category, x, y)
-
-    # Close any load point left farther than the requirement's digital support
-    # bound. This is conservative; the physical 2 N deflection test remains open.
     for switch in switches:
-        point = shp["Point"](*switch["center"])
-        post_clearance = min(
-            (max(0.0, point.distance(shp["Point"](item["x_mm"], item["y_mm"])) - radius) for item in posts),
-            default=float("inf"),
+        target_x, target_y = switch["center"]
+        selected: tuple[float, float] | None = None
+        for dx, dy in _candidate_offsets(radius_mm=9.0, step_mm=0.25):
+            x, y = target_x + dx, target_y + dy
+            point = shp["Point"](x, y)
+            if not allowed_centers.covers(point):
+                continue
+            if any(
+                math.hypot(x - mount_x, y - mount_y)
+                + 1e-9
+                < minimum_mount_center_distance
+                for mount_x, mount_y in mount_centers
+            ):
+                continue
+            if any(
+                math.hypot(x - item["x_mm"], y - item["y_mm"])
+                + 1e-9
+                < POST_DIAMETER_MM + 0.25
+                for item in posts
+            ):
+                continue
+            selected = (x, y)
+            break
+        if selected is None:
+            raise RuntimeError(
+                f"{side}: could not place a dedicated safe load support for {switch['ref']}"
+            )
+        x, y = selected
+        load_distance = max(0.0, math.hypot(x - target_x, y - target_y) - radius)
+        posts.append(
+            {
+                "id": f"{side.upper()}-{switch['ref']}-LOAD",
+                "category": "key_load",
+                "switch_ref": switch["ref"],
+                "x_mm": round(x, 4),
+                "y_mm": round(y, 4),
+                "diameter_mm": POST_DIAMETER_MM,
+                "bottom_z_mm": EXTERIOR_BOTTOM_Z_MM,
+                "top_z_mm": PCB_BOTTOM_Z_MM,
+                "nominal_vertical_gap_mm": 0.0,
+                "target_x_mm": round(target_x, 4),
+                "target_y_mm": round(target_y, 4),
+                "load_point_to_support_edge_mm": round(load_distance, 4),
+            }
         )
-        if min(point.distance(rail), post_clearance) > MAX_LOAD_POINT_TO_SUPPORT_MM:
-            add_near("span", *switch["center"])
 
-    categories = {item["category"] for item in posts}
-    if not {"thumb", "span"}.issubset(categories) or len(posts) < 6:
-        raise RuntimeError(f"{side}: could not place required safe support categories ({len(posts)} posts, {categories})")
+    expected_refs = {switch["ref"] for switch in switches}
+    actual_refs = {post["switch_ref"] for post in posts}
+    if actual_refs != expected_refs or len(posts) != len(expected_refs):
+        raise RuntimeError(
+            f"{side}: dedicated key-load support bijection failed "
+            f"({len(posts)} posts for {len(expected_refs)} switches)"
+        )
+    worst = max(post["load_point_to_support_edge_mm"] for post in posts)
+    if worst > MAX_LOAD_POINT_TO_SUPPORT_MM + 1e-9:
+        raise RuntimeError(
+            f"{side}: dedicated key-load support span {worst:.4f} mm exceeds "
+            f"{MAX_LOAD_POINT_TO_SUPPORT_MM:.2f} mm"
+        )
     return posts
 
 
@@ -1796,7 +1801,20 @@ def mounting_system_manifest(
     expected_distribution = (
         {"whole": len(MOUNTING_HOLE_COORDINATES_MM[side])}
         if side == "left"
-        else {"part_a": 4, "part_b": 6}
+        else {"part_a": 4, "part_b": 4}
+    )
+    support_refs = [post.get("switch_ref") for post in plan["support_posts"]]
+    expected_support_refs = [switch["ref"] for switch in plan["switches"]]
+    key_load_network_matches = bool(
+        len(support_refs) == len(expected_support_refs)
+        and len(set(support_refs)) == len(support_refs)
+        and set(support_refs) == set(expected_support_refs)
+        and all(post.get("category") == "key_load" for post in plan["support_posts"])
+        and max(
+            post.get("load_point_to_support_edge_mm", float("inf"))
+            for post in plan["support_posts"]
+        )
+        <= MAX_LOAD_POINT_TO_SUPPORT_MM
     )
     return {
         "fastener_envelope": (
@@ -1835,8 +1853,12 @@ def mounting_system_manifest(
         "expected_part_distribution": expected_distribution,
         "part_distribution_matches_plan": distribution == expected_distribution,
         "distributed_support_count": len(plan["support_posts"]),
+        "dedicated_key_load_support_count": len(plan["support_posts"]),
+        "all_key_loads_have_dedicated_support": key_load_network_matches,
+        "key_load_support_network_matches_contract": key_load_network_matches,
         "primary_support_load_span_unchanged": bool(
-            len(plan["support_posts"]) == EXPECTED_DISTRIBUTED_SUPPORT_COUNTS[side]
+            key_load_network_matches
+            and len(plan["support_posts"]) == EXPECTED_DISTRIBUTED_SUPPORT_COUNTS[side]
             and math.isclose(
                 _maximum_load_distance(shp, plan),
                 EXPECTED_PRIMARY_SUPPORT_LOAD_SPAN_MM[side],
@@ -2320,8 +2342,8 @@ def generate_outputs(output_dir: Path, kicad_python: Path) -> Path:
             "service_condition": "keycaps-off, switches-installed",
             "note": (
                 "M1.4 features clamp/register the PCB but remain a provisional physical interface; "
-                "the 2.50 mm plate, perimeter rail, and 14/11 distributed supports remain the "
-                "independent vertical load path."
+                "the 2.50 mm plate, perimeter rail, and one dedicated desk-contact support per "
+                "switch remain the independent vertical load path."
             ),
         },
         "physical_deflection_test": {
@@ -2457,6 +2479,12 @@ def generate_outputs(output_dir: Path, kicad_python: Path) -> Path:
             },
             "component_cutouts": component_cutout_manifest(plan),
             "support_posts": plan["support_posts"],
+            "all_key_loads_have_dedicated_support": bool(
+                mounting_system["all_key_loads_have_dedicated_support"]
+            ),
+            "key_load_support_network_matches_contract": bool(
+                mounting_system["key_load_support_network_matches_contract"]
+            ),
             "mounting_system": mounting_system,
             "maximum_load_point_to_support_mm": round(_maximum_load_distance(shp, plan), 4),
             "maximum_seam_load_point_to_support_mm": round(

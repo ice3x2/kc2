@@ -395,7 +395,7 @@
 	(footprint "MH_M1.4_NPTH_1.60"
 		(layer "F.Cu")
 		(uuid "0a326e8e-7fef-4d19-bc6c-dbfd8a9609ff")
-		(at 71.6875 105.5)
+		(at 156.1875 112.5)
 		(descr "KC2 X3 V2 M1.4 service mounting hole, 1.60 mm copper-free NPTH")
 		(tags "KC2 X3 V2 M1.4 mounting NPTH copper-free")
 		(property "Reference" "MH5"
@@ -457,7 +457,7 @@
 	(footprint "MH_M1.4_NPTH_1.60"
 		(layer "F.Cu")
 		(uuid "0fdf62b0-477f-46cf-becb-aaa03c7c6e7a")
-		(at 181.1875 143)
+		(at 97.4375 152)
 		(descr "KC2 X3 V2 M1.4 service mounting hole, 1.60 mm copper-free NPTH")
 		(tags "KC2 X3 V2 M1.4 mounting NPTH copper-free")
 		(property "Reference" "MH7"
@@ -1041,7 +1041,7 @@
 	(footprint "MH_M1.4_NPTH_1.60"
 		(layer "F.Cu")
 		(uuid "11e11885-0617-4068-8063-795bf2cdef14")
-		(at 71.6875 67.9)
+		(at 96.9375 43.25)
 		(descr "KC2 X3 V2 M1.4 service mounting hole, 1.60 mm copper-free NPTH")
 		(tags "KC2 X3 V2 M1.4 mounting NPTH copper-free")
 		(property "Reference" "MH1"
@@ -3503,7 +3503,7 @@
 	(footprint "MH_M1.4_NPTH_1.60"
 		(layer "F.Cu")
 		(uuid "4fd45f2b-538c-4e7c-911f-b00adbf32144")
-		(at 109.6875 104.8)
+		(at 194.9375 98.75)
 		(descr "KC2 X3 V2 M1.4 service mounting hole, 1.60 mm copper-free NPTH")
 		(tags "KC2 X3 V2 M1.4 mounting NPTH copper-free")
 		(property "Reference" "MH4"
@@ -3865,7 +3865,7 @@
 	(footprint "MH_M1.4_NPTH_1.60"
 		(layer "F.Cu")
 		(uuid "512f8736-89b5-4313-a0c0-bd58ed8661c9")
-		(at 181.0875 85.5)
+		(at 72.4375 67)
 		(descr "KC2 X3 V2 M1.4 service mounting hole, 1.60 mm copper-free NPTH")
 		(tags "KC2 X3 V2 M1.4 mounting NPTH copper-free")
 		(property "Reference" "MH2"
@@ -7295,7 +7295,7 @@
 	(footprint "MH_M1.4_NPTH_1.60"
 		(layer "F.Cu")
 		(uuid "8b9a6e2b-d4a4-44e6-bf3e-3cfbcbe0d823")
-		(at 143.0875 143)
+		(at 122.6875 151)
 		(descr "KC2 X3 V2 M1.4 service mounting hole, 1.60 mm copper-free NPTH")
 		(tags "KC2 X3 V2 M1.4 mounting NPTH copper-free")
 		(property "Reference" "MH8"
@@ -7720,7 +7720,7 @@
 	(footprint "MH_M1.4_NPTH_1.60"
 		(layer "F.Cu")
 		(uuid "941ebf01-4907-4d32-812a-c6acb5397857")
-		(at 62.0875 69.3)
+		(at 69.9375 146.25)
 		(descr "KC2 X3 V2 M1.4 service mounting hole, 1.60 mm copper-free NPTH")
 		(tags "KC2 X3 V2 M1.4 mounting NPTH copper-free")
 		(property "Reference" "MH6"
@@ -11821,70 +11821,8 @@
 	)
 	(footprint "MH_M1.4_NPTH_1.60"
 		(layer "F.Cu")
-		(uuid "c4e3d534-5fce-424e-bfdb-86ae11feaf1a")
-		(at 95.6875 147)
-		(descr "KC2 X3 V2 M1.4 service mounting hole, 1.60 mm copper-free NPTH")
-		(tags "KC2 X3 V2 M1.4 mounting NPTH copper-free")
-		(property "Reference" "MH10"
-			(at 0 -1.5 0)
-			(layer "F.SilkS")
-			(uuid "afe0e224-77b4-4d3b-8852-75b8b5056f26")
-			(effects
-				(font
-					(size 0.8 0.8)
-					(thickness 0.15)
-				)
-			)
-		)
-		(property "Value" "M1.4_NPTH_1.60"
-			(at 0 0 0)
-			(layer "F.Fab")
-			(hide yes)
-			(uuid "8cc48cc4-d27d-4e68-a4cd-9ccc093922c3")
-			(effects
-				(font
-					(size 0.8 0.8)
-					(thickness 0.1)
-				)
-			)
-		)
-		(property "Datasheet" ""
-			(at 0 0 0)
-			(layer "F.Fab")
-			(hide yes)
-			(uuid "051b94d7-c240-4d7a-8a04-b29fd8193a6b")
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" ""
-			(at 0 0 0)
-			(layer "F.Fab")
-			(hide yes)
-			(uuid "09347e1e-d263-41c8-a223-ef71d0575bad")
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(attr exclude_from_pos_files exclude_from_bom)
-		(duplicate_pad_numbers_are_jumpers no)
-		(pad "" np_thru_hole circle
-			(at 0 0)
-			(size 1.6 1.6)
-			(drill 1.6)
-			(layers "*.Mask")
-			(uuid "97f4baa8-7ae3-4131-b373-587777372749")
-		)
-		(embedded_fonts no)
-	)
-	(footprint "MH_M1.4_NPTH_1.60"
-		(layer "F.Cu")
 		(uuid "c964f5db-fd11-4972-ac21-2eecb9a34615")
-		(at 156.1875 87)
+		(at 169.9375 95.25)
 		(descr "KC2 X3 V2 M1.4 service mounting hole, 1.60 mm copper-free NPTH")
 		(tags "KC2 X3 V2 M1.4 mounting NPTH copper-free")
 		(property "Reference" "MH3"
@@ -13483,68 +13421,6 @@
 				(xyz 0 0 0)
 			)
 		)
-	)
-	(footprint "MH_M1.4_NPTH_1.60"
-		(layer "F.Cu")
-		(uuid "fd8733f1-73dc-42c7-9e31-4c19cf8efddc")
-		(at 66.8875 153.4)
-		(descr "KC2 X3 V2 M1.4 service mounting hole, 1.60 mm copper-free NPTH")
-		(tags "KC2 X3 V2 M1.4 mounting NPTH copper-free")
-		(property "Reference" "MH9"
-			(at 0 -1.5 0)
-			(layer "F.SilkS")
-			(uuid "44d886c0-0e35-4148-91af-758d0d6e4312")
-			(effects
-				(font
-					(size 0.8 0.8)
-					(thickness 0.15)
-				)
-			)
-		)
-		(property "Value" "M1.4_NPTH_1.60"
-			(at 0 0 0)
-			(layer "F.Fab")
-			(hide yes)
-			(uuid "7b3006ca-0cd2-40a6-8325-afb8feb8a25e")
-			(effects
-				(font
-					(size 0.8 0.8)
-					(thickness 0.1)
-				)
-			)
-		)
-		(property "Datasheet" ""
-			(at 0 0 0)
-			(layer "F.Fab")
-			(hide yes)
-			(uuid "482ce9cb-e0a8-4ac1-9e07-e23998893403")
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" ""
-			(at 0 0 0)
-			(layer "F.Fab")
-			(hide yes)
-			(uuid "8c435fd0-1c38-43c7-b8c2-e2048ebff281")
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(attr exclude_from_pos_files exclude_from_bom)
-		(duplicate_pad_numbers_are_jumpers no)
-		(pad "" np_thru_hole circle
-			(at 0 0)
-			(size 1.6 1.6)
-			(drill 1.6)
-			(layers "*.Mask")
-			(uuid "83a884c5-5bdc-468e-a629-bbd6dde1d0ca")
-		)
-		(embedded_fonts no)
 	)
 	(footprint "D_ES1B_SMA_HandSolder_C437840"
 		(layer "B.Cu")

@@ -562,33 +562,30 @@ class V2GeneratorTests(unittest.TestCase):
             with self.subTest(legitimate_identity=value):
                 self.assertFalse(_contains_identity_placeholder(value))
 
-    def test_generator_declares_exact_selected_m1_4_pattern(self) -> None:
+    def test_generator_declares_interference_minimized_m1_4_pattern(self) -> None:
         from tools import generate_kc2_pcbs as generator
 
         self.assertEqual(
             generator.X3_V2_MOUNTING_POINTS,
             {
                 "left": [
-                    (142.6125, 67.9),
-                    (128.6125, 86.5),
-                    (108.5125, 87.0),
-                    (57.4125, 99.0),
-                    (124.7125, 125.1),
-                    (55.1125, 144.0),
-                    (165.6125, 145.0),
-                    (102.6125, 147.0),
+                    (112.8625, 43.0),
+                    (144.1125, 66.25),
+                    (38.6125, 111.0),
+                    (63.6125, 123.0),
+                    (81.1125, 151.75),
+                    (137.3625, 153.5),
+                    (166.3625, 148.75),
                 ],
                 "right": [
-                    (71.6875, 67.9),
-                    (181.0875, 85.5),
-                    (156.1875, 87.0),
-                    (109.6875, 104.8),
-                    (71.6875, 105.5),
-                    (62.0875, 69.3),
-                    (181.1875, 143.0),
-                    (143.0875, 143.0),
-                    (66.8875, 153.4),
-                    (95.6875, 147.0),
+                    (96.9375, 43.25),
+                    (72.4375, 67.0),
+                    (169.9375, 95.25),
+                    (194.9375, 98.75),
+                    (156.1875, 112.5),
+                    (69.9375, 146.25),
+                    (97.4375, 152.0),
+                    (122.6875, 151.0),
                 ],
             },
         )

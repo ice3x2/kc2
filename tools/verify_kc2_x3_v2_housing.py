@@ -95,26 +95,23 @@ VERIFIED_RESET_SUPPORT_DIAMETER_MM = 3.00
 VERIFIED_SERVICE_MINIMUM_HOUSING_LAND_MM = 0.85
 VERIFIED_MOUNTING_COORDINATES_MM = {
     "left": [
-        [142.6125, 67.9000],
-        [128.6125, 86.5000],
-        [108.5125, 87.0000],
-        [57.4125, 99.0000],
-        [124.7125, 125.1000],
-        [55.1125, 144.0000],
-        [165.6125, 145.0000],
-        [102.6125, 147.0000],
+        [112.8625, 43.0000],
+        [144.1125, 66.2500],
+        [38.6125, 111.0000],
+        [63.6125, 123.0000],
+        [81.1125, 151.7500],
+        [137.3625, 153.5000],
+        [166.3625, 148.7500],
     ],
     "right": [
-        [71.6875, 67.9000],
-        [181.0875, 85.5000],
-        [156.1875, 87.0000],
-        [109.6875, 104.8000],
-        [71.6875, 105.5000],
-        [62.0875, 69.3000],
-        [181.1875, 143.0000],
-        [143.0875, 143.0000],
-        [66.8875, 153.4000],
-        [95.6875, 147.0000],
+        [96.9375, 43.2500],
+        [72.4375, 67.0000],
+        [169.9375, 95.2500],
+        [194.9375, 98.7500],
+        [156.1875, 112.5000],
+        [69.9375, 146.2500],
+        [97.4375, 152.0000],
+        [122.6875, 151.0000],
     ],
 }
 
@@ -139,11 +136,16 @@ def service_cutout_contract_errors(
 
 
 VERIFIED_MOUNTING_PART_DISTRIBUTION = {
-    "left": {"whole": 8},
-    "right": {"part_a": 4, "part_b": 6},
+    "left": {"whole": 7},
+    "right": {"part_a": 4, "part_b": 4},
 }
-VERIFIED_DISTRIBUTED_SUPPORT_COUNTS = {"left": 14, "right": 11}
-VERIFIED_PRIMARY_SUPPORT_LOAD_SPAN_MM = {"left": 15.4640, "right": 18.9619}
+VERIFIED_DISTRIBUTED_SUPPORT_COUNTS = {"left": 31, "right": 39}
+VERIFIED_PRIMARY_SUPPORT_LOAD_SPAN_MM = {"left": 3.5621, "right": 3.5621}
+VERIFIED_MOUNTING_MINIMUM_COMPONENT_CLEARANCE_MM = 1.20
+VERIFIED_MOUNTING_MINIMUM_COPPER_CLEARANCE_MM = 0.85
+VERIFIED_MOUNTING_MINIMUM_BOARD_EDGE_CLEARANCE_MM = 2.10
+VERIFIED_MOUNTING_MINIMUM_HOUSING_EDGE_CLEARANCE_MM = 2.00
+VERIFIED_MOUNTING_MINIMUM_KEY_SUPPORT_CLEARANCE_MM = 3.70
 VERIFIED_MOUNTING_NPTH_DIAMETER_MM = 1.60
 VERIFIED_MOUNTING_SUPPORT_LAND_DIAMETER_MM = 3.00
 VERIFIED_MOUNTING_PILOT_DIAMETER_MM = 1.10
@@ -761,6 +763,16 @@ def analyze_v2_housing() -> dict[str, Any]:
             "rail_segment_count": output["rail"]["segment_count"],
             "support_posts": posts,
             "support_plan_matches_generator": posts == plan["support_posts"],
+            "all_key_loads_have_dedicated_support": bool(
+                output.get("all_key_loads_have_dedicated_support")
+            )
+            and bool(mounting_report.get("all_key_loads_have_dedicated_support")),
+            "key_load_support_network_matches_contract": bool(
+                output.get("key_load_support_network_matches_contract")
+            )
+            and bool(
+                mounting_report.get("key_load_support_network_matches_contract")
+            ),
             "reset_local_support": reset_local_support_report,
             "mounting_system": mounting_report,
             "maximum_load_point_to_support_mm": float(output["maximum_load_point_to_support_mm"]),
@@ -895,15 +907,27 @@ def verify_report(report: dict[str, Any]) -> list[str]:
             errors.append(f"{side}: stale rail plan area")
         if not data["support_plan_matches_generator"]:
             errors.append(f"{side}: stale support plan")
-        categories = {post["category"] for post in data["support_posts"]}
-        missing = {"thumb", "span"} - categories
-        if missing:
-            errors.append(f"{side}: missing support categories {sorted(missing)}")
+        categories = {post.get("category") for post in data["support_posts"]}
+        if categories != {"key_load"}:
+            errors.append(f"{side}: support categories are not exclusively key_load")
         if len(data["support_posts"]) != VERIFIED_DISTRIBUTED_SUPPORT_COUNTS[side]:
             errors.append(
                 f"{side}: distributed support count {len(data['support_posts'])} "
                 f"!= {VERIFIED_DISTRIBUTED_SUPPORT_COUNTS[side]}"
             )
+        expected_switch_refs = {
+            f"SW{index}" for index in range(1, int(data["key_count"]) + 1)
+        }
+        actual_switch_refs = [post.get("switch_ref") for post in data["support_posts"]]
+        if (
+            set(actual_switch_refs) != expected_switch_refs
+            or len(actual_switch_refs) != len(set(actual_switch_refs))
+        ):
+            errors.append(f"{side}: key-load support references are not a switch bijection")
+        if not data.get("all_key_loads_have_dedicated_support"):
+            errors.append(f"{side}: not every key load has a dedicated support")
+        if not data.get("key_load_support_network_matches_contract"):
+            errors.append(f"{side}: key-load support network does not match the generator")
         for post in data["support_posts"]:
             expected = (
                 float(post["diameter_mm"]) == generator.POST_DIAMETER_MM
@@ -913,6 +937,12 @@ def verify_report(report: dict[str, Any]) -> list[str]:
             )
             if not expected:
                 errors.append(f"{side}: invalid post dimensions/Z for {post.get('id')}")
+            if float(post.get("load_point_to_support_edge_mm", 99.0)) > (
+                generator.MAX_LOAD_POINT_TO_SUPPORT_MM + 1e-6
+            ):
+                errors.append(
+                    f"{side}: {post.get('switch_ref')} dedicated support is too far from its load point"
+                )
         if data["maximum_load_point_to_support_mm"] > generator.MAX_LOAD_POINT_TO_SUPPORT_MM:
             errors.append(
                 f"{side}: load point support distance {data['maximum_load_point_to_support_mm']} mm"
@@ -1031,6 +1061,14 @@ def verify_report(report: dict[str, Any]) -> list[str]:
             errors.append(f"{side}: part distribution does not match the split plan")
         if int(mounting.get("distributed_support_count", 0)) != VERIFIED_DISTRIBUTED_SUPPORT_COUNTS[side]:
             errors.append(f"{side}: mounting contract changed the distributed support count")
+        if int(mounting.get("dedicated_key_load_support_count", 0)) != (
+            VERIFIED_DISTRIBUTED_SUPPORT_COUNTS[side]
+        ):
+            errors.append(f"{side}: dedicated key-load support count is wrong")
+        if not mounting.get("all_key_loads_have_dedicated_support") or not mounting.get(
+            "key_load_support_network_matches_contract"
+        ):
+            errors.append(f"{side}: mounting contract lost the per-key support network")
         if not mounting.get("primary_support_load_span_unchanged") or not mounting.get(
             "geometry_primary_support_load_span_unchanged"
         ):
@@ -1181,6 +1219,23 @@ def verify_report(report: dict[str, Any]) -> list[str]:
                     errors.append(
                         f"{side}:{expected_ref}: head reserve {field} is below "
                         f"{VERIFIED_MOUNTING_HEAD_RESERVE_MM:.2f} mm"
+                    )
+            stronger_clearances = {
+                "head_to_installed_component_mm": VERIFIED_MOUNTING_MINIMUM_COMPONENT_CLEARANCE_MM,
+                "geometry_head_to_installed_component_mm": VERIFIED_MOUNTING_MINIMUM_COMPONENT_CLEARANCE_MM,
+                "head_to_routed_copper_or_via_mm": VERIFIED_MOUNTING_MINIMUM_COPPER_CLEARANCE_MM,
+                "geometry_head_to_routed_copper_or_via_mm": VERIFIED_MOUNTING_MINIMUM_COPPER_CLEARANCE_MM,
+                "head_to_board_edge_mm": VERIFIED_MOUNTING_MINIMUM_BOARD_EDGE_CLEARANCE_MM,
+                "geometry_head_to_board_edge_mm": VERIFIED_MOUNTING_MINIMUM_BOARD_EDGE_CLEARANCE_MM,
+                "head_to_housing_edge_mm": VERIFIED_MOUNTING_MINIMUM_HOUSING_EDGE_CLEARANCE_MM,
+                "geometry_head_to_housing_edge_mm": VERIFIED_MOUNTING_MINIMUM_HOUSING_EDGE_CLEARANCE_MM,
+                "head_to_support_posts_mm": VERIFIED_MOUNTING_MINIMUM_KEY_SUPPORT_CLEARANCE_MM,
+                "geometry_head_to_support_posts_mm": VERIFIED_MOUNTING_MINIMUM_KEY_SUPPORT_CLEARANCE_MM,
+            }
+            for field, minimum in stronger_clearances.items():
+                if float(hole.get(field, -99.0)) + 1e-6 < minimum:
+                    errors.append(
+                        f"{side}:{expected_ref}: P2 clearance {field} is below {minimum:.2f} mm"
                     )
             if hole.get("head_reserve_mm") != VERIFIED_MOUNTING_HEAD_RESERVE_MM:
                 errors.append(f"{side}:{expected_ref}: head reserve contract is wrong")

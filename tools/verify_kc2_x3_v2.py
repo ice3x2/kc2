@@ -243,26 +243,23 @@ EXPECTED_BATTERY_TERMINATION_MARKINGS = [
 ]
 EXPECTED_M1_4_MOUNTING_POINTS = {
     "left": [
-        ("MH1", 142.6125, 67.9000),
-        ("MH2", 128.6125, 86.5000),
-        ("MH3", 108.5125, 87.0000),
-        ("MH4", 57.4125, 99.0000),
-        ("MH5", 124.7125, 125.1000),
-        ("MH6", 55.1125, 144.0000),
-        ("MH7", 165.6125, 145.0000),
-        ("MH8", 102.6125, 147.0000),
+        ("MH1", 112.8625, 43.0000),
+        ("MH2", 144.1125, 66.2500),
+        ("MH3", 38.6125, 111.0000),
+        ("MH4", 63.6125, 123.0000),
+        ("MH5", 81.1125, 151.7500),
+        ("MH6", 137.3625, 153.5000),
+        ("MH7", 166.3625, 148.7500),
     ],
     "right": [
-        ("MH1", 71.6875, 67.9000),
-        ("MH2", 181.0875, 85.5000),
-        ("MH3", 156.1875, 87.0000),
-        ("MH4", 109.6875, 104.8000),
-        ("MH5", 71.6875, 105.5000),
-        ("MH6", 62.0875, 69.3000),
-        ("MH7", 181.1875, 143.0000),
-        ("MH8", 143.0875, 143.0000),
-        ("MH9", 66.8875, 153.4000),
-        ("MH10", 95.6875, 147.0000),
+        ("MH1", 96.9375, 43.2500),
+        ("MH2", 72.4375, 67.0000),
+        ("MH3", 169.9375, 95.2500),
+        ("MH4", 194.9375, 98.7500),
+        ("MH5", 156.1875, 112.5000),
+        ("MH6", 69.9375, 146.2500),
+        ("MH7", 97.4375, 152.0000),
+        ("MH8", 122.6875, 151.0000),
     ],
 }
 
@@ -1408,8 +1405,8 @@ def verify_placed_footprint_contracts(
 def expected_m1_4_mount_manifest() -> dict[str, object]:
     return {
         "footprint": "kc2.pretty:MH_M1.4_NPTH_1.60",
-        "references": "MH1..MH8 left; MH1..MH10 right",
-        "counts": {"left": 8, "right": 10, "total": 18},
+        "references": "MH1..MH7 left; MH1..MH8 right",
+        "counts": {"left": 7, "right": 8, "total": 15},
         "positions_mm": {
             side: [
                 {"ref": ref, "x": x, "y": y}
@@ -1733,19 +1730,19 @@ def verify_m1_4_mounting_holes(
     )
     minimum_head_edge_clearance = min(edge_clearances) if edge_clearances else math.inf
     head_clearance_errors = [
-        f"{side}: 3.00 mm rounded screw head lacks 0.25 mm body reserve: {label}; margin {margin:.4f} mm"
+        f"{side}: 3.00 mm rounded screw head lacks 1.20 mm body clearance: {label}; margin {margin:.4f} mm"
         for margin, label in body_measurements
-        if margin < 0.25 - 1e-6
+        if margin < 1.20 - 1e-6
     ]
     head_clearance_errors.extend(
-        f"{side}: 3.00 mm rounded screw head lacks 0.25 mm copper/fillet reserve: {label}; margin {margin:.4f} mm"
+        f"{side}: 3.00 mm rounded screw head lacks 0.85 mm copper/fillet clearance: {label}; margin {margin:.4f} mm"
         for margin, label in head_copper_measurements
-        if margin < 0.25 - 1e-6
+        if margin < 0.85 - 1e-6
     )
-    if minimum_head_edge_clearance < 0.25 - 1e-6:
+    if minimum_head_edge_clearance < 2.10 - 1e-6:
         head_clearance_errors.append(
             f"{side}: 3.00 mm rounded screw-head-to-Edge.Cuts clearance "
-            f"{minimum_head_edge_clearance:.4f} mm is below 0.25 mm"
+            f"{minimum_head_edge_clearance:.4f} mm is below 2.10 mm"
         )
     errors.extend(head_clearance_errors)
 
@@ -1860,7 +1857,7 @@ def verify_canonical_route_evidence(
             errors.append(f"{side}: SES SHA-256 mismatch")
         if record.get("session_source_dsn_sha256") != session_source_dsn_sha:
             errors.append(f"{side}: reviewed SES source DSN SHA-256 mismatch")
-        expected_holes = 8 if side == "left" else 10
+        expected_holes = 7 if side == "left" else 8
         if reports[side]["dsn_mounting_hole_count"] != expected_holes:
             errors.append(f"{side}: current DSN does not contain the exact MH pattern")
         if record.get("dsn_mounting_hole_count") != expected_holes:
@@ -1870,9 +1867,9 @@ def verify_canonical_route_evidence(
             for index, position in enumerate(X3_V2_MOUNTING_POINTS[side], start=1)
         }
         if reports[side]["dsn_mounting_hole_positions_mm"] != expected_positions:
-            errors.append(f"{side}: current DSN P1 mounting geometry mismatch")
+            errors.append(f"{side}: current DSN P2 mounting geometry mismatch")
         if reports[side]["ses_mounting_hole_positions_mm"] != expected_positions:
-            errors.append(f"{side}: reviewed SES P1 mounting geometry mismatch")
+            errors.append(f"{side}: reviewed SES P2 mounting geometry mismatch")
         if set(clearances) != {"global", "kicad_default"} or minimum_clearance is None or minimum_clearance < 300:
             errors.append(f"{side}: DSN global/default clearance must be at least 300 internal units")
         if record.get("dsn_default_clearance_internal_units") != minimum_clearance:
@@ -3496,7 +3493,7 @@ def _housing_head_adjacency_contracts(
             ),
             key=lambda reference: int(reference[2:]),
         )
-        expected_count = 8 if half == "left" else 10
+        expected_count = 7 if half == "left" else 8
         if len(mounting_refs) != expected_count:
             errors.append(f"housing head-adjacency {half} mounting-hole set is incomplete")
             continue

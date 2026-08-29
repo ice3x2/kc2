@@ -4,7 +4,7 @@
 
 This document records the five independent reviews requested before adding mounting holes to the plateless KC2 X3 V2 PCB and its nominal 2.50 mm lower housing.
 
-> **2026-08-29 supersession:** The user subsequently selected a rounded screw head. All `2.00 x 0.50 mm` low-head dimensions and the original coordinate table in the 2026-08-25 analysis are historical only. The active source-of-truth dimensions and P1 coordinates are in `CON-ARCH-006` and in the rounded-head addendum below.
+> **2026-08-29 supersession:** The user subsequently selected a rounded screw head and then rejected the rounded-head P1 hole locations and sparse support spans. All `2.00 x 0.50 mm` low-head dimensions, the original coordinate table, and the P1 8-left/10-right table are historical only. The active source of truth is the P2 7-left/8-right clamp plus 31-left/39-right per-key support contract in `CON-ARCH-006`.
 
 The active rounded-head digital implementation is:
 
@@ -192,7 +192,7 @@ Sources reviewed for the new envelope include the following deliberately limited
 - SAIMA miniature tapping screw `3Mi101440ZP` is a head-geometry comparison only: <https://en.saima.co.jp/product/miniature-screws/3mi10_zp/>
 - SKDIN `0498FA00002` is a rounded-pan geometry upper-bound example intended for metal substrates, not evidence of direct-plastic suitability: <https://www.skdin.com/products/productid-0498FA00002>
 
-The conservative installed switch envelope is `15.60 mm` wide on a `19.05 mm` pitch. The straight inter-switch corridor is only `3.45 mm`, while a `3.00 mm` head plus `0.25 mm` clearance on both sides requires `3.50 mm`. The earlier centers therefore cannot be repaired by tiny moves; active holes move into switch-corner pockets. The selected P1 set minimizes total movement while retaining the previous mounting-hull area as closely as possible:
+The conservative installed switch envelope is `15.60 mm` wide on a `19.05 mm` pitch. The straight inter-switch corridor is only `3.45 mm`, while a `3.00 mm` head plus `0.25 mm` clearance on both sides requires `3.50 mm`. The earlier centers therefore could not be repaired by tiny moves. The following P1 set was selected temporarily and is now historical:
 
 | Ref | Left X | Left Y | Ref | Right X | Right Y |
 | --- | ---: | ---: | --- | ---: | ---: |
@@ -207,8 +207,8 @@ The conservative installed switch envelope is `15.60 mm` wide on a `19.05 mm` pi
 | - | - | - | MH9 | 66.8875 | 153.4000 |
 | - | - | - | MH10 | 95.6875 | 147.0000 |
 
-The P1 digital analysis reports minimum head-to-installed-body clearance `0.2591 mm` left and `0.2553 mm` right, head-to-edge clearance `2.90 mm` left and `2.3201 mm` right, mounting-hull preservation `99.90%` left and `97.22%` right, and unchanged primary-support load spans `15.4640/18.9619 mm`. The maximum switch-to-mount distance grows to approximately `30.8/30.5 mm`, but that is an anti-lift/clamp metric, not the PCB flex span: all 14 left/11 right distributed contacts remain the primary typing-load support.
+The historical P1 digital analysis reported minimum head-to-installed-body clearance `0.2591 mm` left and `0.2553 mm` right, head-to-edge clearance `2.90 mm` left and `2.3201 mm` right, mounting-hull preservation `99.90%` left and `97.22%` right, and sparse primary-support load spans `15.4640/18.9619 mm`. The user rejected that combined clamp/support compromise.
 
 ## Final Decision
 
-Proceed with the active rounded-head P1 M1.4 8-left / 10-right digital geometry and preserve every existing distributed support. Treat the `3.00 x 1.20 mm` head, 1.10 mm blind pilot and 4.00 mm under-head length as provisional prototype envelopes, not procurement-approved hardware. Do not claim physical retention, deflection compliance, repeated serviceability, fabrication readiness, or order readiness until the exact MPN/drawing and coupon gates above pass.
+Proceed with the active rounded-head P2 M1.4 7-left / 8-right clamp geometry and a separate one-to-one 31-left / 39-right switch-load support network. The read-only candidate analysis found no mounting collision, a `1.225 mm` minimum head-to-installed-component clearance, a `0.875 mm` minimum head-to-routed-copper/via clearance, and a `3.5621 mm` maximum switch-center-to-dedicated-support-edge distance. Treat the `3.00 x 1.20 mm` head, 1.10 mm blind pilot and 4.00 mm under-head length as provisional prototype envelopes, not procurement-approved hardware. Do not claim physical retention, deflection compliance, repeated serviceability, fabrication readiness, or order readiness until the exact MPN/drawing and coupon gates above pass.

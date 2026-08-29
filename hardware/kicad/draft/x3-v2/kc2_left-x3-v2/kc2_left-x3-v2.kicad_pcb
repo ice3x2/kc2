@@ -395,7 +395,7 @@
 	(footprint "MH_M1.4_NPTH_1.60"
 		(layer "F.Cu")
 		(uuid "084c4cb4-39de-4694-a545-c2c30499973c")
-		(at 124.7125 125.1)
+		(at 81.1125 151.75)
 		(descr "KC2 X3 V2 M1.4 service mounting hole, 1.60 mm copper-free NPTH")
 		(tags "KC2 X3 V2 M1.4 mounting NPTH copper-free")
 		(property "Reference" "MH5"
@@ -894,7 +894,7 @@
 	(footprint "MH_M1.4_NPTH_1.60"
 		(layer "F.Cu")
 		(uuid "14329d27-2148-4738-afd8-5a9725b34bda")
-		(at 142.6125 67.9)
+		(at 112.8625 43)
 		(descr "KC2 X3 V2 M1.4 service mounting hole, 1.60 mm copper-free NPTH")
 		(tags "KC2 X3 V2 M1.4 mounting NPTH copper-free")
 		(property "Reference" "MH1"
@@ -956,7 +956,7 @@
 	(footprint "MH_M1.4_NPTH_1.60"
 		(layer "F.Cu")
 		(uuid "172e5b90-5547-4279-8d76-ac20d4203924")
-		(at 57.4125 99)
+		(at 63.6125 123)
 		(descr "KC2 X3 V2 M1.4 service mounting hole, 1.60 mm copper-free NPTH")
 		(tags "KC2 X3 V2 M1.4 mounting NPTH copper-free")
 		(property "Reference" "MH4"
@@ -1080,70 +1080,8 @@
 	)
 	(footprint "MH_M1.4_NPTH_1.60"
 		(layer "F.Cu")
-		(uuid "404a8c89-1f1e-4aed-af3b-79511de53ca0")
-		(at 102.6125 147)
-		(descr "KC2 X3 V2 M1.4 service mounting hole, 1.60 mm copper-free NPTH")
-		(tags "KC2 X3 V2 M1.4 mounting NPTH copper-free")
-		(property "Reference" "MH8"
-			(at 0 -1.5 0)
-			(layer "F.SilkS")
-			(uuid "c006dffa-b328-4671-95c7-c359f25ac9fd")
-			(effects
-				(font
-					(size 0.8 0.8)
-					(thickness 0.15)
-				)
-			)
-		)
-		(property "Value" "M1.4_NPTH_1.60"
-			(at 0 0 0)
-			(layer "F.Fab")
-			(hide yes)
-			(uuid "d38a9b82-e105-48c2-a086-5ddabf3dc4e9")
-			(effects
-				(font
-					(size 0.8 0.8)
-					(thickness 0.1)
-				)
-			)
-		)
-		(property "Datasheet" ""
-			(at 0 0 0)
-			(layer "F.Fab")
-			(hide yes)
-			(uuid "87f75f36-bf8e-48a0-a309-209f6152d674")
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" ""
-			(at 0 0 0)
-			(layer "F.Fab")
-			(hide yes)
-			(uuid "46d626da-cce1-4f91-b796-76ade08863a0")
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(attr exclude_from_pos_files exclude_from_bom)
-		(duplicate_pad_numbers_are_jumpers no)
-		(pad "" np_thru_hole circle
-			(at 0 0)
-			(size 1.6 1.6)
-			(drill 1.6)
-			(layers "*.Mask")
-			(uuid "a44e76c3-f943-494d-a687-701843685c21")
-		)
-		(embedded_fonts no)
-	)
-	(footprint "MH_M1.4_NPTH_1.60"
-		(layer "F.Cu")
 		(uuid "413f7307-db39-4a69-9f5d-caba2ac3925b")
-		(at 128.6125 86.5)
+		(at 144.1125 66.25)
 		(descr "KC2 X3 V2 M1.4 service mounting hole, 1.60 mm copper-free NPTH")
 		(tags "KC2 X3 V2 M1.4 mounting NPTH copper-free")
 		(property "Reference" "MH2"
@@ -1205,7 +1143,7 @@
 	(footprint "MH_M1.4_NPTH_1.60"
 		(layer "F.Cu")
 		(uuid "453c05da-2d6a-4104-95e1-c11f147f06cb")
-		(at 55.1125 144)
+		(at 137.3625 153.5)
 		(descr "KC2 X3 V2 M1.4 service mounting hole, 1.60 mm copper-free NPTH")
 		(tags "KC2 X3 V2 M1.4 mounting NPTH copper-free")
 		(property "Reference" "MH6"
@@ -5087,7 +5025,7 @@
 	(footprint "MH_M1.4_NPTH_1.60"
 		(layer "F.Cu")
 		(uuid "87ecc275-3e33-48cb-9f38-a3e2287f7ed0")
-		(at 165.6125 145)
+		(at 166.3625 148.75)
 		(descr "KC2 X3 V2 M1.4 service mounting hole, 1.60 mm copper-free NPTH")
 		(tags "KC2 X3 V2 M1.4 mounting NPTH copper-free")
 		(property "Reference" "MH7"
@@ -10061,7 +9999,7 @@
 	(footprint "MH_M1.4_NPTH_1.60"
 		(layer "F.Cu")
 		(uuid "e4802ae8-5a0c-4780-ad7e-c16a2b20c718")
-		(at 108.5125 87)
+		(at 38.6125 111)
 		(descr "KC2 X3 V2 M1.4 service mounting hole, 1.60 mm copper-free NPTH")
 		(tags "KC2 X3 V2 M1.4 mounting NPTH copper-free")
 		(property "Reference" "MH3"
