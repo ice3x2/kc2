@@ -43,7 +43,7 @@ class V2FootprintTests(unittest.TestCase):
         manifest = json.loads(MANIFEST.read_text(encoding="utf-8"))
         self.assertEqual(
             manifest["requirement_ids"],
-            ["CON-ARCH-004", "CON-ARCH-007", "REL-ARCH-001"],
+            ["CON-ARCH-004", "CON-ARCH-006", "CON-ARCH-007", "REL-ARCH-001"],
         )
 
     def test_controller_power_footprints_match_con_arch_007(self) -> None:
@@ -127,6 +127,50 @@ class V2FootprintTests(unittest.TestCase):
             - (battery_pads["1"][0] + battery_pads["1"][2] / 2.0)
         )
         self.assertGreaterEqual(battery_pad_edge_gap, 0.30)
+        from tools.verify_kc2_x3_v2 import (
+            battery_termination_assembly_marking_errors,
+            normalized_battery_termination_markings,
+        )
+
+        self.assertEqual(
+            normalized_battery_termination_markings(battery),
+            [
+                ("1", "B+", "F.Silkscreen", 0.0, -1.65, 0.8, 0.8, 0.12),
+                ("2", "B-/GND", "F.Silkscreen", 2.54, 1.8, 0.8, 0.8, 0.12),
+            ],
+        )
+        self.assertEqual(battery_termination_assembly_marking_errors(battery), [])
+
+        def swap_battery_markings(footprint: pcbnew.FOOTPRINT) -> None:
+            items = {
+                item.GetText(): item
+                for item in footprint.GraphicalItems()
+                if isinstance(item, pcbnew.PCB_TEXT)
+                and item.GetText() in {"B+", "B-/GND"}
+            }
+            items["B+"].SetText("B-/GND")
+            items["B-/GND"].SetText("B+")
+
+        for label, mutate in (
+            (
+                "swapped",
+                swap_battery_markings,
+            ),
+            (
+                "missing",
+                lambda footprint: footprint.Remove(
+                    next(
+                        item
+                        for item in footprint.GraphicalItems()
+                        if isinstance(item, pcbnew.PCB_TEXT) and item.GetText() == "B-/GND"
+                    )
+                ),
+            ),
+        ):
+            with self.subTest(battery_marking_mutation=label):
+                mutated = pcbnew.FOOTPRINT(battery)
+                mutate(mutated)
+                self.assertTrue(battery_termination_assembly_marking_errors(mutated))
 
         body = pcbnew.FootprintLoad(
             str(BATTERY_BODY_FOOTPRINT.parent), BATTERY_BODY_FOOTPRINT.stem
@@ -166,7 +210,7 @@ class V2FootprintTests(unittest.TestCase):
                 round(pcbnew.ToMM(reference.GetFPRelativePosition().x), 3),
                 round(pcbnew.ToMM(reference.GetFPRelativePosition().y), 3),
             ),
-            (0.8, 0.1, 0.0, -1.5),
+            (0.8, 0.15, 0.0, -1.5),
         )
         pads = list(footprint.Pads())
         self.assertEqual(len(pads), 1)
@@ -185,6 +229,8 @@ class V2FootprintTests(unittest.TestCase):
         self.assertEqual(pad.GetNetname(), "")
 
     def test_supports_only_choc_v2_socket_and_mx_tht(self) -> None:
+        import pcbnew
+
         report = analyze_v2_footprint(FOOTPRINT)
 
         self.assertEqual(report["numbered_pad_counts"], {"1": 2, "2": 2})
@@ -217,6 +263,35 @@ class V2FootprintTests(unittest.TestCase):
         self.assertFalse(report["has_mx_hotswap_pads"])
         self.assertFalse(report["has_choc_v2_direct_solder_pads"])
         self.assertEqual(report["silkscreen_item_count"], 0)
+
+        footprint = pcbnew.FootprintLoad(str(FOOTPRINT.parent), FOOTPRINT.stem)
+        self.assertIsNotNone(footprint)
+        back_courtyard_points = [
+            (
+                round(pcbnew.ToMM(point.x), 3),
+                round(pcbnew.ToMM(point.y), 3),
+            )
+            for item in footprint.GraphicalItems()
+            if item.GetLayer() == pcbnew.B_CrtYd
+            for point in (item.GetStart(), item.GetEnd())
+        ]
+        self.assertEqual(
+            (
+                min(point[0] for point in back_courtyard_points),
+                min(point[1] for point in back_courtyard_points),
+                max(point[0] for point in back_courtyard_points),
+                max(point[1] for point in back_courtyard_points),
+            ),
+            (-10.25, 1.2, 5.25, 8.5),
+        )
+        self.assertEqual(
+            report["choc_socket_back_courtyard_mm"],
+            {
+                "bounds": (-10.25, 1.2, 5.25, 8.5),
+                "manufacturing_allowance": 0.25,
+                "encloses_body_and_lands": True,
+            },
+        )
 
     def test_es1b_sma_footprint_matches_official_land_pattern(self) -> None:
         import pcbnew
@@ -267,6 +342,226 @@ class V2FootprintTests(unittest.TestCase):
 
 
 class V2GeneratorTests(unittest.TestCase):
+    def test_procurement_identity_field_roles_reject_status_prose(self) -> None:
+        from tools.verify_kc2_x3_v2 import (
+            _procurement_object_identity_errors,
+            _valid_drawing_revision,
+            _valid_procurement_identifier,
+            _valid_procurement_manufacturer,
+        )
+
+        status_prose = (
+            "UNKNOWN SUPPLIER",
+            "PENDING DATASHEET",
+            "TBD SKU",
+            "TBA SOURCE",
+            "UNSET PURCHASE",
+            "PROVISIONAL DOC",
+            "TODO DATASHEET",
+            "FIXME SUPPLIER",
+            "TO BE CONFIRMED",
+            "NOT KNOWN",
+            "AWAITING SELECTION",
+            "AWAITING",
+            "UNSPECIFIED",
+            "UNSELECTED",
+            "UNDECIDED",
+            "UNRESOLVED",
+            "UNCONFIRMED",
+            "NOT YET SELECTED",
+            "TO FOLLOW",
+            "DRAFT",
+            "TENTATIVE",
+            "DEFERRED",
+            "LATER",
+            "PENDING SELECTION",
+        )
+        for value in status_prose:
+            with self.subTest(manufacturer_status=value):
+                self.assertFalse(_valid_procurement_manufacturer(value))
+            with self.subTest(identifier_status=value):
+                self.assertFalse(_valid_procurement_identifier(value))
+            with self.subTest(revision_status=value):
+                self.assertFalse(_valid_drawing_revision(value))
+
+        for value in (
+            "Unknown Industries U-1",
+            "Nakamura",
+            "TBC Precision",
+            "KAILH",
+        ):
+            with self.subTest(valid_manufacturer=value):
+                self.assertTrue(_valid_procurement_manufacturer(value))
+        for value in (
+            "TBC-40",
+            "NA-100",
+            "CPG135301D01",
+            "ORDER-M1.4-ROUND-4MM-ZINC-PH0",
+        ):
+            with self.subTest(valid_identifier=value):
+                self.assertTrue(_valid_procurement_identifier(value))
+        for value in (
+            "NO-DIGIT",
+            "ABC 123",
+            "TBD-SKU-1",
+            "PENDING123",
+            "PROVISIONAL-1",
+            "UNDECIDED-1",
+            "AWAITING-SKU-1",
+            "TBD-1",
+            "TO-FOLLOW-1",
+            "DRAFT-1",
+            "TENTATIVE-SKU-1",
+            "DEFERRED-1",
+            "LATER-1",
+        ):
+            with self.subTest(invalid_identifier=value):
+                self.assertFalse(_valid_procurement_identifier(value))
+        for value in ("REV-C", "REV-2026-08", "R2", "V2"):
+            with self.subTest(valid_revision=value):
+                self.assertTrue(_valid_drawing_revision(value))
+        for value in ("C", "revision C", "REV PENDING", "T.B.D."):
+            with self.subTest(invalid_revision=value):
+                self.assertFalse(_valid_drawing_revision(value))
+        self.assertTrue(
+            _procurement_object_identity_errors(
+                {
+                    "parts": {
+                        "switch": {
+                            "manufacturer": "UNKNOWN SUPPLIER",
+                            "mpn": "TBD SKU",
+                            "drawing_revision": "TO BE CONFIRMED",
+                            "document_id": "PROVISIONAL-1",
+                            "sku": "AWAITING-SKU-1",
+                        }
+                    }
+                },
+                label="synthetic BOM",
+            )
+        )
+        self.assertEqual(
+            _procurement_object_identity_errors(
+                {
+                    "parts": {
+                        "switch": {
+                            "manufacturer": "Unknown Industries U-1",
+                            "mpn": "TBC-40",
+                            "drawing_revision": "REV-C",
+                            "document_id": "DOC-123",
+                            "sku": "NA-100",
+                        }
+                    }
+                },
+                label="synthetic BOM",
+            ),
+            [],
+        )
+
+    def test_physical_identity_placeholder_taxonomy_rejects_reserved_sentinels(self) -> None:
+        from tools.verify_kc2_x3_v2 import _contains_identity_placeholder
+
+        sentinels = (
+            "PLACEHOLDER",
+            "N/A",
+            "NA",
+            "UNSET",
+            "NOT SELECTED",
+            "NOT_SELECTED",
+            "NOT-SELECTED",
+            "TBC",
+            "PENDING123",
+            "UNKNOWN_SOCKET",
+            "TODO",
+            "FIXME-part",
+            "MPN_PLACEHOLDER",
+            "ACME/UNKNOWN_SOCKET",
+            "DUMMY",
+            "TO BE DECIDED",
+            "TO BE DETERMINED",
+            "TO_BE_DECIDED",
+            "TO-BE-DETERMINED",
+            "TBA",
+            "NONE",
+            "NULL",
+            "TEMP",
+            "FAKE",
+            "PENDING PHYSICAL PART",
+            "UNKNOWN SOCKET",
+            "TBD PART",
+            "TODO PART",
+            "FIXME PART",
+            "PROVISIONAL FASTENER",
+            "DUMMY PART",
+            "TO BE DECIDED PART",
+            "TO BE DETERMINED FASTENER",
+            "TBA_PART",
+            "TBA FASTENER",
+            "TBC PART",
+            "UNKNOWN FASTENER",
+            "UNKNOWN PART",
+            "TBD ITEM",
+            "TBA PART",
+            "TBC COMPONENT",
+            "NONE-SELECTED",
+            "NULL/FASTENER",
+            "TEMP 42",
+            "FAKE123",
+            "ACME UNKNOWN SOCKET",
+            "FASTENER TBA",
+            "PART TBC",
+            "FASTENER UNKNOWN",
+            "ITEM TBD",
+            "ACME / TBA / PART",
+            "M1.4-FASTENER-TBC",
+            "N.A.",
+            r"N\A",
+            "NOT AVAILABLE",
+            "NO MPN",
+            "TBD.PART",
+            "T.B.D.",
+            "T-B-D",
+            "T/B/D",
+            "T_B_D",
+            "T B D",
+            "T.B.A.",
+            "T-B-A",
+            "T/B/A",
+            "T_B_A",
+            "T B A",
+            "T.B.C.",
+            "T-B-C",
+            "T/B/C",
+            "T_B_C",
+            "T B C",
+            "U.N.K.N.O.W.N",
+            "U-N-K-N-O-W-N",
+            "U/N/K/N/O/W/N",
+            "U_N_K_N_O_W_N",
+            "U N K N O W N",
+            "P.E.N.D.I.N.G",
+            "P-E-N-D-I-N-G",
+            "P/E/N/D/I/N/G",
+            "P_E_N_D_I_N_G",
+            "P E N D I N G",
+            " pending_physical_procurement_gate ",
+        )
+        legitimate = (
+            "Pendington PX-123",
+            "Tbdale Components TD-10",
+            "Temporary Works TW-1",
+            "Fakewell Components FK-2",
+            "Unknown Industries U-1",
+            "Nakamura NA-100",
+            "TBC Precision TBC-40",
+            "KAILH CPG135301D01",
+        )
+        for value in sentinels:
+            with self.subTest(reserved_sentinel=value):
+                self.assertTrue(_contains_identity_placeholder(value))
+        for value in legitimate:
+            with self.subTest(legitimate_identity=value):
+                self.assertFalse(_contains_identity_placeholder(value))
+
     def test_generator_declares_exact_selected_m1_4_pattern(self) -> None:
         from tools import generate_kc2_pcbs as generator
 
@@ -274,38 +569,43 @@ class V2GeneratorTests(unittest.TestCase):
             generator.X3_V2_MOUNTING_POINTS,
             {
                 "left": [
-                    (142.6125, 68.0),
+                    (142.6125, 67.9),
                     (128.6125, 86.5),
-                    (100.1125, 93.5),
-                    (57.1125, 99.0),
-                    (133.6125, 131.5),
+                    (108.5125, 87.0),
+                    (57.4125, 99.0),
+                    (124.7125, 125.1),
                     (55.1125, 144.0),
                     (165.6125, 145.0),
                     (102.6125, 147.0),
                 ],
                 "right": [
-                    (71.6875, 68.0),
-                    (181.1875, 85.5),
-                    (147.6875, 93.5),
-                    (109.6875, 96.5),
+                    (71.6875, 67.9),
+                    (181.0875, 85.5),
+                    (156.1875, 87.0),
+                    (109.6875, 104.8),
                     (71.6875, 105.5),
-                    (42.1875, 106.0),
-                    (181.1875, 134.5),
-                    (143.1875, 134.5),
-                    (51.6875, 144.0),
+                    (62.0875, 69.3),
+                    (181.1875, 143.0),
+                    (143.0875, 143.0),
+                    (66.8875, 153.4),
                     (95.6875, 147.0),
                 ],
             },
         )
         self.assertEqual(generator.X3_V2_MOUNT_HOLE_DIAMETER_MM, 1.6)
-        self.assertEqual(generator.X3_V2_MOUNT_HEAD_ENVELOPE_MM, (2.0, 0.5))
+        self.assertEqual(generator.X3_V2_MOUNT_HEAD_ENVELOPE_MM, (3.0, 1.2))
+        self.assertEqual(
+            generator.X3_V2_MOUNT_HEAD_STYLE,
+            "non_countersunk_rounded_pan_or_button",
+        )
+        self.assertEqual(generator.X3_V2_MOUNT_HEAD_XY_RESERVE_MM, 0.25)
         self.assertEqual(generator.X3_V2_MOUNT_DRIVER_DIAMETER_MM, 3.0)
         self.assertEqual(generator.X3_V2_MOUNT_SUPPORT_LAND_DIAMETER_MM, 3.0)
         self.assertEqual(generator.X3_V2_MOUNT_PILOT_ENVELOPE_MM, (1.1, 2.8))
         self.assertEqual(generator.X3_V2_MOUNT_UNDER_HEAD_LENGTH_MM, 4.0)
         self.assertEqual(generator.X3_V2_MOUNT_CLOSED_BOTTOM_MM, 0.7)
         self.assertEqual(generator.X3_V2_MOUNT_REFERENCE_TEXT_SIZE_MM, 0.8)
-        self.assertEqual(generator.X3_V2_MOUNT_REFERENCE_STROKE_MM, 0.1)
+        self.assertEqual(generator.X3_V2_MOUNT_REFERENCE_STROKE_MM, 0.15)
         self.assertEqual(generator.X3_V2_MOUNT_REFERENCE_OFFSET_MM, (0.0, -1.5))
 
     def test_generator_uses_the_fixed_70_key_v5_layout(self) -> None:
@@ -1020,7 +1320,7 @@ class V2GeneratorTests(unittest.TestCase):
                             round(pcbnew.ToMM(reference.GetFPRelativePosition().x), 3),
                             round(pcbnew.ToMM(reference.GetFPRelativePosition().y), 3),
                         ),
-                        (0.8, 0.1, 0.0, -1.5),
+                        (0.8, 0.15, 0.0, -1.5),
                     )
                 usb_label = next(
                     item
@@ -1115,6 +1415,13 @@ class V2GeneratorTests(unittest.TestCase):
                         "right_rotation_degrees": 0.0,
                         "pad_1": "BAT+",
                         "pad_2": "GND",
+                        "pad_1_marking": "B+",
+                        "pad_2_marking": "B-/GND",
+                        "nice_nano_equivalence": {
+                            "battery_positive": "U1 RAW / NN_B+",
+                            "battery_negative": "U1 GND_C / GND",
+                            "source": "https://nicekeyboards.com/docs/nice-nano/",
+                        },
                         "strain_relief_ref": "BAT_LEAD_SLOT1",
                         "lead_drawing_status": "pending_exact_purchased_pack",
                     },
@@ -1134,6 +1441,10 @@ class V2GeneratorTests(unittest.TestCase):
                         "model_generator_sha256": sha256_file(
                             ROOT / "tools/generate_kc2_component_models.py"
                         ),
+                        "model_role": "nominal_collision_proxy",
+                        "exact_purchased_mpn_status": "pending",
+                        "controlled_drawing_status": "pending",
+                        "imms_12v_bsi_10_equivalence_status": "pending",
                     },
                     "reset": {
                         "footprint": "kc2.pretty:SW_NW3_A06_B3_SMD",
@@ -1176,7 +1487,7 @@ class V2GeneratorTests(unittest.TestCase):
             blockers = controller_service_order_readiness_blockers(manifest)
             self.assertTrue(
                 any(
-                    "J_BAT1 0.90 mm drill is provisional" in blocker
+                    "controller service physical evidence bundle" in blocker
                     for blocker in blockers
                 )
             )
@@ -1193,6 +1504,21 @@ class V2GeneratorTests(unittest.TestCase):
             stale_model = json.loads(json.dumps(manifest))
             stale_model["controller_service_region"]["power"]["model_sha256"] = "0" * 64
             self.assertTrue(verify_controller_service_model_binding(stale_model))
+            stale_marking = json.loads(json.dumps(manifest))
+            stale_marking["controller_service_region"]["battery_termination"][
+                "pad_2_marking"
+            ] = "B+"
+            self.assertTrue(verify_controller_service_model_binding(stale_marking))
+            for field in (
+                "model_role",
+                "exact_purchased_mpn_status",
+                "controlled_drawing_status",
+                "imms_12v_bsi_10_equivalence_status",
+            ):
+                with self.subTest(field=field):
+                    stale_contract = json.loads(json.dumps(manifest))
+                    stale_contract["controller_service_region"]["power"][field] = "approved"
+                    self.assertTrue(verify_controller_service_model_binding(stale_contract))
             self.assertEqual(
                 manifest["diode_placement_policy"]["edge_safe_offsets_mm"],
                 {
@@ -1323,6 +1649,11 @@ class V2GeneratorTests(unittest.TestCase):
 
     def test_controller_power_service_manifest_note_is_v2_only(self) -> None:
         from tools import generate_kc2_pcbs as generator
+
+        v2_readme = (V2_ROOT / "README.md").read_text(encoding="utf-8")
+        self.assertIn("pad 1 `B+`", v2_readme)
+        self.assertIn("pad 2 `B-/GND`", v2_readme)
+        self.assertIn("https://nicekeyboards.com/docs/nice-nano/", v2_readme)
 
         with TemporaryDirectory(dir=ROOT) as temporary:
             for variant, expected, forbidden in (
@@ -1595,6 +1926,16 @@ class V2GeneratorTests(unittest.TestCase):
                 self.assertTrue(report["battery_lead_slot_on_usb_side"])
                 self.assertEqual(report["forbidden_carrier_power_nets"], [])
                 self.assertEqual(report["controller_power_nets"], ["BAT+", "GND", "NN_B+"])
+                power = __import__("pcbnew").LoadBoard(str(board_path)).FindFootprintByReference(
+                    "SW_PWR1"
+                )
+                self.assertEqual(
+                    [model.m_Filename for model in power.Models()],
+                    [
+                        "${KIPRJMOD}/../../../../../third_party/kc2.3dshapes/"
+                        "SW_IMMS_12V_BSI10_THT.step"
+                    ],
+                )
                 self.assertEqual(report["controller_socket_row_spacing_mm"], 15.24)
                 self.assertEqual(report["switch_layout_errors"], [])
                 self.assertLessEqual(report["switch_layout_max_position_error_mm"], 0.001)
@@ -1736,25 +2077,25 @@ class V2GeneratorTests(unittest.TestCase):
     def test_production_boards_use_exact_selected_m1_4_mounting_pattern(self) -> None:
         expected = {
             "left": [
-                ("MH1", 142.6125, 68.0),
+                ("MH1", 142.6125, 67.9),
                 ("MH2", 128.6125, 86.5),
-                ("MH3", 100.1125, 93.5),
-                ("MH4", 57.1125, 99.0),
-                ("MH5", 133.6125, 131.5),
+                ("MH3", 108.5125, 87.0),
+                ("MH4", 57.4125, 99.0),
+                ("MH5", 124.7125, 125.1),
                 ("MH6", 55.1125, 144.0),
                 ("MH7", 165.6125, 145.0),
                 ("MH8", 102.6125, 147.0),
             ],
             "right": [
-                ("MH1", 71.6875, 68.0),
-                ("MH2", 181.1875, 85.5),
-                ("MH3", 147.6875, 93.5),
-                ("MH4", 109.6875, 96.5),
+                ("MH1", 71.6875, 67.9),
+                ("MH2", 181.0875, 85.5),
+                ("MH3", 156.1875, 87.0),
+                ("MH4", 109.6875, 104.8),
                 ("MH5", 71.6875, 105.5),
-                ("MH6", 42.1875, 106.0),
-                ("MH7", 181.1875, 134.5),
-                ("MH8", 143.1875, 134.5),
-                ("MH9", 51.6875, 144.0),
+                ("MH6", 62.0875, 69.3),
+                ("MH7", 181.1875, 143.0),
+                ("MH8", 143.0875, 143.0),
+                ("MH9", 66.8875, 153.4),
                 ("MH10", 95.6875, 147.0),
             ],
         }
@@ -1765,11 +2106,28 @@ class V2GeneratorTests(unittest.TestCase):
                 self.assertEqual(report["mounting_hole_errors"], [])
                 self.assertEqual(report["mounting_hole_silkscreen_errors"], [])
                 self.assertEqual(report["mounting_hole_driver_copper_errors"], [])
+                self.assertEqual(report["mounting_hole_head_clearance_errors"], [])
                 self.assertGreaterEqual(
                     report["mounting_hole_clearances"][
                         "minimum_driver_to_copper_mm"
                     ],
                     0.0,
+                )
+                self.assertGreaterEqual(
+                    report["mounting_hole_clearances"][
+                        "minimum_head_to_installed_body_mm"
+                    ],
+                    0.25,
+                )
+                self.assertGreaterEqual(
+                    report["mounting_hole_clearances"][
+                        "minimum_head_to_exposed_copper_fillet_mm"
+                    ],
+                    0.25,
+                )
+                self.assertGreaterEqual(
+                    report["mounting_hole_clearances"]["minimum_head_to_edge_cuts_mm"],
+                    0.25,
                 )
                 route_record = analyze_v2_manifest(MANIFEST)[
                     "canonical_route_evidence"
@@ -1835,6 +2193,12 @@ class V2GeneratorTests(unittest.TestCase):
                 "wrong layer",
                 lambda board: board.FindFootprintByReference("MH1").Reference().SetLayer(pcbnew.F_Fab),
             ),
+            (
+                "thin stroke",
+                lambda board: board.FindFootprintByReference("MH1").Reference().SetTextThickness(
+                    pcbnew.FromMM(0.1)
+                ),
+            ),
         )
         for label, mutate in mutations:
             with self.subTest(label=label), TemporaryDirectory(dir=ROOT) as temporary:
@@ -1866,6 +2230,51 @@ class V2GeneratorTests(unittest.TestCase):
                 report["mounting_hole_clearances"]["minimum_driver_to_copper_mm"],
                 0.0,
             )
+
+    def test_mounting_head_gate_rejects_missing_xy_reserve_to_body_fillet_route_and_edge(self) -> None:
+        import pcbnew
+
+        def add_near_via(board: pcbnew.BOARD) -> None:
+            center = board.FindFootprintByReference("MH1").GetPosition()
+            via = pcbnew.PCB_VIA(board)
+            via.SetPosition(center + pcbnew.VECTOR2I(pcbnew.FromMM(1.9), 0))
+            via.SetWidth(pcbnew.FromMM(0.6))
+            via.SetDrill(pcbnew.FromMM(0.3))
+            via.SetNetCode(board.FindNet("L_COL5").GetNetCode())
+            board.Add(via)
+
+        def move_switch_into_head_reserve(board: pcbnew.BOARD) -> None:
+            center = board.FindFootprintByReference("MH1").GetPosition()
+            board.FindFootprintByReference("SW1").SetPosition(
+                center + pcbnew.VECTOR2I(pcbnew.FromMM(9.4), 0)
+            )
+
+        def move_diode_pad_into_fillet_reserve(board: pcbnew.BOARD) -> None:
+            center = board.FindFootprintByReference("MH1").GetPosition()
+            diode = board.FindFootprintByReference("D1")
+            pad = next(pad for pad in diode.Pads() if pad.GetNumber() == "1")
+            target = center + pcbnew.VECTOR2I(pcbnew.FromMM(2.8), 0)
+            diode.Move(target - pad.GetPosition())
+
+        def move_hole_near_edge(board: pcbnew.BOARD) -> None:
+            hole = board.FindFootprintByReference("MH1")
+            hole.SetPosition(
+                pcbnew.VECTOR2I(pcbnew.FromMM(142.6125), pcbnew.FromMM(40.9))
+            )
+
+        for label, mutate in (
+            ("installed switch body", move_switch_into_head_reserve),
+            ("exposed diode pad fillet", move_diode_pad_into_fillet_reserve),
+            ("routed via copper", add_near_via),
+            ("PCB edge", move_hole_near_edge),
+        ):
+            with self.subTest(label=label), TemporaryDirectory(dir=ROOT) as temporary:
+                copy = Path(temporary) / LEFT_BOARD.name
+                board = pcbnew.LoadBoard(str(LEFT_BOARD))
+                mutate(board)
+                pcbnew.SaveBoard(str(copy), board)
+                report = analyze_v2_board(copy)
+                self.assertTrue(report["mounting_hole_head_clearance_errors"])
 
     def test_placed_footprint_gate_rejects_diode_switch_controller_and_reset_mutations(self) -> None:
         import pcbnew
@@ -1931,6 +2340,15 @@ class V2GeneratorTests(unittest.TestCase):
                 "switch_footprint_geometry_errors",
             ),
             (
+                "switch bottom courtyard",
+                lambda board: next(
+                    item
+                    for item in board.FindFootprintByReference("SW1").GraphicalItems()
+                    if item.GetLayer() == pcbnew.B_CrtYd
+                ).Move(pcbnew.VECTOR2I(pcbnew.FromMM(0.1), 0)),
+                "switch_footprint_geometry_errors",
+            ),
+            (
                 "controller label coordinate",
                 lambda board: next(
                     pad
@@ -1946,6 +2364,38 @@ class V2GeneratorTests(unittest.TestCase):
                 lambda board: board.FindFootprintByReference("U1").SetPosition(
                     pcbnew.VECTOR2I(pcbnew.FromMM(132.7125), pcbnew.FromMM(50.8))
                 ),
+                "controller_contract_errors",
+            ),
+            (
+                "controller RAW wrong net",
+                lambda board: next(
+                    pad
+                    for pad in board.FindFootprintByReference("U1").Pads()
+                    if pad.GetNumber() == "RAW"
+                ).SetNet(board.FindNet("GND")),
+                "controller_contract_errors",
+            ),
+            (
+                "controller GND_C wrong net",
+                lambda board: next(
+                    pad
+                    for pad in board.FindFootprintByReference("U1").Pads()
+                    if pad.GetNumber() == "GND_C"
+                ).SetNet(board.FindNet("BAT+")),
+                "controller_contract_errors",
+            ),
+            (
+                "controller RST netless",
+                lambda board: next(
+                    pad
+                    for pad in board.FindFootprintByReference("U1").Pads()
+                    if pad.GetNumber() == "RST"
+                ).SetNetCode(0),
+                "controller_contract_errors",
+            ),
+            (
+                "power switch STEP model",
+                lambda board: board.FindFootprintByReference("SW_PWR1").Models().clear(),
                 "controller_contract_errors",
             ),
             (
@@ -1979,7 +2429,50 @@ class V2GeneratorTests(unittest.TestCase):
                 report = analyze_v2_board(copy)
                 self.assertTrue(report[error_field])
 
+    def test_battery_termination_gate_rejects_swapped_missing_marks_and_wrong_nets(self) -> None:
+        import pcbnew
+
+        def swap_markings(board: pcbnew.BOARD) -> None:
+            footprint = board.FindFootprintByReference("J_BAT1")
+            markings = {
+                item.GetText(): item
+                for item in footprint.GraphicalItems()
+                if isinstance(item, pcbnew.PCB_TEXT)
+                and item.GetText() in {"B+", "B-/GND"}
+            }
+            markings["B+"].SetText("B-/GND")
+            markings["B-/GND"].SetText("B+")
+
+        def remove_negative_marking(board: pcbnew.BOARD) -> None:
+            footprint = board.FindFootprintByReference("J_BAT1")
+            next(
+                item
+                for item in footprint.GraphicalItems()
+                if isinstance(item, pcbnew.PCB_TEXT)
+                and item.GetText() == "B-/GND"
+            ).SetText("")
+
+        def swap_pad_nets(board: pcbnew.BOARD) -> None:
+            footprint = board.FindFootprintByReference("J_BAT1")
+            pads = {pad.GetNumber(): pad for pad in footprint.Pads()}
+            pads["1"].SetNet(board.FindNet("GND"))
+            pads["2"].SetNet(board.FindNet("BAT+"))
+
+        for label, mutate in (
+            ("swapped markings", swap_markings),
+            ("missing negative marking", remove_negative_marking),
+            ("swapped pad nets", swap_pad_nets),
+        ):
+            with self.subTest(label=label), TemporaryDirectory(dir=ROOT) as temporary:
+                copy = Path(temporary) / LEFT_BOARD.name
+                board = pcbnew.LoadBoard(str(LEFT_BOARD))
+                mutate(board)
+                pcbnew.SaveBoard(str(copy), board)
+                report = analyze_v2_board(copy)
+                self.assertTrue(report["controller_contract_errors"])
+
     def test_current_projects_and_route_sources_bind_minimum_clearance_and_hashes(self) -> None:
+        from tools import generate_kc2_pcbs as generator
         from tools.verify_kc2_x3_v2 import (
             build_drc_evidence,
             verify_canonical_route_evidence,
@@ -2011,6 +2504,20 @@ class V2GeneratorTests(unittest.TestCase):
             )
             self.assertRegex(route_reports[side]["dsn_sha256"], r"^[0-9a-f]{64}$")
             self.assertRegex(route_reports[side]["ses_sha256"], r"^[0-9a-f]{64}$")
+            expected_positions = {
+                f"MH{index}": position
+                for index, position in enumerate(
+                    generator.X3_V2_MOUNTING_POINTS[side], start=1
+                )
+            }
+            self.assertEqual(
+                route_reports[side]["dsn_mounting_hole_positions_mm"],
+                expected_positions,
+            )
+            self.assertEqual(
+                route_reports[side]["ses_mounting_hole_positions_mm"],
+                expected_positions,
+            )
 
     def test_controller_service_clearances_are_board_derived_and_mutation_sensitive(self) -> None:
         import pcbnew
@@ -2161,7 +2668,16 @@ class V2GeneratorTests(unittest.TestCase):
     def test_manifest_identifies_mutually_exclusive_v2_modes(self) -> None:
         report = analyze_v2_manifest(MANIFEST)
         self.assertEqual(report["hash_policy"], HASH_POLICY)
-        self.assertNotIn(b"\r\n", MANIFEST.read_bytes())
+        if (ROOT / ".git").exists():
+            relative = MANIFEST.relative_to(ROOT).as_posix()
+            staged = subprocess.run(
+                ["git", "show", f":{relative}"],
+                cwd=ROOT,
+                check=True,
+                stdout=subprocess.PIPE,
+            ).stdout
+            self.assertNotIn(b"\r\n", staged)
+            self.assertEqual(sha256_file(MANIFEST), sha256_bytes(staged))
         self.assertEqual(report["generated"], "2026-08-29")
         self.assertEqual(report["variant"], "x3-v2")
         self.assertEqual(report["key_count"], {"left": 31, "right": 39, "total": 70})
@@ -2192,25 +2708,25 @@ class V2GeneratorTests(unittest.TestCase):
                 "counts": {"left": 8, "right": 10, "total": 18},
                 "positions_mm": {
                     "left": [
-                        {"ref": "MH1", "x": 142.6125, "y": 68.0},
+                        {"ref": "MH1", "x": 142.6125, "y": 67.9},
                         {"ref": "MH2", "x": 128.6125, "y": 86.5},
-                        {"ref": "MH3", "x": 100.1125, "y": 93.5},
-                        {"ref": "MH4", "x": 57.1125, "y": 99.0},
-                        {"ref": "MH5", "x": 133.6125, "y": 131.5},
+                        {"ref": "MH3", "x": 108.5125, "y": 87.0},
+                        {"ref": "MH4", "x": 57.4125, "y": 99.0},
+                        {"ref": "MH5", "x": 124.7125, "y": 125.1},
                         {"ref": "MH6", "x": 55.1125, "y": 144.0},
                         {"ref": "MH7", "x": 165.6125, "y": 145.0},
                         {"ref": "MH8", "x": 102.6125, "y": 147.0},
                     ],
                     "right": [
-                        {"ref": "MH1", "x": 71.6875, "y": 68.0},
-                        {"ref": "MH2", "x": 181.1875, "y": 85.5},
-                        {"ref": "MH3", "x": 147.6875, "y": 93.5},
-                        {"ref": "MH4", "x": 109.6875, "y": 96.5},
+                        {"ref": "MH1", "x": 71.6875, "y": 67.9},
+                        {"ref": "MH2", "x": 181.0875, "y": 85.5},
+                        {"ref": "MH3", "x": 156.1875, "y": 87.0},
+                        {"ref": "MH4", "x": 109.6875, "y": 104.8},
                         {"ref": "MH5", "x": 71.6875, "y": 105.5},
-                        {"ref": "MH6", "x": 42.1875, "y": 106.0},
-                        {"ref": "MH7", "x": 181.1875, "y": 134.5},
-                        {"ref": "MH8", "x": 143.1875, "y": 134.5},
-                        {"ref": "MH9", "x": 51.6875, "y": 144.0},
+                        {"ref": "MH6", "x": 62.0875, "y": 69.3},
+                        {"ref": "MH7", "x": 181.1875, "y": 143.0},
+                        {"ref": "MH8", "x": 143.0875, "y": 143.0},
+                        {"ref": "MH9", "x": 66.8875, "y": 153.4},
                         {"ref": "MH10", "x": 95.6875, "y": 147.0},
                     ],
                 },
@@ -2223,10 +2739,12 @@ class V2GeneratorTests(unittest.TestCase):
                 "front_silkscreen_reference": {
                     "visible": True,
                     "text_height_mm": 0.8,
-                    "stroke_mm": 0.1,
+                    "stroke_mm": 0.15,
                     "relative_position_mm": {"x": 0.0, "y": -1.5},
                 },
-                "screw_head_envelope_mm": {"diameter": 2.0, "height": 0.5},
+                "screw_head_style": "non_countersunk_rounded_pan_or_button",
+                "screw_head_envelope_mm": {"diameter": 3.0, "height": 1.2},
+                "screw_head_xy_reserve_mm": 0.25,
                 "vertical_driver_envelope_mm": {"diameter": 3.0},
                 "provisional_under_head_screw_length_mm": 4.0,
                 "service_state": {"keycaps": "removed", "switches": "installed"},
@@ -2290,6 +2808,10 @@ class V2GeneratorTests(unittest.TestCase):
                 "model_generator_sha256": sha256_file(
                     ROOT / "tools/generate_kc2_component_models.py"
                 ),
+                "model_role": "nominal_collision_proxy",
+                "exact_purchased_mpn_status": "pending",
+                "controlled_drawing_status": "pending",
+                "imms_12v_bsi_10_equivalence_status": "pending",
             },
         )
         self.assertEqual(
@@ -2336,6 +2858,15 @@ class V2GeneratorTests(unittest.TestCase):
         )
         self.assertEqual(report["switch_footprint"], "kc2.pretty:SW_Choc_V2_Socket_MX_THT")
         self.assertEqual(
+            report["deep_sea_switch_identity"],
+            {
+                "family": "Kailh Deep Sea low-profile / PG1353-family",
+                "exact_mpn_status": "pending",
+                "controlled_drawing_revision_status": "pending",
+                "order_ready": False,
+            },
+        )
+        self.assertEqual(
             report["matrix_diode"],
             {
                 "manufacturer": "Jingdao Microelectronics",
@@ -2366,30 +2897,30 @@ class V2GeneratorTests(unittest.TestCase):
                     "dsn_role": "current_mh_compact_controller_trackless_routing_input",
                     "dsn_mounting_hole_count": 8,
                     "session_source_dsn": "hardware/kicad/draft/x3-v2/autoroute/kc2_left-x3-v2-70-es1b-controller-r3.dsn",
-                    "session_source_dsn_sha256": "0f1da995d92a6a121142125933e21ce0c1f1db05e5c1ef924f2a7c6dd38fa3db",
+                    "session_source_dsn_sha256": "b0f75b6eee7d8b63fd295c058106630383f4cebb1a5a132233fae480bd8a8abd",
                     "ses": "hardware/kicad/draft/x3-v2/autoroute/kc2_left-x3-v2-70-es1b-controller-r3.ses",
                     "ses_role": "reviewed_matrix_import_plus_exact_edge_cleanup_and_power_reset_service_routing",
-                    "dsn_sha256": "0f1da995d92a6a121142125933e21ce0c1f1db05e5c1ef924f2a7c6dd38fa3db",
-                    "ses_sha256": "41ba7adf4db9881cf6065b592fd81127de5753b7b23a94012a16e1230cdbf0b8",
+                    "dsn_sha256": "b0f75b6eee7d8b63fd295c058106630383f4cebb1a5a132233fae480bd8a8abd",
+                    "ses_sha256": "b4223b6e3ad937e9523a3777ab0657a97aa788b17ca3c78cd62036b3a5d48c4e",
                     "dsn_default_clearance_internal_units": 300,
                     "dsn_clearances_internal_units": {"global": 300, "kicad_default": 300},
-                    "final_track_via_count": 580,
-                    "route_digest_sha256": "7eda6d670a2fd3b99ab06548be4c635dbff03904ec251197f547110864fcb5e6",
+                    "final_track_via_count": 590,
+                    "route_digest_sha256": "94c49ca2749d83cd05969e46b2afb6b610c2067ce6a2acad84790a19e081be18",
                 },
                 "right": {
                     "dsn": "hardware/kicad/draft/x3-v2/autoroute/kc2_right-x3-v2-70-es1b-controller-r3.dsn",
                     "dsn_role": "current_mh_compact_controller_trackless_routing_input",
                     "dsn_mounting_hole_count": 10,
                     "session_source_dsn": "hardware/kicad/draft/x3-v2/autoroute/kc2_right-x3-v2-70-es1b-controller-r3.dsn",
-                    "session_source_dsn_sha256": "45f3bbf61f54d417ab97aeff137aa91db5f323a24ff3473011aaa84ccc9d7e45",
+                    "session_source_dsn_sha256": "bcadb826bcc0d28672e9a6124bbe1b31ec6272809f1100c2d941623d47876013",
                     "ses": "hardware/kicad/draft/x3-v2/autoroute/kc2_right-x3-v2-70-es1b-controller-r3.ses",
                     "ses_role": "reviewed_matrix_import_plus_exact_edge_cleanup_and_power_reset_service_routing",
-                    "dsn_sha256": "45f3bbf61f54d417ab97aeff137aa91db5f323a24ff3473011aaa84ccc9d7e45",
-                    "ses_sha256": "58823efa51c642107623d60180f2431eff572c50a11f1dbad8091c35e82ef2fb",
+                    "dsn_sha256": "bcadb826bcc0d28672e9a6124bbe1b31ec6272809f1100c2d941623d47876013",
+                    "ses_sha256": "0e986c0013ea66d5a4f97ebf8b89001e91da4539f1f1e4fac8cfece0a953f445",
                     "dsn_default_clearance_internal_units": 300,
                     "dsn_clearances_internal_units": {"global": 300, "kicad_default": 300},
-                    "final_track_via_count": 739,
-                    "route_digest_sha256": "fc2a819d9ce840ffc0c9e9b5ac6fc7dac54d51a441addb5b0005b4fa89cdbf1a",
+                    "final_track_via_count": 764,
+                    "route_digest_sha256": "b54d29e27f1f319863ec5808b31188420ad4c47fa001d21ece98db80044c6946",
                 },
             },
         )
@@ -2586,62 +3117,99 @@ class V2GeneratorTests(unittest.TestCase):
         housing["retention"]["physical_registration_status"] = "passed"
         housing["physical_deflection_test"]["status"] = "passed"
 
-        self.assertEqual(
-            controller_service_order_readiness_blockers(manifest, housing),
-            [],
+        scalar_only_blockers = controller_service_order_readiness_blockers(
+            manifest,
+            housing,
         )
-        for label, mutate, expected in (
-            (
-                "physical scan pending",
-                lambda generation, _housing: generation[
-                    "physical_scan_validation"
-                ].update(status="pending"),
-                "physical scan validation status is not passed",
-            ),
-            (
-                "physical scan not orderable",
-                lambda generation, _housing: generation[
-                    "physical_scan_validation"
-                ].update(orderable=False),
-                "physical scan validation is not orderable",
-            ),
-            (
-                "housing not order ready",
-                lambda _generation, case_housing: case_housing.update(
-                    order_ready=False
-                ),
-                "housing manifest order_ready is not true",
-            ),
-            (
-                "retention registration pending",
-                lambda _generation, case_housing: case_housing["retention"].update(
-                    physical_registration_status="pending"
-                ),
-                "housing physical registration status is not passed",
-            ),
-            (
-                "deflection test pending",
-                lambda _generation, case_housing: case_housing[
-                    "physical_deflection_test"
-                ].update(status="pending"),
-                "housing physical deflection test status is not passed",
-            ),
+
+        for expected in (
+            "CON-ARCH-007: controller service physical evidence bundle",
+            "CON-ARCH-004: physical scan evidence bundle",
+            "CON-ARCH-006: housing physical evidence bundle",
+            "REL-ARCH-001: power/RF evidence bundle",
         ):
+            self.assertTrue(
+                any(expected in blocker for blocker in scalar_only_blockers),
+                scalar_only_blockers,
+            )
+        self.assertEqual(
+            release_candidate_exit_code(
+                {
+                    "errors": [],
+                    "order_readiness_blockers": scalar_only_blockers,
+                }
+            ),
+            2,
+        )
+
+        minimal_housing = {
+            "order_ready": True,
+            "retention": {"physical_registration_status": "passed"},
+            "physical_deflection_test": {"status": "passed"},
+            "parameters": housing["parameters"],
+        }
+        minimal_blockers = controller_service_order_readiness_blockers(
+            manifest,
+            minimal_housing,
+        )
+        self.assertTrue(
+            any(
+                "CON-ARCH-006: housing physical evidence bundle" in blocker
+                for blocker in minimal_blockers
+            ),
+            minimal_blockers,
+        )
+        conservative_manifest = json.loads(MANIFEST.read_text(encoding="utf-8"))
+        conservative_housing = json.loads(
+            (ROOT / "hardware/case/draft/x3-v2/kc2_x3_v2_housing_manifest.json")
+            .read_text(encoding="utf-8")
+        )
+        conservative_blockers = controller_service_order_readiness_blockers(
+            conservative_manifest,
+            conservative_housing,
+        )
+        self.assertFalse(
+            any("must remain" in blocker for blocker in conservative_blockers),
+            conservative_blockers,
+        )
+        self.assertEqual(
+            release_candidate_exit_code(
+                {"errors": [], "order_readiness_blockers": conservative_blockers}
+            ),
+            2,
+        )
+
+    def test_generation_manifest_requirement_and_pending_part_identity_contracts_fail_closed(self) -> None:
+        from tools.verify_kc2_x3_v2 import verify_v2_part_identity_contract
+
+        manifest = analyze_v2_manifest(MANIFEST)
+        self.assertEqual(verify_v2_part_identity_contract(manifest), [])
+        mutations = (
+            (
+                "missing housing requirement",
+                lambda value: value.update(
+                    requirement_ids=["CON-ARCH-004", "CON-ARCH-007", "REL-ARCH-001"]
+                ),
+            ),
+            (
+                "invented Deep Sea MPN",
+                lambda value: value["deep_sea_switch_identity"].update(
+                    exact_mpn_status="confirmed",
+                    exact_mpn="UNVERIFIED-MPN",
+                ),
+            ),
+            (
+                "Deep Sea drawing claimed complete",
+                lambda value: value["deep_sea_switch_identity"].update(
+                    controlled_drawing_revision_status="confirmed"
+                ),
+            ),
+        )
+        for label, mutate in mutations:
             with self.subTest(label=label):
-                case_manifest = json.loads(json.dumps(manifest))
-                case_housing = json.loads(json.dumps(housing))
-                mutate(case_manifest, case_housing)
-                blockers = controller_service_order_readiness_blockers(
-                    case_manifest,
-                    case_housing,
-                )
-                self.assertTrue(any(expected in blocker for blocker in blockers))
-                self.assertEqual(
-                    release_candidate_exit_code(
-                        {"errors": [], "order_readiness_blockers": blockers}
-                    ),
-                    2,
-                )
+                changed = json.loads(json.dumps(manifest))
+                mutate(changed)
+                self.assertTrue(verify_v2_part_identity_contract(changed))
 
     def test_active_v2_board_text_contract_rejects_exact_stale_service_texts(self) -> None:
         from tools.verify_kc2_x3_v2 import verify_active_v2_board_text_contract
@@ -2667,6 +3235,1868 @@ class V2GeneratorTests(unittest.TestCase):
             )
         )
 
+    def test_physical_evidence_manifest_binds_files_hashes_and_thresholds(self) -> None:
+        from tools.verify_kc2_x3_v2 import (
+            POSITIVE_ORDER_ARTIFACT_MODULES,
+            _housing_head_adjacency_contracts,
+            _positive_package_identity_errors,
+            controller_service_order_readiness_blockers,
+            verify_physical_evidence_manifest,
+        )
+
+        self.assertEqual(
+            set(POSITIVE_ORDER_ARTIFACT_MODULES),
+            {
+                "fabrication",
+                "mechanical",
+                "render",
+                "firmware",
+                "coupon",
+                "outline",
+            },
+        )
+
+        suite_patch = patch(
+            "tools.verify_kc2_x3_v2._verify_positive_order_artifact_suite",
+            return_value=[],
+        )
+        suite_mock = suite_patch.start()
+        self.addCleanup(suite_patch.stop)
+        index_patch = patch(
+            "tools.verify_kc2_x3_v2._git_index_artifact_errors",
+            return_value=[],
+        )
+        index_patch.start()
+        self.addCleanup(index_patch.stop)
+        with TemporaryDirectory(dir=ROOT) as temporary:
+            temp_root = Path(temporary)
+
+            def file_record(path: Path, kind: str) -> dict[str, object]:
+                return {
+                    "path": path.relative_to(ROOT).as_posix(),
+                    "sha256": sha256_file(path),
+                    "size_bytes": path.stat().st_size,
+                    "kind": kind,
+                }
+
+            def write_document(name: str, kind: str) -> dict[str, object]:
+                path = temp_root / name
+                path.write_text(f"{kind} controlled test document\n", encoding="utf-8", newline="\n")
+                return {
+                    **file_record(path, kind),
+                    "document_id": f"{kind.upper()}-DOC-1",
+                }
+
+            def write_json_document(
+                name: str,
+                kind: str,
+                payload: dict[str, object],
+            ) -> dict[str, object]:
+                path = temp_root / name
+                path.write_text(
+                    json.dumps(payload, indent=2) + "\n",
+                    encoding="utf-8",
+                    newline="\n",
+                )
+                return {
+                    **file_record(path, kind),
+                    "document_id": f"{kind.upper()}-DOC-1",
+                }
+
+            source_paths = {
+                "left_board": LEFT_BOARD,
+                "right_board": RIGHT_BOARD,
+                "generation_manifest": MANIFEST,
+                "housing_manifest": ROOT
+                / "hardware/case/draft/x3-v2/kc2_x3_v2_housing_manifest.json",
+                "fabrication_manifest": V2_ROOT
+                / "fabrication/kc2_x3_v2_fabrication_manifest.json",
+                "mechanical_manifest": V2_ROOT
+                / "mechanical/kc2_x3_v2_mechanical_manifest.json",
+                "render_manifest": V2_ROOT
+                / "renders/kc2_x3_v2_render_manifest.json",
+                "outline_report": V2_ROOT
+                / "mechanical/kc2_x3_v2_outline_report.json",
+                "firmware_build_evidence": ROOT
+                / "firmware/kc2_zmk/boards/shields/kc2_x3_v2/kc2_x3_v2_build_evidence.json",
+            }
+            source_bindings = {
+                name: file_record(path, "release-source")
+                for name, path in source_paths.items()
+            }
+            source_digests = {
+                name: record["sha256"] for name, record in source_bindings.items()
+            }
+
+            arbitrary_path = temp_root / "arbitrary.json"
+            arbitrary_path.write_text("{}\n", encoding="utf-8", newline="\n")
+            arbitrary = file_record(arbitrary_path, "synthetic-test-fixture")
+            arbitrary_measured = {
+                **arbitrary,
+                "measured_at": "2026-08-29T12:00:00+09:00",
+                "equipment_id": "UNVERIFIED",
+                "calibration_evidence": "not_applicable_nonmeasurement",
+            }
+            scalar_only_evidence = {
+                "schema": "kc2-x3-v2-physical-evidence-v1",
+                "requirement_ids": [
+                    "CON-ARCH-004",
+                    "CON-ARCH-006",
+                    "CON-ARCH-007",
+                    "REL-ARCH-001",
+                ],
+                "variant": "x3-v2",
+                "status": "passed",
+                "order_ready": True,
+                "source_bindings": source_bindings,
+                "bundles": {
+                    "controller_service": {
+                        "status": "passed",
+                        "artifacts": [dict(arbitrary_measured)],
+                        "metrics": {
+                            "battery_manufacturer": "TEST",
+                            "battery_mpn": "TEST-PACK",
+                            "battery_lot": "LOT-1",
+                            "protection_status": "protected",
+                            "power_switch_manufacturer": "TEST",
+                            "power_switch_mpn": "TEST-SWITCH",
+                            "reset_switch_mpn": "TEST-RESET",
+                            "lead_drawing_sha256": "1" * 64,
+                            "maximum_swollen_thickness_mm": 3.2,
+                            "minimum_stack_clearance_mm": 0.1,
+                            "lead_pull_pass": True,
+                            "service_pass": True,
+                        },
+                    },
+                    "physical_scan": {
+                        "status": "passed",
+                        "artifacts": [dict(arbitrary_measured)],
+                        "metrics": {
+                            "supply_volts": [3.0, 3.3],
+                            "patterns": ["maximum-same-row", "maximum-same-column"],
+                            "sample_count_per_pattern": 1,
+                            "fault_count": 0,
+                        },
+                    },
+                    "housing_fastener_deflection": {
+                        "status": "passed",
+                        "artifacts": [dict(arbitrary_measured)],
+                        "metrics": {
+                            "install_remove_cycles": 10,
+                            "torque_ratio": 2.0,
+                            "maximum_displacement_mm": 0.30,
+                            "rocking": False,
+                            "loosening": False,
+                            "permanent_deformation": False,
+                            "support_disengagement": False,
+                        },
+                    },
+                    "power_rf": {
+                        "status": "passed",
+                        "artifacts": [dict(arbitrary_measured)],
+                        "metrics": {
+                            "cold_cycles_per_voltage_and_direction": 20,
+                            "brownout_count": 0,
+                            "rssi_samples_per_state": 30,
+                            "reports_per_state": 10000,
+                            "packet_loss_ratio": 0.01,
+                            "median_rssi_degradation_db": 3.0,
+                            "disconnect_count": 0,
+                            "reconnect_count": 0,
+                        },
+                    },
+                },
+            }
+            arbitrary_reused_file_errors = verify_physical_evidence_manifest(
+                scalar_only_evidence,
+                source_paths,
+            )
+            self.assertTrue(
+                all(arbitrary_reused_file_errors.values()),
+                "CON-ARCH-007 AC-11 / REL-ARCH-001 AC-6 must reject one arbitrary "
+                "file reused for every bundle with calibration marked not applicable and "
+                "self-asserted aggregate metrics",
+            )
+
+            controller_documents = {
+                kind: write_document(f"controller-{kind}.txt", kind)
+                for kind in (
+                    "battery_datasheet",
+                    "battery_lead_drawing",
+                    "battery_protection_declaration",
+                    "controller_datasheet",
+                    "controller_socket_drawing",
+                    "choc_switch_drawing",
+                    "choc_socket_drawing",
+                    "mx_switch_drawing",
+                    "power_switch_drawing",
+                    "reset_switch_drawing",
+                )
+            }
+            controller_data = {
+                "parts": {
+                    "battery": {
+                        "manufacturer": "TEST-BATTERY-MAKER",
+                        "mpn": "PACK-301230-PROTECTED",
+                        "lot": "LOT-1",
+                        "protection_status": "integral-protection-confirmed",
+                        "maximum_swollen_thickness_mm": 3.2,
+                        "lead_conductor_diameter_mm": 0.5,
+                        "required_hole_clearance_mm": 0.1,
+                    },
+                    "controller": {
+                        "manufacturer": "nice keyboards",
+                        "mpn": "nice!nano-v2",
+                        "hardware_revision": "v2",
+                    },
+                    "controller_socket": {
+                        "manufacturer": "Mill-Max",
+                        "mpn": "315-43-112-41-003000",
+                        "drawing_revision": "REV-2026-08",
+                    },
+                    "choc_switch": {
+                        "manufacturer": "KAILH",
+                        "mpn": "CPG135301D01",
+                        "drawing_revision": "REV-2026-08",
+                    },
+                    "choc_socket": {
+                        "manufacturer": "KAILH",
+                        "mpn": "CPG135001S30",
+                        "drawing_revision": "REV-2026-08",
+                    },
+                    "mx_switch": {
+                        "manufacturer": "CHERRY",
+                        "mpn": "MX2A-L1NN",
+                        "drawing_revision": "REV-2026-08",
+                    },
+                    "power_switch": {
+                        "manufacturer": "TEST-SWITCH-MAKER",
+                        "mpn": "IMMS-EXACT-MPN-1",
+                        "drawing_revision": "REV-A",
+                    },
+                    "reset_switch": {
+                        "manufacturer": "TEST-RESET-MAKER",
+                        "mpn": "NW3-A06-B3",
+                        "drawing_revision": "REV-B",
+                    },
+                },
+                "documents": controller_documents,
+                "stack_records": [
+                    {
+                        "half": half,
+                        "fully_seated_gap_mm": 5.0,
+                        "insulation_thickness_mm": 0.2,
+                        "retainer_thickness_mm": 0.5,
+                        "socket_pin_protrusion_mm": 0.2,
+                        "solder_protrusion_mm": 0.2,
+                        "assembly_tolerance_mm": 0.2,
+                        "minimum_clearance_mm": 0.5,
+                        "controller_install_remove_pass": True,
+                        "pouch_compressed": False,
+                        "sharp_contact": False,
+                    }
+                    for half in ("left", "right")
+                ],
+                "pull_records": [
+                    {
+                        "half": half,
+                        "rated_load_n": 5.0,
+                        "rated_duration_s": 10.0,
+                        "applied_load_n": 5.0,
+                        "applied_duration_s": 10.0,
+                        "lead_movement_mm": 0.0,
+                        "force_transfer_to_pouch_tab": False,
+                    }
+                    for half in ("left", "right")
+                ],
+                "service_records": [
+                    {
+                        "half": half,
+                        "reset_bootloader_cycles": 10,
+                        "continuity_on_max_ohm": 1.0,
+                        "continuity_off_min_ohm": 1000000.0,
+                        "power_on_resistance_ohm": 0.2,
+                        "power_off_resistance_ohm": 10000000.0,
+                        "reset_pressed_resistance_ohm": 0.2,
+                        "reset_released_resistance_ohm": 10000000.0,
+                        "power_actuator_travel_mm": 1.6,
+                        "minimum_fingertip_access_clearance_mm": 1.0,
+                        "power_full_travel_contact_with_reset": False,
+                        "power_full_travel_contact_with_controller": False,
+                        "power_full_travel_contact_with_keycap": False,
+                        "reset_probe_diameter_mm": 1.0,
+                        "reset_probe_access_pass": True,
+                        "service_pass": True,
+                        "controller_contact": False,
+                        "adjacent_key_actuation": False,
+                        "pad_peel": False,
+                        "visible_pcb_flex": False,
+                    }
+                    for half in ("left", "right")
+                ],
+            }
+            controller_metrics = {
+                "battery_manufacturer": "TEST-BATTERY-MAKER",
+                "battery_mpn": "PACK-301230-PROTECTED",
+                "battery_lot": "LOT-1",
+                "protection_status": "integral-protection-confirmed",
+                "controller_manufacturer": "nice keyboards",
+                "controller_mpn": "nice!nano-v2",
+                "controller_hardware_revision": "v2",
+                "controller_socket_manufacturer": "Mill-Max",
+                "controller_socket_mpn": "315-43-112-41-003000",
+                "controller_socket_drawing_revision": "REV-2026-08",
+                "choc_switch_manufacturer": "KAILH",
+                "choc_switch_mpn": "CPG135301D01",
+                "choc_switch_drawing_revision": "REV-2026-08",
+                "choc_socket_manufacturer": "KAILH",
+                "choc_socket_mpn": "CPG135001S30",
+                "choc_socket_drawing_revision": "REV-2026-08",
+                "mx_switch_manufacturer": "CHERRY",
+                "mx_switch_mpn": "MX2A-L1NN",
+                "mx_switch_drawing_revision": "REV-2026-08",
+                "power_switch_manufacturer": "TEST-SWITCH-MAKER",
+                "power_switch_mpn": "IMMS-EXACT-MPN-1",
+                "power_switch_drawing_revision": "REV-A",
+                "reset_switch_manufacturer": "TEST-RESET-MAKER",
+                "reset_switch_mpn": "NW3-A06-B3",
+                "reset_switch_drawing_revision": "REV-B",
+                "lead_drawing_sha256": controller_documents["battery_lead_drawing"]["sha256"],
+                "protection_declaration_sha256": controller_documents[
+                    "battery_protection_declaration"
+                ]["sha256"],
+                "controller_datasheet_sha256": controller_documents[
+                    "controller_datasheet"
+                ]["sha256"],
+                "controller_socket_drawing_sha256": controller_documents[
+                    "controller_socket_drawing"
+                ]["sha256"],
+                "choc_switch_drawing_sha256": controller_documents[
+                    "choc_switch_drawing"
+                ]["sha256"],
+                "choc_socket_drawing_sha256": controller_documents[
+                    "choc_socket_drawing"
+                ]["sha256"],
+                "mx_switch_drawing_sha256": controller_documents[
+                    "mx_switch_drawing"
+                ]["sha256"],
+                "j_bat_drill_mm": 0.9,
+                "lead_conductor_diameter_mm": 0.5,
+                "lead_to_j_bat_diametral_clearance_mm": 0.4,
+                "maximum_swollen_thickness_mm": 3.2,
+                "minimum_stack_clearance_mm": 0.5,
+                "lead_pull_pass": True,
+                "service_pass": True,
+            }
+
+            scan_records = [
+                {
+                    "half": half,
+                    "supply_voltage_v": voltage,
+                    "pattern": pattern,
+                    "assembly_mode": mode,
+                    "sample_id": f"{half}-{voltage}-{pattern}-{mode}",
+                    "fault_count": 0,
+                }
+                for half in ("left", "right")
+                for voltage in (3.0, 3.3)
+                for pattern in ("maximum-same-row", "maximum-same-column")
+                for mode in ("choc_v2", "mx")
+            ]
+            switch_fit_records = [
+                {
+                    "half": half,
+                    "assembly_mode": mode,
+                    "orientation": "left_rotated" if half == "left" else "right_mirrored",
+                    "switch_mpn": (
+                        controller_data["parts"]["choc_switch"]["mpn"]
+                        if mode == "choc_v2"
+                        else controller_data["parts"]["mx_switch"]["mpn"]
+                    ),
+                    "socket_mpn": (
+                        controller_data["parts"]["choc_socket"]["mpn"]
+                        if mode == "choc_v2"
+                        else "not_populated"
+                    ),
+                    "bottom_socket_fit_pass": mode == "choc_v2",
+                    "mx_five_pin_fit_pass": mode == "mx",
+                    "minimum_joint_clearance_mm": 0.2,
+                    "minimum_housing_clearance_mm": 0.2,
+                }
+                for half in ("left", "right")
+                for mode in ("choc_v2", "mx")
+            ]
+            keycap_fit_records = [
+                {
+                    "half": half,
+                    "assembly_mode": mode,
+                    "width_u": width,
+                    "keycap_manufacturer": "TEST-KEYCAP-MAKER",
+                    "keycap_mpn": f"{mode.upper()}-{width}U-TEST-CAP",
+                    "is_3d_printed": mode == "choc_v2" and width == 1.5,
+                    "fit_pass": True,
+                    "minimum_spacing_mm": 1.8,
+                }
+                for half in ("left", "right")
+                for mode in ("choc_v2", "mx")
+                for width in (1.0, 1.25, 1.5, 1.75)
+            ]
+            keycap_identity_map = {
+                f"{record['assembly_mode']}:{record['width_u']:.2f}": {
+                    "assembly_mode": record["assembly_mode"],
+                    "width_u": record["width_u"],
+                    "manufacturer": record["keycap_manufacturer"],
+                    "mpn": record["keycap_mpn"],
+                    "is_3d_printed": record["is_3d_printed"],
+                }
+                for record in keycap_fit_records
+            }
+            diode_records = [
+                {
+                    "half": half,
+                    "manufacturer": "Jingdao",
+                    "mpn": "ES1B",
+                    "pad1_cathode_polarity_pass": True,
+                    "hand_solder_access_pass": True,
+                    "minimum_joint_clearance_mm": 0.2,
+                    "minimum_housing_clearance_mm": 0.2,
+                }
+                for half in ("left", "right")
+            ]
+            scan_data = {
+                "coupon_id": "COUPON-LOT-1",
+                "records": scan_records,
+                "switch_fit_records": switch_fit_records,
+                "keycap_fit_records": keycap_fit_records,
+                "diode_records": diode_records,
+            }
+            scan_metrics = {
+                "supply_volts": [3.0, 3.3],
+                "patterns": ["maximum-same-row", "maximum-same-column"],
+                "assembly_modes": ["choc_v2", "mx"],
+                "sample_count_per_condition": 1,
+                "fault_count": 0,
+                "switch_fit_condition_count": 4,
+                "keycap_widths": [1.0, 1.25, 1.5, 1.75],
+                "keycap_fit_condition_count": 16,
+                "three_d_keycap_record_count": 2,
+                "es1b_half_count": 2,
+            }
+
+            fastener_identity = {
+                "manufacturer": "TEST-FASTENER-MAKER",
+                "mpn": "M1.4-ROUND-EXACT",
+                "order_code": "ORDER-M1.4-ROUND-4MM-ZINC-PH0",
+                "drawing_revision": "REV-C",
+                "head_style": "rounded_pan_or_button",
+                "nominal_thread_diameter_mm": 1.4,
+                "thread_classification": "direct_plastic_thread_forming",
+                "thread_form": "thread_forming_30_degree_flank",
+                "thread_pitch_mm": 0.4,
+                "thread_flank_angle_degrees": 30.0,
+                "thread_major_diameter_mm": 1.4,
+                "thread_minor_diameter_mm": 1.0,
+                "material": "steel",
+                "finish": "zinc",
+                "drive_recess": "PH0",
+                "driver_manufacturer": "TEST-DRIVER-MAKER",
+                "driver_mpn": "PH0-3MM-SWEEP",
+                "minimum_under_head_length_mm": 3.9,
+                "maximum_under_head_length_mm": 4.1,
+                "minimum_head_diameter_mm": 2.8,
+                "maximum_head_diameter_mm": 3.0,
+                "minimum_head_height_mm": 1.0,
+                "maximum_head_height_mm": 1.2,
+                "maximum_finished_pcb_hole_diameter_mm": 1.7,
+                "minimum_radial_bearing_width_mm": 0.55,
+                "maximum_driver_shaft_diameter_mm": 2.8,
+                "maximum_driver_runout_mm": 0.1,
+                "maximum_driver_sweep_mm": 3.0,
+            }
+            controlled_fastener_fields = (
+                "manufacturer",
+                "mpn",
+                "order_code",
+                "drawing_revision",
+                "head_style",
+                "nominal_thread_diameter_mm",
+                "thread_classification",
+                "thread_form",
+                "thread_pitch_mm",
+                "thread_flank_angle_degrees",
+                "thread_major_diameter_mm",
+                "thread_minor_diameter_mm",
+                "material",
+                "finish",
+                "drive_recess",
+                "minimum_under_head_length_mm",
+                "maximum_under_head_length_mm",
+                "minimum_head_diameter_mm",
+                "maximum_head_diameter_mm",
+                "minimum_head_height_mm",
+                "maximum_head_height_mm",
+            )
+            housing_documents = {
+                "driver_drawing": write_document(
+                    "housing-driver_drawing.txt", "driver_drawing"
+                ),
+                "fastener_drawing": write_json_document(
+                    "housing-fastener-drawing.json",
+                    "fastener_drawing",
+                    {
+                        "schema": "kc2-x3-v2-fastener-drawing-v1",
+                        **{
+                            field: fastener_identity[field]
+                            for field in controlled_fastener_fields
+                        },
+                    },
+                ),
+            }
+            housing_specimen_id = "HOUSING-STRUCTURAL-SPECIMEN-1"
+            production_lot_id = "HOUSING-PRINT-LOT-1"
+            production_print = {
+                "production_process": "FFF",
+                "printer_manufacturer": "TEST-PRINTER-MAKER",
+                "printer_model": "TEST-PRINTER-EXACT",
+                "specimen_coupon_id": housing_specimen_id,
+                "production_lot_id": production_lot_id,
+                "material_manufacturer": "TEST-FILAMENT-MAKER",
+                "material_product": "PLA+ STRUCTURAL",
+                "material_mpn": "PLA-PLUS-BLACK-175",
+                "material_lot": "FILAMENT-LOT-1",
+                "nozzle_diameter_mm": 0.4,
+                "layer_height_mm": 0.2,
+                "print_orientation": "desk_contact_face_down",
+                "slicer_name": "TEST-SLICER",
+                "slicer_version": "1.0.0",
+                "wall_perimeter_count": 4,
+                "infill_pattern": "gyroid",
+                "infill_density_percent": 40.0,
+                "extrusion_width_mm": 0.45,
+                "flow_percent": 100.0,
+                "top_solid_layers": 5,
+                "bottom_solid_layers": 5,
+                "nozzle_temperature_c": 215.0,
+                "bed_temperature_c": 60.0,
+                "fan_percent": 100.0,
+                "print_speed_mm_s": 50.0,
+                "travel_speed_mm_s": 150.0,
+                "print_acceleration_mm_s2": 1000.0,
+                "travel_acceleration_mm_s2": 1500.0,
+            }
+            slicer_profile = {
+                "schema": "kc2-x3-v2-slicer-profile-v1",
+                **production_print,
+            }
+            housing_documents["slicer_profile"] = write_json_document(
+                "housing-slicer-profile.json",
+                "slicer_profile",
+                slicer_profile,
+            )
+            production_print["slicer_profile_sha256"] = housing_documents[
+                "slicer_profile"
+            ]["sha256"]
+            housing_documents["structural_specimen_trace"] = write_json_document(
+                "housing-structural-specimen-trace.json",
+                "structural_specimen_trace",
+                {
+                    "schema": "kc2-x3-v2-structural-specimen-trace-v1",
+                    "production_lot_id": production_lot_id,
+                    "specimen_coupon_id": housing_specimen_id,
+                    "slicer_profile_sha256": production_print[
+                        "slicer_profile_sha256"
+                    ],
+                },
+            )
+            assembly_identity = {
+                "supported_modes": ["choc_v2", "mx"],
+                "choc_switch_manufacturer": "KAILH",
+                "choc_switch_mpn": "CPG135301D01",
+                "mx_switch_manufacturer": "CHERRY",
+                "mx_switch_mpn": "MX2A-L1NN",
+                "keycap_identities": keycap_identity_map,
+            }
+            head_adjacency_contracts, head_adjacency_errors = (
+                _housing_head_adjacency_contracts(source_paths)
+            )
+            self.assertEqual(head_adjacency_errors, [])
+            self.assertEqual(len(head_adjacency_contracts), 34)
+            head_adjacency_counts = Counter(
+                (record["half"], record["mounting_hole_reference"])
+                for record in head_adjacency_contracts.values()
+            )
+            self.assertEqual(
+                sum(count > 1 for count in head_adjacency_counts.values()),
+                13,
+            )
+            housing_data = {
+                "fastener_identity": fastener_identity,
+                "production_print": production_print,
+                "assembly_identity": assembly_identity,
+                "documents": housing_documents,
+                "fastener_records": [
+                    {
+                        "half": half,
+                        "production_lot_id": production_lot_id,
+                        "specimen_coupon_id": housing_specimen_id,
+                        "install_remove_cycles": 10,
+                        "actual_under_head_length_mm": 4.0,
+                        "printed_pilot_diameter_mm": 1.1,
+                        "actual_pcb_thickness_mm": 1.6,
+                        "installed_penetration_mm": 2.4,
+                        "measured_blind_pilot_depth_mm": 2.8,
+                        "measured_closed_bottom_thickness_mm": 0.7,
+                        "measured_available_plastic_depth_mm": 3.5,
+                        "tip_clearance_mm": 0.4,
+                        "tapping_torque_n_m": 0.03,
+                        "selected_installation_torque_n_m": 0.04,
+                        "stripping_torque_n_m": 0.09,
+                        "measured_driver_shaft_diameter_mm": 2.8,
+                        "measured_driver_runout_mm": 0.1,
+                        "measured_driver_sweep_mm": 3.0,
+                        "pull_through_clamp_retention_pass": True,
+                        "full_pattern_without_forcing": True,
+                        "keycaps_off_switches_installed_access": True,
+                        "cracking": False,
+                        "spin": False,
+                        "pull_out": False,
+                        "loosening": False,
+                    }
+                    for half in ("left", "right")
+                ],
+                "assembly_fit_records": [
+                    {
+                        "half": half,
+                        "production_lot_id": production_lot_id,
+                        "specimen_coupon_id": housing_specimen_id,
+                        "assembly_mode": keycap["assembly_mode"],
+                        "width_u": keycap["width_u"],
+                        "switch_manufacturer": assembly_identity[
+                            "choc_switch_manufacturer"
+                            if keycap["assembly_mode"] == "choc_v2"
+                            else "mx_switch_manufacturer"
+                        ],
+                        "switch_mpn": assembly_identity[
+                            "choc_switch_mpn"
+                            if keycap["assembly_mode"] == "choc_v2"
+                            else "mx_switch_mpn"
+                        ],
+                        "keycap_manufacturer": keycap["manufacturer"],
+                        "keycap_mpn": keycap["mpn"],
+                        "is_3d_printed": keycap["is_3d_printed"],
+                        "keycap_skirt_clearance_at_rest_mm": 0.3,
+                        "keycap_skirt_clearance_at_full_travel_mm": 0.2,
+                    }
+                    for half in ("left", "right")
+                    for keycap in keycap_identity_map.values()
+                ],
+                "head_adjacent_fit_records": [
+                    {
+                        **contract,
+                        "production_lot_id": production_lot_id,
+                        "specimen_coupon_id": housing_specimen_id,
+                        "assembly_mode": mode,
+                        "keycap_manufacturer": keycap_identity_map[
+                            f"{mode}:{float(contract['width_u']):.2f}"
+                        ]["manufacturer"],
+                        "keycap_mpn": keycap_identity_map[
+                            f"{mode}:{float(contract['width_u']):.2f}"
+                        ]["mpn"],
+                        "is_3d_printed": keycap_identity_map[
+                            f"{mode}:{float(contract['width_u']):.2f}"
+                        ]["is_3d_printed"],
+                        "keycap_head_clearance_at_rest_mm": 0.3,
+                        "keycap_head_clearance_at_full_travel_mm": 0.2,
+                    }
+                    for contract in head_adjacency_contracts.values()
+                    for mode in ("choc_v2", "mx")
+                ],
+                "deflection_records": [
+                    {
+                        "half": half,
+                        "production_lot_id": production_lot_id,
+                        "specimen_coupon_id": housing_specimen_id,
+                        "switch_reference": f"SW{index}",
+                        "load_n": 2.0,
+                        "downward_displacement_mm": 0.2,
+                        "rocking": False,
+                        "permanent_deformation": False,
+                        "support_disengagement": False,
+                    }
+                    for half, count in (("left", 31), ("right", 39))
+                    for index in range(1, count + 1)
+                ],
+            }
+            housing_metrics = {
+                "fastener_manufacturer": "TEST-FASTENER-MAKER",
+                "fastener_mpn": "M1.4-ROUND-EXACT",
+                "fastener_order_code": "ORDER-M1.4-ROUND-4MM-ZINC-PH0",
+                "fastener_drawing_revision": "REV-C",
+                "fastener_drawing_sha256": housing_documents["fastener_drawing"]["sha256"],
+                "head_style": "rounded_pan_or_button",
+                "nominal_thread_diameter_mm": 1.4,
+                "thread_classification": "direct_plastic_thread_forming",
+                "thread_form": "thread_forming_30_degree_flank",
+                "thread_pitch_mm": 0.4,
+                "thread_flank_angle_degrees": 30.0,
+                "thread_major_diameter_mm": 1.4,
+                "thread_minor_diameter_mm": 1.0,
+                "material": "steel",
+                "finish": "zinc",
+                "drive_recess": "PH0",
+                "minimum_head_diameter_mm": 2.8,
+                "maximum_head_diameter_mm": 3.0,
+                "minimum_head_height_mm": 1.0,
+                "maximum_head_height_mm": 1.2,
+                "minimum_under_head_length_mm": 3.9,
+                "maximum_under_head_length_mm": 4.1,
+                "maximum_finished_pcb_hole_diameter_mm": 1.7,
+                "minimum_radial_bearing_width_mm": 0.55,
+                "driver_manufacturer": "TEST-DRIVER-MAKER",
+                "driver_mpn": "PH0-3MM-SWEEP",
+                "driver_drawing_sha256": housing_documents["driver_drawing"]["sha256"],
+                "maximum_driver_shaft_diameter_mm": 2.8,
+                "maximum_driver_runout_mm": 0.1,
+                "maximum_driver_sweep_mm": 3.0,
+                "production_print": production_print,
+                "assembly_identity": assembly_identity,
+                "assembly_fit_condition_count": 16,
+                "head_adjacent_fit_condition_count": 68,
+                "install_remove_cycles": 10,
+                "torque_ratio": 3.0,
+                "tested_switch_positions": 70,
+                "maximum_displacement_mm": 0.2,
+                "rocking": False,
+                "loosening": False,
+                "permanent_deformation": False,
+                "support_disengagement": False,
+            }
+
+            transition_records = [
+                {
+                    "half": half,
+                    "no_load_voltage_v": voltage,
+                    "direction": direction,
+                    "cycle": cycle,
+                    "vbat_samples_v": [voltage, voltage, voltage],
+                    "vdd_samples_v": [3.3, 3.3, 3.3],
+                    "expected_vdd_v": 3.3,
+                    "brownout_reset": False,
+                    "boot_loop": False,
+                    "usb_reenumeration_failure": False,
+                    "stuck_power_state": False,
+                    "visible_arcing": False,
+                }
+                for half in ("left", "right")
+                for voltage in (3.3, 4.2)
+                for direction in ("off_to_on", "on_to_off")
+                for cycle in range(1, 21)
+            ]
+            rf_records = [
+                {
+                    "half": half,
+                    "ble_channel": 37,
+                    "state": state,
+                    "orientation": orientation,
+                    "hands": hands,
+                    "distance_m": 5.0,
+                    "both_halves_communicating": True,
+                    "baseline_rssi_dbm": [-60.0] * 30,
+                    "final_rssi_dbm": [-60.0] * 30,
+                    "reports_expected": 10000,
+                    "missing_sequence_numbers": [],
+                    "disconnect_events": [],
+                    "reconnect_events": [],
+                }
+                for half in ("left", "right")
+                for state in (
+                    "battery_only",
+                    "usb_charging",
+                    "charge_complete",
+                    "usb_unplug_transition",
+                )
+                for orientation in ("normal", "90_degrees", "180_degrees")
+                for hands in ("absent", "home_row")
+            ]
+            power_data = {
+                "identity": {
+                    "battery_mpn": "PACK-301230-PROTECTED",
+                    "battery_lot": "LOT-1",
+                    "power_switch_mpn": "IMMS-EXACT-MPN-1",
+                    "firmware_build_sha256": source_digests["firmware_build_evidence"],
+                    "housing_manifest_sha256": source_digests["housing_manifest"],
+                    "host_id": "TEST-HOST",
+                    "ble_channels": [37],
+                },
+                "transition_records": transition_records,
+                "rf_records": rf_records,
+            }
+            power_metrics = {
+                "cold_cycles_per_voltage_and_direction": 20,
+                "brownout_count": 0,
+                "power_fault_count": 0,
+                "maximum_vbat_droop_v": 0.0,
+                "maximum_vdd_droop_v": 0.0,
+                "maximum_vbat_ringing_v": 0.0,
+                "rssi_samples_per_state": 30,
+                "reports_per_state": 10000,
+                "packet_loss_ratio": 0.0,
+                "median_rssi_degradation_db": 0.0,
+                "disconnect_count": 0,
+                "reconnect_count": 0,
+            }
+
+            procurement_identity = {
+                "parts": json.loads(json.dumps(controller_data["parts"])),
+                "keycaps": json.loads(json.dumps(keycap_identity_map)),
+            }
+            pending_package_errors = _positive_package_identity_errors(
+                V2_ROOT / "fabrication/kc2_x3_v2_fabrication_manifest.json",
+                controller_identity={
+                    "purchased_parts": procurement_identity["parts"],
+                },
+                scan_identity={"keycaps": procurement_identity["keycaps"]},
+                source_digests=source_digests,
+                seen_paths=set(),
+            )
+            self.assertTrue(
+                any("draft/not order-ready" in error for error in pending_package_errors),
+                pending_package_errors,
+            )
+            self.assertTrue(
+                any("pending" in error for error in pending_package_errors),
+                pending_package_errors,
+            )
+            fabrication_products: dict[str, object] = {}
+            for half, board_binding in (("left", "left_board"), ("right", "right_board")):
+                bom_path = temp_root / f"positive-{half}-bom.json"
+                bom_payload = {
+                    "order_ready": True,
+                    "source_board_sha256": source_digests[board_binding],
+                    "procurement_identity": procurement_identity,
+                    "line_items": [],
+                }
+                bom_path.write_text(
+                    json.dumps(bom_payload, indent=2) + "\n",
+                    encoding="utf-8",
+                    newline="\n",
+                )
+                fabrication_products[half] = {
+                    "source_board_sha256": source_digests[board_binding],
+                    "files": [
+                        {
+                            "name": bom_path.name,
+                            "size": bom_path.stat().st_size,
+                            "sha256": sha256_file(bom_path),
+                        }
+                    ],
+                    "bom": {"json": bom_path.relative_to(ROOT).as_posix()},
+                }
+            positive_fabrication_manifest_path = temp_root / "positive-fabrication-manifest.json"
+            positive_fabrication_manifest_path.write_text(
+                json.dumps(
+                    {
+                        "status": "order_ready_verified_physical_evidence",
+                        "order_ready": True,
+                        "products": fabrication_products,
+                    },
+                    indent=2,
+                )
+                + "\n",
+                encoding="utf-8",
+                newline="\n",
+            )
+            positive_identity_context = {
+                "controller_identity": {
+                    "purchased_parts": procurement_identity["parts"],
+                },
+                "scan_identity": {"keycaps": procurement_identity["keycaps"]},
+                "source_digests": source_digests,
+            }
+            self.assertEqual(
+                _positive_package_identity_errors(
+                    positive_fabrication_manifest_path,
+                    **positive_identity_context,
+                    seen_paths=set(),
+                ),
+                [],
+            )
+            left_bom_path = temp_root / "positive-left-bom.json"
+            left_bom_baseline = left_bom_path.read_text(encoding="utf-8")
+            left_bom_mutation = json.loads(left_bom_baseline)
+            left_bom_mutation["procurement_identity"]["parts"]["choc_switch"][
+                "mpn"
+            ] = "UNBOUND-CHOC-SWITCH"
+            left_bom_path.write_text(
+                json.dumps(left_bom_mutation, indent=2) + "\n",
+                encoding="utf-8",
+                newline="\n",
+            )
+            fabrication_products["left"]["files"][0].update(
+                size=left_bom_path.stat().st_size,
+                sha256=sha256_file(left_bom_path),
+            )
+            positive_fabrication_manifest_path.write_text(
+                json.dumps(
+                    {
+                        "status": "order_ready_verified_physical_evidence",
+                        "order_ready": True,
+                        "products": fabrication_products,
+                    },
+                    indent=2,
+                )
+                + "\n",
+                encoding="utf-8",
+                newline="\n",
+            )
+            self.assertTrue(
+                _positive_package_identity_errors(
+                    positive_fabrication_manifest_path,
+                    **positive_identity_context,
+                    seen_paths=set(),
+                )
+            )
+            left_bom_path.write_text(
+                left_bom_baseline,
+                encoding="utf-8",
+                newline="\n",
+            )
+            fabrication_products["left"]["files"][0].update(
+                size=left_bom_path.stat().st_size,
+                sha256=sha256_file(left_bom_path),
+            )
+            positive_fabrication_manifest_path.write_text(
+                json.dumps(
+                    {
+                        "status": "order_ready_verified_physical_evidence",
+                        "order_ready": True,
+                        "products": fabrication_products,
+                    },
+                    indent=2,
+                )
+                + "\n",
+                encoding="utf-8",
+                newline="\n",
+            )
+            source_paths["fabrication_manifest"] = positive_fabrication_manifest_path
+            source_bindings["fabrication_manifest"] = file_record(
+                positive_fabrication_manifest_path,
+                "release-source",
+            )
+            source_digests["fabrication_manifest"] = source_bindings[
+                "fabrication_manifest"
+            ]["sha256"]
+
+            def typed_bundle(
+                bundle: str,
+                data: dict[str, object],
+                metrics: dict[str, object],
+            ) -> dict[str, object]:
+                if bundle == "housing_fastener_deflection":
+                    calibration = write_json_document(
+                        f"{bundle}-calibration.json",
+                        "calibration-certificate",
+                        {
+                            "schema": "kc2-x3-v2-structural-calibration-v1",
+                            "bundle": bundle,
+                            "production_lot_id": production_lot_id,
+                            "specimen_coupon_id": housing_specimen_id,
+                        },
+                    )
+                else:
+                    calibration = write_document(
+                        f"{bundle}-calibration.txt",
+                        "calibration-certificate",
+                    )
+                raw_path = temp_root / f"{bundle}-raw.json"
+                raw_path.write_text(
+                    json.dumps(
+                        {
+                            "schema": "kc2-x3-v2-physical-raw-bundle-v1",
+                            "bundle": bundle,
+                            "source_bindings": source_digests,
+                            "data": data,
+                        },
+                        indent=2,
+                    )
+                    + "\n",
+                    encoding="utf-8",
+                    newline="\n",
+                )
+                return {
+                    "status": "passed",
+                    "artifacts": [
+                        {
+                            **file_record(
+                                raw_path,
+                                {
+                                    "controller_service": "controller-service-raw-json",
+                                    "physical_scan": "physical-scan-raw-json",
+                                    "housing_fastener_deflection": "housing-fastener-deflection-raw-json",
+                                    "power_rf": "power-rf-raw-json",
+                                }[bundle],
+                            ),
+                            "measured_at": "2026-08-29T12:00:00+09:00",
+                            "equipment_id": f"{bundle}-equipment",
+                            "calibration_evidence": calibration,
+                        }
+                    ],
+                    "metrics": metrics,
+                }
+
+            evidence = {
+                "schema": "kc2-x3-v2-physical-evidence-v1",
+                "requirement_ids": [
+                    "CON-ARCH-004",
+                    "CON-ARCH-006",
+                    "CON-ARCH-007",
+                    "REL-ARCH-001",
+                ],
+                "variant": "x3-v2",
+                "status": "passed",
+                "order_ready": True,
+                "source_bindings": source_bindings,
+                "bundles": {
+                    "controller_service": typed_bundle(
+                        "controller_service", controller_data, controller_metrics
+                    ),
+                    "physical_scan": typed_bundle(
+                        "physical_scan", scan_data, scan_metrics
+                    ),
+                    "housing_fastener_deflection": typed_bundle(
+                        "housing_fastener_deflection", housing_data, housing_metrics
+                    ),
+                    "power_rf": typed_bundle("power_rf", power_data, power_metrics),
+                },
+            }
+            self.assertEqual(
+                verify_physical_evidence_manifest(evidence, source_paths),
+                {
+                    "controller_service": [],
+                    "physical_scan": [],
+                    "housing_fastener_deflection": [],
+                    "power_rf": [],
+                },
+            )
+            self.assertTrue(suite_mock.called)
+            for failed_module in ("coupon", "outline"):
+                with self.subTest(positive_artifact_suite_failure=failed_module):
+                    suite_mock.return_value = [
+                        f"artifact suite {failed_module} verifier failed"
+                    ]
+                    self.assertTrue(
+                        all(
+                            verify_physical_evidence_manifest(
+                                evidence, source_paths
+                            ).values()
+                        )
+                    )
+            suite_mock.return_value = []
+            missing_render_binding = json.loads(json.dumps(evidence))
+            del missing_render_binding["source_bindings"]["render_manifest"]
+            self.assertTrue(
+                all(
+                    verify_physical_evidence_manifest(
+                        missing_render_binding,
+                        source_paths,
+                    ).values()
+                )
+            )
+            stale_outline_binding = json.loads(json.dumps(evidence))
+            stale_outline_binding["source_bindings"]["outline_report"]["sha256"] = "0" * 64
+            self.assertTrue(
+                all(
+                    verify_physical_evidence_manifest(
+                        stale_outline_binding,
+                        source_paths,
+                    ).values()
+                )
+            )
+            conservative_manifest = json.loads(MANIFEST.read_text(encoding="utf-8"))
+            conservative_housing = json.loads(
+                (ROOT / "hardware/case/draft/x3-v2/kc2_x3_v2_housing_manifest.json")
+                .read_text(encoding="utf-8")
+            )
+            self.assertEqual(
+                controller_service_order_readiness_blockers(
+                    conservative_manifest,
+                    conservative_housing,
+                    evidence,
+                    source_paths,
+                ),
+                [],
+            )
+
+            traversal = json.loads(json.dumps(evidence))
+            traversal["bundles"]["controller_service"]["artifacts"][0]["path"] = "../escape.json"
+            self.assertTrue(
+                verify_physical_evidence_manifest(traversal)["controller_service"]
+            )
+            stale_hash = json.loads(json.dumps(evidence))
+            stale_hash["source_bindings"]["left_board"]["sha256"] = "0" * 64
+            self.assertTrue(
+                all(verify_physical_evidence_manifest(stale_hash, source_paths).values())
+            )
+            insufficient = json.loads(json.dumps(evidence))
+            insufficient["bundles"]["power_rf"]["metrics"]["reports_per_state"] = 9999
+            self.assertTrue(
+                verify_physical_evidence_manifest(insufficient, source_paths)["power_rf"]
+            )
+            waived_calibration = json.loads(json.dumps(evidence))
+            waived_calibration["bundles"]["controller_service"]["artifacts"][0][
+                "calibration_evidence"
+            ] = "not_applicable_nonmeasurement"
+            self.assertTrue(
+                verify_physical_evidence_manifest(waived_calibration, source_paths)[
+                    "controller_service"
+                ]
+            )
+            reused = json.loads(json.dumps(evidence))
+            reused["bundles"]["physical_scan"]["artifacts"] = json.loads(
+                json.dumps(reused["bundles"]["controller_service"]["artifacts"])
+            )
+            self.assertTrue(
+                verify_physical_evidence_manifest(reused, source_paths)["physical_scan"]
+            )
+
+            controller_artifact_template = evidence["bundles"]["controller_service"][
+                "artifacts"
+            ][0]
+            controller_raw_path = ROOT / controller_artifact_template["path"]
+            controller_raw_baseline = json.loads(
+                controller_raw_path.read_text(encoding="utf-8")
+            )
+            for label, mutate in (
+                (
+                    "self-asserted stack clearance",
+                    lambda payload, metrics: (
+                        payload["data"]["stack_records"][0].update(
+                            minimum_clearance_mm=0.6
+                        ),
+                        metrics.update(minimum_stack_clearance_mm=0.6),
+                    ),
+                ),
+                (
+                    "failed measured continuity",
+                    lambda payload, _metrics: payload["data"]["service_records"][0].update(
+                        power_on_resistance_ohm=2.0
+                    ),
+                ),
+                (
+                    "purchased battery lead exceeds J_BAT1 fit allowance",
+                    lambda payload, metrics: (
+                        payload["data"]["parts"]["battery"].update(
+                            lead_conductor_diameter_mm=0.85
+                        ),
+                        metrics.update(
+                            lead_conductor_diameter_mm=0.85,
+                            lead_to_j_bat_diametral_clearance_mm=0.05,
+                        ),
+                    ),
+                ),
+                (
+                    "pending exact Kailh switch identity",
+                    lambda payload, metrics: (
+                        payload["data"]["parts"]["choc_switch"].update(mpn="PENDING"),
+                        metrics.update(choc_switch_mpn="PENDING"),
+                    ),
+                ),
+                (
+                    "status prose controller manufacturer",
+                    lambda payload, metrics: (
+                        payload["data"]["parts"]["controller"].update(
+                            manufacturer="UNKNOWN SUPPLIER"
+                        ),
+                        metrics.update(controller_manufacturer="UNKNOWN SUPPLIER"),
+                    ),
+                ),
+                (
+                    "whitespace SKU used as switch MPN",
+                    lambda payload, metrics: (
+                        payload["data"]["parts"]["choc_switch"].update(mpn="TBD SKU"),
+                        metrics.update(choc_switch_mpn="TBD SKU"),
+                    ),
+                ),
+                (
+                    "status prose drawing revision",
+                    lambda payload, metrics: (
+                        payload["data"]["parts"]["choc_socket"].update(
+                            drawing_revision="TO BE CONFIRMED"
+                        ),
+                        metrics.update(
+                            choc_socket_drawing_revision="TO BE CONFIRMED"
+                        ),
+                    ),
+                ),
+                (
+                    "status prose controller datasheet identity",
+                    lambda payload, _metrics: payload["data"]["documents"][
+                        "controller_datasheet"
+                    ].update(document_id="PENDING DATASHEET"),
+                ),
+                (
+                    "coded provisional controller datasheet identity",
+                    lambda payload, _metrics: payload["data"]["documents"][
+                        "controller_datasheet"
+                    ].update(document_id="PROVISIONAL-1"),
+                ),
+                (
+                    "POWER travel below full actuator travel",
+                    lambda payload, _metrics: payload["data"]["service_records"][0].update(
+                        power_actuator_travel_mm=1.59
+                    ),
+                ),
+                (
+                    "POWER full-travel controller contact",
+                    lambda payload, _metrics: payload["data"]["service_records"][0].update(
+                        power_full_travel_contact_with_controller=True
+                    ),
+                ),
+                (
+                    "RESET service probe too large",
+                    lambda payload, _metrics: payload["data"]["service_records"][0].update(
+                        reset_probe_diameter_mm=3.01
+                    ),
+                ),
+            ):
+                with self.subTest(controller_raw_gate=label):
+                    candidate = json.loads(json.dumps(evidence))
+                    payload = json.loads(json.dumps(controller_raw_baseline))
+                    metrics = candidate["bundles"]["controller_service"]["metrics"]
+                    mutate(payload, metrics)
+                    controller_raw_path.write_text(
+                        json.dumps(payload, indent=2) + "\n",
+                        encoding="utf-8",
+                        newline="\n",
+                    )
+                    artifact = candidate["bundles"]["controller_service"]["artifacts"][0]
+                    artifact["sha256"] = sha256_file(controller_raw_path)
+                    artifact["size_bytes"] = controller_raw_path.stat().st_size
+                    self.assertTrue(
+                        verify_physical_evidence_manifest(candidate, source_paths)[
+                            "controller_service"
+                        ],
+                        label,
+                    )
+            controller_raw_path.write_text(
+                json.dumps(controller_raw_baseline, indent=2) + "\n",
+                encoding="utf-8",
+                newline="\n",
+            )
+
+            scan_artifact_template = evidence["bundles"]["physical_scan"]["artifacts"][0]
+            scan_raw_path = ROOT / scan_artifact_template["path"]
+            scan_raw_baseline = json.loads(scan_raw_path.read_text(encoding="utf-8"))
+            scan_mutations = (
+                (
+                    "missing 1U keycap physical fit",
+                    lambda payload: payload["data"]["keycap_fit_records"].pop(0),
+                ),
+                (
+                    "wrong left Choc socket rotation",
+                    lambda payload: payload["data"]["switch_fit_records"][0].update(
+                        orientation="right_mirrored"
+                    ),
+                ),
+                (
+                    "failed Choc bottom socket fit",
+                    lambda payload: payload["data"]["switch_fit_records"][0].update(
+                        bottom_socket_fit_pass=False
+                    ),
+                ),
+                (
+                    "failed MX five-pin fit",
+                    lambda payload: payload["data"]["switch_fit_records"][1].update(
+                        mx_five_pin_fit_pass=False
+                    ),
+                ),
+                (
+                    "pending non-1U keycap identity",
+                    lambda payload: payload["data"]["keycap_fit_records"][0].update(
+                        keycap_mpn="PENDING"
+                    ),
+                ),
+                (
+                    "status prose keycap manufacturer",
+                    lambda payload: payload["data"]["keycap_fit_records"][0].update(
+                        keycap_manufacturer="UNKNOWN SUPPLIER"
+                    ),
+                ),
+                (
+                    "non-1U keycap spacing outside requirement",
+                    lambda payload: payload["data"]["keycap_fit_records"][0].update(
+                        minimum_spacing_mm=2.01
+                    ),
+                ),
+                (
+                    "ES1B polarity failure",
+                    lambda payload: payload["data"]["diode_records"][0].update(
+                        pad1_cathode_polarity_pass=False
+                    ),
+                ),
+                (
+                    "ES1B hand-solder access failure",
+                    lambda payload: payload["data"]["diode_records"][0].update(
+                        hand_solder_access_pass=False
+                    ),
+                ),
+                (
+                    "ES1B housing interference",
+                    lambda payload: payload["data"]["diode_records"][0].update(
+                        minimum_housing_clearance_mm=-0.01
+                    ),
+                ),
+            )
+            for label, mutate in scan_mutations:
+                with self.subTest(physical_scan_gate=label):
+                    candidate = json.loads(json.dumps(evidence))
+                    payload = json.loads(json.dumps(scan_raw_baseline))
+                    mutate(payload)
+                    scan_raw_path.write_text(
+                        json.dumps(payload, indent=2) + "\n",
+                        encoding="utf-8",
+                        newline="\n",
+                    )
+                    artifact = candidate["bundles"]["physical_scan"]["artifacts"][0]
+                    artifact["sha256"] = sha256_file(scan_raw_path)
+                    artifact["size_bytes"] = scan_raw_path.stat().st_size
+                    self.assertTrue(
+                        verify_physical_evidence_manifest(candidate, source_paths)[
+                            "physical_scan"
+                        ],
+                        label,
+                    )
+            scan_raw_path.write_text(
+                json.dumps(scan_raw_baseline, indent=2) + "\n",
+                encoding="utf-8",
+                newline="\n",
+            )
+
+            housing_artifact_template = evidence["bundles"]["housing_fastener_deflection"][
+                "artifacts"
+            ][0]
+            housing_raw_path = ROOT / housing_artifact_template["path"]
+            housing_raw_baseline = json.loads(housing_raw_path.read_text(encoding="utf-8"))
+
+            def identity_mutation(key: str, value: object):
+                def mutate(payload: dict[str, object], metrics: dict[str, object]) -> None:
+                    payload["data"]["fastener_identity"][key] = value
+                    metric_names = {
+                        "manufacturer": "fastener_manufacturer",
+                        "mpn": "fastener_mpn",
+                        "order_code": "fastener_order_code",
+                        "drawing_revision": "fastener_drawing_revision",
+                    }
+                    metric_key = metric_names.get(key, key)
+                    if metric_key in metrics:
+                        metrics[metric_key] = value
+
+                return mutate
+
+            def record_mutation(key: str, value: object):
+                return lambda payload, _metrics: payload["data"]["fastener_records"][0].update(
+                    {key: value}
+                )
+
+            housing_mutations = (
+                (
+                    "placeholder fastener manufacturer",
+                    identity_mutation("manufacturer", "PENDING_PHYSICAL_GATE"),
+                ),
+                (
+                    "status prose fastener manufacturer",
+                    identity_mutation("manufacturer", "UNKNOWN SUPPLIER"),
+                ),
+                (
+                    "fastener MPN lacks a numeric identity",
+                    identity_mutation("mpn", "EXACT-FASTENER-MPN"),
+                ),
+                (
+                    "coded provisional fastener order code",
+                    identity_mutation("order_code", "PROVISIONAL-1"),
+                ),
+                (
+                    "status prose fastener drawing revision",
+                    identity_mutation("drawing_revision", "TO BE CONFIRMED"),
+                ),
+                ("missing exact order code", identity_mutation("order_code", "")),
+                ("missing drawing revision", identity_mutation("drawing_revision", "")),
+                ("wrong head style", identity_mutation("head_style", "ultra_low")),
+                (
+                    "non-direct-plastic thread classification",
+                    identity_mutation("thread_classification", "metric_machine_thread"),
+                ),
+                (
+                    "wrong nominal thread diameter",
+                    identity_mutation("nominal_thread_diameter_mm", 1.3),
+                ),
+                ("missing thread form", identity_mutation("thread_form", "")),
+                (
+                    "uncontrolled direct-plastic thread form self-label",
+                    identity_mutation("thread_form", "banana-thread-forming"),
+                ),
+                ("missing direct-plastic pitch", identity_mutation("thread_pitch_mm", 0.0)),
+                (
+                    "non-M1.4 measured thread major diameter",
+                    identity_mutation("thread_major_diameter_mm", 1.3),
+                ),
+                (
+                    "controlled thread form with non-30-degree flank",
+                    identity_mutation("thread_flank_angle_degrees", 29.0),
+                ),
+                (
+                    "thread pitch diverges from controlled drawing",
+                    identity_mutation("thread_pitch_mm", 0.5),
+                ),
+                ("missing material", identity_mutation("material", "")),
+                ("missing finish", identity_mutation("finish", "")),
+                ("missing drive recess", identity_mutation("drive_recess", "")),
+                (
+                    "reversed length tolerance",
+                    identity_mutation("maximum_under_head_length_mm", 3.8),
+                ),
+                (
+                    "oversize head diameter",
+                    identity_mutation("maximum_head_diameter_mm", 3.01),
+                ),
+                (
+                    "oversize head height",
+                    identity_mutation("maximum_head_height_mm", 1.21),
+                ),
+                (
+                    "unrecomputed radial bearing",
+                    identity_mutation("maximum_finished_pcb_hole_diameter_mm", 1.8),
+                ),
+                (
+                    "missing driver MPN",
+                    identity_mutation("driver_mpn", ""),
+                ),
+                (
+                    "driver shaft/runout mismatch",
+                    identity_mutation("maximum_driver_runout_mm", 0.2),
+                ),
+                (
+                    "measured driver runout not included in sweep",
+                    record_mutation("measured_driver_runout_mm", 0.2),
+                ),
+                (
+                    "measured shaft exceeds controlled maximum despite fitting sweep",
+                    lambda payload, _metrics: payload["data"]["fastener_records"][0].update(
+                        measured_driver_shaft_diameter_mm=2.9,
+                        measured_driver_runout_mm=0.05,
+                        measured_driver_sweep_mm=3.0,
+                    ),
+                ),
+                ("wrong measured length", record_mutation("actual_under_head_length_mm", 4.2)),
+                (
+                    "source-unbound pilot and PCB geometry",
+                    lambda payload, _metrics: payload["data"]["fastener_records"][0].update(
+                        actual_under_head_length_mm=3.9,
+                        printed_pilot_diameter_mm=0.01,
+                        actual_pcb_thickness_mm=1.0,
+                        installed_penetration_mm=2.9,
+                        measured_blind_pilot_depth_mm=3.2,
+                        measured_closed_bottom_thickness_mm=0.7,
+                        measured_available_plastic_depth_mm=3.9,
+                        tip_clearance_mm=0.3,
+                    ),
+                ),
+                (
+                    "zero tip clearance self-consistent geometry",
+                    lambda payload, _metrics: payload["data"]["fastener_records"][0].update(
+                        measured_blind_pilot_depth_mm=2.4,
+                        measured_closed_bottom_thickness_mm=0.7,
+                        measured_available_plastic_depth_mm=3.1,
+                        tip_clearance_mm=0.0,
+                    ),
+                ),
+                ("missing pilot measurement", record_mutation("printed_pilot_diameter_mm", 0.0)),
+                ("missing PCB thickness", record_mutation("actual_pcb_thickness_mm", 0.0)),
+                ("wrong penetration", record_mutation("installed_penetration_mm", 2.0)),
+                ("negative tip clearance", record_mutation("tip_clearance_mm", -0.1)),
+                ("missing tapping torque", record_mutation("tapping_torque_n_m", 0.0)),
+                (
+                    "stripping ratio measured against installation instead of tapping",
+                    lambda payload, metrics: (
+                        [
+                            record.update(
+                                tapping_torque_n_m=0.04,
+                                selected_installation_torque_n_m=0.01,
+                                stripping_torque_n_m=0.06,
+                            )
+                            for record in payload["data"]["fastener_records"]
+                        ],
+                        metrics.update(torque_ratio=6.0),
+                    ),
+                ),
+                (
+                    "insufficient stripping ratio",
+                    record_mutation("stripping_torque_n_m", 0.03),
+                ),
+                (
+                    "selected torque outside seating window",
+                    record_mutation("selected_installation_torque_n_m", 0.02),
+                ),
+                (
+                    "missing clamp retention",
+                    record_mutation("pull_through_clamp_retention_pass", False),
+                ),
+                (
+                    "forced full pattern",
+                    record_mutation("full_pattern_without_forcing", False),
+                ),
+                (
+                    "missing rest skirt clearance",
+                    lambda payload, _metrics: payload["data"]["assembly_fit_records"][0].update(
+                        keycap_skirt_clearance_at_rest_mm=0.0
+                    ),
+                ),
+                (
+                    "missing travel skirt clearance",
+                    lambda payload, _metrics: payload["data"]["assembly_fit_records"][0].update(
+                        keycap_skirt_clearance_at_full_travel_mm=0.0
+                    ),
+                ),
+                ("too few service cycles", record_mutation("install_remove_cycles", 9)),
+                (
+                    "independent pilot depth and impossible tip clearance",
+                    lambda payload, _metrics: payload["data"]["fastener_records"][0].update(
+                        measured_blind_pilot_depth_mm=0.01,
+                        tip_clearance_mm=999.0,
+                    ),
+                ),
+                (
+                    "missing production material",
+                    lambda payload, metrics: (
+                        payload["data"]["production_print"].update(material_mpn=""),
+                        metrics["production_print"].update(material_mpn=""),
+                    ),
+                ),
+                (
+                    "production material uses a whitespace SKU",
+                    lambda payload, metrics: (
+                        payload["data"]["production_print"].update(
+                            material_mpn="TBD SKU"
+                        ),
+                        metrics["production_print"].update(material_mpn="TBD SKU"),
+                    ),
+                ),
+                (
+                    "production material uses awaiting lifecycle code",
+                    lambda payload, metrics: (
+                        payload["data"]["production_print"].update(
+                            material_mpn="AWAITING-SKU-1"
+                        ),
+                        metrics["production_print"].update(
+                            material_mpn="AWAITING-SKU-1"
+                        ),
+                    ),
+                ),
+                (
+                    "production printer manufacturer is status prose",
+                    lambda payload, metrics: (
+                        payload["data"]["production_print"].update(
+                            printer_manufacturer="PENDING DATASHEET"
+                        ),
+                        metrics["production_print"].update(
+                            printer_manufacturer="PENDING DATASHEET"
+                        ),
+                    ),
+                ),
+                (
+                    "production printer manufacturer is unspecified",
+                    lambda payload, metrics: (
+                        payload["data"]["production_print"].update(
+                            printer_manufacturer="UNSPECIFIED"
+                        ),
+                        metrics["production_print"].update(
+                            printer_manufacturer="UNSPECIFIED"
+                        ),
+                    ),
+                ),
+                (
+                    "invalid production layer height",
+                    lambda payload, metrics: (
+                        payload["data"]["production_print"].update(layer_height_mm=0.5),
+                        metrics["production_print"].update(layer_height_mm=0.5),
+                    ),
+                ),
+                (
+                    "missing load-affecting wall setting",
+                    lambda payload, metrics: (
+                        payload["data"]["production_print"].pop(
+                            "wall_perimeter_count"
+                        ),
+                        metrics["production_print"].pop("wall_perimeter_count"),
+                    ),
+                ),
+                (
+                    "structural specimen reuses electrical scan coupon",
+                    lambda payload, metrics: (
+                        payload["data"]["production_print"].update(
+                            specimen_coupon_id="COUPON-LOT-1"
+                        ),
+                        metrics["production_print"].update(
+                            specimen_coupon_id="COUPON-LOT-1"
+                        ),
+                    ),
+                ),
+                (
+                    "missing controlled print speed",
+                    lambda payload, metrics: (
+                        payload["data"]["production_print"].update(print_speed_mm_s=0.0),
+                        metrics["production_print"].update(print_speed_mm_s=0.0),
+                    ),
+                ),
+                (
+                    "fastener record from a different print lot",
+                    lambda payload, _metrics: payload["data"]["fastener_records"][0].update(
+                        production_lot_id="HOUSING-PRINT-LOT-2"
+                    ),
+                ),
+                (
+                    "assembly fit from a different structural specimen",
+                    lambda payload, _metrics: payload["data"]["assembly_fit_records"][0].update(
+                        specimen_coupon_id="HOUSING-STRUCTURAL-SPECIMEN-2"
+                    ),
+                ),
+                (
+                    "mounting-head fit from a different print lot",
+                    lambda payload, _metrics: payload["data"][
+                        "head_adjacent_fit_records"
+                    ][0].update(production_lot_id="HOUSING-PRINT-LOT-2"),
+                ),
+                (
+                    "deflection from a different structural specimen",
+                    lambda payload, _metrics: payload["data"]["deflection_records"][0].update(
+                        specimen_coupon_id="HOUSING-STRUCTURAL-SPECIMEN-2"
+                    ),
+                ),
+                (
+                    "wrong production orientation",
+                    lambda payload, metrics: (
+                        payload["data"]["production_print"].update(
+                            print_orientation="sideways"
+                        ),
+                        metrics["production_print"].update(print_orientation="sideways"),
+                    ),
+                ),
+                (
+                    "unbound slicer profile",
+                    lambda payload, metrics: (
+                        payload["data"]["production_print"].update(
+                            slicer_profile_sha256="0" * 64
+                        ),
+                        metrics["production_print"].update(
+                            slicer_profile_sha256="0" * 64
+                        ),
+                    ),
+                ),
+                (
+                    "profile incompatible FDM process",
+                    lambda payload, metrics: (
+                        payload["data"]["production_print"].update(
+                            production_process="FDM"
+                        ),
+                        metrics["production_print"].update(production_process="FDM"),
+                    ),
+                ),
+                (
+                    "placeholder printer identity",
+                    lambda payload, metrics: (
+                        payload["data"]["production_print"].update(
+                            printer_model="TBD_PRINTER"
+                        ),
+                        metrics["production_print"].update(
+                            printer_model="TBD_PRINTER"
+                        ),
+                    ),
+                ),
+                (
+                    "incomplete supported assembly modes",
+                    lambda payload, metrics: (
+                        payload["data"]["assembly_identity"].update(
+                            supported_modes=["choc_v2"]
+                        ),
+                        metrics["assembly_identity"].update(supported_modes=["choc_v2"]),
+                    ),
+                ),
+                (
+                    "wrong supported keycap identity",
+                    lambda payload, _metrics: payload["data"]["assembly_fit_records"][0].update(
+                        keycap_mpn="UNBOUND-CAP"
+                    ),
+                ),
+                (
+                    "missing 1U housing fit condition",
+                    lambda payload, _metrics: payload["data"][
+                        "assembly_fit_records"
+                    ].pop(0),
+                ),
+                (
+                    "missing mounting-head-adjacent condition",
+                    lambda payload, _metrics: payload["data"][
+                        "head_adjacent_fit_records"
+                    ].pop(),
+                ),
+                (
+                    "duplicate mounting-head-adjacent condition",
+                    lambda payload, _metrics: payload["data"][
+                        "head_adjacent_fit_records"
+                    ].append(
+                        dict(payload["data"]["head_adjacent_fit_records"][0])
+                    ),
+                ),
+                (
+                    "wrong board-derived limiting switch reference",
+                    lambda payload, _metrics: payload["data"][
+                        "head_adjacent_fit_records"
+                    ][0].update(overlapping_switch_reference="SW999"),
+                ),
+                (
+                    "housing switch identity self-consistently diverges from controller evidence",
+                    lambda payload, metrics: (
+                        payload["data"]["assembly_identity"].update(
+                            choc_switch_mpn="UNBOUND-CHOC-SWITCH"
+                        ),
+                        [
+                            record.update(switch_mpn="UNBOUND-CHOC-SWITCH")
+                            for record in payload["data"]["assembly_fit_records"]
+                            if record["assembly_mode"] == "choc_v2"
+                        ],
+                        metrics["assembly_identity"].update(
+                            choc_switch_mpn="UNBOUND-CHOC-SWITCH"
+                        ),
+                    ),
+                ),
+                (
+                    "placeholder housing keycap identity",
+                    lambda payload, metrics: (
+                        payload["data"]["assembly_identity"]["keycap_identities"][
+                            "choc_v2:1.25"
+                        ].update(mpn="TBD_KEYCAP"),
+                        [
+                            record.update(keycap_mpn="TBD_KEYCAP")
+                            for record in payload["data"]["assembly_fit_records"]
+                            if record["assembly_mode"] == "choc_v2"
+                            and record["width_u"] == 1.25
+                        ],
+                        metrics["assembly_identity"]["keycap_identities"][
+                            "choc_v2:1.25"
+                        ].update(mpn="TBD_KEYCAP"),
+                    ),
+                ),
+                (
+                    "housing keycap identity diverges from physical scan",
+                    lambda payload, metrics: (
+                        payload["data"]["assembly_identity"]["keycap_identities"][
+                            "mx:1.75"
+                        ].update(mpn="UNBOUND-MX-1.75-CAP"),
+                        [
+                            record.update(keycap_mpn="UNBOUND-MX-1.75-CAP")
+                            for record in payload["data"]["assembly_fit_records"]
+                            if record["assembly_mode"] == "mx"
+                            and record["width_u"] == 1.75
+                        ],
+                        metrics["assembly_identity"]["keycap_identities"][
+                            "mx:1.75"
+                        ].update(mpn="UNBOUND-MX-1.75-CAP"),
+                    ),
+                ),
+                (
+                    "wrong switch reference set",
+                    lambda payload, _metrics: payload["data"]["deflection_records"][0].update(
+                        switch_reference="SW999"
+                    ),
+                ),
+            )
+            for label, mutate in housing_mutations:
+                with self.subTest(physical_housing_gate=label):
+                    candidate = json.loads(json.dumps(evidence))
+                    payload = json.loads(json.dumps(housing_raw_baseline))
+                    metrics = candidate["bundles"]["housing_fastener_deflection"]["metrics"]
+                    mutate(payload, metrics)
+                    housing_raw_path.write_text(
+                        json.dumps(payload, indent=2) + "\n",
+                        encoding="utf-8",
+                        newline="\n",
+                    )
+                    artifact = candidate["bundles"]["housing_fastener_deflection"][
+                        "artifacts"
+                    ][0]
+                    artifact["sha256"] = sha256_file(housing_raw_path)
+                    artifact["size_bytes"] = housing_raw_path.stat().st_size
+                    self.assertTrue(
+                        verify_physical_evidence_manifest(candidate, source_paths)[
+                            "housing_fastener_deflection"
+                        ],
+                        label,
+                    )
+            housing_raw_path.write_text(
+                json.dumps(housing_raw_baseline, indent=2) + "\n",
+                encoding="utf-8",
+                newline="\n",
+            )
+
+            raw_mutation = json.loads(json.dumps(evidence))
+            power_artifact = raw_mutation["bundles"]["power_rf"]["artifacts"][0]
+            power_path = ROOT / power_artifact["path"]
+            raw_payload = json.loads(power_path.read_text(encoding="utf-8"))
+            raw_payload["data"]["rf_records"][0]["reports_expected"] = 9999
+            power_path.write_text(
+                json.dumps(raw_payload, indent=2) + "\n",
+                encoding="utf-8",
+                newline="\n",
+            )
+            power_artifact["sha256"] = sha256_file(power_path)
+            power_artifact["size_bytes"] = power_path.stat().st_size
+            self.assertTrue(
+                verify_physical_evidence_manifest(raw_mutation, source_paths)["power_rf"]
+            )
+
+    def test_physical_evidence_artifacts_must_match_candidate_git_index(self) -> None:
+        from tools.verify_kc2_x3_v2 import _git_index_artifact_errors
+
+        with TemporaryDirectory(dir=ROOT) as temporary:
+            untracked = Path(temporary) / "plausible-but-untracked-measurement.json"
+            untracked.write_text("{}\n", encoding="utf-8", newline="\n")
+            errors = _git_index_artifact_errors(
+                untracked,
+                sha256_file(untracked),
+                label="physical measurement",
+            )
+            self.assertTrue(any("not tracked" in error for error in errors), errors)
+
+    def test_positive_outline_verification_is_read_only_and_checks_bound_report(self) -> None:
+        from tools.verify_kc2_x3_v2 import _verify_positive_order_artifact_suite
+
+        completed = subprocess.CompletedProcess([], 0, stdout="", stderr="")
+        with (
+            patch(
+                "tools.verify_kc2_x3_v2.subprocess.run",
+                return_value=completed,
+            ) as run_mock,
+            patch("tools.verify_kc2_x3_v2.shutil.which", return_value="py"),
+        ):
+            self.assertEqual(_verify_positive_order_artifact_suite(), [])
+        commands = [call.args[0] for call in run_mock.call_args_list]
+        outline_commands = [
+            command
+            for command in commands
+            if "analyze_outline" in " ".join(str(part) for part in command)
+        ]
+        self.assertEqual(len(outline_commands), 1)
+        outline_command = outline_commands[0]
+        self.assertIn("-c", outline_command)
+        inline_code = outline_command[outline_command.index("-c") + 1]
+        self.assertIn("bound==actual", inline_code)
+        self.assertNotIn("write_text", inline_code)
+        self.assertNotIn("tools.verify_kc2_x3_v2_outline", [
+            outline_command[index + 1]
+            for index, value in enumerate(outline_command[:-1])
+            if value == "-m"
+        ])
+
     def test_release_gate_rejects_stale_m1_4_mount_manifest(self) -> None:
         with TemporaryDirectory(dir=ROOT) as temporary:
             for label, mutate in (
@@ -2681,6 +5111,28 @@ class V2GeneratorTests(unittest.TestCase):
                 (
                     "premature order state",
                     lambda record: record.update(order_ready=True),
+                ),
+                (
+                    "historical low head envelope",
+                    lambda record: record["screw_head_envelope_mm"].update(
+                        diameter=2.0, height=0.5
+                    ),
+                ),
+                (
+                    "low head style",
+                    lambda record: record.update(screw_head_style="ultra_low"),
+                ),
+                (
+                    "flat head style",
+                    lambda record: record.update(screw_head_style="flat"),
+                ),
+                (
+                    "countersunk head style",
+                    lambda record: record.update(screw_head_style="countersunk"),
+                ),
+                (
+                    "missing head reserve",
+                    lambda record: record.pop("screw_head_xy_reserve_mm", None),
                 ),
             ):
                 with self.subTest(label=label):
@@ -2755,8 +5207,8 @@ class V2GeneratorTests(unittest.TestCase):
             output_dir = Path(temporary) / "x3-v2"
             generator.generate_variant("x3-v2", output_dir=output_dir)
             for side, expected in (
-                ("left", {"imported": 539, "removed": 25, "added": 66, "final": 580}),
-                ("right", {"imported": 703, "removed": 27, "added": 63, "final": 739}),
+                ("left", {"imported": 539, "removed": 34, "added": 85, "final": 590}),
+                ("right", {"imported": 703, "removed": 38, "added": 99, "final": 764}),
             ):
                 with self.subTest(side=side):
                     board_path = (
@@ -2876,6 +5328,100 @@ class V2GeneratorTests(unittest.TestCase):
                         ),
                         generator.X3_V2_CONTROLLER_SERVICE_POSITIONS_MM[side]["reset"],
                     )
+
+            for side, original, replacement in (
+                ("left", "(place MH1 1426125 -679000", "(place MH1 1426125 -679001"),
+                ("right", "(place MH1 716875 -679000", "(place MH1 716875 -679001"),
+            ):
+                with self.subTest(side=side, stale_mounting_geometry=True):
+                    board_path = (
+                        output_dir
+                        / f"kc2_{side}-x3-v2"
+                        / f"kc2_{side}-x3-v2.kicad_pcb"
+                    )
+                    board = pcbnew.LoadBoard(str(board_path))
+                    for item in list(board.GetTracks()):
+                        board.Delete(item)
+                    session = (
+                        V2_ROOT
+                        / "autoroute"
+                        / f"kc2_{side}-x3-v2-70-es1b-controller-r3.ses"
+                    )
+                    source = session.read_text(encoding="utf-8")
+                    self.assertEqual(source.count(original), 1)
+                    mutated_session = Path(temporary) / f"mutated-mount-{side}.ses"
+                    mutated_session.write_text(
+                        source.replace(original, replacement, 1),
+                        encoding="utf-8",
+                    )
+                    with self.assertRaisesRegex(
+                        RuntimeError,
+                        f"reviewed {side} controller-compaction session moved the P1 mounting pattern",
+                    ):
+                        import_reviewed_controller_compact_session(
+                            board,
+                            mutated_session,
+                            side,
+                        )
+
+    def test_p1_rounded_head_detours_require_exact_signatures_and_are_idempotent(self) -> None:
+        import pcbnew
+
+        from tools import generate_kc2_pcbs as generator
+        from tools.finalize_kc2_x3_v2_routes import (
+            P1_ROUNDED_HEAD_ROUTE_ADDITIONS,
+            P1_ROUNDED_HEAD_ROUTE_REMOVALS,
+            _add_route_spec,
+            _route_signature,
+            apply_p1_rounded_head_route_detours,
+        )
+
+        with TemporaryDirectory(dir=ROOT) as temporary:
+            output_dir = Path(temporary) / "x3-v2"
+            generator.generate_variant("x3-v2", output_dir=output_dir)
+            for side in ("left", "right"):
+                with self.subTest(side=side):
+                    board_path = (
+                        output_dir
+                        / f"kc2_{side}-x3-v2"
+                        / f"kc2_{side}-x3-v2.kicad_pcb"
+                    )
+                    board = pcbnew.LoadBoard(str(board_path))
+                    for item in list(board.GetTracks()):
+                        board.Delete(item)
+                    for spec in P1_ROUNDED_HEAD_ROUTE_REMOVALS[side]:
+                        _add_route_spec(board, spec)
+
+                    first = apply_p1_rounded_head_route_detours(board, side)
+                    second = apply_p1_rounded_head_route_detours(board, side)
+                    signatures = Counter(
+                        _route_signature(item) for item in board.GetTracks()
+                    )
+                    self.assertEqual(
+                        first,
+                        {
+                            "removed": len(P1_ROUNDED_HEAD_ROUTE_REMOVALS[side]),
+                            "added": len(P1_ROUNDED_HEAD_ROUTE_ADDITIONS[side]),
+                        },
+                    )
+                    self.assertEqual(second, {"removed": 0, "added": 0})
+                    self.assertFalse(
+                        set(P1_ROUNDED_HEAD_ROUTE_REMOVALS[side]) & set(signatures)
+                    )
+                    self.assertTrue(
+                        set(P1_ROUNDED_HEAD_ROUTE_ADDITIONS[side]) <= set(signatures)
+                    )
+
+                    stale = pcbnew.LoadBoard(str(board_path))
+                    for item in list(stale.GetTracks()):
+                        stale.Delete(item)
+                    for spec in P1_ROUNDED_HEAD_ROUTE_REMOVALS[side][1:]:
+                        _add_route_spec(stale, spec)
+                    with self.assertRaisesRegex(
+                        RuntimeError,
+                        f"reviewed {side} P1 rounded-head detour precondition failed",
+                    ):
+                        apply_p1_rounded_head_route_detours(stale, side)
 
     def test_controller_idempotent_path_rejects_service_rotation_and_pad_disconnects(self) -> None:
         import pcbnew
@@ -3257,6 +5803,25 @@ class V2GeneratorTests(unittest.TestCase):
 
     def test_product_spec_uses_current_70_key_v5_quantities(self) -> None:
         product_spec = PRODUCT_SPEC.read_text(encoding="utf-8")
+        spec_index = (ROOT / "docs/spec/00.index.md").read_text(encoding="utf-8")
+
+        self.assertIn(
+            "| Current routes | Left `590`, SHA-256 prefix `94c49ca2749d`; right `764`, SHA-256 prefix `b54d29e27f1f` |",
+            spec_index,
+        )
+        self.assertNotIn(
+            "| Current routes | Left `580`, SHA-256 prefix `7eda6d670a2f`; right `739`, SHA-256 prefix `fc2a819d9ce8` |",
+            spec_index,
+        )
+        self.assertIn(
+            "| Left PCB | `hardware/kicad/draft/x3-v2/kc2_left-x3-v2/kc2_left-x3-v2.kicad_pcb` |",
+            spec_index,
+        )
+        self.assertIn(
+            "| Right PCB | `hardware/kicad/draft/x3-v2/kc2_right-x3-v2/kc2_right-x3-v2.kicad_pcb` |",
+            spec_index,
+        )
+        self.assertNotIn("C:\\Work\\git\\_Snoworca\\kc2", spec_index)
 
         current_claims = (
             "디지털 검증을 통과했지만 물리 검증 대기 중인 `kc2-x3-v2` draft는 `CON-ARCH-004`의 70-key v5 배열(왼쪽 31, 오른쪽 39)",
@@ -3264,7 +5829,7 @@ class V2GeneratorTests(unittest.TestCase):
             "current X3 V2 v5 rows 15 / 14 / 14 / 15 / 12",
             "active draft `kc2-x3-v2` uses exact Jingdao `ES1B`, LCSC `C437840`, Eleparts goods `9475342`, bottom-side SMA at each of its 70 positions",
             "물리 검증 대기 중인 `kc2-x3-v2` draft는 `CON-ARCH-004`의 70개 switch/diode 배치를 기준으로 별도 검증한다",
-            "| KC2 X3 V2 target switch | Kailh Deep Sea Whale low-profile Choc V2 / PG1353-class, 70개.",
+            "| KC2 X3 V2 target switch | Kailh low-profile Choc V2 / PG1353-family, 70개.",
             "| KC2 X3 V2 socket | Kailh Choc hot-swap socket `CPG135001S30` class, 70개",
             "| KC2 X3 V2 MX alternative | Cherry MX-style 5-pin PCB-mount switches, 70개",
         )

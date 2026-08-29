@@ -426,8 +426,11 @@ class V2FirmwareContractTests(unittest.TestCase):
         self.assertIn("`0.3282 mm`", housing_readme)
         self.assertIn("`1.0250 mm`", housing_readme)
         self.assertIn("retained 14/11 distributed supports", housing_readme)
-        self.assertIn("25/25 tests", srs)
-        self.assertIn("physical Z, fit, fastener, deflection, service, and RF gates remain open", srs)
+        self.assertIn("29/29 tests", srs)
+        self.assertIn(
+            "physical Z, fit, exact fastener, keycap-skirt, deflection, service, and RF gates remain open",
+            srs,
+        )
         self.assertNotIn("Seventeen focused housing tests pass", srs)
         self.assertNotIn("Fourteen focused housing tests pass", srs)
         self.assertNotIn("Twelve focused housing tests pass", srs)
@@ -440,36 +443,36 @@ class V2FirmwareContractTests(unittest.TestCase):
                     "dsn_role": "current_mh_compact_controller_trackless_routing_input",
                     "dsn_mounting_hole_count": 8,
                     "session_source_dsn": "hardware/kicad/draft/x3-v2/autoroute/kc2_left-x3-v2-70-es1b-controller-r3.dsn",
-                    "session_source_dsn_sha256": "0f1da995d92a6a121142125933e21ce0c1f1db05e5c1ef924f2a7c6dd38fa3db",
+                    "session_source_dsn_sha256": "b0f75b6eee7d8b63fd295c058106630383f4cebb1a5a132233fae480bd8a8abd",
                     "ses": "hardware/kicad/draft/x3-v2/autoroute/kc2_left-x3-v2-70-es1b-controller-r3.ses",
                     "ses_role": "reviewed_matrix_import_plus_exact_edge_cleanup_and_power_reset_service_routing",
-                    "dsn_sha256": "0f1da995d92a6a121142125933e21ce0c1f1db05e5c1ef924f2a7c6dd38fa3db",
-                    "ses_sha256": "41ba7adf4db9881cf6065b592fd81127de5753b7b23a94012a16e1230cdbf0b8",
+                    "dsn_sha256": "b0f75b6eee7d8b63fd295c058106630383f4cebb1a5a132233fae480bd8a8abd",
+                    "ses_sha256": "b4223b6e3ad937e9523a3777ab0657a97aa788b17ca3c78cd62036b3a5d48c4e",
                     "dsn_default_clearance_internal_units": 300,
                     "dsn_clearances_internal_units": {
                         "global": 300,
                         "kicad_default": 300,
                     },
-                    "final_track_via_count": 580,
-                    "route_digest_sha256": "7eda6d670a2fd3b99ab06548be4c635dbff03904ec251197f547110864fcb5e6",
+                    "final_track_via_count": 590,
+                    "route_digest_sha256": "94c49ca2749d83cd05969e46b2afb6b610c2067ce6a2acad84790a19e081be18",
                 },
                 "right": {
                     "dsn": "hardware/kicad/draft/x3-v2/autoroute/kc2_right-x3-v2-70-es1b-controller-r3.dsn",
                     "dsn_role": "current_mh_compact_controller_trackless_routing_input",
                     "dsn_mounting_hole_count": 10,
                     "session_source_dsn": "hardware/kicad/draft/x3-v2/autoroute/kc2_right-x3-v2-70-es1b-controller-r3.dsn",
-                    "session_source_dsn_sha256": "45f3bbf61f54d417ab97aeff137aa91db5f323a24ff3473011aaa84ccc9d7e45",
+                    "session_source_dsn_sha256": "bcadb826bcc0d28672e9a6124bbe1b31ec6272809f1100c2d941623d47876013",
                     "ses": "hardware/kicad/draft/x3-v2/autoroute/kc2_right-x3-v2-70-es1b-controller-r3.ses",
                     "ses_role": "reviewed_matrix_import_plus_exact_edge_cleanup_and_power_reset_service_routing",
-                    "dsn_sha256": "45f3bbf61f54d417ab97aeff137aa91db5f323a24ff3473011aaa84ccc9d7e45",
-                    "ses_sha256": "58823efa51c642107623d60180f2431eff572c50a11f1dbad8091c35e82ef2fb",
+                    "dsn_sha256": "bcadb826bcc0d28672e9a6124bbe1b31ec6272809f1100c2d941623d47876013",
+                    "ses_sha256": "0e986c0013ea66d5a4f97ebf8b89001e91da4539f1f1e4fac8cfece0a953f445",
                     "dsn_default_clearance_internal_units": 300,
                     "dsn_clearances_internal_units": {
                         "global": 300,
                         "kicad_default": 300,
                     },
-                    "final_track_via_count": 739,
-                    "route_digest_sha256": "fc2a819d9ce840ffc0c9e9b5ac6fc7dac54d51a441addb5b0005b4fa89cdbf1a",
+                    "final_track_via_count": 764,
+                    "route_digest_sha256": "b54d29e27f1f319863ec5808b31188420ad4c47fa001d21ece98db80044c6946",
                 },
             },
         )

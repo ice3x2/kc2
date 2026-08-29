@@ -7,8 +7,20 @@ from zipfile import ZIP_DEFLATED, ZipFile
 
 if __package__:
     from tools.canonical_hash import HASH_POLICY, sha256_file
+    from tools.kc2_x3_v2_output_geometry import (
+        REQUIREMENT_IDS,
+        bom_csv_bytes,
+        build_board_bom,
+        parse_board,
+    )
 else:
     from canonical_hash import HASH_POLICY, sha256_file
+    from kc2_x3_v2_output_geometry import (
+        REQUIREMENT_IDS,
+        bom_csv_bytes,
+        build_board_bom,
+        parse_board,
+    )
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -80,14 +92,31 @@ def export_product(product: str, board: Path) -> dict[str, object]:
             str(board),
         ]
     )
+    source_board_sha256 = sha256_file(board)
+    bom: dict[str, str] | None = None
+    if product in {"left", "right"}:
+        bom_json = output_dir / f"{board.stem}-bom.json"
+        bom_csv = output_dir / f"{board.stem}-bom.csv"
+        bom_payload = build_board_bom(
+            product,
+            str(board.relative_to(ROOT)),
+            source_board_sha256,
+            parse_board(board),
+        )
+        bom_json.write_text(json.dumps(bom_payload, indent=2) + "\n", encoding="utf-8")
+        bom_csv.write_bytes(bom_csv_bytes(bom_payload))
+        bom = {
+            "json": str(bom_json.relative_to(ROOT)),
+            "csv": str(bom_csv.relative_to(ROOT)),
+        }
     files = sorted(path for path in output_dir.iterdir() if path.is_file())
     archive = FAB_ROOT / f"kc2_x3_v2_{product}.zip"
     with ZipFile(archive, "w", compression=ZIP_DEFLATED, compresslevel=9) as package:
         for path in files:
             package.write(path, arcname=path.name)
-    return {
+    result = {
         "board": str(board.relative_to(ROOT)),
-        "source_board_sha256": sha256_file(board),
+        "source_board_sha256": source_board_sha256,
         "key_count": {"left": 31, "right": 39, "coupon": 3}[product],
         "output_dir": str(output_dir.relative_to(ROOT)),
         "archive": str(archive.relative_to(ROOT)),
@@ -101,6 +130,9 @@ def export_product(product: str, board: Path) -> dict[str, object]:
             for path in files
         ],
     }
+    if bom is not None:
+        result["bom"] = bom
+    return result
 
 
 def main() -> None:
@@ -112,7 +144,7 @@ def main() -> None:
         for product, board in PRODUCTS.items()
     }
     manifest = {
-        "requirement": "CON-ARCH-004",
+        "requirement_ids": list(REQUIREMENT_IDS),
         "hash_policy": HASH_POLICY,
         "variant": "x3-v2",
         "status": "draft_not_orderable_pending_physical_coupon",

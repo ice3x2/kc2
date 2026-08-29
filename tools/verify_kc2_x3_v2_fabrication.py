@@ -9,8 +9,26 @@ from zipfile import ZipFile
 
 if __package__:
     from tools.canonical_hash import HASH_POLICY, sha256_bytes, sha256_file
+    from tools.kc2_x3_v2_output_geometry import (
+        REQUIREMENT_IDS,
+        bom_csv_bytes,
+        build_board_bom,
+        parse_board,
+        source_control_flashes,
+        source_drill_geometry,
+        source_j_bat_markings,
+    )
 else:
     from canonical_hash import HASH_POLICY, sha256_bytes, sha256_file
+    from kc2_x3_v2_output_geometry import (
+        REQUIREMENT_IDS,
+        bom_csv_bytes,
+        build_board_bom,
+        parse_board,
+        source_control_flashes,
+        source_drill_geometry,
+        source_j_bat_markings,
+    )
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -61,99 +79,119 @@ EXPECTED_MOUNTING_REFERENCE_LABELS = {
 }
 EXPECTED_MOUNTING_REFERENCE_CENTERS_MM = {
     "left": {
-        "MH1": (142.6125, 68.0),
+        "MH1": (142.6125, 67.9),
         "MH2": (128.6125, 86.5),
-        "MH3": (100.1125, 93.5),
-        "MH4": (57.1125, 99.0),
-        "MH5": (133.6125, 131.5),
+        "MH3": (108.5125, 87.0),
+        "MH4": (57.4125, 99.0),
+        "MH5": (124.7125, 125.1),
         "MH6": (55.1125, 144.0),
         "MH7": (165.6125, 145.0),
         "MH8": (102.6125, 147.0),
     },
     "right": {
-        "MH1": (71.6875, 68.0),
-        "MH2": (181.1875, 85.5),
-        "MH3": (147.6875, 93.5),
-        "MH4": (109.6875, 96.5),
+        "MH1": (71.6875, 67.9),
+        "MH2": (181.0875, 85.5),
+        "MH3": (156.1875, 87.0),
+        "MH4": (109.6875, 104.8),
         "MH5": (71.6875, 105.5),
-        "MH6": (42.1875, 106.0),
-        "MH7": (181.1875, 134.5),
-        "MH8": (143.1875, 134.5),
-        "MH9": (51.6875, 144.0),
+        "MH6": (62.0875, 69.3),
+        "MH7": (181.1875, 143.0),
+        "MH8": (143.0875, 143.0),
+        "MH9": (66.8875, 153.4),
         "MH10": (95.6875, 147.0),
     },
     "coupon": {},
 }
+EXPECTED_J_BAT_MARKING_GLYPHS = {
+    "B+": {
+        "stroke_count": 20,
+        "stroke_width_mm": 0.12,
+        "centerline_bbox_relative_mm": (-0.704762, -0.436145, 0.704762, 0.363855),
+        "ink_bbox_relative_mm": (-0.764762, -0.496145, 0.764762, 0.423855),
+        "centerline_height_mm": 0.8,
+        "ink_height_mm": 0.92,
+        "signature": "4774d5c0746c37505913056816ae981e7522c6a8822d2f50b128d51cff2c5a92",
+    },
+    "B-/GND": {
+        "stroke_count": 51,
+        "stroke_width_mm": 0.12,
+        "centerline_bbox_relative_mm": (-2.342857, -0.47424, 2.380952, 0.554331),
+        "ink_bbox_relative_mm": (-2.402857, -0.53424, 2.440952, 0.614331),
+        "centerline_height_mm": 1.028571,
+        "ink_height_mm": 1.148571,
+        "signature": "29d82abfc452d9e43eb6562ac6496903d9305ecddbe3330047dfb6ef62179fe6",
+    },
+}
 # Golden KiCad 10 vector-font records bind the actual plotted glyph strokes,
 # not merely the Gerber X2 component attributes on mounting-hole flashes.
-_COMMON_GLYPH_CENTERLINE_BBOX_MM = (-1.066667, -0.435105, 1.104761, 0.364895)
-_COMMON_GLYPH_INK_BBOX_MM = (-1.116667, -0.485105, 1.154761, 0.414895)
+_COMMON_GLYPH_CENTERLINE_BBOX_MM = (-1.066667, -0.437705, 1.104761, 0.362295)
+_COMMON_GLYPH_INK_BBOX_MM = (-1.141667, -0.512705, 1.179761, 0.437295)
 _MOUNTING_GLYPH_GOLDEN_DATA = {
     "MH1": (
         12,
         _COMMON_GLYPH_CENTERLINE_BBOX_MM,
         _COMMON_GLYPH_INK_BBOX_MM,
-        "8e5082a8177d787c3db7d945ae6adc77fbdc378d90ab27843d3ebd817fdeeaae",
+        "4db699b5215900fda1bbcb88a7db88ee439cf9355d3c8a6befc5b3472ea22be2",
     ),
     "MH2": (
         17,
         _COMMON_GLYPH_CENTERLINE_BBOX_MM,
         _COMMON_GLYPH_INK_BBOX_MM,
-        "241c70f56df447e1a216ceccb958af2dac9d8fa6c383f4fd6200f629c22baefb",
+        "33fefad39c833d0e3150a4bf7089b54c421f1174f23ef6842f6f2d1672749ccd",
     ),
     "MH3": (
         20,
         _COMMON_GLYPH_CENTERLINE_BBOX_MM,
         _COMMON_GLYPH_INK_BBOX_MM,
-        "56c595efa15d153a37a68aa9a02e3db453e34a1da62efc9eb44e3b60d66f85f0",
+        "e4c71a011b8f48a2a32dcc1fd65ba122037ad1faaab80ce7c8c43166cdb300d3",
     ),
     "MH4": (
         10,
-        (-1.066667, -0.4732, 1.142857, 0.364895),
-        (-1.116667, -0.5232, 1.192857, 0.414895),
-        "3ab23741b98fef79304e79673ee7b18835e8c4e5259a6cca9d150e4b3abefa05",
+        (-1.066667, -0.4758, 1.142857, 0.362295),
+        (-1.141667, -0.5508, 1.217857, 0.437295),
+        "4dac779eeddfc5d43dbcbfa1d6baa1f8afa734441327d84c9953c7939a1fe44e",
     ),
     "MH5": (
         22,
         _COMMON_GLYPH_CENTERLINE_BBOX_MM,
         _COMMON_GLYPH_INK_BBOX_MM,
-        "6dbcd3cddf691021cec560b087b01d21c41c78b44bf1acd576f4192e323b4d8b",
+        "64da6e610ceb26f0dff9e43749671be426e5efcc27c53474e6db0e8ca59afc43",
     ),
     "MH6": (
         28,
         _COMMON_GLYPH_CENTERLINE_BBOX_MM,
         _COMMON_GLYPH_INK_BBOX_MM,
-        "880a349c18302894d8e78fa3aff5305265851d8dc540df9cdd3caad53035a34a",
+        "7d0d42aeeab10871a4efc19c06fbe0665b260fcfb9bec942da1a2de6778245e0",
     ),
     "MH7": (
         9,
-        (-1.066667, -0.435105, 1.142857, 0.364895),
-        (-1.116667, -0.485105, 1.192857, 0.414895),
-        "b7a5c88e39c1e63deb2be54f69fd244e3cf6c190d52df9bc152d266807075a7a",
+        (-1.066667, -0.437705, 1.142857, 0.362295),
+        (-1.141667, -0.512705, 1.217857, 0.437295),
+        "42143a50981460c18a7a61a075c8503671198e6d64c449c1bed5ce640f43781b",
     ),
     "MH8": (
         38,
         _COMMON_GLYPH_CENTERLINE_BBOX_MM,
         _COMMON_GLYPH_INK_BBOX_MM,
-        "55380bc1fc823280cc279df87ec52e87c29bf53391517d4aec43fb12f885e9db",
+        "83fc601e326cc86fd9849f097d77f58063fc4772a8f467c53768ed55a0790cfa",
     ),
     "MH9": (
         28,
         _COMMON_GLYPH_CENTERLINE_BBOX_MM,
         _COMMON_GLYPH_INK_BBOX_MM,
-        "5f821ce10dc89b3c37130ad1b9abea26b9907caa7537b4b8211b1a8e145a31fc",
+        "638ee835c64a8bc059d126f3b8d683e40b7328a1a07be7071a40aff8618aa88d",
     ),
     "MH10": (
         32,
-        (-1.447619, -0.435105, 1.485714, 0.364895),
-        (-1.497619, -0.485105, 1.535714, 0.414895),
-        "7fe358165a4156cc535c4f6decdf82ea218ed123cdbac57f412bf1a12f04a392",
+        (-1.447619, -0.437705, 1.485714, 0.362295),
+        (-1.522619, -0.512705, 1.560714, 0.437295),
+        "769a8e4d73932593a8c96c0799782b50a7d633d62d7f616606211604dc89bc04",
     ),
 }
 EXPECTED_MOUNTING_REFERENCE_GLYPHS = {
     reference: {
         "stroke_count": stroke_count,
-        "stroke_width_mm": 0.1,
+        "stroke_width_mm": 0.15,
         "centerline_bbox_relative_mm": centerline_bbox,
         "ink_bbox_relative_mm": ink_bbox,
         "centerline_height_mm": round(centerline_bbox[3] - centerline_bbox[1], 6),
@@ -171,6 +209,7 @@ GERBER_OPERATION_RE = re.compile(r"(?:X-?\d+)?(?:Y-?\d+)?D0[123]\*")
 GERBER_DRAW_RE = re.compile(
     r"^(?:X(?P<x>-?\d+))?(?:Y(?P<y>-?\d+))?(?P<operation>D0[123])\*$"
 )
+GEOMETRY_TOLERANCE_MM = 0.002
 
 
 def parse_drill_tools(report: str) -> dict[str, dict[str, int]]:
@@ -185,6 +224,156 @@ def parse_drill_tools(report: str) -> dict[str, dict[str, int]]:
         if section and match:
             result[section][match.group(1)] = int(match.group(2))
     return result
+
+
+def inspect_excellon(payload: bytes) -> list[dict[str, object]]:
+    text = payload.decode("ascii", errors="replace")
+    tools = {
+        int(tool): float(diameter)
+        for tool, diameter in re.findall(r"(?m)^T(\d+)C([0-9.]+)\r?$", text)
+    }
+    active_tool: int | None = None
+    records: list[dict[str, object]] = []
+    coordinate = r"X(-?[0-9.]+)Y(-?[0-9.]+)"
+    for line in text.splitlines():
+        tool_match = re.fullmatch(r"T(\d+)", line)
+        if tool_match:
+            active_tool = int(tool_match.group(1))
+            continue
+        if active_tool not in tools:
+            continue
+        slot_match = re.fullmatch(coordinate + r"G85" + coordinate, line)
+        if slot_match:
+            x1, y1, x2, y2 = map(float, slot_match.groups())
+            y1, y2 = -y1, -y2
+            diameter = tools[active_tool]
+            records.append(
+                {
+                    "center": (round((x1 + x2) / 2, 6), round((y1 + y2) / 2, 6)),
+                    "shape": "slot",
+                    "size": (
+                        round(abs(x2 - x1) + diameter, 6),
+                        round(abs(y2 - y1) + diameter, 6),
+                    ),
+                }
+            )
+            continue
+        point_match = re.fullmatch(coordinate, line)
+        if point_match:
+            x, y = map(float, point_match.groups())
+            diameter = tools[active_tool]
+            records.append(
+                {
+                    "center": (round(x, 6), round(-y, 6)),
+                    "shape": "round",
+                    "size": (diameter, diameter),
+                }
+            )
+    records.sort(key=lambda item: (item["size"], item["center"]))
+    return records
+
+
+def _aperture_size(kind: str, parameters: str) -> tuple[float, float] | None:
+    values = [float(value) for value in re.findall(r"-?[0-9.]+", parameters)]
+    if not values:
+        return None
+    if kind == "C":
+        return (values[0], values[0])
+    if kind in {"R", "O"} and len(values) >= 2:
+        return (values[0], values[1])
+    if kind == "RoundRect" and len(values) >= 9:
+        radius = values[0]
+        xs, ys = values[1::2], values[2::2]
+        return (
+            round(max(xs) - min(xs) + 2 * radius, 6),
+            round(max(ys) - min(ys) + 2 * radius, 6),
+        )
+    return None
+
+
+def inspect_gerber_flashes(payload: bytes) -> list[dict[str, object]]:
+    text = payload.decode("ascii", errors="replace")
+    format_match = re.search(r"%FSLAX\d(\d)Y\d(\d)\*%", text)
+    if not format_match or format_match.group(1) != format_match.group(2):
+        return []
+    scale = 10 ** int(format_match.group(1))
+    apertures: dict[int, tuple[float, float]] = {}
+    for code, kind, parameters in re.findall(r"%ADD(\d+)([A-Za-z]+),([^*]+)\*%", text):
+        size = _aperture_size(kind, parameters)
+        if size:
+            apertures[int(code)] = size
+    active_aperture: int | None = None
+    reference = ""
+    pad = ""
+    records: list[dict[str, object]] = []
+    for line in text.splitlines():
+        aperture_match = re.fullmatch(r"D(\d+)\*", line)
+        if aperture_match and int(aperture_match.group(1)) >= 10:
+            active_aperture = int(aperture_match.group(1))
+            continue
+        component_match = re.fullmatch(r"%TO\.C,([^*]+)\*%", line)
+        if component_match:
+            reference, pad = component_match.group(1), ""
+            continue
+        pad_match = re.fullmatch(r"%TO\.P,([^,]+),([^*]+)\*%", line)
+        if pad_match:
+            reference, pad = pad_match.groups()
+            continue
+        if line == "%TD*%":
+            reference, pad = "", ""
+            continue
+        flash_match = re.fullmatch(r"X(-?\d+)Y(-?\d+)D03\*", line)
+        if flash_match and active_aperture in apertures:
+            x, y = map(int, flash_match.groups())
+            records.append(
+                {
+                    "reference": reference,
+                    "pad": pad,
+                    "center": (round(x / scale, 6), round(-y / scale, 6)),
+                    "size": apertures[active_aperture],
+                }
+            )
+    return records
+
+
+def _geometry_delta_errors(
+    expected: list[dict[str, object]],
+    actual: list[dict[str, object]],
+    label: str,
+) -> list[str]:
+    remaining = list(actual)
+    errors: list[str] = []
+
+    def close_pair(left: tuple[float, float], right: tuple[float, float]) -> bool:
+        return all(abs(a - b) <= GEOMETRY_TOLERANCE_MM for a, b in zip(left, right))
+
+    for wanted in expected:
+        match_index = next(
+            (
+                index
+                for index, candidate in enumerate(remaining)
+                if wanted.get("shape") == candidate.get("shape")
+                and close_pair(wanted["center"], candidate["center"])
+                and close_pair(wanted["size"], candidate["size"])
+                and (
+                    not candidate.get("reference")
+                    or candidate.get("reference") == wanted.get("reference")
+                )
+                and (not candidate.get("pad") or candidate.get("pad") == wanted.get("pad"))
+            ),
+            None,
+        )
+        if match_index is None:
+            errors.append(
+                f"{label}: missing {wanted.get('reference', '')}/{wanted.get('pad', '')} "
+                f"{wanted['shape'] if 'shape' in wanted else 'flash'} "
+                f"at {wanted['center']} size {wanted['size']}"
+            )
+        else:
+            remaining.pop(match_index)
+    if remaining:
+        errors.append(f"{label}: {len(remaining)} unexpected geometries; first={remaining[0]}")
+    return errors
 
 
 def inspect_gerber(payload: bytes) -> dict[str, object]:
@@ -358,6 +547,41 @@ def inspect_mounting_reference_glyphs(
     return {"glyphs": glyphs, "errors": errors}
 
 
+def inspect_j_bat_marking_glyphs(
+    payload: bytes, board: dict[str, object]
+) -> dict[str, object]:
+    source = source_j_bat_markings(board)
+    errors = list(source["errors"])
+    all_strokes = _gerber_linear_strokes(payload)
+    glyphs: dict[str, dict[str, object]] = {}
+    for text, expected in EXPECTED_J_BAT_MARKING_GLYPHS.items():
+        marking = source["markings"].get(text)
+        if marking is None:
+            continue
+        anchor = marking["center"]
+        bbox = expected["centerline_bbox_relative_mm"]
+        half_width = max(abs(bbox[0]), abs(bbox[2])) + 0.02
+        half_height = max(abs(bbox[1]), abs(bbox[3])) + 0.02
+        local_strokes = [
+            stroke
+            for stroke in all_strokes
+            if all(
+                abs(x - anchor[0]) <= half_width
+                and abs(y - anchor[1]) <= half_height
+                for x, y in ((stroke[0], stroke[1]), (stroke[2], stroke[3]))
+            )
+        ]
+        actual = _normalized_glyph_record(local_strokes, anchor)
+        glyphs[text] = actual
+        mismatches = [field for field in expected if actual[field] != expected[field]]
+        if mismatches:
+            errors.append(
+                f"J_BAT1 F.SilkS {text!r} plotted glyph mismatch in "
+                f"{', '.join(mismatches)}"
+            )
+    return {"glyphs": glyphs, "errors": errors}
+
+
 def source_board_via_drills(path: Path) -> dict[str, int]:
     if not path.is_file():
         return {}
@@ -386,6 +610,10 @@ def analyze_fabrication(manifest_path: Path = MANIFEST, root: Path = ROOT) -> di
         source_board = root / details["board"]
         output_dir = root / details["output_dir"]
         expected_drills = expected_drill_tools(product, source_board)
+        board_geometry = parse_board(source_board) if source_board.is_file() else None
+        expected_source_drills = (
+            source_drill_geometry(board_geometry) if board_geometry is not None else {"PTH": [], "NPTH": []}
+        )
         entries: list[str] = []
         archive_digest = ""
         file_hash_mismatches: list[str] = []
@@ -395,6 +623,11 @@ def analyze_fabrication(manifest_path: Path = MANIFEST, root: Path = ROOT) -> di
         gerber_geometry_errors: list[str] = []
         mounting_reference_glyphs: dict[str, dict[str, object]] = {}
         mounting_reference_glyph_errors: list[str] = []
+        j_bat_marking_glyphs: dict[str, dict[str, object]] = {}
+        j_bat_marking_errors: list[str] = []
+        drill_source_geometry_errors: list[str] = []
+        gerber_source_geometry_errors: list[str] = []
+        bom_errors: list[str] = []
         if archive.is_file():
             archive_digest = sha256_file(archive)
             with ZipFile(archive) as package:
@@ -411,6 +644,27 @@ def analyze_fabrication(manifest_path: Path = MANIFEST, root: Path = ROOT) -> di
                 )
                 if report_entry:
                     drill_tools = parse_drill_tools(package.read(report_entry).decode("utf-8"))
+                for plating, suffix in (("PTH", "-PTH.drl"), ("NPTH", "-NPTH.drl")):
+                    drill_entry = next((entry for entry in entries if entry.endswith(suffix)), None)
+                    if drill_entry is None:
+                        continue
+                    expected_geometry = expected_source_drills[plating]
+                    drill_source_geometry_errors.extend(
+                        _geometry_delta_errors(
+                            expected_geometry,
+                            inspect_excellon(package.read(drill_entry)),
+                            f"archive {plating}",
+                        )
+                    )
+                    extracted_drill = output_dir / drill_entry
+                    if extracted_drill.is_file():
+                        drill_source_geometry_errors.extend(
+                            _geometry_delta_errors(
+                                expected_geometry,
+                                inspect_excellon(extracted_drill.read_bytes()),
+                                f"extracted {plating}",
+                            )
+                        )
                 for layer, suffix in REQUIRED_SUFFIXES.items():
                     entry = next((name for name in entries if name.endswith(suffix)), None)
                     if entry is None:
@@ -428,6 +682,42 @@ def analyze_fabrication(manifest_path: Path = MANIFEST, root: Path = ROOT) -> di
                         gerber_geometry_errors.append(f"{layer}: no plotted geometry")
                     if not inspection["has_end_of_file"]:
                         gerber_geometry_errors.append(f"{layer}: missing M02 terminator")
+                    if board_geometry is not None and layer in {
+                        "F.Paste",
+                        "B.Cu",
+                        "B.Mask",
+                        "B.Paste",
+                    }:
+                        expected_flashes = source_control_flashes(board_geometry, layer)
+
+                        def selected_flashes(payload: bytes) -> list[dict[str, object]]:
+                            flashes = inspect_gerber_flashes(payload)
+                            return [
+                                flash
+                                for flash in flashes
+                                if (layer == "F.Paste" and flash["reference"] == "SW_RST1")
+                                or (
+                                    layer != "F.Paste"
+                                    and re.fullmatch(r"D\d+", str(flash["reference"]))
+                                )
+                            ]
+
+                        gerber_source_geometry_errors.extend(
+                            _geometry_delta_errors(
+                                expected_flashes,
+                                selected_flashes(package.read(entry)),
+                                f"archive {layer}",
+                            )
+                        )
+                        extracted_gerber = output_dir / entry
+                        if extracted_gerber.is_file():
+                            gerber_source_geometry_errors.extend(
+                                _geometry_delta_errors(
+                                    expected_flashes,
+                                    selected_flashes(extracted_gerber.read_bytes()),
+                                    f"extracted {layer}",
+                                )
+                            )
                     if layer == "F.Silkscreen":
                         glyph_inspection = inspect_mounting_reference_glyphs(
                             package.read(entry),
@@ -435,6 +725,23 @@ def analyze_fabrication(manifest_path: Path = MANIFEST, root: Path = ROOT) -> di
                         )
                         mounting_reference_glyphs = glyph_inspection["glyphs"]
                         mounting_reference_glyph_errors = glyph_inspection["errors"]
+                        if product in {"left", "right"} and board_geometry is not None:
+                            marking_inspection = inspect_j_bat_marking_glyphs(
+                                package.read(entry), board_geometry
+                            )
+                            j_bat_marking_glyphs = marking_inspection["glyphs"]
+                            j_bat_marking_errors.extend(
+                                f"archive {error}" for error in marking_inspection["errors"]
+                            )
+                            extracted_gerber = output_dir / entry
+                            if extracted_gerber.is_file():
+                                extracted_inspection = inspect_j_bat_marking_glyphs(
+                                    extracted_gerber.read_bytes(), board_geometry
+                                )
+                                j_bat_marking_errors.extend(
+                                    f"extracted {error}"
+                                    for error in extracted_inspection["errors"]
+                                )
         if EXPECTED_MOUNTING_REFERENCE_CENTERS_MM[product] and not mounting_reference_glyphs:
             mounting_reference_glyph_errors.append(
                 "F.Silkscreen: no mounting-reference glyph geometry"
@@ -452,6 +759,37 @@ def analyze_fabrication(manifest_path: Path = MANIFEST, root: Path = ROOT) -> di
             output_path = output_dir / item["name"]
             if not output_path.is_file() or sha256_file(output_path) != item["sha256"]:
                 output_file_hash_mismatches.append(item["name"])
+        if product in {"left", "right"}:
+            expected_bom = (
+                build_board_bom(
+                    product,
+                    details["board"],
+                    sha256_file(source_board),
+                    board_geometry,
+                )
+                if board_geometry is not None
+                else None
+            )
+            bom_details = details.get("bom", {})
+            json_path = root / bom_details.get("json", "<missing-bom-json>")
+            csv_path = root / bom_details.get("csv", "<missing-bom-csv>")
+            if not bom_details:
+                bom_errors.append("manifest product has no BOM paths")
+            if expected_bom is not None:
+                if not json_path.is_file():
+                    bom_errors.append("board-derived BOM JSON missing")
+                else:
+                    try:
+                        actual_bom = json.loads(json_path.read_text(encoding="utf-8"))
+                    except (OSError, ValueError) as error:
+                        bom_errors.append(f"BOM JSON parse failed: {error}")
+                    else:
+                        if actual_bom != expected_bom:
+                            bom_errors.append("BOM JSON does not match source-board inventory contract")
+                if not csv_path.is_file():
+                    bom_errors.append("board-derived BOM CSV missing")
+                elif csv_path.read_bytes() != bom_csv_bytes(expected_bom):
+                    bom_errors.append("BOM CSV does not match source-board inventory contract")
         products[product] = {
             "source_board_exists": source_board.is_file(),
             "source_board_sha256_matches": source_board.is_file()
@@ -473,13 +811,17 @@ def analyze_fabrication(manifest_path: Path = MANIFEST, root: Path = ROOT) -> di
             "source_board_via_drills_mm": source_board_via_drills(source_board),
             "expected_drill_tools_mm": expected_drills,
             "drill_geometry_matches": drill_tools == expected_drills,
+            "drill_source_geometry_errors": drill_source_geometry_errors,
             "gerber_layers": gerber_layers,
             "gerber_geometry_errors": gerber_geometry_errors,
+            "gerber_source_geometry_errors": gerber_source_geometry_errors,
             "mounting_reference_labels": gerber_layers.get("F.Silkscreen", {}).get(
                 "component_references", []
             ),
             "mounting_reference_glyphs": mounting_reference_glyphs,
             "mounting_reference_glyph_errors": mounting_reference_glyph_errors,
+            "j_bat_marking_glyphs": j_bat_marking_glyphs,
+            "j_bat_marking_errors": j_bat_marking_errors,
             "bottom_paste_flash_count": gerber_layers.get("B.Paste", {}).get(
                 "flash_count", 0
             ),
@@ -487,9 +829,12 @@ def analyze_fabrication(manifest_path: Path = MANIFEST, root: Path = ROOT) -> di
                 "flash_count", 0
             )
             == EXPECTED_BOTTOM_PASTE_FLASHES[product],
+            "bom_matches_source_board": not bom_errors if product in {"left", "right"} else None,
+            "bom_errors": bom_errors,
         }
     return {
-        "requirement": manifest["requirement"],
+        "requirement_ids": manifest.get("requirement_ids", []),
+        "requirement_ids_match": tuple(manifest.get("requirement_ids", ())) == REQUIREMENT_IDS,
         "hash_policy": manifest.get("hash_policy"),
         "hash_policy_matches": manifest.get("hash_policy") == HASH_POLICY,
         "variant": manifest.get("variant"),
@@ -505,6 +850,8 @@ def main() -> None:
     errors: list[str] = []
     if report["variant"] != "x3-v2":
         errors.append(f"unexpected variant {report['variant']!r}")
+    if not report["requirement_ids_match"]:
+        errors.append(f"requirement_ids must be {list(REQUIREMENT_IDS)!r}")
     if not report["hash_policy_matches"]:
         errors.append(f"hash policy must be {HASH_POLICY!r}")
     for product, details in report["products"].items():
@@ -533,6 +880,14 @@ def main() -> None:
             )
         if details["gerber_geometry_errors"]:
             errors.append(f"{product}: Gerber geometry {details['gerber_geometry_errors']}")
+        if details["drill_source_geometry_errors"]:
+            errors.append(
+                f"{product}: source/Excellon geometry {details['drill_source_geometry_errors']}"
+            )
+        if details["gerber_source_geometry_errors"]:
+            errors.append(
+                f"{product}: source/Gerber geometry {details['gerber_source_geometry_errors']}"
+            )
         if details["mounting_reference_labels"] != EXPECTED_MOUNTING_REFERENCE_LABELS[product]:
             errors.append(
                 f"{product}: F.Silkscreen MH labels {details['mounting_reference_labels']} "
@@ -553,6 +908,13 @@ def main() -> None:
                 f"{product}: B.Paste flashes={details['bottom_paste_flash_count']} "
                 f"expected={EXPECTED_BOTTOM_PASTE_FLASHES[product]}"
             )
+        if details["j_bat_marking_errors"]:
+            errors.append(
+                f"{product}: J_BAT1 F.Silkscreen marking "
+                f"{details['j_bat_marking_errors']}"
+            )
+        if product in {"left", "right"} and not details["bom_matches_source_board"]:
+            errors.append(f"{product}: BOM {details['bom_errors']}")
     if errors:
         raise SystemExit("FAIL: KC2 X3 V2 fabrication archives\n- " + "\n- ".join(errors))
     print(json.dumps(report, indent=2))

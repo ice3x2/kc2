@@ -164,6 +164,15 @@ X3_V2_RESET_Y_MM = 63.45
 X3_V2_POWER_Y_MM = 63.45
 X3_V2_RESET_ROTATIONS_DEGREES = {"left": 0.0, "right": 180.0}
 X3_V2_J_BAT1_ROTATIONS_DEGREES = {"left": 180.0, "right": 0.0}
+X3_V2_J_BAT1_ASSEMBLY_MARKINGS = {
+    "pad_1_marking": "B+",
+    "pad_2_marking": "B-/GND",
+    "nice_nano_equivalence": {
+        "battery_positive": "U1 RAW / NN_B+",
+        "battery_negative": "U1 GND_C / GND",
+        "source": "https://nicekeyboards.com/docs/nice-nano/",
+    },
+}
 X3_V2_BATTERY_SIZE_MM = (30.0, 12.0, 3.0)
 X3_V2_POWER_SWITCH_BODY_SIZE_MM = (10.0, 2.5, 6.4)
 X3_V2_POWER_SWITCH_ACTUATOR_TRAVEL_MM = 1.6
@@ -178,6 +187,18 @@ X3_V2_POWER_SWITCH_MODEL = (
     ROOT / "third_party/kc2.3dshapes/SW_IMMS_12V_BSI10_THT.step"
 )
 X3_V2_POWER_SWITCH_MODEL_GENERATOR = ROOT / "tools/generate_kc2_component_models.py"
+X3_V2_REQUIREMENT_IDS = [
+    "CON-ARCH-004",
+    "CON-ARCH-006",
+    "CON-ARCH-007",
+    "REL-ARCH-001",
+]
+X3_V2_DEEP_SEA_SWITCH_IDENTITY = {
+    "family": "Kailh Deep Sea low-profile / PG1353-family",
+    "exact_mpn_status": "pending",
+    "controlled_drawing_revision_status": "pending",
+    "order_ready": False,
+}
 X3_V2_BATTERY_Y_MM = X3_V2_CONTROLLER_Y_MM
 X3_V2_CONTROLLER_SERVICE_POSITIONS_MM = {
     "left": {
@@ -381,36 +402,38 @@ X3_V2_POWER_ROUTE_POINTS_MM = {
     },
 }
 X3_V2_MOUNT_HOLE_DIAMETER_MM = 1.60
-X3_V2_MOUNT_HEAD_ENVELOPE_MM = (2.00, 0.50)
+X3_V2_MOUNT_HEAD_STYLE = "non_countersunk_rounded_pan_or_button"
+X3_V2_MOUNT_HEAD_ENVELOPE_MM = (3.00, 1.20)
+X3_V2_MOUNT_HEAD_XY_RESERVE_MM = 0.25
 X3_V2_MOUNT_DRIVER_DIAMETER_MM = 3.00
 X3_V2_MOUNT_SUPPORT_LAND_DIAMETER_MM = 3.00
 X3_V2_MOUNT_PILOT_ENVELOPE_MM = (1.10, 2.80)
 X3_V2_MOUNT_UNDER_HEAD_LENGTH_MM = 4.00
 X3_V2_MOUNT_CLOSED_BOTTOM_MM = 0.70
 X3_V2_MOUNT_REFERENCE_TEXT_SIZE_MM = 0.80
-X3_V2_MOUNT_REFERENCE_STROKE_MM = 0.10
+X3_V2_MOUNT_REFERENCE_STROKE_MM = 0.15
 X3_V2_MOUNT_REFERENCE_OFFSET_MM = (0.0, -1.50)
 X3_V2_MOUNTING_POINTS = {
     "left": [
-        (142.6125, 68.0000),
+        (142.6125, 67.9000),
         (128.6125, 86.5000),
-        (100.1125, 93.5000),
-        (57.1125, 99.0000),
-        (133.6125, 131.5000),
+        (108.5125, 87.0000),
+        (57.4125, 99.0000),
+        (124.7125, 125.1000),
         (55.1125, 144.0000),
         (165.6125, 145.0000),
         (102.6125, 147.0000),
     ],
     "right": [
-        (71.6875, 68.0000),
-        (181.1875, 85.5000),
-        (147.6875, 93.5000),
-        (109.6875, 96.5000),
+        (71.6875, 67.9000),
+        (181.0875, 85.5000),
+        (156.1875, 87.0000),
+        (109.6875, 104.8000),
         (71.6875, 105.5000),
-        (42.1875, 106.0000),
-        (181.1875, 134.5000),
-        (143.1875, 134.5000),
-        (51.6875, 144.0000),
+        (62.0875, 69.3000),
+        (181.1875, 143.0000),
+        (143.0875, 143.0000),
+        (66.8875, 153.4000),
         (95.6875, 147.0000),
     ],
 }
@@ -2502,24 +2525,6 @@ def connect_x3_v2_power_service(
         POWER_TRACK_WIDTH,
         pcbnew.B_Cu,
     )
-    add_board_text(
-        board,
-        "+",
-        j_bat_plus[0],
-        j_bat_plus[1] - 1.8,
-        pcbnew.F_SilkS,
-        0.9,
-    )
-    add_board_text(
-        board,
-        "-",
-        j_bat_gnd[0],
-        j_bat_gnd[1] - 1.8,
-        pcbnew.F_SilkS,
-        0.9,
-    )
-
-
 def copy_license() -> None:
     src = SWITCH_LIB / "LICENSE"
     if src.exists():
@@ -2670,6 +2675,10 @@ def generate_variant(variant: str, output_dir: Path | None = None) -> dict[str, 
     elif variant == "x3-v2":
         bottom_join = x3_v2_join_geometry_by_row()[-1]
         notes.append("X3 V2 uses the KC2-owned Choc V2/PG1353 bottom-side hot-swap socket plus Cherry MX 5-pin direct-solder geometry.")
+        notes.append(
+            "The exact Kailh Deep Sea low-profile switch MPN and controlled drawing revision "
+            "remain pending; no family name or reseller nickname is order approval."
+        )
         notes.append("Choc V1 switch geometry, Choc V2 direct-solder pads, and MX hot-swap socket pads are intentionally excluded.")
         notes.append("The Choc socket and MX switch are mutually exclusive assembly options at every key position.")
         notes.append("X3 V2 uses the fixed 70-key v5 no-stabilizer layout: 31 left keys and 39 right keys, with no key wider than 1.75U.")
@@ -2711,7 +2720,7 @@ def generate_variant(variant: str, output_dir: Path | None = None) -> dict[str, 
         "generated": "2026-08-29" if variant == "x3-v2" else "2026-06-08",
         "variant": variant,
         **(
-            {"requirement_ids": ["CON-ARCH-004", "CON-ARCH-007", "REL-ARCH-001"]}
+            {"requirement_ids": X3_V2_REQUIREMENT_IDS}
             if variant == "x3-v2"
             else {}
         ),
@@ -2729,6 +2738,9 @@ def generate_variant(variant: str, output_dir: Path | None = None) -> dict[str, 
             "right": right_keepout,
         },
         "switch_footprint": f"{switch_lib.name}:{switch_fp}",
+        "deep_sea_switch_identity": (
+            X3_V2_DEEP_SEA_SWITCH_IDENTITY if variant == "x3-v2" else None
+        ),
         "assembly_modes": (
             ["choc_v2_bottom_socket", "mx_5pin_top_direct_solder"]
             if variant == "x3-v2"
@@ -2775,12 +2787,12 @@ def generate_variant(variant: str, output_dir: Path | None = None) -> dict[str, 
         "canonical_route_evidence": (
             {
                 "left": canonical_x3_v2_route_record(
-                    "left", 580,
-                    "7eda6d670a2fd3b99ab06548be4c635dbff03904ec251197f547110864fcb5e6",
+                    "left", 590,
+                    "94c49ca2749d83cd05969e46b2afb6b610c2067ce6a2acad84790a19e081be18",
                 ),
                 "right": canonical_x3_v2_route_record(
-                    "right", 739,
-                    "fc2a819d9ce840ffc0c9e9b5ac6fc7dac54d51a441addb5b0005b4fa89cdbf1a",
+                    "right", 764,
+                    "b54d29e27f1f319863ec5808b31188420ad4c47fa001d21ece98db80044c6946",
                 ),
             }
             if variant == "x3-v2"
@@ -2874,6 +2886,7 @@ def generate_variant(variant: str, output_dir: Path | None = None) -> dict[str, 
                     "right_rotation_degrees": X3_V2_J_BAT1_ROTATIONS_DEGREES["right"],
                     "pad_1": "BAT+",
                     "pad_2": "GND",
+                    **X3_V2_J_BAT1_ASSEMBLY_MARKINGS,
                     "strain_relief_ref": "BAT_LEAD_SLOT1",
                     "lead_drawing_status": "pending_exact_purchased_pack",
                 },
@@ -2895,6 +2908,10 @@ def generate_variant(variant: str, output_dir: Path | None = None) -> dict[str, 
                     "model_generator_sha256": sha256_file(
                         X3_V2_POWER_SWITCH_MODEL_GENERATOR
                     ),
+                    "model_role": "nominal_collision_proxy",
+                    "exact_purchased_mpn_status": "pending",
+                    "controlled_drawing_status": "pending",
+                    "imms_12v_bsi_10_equivalence_status": "pending",
                 },
                 "reset": {
                     "footprint": f"{KC2_FP_LIB.name}:{TACT_FP}",
@@ -2984,6 +3001,8 @@ def generate_variant(variant: str, output_dir: Path | None = None) -> dict[str, 
                     "diameter": X3_V2_MOUNT_HEAD_ENVELOPE_MM[0],
                     "height": X3_V2_MOUNT_HEAD_ENVELOPE_MM[1],
                 },
+                "screw_head_style": X3_V2_MOUNT_HEAD_STYLE,
+                "screw_head_xy_reserve_mm": X3_V2_MOUNT_HEAD_XY_RESERVE_MM,
                 "vertical_driver_envelope_mm": {
                     "diameter": X3_V2_MOUNT_DRIVER_DIAMETER_MM,
                 },

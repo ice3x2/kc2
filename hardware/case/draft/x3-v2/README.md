@@ -38,11 +38,31 @@ REG/H registration pattern.
   penetration across the PCB thickness tolerance and at least `0.24 mm`
   nominal tip clearance. The exact screw MPN, printed pilot, torque, repeated
   service, and full-pattern registration remain physical gates.
+- The exact P1 board centers are left `MH1..MH8`: `(142.6125,67.9000)`,
+  `(128.6125,86.5000)`, `(108.5125,87.0000)`, `(57.4125,99.0000)`,
+  `(124.7125,125.1000)`, `(55.1125,144.0000)`, `(165.6125,145.0000)`,
+  `(102.6125,147.0000)`; and right `MH1..MH10`: `(71.6875,67.9000)`,
+  `(181.0875,85.5000)`, `(156.1875,87.0000)`, `(109.6875,104.8000)`,
+  `(71.6875,105.5000)`, `(62.0875,69.3000)`, `(181.1875,143.0000)`,
+  `(143.0875,143.0000)`, `(66.8875,153.4000)`, `(95.6875,147.0000)`.
+- The P1 pattern requires no analytical-rail relief. Every mounting land
+  retains its independent `0.25 mm` unrelated-support reserve, and the full
+  rounded-head envelope independently retains `0.25 mm` to installed switch
+  and component envelopes, routed copper/vias, board and housing edges,
+  distributed/reset supports, and the unmodified analytical rail.
 - The mounting service model removes keycaps but leaves switches installed.
   All selected points pass the final `3.00 mm` PH0 driver cylinder and
-  `2.00 x 0.50 mm` head envelope without adding a second clearance buffer.
+  provisional `3.00 x 1.20 mm` non-countersunk rounded pan/button-head
+  envelope without adding a second driver buffer. Reduced/ultra-low, flat,
+  and countersunk head substitutions do not satisfy this contract.
+  The driver gate includes the full `30.00 x 12.00 mm` BAT1 body, the complete
+  `10.00 x 2.50 mm` SW_PWR1 body, and a conservative `13.20 x 2.50 mm`
+  longitudinal envelope covering the full `1.60 mm` actuator travel in both
+  directions, independently of the unchanged through-hole lead geometry.
   The screw pattern clamps and registers the PCB; it does not replace the
-  perimeter rail or the retained 14/11 distributed supports.
+  perimeter rail or the retained 14/11 distributed supports. Exact head
+  height, installed keycap-skirt rest clearance, and full-travel clearance
+  remain pending physical gates until the final screw MPN is qualified.
 
 ## Exterior-open underside clearances
 
@@ -67,10 +87,13 @@ the socketed nice!nano, so the lower housing deliberately has no battery-body
 cavity.
 
 `SW_RST1` is intentionally absent from this underside-cutout list. Its pads
-are F.Cu-only, and the exact actuator projection is backed by the local
+are F.Cu-only, and the exact board-axis `2.70 x 1.30 mm` actuator projection
+at left `0` / right `180` degrees is backed by the local
 zero-gap support/desk column. The support intersects no via, bottom-exposed
-pad, or exterior-open cutout. The right support lies over two B.Cu routes that
-remain inside the PCB stack under solder mask; the left overlaps none.
+pad, exterior-open cutout, B.Cu route, or B.Mask opening on either current
+board. Protection is derived from exact B.Cu and B.Mask geometry rather than
+declared as a constant; a routed-copper overlap exposed by a B.Mask opening is
+a hard failure.
 
 Every class has at least `0.30 mm` nominal XY clearance. The measured overall
 minimum is `0.3279 mm`; the ES1B openings retain at least `0.3282 mm`. No diode

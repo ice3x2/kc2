@@ -33,12 +33,12 @@
     (component MH_M1.4_NPTH_1.60
       (place MH2 1286125 -865000 front 0)
       (place MH7 1656125 -1450000 front 0)
-      (place MH5 1336125 -1315000 front 0)
-      (place MH4 571125 -990000 front 0)
+      (place MH5 1247125 -1251000 front 0)
+      (place MH4 574125 -990000 front 0)
       (place MH6 551125 -1440000 front 0)
-      (place MH3 1001125 -935000 front 0)
+      (place MH3 1085125 -870000 front 0)
       (place MH8 1026125 -1470000 front 0)
-      (place MH1 1426125 -680000 front 0)
+      (place MH1 1426125 -679000 front 0)
     )
     (component SW_Choc_V2_Socket_MX_THT::1
       (place SW20 430250 -1346750 front 180)

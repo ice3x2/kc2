@@ -23,6 +23,16 @@ The two switch modes are mutually exclusive at every key position:
 - Choc V1 / PG1350, Choc V2 direct-solder, and MX hot-swap are unsupported.
 - Never install both a Choc socket and an MX switch at one key position.
 
+The intended switch remains the Kailh Deep Sea low-profile / PG1353 family,
+but its exact manufacturer MPN and controlled drawing revision are still
+pending. `Deep Sea`, `Deep Sea Whale`, a reseller nickname, or a family name
+is not an orderable part identity. Do not order the switch until those two
+fields are bound to the purchased part and its controlled drawing.
+
+The owned hybrid footprint includes an explicit bottom courtyard from
+`(-10.25,1.20)` to `(5.25,8.50)` mm. It encloses the complete bottom socket
+body and both B.Cu lands with a `0.25 mm` manufacturing allowance.
+
 The left and right boards use their physical split-keyboard orientations. The
 bottom-side socket pattern must be read from the PCB bottom; the 1:1 bottom PDF
 is already mirrored for a physical bottom view.
@@ -94,12 +104,13 @@ still required before ordering.
 The PCB contains eight left and ten right `MH*` features using the owned
 `MH_M1.4_NPTH_1.60` footprint. Each is an unnetted, copper-free `1.60 mm`
 round NPTH. Each hole is visibly numbered `MH1..MH8` on the left and
-`MH1..MH10` on the right using `0.80 mm` / `0.10 mm` front-silkscreen text.
+`MH1..MH10` on the right using `0.80 mm` / `0.15 mm` front-silkscreen text.
 Service is modeled with keycaps removed and either supported switch
 type still installed. A final `3.00 mm` vertical PH0 driver envelope and a
-`2.00 x 0.50 mm` head envelope clear the modeled Choc V2 and MX assemblies;
-the driver envelope already includes the search reserve and must not be
-buffered a second time.
+provisional non-countersunk rounded pan/button head envelope of maximum
+`3.00 x 1.20 mm` clear the modeled Choc V2 and MX assemblies with a separate
+`0.25 mm` XY reserve. The driver envelope already includes its search reserve
+and must not be buffered a second time.
 
 The matching lower housing provides a `3.00 mm` zero-gap support land and desk
 column at every hole, with a provisional `1.10 x 2.80 mm` blind pilot and a
@@ -123,7 +134,12 @@ thickness, lead-exit drawing, and pull limit remain procurement gates.
 Only the pack's pre-attached insulated leads are soldered to `J_BAT1`; do not
 solder a bare pouch tab and do not add an A2501, JST, or other detachable
 battery connector. `J_BAT1` is left `(115.8125, 59.4000)` R180 and right
-`(94.3000, 59.4000)` R0. `BAT_LEAD_SLOT1` remains an unnetted, copper-free
+`(94.3000, 59.4000)` R0. Its visible assembly marks identify pad 1 `B+` and
+pad 2 `B-/GND`; the electrical pad nets remain `BAT+` and `GND`, respectively.
+The [official nice!nano documentation](https://nicekeyboards.com/docs/nice-nano/)
+identifies the carrier's `RAW` and `GND` pins as the battery-positive and
+battery-negative connections, so no extra net tie is required.
+`BAT_LEAD_SLOT1` remains an unnetted, copper-free
 strain-relief feature identified by the exact board text
 `BAT STRAIN RELIEF`, at left `(117.9125, 50.7500)` and right
 `(92.2000, 50.7500)` mm; it is not a lower battery exit.
@@ -153,6 +169,10 @@ RESET. The centers are 10.25 mm apart, giving 2.20 mm nominal controlled-body
 clearance, 3.20 mm reset-body clearance to the nearest keycap envelope, and
 at least 2.03 mm reset-courtyard clearance to U1 socket copper.
 
+Each placed `SW_PWR1` retains the owned STEP model. That STEP is a nominal
+collision proxy only: the exact purchased manufacturer/MPN and controlled
+drawing are pending, and `IMMS-12V` / `BSI-10` equivalence is not assumed.
+
 This V2 contract supersedes the historical X3 no-carrier-power,
 USB-under-reset, and antenna-side-reset instructions only for `kc2-x3-v2`.
 The exact pack stack, USB shell/cable, POWER/RESET access, controller removal,
@@ -170,8 +190,8 @@ physical first-article evidence. The digital package remains not orderable.
 
 The fabrication, mechanical, and housing derivatives were regenerated from
 the current left/right board hashes
-`90430a97aa2e13dbf8325525f9841b60e0b64d058406dd218162970b01f8e6f6` and
-`a6a49f8875e506064ce4bf9e11839b4d932d326ee271fcf4b6bf863c8270b374`.
+`7f629b7f48c7432ddc34429b12d7883a2fd1389a40187b2eeb93d549fba1be6d` and
+`4500956acec4e9f8ada2da285d9fad6c6accad5263da9128d0a14d300af3209c`.
 Their dedicated V2 verifiers pass. The joined SVG/PNG set was regenerated from
 the same current boards and reports 1.1000 mm minimum Edge.Cuts clearance and
 1.8000 mm cross-seam keycap gap. All outputs remain digital draft evidence and
@@ -266,10 +286,10 @@ exact, precondition-checked edge cleanup:
 The helper rejects wrong controller/reset/switch geometry, stale sessions, and
 partial or unexpected nonempty routes. Both importers verify complete matrix connectivity,
 reproduce the committed route exactly, and are covered by second-run
-idempotence tests. The deterministic final track/via counts are 580 left and
-739 right, with route digests
-`7eda6d670a2fd3b99ab06548be4c635dbff03904ec251197f547110864fcb5e6`
-and `fc2a819d9ce840ffc0c9e9b5ac6fc7dac54d51a441addb5b0005b4fa89cdbf1a`.
+idempotence tests. The deterministic P1 rounded-head final track/via counts are
+590 left and 764 right, with route digests
+`94c49ca2749d83cd05969e46b2afb6b610c2067ce6a2acad84790a19e081be18`
+and `b54d29e27f1f319863ec5808b31188420ad4c47fa001d21ece98db80044c6946`.
 Running either command against its already exact committed board is a verified
 no-op. The generation manifest binds each current controller-r3 DSN and
 reviewed controller-r3 SES by SHA-256. It also verifies both

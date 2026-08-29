@@ -26,12 +26,15 @@ ORDER_READINESS_BLOCKER = (
     "CON-ARCH-006 AC-7 physical coupon evidence is pending: exact screw MPN and "
     "drawing; minimum and maximum head diameter and height; maximum finished PCB-hole "
     "diameter and minimum radial bearing width or equivalent pull-through/clamp-retention "
-    "evidence; exact driver MPN, maximum shaft diameter, and runout; printed pilot "
+    "evidence; confirmation that the provisional 3.00 x 1.20 mm non-countersunk "
+    "rounded pan/button head envelope bounds the selected part; exact driver MPN, "
+    "maximum shaft diameter, and runout; printed pilot "
     "diameter, actual PCB thickness, installed penetration, and tip clearance; tapping "
     "torque, stripping torque with at least 2.0 ratio and 3.0 target, and selected "
     "installation torque; ten install/remove cycles without cracking, spin, or pull-out; "
     "full-pattern assembly without sequential forcing; actual installed switch and "
-    "keycap-skirt clearance; and a 2.0 N deflection test at every worst-case support span "
+    "keycap-skirt rest/full-travel clearance under the measured head height; and a 2.0 N "
+    "deflection test at every worst-case support span "
     "with no more than 0.30 mm displacement, rocking, permanent deformation, support "
     "disengagement, or fastener loosening. CON-ARCH-006 AC-11 controller-service "
     "physical evidence is also pending: exact reset supplier Z/travel/force/reflow limits, "
@@ -86,30 +89,31 @@ VERIFIED_RESET_CENTERS_MM = {
     "left": [126.0625, 63.4500],
     "right": [84.0500, 63.4500],
 }
-VERIFIED_RESET_ACTUATOR_PROJECTION_MM = [1.30, 2.70]
+VERIFIED_RESET_ROTATIONS_DEG = {"left": 0.0, "right": 180.0}
+VERIFIED_RESET_ACTUATOR_PROJECTION_MM = [2.70, 1.30]
 VERIFIED_RESET_SUPPORT_DIAMETER_MM = 3.00
 VERIFIED_SERVICE_MINIMUM_HOUSING_LAND_MM = 0.85
 VERIFIED_MOUNTING_COORDINATES_MM = {
     "left": [
-        [142.6125, 68.0000],
+        [142.6125, 67.9000],
         [128.6125, 86.5000],
-        [100.1125, 93.5000],
-        [57.1125, 99.0000],
-        [133.6125, 131.5000],
+        [108.5125, 87.0000],
+        [57.4125, 99.0000],
+        [124.7125, 125.1000],
         [55.1125, 144.0000],
         [165.6125, 145.0000],
         [102.6125, 147.0000],
     ],
     "right": [
-        [71.6875, 68.0000],
-        [181.1875, 85.5000],
-        [147.6875, 93.5000],
-        [109.6875, 96.5000],
+        [71.6875, 67.9000],
+        [181.0875, 85.5000],
+        [156.1875, 87.0000],
+        [109.6875, 104.8000],
         [71.6875, 105.5000],
-        [42.1875, 106.0000],
-        [181.1875, 134.5000],
-        [143.1875, 134.5000],
-        [51.6875, 144.0000],
+        [62.0875, 69.3000],
+        [181.1875, 143.0000],
+        [143.0875, 143.0000],
+        [66.8875, 153.4000],
         [95.6875, 147.0000],
     ],
 }
@@ -146,11 +150,20 @@ VERIFIED_MOUNTING_PILOT_DIAMETER_MM = 1.10
 VERIFIED_MOUNTING_PILOT_DEPTH_MM = 2.80
 VERIFIED_MOUNTING_PILOT_BOTTOM_Z_MM = -0.30
 VERIFIED_MOUNTING_CLOSED_BOTTOM_MM = 0.70
-VERIFIED_MOUNTING_HEAD_ENVELOPE_MM = [2.00, 0.50]
+VERIFIED_MOUNTING_FASTENER_HEAD_STYLE = "non_countersunk_rounded_pan_or_button"
+VERIFIED_MOUNTING_HEAD_ENVELOPE_MM = [3.00, 1.20]
+VERIFIED_MOUNTING_HEAD_RESERVE_MM = 0.25
 VERIFIED_MOUNTING_DRIVER_DIAMETER_MM = 3.00
 VERIFIED_PROVISIONAL_SCREW_UNDER_HEAD_LENGTH_MM = 4.00
 VERIFIED_PCB_TOLERANCE_PENETRATION_RANGE_MM = [2.24, 2.56]
 VERIFIED_MINIMUM_TIP_CLEARANCE_MM = 0.24
+VERIFIED_MOUNTING_UNRELATED_SUPPORT_RESERVE_MM = 0.25
+VERIFIED_MOUNTING_SERVICE_BODY_ENVELOPES = {
+    "battery_body_size_mm": [30.00, 12.00],
+    "power_switch_body_size_mm": [10.00, 2.50],
+    "power_switch_actuator_travel_mm": 1.60,
+    "power_switch_actuator_sweep_size_mm": [13.20, 2.50],
+}
 
 
 def has_trailing_horizontal_whitespace(path: Path) -> bool:
@@ -578,6 +591,39 @@ def analyze_v2_housing() -> dict[str, Any]:
                     "geometry_board_feature_matches": expected_hole[
                         "board_feature_matches"
                     ],
+                    "geometry_support_land_to_existing_support_mm": expected_hole[
+                        "support_land_to_existing_support_mm"
+                    ],
+                    "geometry_head_to_existing_support_mm": expected_hole[
+                        "head_to_existing_support_mm"
+                    ],
+                    "geometry_head_to_support_posts_mm": expected_hole[
+                        "head_to_support_posts_mm"
+                    ],
+                    "geometry_head_to_analytical_rail_mm": expected_hole[
+                        "head_to_analytical_rail_mm"
+                    ],
+                    "geometry_head_to_installed_component_mm": expected_hole[
+                        "head_to_installed_component_mm"
+                    ],
+                    "geometry_head_to_routed_copper_or_via_mm": expected_hole[
+                        "head_to_routed_copper_or_via_mm"
+                    ],
+                    "geometry_head_to_board_edge_mm": expected_hole[
+                        "head_to_board_edge_mm"
+                    ],
+                    "geometry_head_to_housing_edge_mm": expected_hole[
+                        "head_to_housing_edge_mm"
+                    ],
+                    "geometry_driver_to_battery_body_mm": expected_hole[
+                        "driver_to_battery_body_mm"
+                    ],
+                    "geometry_driver_to_power_switch_body_mm": expected_hole[
+                        "driver_to_power_switch_body_mm"
+                    ],
+                    "geometry_driver_to_power_switch_actuator_sweep_mm": expected_hole[
+                        "driver_to_power_switch_actuator_sweep_mm"
+                    ],
                     "step_pilot_open_at_z_2_49": not step_contains(2.49),
                     "step_pilot_open_at_z_minus_0_25": not step_contains(-0.25),
                     "step_pilot_closed_at_z_minus_0_35": step_contains(-0.35),
@@ -596,6 +642,22 @@ def analyze_v2_housing() -> dict[str, Any]:
             "geometry_primary_support_load_span_unchanged": expected_mounting[
                 "primary_support_load_span_unchanged"
             ],
+            "geometry_fastener_head_style": expected_mounting[
+                "fastener_head_style"
+            ],
+            "geometry_head_envelope_mm": expected_mounting["head_envelope_mm"],
+            "geometry_head_reserve_mm": expected_mounting["head_reserve_mm"],
+            "geometry_head_height_and_keycap_skirt_physical_status": (
+                expected_mounting[
+                    "head_height_and_keycap_skirt_physical_status"
+                ]
+            ),
+            "geometry_analytical_rail_relief": expected_mounting[
+                "analytical_rail_relief"
+            ],
+            "geometry_service_body_envelopes": expected_mounting[
+                "service_body_envelopes"
+            ],
         }
         manifest_reset_support = output.get("reset_local_support", {})
         expected_reset_support = plan["reset_local_support"]
@@ -603,6 +665,9 @@ def analyze_v2_housing() -> dict[str, Any]:
             **manifest_reset_support,
             "manifest_matches_generator": manifest_reset_support == expected_reset_support,
             "geometry_board_center_mm": expected_reset_support["board_center_mm"],
+            "geometry_footprint_rotation_deg": expected_reset_support[
+                "footprint_rotation_deg"
+            ],
             "geometry_actuator_projection_covered": expected_reset_support[
                 "actuator_projection_covered"
             ],
@@ -616,6 +681,18 @@ def analyze_v2_housing() -> dict[str, Any]:
                 "bottom_exposed_pad_collision_count"
             ],
             "geometry_via_collision_count": expected_reset_support["via_collision_count"],
+            "geometry_bottom_routed_copper_overlap_count": expected_reset_support[
+                "bottom_routed_copper_overlap_count"
+            ],
+            "geometry_bottom_mask_opening_overlap_count": expected_reset_support[
+                "bottom_mask_opening_overlap_count"
+            ],
+            "geometry_bottom_exposed_routed_copper_overlap_count": expected_reset_support[
+                "bottom_exposed_routed_copper_overlap_count"
+            ],
+            "geometry_bottom_routed_copper_solder_mask_protected": expected_reset_support[
+                "bottom_routed_copper_solder_mask_protected"
+            ],
             "geometry_electrically_safe": expected_reset_support["electrically_safe"],
         }
         report["sides"][side] = {
@@ -875,6 +952,12 @@ def verify_report(report: dict[str, Any]) -> list[str]:
             errors.append(f"{side}: reset local support board coordinate is wrong")
         if reset.get("footprint_side") != "top":
             errors.append(f"{side}: reset local support is not top-side")
+        if (
+            reset.get("footprint_rotation_deg") != VERIFIED_RESET_ROTATIONS_DEG[side]
+            or reset.get("geometry_footprint_rotation_deg")
+            != VERIFIED_RESET_ROTATIONS_DEG[side]
+        ):
+            errors.append(f"{side}: reset local support rotation is wrong")
         if reset.get("actuator_projection_size_mm") != VERIFIED_RESET_ACTUATOR_PROJECTION_MM:
             errors.append(f"{side}: reset local support actuator projection is wrong")
         if (
@@ -905,7 +988,24 @@ def verify_report(report: dict[str, Any]) -> list[str]:
             or int(reset.get("geometry_via_collision_count", 99)) != 0
         ):
             errors.append(f"{side}: reset local support has an electrical/mechanical collision")
-        if not reset.get("bottom_routed_copper_solder_mask_protected"):
+        if (
+            int(reset.get("bottom_routed_copper_overlap_count", 99))
+            != int(reset.get("geometry_bottom_routed_copper_overlap_count", 98))
+            or int(reset.get("bottom_mask_opening_overlap_count", 99))
+            != int(reset.get("geometry_bottom_mask_opening_overlap_count", 98))
+            or int(reset.get("bottom_exposed_routed_copper_overlap_count", 99))
+            != 0
+            or int(reset.get("geometry_bottom_exposed_routed_copper_overlap_count", 99))
+            != 0
+        ):
+            errors.append(f"{side}: reset local support B.Cu/B.Mask derivation is unsafe or stale")
+        if reset.get("bottom_routed_copper_solder_mask_protection_basis") != (
+            "derived_from_exact_B.Cu_and_B.Mask_geometry"
+        ):
+            errors.append(f"{side}: reset local support B.Cu/B.Mask basis is stale")
+        if not reset.get("bottom_routed_copper_solder_mask_protected") or not reset.get(
+            "geometry_bottom_routed_copper_solder_mask_protected"
+        ):
             errors.append(f"{side}: reset local support bottom-route protection is not documented")
         if not reset.get("electrically_safe") or not reset.get("geometry_electrically_safe"):
             errors.append(f"{side}: reset local support is not electrically safe")
@@ -935,6 +1035,54 @@ def verify_report(report: dict[str, Any]) -> list[str]:
             "geometry_primary_support_load_span_unchanged"
         ):
             errors.append(f"{side}: primary-support load span changed")
+        if (
+            mounting.get("analytical_rail_relief") is not None
+            or mounting.get("geometry_analytical_rail_relief") is not None
+        ):
+            errors.append(f"{side}: obsolete analytical rail relief remains")
+        if (
+            mounting.get("fastener_head_style")
+            != VERIFIED_MOUNTING_FASTENER_HEAD_STYLE
+            or mounting.get("geometry_fastener_head_style")
+            != VERIFIED_MOUNTING_FASTENER_HEAD_STYLE
+        ):
+            errors.append(f"{side}: fastener head style is wrong")
+        if (
+            mounting.get("head_envelope_mm")
+            != VERIFIED_MOUNTING_HEAD_ENVELOPE_MM
+            or mounting.get("geometry_head_envelope_mm")
+            != VERIFIED_MOUNTING_HEAD_ENVELOPE_MM
+        ):
+            errors.append(f"{side}: mounting head envelope contract is wrong")
+        if (
+            mounting.get("head_reserve_mm") != VERIFIED_MOUNTING_HEAD_RESERVE_MM
+            or mounting.get("geometry_head_reserve_mm")
+            != VERIFIED_MOUNTING_HEAD_RESERVE_MM
+        ):
+            errors.append(f"{side}: mounting head reserve contract is wrong")
+        if (
+            mounting.get("head_height_and_keycap_skirt_physical_status")
+            != "pending"
+            or mounting.get(
+                "geometry_head_height_and_keycap_skirt_physical_status"
+            )
+            != "pending"
+        ):
+            errors.append(
+                f"{side}: head height/keycap-skirt physical gate is not pending"
+            )
+        if (
+            mounting.get("minimum_unrelated_support_reserve_mm")
+            != VERIFIED_MOUNTING_UNRELATED_SUPPORT_RESERVE_MM
+        ):
+            errors.append(f"{side}: mounting support reserve contract is wrong")
+        if (
+            mounting.get("service_body_envelopes")
+            != VERIFIED_MOUNTING_SERVICE_BODY_ENVELOPES
+            or mounting.get("geometry_service_body_envelopes")
+            != VERIFIED_MOUNTING_SERVICE_BODY_ENVELOPES
+        ):
+            errors.append(f"{side}: mounting BAT1/SW_PWR1 service envelopes are wrong")
         mounting_holes = mounting.get("holes", [])
         if len(mounting_holes) != len(VERIFIED_MOUNTING_COORDINATES_MM[side]):
             errors.append(f"{side}: mounting-hole manifest length is wrong")
@@ -998,6 +1146,78 @@ def verify_report(report: dict[str, Any]) -> list[str]:
                 errors.append(f"{side}:{expected_ref}: head envelope is wrong")
             if hole.get("driver_envelope_diameter_mm") != VERIFIED_MOUNTING_DRIVER_DIAMETER_MM:
                 errors.append(f"{side}:{expected_ref}: driver envelope is wrong")
+            for field in (
+                "support_land_to_existing_support_mm",
+                "head_to_existing_support_mm",
+                "geometry_support_land_to_existing_support_mm",
+                "geometry_head_to_existing_support_mm",
+            ):
+                if (
+                    float(hole.get(field, -99.0)) + 1e-6
+                    < VERIFIED_MOUNTING_UNRELATED_SUPPORT_RESERVE_MM
+                ):
+                    errors.append(
+                        f"{side}:{expected_ref}: support reserve {field} is below "
+                        f"{VERIFIED_MOUNTING_UNRELATED_SUPPORT_RESERVE_MM:.2f} mm"
+                    )
+            for field in (
+                "head_to_support_posts_mm",
+                "head_to_analytical_rail_mm",
+                "head_to_installed_component_mm",
+                "head_to_routed_copper_or_via_mm",
+                "head_to_board_edge_mm",
+                "head_to_housing_edge_mm",
+                "geometry_head_to_support_posts_mm",
+                "geometry_head_to_analytical_rail_mm",
+                "geometry_head_to_installed_component_mm",
+                "geometry_head_to_routed_copper_or_via_mm",
+                "geometry_head_to_board_edge_mm",
+                "geometry_head_to_housing_edge_mm",
+            ):
+                if (
+                    float(hole.get(field, -99.0)) + 1e-6
+                    < VERIFIED_MOUNTING_HEAD_RESERVE_MM
+                ):
+                    errors.append(
+                        f"{side}:{expected_ref}: head reserve {field} is below "
+                        f"{VERIFIED_MOUNTING_HEAD_RESERVE_MM:.2f} mm"
+                    )
+            if hole.get("head_reserve_mm") != VERIFIED_MOUNTING_HEAD_RESERVE_MM:
+                errors.append(f"{side}:{expected_ref}: head reserve contract is wrong")
+            if hole.get("minimum_unrelated_support_reserve_mm") != (
+                VERIFIED_MOUNTING_UNRELATED_SUPPORT_RESERVE_MM
+            ):
+                errors.append(f"{side}:{expected_ref}: support reserve contract is wrong")
+            for field in (
+                "driver_to_battery_body_mm",
+                "driver_to_power_switch_body_mm",
+                "driver_to_power_switch_actuator_sweep_mm",
+                "geometry_driver_to_battery_body_mm",
+                "geometry_driver_to_power_switch_body_mm",
+                "geometry_driver_to_power_switch_actuator_sweep_mm",
+            ):
+                if float(hole.get(field, -99.0)) < -1e-6:
+                    errors.append(
+                        f"{side}:{expected_ref}: full service body clearance {field} is negative"
+                    )
+            required_service_checks = {
+                "driver_battery_body",
+                "driver_power_switch_body",
+                "driver_power_switch_actuator_sweep",
+            }
+            geometry_checks = hole.get("geometry_collision_checks", {})
+            if not required_service_checks.issubset(geometry_checks):
+                errors.append(f"{side}:{expected_ref}: full service body checks are missing")
+            required_head_reserve_checks = {
+                "head_support_post_reserve",
+                "head_analytical_rail_reserve",
+                "head_installed_component_reserve",
+                "head_routed_copper_or_via_reserve",
+                "head_board_edge_reserve",
+                "head_housing_edge_reserve",
+            }
+            if not required_head_reserve_checks.issubset(geometry_checks):
+                errors.append(f"{side}:{expected_ref}: head reserve checks are missing")
             if hole.get("service_condition") != "keycaps-off, switches-installed":
                 errors.append(f"{side}:{expected_ref}: service condition is wrong")
             if int(hole.get("collision_count", 99)) != 0 or int(

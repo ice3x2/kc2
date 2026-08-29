@@ -14,6 +14,13 @@ from tools.verify_kc2_x3_v2_housing import analyze_v2_housing, verify_report
 
 
 class ServiceInterfaceContractUnitTests(unittest.TestCase):
+    @staticmethod
+    def _part_plans(shp: dict[str, object], side: str, plan: dict[str, object]) -> list[object]:
+        if side == "left":
+            return [plan["support_surface"]]
+        split = generator.build_right_split_plan(shp, plan)
+        return [split["part_a_plan"], split["part_b_plan"]]
+
     def test_housing_manifest_traces_all_active_mechanical_requirements(self) -> None:
         manifest = json.loads(generator.MANIFEST_PATH.read_text(encoding="utf-8"))
         self.assertEqual(
@@ -162,8 +169,178 @@ class ServiceInterfaceContractUnitTests(unittest.TestCase):
             "RSSI",
             "packet-loss",
             "USB charging",
+            "non-countersunk rounded pan/button",
+            "keycap-skirt rest/full-travel",
         ):
             self.assertIn(required, blocker)
+
+    def test_rounded_head_p1_contract_keeps_independent_quarter_mm_reserves(self) -> None:
+        shp = generator.legacy_geometry.require_shapely()
+        boards = generator.run_extractor(
+            generator.legacy_geometry.locate_kicad_python()
+        )["boards"]
+        for side in ("left", "right"):
+            plan = generator.build_plan_geometry(shp, side, boards[side])
+            mounting = generator.mounting_system_manifest(
+                shp,
+                side,
+                plan,
+                self._part_plans(shp, side, plan),
+            )
+            self.assertEqual(
+                mounting["fastener_head_style"],
+                "non_countersunk_rounded_pan_or_button",
+            )
+            self.assertEqual(mounting["head_envelope_mm"], [3.00, 1.20])
+            self.assertEqual(mounting["head_reserve_mm"], 0.25)
+            self.assertIsNone(mounting["analytical_rail_relief"])
+            self.assertEqual(
+                mounting["head_height_and_keycap_skirt_physical_status"],
+                "pending",
+            )
+            for hole in mounting["holes"]:
+                self.assertEqual(hole["head_envelope_mm"], [3.00, 1.20])
+                for field in (
+                    "head_to_installed_component_mm",
+                    "head_to_routed_copper_or_via_mm",
+                    "head_to_board_edge_mm",
+                    "head_to_housing_edge_mm",
+                    "head_to_existing_support_mm",
+                    "head_to_analytical_rail_mm",
+                ):
+                    self.assertGreaterEqual(hole[field] + 1e-6, 0.25, field)
+
+        report = json.loads(housing_verifier.REPORT_PATH.read_text(encoding="utf-8"))
+        report["sides"]["right"]["mounting_system"]["holes"][0][
+            "head_to_installed_component_mm"
+        ] = 0.249
+        self.assertTrue(
+            any("head reserve" in error for error in verify_report(report)),
+            verify_report(report),
+        )
+
+    def test_mounting_driver_checks_full_battery_and_power_body_sweep_mutations(self) -> None:
+        shp = generator.legacy_geometry.require_shapely()
+        boards = generator.run_extractor(
+            generator.legacy_geometry.locate_kicad_python()
+        )["boards"]
+        expected_checks = {
+            "driver_battery_body",
+            "driver_power_switch_body",
+            "driver_power_switch_actuator_sweep",
+        }
+        for side in ("left", "right"):
+            plan = generator.build_plan_geometry(shp, side, boards[side])
+            mounting = generator.mounting_system_manifest(
+                shp,
+                side,
+                plan,
+                self._part_plans(shp, side, plan),
+            )
+            for hole in mounting["holes"]:
+                self.assertTrue(expected_checks.issubset(hole["collision_checks"]))
+                self.assertGreaterEqual(hole["driver_to_battery_body_mm"], 0.0)
+                self.assertGreaterEqual(hole["driver_to_power_switch_body_mm"], 0.0)
+                self.assertGreaterEqual(
+                    hole["driver_to_power_switch_actuator_sweep_mm"],
+                    0.0,
+                )
+
+            ref, mount_x, mount_y = generator.MOUNTING_HOLE_COORDINATES_MM[side][0]
+            self.assertEqual(ref, "MH1")
+
+            battery_mutation = copy.deepcopy(boards[side])
+            battery_mutation["battery_above_carrier"]["center"] = [mount_x, mount_y]
+            battery_mutation["battery_above_carrier"]["bounds"] = [
+                mount_x - 15.0,
+                mount_y - 6.0,
+                mount_x + 15.0,
+                mount_y + 6.0,
+            ]
+            battery_plan = generator.build_plan_geometry(shp, side, battery_mutation)
+            battery_mounting = generator.mounting_system_manifest(
+                shp,
+                side,
+                battery_plan,
+                self._part_plans(shp, side, battery_plan),
+            )
+            battery_hole = next(
+                item for item in battery_mounting["holes"] if item["ref"] == "MH1"
+            )
+            self.assertTrue(battery_hole["collision_checks"]["driver_battery_body"])
+
+            power_mutation = copy.deepcopy(boards[side])
+            power_mutation["power_switch_topside"]["center"] = [mount_x, mount_y]
+            power_plan = generator.build_plan_geometry(shp, side, power_mutation)
+            power_mounting = generator.mounting_system_manifest(
+                shp,
+                side,
+                power_plan,
+                self._part_plans(shp, side, power_plan),
+            )
+            power_hole = next(
+                item for item in power_mounting["holes"] if item["ref"] == "MH1"
+            )
+            self.assertTrue(power_hole["collision_checks"]["driver_power_switch_body"])
+            self.assertTrue(
+                power_hole["collision_checks"]["driver_power_switch_actuator_sweep"]
+            )
+
+    def test_reset_projection_metadata_follows_actual_board_rotation(self) -> None:
+        manifest = json.loads(generator.MANIFEST_PATH.read_text(encoding="utf-8"))
+        expected_rotations = {"left": 0.0, "right": 180.0}
+        for side, rotation in expected_rotations.items():
+            reset = manifest["outputs"][side]["reset_local_support"]
+            self.assertEqual(reset["footprint_rotation_deg"], rotation)
+            self.assertEqual(reset["actuator_projection_size_mm"], [2.7, 1.3])
+
+        report = json.loads(housing_verifier.REPORT_PATH.read_text(encoding="utf-8"))
+        report["sides"]["left"]["reset_local_support"][
+            "actuator_projection_size_mm"
+        ] = [1.3, 2.7]
+        self.assertTrue(
+            any("actuator projection" in error for error in verify_report(report)),
+            verify_report(report),
+        )
+
+    def test_reset_support_derives_bottom_mask_protection_and_rejects_exposure(self) -> None:
+        manifest = json.loads(generator.MANIFEST_PATH.read_text(encoding="utf-8"))
+        for side in ("left", "right"):
+            reset = manifest["outputs"][side]["reset_local_support"]
+            self.assertEqual(reset["bottom_routed_copper_overlap_count"], 0)
+            self.assertEqual(reset["bottom_mask_opening_overlap_count"], 0)
+            self.assertEqual(reset["bottom_exposed_routed_copper_overlap_count"], 0)
+            self.assertEqual(
+                reset["bottom_routed_copper_solder_mask_protection_basis"],
+                "derived_from_exact_B.Cu_and_B.Mask_geometry",
+            )
+
+        shp = generator.legacy_geometry.require_shapely()
+        boards = generator.run_extractor(
+            generator.legacy_geometry.locate_kicad_python()
+        )["boards"]
+        mutated = copy.deepcopy(boards["left"])
+        reset_x, reset_y = mutated["reset_topside"]["center"]
+        mutated["routed_copper_exact"].append(
+            {
+                "kind": "line",
+                "start": [reset_x - 2.0, reset_y],
+                "end": [reset_x + 2.0, reset_y],
+                "radius_mm": 0.125,
+                "net": "MUTATED_EXPOSED_BCU",
+                "layer": "B.Cu",
+            }
+        )
+        mutated["bottom_mask_openings"].append(
+            {
+                "kind": "circle",
+                "center": [reset_x, reset_y],
+                "radius_mm": 0.75,
+                "source": "mutation",
+            }
+        )
+        with self.assertRaisesRegex(RuntimeError, "reset local support is not electrically safe"):
+            generator.build_plan_geometry(shp, "left", mutated)
 
 
 class V2LoadBearingHousingTests(unittest.TestCase):
@@ -295,7 +472,11 @@ class V2LoadBearingHousingTests(unittest.TestCase):
             self.assertEqual(reset["ref"], "SW_RST1")
             self.assertEqual(reset["board_center_mm"], expected_reset_center)
             self.assertEqual(reset["footprint_side"], "top")
-            self.assertEqual(reset["actuator_projection_size_mm"], [1.30, 2.70])
+            self.assertEqual(reset["actuator_projection_size_mm"], [2.70, 1.30])
+            self.assertEqual(
+                reset["footprint_rotation_deg"],
+                0.0 if side == "left" else 180.0,
+            )
             self.assertEqual(reset["support_diameter_mm"], 3.00)
             self.assertEqual(reset["support_top_z_mm"], 2.50)
             self.assertEqual(reset["support_vertical_gap_mm"], 0.0)
@@ -305,6 +486,7 @@ class V2LoadBearingHousingTests(unittest.TestCase):
             self.assertEqual(reset["component_cutout_collision_count"], 0)
             self.assertEqual(reset["bottom_exposed_pad_collision_count"], 0)
             self.assertEqual(reset["via_collision_count"], 0)
+            self.assertEqual(reset["bottom_exposed_routed_copper_overlap_count"], 0)
             self.assertTrue(reset["bottom_routed_copper_solder_mask_protected"])
             self.assertTrue(reset["electrically_safe"])
 
@@ -413,25 +595,25 @@ class V2LoadBearingHousingTests(unittest.TestCase):
     def test_m1_4_mounting_columns_preserve_the_primary_support_network(self) -> None:
         expected_coordinates = {
             "left": [
-                [142.6125, 68.0000],
+                [142.6125, 67.9000],
                 [128.6125, 86.5000],
-                [100.1125, 93.5000],
-                [57.1125, 99.0000],
-                [133.6125, 131.5000],
+                [108.5125, 87.0000],
+                [57.4125, 99.0000],
+                [124.7125, 125.1000],
                 [55.1125, 144.0000],
                 [165.6125, 145.0000],
                 [102.6125, 147.0000],
             ],
             "right": [
-                [71.6875, 68.0000],
-                [181.1875, 85.5000],
-                [147.6875, 93.5000],
-                [109.6875, 96.5000],
+                [71.6875, 67.9000],
+                [181.0875, 85.5000],
+                [156.1875, 87.0000],
+                [109.6875, 104.8000],
                 [71.6875, 105.5000],
-                [42.1875, 106.0000],
-                [181.1875, 134.5000],
-                [143.1875, 134.5000],
-                [51.6875, 144.0000],
+                [62.0875, 69.3000],
+                [181.1875, 143.0000],
+                [143.0875, 143.0000],
+                [66.8875, 153.4000],
                 [95.6875, 147.0000],
             ],
         }
@@ -458,6 +640,15 @@ class V2LoadBearingHousingTests(unittest.TestCase):
             self.assertTrue(mounting["part_distribution_matches_plan"])
             self.assertTrue(mounting["primary_support_load_span_unchanged"])
             self.assertEqual(mounting["physical_registration_status"], "pending")
+            self.assertEqual(
+                mounting["fastener_head_style"],
+                "non_countersunk_rounded_pan_or_button",
+            )
+            self.assertEqual(mounting["head_envelope_mm"], [3.00, 1.20])
+            self.assertEqual(
+                mounting["head_height_and_keycap_skirt_physical_status"],
+                "pending",
+            )
             self.assertAlmostEqual(
                 housing["maximum_load_point_to_support_mm"],
                 expected_load_spans[side],
@@ -486,7 +677,7 @@ class V2LoadBearingHousingTests(unittest.TestCase):
                 self.assertTrue(hole["step_pilot_closed_at_z_minus_0_35"])
                 self.assertTrue(hole["step_pilot_closed_at_z_minus_0_79"])
                 self.assertTrue(hole["step_pilot_closed_at_z_minus_0_99"])
-                self.assertEqual(hole["head_envelope_mm"], [2.00, 0.50])
+                self.assertEqual(hole["head_envelope_mm"], [3.00, 1.20])
                 self.assertEqual(hole["driver_envelope_diameter_mm"], 3.00)
                 self.assertEqual(hole["collision_count"], 0)
 
@@ -497,6 +688,11 @@ class V2LoadBearingHousingTests(unittest.TestCase):
             ("board MH", lambda item: item.__setitem__("board_features_match_selected_pattern", False)),
             ("mounting manifest", lambda item: item.__setitem__("manifest_matches_generator", False)),
             ("physical registration", lambda item: item.__setitem__("physical_registration_status", "verified")),
+            ("fastener head style", lambda item: item.__setitem__("fastener_head_style", "low_head")),
+            ("mounting head envelope", lambda item: item.__setitem__("head_envelope_mm", [2.0, 0.5])),
+            ("mounting head reserve", lambda item: item.__setitem__("head_reserve_mm", 0.0)),
+            ("head height/keycap-skirt", lambda item: item.__setitem__("head_height_and_keycap_skirt_physical_status", "verified")),
+            ("obsolete analytical rail relief", lambda item: item.__setitem__("analytical_rail_relief", {"ref": "MH9"})),
             ("PCB NPTH", lambda item: item["holes"][0].__setitem__("pcb_npth_diameter_mm", 1.7)),
             ("support land", lambda item: item["holes"][0].__setitem__("support_land_diameter_mm", 2.9)),
             ("support land", lambda item: item["holes"][0].__setitem__("support_land_vertical_gap_mm", 0.1)),
@@ -509,7 +705,8 @@ class V2LoadBearingHousingTests(unittest.TestCase):
             ("provisional screw penetration", lambda item: item["holes"][0].__setitem__("provisional_screw_under_head_length_mm", 3.0)),
             ("provisional screw penetration", lambda item: item["holes"][0].__setitem__("pcb_tolerance_penetration_range_mm", [1.0, 1.1])),
             ("provisional screw penetration", lambda item: item["holes"][0].__setitem__("minimum_tip_clearance_mm", 0.1)),
-            ("head envelope", lambda item: item["holes"][0].__setitem__("head_envelope_mm", [2.1, 0.5])),
+            ("head envelope", lambda item: item["holes"][0].__setitem__("head_envelope_mm", [2.0, 0.5])),
+            ("head reserve", lambda item: item["holes"][0].__setitem__("head_to_installed_component_mm", 0.249)),
             ("driver envelope", lambda item: item["holes"][0].__setitem__("driver_envelope_diameter_mm", 2.9)),
             ("service condition", lambda item: item["holes"][0].__setitem__("service_condition", "switches-removed")),
             ("mounting collision", lambda item: item["holes"][0].__setitem__("collision_count", 1)),
@@ -526,6 +723,31 @@ class V2LoadBearingHousingTests(unittest.TestCase):
                     any(expected_error in error for error in verify_report(report)),
                     verify_report(report),
                 )
+
+        for forbidden_style in (
+            "low_head",
+            "ultra_low_head",
+            "flat_head",
+            "countersunk",
+        ):
+            with self.subTest(forbidden_style=forbidden_style):
+                report = copy.deepcopy(self.report)
+                report["sides"]["right"]["mounting_system"][
+                    "fastener_head_style"
+                ] = forbidden_style
+                self.assertTrue(
+                    any("fastener head style" in error for error in verify_report(report)),
+                    verify_report(report),
+                )
+
+        report = copy.deepcopy(self.report)
+        report["sides"]["right"]["mounting_system"]["holes"][0][
+            "geometry_collision_checks"
+        ].pop("head_installed_component_reserve", None)
+        self.assertTrue(
+            any("head reserve checks" in error for error in verify_report(report)),
+            verify_report(report),
+        )
 
         report = copy.deepcopy(self.report)
         report["order_ready"] = True
@@ -780,12 +1002,15 @@ class V2LoadBearingHousingTests(unittest.TestCase):
             "CON-ARCH-006 AC-7 physical coupon evidence is pending: exact screw MPN and "
             "drawing; minimum and maximum head diameter and height; maximum finished PCB-hole "
             "diameter and minimum radial bearing width or equivalent pull-through/clamp-retention "
-            "evidence; exact driver MPN, maximum shaft diameter, and runout; printed pilot "
+            "evidence; confirmation that the provisional 3.00 x 1.20 mm non-countersunk "
+            "rounded pan/button head envelope bounds the selected part; exact driver MPN, "
+            "maximum shaft diameter, and runout; printed pilot "
             "diameter, actual PCB thickness, installed penetration, and tip clearance; tapping "
             "torque, stripping torque with at least 2.0 ratio and 3.0 target, and selected "
             "installation torque; ten install/remove cycles without cracking, spin, or pull-out; "
             "full-pattern assembly without sequential forcing; actual installed switch and "
-            "keycap-skirt clearance; and a 2.0 N deflection test at every worst-case support span "
+            "keycap-skirt rest/full-travel clearance under the measured head height; and a 2.0 N "
+            "deflection test at every worst-case support span "
             "with no more than 0.30 mm displacement, rocking, permanent deformation, support "
             "disengagement, or fastener loosening. CON-ARCH-006 AC-11 controller-service "
             "physical evidence is also pending: exact reset supplier Z/travel/force/reflow limits, "

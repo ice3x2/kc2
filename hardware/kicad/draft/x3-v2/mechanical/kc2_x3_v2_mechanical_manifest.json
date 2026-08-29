@@ -1,5 +1,10 @@
 {
-  "requirement": "CON-ARCH-004",
+  "requirement_ids": [
+    "CON-ARCH-004",
+    "CON-ARCH-006",
+    "CON-ARCH-007",
+    "REL-ARCH-001"
+  ],
   "hash_policy": "lf-normalized-utf8-text-else-raw-v1",
   "status": "draft_not_orderable_pending_physical_coupon",
   "scale": 1.0,
@@ -8,21 +13,34 @@
   "products": {
     "left": {
       "board": "hardware\\kicad\\draft\\x3-v2\\kc2_left-x3-v2\\kc2_left-x3-v2.kicad_pcb",
-      "source_board_sha256": "90430a97aa2e13dbf8325525f9841b60e0b64d058406dd218162970b01f8e6f6",
+      "source_board_sha256": "7f629b7f48c7432ddc34429b12d7883a2fd1389a40187b2eeb93d549fba1be6d",
       "drawings": {
         "top": {
           "path": "hardware\\kicad\\draft\\x3-v2\\mechanical\\left_top_1to1.pdf",
           "layer": "F.Fab",
+          "layers": [
+            "F.Fab",
+            "F.Silkscreen",
+            "Edge.Cuts"
+          ],
           "mirrored": false,
-          "size": 95383,
-          "sha256": "40ce43c9156238863b18fa35d21f8ad4e7be2168f1f45e70105f39819a1ee93b"
+          "scale": 1.0,
+          "page_size": "A4_landscape",
+          "size": 100021,
+          "sha256": "a37fc620cb61ceabf35b51367fcac8806796c87ce824960bfd296e443e681943"
         },
         "bottom": {
           "path": "hardware\\kicad\\draft\\x3-v2\\mechanical\\left_bottom_1to1.pdf",
           "layer": "B.Fab",
+          "layers": [
+            "B.Fab",
+            "Edge.Cuts"
+          ],
           "mirrored": true,
-          "size": 107537,
-          "sha256": "4ed1ab1b9f54805c69d8e464d13c8ee61b32e056d94a49ed924290670da9e728"
+          "scale": 1.0,
+          "page_size": "A4_landscape",
+          "size": 107549,
+          "sha256": "e0a6b9164be19e38175ff9e148d78e3ca78182c67b202de827a796cf22647476"
         }
       },
       "outline_svg": {
@@ -34,27 +52,40 @@
           "F.Silkscreen",
           "Edge.Cuts"
         ],
-        "size": 161292,
-        "sha256": "4a81b19d26df6d63f24b0f437f7e18b34745f31b582e415dce74245ab9e6999a"
+        "size": 164746,
+        "sha256": "5f385f8c7e86e5959e7cdcd9e68cc50e09fb0d8c1bded0caa76aa2b23425a506"
       }
     },
     "right": {
       "board": "hardware\\kicad\\draft\\x3-v2\\kc2_right-x3-v2\\kc2_right-x3-v2.kicad_pcb",
-      "source_board_sha256": "a6a49f8875e506064ce4bf9e11839b4d932d326ee271fcf4b6bf863c8270b374",
+      "source_board_sha256": "4500956acec4e9f8ada2da285d9fad6c6accad5263da9128d0a14d300af3209c",
       "drawings": {
         "top": {
           "path": "hardware\\kicad\\draft\\x3-v2\\mechanical\\right_top_1to1.pdf",
           "layer": "F.Fab",
+          "layers": [
+            "F.Fab",
+            "F.Silkscreen",
+            "Edge.Cuts"
+          ],
           "mirrored": false,
-          "size": 115324,
-          "sha256": "34351f6335160041cb9eec7d784fe3a3bdbe359a94878caf91c976fbabd37041"
+          "scale": 1.0,
+          "page_size": "A4_landscape",
+          "size": 118767,
+          "sha256": "b7e0c709069db017c7ef2bc0f85632b97eee5e332cb810f673813d0ecfa0dede"
         },
         "bottom": {
           "path": "hardware\\kicad\\draft\\x3-v2\\mechanical\\right_bottom_1to1.pdf",
           "layer": "B.Fab",
+          "layers": [
+            "B.Fab",
+            "Edge.Cuts"
+          ],
           "mirrored": true,
-          "size": 128521,
-          "sha256": "f58c1602443b584ebae56b502782c2367040758ed90db1a2673e7764140157d3"
+          "scale": 1.0,
+          "page_size": "A4_landscape",
+          "size": 128526,
+          "sha256": "718f94231ea24d6afab85f5c055322656d1669bd3f916d63a450d41b72e4754e"
         }
       },
       "outline_svg": {
@@ -66,8 +97,8 @@
           "F.Silkscreen",
           "Edge.Cuts"
         ],
-        "size": 178192,
-        "sha256": "b88370e1abeac481ff677435df1cab073d36a9bb1fb6b5721b814338e262c566"
+        "size": 182379,
+        "sha256": "ba32d31844c0ba029d1c0e75d762527bac938c2f8ed135489d3e7513581e7716"
       }
     },
     "coupon": {
@@ -77,16 +108,29 @@
         "top": {
           "path": "hardware\\kicad\\draft\\x3-v2\\mechanical\\coupon_top_1to1.pdf",
           "layer": "F.Fab",
+          "layers": [
+            "F.Fab",
+            "F.Silkscreen",
+            "Edge.Cuts"
+          ],
           "mirrored": false,
-          "size": 25904,
-          "sha256": "9760dc32450b11174059d749b05f2bef69ced263b1ba9bea493225c2ffe184f6"
+          "scale": 1.0,
+          "page_size": "A4_landscape",
+          "size": 26809,
+          "sha256": "1bf9edfdbbb4ba52df89098858c79b3a36e8b5506bc47f44b90b0aa438d71a01"
         },
         "bottom": {
           "path": "hardware\\kicad\\draft\\x3-v2\\mechanical\\coupon_bottom_1to1.pdf",
           "layer": "B.Fab",
+          "layers": [
+            "B.Fab",
+            "Edge.Cuts"
+          ],
           "mirrored": true,
+          "scale": 1.0,
+          "page_size": "A4_landscape",
           "size": 28577,
-          "sha256": "b6779aa313ffe8af927bcb74df0af6fdef01e61866db6de37f7ee886d90ab344"
+          "sha256": "8fb4ba0e0a432f0875af06fe515fbf8b2f89174000445c0b0033dbe287198ed2"
         }
       }
     }

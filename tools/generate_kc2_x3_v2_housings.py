@@ -78,6 +78,15 @@ POWER_SWITCH_REFERENCE = "SW_PWR1"
 POWER_SWITCH_DRILL_COUNT = 3
 POWER_SWITCH_DRILL_DIAMETER_MM = 0.80
 POWER_SWITCH_PITCH_MM = 2.54
+POWER_SWITCH_BODY_ENVELOPE_MM = (10.00, 2.50)
+POWER_SWITCH_ACTUATOR_TRAVEL_MM = 1.60
+# The controlled drawing gives travel but no separate actuator plan width.  Use
+# the complete body plus the full travel in both longitudinal directions so a
+# body-only placement mutation cannot hide behind unchanged through-hole pads.
+POWER_SWITCH_ACTUATOR_SWEEP_ENVELOPE_MM = (
+    POWER_SWITCH_BODY_ENVELOPE_MM[0] + 2.0 * POWER_SWITCH_ACTUATOR_TRAVEL_MM,
+    POWER_SWITCH_BODY_ENVELOPE_MM[1],
+)
 RESET_REFERENCE = "SW_RST1"
 RESET_BODY_ENVELOPE_MM = (6.10, 3.70)
 RESET_ACTUATOR_ENVELOPE_MM = (2.70, 1.30)
@@ -106,9 +115,12 @@ MOUNTING_CLOSED_BOTTOM_MM = round(
     MOUNTING_PILOT_BOTTOM_Z_MM - DESK_DATUM_Z_MM,
     4,
 )
-MOUNTING_HEAD_DIAMETER_MM = 2.00
-MOUNTING_HEAD_HEIGHT_MM = 0.50
+MOUNTING_FASTENER_HEAD_STYLE = "non_countersunk_rounded_pan_or_button"
+MOUNTING_HEAD_DIAMETER_MM = 3.00
+MOUNTING_HEAD_HEIGHT_MM = 1.20
 MOUNTING_DRIVER_DIAMETER_MM = 3.00
+MOUNTING_UNRELATED_SUPPORT_RESERVE_MM = 0.25
+MOUNTING_HEAD_RESERVE_MM = 0.25
 MOUNTING_PROVISIONAL_SCREW_UNDER_HEAD_LENGTH_MM = 4.00
 PCB_THICKNESS_TOLERANCE_FRACTION = 0.10
 MOUNTING_PENETRATION_RANGE_MM = (
@@ -125,25 +137,25 @@ EXPECTED_DISTRIBUTED_SUPPORT_COUNTS = {"left": 14, "right": 11}
 EXPECTED_PRIMARY_SUPPORT_LOAD_SPAN_MM = {"left": 15.4640, "right": 18.9619}
 MOUNTING_HOLE_COORDINATES_MM = {
     "left": (
-        ("MH1", 142.6125, 68.0000),
+        ("MH1", 142.6125, 67.9000),
         ("MH2", 128.6125, 86.5000),
-        ("MH3", 100.1125, 93.5000),
-        ("MH4", 57.1125, 99.0000),
-        ("MH5", 133.6125, 131.5000),
+        ("MH3", 108.5125, 87.0000),
+        ("MH4", 57.4125, 99.0000),
+        ("MH5", 124.7125, 125.1000),
         ("MH6", 55.1125, 144.0000),
         ("MH7", 165.6125, 145.0000),
         ("MH8", 102.6125, 147.0000),
     ),
     "right": (
-        ("MH1", 71.6875, 68.0000),
-        ("MH2", 181.1875, 85.5000),
-        ("MH3", 147.6875, 93.5000),
-        ("MH4", 109.6875, 96.5000),
+        ("MH1", 71.6875, 67.9000),
+        ("MH2", 181.0875, 85.5000),
+        ("MH3", 156.1875, 87.0000),
+        ("MH4", 109.6875, 104.8000),
         ("MH5", 71.6875, 105.5000),
-        ("MH6", 42.1875, 106.0000),
-        ("MH7", 181.1875, 134.5000),
-        ("MH8", 143.1875, 134.5000),
-        ("MH9", 51.6875, 144.0000),
+        ("MH6", 62.0875, 69.3000),
+        ("MH7", 181.1875, 143.0000),
+        ("MH8", 143.0875, 143.0000),
+        ("MH9", 66.8875, 153.4000),
         ("MH10", 95.6875, 147.0000),
     ),
 }
@@ -174,6 +186,28 @@ def _box(pcbnew: Any, item: Any) -> list[float]:
 
 def _point(pcbnew: Any, value: Any) -> list[float]:
     return [pcbnew.ToMM(value.x), pcbnew.ToMM(value.y)]
+
+
+def _shape_box(pcbnew: Any, shape: Any) -> list[float]:
+    bounds = shape.BBox()
+    return [
+        pcbnew.ToMM(bounds.GetX()),
+        pcbnew.ToMM(bounds.GetY()),
+        pcbnew.ToMM(bounds.GetX() + bounds.GetWidth()),
+        pcbnew.ToMM(bounds.GetY() + bounds.GetHeight()),
+    ]
+
+
+def _axis_aligned_projection_size(
+    size_mm: tuple[float, float], angle_deg: float
+) -> list[float]:
+    angle = math.radians(float(angle_deg))
+    cosine = abs(math.cos(angle))
+    sine = abs(math.sin(angle))
+    return [
+        round(size_mm[0] * cosine + size_mm[1] * sine, 4),
+        round(size_mm[0] * sine + size_mm[1] * cosine, 4),
+    ]
 
 
 def validate_battery_termination_pad_records(
@@ -340,17 +374,29 @@ def extract_board(pcbnew: Any, path: Path) -> dict[str, Any]:
     switches: list[dict[str, Any]] = []
     mounting_holes: list[dict[str, Any]] = []
     routed_copper_exact: list[dict[str, Any]] = []
+    bottom_mask_openings: list[dict[str, Any]] = []
     legacy_refs: list[str] = []
     reset_topside: dict[str, Any] | None = None
     battery_above_carrier: dict[str, Any] | None = None
     battery_termination_contract: dict[str, Any] | None = None
     power_switch_contract: dict[str, Any] | None = None
+    power_switch_topside: dict[str, Any] | None = None
     matching_sides = [side for side, board_path in BOARD_PATHS.items() if path.resolve() == board_path.resolve()]
     if len(matching_sides) != 1:
         raise RuntimeError(f"{path.name}: cannot bind board to one X3 V2 side")
     side = matching_sides[0]
     source_board = str(path.relative_to(ROOT)).replace("\\", "/")
     source_board_sha256 = sha256_file(path)
+
+    for drawing in board.GetDrawings():
+        if drawing.GetLayer() == pcbnew.B_Mask:
+            bottom_mask_openings.append(
+                {
+                    "kind": "box",
+                    "bounds": _box(pcbnew, drawing),
+                    "source": "board_graphic",
+                }
+            )
 
     for footprint in board.GetFootprints():
         ref = footprint.GetReference()
@@ -361,6 +407,27 @@ def extract_board(pcbnew: Any, path: Path) -> dict[str, Any]:
 
         pads = list(footprint.Pads())
         graphics = list(footprint.GraphicalItems())
+        for pad in pads:
+            if pad.IsOnLayer(pcbnew.B_Mask):
+                bottom_mask_openings.append(
+                    {
+                        "kind": "box",
+                        "bounds": _shape_box(
+                            pcbnew,
+                            pad.GetEffectiveShape(pcbnew.B_Mask),
+                        ),
+                        "source": f"{ref}.{pad.GetNumber()}",
+                    }
+                )
+        for graphic in graphics:
+            if graphic.GetLayer() == pcbnew.B_Mask:
+                bottom_mask_openings.append(
+                    {
+                        "kind": "box",
+                        "bounds": _box(pcbnew, graphic),
+                        "source": ref,
+                    }
+                )
         if ref.startswith("MH") and ref[2:].isdigit():
             pad_records = []
             for pad in pads:
@@ -554,6 +621,17 @@ def extract_board(pcbnew: Any, path: Path) -> dict[str, Any]:
         if ref == POWER_SWITCH_REFERENCE:
             pad_records = [_normalized_service_pad(pcbnew, pad) for pad in pads]
             power_switch_contract = validate_power_switch_pad_records(path.name, pad_records)
+            power_switch_topside = {
+                "ref": ref,
+                "center": _point(pcbnew, footprint.GetPosition()),
+                "angle_deg": float(footprint.GetOrientationDegrees()),
+                "footprint_side": "top",
+                "body_size_mm": list(POWER_SWITCH_BODY_ENVELOPE_MM),
+                "actuator_travel_mm": POWER_SWITCH_ACTUATOR_TRAVEL_MM,
+                "actuator_sweep_size_mm": list(
+                    POWER_SWITCH_ACTUATOR_SWEEP_ENVELOPE_MM
+                ),
+            }
             for pad in pads:
                 classes["power_switch_leads"].append(
                     {
@@ -603,12 +681,10 @@ def extract_board(pcbnew: Any, path: Path) -> dict[str, Any]:
                 "angle_deg": angle,
                 "footprint_side": "top",
                 "body_size_mm": list(RESET_BODY_ENVELOPE_MM),
-                # The footprint is portrait at 90 degrees, so record the
-                # assembled board-axis projection explicitly.
-                "actuator_projection_size_mm": [
-                    RESET_ACTUATOR_ENVELOPE_MM[1],
-                    RESET_ACTUATOR_ENVELOPE_MM[0],
-                ],
+                "actuator_projection_size_mm": _axis_aligned_projection_size(
+                    RESET_ACTUATOR_ENVELOPE_MM,
+                    angle,
+                ),
                 "pad_layers": pad_layers,
                 "bottom_exposed_pad_count": sum(
                     1 for item in pad_layers.values() if item["bottom_copper"]
@@ -678,6 +754,10 @@ def extract_board(pcbnew: Any, path: Path) -> dict[str, Any]:
         raise RuntimeError(f"{path.name}: exact {BATTERY_TERMINATION_REFERENCE} footprint is missing")
     if power_switch_contract is None:
         raise RuntimeError(f"{path.name}: exact {POWER_SWITCH_REFERENCE} footprint is missing")
+    if power_switch_topside is None:
+        raise RuntimeError(
+            f"{path.name}: exact {POWER_SWITCH_REFERENCE} top-side body is missing"
+        )
 
     return {
         "path": source_board,
@@ -688,8 +768,10 @@ def extract_board(pcbnew: Any, path: Path) -> dict[str, Any]:
             key=lambda item: int(item["ref"][2:]),
         ),
         "routed_copper_exact": routed_copper_exact,
+        "bottom_mask_openings": bottom_mask_openings,
         "reset_topside": reset_topside,
         "battery_above_carrier": battery_above_carrier,
+        "power_switch_topside": power_switch_topside,
         "service_pad_contracts": {
             "battery_termination": battery_termination_contract,
             "power_switch_leads": power_switch_contract,
@@ -821,6 +903,47 @@ def _feature_geometry(shp: dict[str, Any], feature: dict[str, Any], bounds: tupl
     return geometry.buffer(allowance, join_style="round", quad_segs=4) if allowance else geometry
 
 
+def _mounting_service_geometries(
+    shp: dict[str, Any],
+    board_data: dict[str, Any],
+    bounds: tuple[float, float, float, float],
+) -> dict[str, Any]:
+    battery = board_data["battery_above_carrier"]
+    power = board_data["power_switch_topside"]
+    battery_geometry = _feature_geometry(
+        shp,
+        {"kind": "box", "bounds": battery["bounds"]},
+        bounds,
+    )
+    power_body_geometry = _feature_geometry(
+        shp,
+        {
+            "kind": "oriented_box",
+            "center": power["center"],
+            "size_x_mm": power["body_size_mm"][0],
+            "size_y_mm": power["body_size_mm"][1],
+            "angle_deg": power["angle_deg"],
+        },
+        bounds,
+    )
+    power_sweep_geometry = _feature_geometry(
+        shp,
+        {
+            "kind": "oriented_box",
+            "center": power["center"],
+            "size_x_mm": power["actuator_sweep_size_mm"][0],
+            "size_y_mm": power["actuator_sweep_size_mm"][1],
+            "angle_deg": power["angle_deg"],
+        },
+        bounds,
+    )
+    return {
+        "battery_body": battery_geometry,
+        "power_switch_body": power_body_geometry,
+        "power_switch_actuator_sweep": power_sweep_geometry,
+    }
+
+
 def build_plan_geometry(shp: dict[str, Any], side: str, board_data: dict[str, Any]) -> dict[str, Any]:
     raw_board = legacy_geometry.board_polygon(shp, board_data["edge_segments"])
     bounds = tuple(float(value) for value in raw_board.bounds)
@@ -847,6 +970,20 @@ def build_plan_geometry(shp: dict[str, Any], side: str, board_data: dict[str, An
         shp["unary_union"](routed_copper_exact_parts)
         if routed_copper_exact_parts
         else shp["Polygon"]()
+    )
+    bottom_mask_opening_parts = [
+        _feature_geometry(shp, feature, bounds)
+        for feature in board_data.get("bottom_mask_openings", [])
+    ]
+    bottom_mask_opening_geometry = (
+        shp["unary_union"](bottom_mask_opening_parts)
+        if bottom_mask_opening_parts
+        else shp["Polygon"]()
+    )
+    mounting_service_geometries = _mounting_service_geometries(
+        shp,
+        board_data,
+        bounds,
     )
 
     cutout_sources = {
@@ -919,6 +1056,10 @@ def build_plan_geometry(shp: dict[str, Any], side: str, board_data: dict[str, An
     rail_outer = board.buffer(-RAIL_INSET_MM, join_style="round", quad_segs=16)
     rail_inner = board.buffer(-(RAIL_INSET_MM + RAIL_WIDTH_MM), join_style="round", quad_segs=16)
     rail = rail_outer.difference(rail_inner).intersection(support_surface)
+    # The P1 rounded-head coordinate pattern clears the unmodified analytical
+    # perimeter rail.  Keep this explicit so a stale, MH-specific notch cannot
+    # silently reduce the original load path.
+    analytical_rail_relief = None
     forbidden = shp["unary_union"]([geom for geom in feature_geometries.values() if not geom.is_empty])
     if not rail.is_valid:
         rail = rail.buffer(0)
@@ -1033,6 +1174,21 @@ def build_plan_geometry(shp: dict[str, Any], side: str, board_data: dict[str, An
         )
         for feature in board_data.get("routed_copper_exact", [])
     )
+    reset_bottom_mask_opening_overlap_count = int(
+        reset_local_support_geometry.intersects(bottom_mask_opening_geometry)
+    )
+    reset_bottom_exposed_route_overlap_count = sum(
+        int(
+            feature.get("layer") == "B.Cu"
+            and reset_local_support_geometry.intersects(
+                _feature_geometry(shp, feature, bounds)
+            )
+            and bottom_mask_opening_geometry.intersects(
+                _feature_geometry(shp, feature, bounds)
+            )
+        )
+        for feature in board_data.get("routed_copper_exact", [])
+    )
     reset_component_cutout_collision_count = int(
         reset_local_support_geometry.intersects(all_component_cutouts)
     )
@@ -1040,6 +1196,7 @@ def build_plan_geometry(shp: dict[str, Any], side: str, board_data: dict[str, An
         int(reset_board["bottom_exposed_pad_count"]) == 0
         and reset_via_collision_count == 0
         and reset_component_cutout_collision_count == 0
+        and reset_bottom_exposed_route_overlap_count == 0
     )
     if not reset_electrically_safe:
         raise RuntimeError(f"{side}: reset local support is not electrically safe")
@@ -1048,6 +1205,7 @@ def build_plan_geometry(shp: dict[str, Any], side: str, board_data: dict[str, An
         "board_center_mm": [round(float(value), 4) for value in reset_board["center"]],
         "housing_center_mm": [round(reset_x, 4), round(reset_y, 4)],
         "footprint_side": "top",
+        "footprint_rotation_deg": round(float(reset_board["angle_deg"]), 4),
         "actuator_projection_size_mm": list(reset_board["actuator_projection_size_mm"]),
         "support_diameter_mm": RESET_LOCAL_SUPPORT_DIAMETER_MM,
         "support_top_z_mm": PCB_BOTTOM_Z_MM,
@@ -1059,11 +1217,21 @@ def build_plan_geometry(shp: dict[str, Any], side: str, board_data: dict[str, An
         "bottom_exposed_pad_collision_count": int(reset_board["bottom_exposed_pad_count"]),
         "via_collision_count": reset_via_collision_count,
         "bottom_routed_copper_overlap_count": reset_bottom_route_overlap_count,
-        "bottom_routed_copper_solder_mask_protected": True,
+        "bottom_mask_opening_overlap_count": reset_bottom_mask_opening_overlap_count,
+        "bottom_exposed_routed_copper_overlap_count": (
+            reset_bottom_exposed_route_overlap_count
+        ),
+        "bottom_routed_copper_solder_mask_protected": (
+            reset_bottom_exposed_route_overlap_count == 0
+        ),
+        "bottom_routed_copper_solder_mask_protection_basis": (
+            "derived_from_exact_B.Cu_and_B.Mask_geometry"
+        ),
         "electrically_safe": reset_electrically_safe,
         "electrical_safety_basis": (
             "SW_RST1 pads are F.Cu-only; no via or exterior-open cutout intersects the "
-            "support, and any B.Cu route overlap remains inside the PCB stack under solder mask."
+            "support, and exact B.Cu route overlap is rejected wherever an exact B.Mask "
+            "opening exposes it."
         ),
     }
 
@@ -1126,8 +1294,11 @@ def build_plan_geometry(shp: dict[str, Any], side: str, board_data: dict[str, An
         "support_surface": support_surface,
         "raw_bounds": bounds,
         "rail": rail,
+        "analytical_rail_relief": analytical_rail_relief,
         "feature_geometries": feature_geometries,
         "routed_copper_exact_geometry": routed_copper_exact_geometry,
+        "bottom_mask_opening_geometry": bottom_mask_opening_geometry,
+        "mounting_service_geometries": mounting_service_geometries,
         "component_geometries": component_geometries,
         "component_cutout_geometries": component_cutout_geometries,
         "component_cutout_counts": component_cutout_counts,
@@ -1371,15 +1542,27 @@ def mounting_system_manifest(
     part_plans: list[Any],
 ) -> dict[str, Any]:
     part_names = ["whole"] if side == "left" else ["part_a", "part_b"]
-    existing_supports = _support_plan_union(shp, plan["support_posts"]).union(
-        plan["rail"]
+    existing_support_posts = _support_plan_union(
+        shp,
+        plan["support_posts"],
+    ).union(
+        plan["reset_local_support_geometry"]
     )
+    analytical_rail = plan["rail"]
+    existing_supports = existing_support_posts.union(analytical_rail)
     raised_or_component_features = shp["unary_union"](
         [
             geometry
             for name, geometry in plan["feature_geometries"].items()
             if name not in {"bottom_copper_tracks", "vias"}
             if not geometry.is_empty
+        ]
+    )
+    installed_component_geometry = shp["unary_union"](
+        [
+            plan["switch_service_body_geometry"],
+            raised_or_component_features,
+            *plan["mounting_service_geometries"].values(),
         ]
     )
     split_slot = shp["Polygon"]()
@@ -1393,6 +1576,47 @@ def mounting_system_manifest(
     distribution: dict[str, int] = {}
     for item in plan["mounting_holes"]:
         ref = item["ref"]
+        support_land_to_existing_support = float(
+            item["land_geometry"].distance(existing_supports)
+        )
+        head_to_existing_support = float(
+            item["head_geometry"].distance(existing_supports)
+        )
+        head_to_support_posts = float(
+            item["head_geometry"].distance(existing_support_posts)
+        )
+        head_to_analytical_rail = float(
+            item["head_geometry"].distance(analytical_rail)
+        )
+        head_to_installed_component = float(
+            item["head_geometry"].distance(installed_component_geometry)
+        )
+        head_to_routed_copper_or_via = float(
+            item["head_geometry"].distance(plan["routed_copper_exact_geometry"])
+        )
+        head_to_board_edge = float(
+            item["head_geometry"].distance(plan["board"].boundary)
+        )
+        head_to_housing_edge = float(
+            item["head_geometry"].distance(plan["housing_outline"].boundary)
+        )
+        driver_to_battery_body = float(
+            item["driver_geometry"].distance(
+                plan["mounting_service_geometries"]["battery_body"]
+            )
+        )
+        driver_to_power_switch_body = float(
+            item["driver_geometry"].distance(
+                plan["mounting_service_geometries"]["power_switch_body"]
+            )
+        )
+        driver_to_power_switch_actuator_sweep = float(
+            item["driver_geometry"].distance(
+                plan["mounting_service_geometries"][
+                    "power_switch_actuator_sweep"
+                ]
+            )
+        )
         containing_parts = [
             name
             for name, part_plan in zip(part_names, part_plans)
@@ -1410,6 +1634,36 @@ def mounting_system_manifest(
             "support_land_existing_support": item["land_geometry"].intersects(
                 existing_supports
             ),
+            "support_land_existing_support_reserve": (
+                support_land_to_existing_support
+                + 1e-9
+                < MOUNTING_UNRELATED_SUPPORT_RESERVE_MM
+            ),
+            "head_existing_support_reserve": (
+                head_to_existing_support
+                + 1e-9
+                < MOUNTING_UNRELATED_SUPPORT_RESERVE_MM
+            ),
+            "head_support_post_reserve": (
+                head_to_support_posts + 1e-9 < MOUNTING_HEAD_RESERVE_MM
+            ),
+            "head_analytical_rail_reserve": (
+                head_to_analytical_rail + 1e-9 < MOUNTING_HEAD_RESERVE_MM
+            ),
+            "head_installed_component_reserve": (
+                head_to_installed_component + 1e-9 < MOUNTING_HEAD_RESERVE_MM
+            ),
+            "head_routed_copper_or_via_reserve": (
+                head_to_routed_copper_or_via + 1e-9 < MOUNTING_HEAD_RESERVE_MM
+            ),
+            "head_board_edge_reserve": (
+                not plan["board"].covers(item["head_geometry"])
+                or head_to_board_edge + 1e-9 < MOUNTING_HEAD_RESERVE_MM
+            ),
+            "head_housing_edge_reserve": (
+                not plan["housing_outline"].covers(item["head_geometry"])
+                or head_to_housing_edge + 1e-9 < MOUNTING_HEAD_RESERVE_MM
+            ),
             "pilot_component_cutout": item["pilot_geometry"].intersects(
                 plan["all_component_cutouts"]
             ),
@@ -1424,6 +1678,19 @@ def mounting_system_manifest(
             ),
             "driver_component": item["driver_geometry"].intersects(
                 raised_or_component_features
+            ),
+            "driver_battery_body": item["driver_geometry"].intersects(
+                plan["mounting_service_geometries"]["battery_body"]
+            ),
+            "driver_power_switch_body": item["driver_geometry"].intersects(
+                plan["mounting_service_geometries"]["power_switch_body"]
+            ),
+            "driver_power_switch_actuator_sweep": item[
+                "driver_geometry"
+            ].intersects(
+                plan["mounting_service_geometries"][
+                    "power_switch_actuator_sweep"
+                ]
             ),
             "driver_routed_copper_or_via": item["driver_geometry"].intersects(
                 plan["routed_copper_exact_geometry"]
@@ -1456,6 +1723,33 @@ def mounting_system_manifest(
                 ),
                 "support_land_top_z_mm": PCB_BOTTOM_Z_MM,
                 "support_land_vertical_gap_mm": 0.0,
+                "support_land_to_existing_support_mm": round(
+                    support_land_to_existing_support,
+                    4,
+                ),
+                "head_to_existing_support_mm": round(
+                    head_to_existing_support,
+                    4,
+                ),
+                "head_to_support_posts_mm": round(head_to_support_posts, 4),
+                "head_to_analytical_rail_mm": round(
+                    head_to_analytical_rail,
+                    4,
+                ),
+                "head_to_installed_component_mm": round(
+                    head_to_installed_component,
+                    4,
+                ),
+                "head_to_routed_copper_or_via_mm": round(
+                    head_to_routed_copper_or_via,
+                    4,
+                ),
+                "head_to_board_edge_mm": round(head_to_board_edge, 4),
+                "head_to_housing_edge_mm": round(head_to_housing_edge, 4),
+                "head_reserve_mm": MOUNTING_HEAD_RESERVE_MM,
+                "minimum_unrelated_support_reserve_mm": (
+                    MOUNTING_UNRELATED_SUPPORT_RESERVE_MM
+                ),
                 "desk_column_diameter_mm": MOUNTING_SUPPORT_LAND_DIAMETER_MM,
                 "desk_column_bottom_z_mm": DESK_DATUM_Z_MM,
                 "pilot_diameter_mm": MOUNTING_PILOT_DIAMETER_MM,
@@ -1485,6 +1779,15 @@ def mounting_system_manifest(
                     MOUNTING_HEAD_HEIGHT_MM,
                 ],
                 "driver_envelope_diameter_mm": MOUNTING_DRIVER_DIAMETER_MM,
+                "driver_to_battery_body_mm": round(driver_to_battery_body, 4),
+                "driver_to_power_switch_body_mm": round(
+                    driver_to_power_switch_body,
+                    4,
+                ),
+                "driver_to_power_switch_actuator_sweep_mm": round(
+                    driver_to_power_switch_actuator_sweep,
+                    4,
+                ),
                 "service_condition": "keycaps-off, switches-installed",
                 "collision_checks": checks,
                 "collision_count": sum(bool(value) for value in checks.values()),
@@ -1496,7 +1799,17 @@ def mounting_system_manifest(
         else {"part_a": 4, "part_b": 6}
     )
     return {
-        "fastener_envelope": "M1.4 provisional direct-plastic prototype",
+        "fastener_envelope": (
+            "M1.4 provisional direct-plastic prototype; non-countersunk "
+            "rounded pan/button head"
+        ),
+        "fastener_head_style": MOUNTING_FASTENER_HEAD_STYLE,
+        "head_envelope_mm": [
+            MOUNTING_HEAD_DIAMETER_MM,
+            MOUNTING_HEAD_HEIGHT_MM,
+        ],
+        "head_reserve_mm": MOUNTING_HEAD_RESERVE_MM,
+        "head_height_and_keycap_skirt_physical_status": "pending",
         "physical_registration_status": "pending",
         "count": len(holes),
         "board_coordinates_mm": [
@@ -1506,6 +1819,18 @@ def mounting_system_manifest(
             plan["board_mounting_contract"]["matches"]
         ),
         "holes": holes,
+        "analytical_rail_relief": plan["analytical_rail_relief"],
+        "minimum_unrelated_support_reserve_mm": (
+            MOUNTING_UNRELATED_SUPPORT_RESERVE_MM
+        ),
+        "service_body_envelopes": {
+            "battery_body_size_mm": list(BATTERY_NOMINAL_PLAN_ENVELOPE_MM),
+            "power_switch_body_size_mm": list(POWER_SWITCH_BODY_ENVELOPE_MM),
+            "power_switch_actuator_travel_mm": POWER_SWITCH_ACTUATOR_TRAVEL_MM,
+            "power_switch_actuator_sweep_size_mm": list(
+                POWER_SWITCH_ACTUATOR_SWEEP_ENVELOPE_MM
+            ),
+        },
         "part_distribution": distribution,
         "expected_part_distribution": expected_distribution,
         "part_distribution_matches_plan": distribution == expected_distribution,
@@ -1937,6 +2262,11 @@ def generate_outputs(output_dir: Path, kicad_python: Path) -> Path:
             "power_switch_reference": POWER_SWITCH_REFERENCE,
             "power_switch_drill_count": POWER_SWITCH_DRILL_COUNT,
             "power_switch_drill_diameter_mm": POWER_SWITCH_DRILL_DIAMETER_MM,
+            "power_switch_body_envelope_mm": list(POWER_SWITCH_BODY_ENVELOPE_MM),
+            "power_switch_actuator_travel_mm": POWER_SWITCH_ACTUATOR_TRAVEL_MM,
+            "power_switch_actuator_sweep_envelope_mm": list(
+                POWER_SWITCH_ACTUATOR_SWEEP_ENVELOPE_MM
+            ),
             "reset_reference": RESET_REFERENCE,
             "reset_local_support_diameter_mm": RESET_LOCAL_SUPPORT_DIAMETER_MM,
             "maximum_load_point_to_support_mm": MAX_LOAD_POINT_TO_SUPPORT_MM,
@@ -1955,7 +2285,13 @@ def generate_outputs(output_dir: Path, kicad_python: Path) -> Path:
                 MOUNTING_HEAD_DIAMETER_MM,
                 MOUNTING_HEAD_HEIGHT_MM,
             ],
+            "mounting_fastener_head_style": MOUNTING_FASTENER_HEAD_STYLE,
+            "mounting_head_reserve_mm": MOUNTING_HEAD_RESERVE_MM,
             "mounting_driver_envelope_diameter_mm": MOUNTING_DRIVER_DIAMETER_MM,
+            "mounting_unrelated_support_reserve_mm": (
+                MOUNTING_UNRELATED_SUPPORT_RESERVE_MM
+            ),
+            "mounting_analytical_rail_relief": None,
             "provisional_screw_under_head_length_mm": (
                 MOUNTING_PROVISIONAL_SCREW_UNDER_HEAD_LENGTH_MM
             ),
@@ -1980,6 +2316,7 @@ def generate_outputs(output_dir: Path, kicad_python: Path) -> Path:
             "fastener_boss_count": 0,
             "glue_assumed": False,
             "physical_registration_status": "pending",
+            "head_height_and_keycap_skirt_physical_status": "pending",
             "service_condition": "keycaps-off, switches-installed",
             "note": (
                 "M1.4 features clamp/register the PCB but remain a provisional physical interface; "

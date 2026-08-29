@@ -1,7 +1,9 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import html
+import json
 import math
 import os
 import re
@@ -29,6 +31,7 @@ from tools.generate_kc2_pcbs import (  # noqa: E402
     make_right_keys_no_stab,
     make_right_keys_x3_v2,
 )
+from tools.canonical_hash import HASH_POLICY, sha256_file  # noqa: E402
 
 DEFAULT_CLEARANCE_MM = 1.0
 DEFAULT_SCALE = 5.0
@@ -37,20 +40,51 @@ ZOOM_WIDTH_MM = 64.0
 SCAN_STEP_MM = 0.005
 CORRIDOR_STEP_MM = 0.25
 TY_ROW_CENTER_Y_MM = 96.575
+X3_V2_SERVICE_REFERENCES = ("BAT1", "J_BAT1", "SW_PWR1", "SW_RST1")
+X3_V2_BATTERY_TERMINAL_LEGENDS = ("B+", "B-/GND")
+SERVICE_STYLES = {
+    "BAT1": ("#f1e7ff", "#7951a8"),
+    "J_BAT1": ("#fff1d8", "#b66a13"),
+    "SW_PWR1": ("#ffe5dd", "#b83d27"),
+    "SW_RST1": ("#ffe8f2", "#a83267"),
+}
 
 
 Segment = tuple[tuple[float, float], tuple[float, float]]
 
 
 @dataclass(frozen=True)
+class MountRenderData:
+    reference: str
+    center: tuple[float, float]
+
+
+@dataclass(frozen=True)
+class ServiceRenderData:
+    reference: str
+    center: tuple[float, float]
+    bounds: tuple[float, float, float, float]
+    rotation_degrees: float
+
+
+@dataclass(frozen=True)
+class TerminalLegendRenderData:
+    text: str
+    center: tuple[float, float]
+
+
+@dataclass(frozen=True)
 class BoardRenderData:
     side: str
+    source_path: Path
     board: pcbnew.BOARD
     edge_segments: list[Segment]
     bounds: tuple[float, float, float, float]
     keys: list[Key]
     switch_centers: dict[int, tuple[float, float]]
-    mount_centers: list[tuple[float, float]]
+    mounts: list[MountRenderData]
+    service_components: list[ServiceRenderData]
+    battery_terminal_legends: list[TerminalLegendRenderData]
     controller_bounds: tuple[float, float, float, float]
 
 
@@ -157,12 +191,69 @@ def switch_centers(board: pcbnew.BOARD) -> dict[int, tuple[float, float]]:
     return centers
 
 
-def mount_centers(board: pcbnew.BOARD) -> list[tuple[float, float]]:
-    centers: list[tuple[float, float]] = []
+def mount_records(board: pcbnew.BOARD) -> list[MountRenderData]:
+    records: list[MountRenderData] = []
     for fp in board.GetFootprints():
-        if fp.GetValue() in {"M2_NPTH_2.2", "REG_NPTH_3.0"}:
-            centers.append(mm_vec(fp.GetPosition()))
-    return centers
+        reference = fp.GetReference()
+        if re.fullmatch(r"MH\d+", reference) or fp.GetValue() in {
+            "M2_NPTH_2.2",
+            "REG_NPTH_3.0",
+        }:
+            records.append(MountRenderData(reference, mm_vec(fp.GetPosition())))
+    return sorted(records, key=lambda record: record.reference)
+
+
+def _box_mm(box: pcbnew.BOX2I) -> tuple[float, float, float, float]:
+    x = pcbnew.ToMM(box.GetX())
+    y = pcbnew.ToMM(box.GetY())
+    return x, y, x + pcbnew.ToMM(box.GetWidth()), y + pcbnew.ToMM(box.GetHeight())
+
+
+def service_component_records(
+    board: pcbnew.BOARD,
+    expected_references: tuple[str, ...],
+) -> list[ServiceRenderData]:
+    records: list[ServiceRenderData] = []
+    for reference in expected_references:
+        matches = [fp for fp in board.GetFootprints() if fp.GetReference() == reference]
+        if len(matches) != 1:
+            state = "missing" if not matches else f"duplicated ({len(matches)})"
+            raise RuntimeError(f"service reference {reference} is {state}")
+        footprint = matches[0]
+        records.append(
+            ServiceRenderData(
+                reference=reference,
+                center=mm_vec(footprint.GetPosition()),
+                bounds=_box_mm(footprint.GetBoundingBox(False, False)),
+                rotation_degrees=float(footprint.GetOrientationDegrees()),
+            )
+        )
+    return records
+
+
+def battery_terminal_legend_records(board: pcbnew.BOARD) -> list[TerminalLegendRenderData]:
+    matches = [fp for fp in board.GetFootprints() if fp.GetReference() == "J_BAT1"]
+    if len(matches) != 1:
+        state = "missing" if not matches else f"duplicated ({len(matches)})"
+        raise RuntimeError(f"service reference J_BAT1 is {state}")
+    footprint = matches[0]
+    records: list[TerminalLegendRenderData] = []
+    for expected_text in X3_V2_BATTERY_TERMINAL_LEGENDS:
+        text_items = [
+            item
+            for item in footprint.GraphicalItems()
+            if hasattr(item, "GetText")
+            and item.GetText() == expected_text
+            and item.IsVisible()
+            and item.GetLayerName() == "F.Silkscreen"
+        ]
+        if len(text_items) != 1:
+            state = "missing" if not text_items else f"duplicated ({len(text_items)})"
+            raise RuntimeError(f"battery terminal legend {expected_text} is {state}")
+        records.append(
+            TerminalLegendRenderData(expected_text, mm_vec(text_items[0].GetPosition()))
+        )
+    return records
 
 
 def controller_bounds(board: pcbnew.BOARD) -> tuple[float, float, float, float]:
@@ -182,7 +273,12 @@ def controller_bounds(board: pcbnew.BOARD) -> tuple[float, float, float, float]:
     raise RuntimeError("U1 controller footprint not found")
 
 
-def load_board_data(side: str, path: Path, keys: list[Key]) -> BoardRenderData:
+def load_board_data(
+    side: str,
+    path: Path,
+    keys: list[Key],
+    service_references: tuple[str, ...] = (),
+) -> BoardRenderData:
     board = pcbnew.LoadBoard(str(path))
     segments = edge_segments(board)
     centers = switch_centers(board)
@@ -193,12 +289,17 @@ def load_board_data(side: str, path: Path, keys: list[Key]) -> BoardRenderData:
         raise RuntimeError(f"{side} switch/key mismatch: missing={missing}, extra={extra}")
     return BoardRenderData(
         side=side,
+        source_path=path,
         board=board,
         edge_segments=segments,
         bounds=board_bounds(segments),
         keys=keys,
         switch_centers=centers,
-        mount_centers=mount_centers(board),
+        mounts=mount_records(board),
+        service_components=service_component_records(board, service_references),
+        battery_terminal_legends=(
+            battery_terminal_legend_records(board) if service_references else []
+        ),
         controller_bounds=controller_bounds(board),
     )
 
@@ -504,24 +605,38 @@ def build_context(
         left_keys = make_left_keys_x3_v2()
         right_keys = make_right_keys_x3_v2()
         right_seam_label = "7"
+        service_references = X3_V2_SERVICE_REFERENCES
     elif variant == "x3":
         left_path = repo / "hardware" / "kicad" / "kc2_left" / "kc2_left.kicad_pcb"
         right_path = repo / "hardware" / "kicad" / "kc2_right" / "kc2_right.kicad_pcb"
         left_keys = make_left_keys_no_stab()
         right_keys = make_right_keys_no_stab()
         right_seam_label = "Y"
+        service_references = ()
     else:
         raise ValueError(f"Unknown variant: {variant}")
     left = load_board_data(
         "left",
         left_path,
         left_keys,
+        service_references,
     )
     right = load_board_data(
         "right",
         right_path,
         right_keys,
+        service_references,
     )
+    if variant == "x3-v2":
+        for data, count in ((left, 8), (right, 10)):
+            expected_mounts = {f"MH{index}" for index in range(1, count + 1)}
+            actual_mounts = {mount.reference for mount in data.mounts}
+            if actual_mounts != expected_mounts:
+                missing = sorted(expected_mounts - actual_mounts)
+                extra = sorted(actual_mounts - expected_mounts)
+                raise RuntimeError(
+                    f"{data.side} mounting references mismatch: missing={missing}, extra={extra}"
+                )
 
     right_dy = left.bounds[1] - right.bounds[1]
     if placement_mode == "bounding-gap":
@@ -644,6 +759,17 @@ def shifted_rect(ctx: RenderContext, side: str, rect: tuple[float, float, float,
     return x1, y1, x2, y2
 
 
+def shifted_service_component(
+    ctx: RenderContext,
+    side: str,
+    component: ServiceRenderData,
+) -> tuple[tuple[float, float], tuple[float, float, float, float]]:
+    return (
+        shift_point(ctx, side, component.center),
+        shifted_rect(ctx, side, component.bounds),
+    )
+
+
 def zoom_center_x(ctx: RenderContext) -> float:
     return (ctx.measurement.left_x + ctx.measurement.right_x) / 2.0
 
@@ -759,9 +885,85 @@ def render_svg(ctx: RenderContext, path: Path, *, zoom: bool) -> tuple[int, int]
         lines.append(rect(ctrl, 'fill="none" stroke="#252525" stroke-width="1.5" stroke-dasharray="4 3"'))
         cx, cy = tx(((ctrl[0] + ctrl[2]) / 2.0, ctrl[1] - 0.8))
         lines.append(f'<text x="{cx:.2f}" y="{cy:.2f}" text-anchor="middle" font-family="Arial" font-size="9" fill="#222">U1</text>')
-        for mount in data.mount_centers:
-            mx, my = tx(shift_point(ctx, data.side, mount))
-            lines.append(f'<circle cx="{mx:.2f}" cy="{my:.2f}" r="7" fill="white" stroke="#555" stroke-width="1"/>')
+        lines.append(
+            f'<g id="{data.side}-service-components" data-service-reference-count="{len(data.service_components)}">'
+        )
+        for component in data.service_components:
+            joined_center, joined_bounds = shifted_service_component(ctx, data.side, component)
+            fill_color, stroke_color = SERVICE_STYLES[component.reference]
+            lines.append(
+                f'<g class="service-component" data-side="{data.side}" '
+                f'data-reference="{component.reference}" '
+                f'data-board-center-x-mm="{component.center[0]:.4f}" '
+                f'data-board-center-y-mm="{component.center[1]:.4f}" '
+                f'data-joined-center-x-mm="{joined_center[0]:.4f}" '
+                f'data-joined-center-y-mm="{joined_center[1]:.4f}" '
+                f'data-board-bounds-mm="{",".join(f"{value:.4f}" for value in component.bounds)}" '
+                f'data-joined-bounds-mm="{",".join(f"{value:.4f}" for value in joined_bounds)}" '
+                f'data-rotation-degrees="{component.rotation_degrees:.4f}">'
+            )
+            lines.append(
+                rect(
+                    joined_bounds,
+                    f'rx="2" ry="2" fill="{fill_color}" fill-opacity="0.82" '
+                    f'stroke="{stroke_color}" stroke-width="1.4"',
+                )
+            )
+            service_x, service_y = tx(joined_center)
+            lines.append(
+                f'<text x="{service_x:.2f}" y="{service_y + 3.0:.2f}" text-anchor="middle" '
+                f'font-family="Arial" font-size="9" font-weight="bold" fill="{stroke_color}">'
+                f'{component.reference}</text>'
+            )
+            lines.append("</g>")
+        lines.append("</g>")
+        lines.append(
+            f'<g id="{data.side}-battery-terminal-legends" '
+            f'data-terminal-legend-count="{len(data.battery_terminal_legends)}">'
+        )
+        for legend in data.battery_terminal_legends:
+            joined_center = shift_point(ctx, data.side, legend.center)
+            legend_x, legend_y = tx(joined_center)
+            lines.append(
+                f'<g class="battery-terminal-legend" data-side="{data.side}" '
+                f'data-text="{html.escape(legend.text)}" '
+                f'data-board-center-x-mm="{legend.center[0]:.4f}" '
+                f'data-board-center-y-mm="{legend.center[1]:.4f}" '
+                f'data-joined-center-x-mm="{joined_center[0]:.4f}" '
+                f'data-joined-center-y-mm="{joined_center[1]:.4f}">'
+            )
+            lines.append(
+                f'<text x="{legend_x:.2f}" y="{legend_y + 2.4:.2f}" text-anchor="middle" '
+                f'font-family="Arial" font-size="7" font-weight="bold" fill="#5f2e00">'
+                f'{html.escape(legend.text)}</text>'
+            )
+            lines.append("</g>")
+        lines.append("</g>")
+        lines.append(
+            f'<g id="{data.side}-mounting-holes" data-mount-reference-count="{len(data.mounts)}">'
+        )
+        for mount in data.mounts:
+            joined_center = shift_point(ctx, data.side, mount.center)
+            mx, my = tx(joined_center)
+            lines.append(
+                f'<g class="mounting-hole" data-side="{data.side}" '
+                f'data-reference="{mount.reference}" '
+                f'data-board-center-x-mm="{mount.center[0]:.4f}" '
+                f'data-board-center-y-mm="{mount.center[1]:.4f}" '
+                f'data-joined-center-x-mm="{joined_center[0]:.4f}" '
+                f'data-joined-center-y-mm="{joined_center[1]:.4f}">'
+            )
+            lines.append(
+                f'<circle cx="{mx:.2f}" cy="{my:.2f}" r="7" fill="white" '
+                f'fill-opacity="0.94" stroke="#555" stroke-width="1"/>'
+            )
+            lines.append(
+                f'<text x="{mx:.2f}" y="{my + 2.7:.2f}" text-anchor="middle" '
+                f'font-family="Arial" font-size="7" font-weight="bold" fill="#333">'
+                f'{html.escape(mount.reference)}</text>'
+            )
+            lines.append("</g>")
+        lines.append("</g>")
 
     gap = ctx.key_horizontal_clearance
     gap_label = html.escape(key_horizontal_clearance_label(ctx))
@@ -913,9 +1115,39 @@ def render_png(ctx: RenderContext, path: Path, *, zoom: bool) -> tuple[int, int]
         x2, y2 = tx((ctrl[2], ctrl[3]))
         draw.rectangle((x1, y1, x2, y2), outline="#252525", width=1)
         draw.text(((x1 + x2) / 2.0, y1 - 7), "U1", fill="#222222", font=font, anchor="mm")
-        for mount in data.mount_centers:
-            mx, my = tx(shift_point(ctx, data.side, mount))
+        for component in data.service_components:
+            joined_center, joined_bounds = shifted_service_component(ctx, data.side, component)
+            fill_color, stroke_color = SERVICE_STYLES[component.reference]
+            x1, y1 = tx((joined_bounds[0], joined_bounds[1]))
+            x2, y2 = tx((joined_bounds[2], joined_bounds[3]))
+            draw.rounded_rectangle(
+                (x1, y1, x2, y2),
+                radius=2,
+                fill=fill_color,
+                outline=stroke_color,
+                width=1,
+            )
+            service_x, service_y = tx(joined_center)
+            draw.text(
+                (service_x, service_y),
+                component.reference,
+                fill=stroke_color,
+                font=font,
+                anchor="mm",
+            )
+        for legend in data.battery_terminal_legends:
+            legend_x, legend_y = tx(shift_point(ctx, data.side, legend.center))
+            draw.text(
+                (legend_x, legend_y),
+                legend.text,
+                fill="#5f2e00",
+                font=font,
+                anchor="mm",
+            )
+        for mount in data.mounts:
+            mx, my = tx(shift_point(ctx, data.side, mount.center))
             draw.ellipse((mx - 7, my - 7, mx + 7, my + 7), fill="white", outline="#555555", width=1)
+            draw.text((mx, my), mount.reference, fill="#333333", font=font, anchor="mm")
 
     gap = ctx.key_horizontal_clearance
     p1 = tx(gap.start)
@@ -940,6 +1172,98 @@ def render_png(ctx: RenderContext, path: Path, *, zoom: bool) -> tuple[int, int]
 
     img.save(path)
     return width, height
+
+
+def raw_sha256_file(path: Path) -> str:
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def _repo_relative(path: Path) -> str:
+    return path.resolve().relative_to(ROOT.resolve()).as_posix()
+
+
+def render_reference_counts(ctx: RenderContext) -> tuple[dict[str, dict[str, int]], dict[str, int]]:
+    service_counts = {
+        data.side: {
+            reference: sum(
+                component.reference == reference for component in data.service_components
+            )
+            for reference in X3_V2_SERVICE_REFERENCES
+        }
+        for data in (ctx.left, ctx.right)
+    }
+    mount_counts = {data.side: len(data.mounts) for data in (ctx.left, ctx.right)}
+    return service_counts, mount_counts
+
+
+def battery_terminal_legend_counts(ctx: RenderContext) -> dict[str, dict[str, int]]:
+    return {
+        data.side: {
+            text: sum(legend.text == text for legend in data.battery_terminal_legends)
+            for text in X3_V2_BATTERY_TERMINAL_LEGENDS
+        }
+        for data in (ctx.left, ctx.right)
+    }
+
+
+def mount_centers_mm(ctx: RenderContext) -> dict[str, dict[str, list[float]]]:
+    return {
+        data.side: {
+            mount.reference: [round(mount.center[0], 4), round(mount.center[1], 4)]
+            for mount in data.mounts
+        }
+        for data in (ctx.left, ctx.right)
+    }
+
+
+def write_x3_v2_render_manifest(
+    ctx: RenderContext,
+    output_records: dict[str, dict[str, object]],
+    output_dir: Path,
+) -> Path:
+    if ctx.variant != "x3-v2":
+        raise ValueError("render evidence manifest is defined only for x3-v2")
+    service_counts, mount_counts = render_reference_counts(ctx)
+    terminal_legend_counts = battery_terminal_legend_counts(ctx)
+    source_boards = {
+        data.side: {
+            "path": _repo_relative(data.source_path),
+            "canonical_sha256": sha256_file(data.source_path),
+        }
+        for data in (ctx.left, ctx.right)
+    }
+    manifest = {
+        "schema": "kc2-x3-v2-render-evidence-v1",
+        "requirement_ids": ["CON-ARCH-006", "CON-ARCH-007"],
+        "variant": "x3-v2",
+        "hash_policy": HASH_POLICY,
+        "renderer": {
+            "path": _repo_relative(Path(__file__)),
+            "canonical_sha256": sha256_file(Path(__file__)),
+        },
+        "render_parameters": {
+            "clearance_mm": ctx.clearance_mm,
+            "scale_px_per_mm": ctx.scale,
+            "placement_mode": ctx.placement_mode,
+            "full_margin_px": FULL_MARGIN_PX,
+            "zoom_width_mm": ZOOM_WIDTH_MM,
+        },
+        "source_boards": source_boards,
+        "service_reference_counts": service_counts,
+        "mount_reference_counts": mount_counts,
+        "mount_centers_mm": mount_centers_mm(ctx),
+        "battery_terminal_legend_counts": terminal_legend_counts,
+        "semantic_contract": (
+            "SVG service-component, battery-terminal-legend, and mounting-hole groups are "
+            "recomputed from exact board references, positions, footprint bounds, rotations, "
+            "visible F.Silkscreen B+/B-/GND text, and joined transforms; PNGs "
+            "must regenerate byte-identically from the same RenderContext."
+        ),
+        "outputs": output_records,
+    }
+    manifest_path = output_dir / "kc2_x3_v2_render_manifest.json"
+    manifest_path.write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
+    return manifest_path
 
 
 def main() -> int:
@@ -973,19 +1297,74 @@ def main() -> int:
     output_dir.mkdir(parents=True, exist_ok=True)
     stem = "kc2_x3_v2" if args.variant == "x3-v2" else "kc2"
     outputs = [
-        (output_dir / f"{stem}_joined_top.svg", False, render_svg),
-        (output_dir / f"{stem}_join_seam_zoom.svg", True, render_svg),
+        ("joined_top_svg", output_dir / f"{stem}_joined_top.svg", False, render_svg),
+        ("join_seam_zoom_svg", output_dir / f"{stem}_join_seam_zoom.svg", True, render_svg),
     ]
     if not args.svg_only:
         outputs.extend(
             [
-                (output_dir / f"{stem}_joined_top.png", False, render_png),
-                (output_dir / f"{stem}_join_seam_zoom.png", True, render_png),
+                ("joined_top_png", output_dir / f"{stem}_joined_top.png", False, render_png),
+                ("join_seam_zoom_png", output_dir / f"{stem}_join_seam_zoom.png", True, render_png),
             ]
         )
-    for path, zoom, renderer in outputs:
-        width, height = renderer(ctx, path, zoom=zoom)
-        print(f"{path} {width}x{height}")
+    dimensions: dict[str, tuple[int, int]] = {}
+    repeat_raw_hashes: dict[str, str] = {}
+    repeat_canonical_hashes: dict[str, str] = {}
+    with tempfile.TemporaryDirectory(prefix="kc2-render-repeat-") as temporary:
+        repeat_root = Path(temporary)
+        for key, path, zoom, renderer in outputs:
+            width, height = renderer(ctx, path, zoom=zoom)
+            repeat_path = repeat_root / path.name
+            repeat_width, repeat_height = renderer(ctx, repeat_path, zoom=zoom)
+            if (repeat_width, repeat_height) != (width, height):
+                raise RuntimeError(
+                    f"{path.name} regenerated viewport {(repeat_width, repeat_height)} "
+                    f"does not match {(width, height)}"
+                )
+            repeat_raw_hash = raw_sha256_file(repeat_path)
+            if repeat_raw_hash != raw_sha256_file(path):
+                raise RuntimeError(f"{path.name} is not byte-deterministic across two renders")
+            dimensions[key] = (width, height)
+            repeat_raw_hashes[key] = repeat_raw_hash
+            repeat_canonical_hashes[key] = sha256_file(repeat_path)
+            print(f"{path} {width}x{height}")
+
+    if args.variant == "x3-v2" and not args.svg_only:
+        service_counts, mount_counts = render_reference_counts(ctx)
+        terminal_legend_counts = battery_terminal_legend_counts(ctx)
+        output_records: dict[str, dict[str, object]] = {}
+        for key, path, zoom, _renderer in outputs:
+            width, height = dimensions[key]
+            record: dict[str, object] = {
+                "path": _repo_relative(path),
+                "media_type": "image/svg+xml" if path.suffix == ".svg" else "image/png",
+                "zoom": zoom,
+                "width_px": width,
+                "height_px": height,
+                "deterministic_regeneration": True,
+                "service_reference_counts": service_counts,
+                "mount_reference_counts": mount_counts,
+                "battery_terminal_legend_counts": terminal_legend_counts,
+            }
+            if path.suffix == ".svg":
+                record.update(
+                    {
+                        "digest_mode": "canonical_text",
+                        "canonical_sha256": sha256_file(path),
+                        "regenerated_canonical_sha256": repeat_canonical_hashes[key],
+                    }
+                )
+            else:
+                record.update(
+                    {
+                        "digest_mode": "raw_binary",
+                        "raw_sha256": raw_sha256_file(path),
+                        "regenerated_raw_sha256": repeat_raw_hashes[key],
+                    }
+                )
+            output_records[key] = record
+        manifest_path = write_x3_v2_render_manifest(ctx, output_records, output_dir)
+        print(f"{manifest_path} manifest")
 
     print(f"placement_mode={ctx.placement_mode}")
     print(f"target_clearance_mm={ctx.clearance_mm:.4f}")

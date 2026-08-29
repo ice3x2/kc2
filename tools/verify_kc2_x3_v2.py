@@ -6,22 +6,30 @@ import json
 from collections import Counter
 from datetime import datetime
 import math
+import os
 from pathlib import Path
 import re
+import shutil
+from statistics import median
+import subprocess
+import sys
 from typing import Iterable, Sequence
 
 import pcbnew
 
-from tools.canonical_hash import HASH_POLICY, sha256_file
+from tools.canonical_hash import HASH_POLICY, sha256_bytes, sha256_file
 from tools.generate_kc2_pcbs import (
     X3_V2_CONTROLLER_SERVICE_POSITIONS_MM,
     X3_V2_J_BAT1_ROTATIONS_DEGREES,
+    X3_V2_MOUNTING_POINTS,
     X3_V2_RESET_BODY_SIZE_MM,
     X3_V2_RESET_BODY_TO_KEYCAP_MIN_MM,
     X3_V2_RESET_COURTYARD_TO_U1_SOCKET_COPPER_MIN_MM,
     X3_V2_RESET_KEYCAP_ENVELOPE_MM,
     X3_V2_RESET_ROTATIONS_DEGREES,
     X3_V2_TOP_EDGE_Y_MM,
+    make_left_keys_x3_v2,
+    make_right_keys_x3_v2,
     x3_v2_join_geometry_by_row,
 )
 
@@ -48,6 +56,169 @@ DEFAULT_DRC_EVIDENCE = V2_ROOT / "kc2_x3_v2_drc_evidence.json"
 DEFAULT_HOUSING_MANIFEST = (
     ROOT / "hardware" / "case" / "draft" / "x3-v2" / "kc2_x3_v2_housing_manifest.json"
 )
+DEFAULT_PHYSICAL_EVIDENCE = (
+    V2_ROOT / "kc2_x3_v2_physical_evidence.json"
+)
+DEFAULT_FABRICATION_MANIFEST = (
+    V2_ROOT / "fabrication" / "kc2_x3_v2_fabrication_manifest.json"
+)
+DEFAULT_OUTLINE_REPORT = (
+    V2_ROOT / "mechanical" / "kc2_x3_v2_outline_report.json"
+)
+DEFAULT_FIRMWARE_BUILD_EVIDENCE = (
+    ROOT
+    / "firmware"
+    / "kc2_zmk"
+    / "boards"
+    / "shields"
+    / "kc2_x3_v2"
+    / "kc2_x3_v2_build_evidence.json"
+)
+PHYSICAL_EVIDENCE_SCHEMA = "kc2-x3-v2-physical-evidence-v1"
+PHYSICAL_EVIDENCE_REQUIREMENT_IDS = [
+    "CON-ARCH-004",
+    "CON-ARCH-006",
+    "CON-ARCH-007",
+    "REL-ARCH-001",
+]
+PHYSICAL_EVIDENCE_BUNDLES = {
+    "controller_service": "CON-ARCH-007: controller service physical evidence bundle",
+    "physical_scan": "CON-ARCH-004: physical scan evidence bundle",
+    "housing_fastener_deflection": "CON-ARCH-006: housing physical evidence bundle",
+    "power_rf": "REL-ARCH-001: power/RF evidence bundle",
+}
+PHYSICAL_RAW_BUNDLE_SCHEMA = "kc2-x3-v2-physical-raw-bundle-v1"
+PHYSICAL_RAW_ARTIFACT_KINDS = {
+    "controller_service": "controller-service-raw-json",
+    "physical_scan": "physical-scan-raw-json",
+    "housing_fastener_deflection": "housing-fastener-deflection-raw-json",
+    "power_rf": "power-rf-raw-json",
+}
+POSITIVE_ORDER_ARTIFACT_MODULES = {
+    "fabrication": "tools.verify_kc2_x3_v2_fabrication",
+    "mechanical": "tools.verify_kc2_x3_v2_mechanical",
+    "render": "tools.verify_kc2_x3_v2_render",
+    "firmware": "tools.verify_kc2_x3_v2_zmk_firmware",
+    "coupon": "tools.verify_kc2_x3_v2_coupon",
+    "outline": "tools.verify_kc2_x3_v2_outline",
+}
+DIRECT_PLASTIC_THREAD_FORMS = {"thread_forming_30_degree_flank"}
+IDENTITY_PLACEHOLDER_TOKENS = {
+    "PLACEHOLDER",
+    "NA",
+    "UNSET",
+    "UNDECIDED",
+    "UNSPECIFIED",
+    "UNSELECTED",
+    "UNRESOLVED",
+    "UNCONFIRMED",
+    "TBC",
+    "TBD",
+    "TBA",
+    "PENDING",
+    "UNKNOWN",
+    "TODO",
+    "FIXME",
+    "PROVISIONAL",
+    "DUMMY",
+    "NONE",
+    "NULL",
+    "TEMP",
+    "FAKE",
+    "AWAITING",
+    "DRAFT",
+    "TENTATIVE",
+    "DEFERRED",
+    "LATER",
+}
+IDENTITY_PLACEHOLDER_PHRASES = {
+    ("NOT", "AVAILABLE"),
+    ("NOT", "KNOWN"),
+    ("NOT", "SELECTED"),
+    ("NOT", "YET", "SELECTED"),
+    ("NO", "MPN"),
+    ("AWAITING", "SELECTION"),
+    ("PENDING", "SELECTION"),
+    ("TO", "FOLLOW"),
+    ("TO", "BE", "DECIDED"),
+    ("TO", "BE", "CONFIRMED"),
+    ("TO", "BE", "DETERMINED"),
+}
+IDENTITY_PLACEHOLDER_GENERIC_CONTEXT = {
+    "ASSEMBLY",
+    "BOARD",
+    "CODE",
+    "COMPONENT",
+    "COUPON",
+    "DATASHEET",
+    "DOC",
+    "DOCUMENT",
+    "DRAWING",
+    "DRIVER",
+    "EVIDENCE",
+    "FASTENER",
+    "FOOTPRINT",
+    "GATE",
+    "HOUSING",
+    "ID",
+    "IDENTITY",
+    "ITEM",
+    "KEYCAP",
+    "LOT",
+    "MANUFACTURER",
+    "MATERIAL",
+    "MODEL",
+    "MPN",
+    "NUMBER",
+    "ORDER",
+    "PART",
+    "PHYSICAL",
+    "PRINTER",
+    "PROCESS",
+    "PROCUREMENT",
+    "PRODUCT",
+    "PROFILE",
+    "PURCHASE",
+    "RECORD",
+    "REV",
+    "REVISION",
+    "SELECTED",
+    "SELECTION",
+    "SOCKET",
+    "SOURCE",
+    "SPECIMEN",
+    "SKU",
+    "SUPPLIER",
+    "SWITCH",
+    "VALUE",
+    "VENDOR",
+}
+IDENTITY_PLACEHOLDER_NUMERIC_PREFIXES = {
+    "AWAITING",
+    "DEFERRED",
+    "DRAFT",
+    "DUMMY",
+    "FAKE",
+    "FIXME",
+    "LATER",
+    "NONE",
+    "NULL",
+    "PENDING",
+    "PLACEHOLDER",
+    "PROVISIONAL",
+    "TEMP",
+    "TBA",
+    "TBD",
+    "TENTATIVE",
+    "TODO",
+    "UNCONFIRMED",
+    "UNDECIDED",
+    "UNRESOLVED",
+    "UNSELECTED",
+    "UNSPECIFIED",
+    "UNKNOWN",
+    "UNSET",
+}
 EXPECTED_IGNORED_DRC_CHECKS = [
     "footprint_filters_mismatch",
     "footprint_type_mismatch",
@@ -66,27 +237,31 @@ FORBIDDEN_ACTIVE_V2_BOARD_TEXTS = {
     "BAT LEAD EXIT",
 }
 REQUIRED_ACTIVE_V2_BOARD_TEXTS = {"BAT STRAIN RELIEF"}
+EXPECTED_BATTERY_TERMINATION_MARKINGS = [
+    ("1", "B+", "F.Silkscreen", 0.0, -1.65, 0.8, 0.8, 0.12),
+    ("2", "B-/GND", "F.Silkscreen", 2.54, 1.8, 0.8, 0.8, 0.12),
+]
 EXPECTED_M1_4_MOUNTING_POINTS = {
     "left": [
-        ("MH1", 142.6125, 68.0000),
+        ("MH1", 142.6125, 67.9000),
         ("MH2", 128.6125, 86.5000),
-        ("MH3", 100.1125, 93.5000),
-        ("MH4", 57.1125, 99.0000),
-        ("MH5", 133.6125, 131.5000),
+        ("MH3", 108.5125, 87.0000),
+        ("MH4", 57.4125, 99.0000),
+        ("MH5", 124.7125, 125.1000),
         ("MH6", 55.1125, 144.0000),
         ("MH7", 165.6125, 145.0000),
         ("MH8", 102.6125, 147.0000),
     ],
     "right": [
-        ("MH1", 71.6875, 68.0000),
-        ("MH2", 181.1875, 85.5000),
-        ("MH3", 147.6875, 93.5000),
-        ("MH4", 109.6875, 96.5000),
+        ("MH1", 71.6875, 67.9000),
+        ("MH2", 181.0875, 85.5000),
+        ("MH3", 156.1875, 87.0000),
+        ("MH4", 109.6875, 104.8000),
         ("MH5", 71.6875, 105.5000),
-        ("MH6", 42.1875, 106.0000),
-        ("MH7", 181.1875, 134.5000),
-        ("MH8", 143.1875, 134.5000),
-        ("MH9", 51.6875, 144.0000),
+        ("MH6", 62.0875, 69.3000),
+        ("MH7", 181.1875, 143.0000),
+        ("MH8", 143.0875, 143.0000),
+        ("MH9", 66.8875, 153.4000),
         ("MH10", 95.6875, 147.0000),
     ],
 }
@@ -730,6 +905,62 @@ def analyze_v2_footprint(path: Path = DEFAULT_FOOTPRINT) -> dict[str, object]:
         footprint.Reference(),
         footprint.Value(),
     ]
+    back_courtyard_points = [
+        point
+        for item in footprint.GraphicalItems()
+        if item.GetLayer() == pcbnew.B_CrtYd and isinstance(item, pcbnew.PCB_SHAPE)
+        for point in (item.GetStart(), item.GetEnd())
+    ]
+    back_body_points = [
+        point
+        for item in footprint.GraphicalItems()
+        if item.GetLayer() == pcbnew.B_Fab and isinstance(item, pcbnew.PCB_SHAPE)
+        for point in (item.GetStart(), item.GetEnd())
+    ]
+    socket_feature_bounds = [
+        (
+            x - width / 2.0,
+            y - height / 2.0,
+            x + width / 2.0,
+            y + height / 2.0,
+        )
+        for x, y, width, height in choc_socket_smd_pads.values()
+    ]
+    if back_body_points:
+        socket_feature_bounds.append(
+            (
+                min(mm(point.x) for point in back_body_points),
+                min(mm(point.y) for point in back_body_points),
+                max(mm(point.x) for point in back_body_points),
+                max(mm(point.y) for point in back_body_points),
+            )
+        )
+    back_courtyard_bounds = (
+        (
+            min(mm(point.x) for point in back_courtyard_points),
+            min(mm(point.y) for point in back_courtyard_points),
+            max(mm(point.x) for point in back_courtyard_points),
+            max(mm(point.y) for point in back_courtyard_points),
+        )
+        if back_courtyard_points
+        else None
+    )
+    socket_bounds = (
+        min(bounds[0] for bounds in socket_feature_bounds),
+        min(bounds[1] for bounds in socket_feature_bounds),
+        max(bounds[2] for bounds in socket_feature_bounds),
+        max(bounds[3] for bounds in socket_feature_bounds),
+    )
+    courtyard_allowance = (
+        min(
+            socket_bounds[0] - back_courtyard_bounds[0],
+            socket_bounds[1] - back_courtyard_bounds[1],
+            back_courtyard_bounds[2] - socket_bounds[2],
+            back_courtyard_bounds[3] - socket_bounds[3],
+        )
+        if back_courtyard_bounds is not None
+        else -math.inf
+    )
 
     return {
         "name": str(footprint.GetFPID().GetLibItemName()),
@@ -749,6 +980,11 @@ def analyze_v2_footprint(path: Path = DEFAULT_FOOTPRINT) -> dict[str, object]:
             or (abs(x + 5.0) < 0.01 and abs(y - 3.8) < 0.01)
             for x, y, _, _, _ in mx_tht_pads.values()
         ),
+        "choc_socket_back_courtyard_mm": {
+            "bounds": back_courtyard_bounds,
+            "manufacturing_allowance": round(courtyard_allowance, 3),
+            "encloses_body_and_lands": courtyard_allowance >= 0.25 - 1e-6,
+        },
         "silkscreen_item_count": sum(item.GetLayer() in silk_layers for item in footprint_items),
     }
 
@@ -857,24 +1093,37 @@ def normalized_footprint_graphics(
     signatures: list[tuple[object, ...]] = []
     for item in normalized.GraphicalItems():
         layer = pcbnew.LayerName(item.GetLayer())
-        if layer not in {"F.Fab", "F.Courtyard", "F.Silkscreen"}:
+        if layer not in {
+            "F.Fab",
+            "B.Fab",
+            "F.Courtyard",
+            "B.Courtyard",
+            "F.Silkscreen",
+            "B.Silkscreen",
+        }:
             continue
         if isinstance(item, pcbnew.PCB_SHAPE):
             start = item.GetStart()
             end = item.GetEnd()
+            if item.GetShape() == pcbnew.SHAPE_T_RECT:
+                start_x, end_x = sorted((mm(start.x), mm(end.x)))
+                start_y, end_y = sorted((mm(start.y), mm(end.y)))
+            else:
+                start_x, start_y = mm(start.x), mm(start.y)
+                end_x, end_y = mm(end.x), mm(end.y)
             signatures.append(
                 (
                     "shape",
                     layer,
                     int(item.GetShape()),
-                    mm(start.x),
-                    mm(start.y),
-                    mm(end.x),
-                    mm(end.y),
+                    start_x,
+                    start_y,
+                    end_x,
+                    end_y,
                     mm(item.GetWidth()),
                 )
             )
-        elif isinstance(item, pcbnew.PCB_TEXT):
+        elif isinstance(item, pcbnew.PCB_TEXT) and item.GetText():
             position = item.GetPosition()
             signatures.append(
                 (
@@ -889,6 +1138,77 @@ def normalized_footprint_graphics(
                 )
             )
     return sorted(signatures, key=repr)
+
+
+def normalized_battery_termination_markings(
+    footprint: pcbnew.FOOTPRINT,
+) -> list[tuple[object, ...]]:
+    """Return pad-associated, local J_BAT1 assembly markings."""
+    normalized = pcbnew.FOOTPRINT(footprint)
+    normalized.SetPosition(pcbnew.VECTOR2I(0, 0))
+    normalized.SetOrientationDegrees(0)
+    pads = [pad for pad in normalized.Pads() if pad.GetNumber() in {"1", "2"}]
+    if {pad.GetNumber() for pad in pads} != {"1", "2"}:
+        return []
+    signatures: list[tuple[object, ...]] = []
+    for item in normalized.GraphicalItems():
+        if not isinstance(item, pcbnew.PCB_TEXT) or item.GetLayer() != pcbnew.F_SilkS:
+            continue
+        position = item.GetPosition()
+        nearest = min(
+            pads,
+            key=lambda pad: math.dist(
+                (position.x, position.y),
+                (pad.GetPosition().x, pad.GetPosition().y),
+            ),
+        )
+        signatures.append(
+            (
+                nearest.GetNumber(),
+                item.GetText(),
+                pcbnew.LayerName(item.GetLayer()),
+                mm(position.x),
+                mm(position.y),
+                mm(item.GetTextSize().x),
+                mm(item.GetTextSize().y),
+                mm(item.GetTextThickness()),
+            )
+        )
+    return sorted(signatures, key=lambda item: str(item[0]))
+
+
+def battery_termination_assembly_marking_errors(
+    footprint: pcbnew.FOOTPRINT,
+) -> list[str]:
+    actual = normalized_battery_termination_markings(footprint)
+    if actual != EXPECTED_BATTERY_TERMINATION_MARKINGS:
+        return [
+            "J_BAT1 assembly markings must identify pad1 B+ and pad2 B-/GND "
+            f"with exact visible owned geometry; found {actual}"
+        ]
+    return []
+
+
+def normalized_model_signatures(
+    footprint: pcbnew.FOOTPRINT,
+) -> list[tuple[object, ...]]:
+    return sorted(
+        (
+            model.m_Filename,
+            round(float(model.m_Offset.x), 6),
+            round(float(model.m_Offset.y), 6),
+            round(float(model.m_Offset.z), 6),
+            round(float(model.m_Scale.x), 6),
+            round(float(model.m_Scale.y), 6),
+            round(float(model.m_Scale.z), 6),
+            round(float(model.m_Rotation.x), 6),
+            round(float(model.m_Rotation.y), 6),
+            round(float(model.m_Rotation.z), 6),
+            bool(model.m_Show),
+            round(float(model.m_Opacity), 6),
+        )
+        for model in footprint.Models()
+    )
 
 
 def verify_placed_footprint_contracts(
@@ -919,10 +1239,15 @@ def verify_placed_footprint_contracts(
 
     switch_source = load_footprint(DEFAULT_FOOTPRINT)
     expected_switch_pads = normalized_pad_signatures(switch_source)
+    expected_switch_graphics = normalized_footprint_graphics(switch_source)
     for switch in switches:
         if normalized_pad_signatures(switch) != expected_switch_pads:
             switch_errors.append(
                 f"{switch.GetReference()}: pad/NPTH geometry differs from owned hybrid-switch footprint"
+            )
+        if normalized_footprint_graphics(switch) != expected_switch_graphics:
+            switch_errors.append(
+                f"{switch.GetReference()}: Fab/courtyard geometry differs from owned hybrid-switch footprint"
             )
 
     controller = board.FindFootprintByReference("U1")
@@ -938,6 +1263,21 @@ def verify_placed_footprint_contracts(
         if normalized_pad_signatures(controller) != normalized_pad_signatures(controller_source):
             controller_errors.append(
                 "U1 pad labels/positions/sizes/drills/layers differ from the side-specific owned footprint"
+            )
+        expected_power_nets = {
+            "RAW": "NN_B+",
+            "GND_C": "GND",
+            "RST": "RST",
+        }
+        actual_power_nets = {
+            pad.GetNumber(): pad.GetNetname()
+            for pad in controller.Pads()
+            if pad.GetNumber() in expected_power_nets
+        }
+        if actual_power_nets != expected_power_nets:
+            controller_errors.append(
+                "U1 RAW/GND_C/RST pad nets differ from the exact controller power/reset contract: "
+                f"expected {expected_power_nets}, got {actual_power_nets}"
             )
         expected_position = X3_V2_CONTROLLER_SERVICE_POSITIONS_MM[side]["u1"]
         controller_position = controller.GetPosition()
@@ -1020,6 +1360,16 @@ def verify_placed_footprint_contracts(
             controller_errors.append("J_BAT1 must use the owned direct-solder footprint")
         if normalized_pad_signatures(j_bat) != normalized_pad_signatures(source):
             controller_errors.append("J_BAT1 pad geometry differs from the owned footprint")
+        if normalized_footprint_graphics(j_bat) != normalized_footprint_graphics(source):
+            controller_errors.append("J_BAT1 graphics/assembly markings differ from the owned footprint")
+        controller_errors.extend(
+            f"J_BAT1: {error}"
+            for error in battery_termination_assembly_marking_errors(source)
+        )
+        controller_errors.extend(
+            f"J_BAT1: {error}"
+            for error in battery_termination_assembly_marking_errors(j_bat)
+        )
         if {pad.GetNumber(): pad.GetNetname() for pad in j_bat.Pads()} != {"1": "BAT+", "2": "GND"}:
             controller_errors.append("J_BAT1 must be pad1=BAT+, pad2=GND")
         actual = tuple(round(value, 4) for value in padless_footprint_position(j_bat))
@@ -1038,6 +1388,8 @@ def verify_placed_footprint_contracts(
             controller_errors.append("SW_PWR1 must use the owned IMMS-12V footprint")
         if normalized_pad_signatures(power) != normalized_pad_signatures(source):
             controller_errors.append("SW_PWR1 pad geometry differs from the owned footprint")
+        if normalized_model_signatures(power) != normalized_model_signatures(source):
+            controller_errors.append("SW_PWR1 STEP models differ from the owned footprint")
         if {pad.GetNumber(): pad.GetNetname() for pad in power.Pads()} != {
             "2": "NN_B+",
             "1": "BAT+",
@@ -1074,10 +1426,12 @@ def expected_m1_4_mount_manifest() -> dict[str, object]:
         "front_silkscreen_reference": {
             "visible": True,
             "text_height_mm": 0.8,
-            "stroke_mm": 0.1,
+            "stroke_mm": 0.15,
             "relative_position_mm": {"x": 0.0, "y": -1.5},
         },
-        "screw_head_envelope_mm": {"diameter": 2.0, "height": 0.5},
+        "screw_head_style": "non_countersunk_rounded_pan_or_button",
+        "screw_head_envelope_mm": {"diameter": 3.0, "height": 1.2},
+        "screw_head_xy_reserve_mm": 0.25,
         "vertical_driver_envelope_mm": {"diameter": 3.0},
         "provisional_under_head_screw_length_mm": 4.0,
         "service_state": {"keycaps": "removed", "switches": "installed"},
@@ -1100,6 +1454,7 @@ def verify_m1_4_mounting_holes(
     list[str],
     list[tuple[str, float, float]],
     dict[str, float | None],
+    list[str],
     list[str],
     list[str],
 ]:
@@ -1133,10 +1488,10 @@ def verify_m1_4_mounting_holes(
             mm(reference_position.x),
             mm(reference_position.y),
         )
-        if reference_signature != (True, pcbnew.F_SilkS, 0.8, 0.1, 0.0, -1.5):
+        if reference_signature != (True, pcbnew.F_SilkS, 0.8, 0.15, 0.0, -1.5):
             silkscreen_errors.append(
                 f"{hole.GetReference()}: visible F.SilkS reference must be "
-                "0.80 mm high / 0.10 mm stroke at relative (0.0,-1.5) mm; "
+                "0.80 mm high / 0.15 mm stroke at relative (0.0,-1.5) mm; "
                 f"found {reference_signature}"
             )
         if str(hole.GetFPID().GetLibItemName()) != "MH_M1.4_NPTH_1.60":
@@ -1255,26 +1610,91 @@ def verify_m1_4_mounting_holes(
     ]
     errors.extend(driver_copper_errors)
 
-    switch_driver_boxes = [
-        (
-            pcbnew.ToMM(switch.GetPosition().x) - 7.8,
-            pcbnew.ToMM(switch.GetPosition().y) - 7.8,
-            pcbnew.ToMM(switch.GetPosition().x) + 7.8,
-            pcbnew.ToMM(switch.GetPosition().y) + 7.8,
+    def graphics_envelope(
+        footprint: pcbnew.FOOTPRINT,
+        layers: set[int],
+    ) -> tuple[float, float, float, float] | None:
+        boxes = [
+            bounding_box_mm(item)
+            for item in footprint.GraphicalItems()
+            if isinstance(item, pcbnew.PCB_SHAPE) and item.GetLayer() in layers
+        ]
+        if not boxes:
+            return None
+        return (
+            min(box[0] for box in boxes),
+            min(box[1] for box in boxes),
+            max(box[2] for box in boxes),
+            max(box[3] for box in boxes),
         )
-        for switch in matrix_footprints(board, "SW")
+
+    installed_body_boxes: list[tuple[str, tuple[float, float, float, float]]] = []
+    for switch in matrix_footprints(board, "SW"):
+        at = switch.GetPosition()
+        center = (pcbnew.ToMM(at.x), pcbnew.ToMM(at.y))
+        installed_body_boxes.append(
+            (
+                f"{switch.GetReference()} installed switch 15.60 mm envelope",
+                (center[0] - 7.8, center[1] - 7.8, center[0] + 7.8, center[1] + 7.8),
+            )
+        )
+        socket_box = graphics_envelope(switch, {pcbnew.B_Fab})
+        if socket_box is not None:
+            installed_body_boxes.append(
+                (f"{switch.GetReference()} Choc socket B.Fab body", socket_box)
+            )
+    for diode in matrix_footprints(board, "D"):
+        body_box = graphics_envelope(diode, {pcbnew.B_Fab})
+        if body_box is not None:
+            installed_body_boxes.append((f"{diode.GetReference()} ES1B body", body_box))
+
+    controller = board.FindFootprintByReference("U1")
+    if controller is not None:
+        at = controller.GetPosition()
+        center = (pcbnew.ToMM(at.x), pcbnew.ToMM(at.y))
+        installed_body_boxes.append(
+            ("U1 controlled 33.80 x 18.30 mm body", (center[0] - 16.9, center[1] - 9.15, center[0] + 16.9, center[1] + 9.15))
+        )
+    battery = board.FindFootprintByReference("BAT1")
+    if battery is not None:
+        at = battery.GetPosition()
+        center = (pcbnew.ToMM(at.x), pcbnew.ToMM(at.y))
+        installed_body_boxes.append(
+            ("BAT1 nominal 301230 body", (center[0] - 15.0, center[1] - 6.0, center[0] + 15.0, center[1] + 6.0))
+        )
+    power = board.FindFootprintByReference("SW_PWR1")
+    if power is not None:
+        at = power.GetPosition()
+        center = (pcbnew.ToMM(at.x), pcbnew.ToMM(at.y))
+        installed_body_boxes.append(
+            (
+                "SW_PWR1 body plus actuator travel",
+                (center[0] - 6.6, center[1] - 1.25, center[0] + 6.6, center[1] + 1.25),
+            )
+        )
+    for reference, layers in (
+        ("J_BAT1", {pcbnew.F_Fab}),
+        ("SW_RST1", {pcbnew.F_Fab, pcbnew.F_CrtYd}),
+        ("BAT_LEAD_SLOT1", {pcbnew.F_Fab, pcbnew.Dwgs_User}),
+    ):
+        footprint = board.FindFootprintByReference(reference)
+        if footprint is None:
+            continue
+        body_box = graphics_envelope(footprint, layers)
+        if body_box is None:
+            body_box = bounding_box_mm(footprint)
+        installed_body_boxes.append((f"{reference} physical envelope", body_box))
+
+    body_measurements = [
+        (
+            point_to_box_distance_mm(center, box) - 1.5,
+            f"{reference} vs {label}",
+        )
+        for reference, *coordinates in positions
+        for center in [tuple(coordinates)]
+        for label, box in installed_body_boxes
     ]
-    controller_service_boxes = [
-        bounding_box_mm(footprint)
-        for footprint in board.GetFootprints()
-        if footprint.GetReference() in {"U1", "SW_RST1"}
-    ]
-    driver_boxes = switch_driver_boxes + controller_service_boxes
-    driver_clearances = [
-        point_to_box_distance_mm(center, box) - 1.5
-        for center in hole_centers
-        for box in driver_boxes
-    ]
+    driver_clearances = [margin for margin, _label in body_measurements]
     minimum_driver_clearance = min(driver_clearances) if driver_clearances else math.inf
     if minimum_driver_clearance < -1e-6:
         errors.append(
@@ -1282,24 +1702,63 @@ def verify_m1_4_mounting_holes(
             f"{-minimum_driver_clearance:.4f} mm"
         )
 
+    fillet_boxes = [
+        (f"{label} plus 0.30 mm solder-fillet allowance", inflate_box_mm(box, 0.30))
+        for label, box in copper_pads
+    ]
+    head_copper_measurements = [
+        (
+            point_to_box_distance_mm(center, box) - 1.5,
+            f"{reference} vs pad {label}",
+        )
+        for reference, *coordinates in positions
+        for center in [tuple(coordinates)]
+        for label, box in fillet_boxes
+    ]
+    head_copper_measurements.extend(driver_copper_measurements)
+
     outline_segments = board_outline_segments_mm(board)
     edge_clearances = [
-        point_to_segment_distance_mm(center, start, end) - 1.0
+        point_to_segment_distance_mm(center, start, end) - 1.5
         for center in hole_centers
         for start, end in outline_segments
     ]
+    minimum_head_body_clearance = min(
+        (margin for margin, _label in body_measurements),
+        default=math.inf,
+    )
+    minimum_head_copper_fillet_clearance = min(
+        (margin for margin, _label in head_copper_measurements),
+        default=math.inf,
+    )
     minimum_head_edge_clearance = min(edge_clearances) if edge_clearances else math.inf
+    head_clearance_errors = [
+        f"{side}: 3.00 mm rounded screw head lacks 0.25 mm body reserve: {label}; margin {margin:.4f} mm"
+        for margin, label in body_measurements
+        if margin < 0.25 - 1e-6
+    ]
+    head_clearance_errors.extend(
+        f"{side}: 3.00 mm rounded screw head lacks 0.25 mm copper/fillet reserve: {label}; margin {margin:.4f} mm"
+        for margin, label in head_copper_measurements
+        if margin < 0.25 - 1e-6
+    )
     if minimum_head_edge_clearance < 0.25 - 1e-6:
-        errors.append(
-            f"{side}: screw-head-to-Edge.Cuts clearance {minimum_head_edge_clearance:.4f} mm is below 0.25 mm"
+        head_clearance_errors.append(
+            f"{side}: 3.00 mm rounded screw-head-to-Edge.Cuts clearance "
+            f"{minimum_head_edge_clearance:.4f} mm is below 0.25 mm"
         )
+    errors.extend(head_clearance_errors)
 
     return errors, positions, {
         "minimum_npth_edge_to_copper_mm": round(minimum_copper_clearance, 4),
         "minimum_driver_to_copper_mm": round(minimum_driver_copper_clearance, 4),
         "minimum_driver_to_installed_body_mm": round(minimum_driver_clearance, 4),
+        "minimum_head_to_installed_body_mm": round(minimum_head_body_clearance, 4),
+        "minimum_head_to_exposed_copper_fillet_mm": round(
+            minimum_head_copper_fillet_clearance, 4
+        ),
         "minimum_head_to_edge_cuts_mm": round(minimum_head_edge_clearance, 4),
-    }, driver_copper_errors, silkscreen_errors
+    }, driver_copper_errors, silkscreen_errors, head_clearance_errors
 
 
 def project_default_clearance_mm(project_path: Path) -> float:
@@ -1374,6 +1833,7 @@ def verify_canonical_route_evidence(
             ses_sha = sha256_file(ses_path)
             clearances = _dsn_default_clearances(dsn_path)
             dsn_text = dsn_path.read_text(encoding="utf-8")
+            ses_text = ses_path.read_text(encoding="utf-8")
         except OSError as error:
             errors.append(f"{side}: canonical route source cannot be read: {error}")
             continue
@@ -1387,6 +1847,12 @@ def verify_canonical_route_evidence(
             ),
             "dsn_default_clearance_internal_units": minimum_clearance,
             "dsn_clearances_internal_units": clearances,
+            "dsn_mounting_hole_positions_mm": _specctra_mount_positions_mm(
+                dsn_text, 1000.0
+            ),
+            "ses_mounting_hole_positions_mm": _specctra_mount_positions_mm(
+                ses_text, 10000.0
+            ),
         }
         if record.get("dsn_sha256") != dsn_sha:
             errors.append(f"{side}: DSN SHA-256 mismatch")
@@ -1399,6 +1865,14 @@ def verify_canonical_route_evidence(
             errors.append(f"{side}: current DSN does not contain the exact MH pattern")
         if record.get("dsn_mounting_hole_count") != expected_holes:
             errors.append(f"{side}: current DSN MH count evidence mismatch")
+        expected_positions = {
+            f"MH{index}": position
+            for index, position in enumerate(X3_V2_MOUNTING_POINTS[side], start=1)
+        }
+        if reports[side]["dsn_mounting_hole_positions_mm"] != expected_positions:
+            errors.append(f"{side}: current DSN P1 mounting geometry mismatch")
+        if reports[side]["ses_mounting_hole_positions_mm"] != expected_positions:
+            errors.append(f"{side}: reviewed SES P1 mounting geometry mismatch")
         if set(clearances) != {"global", "kicad_default"} or minimum_clearance is None or minimum_clearance < 300:
             errors.append(f"{side}: DSN global/default clearance must be at least 300 internal units")
         if record.get("dsn_default_clearance_internal_units") != minimum_clearance:
@@ -1481,6 +1955,7 @@ def analyze_v2_board(path: Path) -> dict[str, object]:
         mounting_hole_clearances,
         mounting_hole_driver_copper_errors,
         mounting_hole_silkscreen_errors,
+        mounting_hole_head_clearance_errors,
     ) = verify_m1_4_mounting_holes(board, side)
     (
         diode_footprint_geometry_errors,
@@ -1914,6 +2389,7 @@ def analyze_v2_board(path: Path) -> dict[str, object]:
         "mounting_hole_clearances": mounting_hole_clearances,
         "mounting_hole_driver_copper_errors": mounting_hole_driver_copper_errors,
         "mounting_hole_silkscreen_errors": mounting_hole_silkscreen_errors,
+        "mounting_hole_head_clearance_errors": mounting_hole_head_clearance_errors,
         "route_track_via_count": sum(route_signatures.values()),
         "route_digest_sha256": _route_counter_digest(route_signatures),
         "registration_label_layers": registration_label_layers,
@@ -1995,53 +2471,2569 @@ def verify_active_v2_board_text_contract(board_text: Iterable[str]) -> list[str]
     return errors
 
 
+def _repository_artifact_errors(
+    record: object,
+    *,
+    label: str,
+    measurement: bool,
+    seen_paths: set[str] | None = None,
+) -> list[str]:
+    if not isinstance(record, dict):
+        return [f"{label} is not an artifact record"]
+    errors: list[str] = []
+    relative_path = record.get("path")
+    if not isinstance(relative_path, str) or not relative_path:
+        return [f"{label} path is missing"]
+    candidate = Path(relative_path)
+    if candidate.is_absolute() or ".." in candidate.parts:
+        return [f"{label} path must be a repository-relative path without '..'"]
+    resolved = (ROOT / candidate).resolve()
+    try:
+        resolved.relative_to(ROOT.resolve())
+    except ValueError:
+        return [f"{label} path escapes the repository"]
+    path_key = resolved.as_posix().casefold()
+    if seen_paths is not None:
+        if path_key in seen_paths:
+            errors.append(f"{label} reuses an evidence path")
+        else:
+            seen_paths.add(path_key)
+    if not resolved.is_file():
+        return [f"{label} file is missing: {relative_path}"]
+    actual_size = resolved.stat().st_size
+    if record.get("size_bytes") != actual_size:
+        errors.append(f"{label} size is missing or stale")
+    digest = record.get("sha256")
+    if not isinstance(digest, str) or not re.fullmatch(r"[0-9a-f]{64}", digest):
+        errors.append(f"{label} SHA-256 is missing or malformed")
+    elif digest != sha256_file(resolved):
+        errors.append(f"{label} SHA-256 is stale")
+    else:
+        errors.extend(_git_index_artifact_errors(resolved, digest, label=label))
+    if not isinstance(record.get("kind"), str) or not record.get("kind"):
+        errors.append(f"{label} kind is missing")
+    if measurement:
+        measured_at = record.get("measured_at")
+        try:
+            datetime.fromisoformat(str(measured_at).replace("Z", "+00:00"))
+        except (TypeError, ValueError):
+            errors.append(f"{label} measured_at is not an ISO timestamp")
+        if not isinstance(record.get("equipment_id"), str) or not record.get("equipment_id"):
+            errors.append(f"{label} equipment_id is missing")
+        calibration = record.get("calibration_evidence")
+        if calibration == "not_applicable_nonmeasurement":
+            errors.append(f"{label} calibration evidence cannot be waived for a measurement")
+        else:
+            errors.extend(
+                _repository_artifact_errors(
+                    calibration,
+                    label=f"{label} calibration evidence",
+                    measurement=False,
+                    seen_paths=seen_paths,
+                )
+            )
+            if isinstance(calibration, dict) and calibration.get("kind") != "calibration-certificate":
+                errors.append(f"{label} calibration evidence kind is not calibration-certificate")
+    return errors
+
+
+def _git_index_artifact_errors(path: Path, digest: str, *, label: str) -> list[str]:
+    try:
+        relative = path.resolve().relative_to(ROOT.resolve()).as_posix()
+    except ValueError:
+        return [f"{label} path escapes the repository"]
+    try:
+        completed = subprocess.run(
+            ["git", "show", f":{relative}"],
+            cwd=ROOT,
+            capture_output=True,
+            timeout=30,
+            check=False,
+        )
+    except (OSError, subprocess.SubprocessError) as error:
+        return [f"{label} cannot be checked against the Git index: {error}"]
+    if completed.returncode != 0:
+        return [f"{label} is not tracked in the candidate Git index"]
+    if sha256_bytes(completed.stdout) != digest:
+        return [f"{label} does not match the candidate Git-index blob"]
+    return []
+
+
+def _finite_number(value: object) -> float | None:
+    if isinstance(value, bool):
+        return None
+    try:
+        result = float(value)
+    except (TypeError, ValueError):
+        return None
+    return result if math.isfinite(result) else None
+
+
+def _contains_identity_placeholder(value: object) -> bool:
+    if not isinstance(value, str):
+        return False
+    raw_tokens = re.findall(r"[A-Z0-9]+", value.upper())
+    tokens: list[str] = []
+    index = 0
+    while index < len(raw_tokens):
+        if len(raw_tokens[index]) == 1 and raw_tokens[index].isalpha():
+            end = index
+            while (
+                end < len(raw_tokens)
+                and len(raw_tokens[end]) == 1
+                and raw_tokens[end].isalpha()
+            ):
+                end += 1
+            if end - index >= 2:
+                tokens.append("".join(raw_tokens[index:end]))
+                index = end
+                continue
+        tokens.append(raw_tokens[index])
+        index += 1
+    if not tokens:
+        return False
+    if len(tokens) == 1 and tokens[0] in IDENTITY_PLACEHOLDER_TOKENS:
+        return True
+    for phrase in IDENTITY_PLACEHOLDER_PHRASES:
+        width = len(phrase)
+        if any(
+            tuple(tokens[start : start + width]) == phrase
+            for start in range(len(tokens) - width + 1)
+        ):
+            return True
+    for token_index, token in enumerate(tokens):
+        numeric_placeholder = re.fullmatch(r"([A-Z]+)(\d+)", token)
+        if (
+            numeric_placeholder is not None
+            and numeric_placeholder.group(1) in IDENTITY_PLACEHOLDER_NUMERIC_PREFIXES
+        ):
+            return True
+        if token not in IDENTITY_PLACEHOLDER_TOKENS:
+            continue
+        previous = tokens[token_index - 1] if token_index else None
+        following = tokens[token_index + 1] if token_index + 1 < len(tokens) else None
+        if (
+            previous in IDENTITY_PLACEHOLDER_GENERIC_CONTEXT
+            or following in IDENTITY_PLACEHOLDER_GENERIC_CONTEXT
+            or token_index == len(tokens) - 1
+            or (
+                following is not None
+                and following.isdigit()
+                and token in IDENTITY_PLACEHOLDER_NUMERIC_PREFIXES
+            )
+        ):
+            return True
+    return False
+
+
+def _valid_procurement_manufacturer(value: object) -> bool:
+    return (
+        isinstance(value, str)
+        and bool(value.strip())
+        and bool(re.search(r"[A-Za-z0-9]", value))
+        and not _contains_identity_placeholder(value)
+    )
+
+
+def _valid_procurement_identifier(value: object) -> bool:
+    return (
+        isinstance(value, str)
+        and bool(re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9.!+_:/-]*", value))
+        and bool(re.search(r"\d", value))
+        and not _contains_identity_placeholder(value)
+    )
+
+
+def _valid_drawing_revision(value: object) -> bool:
+    return (
+        isinstance(value, str)
+        and bool(
+            re.fullmatch(
+                r"(?:REV[-_.]?[A-Za-z0-9][A-Za-z0-9._-]*|R\d[A-Za-z0-9._-]*|V\d[A-Za-z0-9._-]*)",
+                value,
+                re.IGNORECASE,
+            )
+        )
+        and not _contains_identity_placeholder(value)
+    )
+
+
+def _valid_identity_for_field(key: str, value: object) -> bool:
+    normalized = key.lower()
+    if normalized in {"manufacturer", "supplier", "vendor"} or normalized.endswith(
+        ("_manufacturer", "_supplier", "_vendor")
+    ):
+        return _valid_procurement_manufacturer(value)
+    if normalized in {
+        "coupon_id",
+        "doc_id",
+        "doc_identity",
+        "document_code",
+        "document_id",
+        "document_identity",
+        "drawing_id",
+        "drawing_identity",
+        "lot",
+        "mpn",
+        "order_code",
+        "part_number",
+        "pn",
+        "production_lot_id",
+        "sku",
+        "specimen_coupon_id",
+    } or normalized.endswith(
+        (
+            "_doc_id",
+            "_doc_identity",
+            "_document_id",
+            "_document_identity",
+            "_drawing_id",
+            "_drawing_identity",
+            "_lot",
+            "_mpn",
+            "_order_code",
+            "_part_number",
+            "_sku",
+        )
+    ):
+        return _valid_procurement_identifier(value)
+    if normalized in {"drawing_revision", "hardware_revision"} or normalized.endswith(
+        ("_drawing_revision", "_hardware_revision")
+    ):
+        return _valid_drawing_revision(value)
+    return (
+        isinstance(value, str)
+        and bool(value.strip())
+        and not _contains_identity_placeholder(value)
+    )
+
+
+def _procurement_object_identity_errors(
+    value: object,
+    *,
+    label: str,
+) -> list[str]:
+    errors: list[str] = []
+
+    def visit(item: object, path: str, field: str | None = None) -> None:
+        if isinstance(item, dict):
+            for key, child in item.items():
+                child_path = f"{path}.{key}"
+                visit(child, child_path, str(key))
+            return
+        if isinstance(item, list):
+            for index, child in enumerate(item):
+                visit(child, f"{path}[{index}]", field)
+            return
+        if isinstance(item, str) and field is not None and not _valid_identity_for_field(
+            field, item
+        ):
+            errors.append(f"{path} is malformed or retains a pending procurement identity")
+
+    visit(value, label)
+    return errors
+
+
+def _validate_document_set(
+    documents: object,
+    expected_kinds: set[str],
+    *,
+    label: str,
+    seen_paths: set[str],
+) -> tuple[dict[str, dict[str, object]], list[str]]:
+    errors: list[str] = []
+    if not isinstance(documents, dict) or set(documents) != expected_kinds:
+        return {}, [f"{label} document set is incomplete or stale"]
+    typed: dict[str, dict[str, object]] = {}
+    document_ids: set[str] = set()
+    for kind in sorted(expected_kinds):
+        record = documents[kind]
+        errors.extend(
+            _repository_artifact_errors(
+                record,
+                label=f"{label} {kind}",
+                measurement=False,
+                seen_paths=seen_paths,
+            )
+        )
+        if not isinstance(record, dict):
+            continue
+        typed[kind] = record
+        if record.get("kind") != kind:
+            errors.append(f"{label} {kind} artifact kind is missing or stale")
+        document_id = record.get("document_id")
+        if not _valid_procurement_identifier(document_id):
+            errors.append(f"{label} {kind} document identity is malformed or pending")
+        elif document_id in document_ids:
+            errors.append(f"{label} {kind} document identity is duplicated")
+        else:
+            document_ids.add(str(document_id))
+    return typed, errors
+
+
+def _records_by_half(
+    records: object,
+    *,
+    label: str,
+) -> tuple[dict[str, dict[str, object]], list[str]]:
+    if not isinstance(records, list):
+        return {}, [f"{label} records are missing"]
+    errors: list[str] = []
+    by_half: dict[str, dict[str, object]] = {}
+    for record in records:
+        if not isinstance(record, dict):
+            errors.append(f"{label} contains a non-record entry")
+            continue
+        half = record.get("half")
+        if half not in {"left", "right"}:
+            errors.append(f"{label} half must be left or right")
+            continue
+        if half in by_half:
+            errors.append(f"{label} contains duplicate {half} records")
+        by_half[str(half)] = record
+    if set(by_half) != {"left", "right"}:
+        errors.append(f"{label} must contain exact left and right records")
+    return by_half, errors
+
+
+def _controller_service_metrics(
+    data: object,
+    *,
+    seen_paths: set[str],
+) -> tuple[dict[str, object], list[str], dict[str, object]]:
+    errors: list[str] = []
+    if not isinstance(data, dict) or set(data) != {
+        "parts",
+        "documents",
+        "stack_records",
+        "pull_records",
+        "service_records",
+    }:
+        return {}, ["controller service raw data schema is incomplete or stale"], {}
+    documents, document_errors = _validate_document_set(
+        data["documents"],
+        {
+            "battery_datasheet",
+            "battery_lead_drawing",
+            "battery_protection_declaration",
+            "controller_datasheet",
+            "controller_socket_drawing",
+            "choc_switch_drawing",
+            "choc_socket_drawing",
+            "mx_switch_drawing",
+            "power_switch_drawing",
+            "reset_switch_drawing",
+        },
+        label="controller service",
+        seen_paths=seen_paths,
+    )
+    errors.extend(document_errors)
+    parts = data.get("parts")
+    if not isinstance(parts, dict) or set(parts) != {
+        "battery",
+        "controller",
+        "controller_socket",
+        "choc_switch",
+        "choc_socket",
+        "mx_switch",
+        "power_switch",
+        "reset_switch",
+    }:
+        return {}, errors + ["controller service exact purchased-part set is incomplete"], {}
+    battery = parts.get("battery")
+    controller = parts.get("controller")
+    controller_socket = parts.get("controller_socket")
+    choc_switch = parts.get("choc_switch")
+    choc_socket = parts.get("choc_socket")
+    mx_switch = parts.get("mx_switch")
+    power = parts.get("power_switch")
+    reset = parts.get("reset_switch")
+    for name, record, required in (
+        (
+            "battery",
+            battery,
+            {
+                "manufacturer",
+                "mpn",
+                "lot",
+                "protection_status",
+                "maximum_swollen_thickness_mm",
+                "lead_conductor_diameter_mm",
+                "required_hole_clearance_mm",
+            },
+        ),
+        ("controller", controller, {"manufacturer", "mpn", "hardware_revision"}),
+        ("controller socket", controller_socket, {"manufacturer", "mpn", "drawing_revision"}),
+        ("Choc V2 switch", choc_switch, {"manufacturer", "mpn", "drawing_revision"}),
+        ("Choc socket", choc_socket, {"manufacturer", "mpn", "drawing_revision"}),
+        ("MX switch", mx_switch, {"manufacturer", "mpn", "drawing_revision"}),
+        ("power switch", power, {"manufacturer", "mpn", "drawing_revision"}),
+        ("reset switch", reset, {"manufacturer", "mpn", "drawing_revision"}),
+    ):
+        if not isinstance(record, dict) or set(record) != required:
+            errors.append(f"controller service {name} identity schema is incomplete or stale")
+    if errors:
+        return {}, errors, {}
+    assert all(
+        isinstance(record, dict)
+        for record in (
+            battery,
+            controller,
+            controller_socket,
+            choc_switch,
+            choc_socket,
+            mx_switch,
+            power,
+            reset,
+        )
+    )
+    assert isinstance(battery, dict) and isinstance(controller, dict)
+    assert isinstance(controller_socket, dict) and isinstance(choc_switch, dict)
+    assert isinstance(choc_socket, dict) and isinstance(mx_switch, dict)
+    assert isinstance(power, dict) and isinstance(reset, dict)
+    for name, record in (
+        ("battery", battery),
+        ("controller", controller),
+        ("controller socket", controller_socket),
+        ("Choc V2 switch", choc_switch),
+        ("Choc socket", choc_socket),
+        ("MX switch", mx_switch),
+        ("power switch", power),
+        ("reset switch", reset),
+    ):
+        for key, value in record.items():
+            if key in {
+                "maximum_swollen_thickness_mm",
+                "lead_conductor_diameter_mm",
+                "required_hole_clearance_mm",
+            }:
+                continue
+            if not isinstance(value, str) or not value.strip():
+                errors.append(f"controller service {name} {key} is missing")
+            elif not _valid_identity_for_field(key, value):
+                errors.append(
+                    f"controller service {name} {key} is malformed or retains a pending identity"
+                )
+    swollen = _finite_number(battery.get("maximum_swollen_thickness_mm"))
+    if swollen is None or swollen <= 0.0:
+        errors.append("controller service maximum swollen thickness is invalid")
+    lead_diameter = _finite_number(battery.get("lead_conductor_diameter_mm"))
+    required_hole_clearance = _finite_number(battery.get("required_hole_clearance_mm"))
+    j_bat_drill = 0.90
+    lead_hole_clearance = (
+        j_bat_drill - lead_diameter if lead_diameter is not None else None
+    )
+    if (
+        lead_diameter is None
+        or lead_diameter <= 0.0
+        or required_hole_clearance is None
+        or required_hole_clearance < 0.0
+        or lead_hole_clearance is None
+        or lead_hole_clearance < required_hole_clearance
+    ):
+        errors.append("controller service purchased lead does not fit the 0.90 mm J_BAT1 drill")
+
+    stacks, stack_errors = _records_by_half(data.get("stack_records"), label="controller stack")
+    pulls, pull_errors = _records_by_half(data.get("pull_records"), label="lead pull")
+    services, service_errors = _records_by_half(data.get("service_records"), label="POWER/RESET service")
+    errors.extend(stack_errors + pull_errors + service_errors)
+    stack_clearances: list[float] = []
+    for half, record in stacks.items():
+        required = {
+            "half",
+            "fully_seated_gap_mm",
+            "insulation_thickness_mm",
+            "retainer_thickness_mm",
+            "socket_pin_protrusion_mm",
+            "solder_protrusion_mm",
+            "assembly_tolerance_mm",
+            "minimum_clearance_mm",
+            "controller_install_remove_pass",
+            "pouch_compressed",
+            "sharp_contact",
+        }
+        if set(record) != required:
+            errors.append(f"controller stack {half} record schema is incomplete or stale")
+            continue
+        gap = _finite_number(record.get("fully_seated_gap_mm"))
+        thicknesses = [
+            _finite_number(record.get(key))
+            for key in (
+                "insulation_thickness_mm",
+                "retainer_thickness_mm",
+                "socket_pin_protrusion_mm",
+                "solder_protrusion_mm",
+                "assembly_tolerance_mm",
+            )
+        ]
+        recorded_clearance = _finite_number(record.get("minimum_clearance_mm"))
+        if (
+            gap is None
+            or gap <= 0.0
+            or swollen is None
+            or any(value is None or value < 0.0 for value in thicknesses)
+            or recorded_clearance is None
+        ):
+            errors.append(f"controller stack {half} dimensions are invalid")
+        else:
+            recomputed_clearance = gap - swollen - sum(float(value) for value in thicknesses)
+            if not math.isclose(recorded_clearance, recomputed_clearance, abs_tol=1e-9):
+                errors.append(f"controller stack {half} clearance is not recomputed from raw dimensions")
+            if recomputed_clearance < 0.0:
+                errors.append(f"controller stack {half} has negative physical clearance")
+            stack_clearances.append(recomputed_clearance)
+        if (
+            record.get("controller_install_remove_pass") is not True
+            or record.get("pouch_compressed") is not False
+            or record.get("sharp_contact") is not False
+        ):
+            errors.append(f"controller stack {half} fit result is not passed")
+    pull_pass = True
+    for half, record in pulls.items():
+        required = {
+            "half",
+            "rated_load_n",
+            "rated_duration_s",
+            "applied_load_n",
+            "applied_duration_s",
+            "lead_movement_mm",
+            "force_transfer_to_pouch_tab",
+        }
+        if set(record) != required:
+            errors.append(f"lead pull {half} record schema is incomplete or stale")
+            pull_pass = False
+            continue
+        rated_load = _finite_number(record.get("rated_load_n"))
+        rated_duration = _finite_number(record.get("rated_duration_s"))
+        applied_load = _finite_number(record.get("applied_load_n"))
+        applied_duration = _finite_number(record.get("applied_duration_s"))
+        movement = _finite_number(record.get("lead_movement_mm"))
+        passed = (
+            rated_load is not None
+            and rated_load > 0.0
+            and rated_duration is not None
+            and rated_duration > 0.0
+            and applied_load is not None
+            and applied_load >= rated_load
+            and applied_duration is not None
+            and applied_duration >= rated_duration
+            and movement is not None
+            and movement <= 0.0
+            and record.get("force_transfer_to_pouch_tab") is False
+        )
+        pull_pass = pull_pass and passed
+        if not passed:
+            errors.append(f"lead pull {half} raw result does not pass")
+    service_pass = True
+    for half, record in services.items():
+        required = {
+            "half",
+            "reset_bootloader_cycles",
+            "continuity_on_max_ohm",
+            "continuity_off_min_ohm",
+            "power_on_resistance_ohm",
+            "power_off_resistance_ohm",
+            "reset_pressed_resistance_ohm",
+            "reset_released_resistance_ohm",
+            "power_actuator_travel_mm",
+            "minimum_fingertip_access_clearance_mm",
+            "power_full_travel_contact_with_reset",
+            "power_full_travel_contact_with_controller",
+            "power_full_travel_contact_with_keycap",
+            "reset_probe_diameter_mm",
+            "reset_probe_access_pass",
+            "service_pass",
+            "controller_contact",
+            "adjacent_key_actuation",
+            "pad_peel",
+            "visible_pcb_flex",
+        }
+        if set(record) != required:
+            errors.append(f"POWER/RESET service {half} record schema is incomplete or stale")
+            service_pass = False
+            continue
+        cycles = _finite_number(record.get("reset_bootloader_cycles"))
+        on_max = _finite_number(record.get("continuity_on_max_ohm"))
+        off_min = _finite_number(record.get("continuity_off_min_ohm"))
+        power_on = _finite_number(record.get("power_on_resistance_ohm"))
+        power_off = _finite_number(record.get("power_off_resistance_ohm"))
+        reset_pressed = _finite_number(record.get("reset_pressed_resistance_ohm"))
+        reset_released = _finite_number(record.get("reset_released_resistance_ohm"))
+        power_travel = _finite_number(record.get("power_actuator_travel_mm"))
+        fingertip_clearance = _finite_number(
+            record.get("minimum_fingertip_access_clearance_mm")
+        )
+        reset_probe = _finite_number(record.get("reset_probe_diameter_mm"))
+        passed = (
+            cycles is not None
+            and cycles >= 10
+            and on_max is not None
+            and on_max > 0.0
+            and off_min is not None
+            and off_min > on_max
+            and power_on is not None
+            and power_on <= on_max
+            and power_off is not None
+            and power_off >= off_min
+            and reset_pressed is not None
+            and reset_pressed <= on_max
+            and reset_released is not None
+            and reset_released >= off_min
+            and power_travel is not None
+            and power_travel >= 1.60
+            and fingertip_clearance is not None
+            and fingertip_clearance > 0.0
+            and record.get("power_full_travel_contact_with_reset") is False
+            and record.get("power_full_travel_contact_with_controller") is False
+            and record.get("power_full_travel_contact_with_keycap") is False
+            and reset_probe is not None
+            and 0.0 < reset_probe <= 3.0
+            and record.get("reset_probe_access_pass") is True
+            and record.get("service_pass") is True
+            and all(
+                record.get(key) is False
+                for key in (
+                    "controller_contact",
+                    "adjacent_key_actuation",
+                    "pad_peel",
+                    "visible_pcb_flex",
+                )
+            )
+        )
+        service_pass = service_pass and passed
+        if not passed:
+            errors.append(f"POWER/RESET service {half} raw result does not pass")
+    metrics = {
+        "battery_manufacturer": battery.get("manufacturer"),
+        "battery_mpn": battery.get("mpn"),
+        "battery_lot": battery.get("lot"),
+        "protection_status": battery.get("protection_status"),
+        "controller_manufacturer": controller.get("manufacturer"),
+        "controller_mpn": controller.get("mpn"),
+        "controller_hardware_revision": controller.get("hardware_revision"),
+        "controller_socket_manufacturer": controller_socket.get("manufacturer"),
+        "controller_socket_mpn": controller_socket.get("mpn"),
+        "controller_socket_drawing_revision": controller_socket.get("drawing_revision"),
+        "choc_switch_manufacturer": choc_switch.get("manufacturer"),
+        "choc_switch_mpn": choc_switch.get("mpn"),
+        "choc_switch_drawing_revision": choc_switch.get("drawing_revision"),
+        "choc_socket_manufacturer": choc_socket.get("manufacturer"),
+        "choc_socket_mpn": choc_socket.get("mpn"),
+        "choc_socket_drawing_revision": choc_socket.get("drawing_revision"),
+        "mx_switch_manufacturer": mx_switch.get("manufacturer"),
+        "mx_switch_mpn": mx_switch.get("mpn"),
+        "mx_switch_drawing_revision": mx_switch.get("drawing_revision"),
+        "power_switch_manufacturer": power.get("manufacturer"),
+        "power_switch_mpn": power.get("mpn"),
+        "power_switch_drawing_revision": power.get("drawing_revision"),
+        "reset_switch_manufacturer": reset.get("manufacturer"),
+        "reset_switch_mpn": reset.get("mpn"),
+        "reset_switch_drawing_revision": reset.get("drawing_revision"),
+        "lead_drawing_sha256": documents.get("battery_lead_drawing", {}).get("sha256"),
+        "protection_declaration_sha256": documents.get(
+            "battery_protection_declaration", {}
+        ).get("sha256"),
+        "controller_datasheet_sha256": documents.get("controller_datasheet", {}).get(
+            "sha256"
+        ),
+        "controller_socket_drawing_sha256": documents.get(
+            "controller_socket_drawing", {}
+        ).get("sha256"),
+        "choc_switch_drawing_sha256": documents.get("choc_switch_drawing", {}).get(
+            "sha256"
+        ),
+        "choc_socket_drawing_sha256": documents.get("choc_socket_drawing", {}).get(
+            "sha256"
+        ),
+        "mx_switch_drawing_sha256": documents.get("mx_switch_drawing", {}).get("sha256"),
+        "j_bat_drill_mm": j_bat_drill,
+        "lead_conductor_diameter_mm": lead_diameter,
+        "lead_to_j_bat_diametral_clearance_mm": lead_hole_clearance,
+        "maximum_swollen_thickness_mm": swollen,
+        "minimum_stack_clearance_mm": min(stack_clearances) if stack_clearances else None,
+        "lead_pull_pass": pull_pass and set(pulls) == {"left", "right"},
+        "service_pass": service_pass and set(services) == {"left", "right"},
+    }
+    identity = {
+        "battery_mpn": str(battery.get("mpn", "")),
+        "battery_lot": str(battery.get("lot", "")),
+        "power_switch_mpn": str(power.get("mpn", "")),
+        "choc_switch_mpn": str(choc_switch.get("mpn", "")),
+        "choc_socket_mpn": str(choc_socket.get("mpn", "")),
+        "mx_switch_mpn": str(mx_switch.get("mpn", "")),
+        "purchased_parts": {
+            "battery": dict(battery),
+            "controller": dict(controller),
+            "controller_socket": dict(controller_socket),
+            "choc_switch": dict(choc_switch),
+            "choc_socket": dict(choc_socket),
+            "mx_switch": dict(mx_switch),
+            "power_switch": dict(power),
+            "reset_switch": dict(reset),
+        },
+    }
+    return metrics, errors, identity
+
+
+def _physical_scan_metrics(
+    data: object,
+    *,
+    controller_identity: dict[str, object],
+) -> tuple[dict[str, object], list[str], dict[str, object]]:
+    errors: list[str] = []
+    if not isinstance(data, dict) or set(data) != {
+        "coupon_id",
+        "records",
+        "switch_fit_records",
+        "keycap_fit_records",
+        "diode_records",
+    }:
+        return {}, ["physical scan raw data schema is incomplete or stale"], {}
+    if not _valid_identity_for_field("coupon_id", data.get("coupon_id")):
+        errors.append("physical scan coupon identity is missing, malformed, or pending")
+    records = data.get("records")
+    if not isinstance(records, list):
+        return {}, errors + ["physical scan records are missing"], {}
+    expected_combinations = {
+        (half, voltage, pattern, mode)
+        for half in ("left", "right")
+        for voltage in (3.0, 3.3)
+        for pattern in ("maximum-same-row", "maximum-same-column")
+        for mode in ("choc_v2", "mx")
+    }
+    counts: Counter[tuple[str, float, str, str]] = Counter()
+    fault_count = 0
+    sample_ids: set[str] = set()
+    for record in records:
+        if not isinstance(record, dict) or set(record) != {
+            "half",
+            "supply_voltage_v",
+            "pattern",
+            "assembly_mode",
+            "sample_id",
+            "fault_count",
+        }:
+            errors.append("physical scan contains an incomplete record")
+            continue
+        voltage = _finite_number(record.get("supply_voltage_v"))
+        key = (
+            str(record.get("half")),
+            voltage if voltage is not None else -1.0,
+            str(record.get("pattern")),
+            str(record.get("assembly_mode")),
+        )
+        if key not in expected_combinations:
+            errors.append(f"physical scan has an unexpected condition {key}")
+            continue
+        sample_id = record.get("sample_id")
+        if not isinstance(sample_id, str) or not sample_id or sample_id in sample_ids:
+            errors.append("physical scan sample IDs are missing or duplicated")
+            continue
+        sample_ids.add(sample_id)
+        faults = _finite_number(record.get("fault_count"))
+        if faults is None or faults < 0 or not faults.is_integer():
+            errors.append("physical scan fault count is invalid")
+            continue
+        counts[key] += 1
+        fault_count += int(faults)
+    if set(counts) != expected_combinations:
+        errors.append("physical scan does not cover both halves, voltages, patterns, and assembly modes")
+    switch_fit_records = data.get("switch_fit_records")
+    expected_fit_keys = {
+        (half, mode)
+        for half in ("left", "right")
+        for mode in ("choc_v2", "mx")
+    }
+    seen_fit_keys: set[tuple[str, str]] = set()
+    if not isinstance(switch_fit_records, list):
+        errors.append("physical scan switch/socket fit records are missing")
+        switch_fit_records = []
+    for record in switch_fit_records:
+        if not isinstance(record, dict) or set(record) != {
+            "half",
+            "assembly_mode",
+            "orientation",
+            "switch_mpn",
+            "socket_mpn",
+            "bottom_socket_fit_pass",
+            "mx_five_pin_fit_pass",
+            "minimum_joint_clearance_mm",
+            "minimum_housing_clearance_mm",
+        }:
+            errors.append("physical scan switch/socket fit contains an incomplete record")
+            continue
+        key = (str(record.get("half")), str(record.get("assembly_mode")))
+        if key not in expected_fit_keys or key in seen_fit_keys:
+            errors.append(f"physical scan switch/socket condition is unexpected or duplicated: {key}")
+            continue
+        seen_fit_keys.add(key)
+        joint = _finite_number(record.get("minimum_joint_clearance_mm"))
+        housing = _finite_number(record.get("minimum_housing_clearance_mm"))
+        expected_orientation = "left_rotated" if key[0] == "left" else "right_mirrored"
+        expected_switch = controller_identity.get(
+            "choc_switch_mpn" if key[1] == "choc_v2" else "mx_switch_mpn"
+        )
+        expected_socket = (
+            controller_identity.get("choc_socket_mpn") if key[1] == "choc_v2" else "not_populated"
+        )
+        mode_pass = (
+            record.get("bottom_socket_fit_pass") is (key[1] == "choc_v2")
+            and record.get("mx_five_pin_fit_pass") is (key[1] == "mx")
+        )
+        if (
+            record.get("orientation") != expected_orientation
+            or record.get("switch_mpn") != expected_switch
+            or record.get("socket_mpn") != expected_socket
+            or not mode_pass
+            or joint is None
+            or joint < 0.0
+            or housing is None
+            or housing < 0.0
+        ):
+            errors.append(f"physical scan switch/socket fit {key} does not pass")
+    if seen_fit_keys != expected_fit_keys:
+        errors.append("physical scan switch/socket fit does not cover both halves and modes")
+
+    keycap_fit_records = data.get("keycap_fit_records")
+    expected_keycap_conditions = {
+        (half, mode, width)
+        for half in ("left", "right")
+        for mode in ("choc_v2", "mx")
+        for width in (1.0, 1.25, 1.5, 1.75)
+    }
+    seen_keycap_conditions: set[tuple[str, str, float]] = set()
+    keycap_identities: dict[str, dict[str, object]] = {}
+    three_d_count = 0
+    if not isinstance(keycap_fit_records, list):
+        errors.append("physical scan non-1U/3D keycap records are missing")
+        keycap_fit_records = []
+    for record in keycap_fit_records:
+        if not isinstance(record, dict) or set(record) != {
+            "assembly_mode",
+            "half",
+            "width_u",
+            "keycap_manufacturer",
+            "keycap_mpn",
+            "is_3d_printed",
+            "fit_pass",
+            "minimum_spacing_mm",
+        }:
+            errors.append("physical scan keycap fit contains an incomplete record")
+            continue
+        width = _finite_number(record.get("width_u"))
+        mode = str(record.get("assembly_mode"))
+        half = str(record.get("half"))
+        condition = (half, mode, float(width) if width is not None else -1.0)
+        spacing = _finite_number(record.get("minimum_spacing_mm"))
+        if condition not in expected_keycap_conditions or condition in seen_keycap_conditions:
+            errors.append("physical scan keycap mode/width is unexpected or duplicated")
+            continue
+        seen_keycap_conditions.add(condition)
+        identity_key = f"{mode}:{float(width):.2f}"
+        keycap_identity = {
+            "assembly_mode": mode,
+            "width_u": float(width),
+            "manufacturer": record.get("keycap_manufacturer"),
+            "mpn": record.get("keycap_mpn"),
+            "is_3d_printed": record.get("is_3d_printed"),
+        }
+        if identity_key in keycap_identities and keycap_identities[identity_key] != keycap_identity:
+            errors.append(f"physical scan keycap identity differs between halves: {identity_key}")
+        keycap_identities[identity_key] = keycap_identity
+        three_d_count += int(record.get("is_3d_printed") is True)
+        if (
+            not isinstance(record.get("keycap_manufacturer"), str)
+            or not record.get("keycap_manufacturer")
+            or not _valid_procurement_manufacturer(record.get("keycap_manufacturer"))
+            or not isinstance(record.get("keycap_mpn"), str)
+            or not record.get("keycap_mpn")
+            or not _valid_procurement_identifier(record.get("keycap_mpn"))
+            or record.get("fit_pass") is not True
+            or spacing is None
+            or not 1.60 <= spacing <= 2.00
+        ):
+            errors.append(f"physical scan keycap {width}U fit/spacing does not pass")
+    if seen_keycap_conditions != expected_keycap_conditions or three_d_count < 1:
+        errors.append(
+            "physical scan does not cover 1U/every non-1U width in both modes and a 3D keycap"
+        )
+
+    diode_records = data.get("diode_records")
+    seen_diode_halves: set[str] = set()
+    if not isinstance(diode_records, list):
+        errors.append("physical scan ES1B records are missing")
+        diode_records = []
+    for record in diode_records:
+        if not isinstance(record, dict) or set(record) != {
+            "half",
+            "manufacturer",
+            "mpn",
+            "pad1_cathode_polarity_pass",
+            "hand_solder_access_pass",
+            "minimum_joint_clearance_mm",
+            "minimum_housing_clearance_mm",
+        }:
+            errors.append("physical scan ES1B evidence contains an incomplete record")
+            continue
+        half = record.get("half")
+        joint = _finite_number(record.get("minimum_joint_clearance_mm"))
+        housing = _finite_number(record.get("minimum_housing_clearance_mm"))
+        if half not in {"left", "right"} or half in seen_diode_halves:
+            errors.append("physical scan ES1B half is invalid or duplicated")
+            continue
+        seen_diode_halves.add(str(half))
+        if (
+            record.get("manufacturer") != "Jingdao"
+            or record.get("mpn") != "ES1B"
+            or record.get("pad1_cathode_polarity_pass") is not True
+            or record.get("hand_solder_access_pass") is not True
+            or joint is None
+            or joint < 0.0
+            or housing is None
+            or housing < 0.0
+        ):
+            errors.append(f"physical scan ES1B {half} result does not pass")
+    if seen_diode_halves != {"left", "right"}:
+        errors.append("physical scan ES1B records do not cover both halves")
+    metrics = {
+        "supply_volts": [3.0, 3.3],
+        "patterns": ["maximum-same-row", "maximum-same-column"],
+        "assembly_modes": ["choc_v2", "mx"],
+        "sample_count_per_condition": min(counts.values()) if counts else 0,
+        "fault_count": fault_count,
+        "switch_fit_condition_count": len(seen_fit_keys),
+        "keycap_widths": sorted(
+            {width for _, _, width in seen_keycap_conditions}
+        ),
+        "keycap_fit_condition_count": len(seen_keycap_conditions),
+        "three_d_keycap_record_count": three_d_count,
+        "es1b_half_count": len(seen_diode_halves),
+    }
+    identity = {
+        "coupon_id": data.get("coupon_id"),
+        "keycaps": keycap_identities,
+    }
+    return metrics, errors, identity
+
+
+def _housing_source_contracts(
+    source_paths: dict[str, Path],
+) -> tuple[dict[str, float], list[str]]:
+    path = source_paths.get("housing_manifest")
+    if path is None:
+        return {}, ["housing raw measurements lack a bound housing manifest"]
+    try:
+        manifest = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as error:
+        return {}, [f"housing source contract cannot be parsed: {error}"]
+    parameters = manifest.get("parameters") if isinstance(manifest, dict) else None
+    if not isinstance(parameters, dict):
+        return {}, ["housing source contract parameters are missing"]
+    names = {
+        "pilot_diameter_mm": "mounting_pilot_diameter_mm",
+        "pilot_depth_mm": "mounting_pilot_depth_mm",
+        "closed_bottom_mm": "mounting_closed_bottom_mm",
+        "pcb_thickness_mm": "pcb_thickness_mm",
+        "pcb_thickness_tolerance_fraction": "pcb_thickness_tolerance_fraction",
+        "minimum_tip_clearance_mm": "minimum_tip_clearance_mm",
+    }
+    values = {
+        name: _finite_number(parameters.get(source_name))
+        for name, source_name in names.items()
+    }
+    penetration_range = parameters.get("pcb_tolerance_penetration_range_mm")
+    if (
+        any(value is None or value <= 0.0 for value in values.values())
+        or not isinstance(penetration_range, list)
+        or len(penetration_range) != 2
+        or any(_finite_number(value) is None for value in penetration_range)
+    ):
+        return {}, ["housing source contract dimensions are incomplete or invalid"]
+    contracts = {name: float(value) for name, value in values.items()}
+    contracts["minimum_penetration_mm"] = float(penetration_range[0])
+    contracts["maximum_penetration_mm"] = float(penetration_range[1])
+    contracts["minimum_pcb_thickness_mm"] = contracts["pcb_thickness_mm"] * (
+        1.0 - contracts["pcb_thickness_tolerance_fraction"]
+    )
+    contracts["maximum_pcb_thickness_mm"] = contracts["pcb_thickness_mm"] * (
+        1.0 + contracts["pcb_thickness_tolerance_fraction"]
+    )
+    return contracts, []
+
+
+def _housing_head_adjacency_contracts(
+    source_paths: dict[str, Path],
+) -> tuple[dict[str, dict[str, object]], list[str]]:
+    contracts: dict[str, dict[str, object]] = {}
+    errors: list[str] = []
+    layouts = {
+        "left": make_left_keys_x3_v2(),
+        "right": make_right_keys_x3_v2(),
+    }
+    for half, binding in (("left", "left_board"), ("right", "right_board")):
+        path = source_paths.get(binding)
+        if path is None or not path.is_file():
+            errors.append(f"housing head-adjacency lacks the bound {half} board")
+            continue
+        try:
+            board = pcbnew.LoadBoard(str(path))
+        except Exception as error:  # pragma: no cover - pcbnew exception types vary
+            errors.append(f"housing head-adjacency cannot load {half} board: {error}")
+            continue
+        footprints = {item.GetReference(): item for item in board.GetFootprints()}
+        switches = {
+            f"SW{index}": (footprints.get(f"SW{index}"), key)
+            for index, key in enumerate(layouts[half], start=1)
+        }
+        if any(footprint is None for footprint, _ in switches.values()):
+            errors.append(f"housing head-adjacency {half} switch reference set is incomplete")
+            continue
+        mounting_refs = sorted(
+            (
+                reference
+                for reference in footprints
+                if re.fullmatch(r"MH\d+", reference)
+            ),
+            key=lambda reference: int(reference[2:]),
+        )
+        expected_count = 8 if half == "left" else 10
+        if len(mounting_refs) != expected_count:
+            errors.append(f"housing head-adjacency {half} mounting-hole set is incomplete")
+            continue
+        for mounting_ref in mounting_refs:
+            mounting_position = footprints[mounting_ref].GetPosition()
+
+            def keycap_distance(item: tuple[str, tuple[object, object]]) -> tuple[float, float, str]:
+                reference, (footprint, key) = item
+                assert footprint is not None
+                position = footprint.GetPosition()
+                dx = abs(pcbnew.ToMM(position.x - mounting_position.x))
+                dy = abs(pcbnew.ToMM(position.y - mounting_position.y))
+                half_width = (19.05 * float(key.w_u) - 1.0) / 2.0
+                half_height = 18.05 / 2.0
+                outside_x = max(dx - half_width, 0.0)
+                outside_y = max(dy - half_height, 0.0)
+                edge_distance = math.hypot(outside_x, outside_y)
+                return edge_distance, math.hypot(dx, dy), reference
+
+            for switch_ref, (_, switch_key) in switches.items():
+                edge_distance, _, _ = keycap_distance(
+                    (switch_ref, switches[switch_ref])
+                )
+                if edge_distance > 1.5 + 1e-9:
+                    continue
+                contract_key = f"{half}:{mounting_ref}:{switch_ref}"
+                contracts[contract_key] = {
+                    "half": half,
+                    "mounting_hole_reference": mounting_ref,
+                    "overlapping_switch_reference": switch_ref,
+                    "width_u": float(switch_key.w_u),
+                }
+    per_hole_counts = Counter(
+        (record["half"], record["mounting_hole_reference"])
+        for record in contracts.values()
+    )
+    if (
+        len(contracts) != 34
+        or len(per_hole_counts) != 18
+        or sum(count > 1 for count in per_hole_counts.values()) != 13
+    ):
+        errors.append(
+            "housing head-adjacency is not the exact 34 overlaps at 18 holes (13 multi-switch)"
+        )
+    return contracts, errors
+
+
+def _housing_metrics(
+    data: object,
+    *,
+    seen_paths: set[str],
+    controller_identity: dict[str, object],
+    scan_identity: dict[str, object],
+    source_contracts: dict[str, float],
+    head_adjacency_contracts: dict[str, dict[str, object]],
+    calibration_evidence: object,
+) -> tuple[dict[str, object], list[str]]:
+    errors: list[str] = []
+    if not isinstance(data, dict) or set(data) != {
+        "fastener_identity",
+        "production_print",
+        "assembly_identity",
+        "documents",
+        "fastener_records",
+        "assembly_fit_records",
+        "head_adjacent_fit_records",
+        "deflection_records",
+    }:
+        return {}, ["housing raw data schema is incomplete or stale"]
+    documents, document_errors = _validate_document_set(
+        data["documents"],
+        {
+            "driver_drawing",
+            "fastener_drawing",
+            "slicer_profile",
+            "structural_specimen_trace",
+        },
+        label="housing fastener",
+        seen_paths=seen_paths,
+    )
+    errors.extend(document_errors)
+    identity = data.get("fastener_identity")
+    required_identity = {
+        "manufacturer",
+        "mpn",
+        "order_code",
+        "drawing_revision",
+        "head_style",
+        "nominal_thread_diameter_mm",
+        "thread_classification",
+        "thread_form",
+        "thread_pitch_mm",
+        "thread_flank_angle_degrees",
+        "thread_major_diameter_mm",
+        "thread_minor_diameter_mm",
+        "material",
+        "finish",
+        "drive_recess",
+        "driver_manufacturer",
+        "driver_mpn",
+        "minimum_under_head_length_mm",
+        "maximum_under_head_length_mm",
+        "minimum_head_diameter_mm",
+        "maximum_head_diameter_mm",
+        "minimum_head_height_mm",
+        "maximum_head_height_mm",
+        "maximum_finished_pcb_hole_diameter_mm",
+        "minimum_radial_bearing_width_mm",
+        "maximum_driver_shaft_diameter_mm",
+        "maximum_driver_runout_mm",
+        "maximum_driver_sweep_mm",
+    }
+    if not isinstance(identity, dict) or set(identity) != required_identity:
+        return {}, errors + ["housing exact fastener/driver identity is incomplete"]
+    numeric_identity_keys = {
+        "nominal_thread_diameter_mm",
+        "thread_pitch_mm",
+        "thread_flank_angle_degrees",
+        "thread_major_diameter_mm",
+        "thread_minor_diameter_mm",
+        "minimum_under_head_length_mm",
+        "maximum_under_head_length_mm",
+        "minimum_head_diameter_mm",
+        "maximum_head_diameter_mm",
+        "minimum_head_height_mm",
+        "maximum_head_height_mm",
+        "maximum_finished_pcb_hole_diameter_mm",
+        "minimum_radial_bearing_width_mm",
+        "maximum_driver_shaft_diameter_mm",
+        "maximum_driver_runout_mm",
+        "maximum_driver_sweep_mm",
+    }
+    for key in required_identity - numeric_identity_keys:
+        if not isinstance(identity.get(key), str) or not identity.get(key):
+            errors.append(f"housing fastener identity {key} is missing")
+        elif not _valid_identity_for_field(key, identity.get(key)):
+            errors.append(
+                f"housing fastener identity {key} is malformed or retains a placeholder"
+            )
+    if identity.get("head_style") != "rounded_pan_or_button":
+        errors.append("housing fastener head style is not rounded pan/button")
+    if identity.get("thread_classification") != "direct_plastic_thread_forming":
+        errors.append("housing fastener is not classified as direct-plastic thread-forming")
+    if identity.get("thread_form") not in DIRECT_PLASTIC_THREAD_FORMS:
+        errors.append("housing fastener thread form is not a controlled direct-plastic taxonomy value")
+    numeric_identity = {
+        key: _finite_number(identity.get(key)) for key in numeric_identity_keys
+    }
+    if any(value is None or value <= 0.0 for value in numeric_identity.values()):
+        errors.append("housing fastener dimensional identity contains a missing/nonpositive value")
+    else:
+        minimum_length = float(numeric_identity["minimum_under_head_length_mm"])
+        maximum_length = float(numeric_identity["maximum_under_head_length_mm"])
+        minimum_head_diameter = float(numeric_identity["minimum_head_diameter_mm"])
+        maximum_head_diameter = float(numeric_identity["maximum_head_diameter_mm"])
+        minimum_head_height = float(numeric_identity["minimum_head_height_mm"])
+        maximum_head_height = float(numeric_identity["maximum_head_height_mm"])
+        maximum_hole = float(numeric_identity["maximum_finished_pcb_hole_diameter_mm"])
+        bearing = float(numeric_identity["minimum_radial_bearing_width_mm"])
+        shaft = float(numeric_identity["maximum_driver_shaft_diameter_mm"])
+        runout = float(numeric_identity["maximum_driver_runout_mm"])
+        sweep = float(numeric_identity["maximum_driver_sweep_mm"])
+        if not math.isclose(
+            float(numeric_identity["nominal_thread_diameter_mm"]),
+            1.4,
+            abs_tol=1e-9,
+        ):
+            errors.append("housing fastener nominal thread diameter is not exactly M1.4")
+        pitch = float(numeric_identity["thread_pitch_mm"])
+        flank_angle = float(numeric_identity["thread_flank_angle_degrees"])
+        major = float(numeric_identity["thread_major_diameter_mm"])
+        minor = float(numeric_identity["thread_minor_diameter_mm"])
+        if (
+            pitch <= 0.0
+            or not math.isclose(flank_angle, 30.0, abs_tol=1e-9)
+            or not 0.0 < minor < major
+            or not math.isclose(major, 1.4, abs_tol=1e-9)
+        ):
+            errors.append("housing direct-plastic thread geometry is invalid or not M1.4")
+        if minimum_length > maximum_length:
+            errors.append("housing fastener under-head length tolerance is reversed")
+        if minimum_head_diameter > maximum_head_diameter or maximum_head_diameter > 3.0 + 1e-9:
+            errors.append("housing fastener head diameter tolerance exceeds the 3.00 mm envelope")
+        if minimum_head_height > maximum_head_height or maximum_head_height > 1.2 + 1e-9:
+            errors.append("housing fastener head height tolerance exceeds the 1.20 mm envelope")
+        recomputed_bearing = (minimum_head_diameter - maximum_hole) / 2.0
+        if recomputed_bearing <= 0.0 or not math.isclose(
+            bearing, recomputed_bearing, abs_tol=1e-9
+        ):
+            errors.append("housing fastener radial bearing is not recomputed from head/hole limits")
+        if not math.isclose(sweep, shaft + 2.0 * runout, abs_tol=1e-9) or sweep > 3.0 + 1e-9:
+            errors.append("housing driver sweep is not shaft plus two-sided runout within 3.00 mm")
+
+    controlled_fastener_fields = (
+        "manufacturer",
+        "mpn",
+        "order_code",
+        "drawing_revision",
+        "head_style",
+        "nominal_thread_diameter_mm",
+        "thread_classification",
+        "thread_form",
+        "thread_pitch_mm",
+        "thread_flank_angle_degrees",
+        "thread_major_diameter_mm",
+        "thread_minor_diameter_mm",
+        "material",
+        "finish",
+        "drive_recess",
+        "minimum_under_head_length_mm",
+        "maximum_under_head_length_mm",
+        "minimum_head_diameter_mm",
+        "maximum_head_diameter_mm",
+        "minimum_head_height_mm",
+        "maximum_head_height_mm",
+    )
+    fastener_drawing_record = documents.get("fastener_drawing", {})
+    fastener_drawing: object = None
+    if isinstance(fastener_drawing_record, dict) and isinstance(
+        fastener_drawing_record.get("path"), str
+    ):
+        try:
+            fastener_drawing = json.loads(
+                (ROOT / str(fastener_drawing_record["path"])).read_text(encoding="utf-8")
+            )
+        except (OSError, json.JSONDecodeError) as error:
+            errors.append(f"housing controlled fastener drawing cannot be parsed: {error}")
+    expected_fastener_drawing = {
+        "schema": "kc2-x3-v2-fastener-drawing-v1",
+        **{field: identity.get(field) for field in controlled_fastener_fields},
+    }
+    if fastener_drawing != expected_fastener_drawing:
+        errors.append("housing fastener identity/geometry is not bound to its controlled drawing")
+
+    production_print = data.get("production_print")
+    required_print_fields = {
+        "production_process",
+        "printer_manufacturer",
+        "printer_model",
+        "specimen_coupon_id",
+        "production_lot_id",
+        "material_manufacturer",
+        "material_product",
+        "material_mpn",
+        "material_lot",
+        "nozzle_diameter_mm",
+        "layer_height_mm",
+        "print_orientation",
+        "slicer_name",
+        "slicer_version",
+        "wall_perimeter_count",
+        "infill_pattern",
+        "infill_density_percent",
+        "extrusion_width_mm",
+        "flow_percent",
+        "top_solid_layers",
+        "bottom_solid_layers",
+        "nozzle_temperature_c",
+        "bed_temperature_c",
+        "fan_percent",
+        "print_speed_mm_s",
+        "travel_speed_mm_s",
+        "print_acceleration_mm_s2",
+        "travel_acceleration_mm_s2",
+        "slicer_profile_sha256",
+    }
+    if not isinstance(production_print, dict) or set(production_print) != required_print_fields:
+        errors.append("housing production print identity/process schema is incomplete or stale")
+        production_print = {}
+    else:
+        numeric_print_fields = {
+            "nozzle_diameter_mm",
+            "layer_height_mm",
+            "wall_perimeter_count",
+            "infill_density_percent",
+            "extrusion_width_mm",
+            "flow_percent",
+            "top_solid_layers",
+            "bottom_solid_layers",
+            "nozzle_temperature_c",
+            "bed_temperature_c",
+            "fan_percent",
+            "print_speed_mm_s",
+            "travel_speed_mm_s",
+            "print_acceleration_mm_s2",
+            "travel_acceleration_mm_s2",
+        }
+        for key in required_print_fields - numeric_print_fields:
+            if not isinstance(production_print.get(key), str) or not production_print.get(key):
+                errors.append(f"housing production print {key} is missing")
+            elif not _valid_identity_for_field(key, production_print.get(key)):
+                errors.append(
+                    f"housing production print {key} is malformed or retains a placeholder"
+                )
+        nozzle = _finite_number(production_print.get("nozzle_diameter_mm"))
+        layer = _finite_number(production_print.get("layer_height_mm"))
+        if nozzle is None or nozzle <= 0.0 or layer is None or layer <= 0.0 or layer > nozzle:
+            errors.append("housing production nozzle/layer measurements are invalid")
+        if production_print.get("print_orientation") != "desk_contact_face_down":
+            errors.append("housing production print orientation is not desk_contact_face_down")
+        if production_print.get("production_process") not in {"FFF", "FDM"}:
+            errors.append("housing production process is not the controlled FFF/FDM enum")
+        if production_print.get("specimen_coupon_id") == scan_identity.get("coupon_id"):
+            errors.append("housing structural specimen identity reuses the electrical scan coupon")
+        integer_settings = {
+            "wall_perimeter_count": (2, 99),
+            "top_solid_layers": (1, 99),
+            "bottom_solid_layers": (1, 99),
+        }
+        for key, (minimum, maximum) in integer_settings.items():
+            value = production_print.get(key)
+            if isinstance(value, bool) or not isinstance(value, int) or not minimum <= value <= maximum:
+                errors.append(f"housing production {key} is invalid")
+        bounded_settings = {
+            "infill_density_percent": (1.0, 100.0),
+            "extrusion_width_mm": (0.1, 2.0),
+            "flow_percent": (50.0, 150.0),
+            "nozzle_temperature_c": (150.0, 350.0),
+            "bed_temperature_c": (0.0, 150.0),
+            "fan_percent": (0.0, 100.0),
+            "print_speed_mm_s": (1.0, 500.0),
+            "travel_speed_mm_s": (1.0, 1000.0),
+            "print_acceleration_mm_s2": (1.0, 50000.0),
+            "travel_acceleration_mm_s2": (1.0, 50000.0),
+        }
+        for key, (minimum, maximum) in bounded_settings.items():
+            value = _finite_number(production_print.get(key))
+            if value is None or not minimum <= value <= maximum:
+                errors.append(f"housing production {key} is invalid")
+        if production_print.get("infill_pattern") not in {
+            "gyroid",
+            "grid",
+            "cubic",
+            "rectilinear",
+        }:
+            errors.append("housing production infill pattern is not controlled")
+        if production_print.get("slicer_profile_sha256") != documents.get(
+            "slicer_profile", {}
+        ).get("sha256"):
+            errors.append("housing production slicer profile is not document-bound")
+        profile_record = documents.get("slicer_profile", {})
+        profile: object = None
+        if isinstance(profile_record, dict) and isinstance(profile_record.get("path"), str):
+            try:
+                profile = json.loads(
+                    (ROOT / str(profile_record["path"])).read_text(encoding="utf-8")
+                )
+            except (OSError, json.JSONDecodeError) as error:
+                errors.append(f"housing slicer profile cannot be parsed: {error}")
+        expected_profile = {
+            "schema": "kc2-x3-v2-slicer-profile-v1",
+            **{
+                key: value
+                for key, value in production_print.items()
+                if key != "slicer_profile_sha256"
+            },
+        }
+        if profile != expected_profile:
+            errors.append("housing slicer profile is incompatible with the production process")
+
+    specimen_id = production_print.get("specimen_coupon_id")
+    production_lot_id = production_print.get("production_lot_id")
+    trace_record = documents.get("structural_specimen_trace", {})
+    trace_payload: object = None
+    if isinstance(trace_record, dict) and isinstance(trace_record.get("path"), str):
+        try:
+            trace_payload = json.loads(
+                (ROOT / str(trace_record["path"])).read_text(encoding="utf-8")
+            )
+        except (OSError, json.JSONDecodeError) as error:
+            errors.append(f"housing structural specimen trace cannot be parsed: {error}")
+    expected_trace = {
+        "schema": "kc2-x3-v2-structural-specimen-trace-v1",
+        "production_lot_id": production_lot_id,
+        "specimen_coupon_id": specimen_id,
+        "slicer_profile_sha256": production_print.get("slicer_profile_sha256"),
+    }
+    if trace_payload != expected_trace:
+        errors.append("housing structural specimen trace is not production-profile bound")
+    calibration_payload: object = None
+    if isinstance(calibration_evidence, dict) and isinstance(
+        calibration_evidence.get("path"), str
+    ):
+        try:
+            calibration_payload = json.loads(
+                (ROOT / str(calibration_evidence["path"])).read_text(encoding="utf-8")
+            )
+        except (OSError, json.JSONDecodeError) as error:
+            errors.append(f"housing structural calibration trace cannot be parsed: {error}")
+    expected_calibration = {
+        "schema": "kc2-x3-v2-structural-calibration-v1",
+        "bundle": "housing_fastener_deflection",
+        "production_lot_id": production_lot_id,
+        "specimen_coupon_id": specimen_id,
+    }
+    if calibration_payload != expected_calibration:
+        errors.append("housing calibration is not bound to the tested structural specimen")
+
+    assembly_identity = data.get("assembly_identity")
+    required_assembly_identity = {
+        "supported_modes",
+        "choc_switch_manufacturer",
+        "choc_switch_mpn",
+        "mx_switch_manufacturer",
+        "mx_switch_mpn",
+        "keycap_identities",
+    }
+    if not isinstance(assembly_identity, dict) or set(assembly_identity) != required_assembly_identity:
+        errors.append("housing supported switch/keycap identity schema is incomplete or stale")
+        assembly_identity = {}
+    else:
+        if assembly_identity.get("supported_modes") != ["choc_v2", "mx"]:
+            errors.append("housing supported assembly modes are not exact Choc V2 and MX")
+        for key in required_assembly_identity - {"supported_modes", "keycap_identities"}:
+            if not isinstance(assembly_identity.get(key), str) or not assembly_identity.get(key):
+                errors.append(f"housing assembly identity {key} is missing")
+            elif not _valid_identity_for_field(key, assembly_identity.get(key)):
+                errors.append(
+                    f"housing assembly identity {key} is malformed or retains a placeholder"
+                )
+        purchased_parts = controller_identity.get("purchased_parts")
+        for prefix, part_name in (("choc", "choc_switch"), ("mx", "mx_switch")):
+            expected_part = (
+                purchased_parts.get(part_name)
+                if isinstance(purchased_parts, dict)
+                else None
+            )
+            if not isinstance(expected_part, dict) or any(
+                assembly_identity.get(f"{prefix}_switch_{field}")
+                != expected_part.get(field)
+                for field in ("manufacturer", "mpn")
+            ):
+                errors.append(
+                    f"housing {prefix} switch identity is not bound to controller service evidence"
+                )
+        if assembly_identity.get("keycap_identities") != scan_identity.get("keycaps"):
+            errors.append("housing keycap identities are not bound to physical scan evidence")
+        keycap_identities = assembly_identity.get("keycap_identities")
+        if not isinstance(keycap_identities, dict):
+            errors.append("housing exact keycap identity set is missing")
+        else:
+            for condition, keycap_identity in keycap_identities.items():
+                if not isinstance(keycap_identity, dict):
+                    errors.append(f"housing keycap identity {condition} is malformed")
+                    continue
+                for field in ("assembly_mode", "manufacturer", "mpn"):
+                    value = keycap_identity.get(field)
+                    if (
+                        not isinstance(value, str)
+                        or not value
+                        or not _valid_identity_for_field(field, value)
+                    ):
+                        errors.append(
+                            f"housing keycap identity {condition} {field} is missing/placeholder"
+                        )
+
+    fasteners, fastener_errors = _records_by_half(
+        data.get("fastener_records"), label="housing fastener"
+    )
+    errors.extend(fastener_errors)
+    cycles: list[int] = []
+    ratios: list[float] = []
+    rocking = loosening = permanent = disengagement = False
+    for half, record in fasteners.items():
+        required = {
+            "half",
+            "production_lot_id",
+            "specimen_coupon_id",
+            "install_remove_cycles",
+            "actual_under_head_length_mm",
+            "printed_pilot_diameter_mm",
+            "actual_pcb_thickness_mm",
+            "installed_penetration_mm",
+            "measured_blind_pilot_depth_mm",
+            "measured_closed_bottom_thickness_mm",
+            "measured_available_plastic_depth_mm",
+            "tip_clearance_mm",
+            "tapping_torque_n_m",
+            "selected_installation_torque_n_m",
+            "stripping_torque_n_m",
+            "measured_driver_shaft_diameter_mm",
+            "measured_driver_runout_mm",
+            "measured_driver_sweep_mm",
+            "pull_through_clamp_retention_pass",
+            "full_pattern_without_forcing",
+            "keycaps_off_switches_installed_access",
+            "cracking",
+            "spin",
+            "pull_out",
+            "loosening",
+        }
+        if set(record) != required:
+            errors.append(f"housing fastener {half} record schema is incomplete or stale")
+            continue
+        cycle_value = _finite_number(record.get("install_remove_cycles"))
+        actual_length = _finite_number(record.get("actual_under_head_length_mm"))
+        pilot = _finite_number(record.get("printed_pilot_diameter_mm"))
+        pcb_thickness = _finite_number(record.get("actual_pcb_thickness_mm"))
+        penetration = _finite_number(record.get("installed_penetration_mm"))
+        pilot_depth = _finite_number(record.get("measured_blind_pilot_depth_mm"))
+        closed_bottom = _finite_number(record.get("measured_closed_bottom_thickness_mm"))
+        available_depth = _finite_number(record.get("measured_available_plastic_depth_mm"))
+        tip_clearance = _finite_number(record.get("tip_clearance_mm"))
+        tapping = _finite_number(record.get("tapping_torque_n_m"))
+        install = _finite_number(record.get("selected_installation_torque_n_m"))
+        stripping = _finite_number(record.get("stripping_torque_n_m"))
+        measured_shaft = _finite_number(record.get("measured_driver_shaft_diameter_mm"))
+        measured_runout = _finite_number(record.get("measured_driver_runout_mm"))
+        measured_sweep = _finite_number(record.get("measured_driver_sweep_mm"))
+        minimum_length = _finite_number(identity.get("minimum_under_head_length_mm"))
+        maximum_length = _finite_number(identity.get("maximum_under_head_length_mm"))
+        if (
+            cycle_value is None
+            or record.get("production_lot_id") != production_lot_id
+            or record.get("specimen_coupon_id") != specimen_id
+            or not cycle_value.is_integer()
+            or cycle_value < 10
+            or actual_length is None
+            or minimum_length is None
+            or maximum_length is None
+            or not minimum_length <= actual_length <= maximum_length
+            or pilot is None
+            or pilot <= 0.0
+            or not source_contracts
+            or not math.isclose(
+                pilot,
+                source_contracts.get("pilot_diameter_mm", -1.0),
+                abs_tol=1e-6,
+            )
+            or pcb_thickness is None
+            or pcb_thickness <= 0.0
+            or not source_contracts.get("minimum_pcb_thickness_mm", 99.0)
+            <= pcb_thickness
+            <= source_contracts.get("maximum_pcb_thickness_mm", -1.0)
+            or penetration is None
+            or penetration <= 0.0
+            or not math.isclose(actual_length - pcb_thickness, penetration, abs_tol=1e-6)
+            or pilot_depth is None
+            or pilot_depth <= 0.0
+            or not math.isclose(
+                pilot_depth,
+                source_contracts.get("pilot_depth_mm", -1.0),
+                abs_tol=1e-6,
+            )
+            or closed_bottom is None
+            or closed_bottom <= 0.0
+            or not math.isclose(
+                closed_bottom,
+                source_contracts.get("closed_bottom_mm", -1.0),
+                abs_tol=1e-6,
+            )
+            or available_depth is None
+            or not math.isclose(available_depth, pilot_depth + closed_bottom, abs_tol=1e-6)
+            or tip_clearance is None
+            or not math.isclose(tip_clearance, pilot_depth - penetration, abs_tol=1e-6)
+            or tip_clearance
+            < source_contracts.get("minimum_tip_clearance_mm", float("inf"))
+            or penetration
+            < source_contracts.get("minimum_penetration_mm", float("inf"))
+            or penetration
+            > source_contracts.get("maximum_penetration_mm", float("-inf"))
+            or tapping is None
+            or tapping <= 0.0
+            or install is None
+            or install <= 0.0
+            or stripping is None
+            or stripping / tapping < 2.0
+            or not tapping <= install <= stripping / 2.0
+            or measured_shaft is None
+            or measured_shaft <= 0.0
+            or measured_shaft
+            > float(identity.get("maximum_driver_shaft_diameter_mm", 0.0)) + 1e-9
+            or measured_runout is None
+            or measured_runout < 0.0
+            or measured_runout
+            > float(identity.get("maximum_driver_runout_mm", -1.0)) + 1e-9
+            or measured_sweep is None
+            or not math.isclose(
+                measured_sweep,
+                measured_shaft + 2.0 * measured_runout,
+                abs_tol=1e-6,
+            )
+            or measured_sweep
+            > float(identity.get("maximum_driver_sweep_mm", 0.0)) + 1e-9
+        ):
+            errors.append(
+                f"housing fastener {half} dimensional/cycle/torque/skirt record does not pass"
+            )
+        else:
+            cycles.append(int(cycle_value))
+            ratios.append(stripping / tapping)
+        if not all(
+            record.get(key) is True
+            for key in (
+                "pull_through_clamp_retention_pass",
+                "full_pattern_without_forcing",
+                "keycaps_off_switches_installed_access",
+            )
+        ) or not all(record.get(key) is False for key in ("cracking", "spin", "pull_out", "loosening")):
+            errors.append(f"housing fastener {half} service result does not pass")
+        loosening = loosening or record.get("loosening") is not False
+
+    assembly_fit_records = data.get("assembly_fit_records")
+    expected_fit_keys = {
+        (half, mode, width)
+        for half in ("left", "right")
+        for mode in ("choc_v2", "mx")
+        for width in (1.0, 1.25, 1.5, 1.75)
+    }
+    seen_fit_keys: set[tuple[str, str, float]] = set()
+    if not isinstance(assembly_fit_records, list):
+        errors.append("housing switch/keycap assembly fit records are missing")
+        assembly_fit_records = []
+    for record in assembly_fit_records:
+        if not isinstance(record, dict) or set(record) != {
+            "half",
+            "production_lot_id",
+            "specimen_coupon_id",
+            "assembly_mode",
+            "width_u",
+            "switch_manufacturer",
+            "switch_mpn",
+            "keycap_manufacturer",
+            "keycap_mpn",
+            "is_3d_printed",
+            "keycap_skirt_clearance_at_rest_mm",
+            "keycap_skirt_clearance_at_full_travel_mm",
+        }:
+            errors.append("housing assembly fit contains an incomplete record")
+            continue
+        width = _finite_number(record.get("width_u"))
+        key = (
+            str(record.get("half")),
+            str(record.get("assembly_mode")),
+            float(width) if width is not None else -1.0,
+        )
+        if key not in expected_fit_keys or key in seen_fit_keys:
+            errors.append(f"housing assembly fit condition is unexpected or duplicated: {key}")
+            continue
+        seen_fit_keys.add(key)
+        prefix = "choc" if key[1] == "choc_v2" else "mx"
+        keycap = scan_identity.get("keycaps", {})
+        expected_keycap = (
+            keycap.get(f"{key[1]}:{key[2]:.2f}") if isinstance(keycap, dict) else None
+        )
+        rest = _finite_number(record.get("keycap_skirt_clearance_at_rest_mm"))
+        travel = _finite_number(record.get("keycap_skirt_clearance_at_full_travel_mm"))
+        if (
+            record.get("production_lot_id") != production_lot_id
+            or record.get("specimen_coupon_id") != specimen_id
+            or record.get("switch_manufacturer")
+            != assembly_identity.get(f"{prefix}_switch_manufacturer")
+            or record.get("switch_mpn") != assembly_identity.get(f"{prefix}_switch_mpn")
+            or not isinstance(expected_keycap, dict)
+            or record.get("keycap_manufacturer") != expected_keycap.get("manufacturer")
+            or record.get("keycap_mpn") != expected_keycap.get("mpn")
+            or record.get("is_3d_printed") is not expected_keycap.get("is_3d_printed")
+            or rest is None
+            or rest <= 0.0
+            or travel is None
+            or travel <= 0.0
+        ):
+            errors.append(f"housing assembly fit {key} identity/clearance does not pass")
+    if seen_fit_keys != expected_fit_keys:
+        errors.append(
+            "housing assembly fit does not cover both halves, modes, and all non-1U keycaps"
+        )
+
+    head_fit_records = data.get("head_adjacent_fit_records")
+    expected_head_fit_keys = {
+        (contract_key, mode)
+        for contract_key in head_adjacency_contracts
+        for mode in ("choc_v2", "mx")
+    }
+    seen_head_fit_keys: set[tuple[str, str]] = set()
+    if not isinstance(head_fit_records, list):
+        errors.append("housing mounting-head-adjacent fit records are missing")
+        head_fit_records = []
+    for record in head_fit_records:
+        required = {
+            "half",
+            "production_lot_id",
+            "specimen_coupon_id",
+            "mounting_hole_reference",
+            "assembly_mode",
+            "overlapping_switch_reference",
+            "width_u",
+            "keycap_manufacturer",
+            "keycap_mpn",
+            "is_3d_printed",
+            "keycap_head_clearance_at_rest_mm",
+            "keycap_head_clearance_at_full_travel_mm",
+        }
+        if not isinstance(record, dict) or set(record) != required:
+            errors.append("housing mounting-head-adjacent fit contains an incomplete record")
+            continue
+        contract_key = (
+            f"{record.get('half')}:{record.get('mounting_hole_reference')}:"
+            f"{record.get('overlapping_switch_reference')}"
+        )
+        mode = str(record.get("assembly_mode"))
+        key = (contract_key, mode)
+        if key not in expected_head_fit_keys or key in seen_head_fit_keys:
+            errors.append(
+                f"housing mounting-head-adjacent fit is unexpected or duplicated: {key}"
+            )
+            continue
+        seen_head_fit_keys.add(key)
+        contract = head_adjacency_contracts[contract_key]
+        width = _finite_number(record.get("width_u"))
+        expected_keycap = scan_identity.get("keycaps", {})
+        expected_keycap = (
+            expected_keycap.get(f"{mode}:{float(width):.2f}")
+            if isinstance(expected_keycap, dict) and width is not None
+            else None
+        )
+        rest = _finite_number(record.get("keycap_head_clearance_at_rest_mm"))
+        travel = _finite_number(record.get("keycap_head_clearance_at_full_travel_mm"))
+        if (
+            record.get("production_lot_id") != production_lot_id
+            or record.get("specimen_coupon_id") != specimen_id
+            or record.get("half") != contract.get("half")
+            or record.get("mounting_hole_reference")
+            != contract.get("mounting_hole_reference")
+            or record.get("overlapping_switch_reference")
+            != contract.get("overlapping_switch_reference")
+            or width is None
+            or not math.isclose(width, float(contract.get("width_u", -1.0)), abs_tol=1e-9)
+            or not isinstance(expected_keycap, dict)
+            or record.get("keycap_manufacturer") != expected_keycap.get("manufacturer")
+            or record.get("keycap_mpn") != expected_keycap.get("mpn")
+            or record.get("is_3d_printed") is not expected_keycap.get("is_3d_printed")
+            or rest is None
+            or rest <= 0.0
+            or travel is None
+            or travel <= 0.0
+        ):
+            errors.append(f"housing mounting-head-adjacent fit {key} does not pass")
+    if seen_head_fit_keys != expected_head_fit_keys or len(seen_head_fit_keys) != 68:
+        errors.append(
+            "housing mounting-head-adjacent fit does not cover both modes for all 34 overlaps"
+        )
+
+    deflections = data.get("deflection_records")
+    expected_counts = {"left": 31, "right": 39}
+    seen_switches: set[tuple[str, str]] = set()
+    displacements: list[float] = []
+    if not isinstance(deflections, list):
+        errors.append("housing deflection records are missing")
+        deflections = []
+    for record in deflections:
+        if not isinstance(record, dict) or set(record) != {
+            "half",
+            "production_lot_id",
+            "specimen_coupon_id",
+            "switch_reference",
+            "load_n",
+            "downward_displacement_mm",
+            "rocking",
+            "permanent_deformation",
+            "support_disengagement",
+        }:
+            errors.append("housing deflection contains an incomplete record")
+            continue
+        half = record.get("half")
+        reference = record.get("switch_reference")
+        key = (str(half), str(reference))
+        if half not in expected_counts or not isinstance(reference, str) or not re.fullmatch(r"SW\d+", reference):
+            errors.append("housing deflection half/reference is invalid")
+            continue
+        if key in seen_switches:
+            errors.append("housing deflection switch record is duplicated")
+            continue
+        seen_switches.add(key)
+        load = _finite_number(record.get("load_n"))
+        displacement = _finite_number(record.get("downward_displacement_mm"))
+        if (
+            record.get("production_lot_id") != production_lot_id
+            or record.get("specimen_coupon_id") != specimen_id
+            or load is None
+            or not math.isclose(load, 2.0, abs_tol=1e-9)
+            or displacement is None
+            or displacement < 0.0
+        ):
+            errors.append(f"housing deflection {half} {reference} measurement is invalid")
+        else:
+            displacements.append(displacement)
+        rocking = rocking or record.get("rocking") is not False
+        permanent = permanent or record.get("permanent_deformation") is not False
+        disengagement = disengagement or record.get("support_disengagement") is not False
+    expected_switches = {
+        (half, f"SW{index}")
+        for half, count in expected_counts.items()
+        for index in range(1, count + 1)
+    }
+    if seen_switches != expected_switches:
+        errors.append("housing deflection does not contain the exact 31 left and 39 right switch references")
+    metrics = {
+        "fastener_manufacturer": identity.get("manufacturer"),
+        "fastener_mpn": identity.get("mpn"),
+        "fastener_order_code": identity.get("order_code"),
+        "fastener_drawing_revision": identity.get("drawing_revision"),
+        "fastener_drawing_sha256": documents.get("fastener_drawing", {}).get("sha256"),
+        "head_style": identity.get("head_style"),
+        "nominal_thread_diameter_mm": identity.get("nominal_thread_diameter_mm"),
+        "thread_classification": identity.get("thread_classification"),
+        "thread_form": identity.get("thread_form"),
+        "thread_pitch_mm": identity.get("thread_pitch_mm"),
+        "thread_flank_angle_degrees": identity.get("thread_flank_angle_degrees"),
+        "thread_major_diameter_mm": identity.get("thread_major_diameter_mm"),
+        "thread_minor_diameter_mm": identity.get("thread_minor_diameter_mm"),
+        "material": identity.get("material"),
+        "finish": identity.get("finish"),
+        "drive_recess": identity.get("drive_recess"),
+        "minimum_head_diameter_mm": identity.get("minimum_head_diameter_mm"),
+        "maximum_head_diameter_mm": identity.get("maximum_head_diameter_mm"),
+        "minimum_head_height_mm": identity.get("minimum_head_height_mm"),
+        "maximum_head_height_mm": identity.get("maximum_head_height_mm"),
+        "minimum_under_head_length_mm": identity.get("minimum_under_head_length_mm"),
+        "maximum_under_head_length_mm": identity.get("maximum_under_head_length_mm"),
+        "maximum_finished_pcb_hole_diameter_mm": identity.get(
+            "maximum_finished_pcb_hole_diameter_mm"
+        ),
+        "minimum_radial_bearing_width_mm": identity.get("minimum_radial_bearing_width_mm"),
+        "driver_manufacturer": identity.get("driver_manufacturer"),
+        "driver_mpn": identity.get("driver_mpn"),
+        "driver_drawing_sha256": documents.get("driver_drawing", {}).get("sha256"),
+        "maximum_driver_shaft_diameter_mm": identity.get("maximum_driver_shaft_diameter_mm"),
+        "maximum_driver_runout_mm": identity.get("maximum_driver_runout_mm"),
+        "maximum_driver_sweep_mm": identity.get("maximum_driver_sweep_mm"),
+        "production_print": production_print,
+        "assembly_identity": assembly_identity,
+        "assembly_fit_condition_count": len(seen_fit_keys),
+        "head_adjacent_fit_condition_count": len(seen_head_fit_keys),
+        "install_remove_cycles": min(cycles) if cycles else 0,
+        "torque_ratio": min(ratios) if ratios else 0.0,
+        "tested_switch_positions": len(seen_switches),
+        "maximum_displacement_mm": max(displacements) if displacements else None,
+        "rocking": rocking,
+        "loosening": loosening,
+        "permanent_deformation": permanent,
+        "support_disengagement": disengagement,
+    }
+    return metrics, errors
+
+
+def _power_rf_metrics(
+    data: object,
+    *,
+    source_digests: dict[str, str],
+    controller_identity: dict[str, object],
+) -> tuple[dict[str, object], list[str]]:
+    errors: list[str] = []
+    if not isinstance(data, dict) or set(data) != {"identity", "transition_records", "rf_records"}:
+        return {}, ["power/RF raw data schema is incomplete or stale"]
+    identity = data.get("identity")
+    required_identity = {
+        "battery_mpn",
+        "battery_lot",
+        "power_switch_mpn",
+        "firmware_build_sha256",
+        "housing_manifest_sha256",
+        "host_id",
+        "ble_channels",
+    }
+    if not isinstance(identity, dict) or set(identity) != required_identity:
+        return {}, ["power/RF assembly, firmware, host, and channel identity is incomplete"]
+    for key in ("battery_mpn", "battery_lot", "power_switch_mpn"):
+        if identity.get(key) != controller_identity.get(key):
+            errors.append(f"power/RF {key} does not match controller-service evidence")
+    if identity.get("firmware_build_sha256") != source_digests.get("firmware_build_evidence"):
+        errors.append("power/RF firmware build identity is not source-bound")
+    if identity.get("housing_manifest_sha256") != source_digests.get("housing_manifest"):
+        errors.append("power/RF housing identity is not source-bound")
+    if not isinstance(identity.get("host_id"), str) or not identity.get("host_id"):
+        errors.append("power/RF host identity is missing")
+    channels = identity.get("ble_channels")
+    if not isinstance(channels, list) or not channels or any(
+        isinstance(channel, bool) or not isinstance(channel, int) for channel in channels
+    ) or len(set(channels)) != len(channels):
+        errors.append("power/RF BLE channel set is missing or invalid")
+        channels = []
+
+    transitions = data.get("transition_records")
+    expected_transition_keys = {
+        (half, voltage, direction, cycle)
+        for half in ("left", "right")
+        for voltage in (3.3, 4.2)
+        for direction in ("off_to_on", "on_to_off")
+        for cycle in range(1, 21)
+    }
+    seen_transition_keys: set[tuple[str, float, str, int]] = set()
+    brownouts = boot_faults = 0
+    vbat_droops: list[float] = []
+    vdd_droops: list[float] = []
+    ringing_values: list[float] = []
+    if not isinstance(transitions, list):
+        errors.append("power transition raw records are missing")
+        transitions = []
+    for record in transitions:
+        if not isinstance(record, dict) or set(record) != {
+            "half",
+            "no_load_voltage_v",
+            "direction",
+            "cycle",
+            "vbat_samples_v",
+            "vdd_samples_v",
+            "expected_vdd_v",
+            "brownout_reset",
+            "boot_loop",
+            "usb_reenumeration_failure",
+            "stuck_power_state",
+            "visible_arcing",
+        }:
+            errors.append("power transition contains an incomplete record")
+            continue
+        voltage = _finite_number(record.get("no_load_voltage_v"))
+        cycle = _finite_number(record.get("cycle"))
+        key = (
+            str(record.get("half")),
+            voltage if voltage is not None else -1.0,
+            str(record.get("direction")),
+            int(cycle) if cycle is not None and cycle.is_integer() else -1,
+        )
+        if key not in expected_transition_keys or key in seen_transition_keys:
+            errors.append(f"power transition condition is unexpected or duplicated: {key}")
+            continue
+        seen_transition_keys.add(key)
+        vbat = record.get("vbat_samples_v")
+        vdd = record.get("vdd_samples_v")
+        expected_vdd = _finite_number(record.get("expected_vdd_v"))
+        if not isinstance(vbat, list) or len(vbat) < 3 or not isinstance(vdd, list) or len(vdd) < 3:
+            errors.append(f"power transition {key} lacks raw scope samples")
+            continue
+        vbat_values = [_finite_number(value) for value in vbat]
+        vdd_values = [_finite_number(value) for value in vdd]
+        if any(value is None for value in vbat_values + vdd_values) or expected_vdd is None:
+            errors.append(f"power transition {key} has invalid raw scope samples")
+            continue
+        if key[2] == "off_to_on":
+            vbat_numbers = [float(value) for value in vbat_values]
+            vdd_numbers = [float(value) for value in vdd_values]
+            vbat_droops.append(key[1] - min(vbat_numbers))
+            vdd_droops.append(expected_vdd - min(vdd_numbers))
+            ringing_values.append(max(vbat_numbers) - min(vbat_numbers))
+        brownout = record.get("brownout_reset") is not False
+        brownouts += int(brownout)
+        other_fault = any(
+            record.get(field) is not False
+            for field in (
+                "boot_loop",
+                "usb_reenumeration_failure",
+                "stuck_power_state",
+                "visible_arcing",
+            )
+        )
+        boot_faults += int(other_fault)
+    if seen_transition_keys != expected_transition_keys:
+        errors.append("power transition records do not cover 20 cycles for both halves, voltages, and directions")
+
+    states = ("battery_only", "usb_charging", "charge_complete", "usb_unplug_transition")
+    orientations = ("normal", "90_degrees", "180_degrees")
+    hands = ("absent", "home_row")
+    expected_rf_keys = {
+        (half, channel, state, orientation, hand)
+        for half in ("left", "right")
+        for channel in channels
+        for state in states
+        for orientation in orientations
+        for hand in hands
+    }
+    rf_records = data.get("rf_records")
+    seen_rf_keys: set[tuple[str, int, str, str, str]] = set()
+    rssi_counts: list[int] = []
+    report_counts: list[int] = []
+    loss_ratios: list[float] = []
+    degradations: list[float] = []
+    disconnects = reconnects = 0
+    if not isinstance(rf_records, list):
+        errors.append("RF raw records are missing")
+        rf_records = []
+    for record in rf_records:
+        if not isinstance(record, dict) or set(record) != {
+            "half",
+            "ble_channel",
+            "state",
+            "orientation",
+            "hands",
+            "distance_m",
+            "both_halves_communicating",
+            "baseline_rssi_dbm",
+            "final_rssi_dbm",
+            "reports_expected",
+            "missing_sequence_numbers",
+            "disconnect_events",
+            "reconnect_events",
+        }:
+            errors.append("RF evidence contains an incomplete record")
+            continue
+        key = (
+            str(record.get("half")),
+            record.get("ble_channel"),
+            str(record.get("state")),
+            str(record.get("orientation")),
+            str(record.get("hands")),
+        )
+        if key not in expected_rf_keys or key in seen_rf_keys:
+            errors.append(f"RF condition is unexpected or duplicated: {key}")
+            continue
+        seen_rf_keys.add(key)
+        distance = _finite_number(record.get("distance_m"))
+        baseline = record.get("baseline_rssi_dbm")
+        final = record.get("final_rssi_dbm")
+        expected_reports = _finite_number(record.get("reports_expected"))
+        missing = record.get("missing_sequence_numbers")
+        disconnect_events = record.get("disconnect_events")
+        reconnect_events = record.get("reconnect_events")
+        if (
+            distance is None
+            or not math.isclose(distance, 5.0, abs_tol=1e-9)
+            or record.get("both_halves_communicating") is not True
+            or not isinstance(baseline, list)
+            or not isinstance(final, list)
+            or len(baseline) < 30
+            or len(final) < 30
+            or expected_reports is None
+            or not expected_reports.is_integer()
+            or expected_reports < 10000
+            or not isinstance(missing, list)
+            or not isinstance(disconnect_events, list)
+            or not isinstance(reconnect_events, list)
+        ):
+            errors.append(f"RF condition {key} lacks required raw samples or workload")
+            continue
+        baseline_values = [_finite_number(value) for value in baseline]
+        final_values = [_finite_number(value) for value in final]
+        if any(value is None for value in baseline_values + final_values):
+            errors.append(f"RF condition {key} has invalid RSSI samples")
+            continue
+        expected_reports_int = int(expected_reports)
+        if any(
+            isinstance(sequence, bool)
+            or not isinstance(sequence, int)
+            or sequence < 1
+            or sequence > expected_reports_int
+            for sequence in missing
+        ) or len(set(missing)) != len(missing):
+            errors.append(f"RF condition {key} missing-sequence record is invalid")
+            continue
+        rssi_counts.append(min(len(baseline), len(final)))
+        report_counts.append(expected_reports_int)
+        loss_ratios.append(len(missing) / expected_reports_int)
+        degradations.append(
+            float(median(float(value) for value in baseline_values))
+            - float(median(float(value) for value in final_values))
+        )
+        disconnects += len(disconnect_events)
+        reconnects += len(reconnect_events)
+    if seen_rf_keys != expected_rf_keys:
+        errors.append("RF records do not cover every half/channel/state/orientation/hand condition")
+    metrics = {
+        "cold_cycles_per_voltage_and_direction": 20 if seen_transition_keys == expected_transition_keys else 0,
+        "brownout_count": brownouts,
+        "power_fault_count": boot_faults,
+        "maximum_vbat_droop_v": max(vbat_droops) if vbat_droops else None,
+        "maximum_vdd_droop_v": max(vdd_droops) if vdd_droops else None,
+        "maximum_vbat_ringing_v": max(ringing_values) if ringing_values else None,
+        "rssi_samples_per_state": min(rssi_counts) if rssi_counts else 0,
+        "reports_per_state": min(report_counts) if report_counts else 0,
+        "packet_loss_ratio": max(loss_ratios) if loss_ratios else None,
+        "median_rssi_degradation_db": max(degradations) if degradations else None,
+        "disconnect_count": disconnects,
+        "reconnect_count": reconnects,
+    }
+    return metrics, errors
+
+
+def _verify_positive_order_artifact_suite() -> list[str]:
+    """Re-run every dedicated digital artifact verifier for a positive order claim."""
+    errors: list[str] = []
+    commands = {
+        label: [sys.executable, "-B", "-m", module]
+        for label, module in POSITIVE_ORDER_ARTIFACT_MODULES.items()
+    }
+    commands["firmware"].extend(["--kicad-python", sys.executable])
+    outline_code = (
+        "import json;"
+        "from tools.verify_kc2_x3_v2_outline import ROOT,analyze_outline;"
+        "p=ROOT/'hardware/kicad/draft/x3-v2/mechanical/kc2_x3_v2_outline_report.json';"
+        "actual=analyze_outline(ROOT);"
+        "bound=json.loads(p.read_text(encoding='utf-8'));"
+        "errors=list(actual.get('errors',[]));"
+        "errors.extend([] if bound==actual else ['bound outline report is stale']);"
+        "raise SystemExit('\\n'.join(errors) if errors else 0)"
+    )
+    commands["outline"] = [sys.executable, "-B", "-c", outline_code]
+    for label, command in commands.items():
+        try:
+            completed = subprocess.run(
+                command,
+                cwd=ROOT,
+                capture_output=True,
+                text=True,
+                timeout=300,
+                check=False,
+            )
+        except (OSError, subprocess.SubprocessError) as error:
+            errors.append(f"artifact suite {label} verifier could not run: {error}")
+            continue
+        if completed.returncode != 0:
+            detail = (completed.stderr or completed.stdout).strip().splitlines()
+            errors.append(
+                f"artifact suite {label} verifier failed"
+                + (f": {detail[-1]}" if detail else "")
+            )
+    python_launcher = shutil.which("py")
+    if python_launcher is None:
+        errors.append("artifact suite housing verifier could not run: Windows py launcher is missing")
+    else:
+        housing_code = (
+            "from tools.verify_kc2_x3_v2_housing import analyze_v2_housing,verify_report;"
+            "errors=verify_report(analyze_v2_housing());"
+            "raise SystemExit('\\n'.join(errors) if errors else 0)"
+        )
+        housing_environment = os.environ.copy()
+        # KiCad sets a private PYTHONUSERBASE for its bundled Python.  Do not leak it
+        # into the independent CadQuery interpreter used by the housing verifier.
+        housing_environment.pop("PYTHONUSERBASE", None)
+        try:
+            completed = subprocess.run(
+                [python_launcher, "-3.12", "-B", "-c", housing_code],
+                cwd=ROOT,
+                env=housing_environment,
+                capture_output=True,
+                text=True,
+                timeout=300,
+                check=False,
+            )
+        except (OSError, subprocess.SubprocessError) as error:
+            errors.append(f"artifact suite housing verifier could not run: {error}")
+        else:
+            if completed.returncode != 0:
+                detail = (completed.stderr or completed.stdout).strip().splitlines()
+                errors.append(
+                    "artifact suite housing verifier failed"
+                    + (f": {detail[-1]}" if detail else "")
+                )
+    return errors
+
+
+def _positive_package_identity_errors(
+    fabrication_manifest_path: Path | None,
+    *,
+    controller_identity: dict[str, object],
+    scan_identity: dict[str, object],
+    source_digests: dict[str, str],
+    seen_paths: set[str],
+) -> list[str]:
+    if fabrication_manifest_path is None:
+        return ["positive fabrication package manifest is missing"]
+    try:
+        manifest = json.loads(fabrication_manifest_path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as error:
+        return [f"positive fabrication package manifest cannot be parsed: {error}"]
+    errors: list[str] = []
+    if not isinstance(manifest, dict):
+        return ["positive fabrication package manifest is not an object"]
+    if (
+        manifest.get("status") != "order_ready_verified_physical_evidence"
+        or manifest.get("order_ready") is not True
+    ):
+        errors.append("positive fabrication package remains draft/not order-ready")
+    errors.extend(
+        _procurement_object_identity_errors(
+            manifest,
+            label="positive fabrication package",
+        )
+    )
+    purchased_parts = controller_identity.get("purchased_parts")
+    keycaps = scan_identity.get("keycaps")
+    expected_procurement_identity = {
+        "parts": purchased_parts,
+        "keycaps": keycaps,
+    }
+    if not isinstance(purchased_parts, dict) or not isinstance(keycaps, dict):
+        errors.append("positive package lacks recomputed physical purchased-part identities")
+    products = manifest.get("products")
+    if not isinstance(products, dict):
+        return errors + ["positive fabrication package products are missing"]
+    for half, board_binding in (("left", "left_board"), ("right", "right_board")):
+        product = products.get(half)
+        if not isinstance(product, dict):
+            errors.append(f"positive fabrication package {half} product is missing")
+            continue
+        if product.get("source_board_sha256") != source_digests.get(board_binding):
+            errors.append(f"positive fabrication package {half} board digest is stale")
+        bom = product.get("bom")
+        files = product.get("files")
+        if not isinstance(bom, dict) or not isinstance(bom.get("json"), str):
+            errors.append(f"positive fabrication package {half} BOM path is missing")
+            continue
+        relative = Path(str(bom["json"]).replace("\\", "/"))
+        if relative.is_absolute() or ".." in relative.parts:
+            errors.append(f"positive fabrication package {half} BOM path is unsafe")
+            continue
+        bom_path = ROOT / relative
+        file_entry = None
+        if isinstance(files, list):
+            file_entry = next(
+                (
+                    item
+                    for item in files
+                    if isinstance(item, dict) and item.get("name") == relative.name
+                ),
+                None,
+            )
+        if not isinstance(file_entry, dict):
+            errors.append(f"positive fabrication package {half} BOM file record is missing")
+            continue
+        errors.extend(
+            _repository_artifact_errors(
+                {
+                    "path": relative.as_posix(),
+                    "sha256": file_entry.get("sha256"),
+                    "size_bytes": file_entry.get("size"),
+                    "kind": "fabrication-bom-json",
+                },
+                label=f"positive fabrication package {half} BOM",
+                measurement=False,
+                seen_paths=seen_paths,
+            )
+        )
+        try:
+            bom_payload = json.loads(bom_path.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError) as error:
+            errors.append(f"positive fabrication package {half} BOM cannot be parsed: {error}")
+            continue
+        if not isinstance(bom_payload, dict):
+            errors.append(f"positive fabrication package {half} BOM is not an object")
+            continue
+        if (
+            bom_payload.get("order_ready") is not True
+            or bom_payload.get("source_board_sha256") != source_digests.get(board_binding)
+        ):
+            errors.append(f"positive fabrication package {half} BOM is stale/not order-ready")
+        if bom_payload.get("procurement_identity") != expected_procurement_identity:
+            errors.append(
+                f"positive fabrication package {half} BOM identities are not exact physical evidence"
+            )
+        errors.extend(
+            _procurement_object_identity_errors(
+                bom_payload,
+                label=f"positive fabrication package {half} BOM",
+            )
+        )
+    return errors
+
+
+def verify_physical_evidence_manifest(
+    evidence: object,
+    expected_source_paths: dict[str, Path] | None = None,
+) -> dict[str, list[str]]:
+    bundle_errors = {name: [] for name in PHYSICAL_EVIDENCE_BUNDLES}
+    if not isinstance(evidence, dict):
+        for errors in bundle_errors.values():
+            errors.append("physical evidence manifest is missing or invalid")
+        return bundle_errors
+
+    root_errors: list[str] = []
+    if evidence.get("schema") != PHYSICAL_EVIDENCE_SCHEMA:
+        root_errors.append("schema is missing or stale")
+    if evidence.get("requirement_ids") != PHYSICAL_EVIDENCE_REQUIREMENT_IDS:
+        root_errors.append("requirement IDs are missing or stale")
+    if evidence.get("variant") != "x3-v2":
+        root_errors.append("variant is missing or stale")
+    if evidence.get("status") != "passed" or evidence.get("order_ready") is not True:
+        root_errors.append("physical evidence status/order_ready is not passed/true")
+
+    required_bindings = {
+        "left_board",
+        "right_board",
+        "generation_manifest",
+        "housing_manifest",
+        "fabrication_manifest",
+        "mechanical_manifest",
+        "render_manifest",
+        "outline_report",
+        "firmware_build_evidence",
+    }
+    bindings = evidence.get("source_bindings")
+    source_digests: dict[str, str] = {}
+    bound_source_paths: dict[str, Path] = {}
+    if not isinstance(bindings, dict) or set(bindings) != required_bindings:
+        root_errors.append("source bindings are incomplete")
+    else:
+        for name in sorted(required_bindings):
+            root_errors.extend(
+                _repository_artifact_errors(
+                    bindings[name],
+                    label=f"source binding {name}",
+                    measurement=False,
+                )
+            )
+            if isinstance(bindings[name], dict) and isinstance(bindings[name].get("sha256"), str):
+                source_digests[name] = str(bindings[name]["sha256"])
+            if isinstance(bindings[name], dict) and isinstance(bindings[name].get("path"), str):
+                bound_source_paths[name] = ROOT / str(bindings[name]["path"])
+            if expected_source_paths is not None:
+                expected_path = expected_source_paths.get(name)
+                expected_relative = (
+                    expected_path.resolve().relative_to(ROOT.resolve()).as_posix()
+                    if expected_path is not None
+                    else None
+                )
+                if bindings[name].get("path") != expected_relative:
+                    root_errors.append(f"source binding {name} path is not canonical")
+    if (
+        evidence.get("status") == "passed"
+        and evidence.get("order_ready") is True
+        and not root_errors
+    ):
+        root_errors.extend(_verify_positive_order_artifact_suite())
+
+    bundles = evidence.get("bundles")
+    if not isinstance(bundles, dict) or set(bundles) != set(PHYSICAL_EVIDENCE_BUNDLES):
+        root_errors.append("physical evidence bundle set is incomplete or stale")
+        bundles = {}
+    seen_paths: set[str] = set()
+    controller_identity: dict[str, object] = {}
+    scan_identity: dict[str, object] = {}
+    housing_contracts, housing_contract_errors = _housing_source_contracts(
+        bound_source_paths
+    )
+    head_adjacency_contracts, head_adjacency_contract_errors = (
+        _housing_head_adjacency_contracts(bound_source_paths)
+    )
+    for name in bundle_errors:
+        errors = bundle_errors[name]
+        errors.extend(root_errors)
+        bundle = bundles.get(name)
+        if not isinstance(bundle, dict):
+            errors.append(f"{name} bundle is missing")
+            continue
+        if bundle.get("status") != "passed":
+            errors.append(f"{name} status is not passed")
+        artifacts = bundle.get("artifacts")
+        if not isinstance(artifacts, list) or len(artifacts) != 1:
+            errors.append(f"{name} must contain exactly one typed raw JSON artifact")
+            continue
+        artifact = artifacts[0]
+        errors.extend(
+            _repository_artifact_errors(
+                artifact,
+                label=f"{name} artifact",
+                measurement=True,
+                seen_paths=seen_paths,
+            )
+        )
+        if not isinstance(artifact, dict):
+            continue
+        if artifact.get("kind") != PHYSICAL_RAW_ARTIFACT_KINDS[name]:
+            errors.append(f"{name} typed raw artifact kind is missing or stale")
+        relative_path = artifact.get("path")
+        payload: object = None
+        if isinstance(relative_path, str):
+            try:
+                payload = json.loads((ROOT / relative_path).read_text(encoding="utf-8"))
+            except (OSError, json.JSONDecodeError) as error:
+                errors.append(f"{name} typed raw JSON cannot be parsed: {error}")
+        if not isinstance(payload, dict) or set(payload) != {
+            "schema",
+            "bundle",
+            "source_bindings",
+            "data",
+        }:
+            errors.append(f"{name} typed raw JSON schema is incomplete or stale")
+            continue
+        if payload.get("schema") != PHYSICAL_RAW_BUNDLE_SCHEMA or payload.get("bundle") != name:
+            errors.append(f"{name} typed raw JSON identity is missing or stale")
+        if payload.get("source_bindings") != source_digests:
+            errors.append(f"{name} typed raw JSON is not bound to the exact release sources")
+        metrics = bundle.get("metrics")
+        if not isinstance(metrics, dict):
+            errors.append(f"{name} metrics are missing")
+            continue
+        if name == "controller_service":
+            recomputed, raw_errors, controller_identity = _controller_service_metrics(
+                payload.get("data"),
+                seen_paths=seen_paths,
+            )
+            errors.extend(raw_errors)
+        elif name == "physical_scan":
+            recomputed, raw_errors, scan_identity = _physical_scan_metrics(
+                payload.get("data"),
+                controller_identity=controller_identity,
+            )
+            errors.extend(raw_errors)
+        elif name == "housing_fastener_deflection":
+            recomputed, raw_errors = _housing_metrics(
+                payload.get("data"),
+                seen_paths=seen_paths,
+                controller_identity=controller_identity,
+                scan_identity=scan_identity,
+                source_contracts=housing_contracts,
+                head_adjacency_contracts=head_adjacency_contracts,
+                calibration_evidence=artifact.get("calibration_evidence"),
+            )
+            errors.extend(
+                housing_contract_errors + head_adjacency_contract_errors + raw_errors
+            )
+        elif name == "power_rf":
+            recomputed, raw_errors = _power_rf_metrics(
+                payload.get("data"),
+                source_digests=source_digests,
+                controller_identity=controller_identity,
+            )
+            errors.extend(raw_errors)
+        else:  # pragma: no cover - bundle set is a constant
+            recomputed = {}
+        if metrics != recomputed:
+            errors.append(f"{name} metrics are not an exact recomputation of typed raw records")
+        if name == "controller_service" and (
+            recomputed.get("lead_pull_pass") is not True
+            or recomputed.get("service_pass") is not True
+            or _finite_number(recomputed.get("minimum_stack_clearance_mm")) is None
+        ):
+            errors.append("controller service raw results do not pass")
+        elif name == "physical_scan" and (
+            recomputed.get("sample_count_per_condition", 0) < 1
+            or recomputed.get("fault_count") != 0
+        ):
+            errors.append("physical scan raw results do not pass")
+        elif name == "housing_fastener_deflection" and (
+            _finite_number(recomputed.get("torque_ratio")) is None
+            or float(recomputed.get("torque_ratio", 0.0)) < 2.0
+            or _finite_number(recomputed.get("maximum_displacement_mm")) is None
+            or float(recomputed.get("maximum_displacement_mm", 99.0)) > 0.30
+            or any(
+                recomputed.get(key) is not False
+                for key in ("rocking", "loosening", "permanent_deformation", "support_disengagement")
+            )
+        ):
+            errors.append("housing fastener/deflection raw results do not pass")
+        elif name == "power_rf" and (
+            recomputed.get("cold_cycles_per_voltage_and_direction") != 20
+            or recomputed.get("brownout_count") != 0
+            or recomputed.get("power_fault_count") != 0
+            or recomputed.get("rssi_samples_per_state", 0) < 30
+            or recomputed.get("reports_per_state", 0) < 10000
+            or _finite_number(recomputed.get("packet_loss_ratio")) is None
+            or float(recomputed.get("packet_loss_ratio", 99.0)) > 0.01
+            or _finite_number(recomputed.get("median_rssi_degradation_db")) is None
+            or float(recomputed.get("median_rssi_degradation_db", 99.0)) > 3.0
+            or recomputed.get("disconnect_count") != 0
+            or recomputed.get("reconnect_count") != 0
+        ):
+            errors.append("power/RF raw results do not pass")
+    if evidence.get("status") == "passed" and evidence.get("order_ready") is True:
+        package_errors = _positive_package_identity_errors(
+            bound_source_paths.get("fabrication_manifest"),
+            controller_identity=controller_identity,
+            scan_identity=scan_identity,
+            source_digests=source_digests,
+            seen_paths=seen_paths,
+        )
+        for errors in bundle_errors.values():
+            errors.extend(package_errors)
+    return bundle_errors
+
+
 def controller_service_order_readiness_blockers(
     manifest: dict[str, object],
     housing_manifest: dict[str, object] | None = None,
+    physical_evidence: dict[str, object] | None = None,
+    expected_source_paths: dict[str, Path] | None = None,
 ) -> list[str]:
     service = manifest.get("controller_service_region")
     if not isinstance(service, dict):
         return ["CON-ARCH-007 controller service manifest is missing"]
     blockers: list[str] = []
-    termination = service.get("battery_termination")
-    if not isinstance(termination, dict) or termination.get("lead_drawing_status") != (
-        "confirmed_exact_purchased_pack"
-    ):
+    # Generated design manifests remain conservative and are not an authority for
+    # irreversible order readiness.  Only the repository-bound physical evidence
+    # manifest below can establish a positive release result.
+    if service.get("order_ready") is not False:
         blockers.append(
-            "CON-ARCH-007 AC-4: J_BAT1 0.90 mm drill is provisional until the exact "
-            "purchased battery lead drawing is confirmed"
+            "CON-ARCH-007: generated controller service order_ready must remain false"
         )
-    if service.get("physical_validation") != "passed_battery_power_reset_rf_first_article":
-        blockers.append(
-            "CON-ARCH-007/REL-ARCH-001: battery stack, POWER/RESET access, 20-cycle "
-            "power transition, RSSI/PER, disconnect, and USB charging-state evidence is pending"
-        )
-    if service.get("order_ready") is not True:
-        blockers.append("CON-ARCH-007: controller service order_ready is not true")
-
     physical_scan = manifest.get("physical_scan_validation")
-    if not isinstance(physical_scan, dict) or physical_scan.get("status") != "passed":
-        blockers.append("CON-ARCH-004: physical scan validation status is not passed")
-    if not isinstance(physical_scan, dict) or physical_scan.get("orderable") is not True:
-        blockers.append("CON-ARCH-004: physical scan validation is not orderable")
+    if not isinstance(physical_scan, dict) or physical_scan.get("orderable") is not False:
+        blockers.append(
+            "CON-ARCH-004: generated physical scan orderable must remain false"
+        )
 
     if not isinstance(housing_manifest, dict):
         blockers.append("CON-ARCH-006: housing manifest is missing or invalid")
     else:
-        if housing_manifest.get("order_ready") is not True:
-            blockers.append("CON-ARCH-006: housing manifest order_ready is not true")
+        required_housing_keys = {
+            "requirement",
+            "requirement_ids",
+            "variant",
+            "generated_by",
+            "hash_policy",
+            "generator_sha256",
+            "coordinate_system",
+            "order_ready",
+            "parameters",
+            "retention",
+            "physical_deflection_test",
+            "outputs",
+        }
+        if set(housing_manifest) != required_housing_keys:
+            blockers.append("CON-ARCH-006: housing manifest schema is incomplete or stale")
+        if housing_manifest.get("requirement") != "CON-ARCH-006" or housing_manifest.get(
+            "requirement_ids"
+        ) != ["CON-ARCH-006", "CON-ARCH-007", "REL-ARCH-001"]:
+            blockers.append("CON-ARCH-006: housing manifest requirement IDs are stale")
+        if housing_manifest.get("variant") != "x3-v2" or housing_manifest.get(
+            "hash_policy"
+        ) != HASH_POLICY:
+            blockers.append("CON-ARCH-006: housing manifest identity/hash policy is stale")
+        if housing_manifest.get("order_ready") is not False:
+            blockers.append("CON-ARCH-006: generated housing order_ready must remain false")
         retention = housing_manifest.get("retention")
-        if not isinstance(retention, dict) or retention.get(
-            "physical_registration_status"
-        ) != "passed":
-            blockers.append(
-                "CON-ARCH-006: housing physical registration status is not passed"
-            )
+        if not isinstance(retention, dict) or retention.get("physical_registration_status") != (
+            "pending"
+        ):
+            blockers.append("CON-ARCH-006: generated housing registration must remain pending")
         deflection = housing_manifest.get("physical_deflection_test")
-        if not isinstance(deflection, dict) or deflection.get("status") != "passed":
-            blockers.append(
-                "CON-ARCH-006: housing physical deflection test status is not passed"
-            )
+        if not isinstance(deflection, dict) or deflection.get("status") != "pending":
+            blockers.append("CON-ARCH-006: generated housing deflection must remain pending")
+    evidence_errors = verify_physical_evidence_manifest(
+        physical_evidence,
+        expected_source_paths,
+    )
+    for bundle_name, label in PHYSICAL_EVIDENCE_BUNDLES.items():
+        if evidence_errors[bundle_name]:
+            blockers.append(f"{label} is missing or invalid: {evidence_errors[bundle_name][0]}")
     return blockers
 
 
@@ -2050,6 +5042,9 @@ def verify_controller_service_model_binding(
 ) -> list[str]:
     service = manifest.get("controller_service_region")
     power = service.get("power") if isinstance(service, dict) else None
+    battery_termination = (
+        service.get("battery_termination") if isinstance(service, dict) else None
+    )
     if not isinstance(power, dict):
         return ["manifest: controller POWER model contract is missing"]
     expected_model = "third_party/kc2.3dshapes/SW_IMMS_12V_BSI10_THT.step"
@@ -2071,6 +5066,57 @@ def verify_controller_service_model_binding(
         errors.append("manifest: IMMS 10x2.5x6.4 mm body contract is missing")
     if power.get("actuator_travel_mm") != 1.6:
         errors.append("manifest: IMMS 1.60 mm actuator travel is missing")
+    expected_battery_termination_contract = {
+        "pad_1": "BAT+",
+        "pad_2": "GND",
+        "pad_1_marking": "B+",
+        "pad_2_marking": "B-/GND",
+        "nice_nano_equivalence": {
+            "battery_positive": "U1 RAW / NN_B+",
+            "battery_negative": "U1 GND_C / GND",
+            "source": "https://nicekeyboards.com/docs/nice-nano/",
+        },
+    }
+    if not isinstance(battery_termination, dict):
+        errors.append("manifest: J_BAT1 assembly-marking contract is missing")
+    else:
+        for field, expected in expected_battery_termination_contract.items():
+            if battery_termination.get(field) != expected:
+                errors.append(f"manifest: J_BAT1 {field} must be {expected!r}")
+    expected_pending_contract = {
+        "model_role": "nominal_collision_proxy",
+        "exact_purchased_mpn_status": "pending",
+        "controlled_drawing_status": "pending",
+        "imms_12v_bsi_10_equivalence_status": "pending",
+    }
+    for field, expected in expected_pending_contract.items():
+        if power.get(field) != expected:
+            errors.append(
+                f"manifest: POWER {field} must remain {expected!r} until exact purchased-part evidence exists"
+            )
+    return errors
+
+
+def verify_v2_part_identity_contract(manifest: dict[str, object]) -> list[str]:
+    errors: list[str] = []
+    expected_requirements = [
+        "CON-ARCH-004",
+        "CON-ARCH-006",
+        "CON-ARCH-007",
+        "REL-ARCH-001",
+    ]
+    if manifest.get("requirement_ids") != expected_requirements:
+        errors.append("manifest: requirement IDs are missing, stale, or out of order")
+    expected_deep_sea = {
+        "family": "Kailh Deep Sea low-profile / PG1353-family",
+        "exact_mpn_status": "pending",
+        "controlled_drawing_revision_status": "pending",
+        "order_ready": False,
+    }
+    if manifest.get("deep_sea_switch_identity") != expected_deep_sea:
+        errors.append(
+            "manifest: exact Deep Sea MPN/drawing must remain pending without an invented part identity"
+        )
     return errors
 
 
@@ -2234,6 +5280,14 @@ def verify_v2_footprint(path: Path = DEFAULT_FOOTPRINT) -> list[str]:
         errors.append("MX hot-swap pads are forbidden")
     if report["has_choc_v2_direct_solder_pads"]:
         errors.append("Choc V2 direct-solder pads are forbidden")
+    if report["choc_socket_back_courtyard_mm"] != {
+        "bounds": (-10.25, 1.2, 5.25, 8.5),
+        "manufacturing_allowance": 0.25,
+        "encloses_body_and_lands": True,
+    }:
+        errors.append(
+            "bottom Choc socket courtyard must enclose the B.Fab body and both B.Cu lands with 0.25 mm allowance"
+        )
     return errors
 
 
@@ -2243,6 +5297,7 @@ def verify_v2_release_candidate(
     manifest_path: Path = DEFAULT_MANIFEST,
     drc_evidence_path: Path = DEFAULT_DRC_EVIDENCE,
     housing_manifest_path: Path = DEFAULT_HOUSING_MANIFEST,
+    physical_evidence_path: Path = DEFAULT_PHYSICAL_EVIDENCE,
 ) -> dict[str, object]:
     from tools.verify_kc2_antenna_keepout import check_board as check_antenna_keepout
     from tools.verify_kc2_compact_controller import check_side as check_compact_controller
@@ -2274,10 +5329,12 @@ def verify_v2_release_candidate(
 
     errors = [f"footprint: {error}" for error in verify_v2_footprint(footprint_path)]
     manifest = analyze_v2_manifest(manifest_path)
+    errors.extend(verify_v2_part_identity_contract(manifest))
     errors.extend(verify_controller_service_model_binding(manifest))
     errors.extend(verify_controller_service_manifest_clearances(manifest))
     drc_evidence = analyze_v2_manifest(drc_evidence_path)
     housing_manifest = analyze_v2_manifest(housing_manifest_path)
+    physical_evidence = analyze_v2_manifest(physical_evidence_path)
     if drc_evidence.get("requirement_ids") != [
         "CON-ARCH-004",
         "CON-ARCH-006",
@@ -2416,6 +5473,9 @@ def verify_v2_release_candidate(
             "M1.4 driver-to-copper clearance": not report[
                 "mounting_hole_driver_copper_errors"
             ],
+            "rounded M1.4 head 0.25 mm XY reserve": not report[
+                "mounting_hole_head_clearance_errors"
+            ],
             "canonical final route item count": report["route_track_via_count"]
             == manifest["canonical_route_evidence"][side]["final_track_via_count"],
             "canonical final route digest": report["route_digest_sha256"]
@@ -2465,17 +5525,42 @@ def verify_v2_release_candidate(
             for error in check_antenna_keepout(side, board_path, keepout)
         )
 
+    order_readiness_blockers = controller_service_order_readiness_blockers(
+        manifest,
+        housing_manifest,
+        physical_evidence,
+        {
+            "left_board": board_paths[detected_sides.index("left")],
+            "right_board": board_paths[detected_sides.index("right")],
+            "generation_manifest": manifest_path,
+            "housing_manifest": housing_manifest_path,
+            "fabrication_manifest": DEFAULT_FABRICATION_MANIFEST,
+            "mechanical_manifest": V2_ROOT
+            / "mechanical"
+            / "kc2_x3_v2_mechanical_manifest.json",
+            "render_manifest": V2_ROOT
+            / "renders"
+            / "kc2_x3_v2_render_manifest.json",
+            "outline_report": DEFAULT_OUTLINE_REPORT,
+            "firmware_build_evidence": DEFAULT_FIRMWARE_BUILD_EVIDENCE,
+        },
+    )
+    if errors:
+        status = "invalid_release_candidate"
+    elif order_readiness_blockers:
+        status = "draft_not_orderable_pending_physical_evidence"
+    else:
+        status = "order_ready_verified_physical_evidence"
+
     return {
         "requirement": "CON-ARCH-004",
-        "status": "draft_not_orderable_pending_physical_coupon",
+        "status": status,
         "boards": board_reports,
         "connectivity_errors": connectivity_errors,
         "drc_evidence": drc_evidence_reports,
         "canonical_route_evidence": route_evidence_reports,
-        "order_readiness_blockers": controller_service_order_readiness_blockers(
-            manifest,
-            housing_manifest,
-        ),
+        "physical_evidence": physical_evidence,
+        "order_readiness_blockers": order_readiness_blockers,
         "reviewed_drc_exclusions": {
             "checks": EXPECTED_IGNORED_DRC_CHECKS,
             "rationale": (
@@ -2488,6 +5573,22 @@ def verify_v2_release_candidate(
     }
 
 
+def _specctra_mount_positions_mm(
+    text: str,
+    coordinate_scale: float,
+) -> dict[str, tuple[float, float]]:
+    return {
+        reference: (
+            round(float(x) / coordinate_scale, 4),
+            round(-float(y) / coordinate_scale, 4),
+        )
+        for reference, x, y in re.findall(
+            r"\(place\s+(MH\d+)\s+(-?\d+(?:\.\d+)?)\s+(-?\d+(?:\.\d+)?)\b",
+            text,
+        )
+    }
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description="Verify CON-ARCH-004 KC2 X3 V2 routed draft.")
     parser.add_argument("--footprint", type=Path, default=DEFAULT_FOOTPRINT)
@@ -2495,6 +5596,7 @@ def main() -> None:
     parser.add_argument("--manifest", type=Path, default=DEFAULT_MANIFEST)
     parser.add_argument("--drc-evidence", type=Path, default=DEFAULT_DRC_EVIDENCE)
     parser.add_argument("--housing-manifest", type=Path, default=DEFAULT_HOUSING_MANIFEST)
+    parser.add_argument("--physical-evidence", type=Path, default=DEFAULT_PHYSICAL_EVIDENCE)
     args = parser.parse_args()
     report = verify_v2_release_candidate(
         args.footprint,
@@ -2502,6 +5604,7 @@ def main() -> None:
         args.manifest,
         args.drc_evidence,
         args.housing_manifest,
+        args.physical_evidence,
     )
     errors = report["errors"]
     exit_code = release_candidate_exit_code(report)

@@ -7,8 +7,10 @@ from pathlib import Path
 
 if __package__:
     from tools.canonical_hash import HASH_POLICY, sha256_file
+    from tools.kc2_x3_v2_output_geometry import REQUIREMENT_IDS
 else:
     from canonical_hash import HASH_POLICY, sha256_file
+    from kc2_x3_v2_output_geometry import REQUIREMENT_IDS
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -40,7 +42,7 @@ def export_mechanical(kicad_cli: Path = DEFAULT_KICAD_CLI) -> dict[str, object]:
     for product, board in BOARDS.items():
         drawings: dict[str, object] = {}
         for face, layer, mirror in (
-            ("top", "F.Fab,Edge.Cuts", False),
+            ("top", "F.Fab,F.Silkscreen,Edge.Cuts", False),
             ("bottom", "B.Fab,Edge.Cuts", True),
         ):
             output = OUTPUT_DIR / f"{product}_{face}_1to1.pdf"
@@ -58,6 +60,8 @@ def export_mechanical(kicad_cli: Path = DEFAULT_KICAD_CLI) -> dict[str, object]:
                 "1",
                 "--black-and-white",
                 "--sketch-pads-on-fab-layers",
+                "--drill-shape-opt",
+                "2",
             ]
             if mirror:
                 command.append("--mirror")
@@ -66,7 +70,10 @@ def export_mechanical(kicad_cli: Path = DEFAULT_KICAD_CLI) -> dict[str, object]:
             drawings[face] = {
                 "path": str(output.relative_to(ROOT)),
                 "layer": layer.split(",")[0],
+                "layers": layer.split(","),
                 "mirrored": mirror,
+                "scale": 1.0,
+                "page_size": "A4_landscape",
                 "size": output.stat().st_size,
                 "sha256": sha256_file(output),
             }
@@ -107,7 +114,7 @@ def export_mechanical(kicad_cli: Path = DEFAULT_KICAD_CLI) -> dict[str, object]:
                 "sha256": sha256_file(outline_svg),
             }
     manifest = {
-        "requirement": "CON-ARCH-004",
+        "requirement_ids": list(REQUIREMENT_IDS),
         "hash_policy": HASH_POLICY,
         "status": "draft_not_orderable_pending_physical_coupon",
         "scale": 1.0,

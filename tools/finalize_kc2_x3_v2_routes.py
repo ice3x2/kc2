@@ -134,10 +134,10 @@ CONTROLLER_COMPACT_IMPORTED_ROUTE_SHA256 = {
     "left": "4048da738ac3f3a5106ed86de5d7a8291014993daa73044c695f55f353d22967",
     "right": "15f7dd78eb1195d4697e0d6f0457cfcdfaf347fc9be28a749ae341ce5ecbae2d",
 }
-CONTROLLER_COMPACT_ROUTE_ITEM_COUNTS = {"left": 580, "right": 739}
+CONTROLLER_COMPACT_ROUTE_ITEM_COUNTS = {"left": 590, "right": 764}
 CONTROLLER_COMPACT_ROUTE_SHA256 = {
-    "left": "7eda6d670a2fd3b99ab06548be4c635dbff03904ec251197f547110864fcb5e6",
-    "right": "fc2a819d9ce840ffc0c9e9b5ac6fc7dac54d51a441addb5b0005b4fa89cdbf1a",
+    "left": "94c49ca2749d83cd05969e46b2afb6b610c2067ce6a2acad84790a19e081be18",
+    "right": "b54d29e27f1f319863ec5808b31188420ad4c47fa001d21ece98db80044c6946",
 }
 CONTROLLER_COMPACT_ROUTE_REMOVALS = {
     "left": (
@@ -314,6 +314,95 @@ M1_4_DRIVER_ROUTE_ADDITIONS = {
 }
 
 
+P1_ROUNDED_HEAD_ROUTE_REMOVALS = {
+    "left": (
+        ("track", "L_COL5", "F.Cu", 140.8150, 61.6975, 140.8150, 72.4450, 0.250),
+        ("track", "L_COL4", "B.Cu", 130.9950, 91.4950, 122.9250, 83.4250, 0.250),
+        ("track", "L_COL3", "B.Cu", 112.2400, 91.4950, 104.1700, 83.4250, 0.250),
+        ("track", "L_ROW1", "B.Cu", 58.8115, 101.6510, 58.8115, 90.9855, 0.250),
+        ("track", "L_COL4", "F.Cu", 124.6188, 124.4412, 126.5275, 126.3499, 0.250),
+        ("via", "L_COL4", 124.6188, 124.4412, 0.600, 0.300),
+        ("track", "L_COL4", "B.Cu", 133.6963, 124.4412, 124.6188, 124.4412, 0.250),
+        ("track", "L_ROW3", "B.Cu", 120.4678, 126.2947, 138.1375, 126.2947, 0.250),
+        ("track", "L_ROW4", "B.Cu", 98.5506, 145.3659, 116.7063, 145.3659, 0.250),
+    ),
+    "right": (
+        ("track", "R_COL6", "B.Cu", 111.1497, 104.6982, 103.6462, 97.1947, 0.250),
+        ("track", "R_COL6", "B.Cu", 132.9544, 104.6982, 111.1497, 104.6982, 0.250),
+        ("track", "R_ROW2", "B.Cu", 63.3038, 107.2587, 80.9875, 107.2587, 0.250),
+        ("track", "R_ROW1", "F.Cu", 62.0770, 87.3977, 62.0770, 57.1830, 0.250),
+        ("track", "R_ROW2", "F.Cu", 61.0903, 88.1813, 61.0903, 55.6297, 0.250),
+        ("track", "R_ROW4", "F.Cu", 60.5386, 80.0662, 60.5386, 51.1014, 0.250),
+        ("track", "R_COL6", "B.Cu", 177.4877, 142.7502, 187.3077, 142.7502, 0.250),
+        ("track", "R_COL4", "B.Cu", 150.9249, 142.6343, 139.2718, 142.6343, 0.250),
+        ("track", "RK33_D", "B.Cu", 66.0125, 149.9250, 66.0125, 152.3891, 0.250),
+        ("track", "RK33_D", "B.Cu", 66.0125, 152.3891, 62.1366, 156.2650, 0.250),
+        ("track", "R_ROW4", "B.Cu", 80.0097, 145.3216, 105.7779, 145.3216, 0.250),
+    ),
+}
+P1_ROUNDED_HEAD_ROUTE_ADDITIONS = {
+    "left": (
+        ("track", "L_COL5", "F.Cu", 140.8150, 61.6975, 140.5000, 71.7500, 0.250),
+        ("track", "L_COL5", "F.Cu", 140.5000, 71.7500, 140.8150, 72.4450, 0.250),
+        ("track", "L_COL4", "B.Cu", 130.9950, 91.4950, 123.5000, 84.2500, 0.250),
+        ("track", "L_COL4", "B.Cu", 123.5000, 84.2500, 122.9250, 83.4250, 0.250),
+        ("track", "L_COL3", "B.Cu", 112.2400, 91.4950, 110.2500, 86.0000, 0.250),
+        ("track", "L_COL3", "B.Cu", 110.2500, 86.0000, 109.5000, 85.2500, 0.250),
+        ("track", "L_COL3", "B.Cu", 109.5000, 85.2500, 108.0000, 85.0000, 0.250),
+        ("track", "L_COL3", "B.Cu", 108.0000, 85.0000, 104.1700, 83.4250, 0.250),
+        ("track", "L_ROW1", "B.Cu", 58.8115, 101.6510, 59.5000, 98.2500, 0.250),
+        ("track", "L_ROW1", "B.Cu", 59.5000, 98.2500, 58.8115, 90.9855, 0.250),
+        ("track", "L_COL4", "F.Cu", 126.5275, 126.3499, 127.5000, 125.7500, 0.250),
+        ("via", "L_COL4", 127.5000, 125.7500, 0.600, 0.300),
+        ("track", "L_COL4", "B.Cu", 127.5000, 125.7500, 133.6963, 124.4412, 0.250),
+        ("track", "L_ROW3", "B.Cu", 120.4678, 126.2947, 124.5000, 127.0000, 0.250),
+        ("track", "L_ROW3", "B.Cu", 124.5000, 127.0000, 132.5000, 126.5000, 0.250),
+        ("track", "L_ROW3", "B.Cu", 132.5000, 126.5000, 133.2500, 126.2500, 0.250),
+        ("track", "L_ROW3", "B.Cu", 133.2500, 126.2500, 138.1375, 126.2947, 0.250),
+        ("track", "L_ROW4", "B.Cu", 98.5506, 145.3659, 104.5000, 145.0000, 0.250),
+        ("track", "L_ROW4", "B.Cu", 104.5000, 145.0000, 116.7063, 145.3659, 0.250),
+    ),
+    "right": (
+        ("track", "R_COL6", "B.Cu", 132.9544, 104.6982, 117.2500, 104.5000, 0.250),
+        ("track", "R_COL6", "B.Cu", 117.2500, 104.5000, 108.7500, 102.0000, 0.250),
+        ("track", "R_COL6", "B.Cu", 108.7500, 102.0000, 104.2500, 98.0000, 0.250),
+        ("track", "R_COL6", "B.Cu", 104.2500, 98.0000, 103.6462, 97.1947, 0.250),
+        ("track", "R_ROW2", "B.Cu", 63.3038, 107.2587, 75.5000, 107.5000, 0.250),
+        ("track", "R_ROW2", "B.Cu", 75.5000, 107.5000, 75.7500, 107.2500, 0.250),
+        ("track", "R_ROW2", "B.Cu", 75.7500, 107.2500, 80.9875, 107.2587, 0.250),
+        ("track", "R_ROW1", "F.Cu", 62.0770, 87.3977, 64.0000, 69.2500, 0.250),
+        ("track", "R_ROW1", "F.Cu", 64.0000, 69.2500, 62.7500, 61.2500, 0.250),
+        ("track", "R_ROW1", "F.Cu", 62.7500, 61.2500, 62.0000, 59.2500, 0.250),
+        ("track", "R_ROW1", "F.Cu", 62.0000, 59.2500, 62.0770, 57.1830, 0.250),
+        ("track", "R_ROW2", "F.Cu", 61.0903, 88.1813, 61.2500, 71.2500, 0.250),
+        ("via", "R_ROW2", 61.2500, 71.2500, 0.600, 0.300),
+        ("track", "R_ROW2", "B.Cu", 61.2500, 71.2500, 60.2500, 70.2500, 0.250),
+        ("track", "R_ROW2", "B.Cu", 60.2500, 70.2500, 60.0000, 68.2500, 0.250),
+        ("track", "R_ROW2", "B.Cu", 60.0000, 68.2500, 60.7500, 67.5000, 0.250),
+        ("via", "R_ROW2", 60.7500, 67.5000, 0.600, 0.300),
+        ("track", "R_ROW2", "F.Cu", 60.7500, 67.5000, 61.0903, 55.6297, 0.250),
+        ("track", "R_ROW4", "F.Cu", 60.5386, 80.0662, 60.2500, 79.7500, 0.250),
+        ("via", "R_ROW4", 60.2500, 79.7500, 0.600, 0.300),
+        ("track", "R_ROW4", "B.Cu", 60.2500, 79.7500, 62.2500, 76.0000, 0.250),
+        ("track", "R_ROW4", "B.Cu", 62.2500, 76.0000, 63.0000, 75.2500, 0.250),
+        ("track", "R_ROW4", "B.Cu", 63.0000, 75.2500, 64.0000, 69.2500, 0.250),
+        ("track", "R_ROW4", "B.Cu", 64.0000, 69.2500, 62.0000, 59.0000, 0.250),
+        ("track", "R_ROW4", "B.Cu", 62.0000, 59.0000, 61.0000, 54.5000, 0.250),
+        ("via", "R_ROW4", 61.0000, 54.5000, 0.600, 0.300),
+        ("track", "R_ROW4", "F.Cu", 61.0000, 54.5000, 60.5386, 51.1014, 0.250),
+        ("track", "R_COL6", "B.Cu", 177.4877, 142.7502, 180.2500, 141.2500, 0.250),
+        ("track", "R_COL6", "B.Cu", 180.2500, 141.2500, 181.7500, 141.0000, 0.250),
+        ("track", "R_COL6", "B.Cu", 181.7500, 141.0000, 187.3077, 142.7502, 0.250),
+        ("track", "R_COL4", "B.Cu", 150.9249, 142.6343, 142.7500, 141.0000, 0.250),
+        ("track", "R_COL4", "B.Cu", 142.7500, 141.0000, 139.2718, 142.6343, 0.250),
+        ("track", "RK33_D", "B.Cu", 66.0125, 149.9250, 63.7500, 154.7500, 0.250),
+        ("track", "RK33_D", "B.Cu", 63.7500, 154.7500, 62.1366, 156.2650, 0.250),
+        ("track", "R_ROW4", "B.Cu", 80.0097, 145.3216, 105.0000, 145.0000, 0.250),
+        ("track", "R_ROW4", "B.Cu", 105.0000, 145.0000, 105.7779, 145.3216, 0.250),
+    ),
+}
+
+
 def _route_signature(item: pcbnew.BOARD_CONNECTED_ITEM) -> tuple[object, ...]:
     if isinstance(item, pcbnew.PCB_VIA):
         position = item.GetPosition()
@@ -376,6 +465,24 @@ def _matrix_pads_are_fully_connected(board: pcbnew.BOARD, side: str) -> bool:
         if any(pad.m_Uuid.AsString() not in connected for pad in pads):
             return False
     return True
+
+
+def _has_exact_current_mounting_geometry(board: pcbnew.BOARD, side: str) -> bool:
+    expected = {
+        f"MH{index}": position
+        for index, position in enumerate(gen.X3_V2_MOUNTING_POINTS[side], start=1)
+    }
+    actual: dict[str, tuple[float, float]] = {}
+    for footprint in board.GetFootprints():
+        reference = footprint.GetReference()
+        if not re.fullmatch(r"MH\d+", reference):
+            continue
+        position = footprint.GetPosition()
+        actual[reference] = (
+            round(pcbnew.ToMM(position.x), 4),
+            round(pcbnew.ToMM(position.y), 4),
+        )
+    return actual == expected
 
 
 def _add_route_spec(board: pcbnew.BOARD, spec: tuple[object, ...]) -> None:
@@ -568,6 +675,51 @@ def apply_m1_4_driver_route_detours(
     return {"removed": removed, "added": len(M1_4_DRIVER_ROUTE_ADDITIONS[side])}
 
 
+def apply_p1_rounded_head_route_detours(
+    board: pcbnew.BOARD,
+    side: str,
+) -> dict[str, int]:
+    """Apply only the reviewed P1 detours required by the rounded 3 mm head."""
+    if side not in P1_ROUNDED_HEAD_ROUTE_REMOVALS:
+        raise RuntimeError(f"unsupported P1 rounded-head detour side {side!r}")
+    signatures = Counter(_route_signature(item) for item in board.GetTracks())
+    removals = Counter(P1_ROUNDED_HEAD_ROUTE_REMOVALS[side])
+    additions = Counter(P1_ROUNDED_HEAD_ROUTE_ADDITIONS[side])
+    has_old = signatures & removals == removals
+    has_new = signatures & additions == additions
+    if has_new and not has_old:
+        return {"removed": 0, "added": 0}
+    if not has_old or has_new:
+        raise RuntimeError(
+            f"reviewed {side} P1 rounded-head detour precondition failed"
+        )
+
+    remaining = removals.copy()
+    removed = 0
+    for item in list(board.GetTracks()):
+        signature = _route_signature(item)
+        if remaining[signature] <= 0:
+            continue
+        board.Delete(item)
+        remaining[signature] -= 1
+        removed += 1
+    if any(remaining.values()):
+        raise RuntimeError(
+            f"reviewed {side} P1 rounded-head detour removal was incomplete"
+        )
+    for spec in P1_ROUNDED_HEAD_ROUTE_ADDITIONS[side]:
+        _add_route_spec(board, spec)
+    updated = Counter(_route_signature(item) for item in board.GetTracks())
+    if updated & removals or updated & additions != additions:
+        raise RuntimeError(
+            f"reviewed {side} P1 rounded-head detour was incomplete"
+        )
+    return {
+        "removed": removed,
+        "added": len(P1_ROUNDED_HEAD_ROUTE_ADDITIONS[side]),
+    }
+
+
 def export_current_mh_trackless_dsn(
     board: pcbnew.BOARD,
     output_path: Path,
@@ -645,6 +797,7 @@ def _has_exact_reviewed_controller_compact_route(
         sum(signatures.values()) == CONTROLLER_COMPACT_ROUTE_ITEM_COUNTS[side]
         and _route_counter_digest(signatures) == CONTROLLER_COMPACT_ROUTE_SHA256[side]
         and routed_service_nets == {"RST", "GND", "BAT+", "NN_B+"}
+        and _has_exact_current_mounting_geometry(board, side)
         and _matrix_pads_are_fully_connected(board, side)
         and _controller_service_pads_are_physically_connected(board)
     )
@@ -796,6 +949,10 @@ def import_reviewed_controller_compact_session(
         )
 
     restore_v2_controller_service_placements(board, side)
+    if not _has_exact_current_mounting_geometry(board, side):
+        raise RuntimeError(
+            f"reviewed {side} controller-compaction session moved the P1 mounting pattern"
+        )
 
     expected_removals = Counter(CONTROLLER_COMPACT_ROUTE_REMOVALS[side])
     if imported_signatures & expected_removals != expected_removals:
@@ -821,6 +978,7 @@ def import_reviewed_controller_compact_session(
     reset_route = replace_v2_usb_under_reset_routes(board, side)
     matrix_detours = apply_matrix_service_detours(board, side)
     connectivity_detours = apply_matrix_connectivity_detours(board, side)
+    rounded_head_detours = apply_p1_rounded_head_route_detours(board, side)
     if not _has_exact_reviewed_controller_compact_route(board, side):
         raise RuntimeError(
             f"reviewed {side} controller-compaction session did not reconstruct "
@@ -833,12 +991,14 @@ def import_reviewed_controller_compact_session(
             + reset_route["removed"]
             + matrix_detours["removed"]
             + connectivity_detours["removed"]
+            + rounded_head_detours["removed"]
         ),
         "reviewed_items_added": (
             len(CONTROLLER_COMPACT_ROUTE_ADDITIONS[side])
             + reset_route["added"]
             + matrix_detours["added"]
             + connectivity_detours["added"]
+            + rounded_head_detours["added"]
         ),
         "final_track_and_via_items": len(list(board.GetTracks())),
     }

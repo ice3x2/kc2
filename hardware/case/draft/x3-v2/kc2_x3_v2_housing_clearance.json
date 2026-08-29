@@ -9,7 +9,7 @@
   "sides": {
     "left": {
       "source_board": "hardware/kicad/draft/x3-v2/kc2_left-x3-v2/kc2_left-x3-v2.kicad_pcb",
-      "source_board_sha256": "90430a97aa2e13dbf8325525f9841b60e0b64d058406dd218162970b01f8e6f6",
+      "source_board_sha256": "7f629b7f48c7432ddc34429b12d7883a2fd1389a40187b2eeb93d549fba1be6d",
       "source_board_sha256_matches": true,
       "key_count": 31,
       "legacy_registration_refs": [],
@@ -33,7 +33,7 @@
         "housing_body_cutout": false,
         "side": "left",
         "source_board": "hardware/kicad/draft/x3-v2/kc2_left-x3-v2/kc2_left-x3-v2.kicad_pcb",
-        "source_board_sha256": "90430a97aa2e13dbf8325525f9841b60e0b64d058406dd218162970b01f8e6f6",
+        "source_board_sha256": "7f629b7f48c7432ddc34429b12d7883a2fd1389a40187b2eeb93d549fba1be6d",
         "fresh_extraction_manifest_binding": true
       },
       "exterior_bottom_z_mm": 0.0,
@@ -237,9 +237,10 @@
           24.2
         ],
         "footprint_side": "top",
+        "footprint_rotation_deg": 0.0,
         "actuator_projection_size_mm": [
-          1.3,
-          2.7
+          2.7,
+          1.3
         ],
         "support_diameter_mm": 3.0,
         "support_top_z_mm": 2.5,
@@ -251,45 +252,60 @@
         "bottom_exposed_pad_collision_count": 0,
         "via_collision_count": 0,
         "bottom_routed_copper_overlap_count": 0,
+        "bottom_mask_opening_overlap_count": 0,
+        "bottom_exposed_routed_copper_overlap_count": 0,
         "bottom_routed_copper_solder_mask_protected": true,
+        "bottom_routed_copper_solder_mask_protection_basis": "derived_from_exact_B.Cu_and_B.Mask_geometry",
         "electrically_safe": true,
-        "electrical_safety_basis": "SW_RST1 pads are F.Cu-only; no via or exterior-open cutout intersects the support, and any B.Cu route overlap remains inside the PCB stack under solder mask.",
+        "electrical_safety_basis": "SW_RST1 pads are F.Cu-only; no via or exterior-open cutout intersects the support, and exact B.Cu route overlap is rejected wherever an exact B.Mask opening exposes it.",
         "manifest_matches_generator": true,
         "geometry_board_center_mm": [
           126.0625,
           63.45
         ],
+        "geometry_footprint_rotation_deg": 0.0,
         "geometry_actuator_projection_covered": true,
         "geometry_support_surface_covered": true,
         "geometry_component_cutout_collision_count": 0,
         "geometry_bottom_exposed_pad_collision_count": 0,
         "geometry_via_collision_count": 0,
+        "geometry_bottom_routed_copper_overlap_count": 0,
+        "geometry_bottom_mask_opening_overlap_count": 0,
+        "geometry_bottom_exposed_routed_copper_overlap_count": 0,
+        "geometry_bottom_routed_copper_solder_mask_protected": true,
         "geometry_electrically_safe": true
       },
       "mounting_system": {
-        "fastener_envelope": "M1.4 provisional direct-plastic prototype",
+        "fastener_envelope": "M1.4 provisional direct-plastic prototype; non-countersunk rounded pan/button head",
+        "fastener_head_style": "non_countersunk_rounded_pan_or_button",
+        "head_envelope_mm": [
+          3.0,
+          1.2
+        ],
+        "head_reserve_mm": 0.25,
+        "head_height_and_keycap_skirt_physical_status": "pending",
         "physical_registration_status": "pending",
         "count": 8,
         "board_coordinates_mm": [
           [
             142.6125,
-            68.0
+            67.9
           ],
           [
             128.6125,
             86.5
           ],
           [
-            100.1125,
-            93.5
+            108.5125,
+            87.0
           ],
           [
-            57.1125,
+            57.4125,
             99.0
           ],
           [
-            133.6125,
-            131.5
+            124.7125,
+            125.1
           ],
           [
             55.1125,
@@ -310,11 +326,11 @@
             "ref": "MH1",
             "board_center_mm": [
               142.6125,
-              68.0
+              67.9
             ],
             "housing_center_mm": [
               27.5,
-              28.75
+              28.65
             ],
             "printable_part": "whole",
             "pcb_npth_diameter_mm": 1.6,
@@ -323,6 +339,16 @@
             "support_land_annular_width_mm": 0.95,
             "support_land_top_z_mm": 2.5,
             "support_land_vertical_gap_mm": 0.0,
+            "support_land_to_existing_support_mm": 6.8596,
+            "head_to_existing_support_mm": 6.8596,
+            "head_to_support_posts_mm": 14.1379,
+            "head_to_analytical_rail_mm": 6.8596,
+            "head_to_installed_component_mm": 0.325,
+            "head_to_routed_copper_or_via_mm": 0.3659,
+            "head_to_board_edge_mm": 7.6088,
+            "head_to_housing_edge_mm": 7.5089,
+            "head_reserve_mm": 0.25,
+            "minimum_unrelated_support_reserve_mm": 0.25,
             "desk_column_diameter_mm": 3.0,
             "desk_column_bottom_z_mm": -1.0,
             "pilot_diameter_mm": 1.1,
@@ -339,20 +365,34 @@
             ],
             "minimum_tip_clearance_mm": 0.24,
             "head_envelope_mm": [
-              2.0,
-              0.5
+              3.0,
+              1.2
             ],
             "driver_envelope_diameter_mm": 3.0,
+            "driver_to_battery_body_mm": 9.65,
+            "driver_to_power_switch_body_mm": 20.5336,
+            "driver_to_power_switch_actuator_sweep_mm": 18.952,
             "service_condition": "keycaps-off, switches-installed",
             "collision_checks": {
               "support_land_leaves_support_surface": false,
               "support_land_component_cutout": false,
               "support_land_existing_support": false,
+              "support_land_existing_support_reserve": false,
+              "head_existing_support_reserve": false,
+              "head_support_post_reserve": false,
+              "head_analytical_rail_reserve": false,
+              "head_installed_component_reserve": false,
+              "head_routed_copper_or_via_reserve": false,
+              "head_board_edge_reserve": false,
+              "head_housing_edge_reserve": false,
               "pilot_component_cutout": false,
               "head_leaves_housing_outline": false,
               "driver_leaves_housing_outline": false,
               "driver_switch_body": false,
               "driver_component": false,
+              "driver_battery_body": false,
+              "driver_power_switch_body": false,
+              "driver_power_switch_actuator_sweep": false,
               "driver_routed_copper_or_via": false,
               "right_split_feature": false,
               "part_assignment": false
@@ -362,11 +402,22 @@
               "support_land_leaves_support_surface": false,
               "support_land_component_cutout": false,
               "support_land_existing_support": false,
+              "support_land_existing_support_reserve": false,
+              "head_existing_support_reserve": false,
+              "head_support_post_reserve": false,
+              "head_analytical_rail_reserve": false,
+              "head_installed_component_reserve": false,
+              "head_routed_copper_or_via_reserve": false,
+              "head_board_edge_reserve": false,
+              "head_housing_edge_reserve": false,
               "pilot_component_cutout": false,
               "head_leaves_housing_outline": false,
               "driver_leaves_housing_outline": false,
               "driver_switch_body": false,
               "driver_component": false,
+              "driver_battery_body": false,
+              "driver_power_switch_body": false,
+              "driver_power_switch_actuator_sweep": false,
               "driver_routed_copper_or_via": false,
               "right_split_feature": false,
               "part_assignment": false
@@ -374,6 +425,17 @@
             "geometry_collision_count": 0,
             "geometry_printable_part": "whole",
             "geometry_board_feature_matches": true,
+            "geometry_support_land_to_existing_support_mm": 6.8596,
+            "geometry_head_to_existing_support_mm": 6.8596,
+            "geometry_head_to_support_posts_mm": 14.1379,
+            "geometry_head_to_analytical_rail_mm": 6.8596,
+            "geometry_head_to_installed_component_mm": 0.325,
+            "geometry_head_to_routed_copper_or_via_mm": 0.3659,
+            "geometry_head_to_board_edge_mm": 7.6088,
+            "geometry_head_to_housing_edge_mm": 7.5089,
+            "geometry_driver_to_battery_body_mm": 9.65,
+            "geometry_driver_to_power_switch_body_mm": 20.5336,
+            "geometry_driver_to_power_switch_actuator_sweep_mm": 18.952,
             "step_pilot_open_at_z_2_49": true,
             "step_pilot_open_at_z_minus_0_25": true,
             "step_pilot_closed_at_z_minus_0_35": true,
@@ -397,6 +459,16 @@
             "support_land_annular_width_mm": 0.95,
             "support_land_top_z_mm": 2.5,
             "support_land_vertical_gap_mm": 0.0,
+            "support_land_to_existing_support_mm": 11.12,
+            "head_to_existing_support_mm": 11.12,
+            "head_to_support_posts_mm": 11.12,
+            "head_to_analytical_rail_mm": 24.2625,
+            "head_to_installed_component_mm": 0.475,
+            "head_to_routed_copper_or_via_mm": 0.3106,
+            "head_to_board_edge_mm": 25.0118,
+            "head_to_housing_edge_mm": 24.912,
+            "head_reserve_mm": 0.25,
+            "minimum_unrelated_support_reserve_mm": 0.25,
             "desk_column_diameter_mm": 3.0,
             "desk_column_bottom_z_mm": -1.0,
             "pilot_diameter_mm": 1.1,
@@ -413,20 +485,34 @@
             ],
             "minimum_tip_clearance_mm": 0.24,
             "head_envelope_mm": [
-              2.0,
-              0.5
+              3.0,
+              1.2
             ],
             "driver_envelope_diameter_mm": 3.0,
+            "driver_to_battery_body_mm": 28.25,
+            "driver_to_power_switch_body_mm": 21.6534,
+            "driver_to_power_switch_actuator_sweep_mm": 21.1646,
             "service_condition": "keycaps-off, switches-installed",
             "collision_checks": {
               "support_land_leaves_support_surface": false,
               "support_land_component_cutout": false,
               "support_land_existing_support": false,
+              "support_land_existing_support_reserve": false,
+              "head_existing_support_reserve": false,
+              "head_support_post_reserve": false,
+              "head_analytical_rail_reserve": false,
+              "head_installed_component_reserve": false,
+              "head_routed_copper_or_via_reserve": false,
+              "head_board_edge_reserve": false,
+              "head_housing_edge_reserve": false,
               "pilot_component_cutout": false,
               "head_leaves_housing_outline": false,
               "driver_leaves_housing_outline": false,
               "driver_switch_body": false,
               "driver_component": false,
+              "driver_battery_body": false,
+              "driver_power_switch_body": false,
+              "driver_power_switch_actuator_sweep": false,
               "driver_routed_copper_or_via": false,
               "right_split_feature": false,
               "part_assignment": false
@@ -436,11 +522,22 @@
               "support_land_leaves_support_surface": false,
               "support_land_component_cutout": false,
               "support_land_existing_support": false,
+              "support_land_existing_support_reserve": false,
+              "head_existing_support_reserve": false,
+              "head_support_post_reserve": false,
+              "head_analytical_rail_reserve": false,
+              "head_installed_component_reserve": false,
+              "head_routed_copper_or_via_reserve": false,
+              "head_board_edge_reserve": false,
+              "head_housing_edge_reserve": false,
               "pilot_component_cutout": false,
               "head_leaves_housing_outline": false,
               "driver_leaves_housing_outline": false,
               "driver_switch_body": false,
               "driver_component": false,
+              "driver_battery_body": false,
+              "driver_power_switch_body": false,
+              "driver_power_switch_actuator_sweep": false,
               "driver_routed_copper_or_via": false,
               "right_split_feature": false,
               "part_assignment": false
@@ -448,6 +545,17 @@
             "geometry_collision_count": 0,
             "geometry_printable_part": "whole",
             "geometry_board_feature_matches": true,
+            "geometry_support_land_to_existing_support_mm": 11.12,
+            "geometry_head_to_existing_support_mm": 11.12,
+            "geometry_head_to_support_posts_mm": 11.12,
+            "geometry_head_to_analytical_rail_mm": 24.2625,
+            "geometry_head_to_installed_component_mm": 0.475,
+            "geometry_head_to_routed_copper_or_via_mm": 0.3106,
+            "geometry_head_to_board_edge_mm": 25.0118,
+            "geometry_head_to_housing_edge_mm": 24.912,
+            "geometry_driver_to_battery_body_mm": 28.25,
+            "geometry_driver_to_power_switch_body_mm": 21.6534,
+            "geometry_driver_to_power_switch_actuator_sweep_mm": 21.1646,
             "step_pilot_open_at_z_2_49": true,
             "step_pilot_open_at_z_minus_0_25": true,
             "step_pilot_closed_at_z_minus_0_35": true,
@@ -457,12 +565,12 @@
           {
             "ref": "MH3",
             "board_center_mm": [
-              100.1125,
-              93.5
+              108.5125,
+              87.0
             ],
             "housing_center_mm": [
-              70.0,
-              54.25
+              61.6,
+              47.75
             ],
             "printable_part": "whole",
             "pcb_npth_diameter_mm": 1.6,
@@ -471,6 +579,16 @@
             "support_land_annular_width_mm": 0.95,
             "support_land_top_z_mm": 2.5,
             "support_land_vertical_gap_mm": 0.0,
+            "support_land_to_existing_support_mm": 11.0714,
+            "head_to_existing_support_mm": 11.0714,
+            "head_to_support_posts_mm": 11.0714,
+            "head_to_analytical_rail_mm": 15.2987,
+            "head_to_installed_component_mm": 0.2592,
+            "head_to_routed_copper_or_via_mm": 0.2636,
+            "head_to_board_edge_mm": 16.0482,
+            "head_to_housing_edge_mm": 15.9483,
+            "head_reserve_mm": 0.25,
+            "minimum_unrelated_support_reserve_mm": 0.25,
             "desk_column_diameter_mm": 3.0,
             "desk_column_bottom_z_mm": -1.0,
             "pilot_diameter_mm": 1.1,
@@ -487,20 +605,34 @@
             ],
             "minimum_tip_clearance_mm": 0.24,
             "head_envelope_mm": [
-              2.0,
-              0.5
+              3.0,
+              1.2
             ],
             "driver_envelope_diameter_mm": 3.0,
+            "driver_to_battery_body_mm": 29.8417,
+            "driver_to_power_switch_body_mm": 20.9183,
+            "driver_to_power_switch_actuator_sweep_mm": 20.811,
             "service_condition": "keycaps-off, switches-installed",
             "collision_checks": {
               "support_land_leaves_support_surface": false,
               "support_land_component_cutout": false,
               "support_land_existing_support": false,
+              "support_land_existing_support_reserve": false,
+              "head_existing_support_reserve": false,
+              "head_support_post_reserve": false,
+              "head_analytical_rail_reserve": false,
+              "head_installed_component_reserve": false,
+              "head_routed_copper_or_via_reserve": false,
+              "head_board_edge_reserve": false,
+              "head_housing_edge_reserve": false,
               "pilot_component_cutout": false,
               "head_leaves_housing_outline": false,
               "driver_leaves_housing_outline": false,
               "driver_switch_body": false,
               "driver_component": false,
+              "driver_battery_body": false,
+              "driver_power_switch_body": false,
+              "driver_power_switch_actuator_sweep": false,
               "driver_routed_copper_or_via": false,
               "right_split_feature": false,
               "part_assignment": false
@@ -510,11 +642,22 @@
               "support_land_leaves_support_surface": false,
               "support_land_component_cutout": false,
               "support_land_existing_support": false,
+              "support_land_existing_support_reserve": false,
+              "head_existing_support_reserve": false,
+              "head_support_post_reserve": false,
+              "head_analytical_rail_reserve": false,
+              "head_installed_component_reserve": false,
+              "head_routed_copper_or_via_reserve": false,
+              "head_board_edge_reserve": false,
+              "head_housing_edge_reserve": false,
               "pilot_component_cutout": false,
               "head_leaves_housing_outline": false,
               "driver_leaves_housing_outline": false,
               "driver_switch_body": false,
               "driver_component": false,
+              "driver_battery_body": false,
+              "driver_power_switch_body": false,
+              "driver_power_switch_actuator_sweep": false,
               "driver_routed_copper_or_via": false,
               "right_split_feature": false,
               "part_assignment": false
@@ -522,6 +665,17 @@
             "geometry_collision_count": 0,
             "geometry_printable_part": "whole",
             "geometry_board_feature_matches": true,
+            "geometry_support_land_to_existing_support_mm": 11.0714,
+            "geometry_head_to_existing_support_mm": 11.0714,
+            "geometry_head_to_support_posts_mm": 11.0714,
+            "geometry_head_to_analytical_rail_mm": 15.2987,
+            "geometry_head_to_installed_component_mm": 0.2592,
+            "geometry_head_to_routed_copper_or_via_mm": 0.2636,
+            "geometry_head_to_board_edge_mm": 16.0482,
+            "geometry_head_to_housing_edge_mm": 15.9483,
+            "geometry_driver_to_battery_body_mm": 29.8417,
+            "geometry_driver_to_power_switch_body_mm": 20.9183,
+            "geometry_driver_to_power_switch_actuator_sweep_mm": 20.811,
             "step_pilot_open_at_z_2_49": true,
             "step_pilot_open_at_z_minus_0_25": true,
             "step_pilot_closed_at_z_minus_0_35": true,
@@ -531,11 +685,11 @@
           {
             "ref": "MH4",
             "board_center_mm": [
-              57.1125,
+              57.4125,
               99.0
             ],
             "housing_center_mm": [
-              113.0,
+              112.7,
               59.75
             ],
             "printable_part": "whole",
@@ -545,6 +699,16 @@
             "support_land_annular_width_mm": 0.95,
             "support_land_top_z_mm": 2.5,
             "support_land_vertical_gap_mm": 0.0,
+            "support_land_to_existing_support_mm": 2.9914,
+            "head_to_existing_support_mm": 2.9914,
+            "head_to_support_posts_mm": 2.9914,
+            "head_to_analytical_rail_mm": 20.1625,
+            "head_to_installed_component_mm": 0.325,
+            "head_to_routed_copper_or_via_mm": 0.2722,
+            "head_to_board_edge_mm": 20.9125,
+            "head_to_housing_edge_mm": 20.8125,
+            "head_reserve_mm": 0.25,
+            "minimum_unrelated_support_reserve_mm": 0.25,
             "desk_column_diameter_mm": 3.0,
             "desk_column_bottom_z_mm": -1.0,
             "pilot_diameter_mm": 1.1,
@@ -561,20 +725,34 @@
             ],
             "minimum_tip_clearance_mm": 0.24,
             "head_envelope_mm": [
-              2.0,
-              0.5
+              3.0,
+              1.2
             ],
             "driver_envelope_diameter_mm": 3.0,
+            "driver_to_battery_body_mm": 71.3118,
+            "driver_to_power_switch_body_mm": 61.967,
+            "driver_to_power_switch_actuator_sweep_mm": 60.6267,
             "service_condition": "keycaps-off, switches-installed",
             "collision_checks": {
               "support_land_leaves_support_surface": false,
               "support_land_component_cutout": false,
               "support_land_existing_support": false,
+              "support_land_existing_support_reserve": false,
+              "head_existing_support_reserve": false,
+              "head_support_post_reserve": false,
+              "head_analytical_rail_reserve": false,
+              "head_installed_component_reserve": false,
+              "head_routed_copper_or_via_reserve": false,
+              "head_board_edge_reserve": false,
+              "head_housing_edge_reserve": false,
               "pilot_component_cutout": false,
               "head_leaves_housing_outline": false,
               "driver_leaves_housing_outline": false,
               "driver_switch_body": false,
               "driver_component": false,
+              "driver_battery_body": false,
+              "driver_power_switch_body": false,
+              "driver_power_switch_actuator_sweep": false,
               "driver_routed_copper_or_via": false,
               "right_split_feature": false,
               "part_assignment": false
@@ -584,11 +762,22 @@
               "support_land_leaves_support_surface": false,
               "support_land_component_cutout": false,
               "support_land_existing_support": false,
+              "support_land_existing_support_reserve": false,
+              "head_existing_support_reserve": false,
+              "head_support_post_reserve": false,
+              "head_analytical_rail_reserve": false,
+              "head_installed_component_reserve": false,
+              "head_routed_copper_or_via_reserve": false,
+              "head_board_edge_reserve": false,
+              "head_housing_edge_reserve": false,
               "pilot_component_cutout": false,
               "head_leaves_housing_outline": false,
               "driver_leaves_housing_outline": false,
               "driver_switch_body": false,
               "driver_component": false,
+              "driver_battery_body": false,
+              "driver_power_switch_body": false,
+              "driver_power_switch_actuator_sweep": false,
               "driver_routed_copper_or_via": false,
               "right_split_feature": false,
               "part_assignment": false
@@ -596,6 +785,17 @@
             "geometry_collision_count": 0,
             "geometry_printable_part": "whole",
             "geometry_board_feature_matches": true,
+            "geometry_support_land_to_existing_support_mm": 2.9914,
+            "geometry_head_to_existing_support_mm": 2.9914,
+            "geometry_head_to_support_posts_mm": 2.9914,
+            "geometry_head_to_analytical_rail_mm": 20.1625,
+            "geometry_head_to_installed_component_mm": 0.325,
+            "geometry_head_to_routed_copper_or_via_mm": 0.2722,
+            "geometry_head_to_board_edge_mm": 20.9125,
+            "geometry_head_to_housing_edge_mm": 20.8125,
+            "geometry_driver_to_battery_body_mm": 71.3118,
+            "geometry_driver_to_power_switch_body_mm": 61.967,
+            "geometry_driver_to_power_switch_actuator_sweep_mm": 60.6267,
             "step_pilot_open_at_z_2_49": true,
             "step_pilot_open_at_z_minus_0_25": true,
             "step_pilot_closed_at_z_minus_0_35": true,
@@ -605,12 +805,12 @@
           {
             "ref": "MH5",
             "board_center_mm": [
-              133.6125,
-              131.5
+              124.7125,
+              125.1
             ],
             "housing_center_mm": [
-              36.5,
-              92.25
+              45.4,
+              85.85
             ],
             "printable_part": "whole",
             "pcb_npth_diameter_mm": 1.6,
@@ -619,6 +819,16 @@
             "support_land_annular_width_mm": 0.95,
             "support_land_top_z_mm": 2.5,
             "support_land_vertical_gap_mm": 0.0,
+            "support_land_to_existing_support_mm": 11.0399,
+            "head_to_existing_support_mm": 11.0399,
+            "head_to_support_posts_mm": 11.0399,
+            "head_to_analytical_rail_mm": 33.653,
+            "head_to_installed_component_mm": 0.275,
+            "head_to_routed_copper_or_via_mm": 0.2581,
+            "head_to_board_edge_mm": 34.4024,
+            "head_to_housing_edge_mm": 34.3025,
+            "head_reserve_mm": 0.25,
+            "minimum_unrelated_support_reserve_mm": 0.25,
             "desk_column_diameter_mm": 3.0,
             "desk_column_bottom_z_mm": -1.0,
             "pilot_diameter_mm": 1.1,
@@ -635,20 +845,34 @@
             ],
             "minimum_tip_clearance_mm": 0.24,
             "head_envelope_mm": [
-              2.0,
-              0.5
+              3.0,
+              1.2
             ],
             "driver_envelope_diameter_mm": 3.0,
+            "driver_to_battery_body_mm": 66.85,
+            "driver_to_power_switch_body_mm": 59.0258,
+            "driver_to_power_switch_actuator_sweep_mm": 58.9439,
             "service_condition": "keycaps-off, switches-installed",
             "collision_checks": {
               "support_land_leaves_support_surface": false,
               "support_land_component_cutout": false,
               "support_land_existing_support": false,
+              "support_land_existing_support_reserve": false,
+              "head_existing_support_reserve": false,
+              "head_support_post_reserve": false,
+              "head_analytical_rail_reserve": false,
+              "head_installed_component_reserve": false,
+              "head_routed_copper_or_via_reserve": false,
+              "head_board_edge_reserve": false,
+              "head_housing_edge_reserve": false,
               "pilot_component_cutout": false,
               "head_leaves_housing_outline": false,
               "driver_leaves_housing_outline": false,
               "driver_switch_body": false,
               "driver_component": false,
+              "driver_battery_body": false,
+              "driver_power_switch_body": false,
+              "driver_power_switch_actuator_sweep": false,
               "driver_routed_copper_or_via": false,
               "right_split_feature": false,
               "part_assignment": false
@@ -658,11 +882,22 @@
               "support_land_leaves_support_surface": false,
               "support_land_component_cutout": false,
               "support_land_existing_support": false,
+              "support_land_existing_support_reserve": false,
+              "head_existing_support_reserve": false,
+              "head_support_post_reserve": false,
+              "head_analytical_rail_reserve": false,
+              "head_installed_component_reserve": false,
+              "head_routed_copper_or_via_reserve": false,
+              "head_board_edge_reserve": false,
+              "head_housing_edge_reserve": false,
               "pilot_component_cutout": false,
               "head_leaves_housing_outline": false,
               "driver_leaves_housing_outline": false,
               "driver_switch_body": false,
               "driver_component": false,
+              "driver_battery_body": false,
+              "driver_power_switch_body": false,
+              "driver_power_switch_actuator_sweep": false,
               "driver_routed_copper_or_via": false,
               "right_split_feature": false,
               "part_assignment": false
@@ -670,6 +905,17 @@
             "geometry_collision_count": 0,
             "geometry_printable_part": "whole",
             "geometry_board_feature_matches": true,
+            "geometry_support_land_to_existing_support_mm": 11.0399,
+            "geometry_head_to_existing_support_mm": 11.0399,
+            "geometry_head_to_support_posts_mm": 11.0399,
+            "geometry_head_to_analytical_rail_mm": 33.653,
+            "geometry_head_to_installed_component_mm": 0.275,
+            "geometry_head_to_routed_copper_or_via_mm": 0.2581,
+            "geometry_head_to_board_edge_mm": 34.4024,
+            "geometry_head_to_housing_edge_mm": 34.3025,
+            "geometry_driver_to_battery_body_mm": 66.85,
+            "geometry_driver_to_power_switch_body_mm": 59.0258,
+            "geometry_driver_to_power_switch_actuator_sweep_mm": 58.9439,
             "step_pilot_open_at_z_2_49": true,
             "step_pilot_open_at_z_minus_0_25": true,
             "step_pilot_closed_at_z_minus_0_35": true,
@@ -693,6 +939,16 @@
             "support_land_annular_width_mm": 0.95,
             "support_land_top_z_mm": 2.5,
             "support_land_vertical_gap_mm": 0.0,
+            "support_land_to_existing_support_mm": 14.2079,
+            "head_to_existing_support_mm": 14.2079,
+            "head_to_support_posts_mm": 14.2079,
+            "head_to_analytical_rail_mm": 15.5,
+            "head_to_installed_component_mm": 0.6701,
+            "head_to_routed_copper_or_via_mm": 2.1315,
+            "head_to_board_edge_mm": 16.25,
+            "head_to_housing_edge_mm": 16.15,
+            "head_reserve_mm": 0.25,
+            "minimum_unrelated_support_reserve_mm": 0.25,
             "desk_column_diameter_mm": 3.0,
             "desk_column_bottom_z_mm": -1.0,
             "pilot_diameter_mm": 1.1,
@@ -709,20 +965,34 @@
             ],
             "minimum_tip_clearance_mm": 0.24,
             "head_envelope_mm": [
-              2.0,
-              0.5
+              3.0,
+              1.2
             ],
             "driver_envelope_diameter_mm": 3.0,
+            "driver_to_battery_body_mm": 105.3041,
+            "driver_to_power_switch_body_mm": 95.4071,
+            "driver_to_power_switch_actuator_sweep_mm": 94.4964,
             "service_condition": "keycaps-off, switches-installed",
             "collision_checks": {
               "support_land_leaves_support_surface": false,
               "support_land_component_cutout": false,
               "support_land_existing_support": false,
+              "support_land_existing_support_reserve": false,
+              "head_existing_support_reserve": false,
+              "head_support_post_reserve": false,
+              "head_analytical_rail_reserve": false,
+              "head_installed_component_reserve": false,
+              "head_routed_copper_or_via_reserve": false,
+              "head_board_edge_reserve": false,
+              "head_housing_edge_reserve": false,
               "pilot_component_cutout": false,
               "head_leaves_housing_outline": false,
               "driver_leaves_housing_outline": false,
               "driver_switch_body": false,
               "driver_component": false,
+              "driver_battery_body": false,
+              "driver_power_switch_body": false,
+              "driver_power_switch_actuator_sweep": false,
               "driver_routed_copper_or_via": false,
               "right_split_feature": false,
               "part_assignment": false
@@ -732,11 +1002,22 @@
               "support_land_leaves_support_surface": false,
               "support_land_component_cutout": false,
               "support_land_existing_support": false,
+              "support_land_existing_support_reserve": false,
+              "head_existing_support_reserve": false,
+              "head_support_post_reserve": false,
+              "head_analytical_rail_reserve": false,
+              "head_installed_component_reserve": false,
+              "head_routed_copper_or_via_reserve": false,
+              "head_board_edge_reserve": false,
+              "head_housing_edge_reserve": false,
               "pilot_component_cutout": false,
               "head_leaves_housing_outline": false,
               "driver_leaves_housing_outline": false,
               "driver_switch_body": false,
               "driver_component": false,
+              "driver_battery_body": false,
+              "driver_power_switch_body": false,
+              "driver_power_switch_actuator_sweep": false,
               "driver_routed_copper_or_via": false,
               "right_split_feature": false,
               "part_assignment": false
@@ -744,6 +1025,17 @@
             "geometry_collision_count": 0,
             "geometry_printable_part": "whole",
             "geometry_board_feature_matches": true,
+            "geometry_support_land_to_existing_support_mm": 14.2079,
+            "geometry_head_to_existing_support_mm": 14.2079,
+            "geometry_head_to_support_posts_mm": 14.2079,
+            "geometry_head_to_analytical_rail_mm": 15.5,
+            "geometry_head_to_installed_component_mm": 0.6701,
+            "geometry_head_to_routed_copper_or_via_mm": 2.1315,
+            "geometry_head_to_board_edge_mm": 16.25,
+            "geometry_head_to_housing_edge_mm": 16.15,
+            "geometry_driver_to_battery_body_mm": 105.3041,
+            "geometry_driver_to_power_switch_body_mm": 95.4071,
+            "geometry_driver_to_power_switch_actuator_sweep_mm": 94.4964,
             "step_pilot_open_at_z_2_49": true,
             "step_pilot_open_at_z_minus_0_25": true,
             "step_pilot_closed_at_z_minus_0_35": true,
@@ -767,6 +1059,16 @@
             "support_land_annular_width_mm": 0.95,
             "support_land_top_z_mm": 2.5,
             "support_land_vertical_gap_mm": 0.0,
+            "support_land_to_existing_support_mm": 0.4373,
+            "head_to_existing_support_mm": 0.4373,
+            "head_to_support_posts_mm": 0.4373,
+            "head_to_analytical_rail_mm": 2.25,
+            "head_to_installed_component_mm": 0.8539,
+            "head_to_routed_copper_or_via_mm": 2.8036,
+            "head_to_board_edge_mm": 3.0,
+            "head_to_housing_edge_mm": 2.9,
+            "head_reserve_mm": 0.25,
+            "minimum_unrelated_support_reserve_mm": 0.25,
             "desk_column_diameter_mm": 3.0,
             "desk_column_bottom_z_mm": -1.0,
             "pilot_diameter_mm": 1.1,
@@ -783,20 +1085,34 @@
             ],
             "minimum_tip_clearance_mm": 0.24,
             "head_envelope_mm": [
-              2.0,
-              0.5
+              3.0,
+              1.2
             ],
             "driver_envelope_diameter_mm": 3.0,
+            "driver_to_battery_body_mm": 88.7512,
+            "driver_to_power_switch_body_mm": 90.4518,
+            "driver_to_power_switch_actuator_sweep_mm": 89.683,
             "service_condition": "keycaps-off, switches-installed",
             "collision_checks": {
               "support_land_leaves_support_surface": false,
               "support_land_component_cutout": false,
               "support_land_existing_support": false,
+              "support_land_existing_support_reserve": false,
+              "head_existing_support_reserve": false,
+              "head_support_post_reserve": false,
+              "head_analytical_rail_reserve": false,
+              "head_installed_component_reserve": false,
+              "head_routed_copper_or_via_reserve": false,
+              "head_board_edge_reserve": false,
+              "head_housing_edge_reserve": false,
               "pilot_component_cutout": false,
               "head_leaves_housing_outline": false,
               "driver_leaves_housing_outline": false,
               "driver_switch_body": false,
               "driver_component": false,
+              "driver_battery_body": false,
+              "driver_power_switch_body": false,
+              "driver_power_switch_actuator_sweep": false,
               "driver_routed_copper_or_via": false,
               "right_split_feature": false,
               "part_assignment": false
@@ -806,11 +1122,22 @@
               "support_land_leaves_support_surface": false,
               "support_land_component_cutout": false,
               "support_land_existing_support": false,
+              "support_land_existing_support_reserve": false,
+              "head_existing_support_reserve": false,
+              "head_support_post_reserve": false,
+              "head_analytical_rail_reserve": false,
+              "head_installed_component_reserve": false,
+              "head_routed_copper_or_via_reserve": false,
+              "head_board_edge_reserve": false,
+              "head_housing_edge_reserve": false,
               "pilot_component_cutout": false,
               "head_leaves_housing_outline": false,
               "driver_leaves_housing_outline": false,
               "driver_switch_body": false,
               "driver_component": false,
+              "driver_battery_body": false,
+              "driver_power_switch_body": false,
+              "driver_power_switch_actuator_sweep": false,
               "driver_routed_copper_or_via": false,
               "right_split_feature": false,
               "part_assignment": false
@@ -818,6 +1145,17 @@
             "geometry_collision_count": 0,
             "geometry_printable_part": "whole",
             "geometry_board_feature_matches": true,
+            "geometry_support_land_to_existing_support_mm": 0.4373,
+            "geometry_head_to_existing_support_mm": 0.4373,
+            "geometry_head_to_support_posts_mm": 0.4373,
+            "geometry_head_to_analytical_rail_mm": 2.25,
+            "geometry_head_to_installed_component_mm": 0.8539,
+            "geometry_head_to_routed_copper_or_via_mm": 2.8036,
+            "geometry_head_to_board_edge_mm": 3.0,
+            "geometry_head_to_housing_edge_mm": 2.9,
+            "geometry_driver_to_battery_body_mm": 88.7512,
+            "geometry_driver_to_power_switch_body_mm": 90.4518,
+            "geometry_driver_to_power_switch_actuator_sweep_mm": 89.683,
             "step_pilot_open_at_z_2_49": true,
             "step_pilot_open_at_z_minus_0_25": true,
             "step_pilot_closed_at_z_minus_0_35": true,
@@ -841,6 +1179,16 @@
             "support_land_annular_width_mm": 0.95,
             "support_land_top_z_mm": 2.5,
             "support_land_vertical_gap_mm": 0.0,
+            "support_land_to_existing_support_mm": 8.2291,
+            "head_to_existing_support_mm": 8.2291,
+            "head_to_support_posts_mm": 8.2291,
+            "head_to_analytical_rail_mm": 12.5,
+            "head_to_installed_component_mm": 0.2812,
+            "head_to_routed_copper_or_via_mm": 0.2555,
+            "head_to_board_edge_mm": 13.25,
+            "head_to_housing_edge_mm": 13.15,
+            "head_reserve_mm": 0.25,
+            "minimum_unrelated_support_reserve_mm": 0.25,
             "desk_column_diameter_mm": 3.0,
             "desk_column_bottom_z_mm": -1.0,
             "pilot_diameter_mm": 1.1,
@@ -857,20 +1205,34 @@
             ],
             "minimum_tip_clearance_mm": 0.24,
             "head_envelope_mm": [
-              2.0,
-              0.5
+              3.0,
+              1.2
             ],
             "driver_envelope_diameter_mm": 3.0,
+            "driver_to_battery_body_mm": 89.8448,
+            "driver_to_power_switch_body_mm": 81.2075,
+            "driver_to_power_switch_actuator_sweep_mm": 81.0642,
             "service_condition": "keycaps-off, switches-installed",
             "collision_checks": {
               "support_land_leaves_support_surface": false,
               "support_land_component_cutout": false,
               "support_land_existing_support": false,
+              "support_land_existing_support_reserve": false,
+              "head_existing_support_reserve": false,
+              "head_support_post_reserve": false,
+              "head_analytical_rail_reserve": false,
+              "head_installed_component_reserve": false,
+              "head_routed_copper_or_via_reserve": false,
+              "head_board_edge_reserve": false,
+              "head_housing_edge_reserve": false,
               "pilot_component_cutout": false,
               "head_leaves_housing_outline": false,
               "driver_leaves_housing_outline": false,
               "driver_switch_body": false,
               "driver_component": false,
+              "driver_battery_body": false,
+              "driver_power_switch_body": false,
+              "driver_power_switch_actuator_sweep": false,
               "driver_routed_copper_or_via": false,
               "right_split_feature": false,
               "part_assignment": false
@@ -880,11 +1242,22 @@
               "support_land_leaves_support_surface": false,
               "support_land_component_cutout": false,
               "support_land_existing_support": false,
+              "support_land_existing_support_reserve": false,
+              "head_existing_support_reserve": false,
+              "head_support_post_reserve": false,
+              "head_analytical_rail_reserve": false,
+              "head_installed_component_reserve": false,
+              "head_routed_copper_or_via_reserve": false,
+              "head_board_edge_reserve": false,
+              "head_housing_edge_reserve": false,
               "pilot_component_cutout": false,
               "head_leaves_housing_outline": false,
               "driver_leaves_housing_outline": false,
               "driver_switch_body": false,
               "driver_component": false,
+              "driver_battery_body": false,
+              "driver_power_switch_body": false,
+              "driver_power_switch_actuator_sweep": false,
               "driver_routed_copper_or_via": false,
               "right_split_feature": false,
               "part_assignment": false
@@ -892,6 +1265,17 @@
             "geometry_collision_count": 0,
             "geometry_printable_part": "whole",
             "geometry_board_feature_matches": true,
+            "geometry_support_land_to_existing_support_mm": 8.2291,
+            "geometry_head_to_existing_support_mm": 8.2291,
+            "geometry_head_to_support_posts_mm": 8.2291,
+            "geometry_head_to_analytical_rail_mm": 12.5,
+            "geometry_head_to_installed_component_mm": 0.2812,
+            "geometry_head_to_routed_copper_or_via_mm": 0.2555,
+            "geometry_head_to_board_edge_mm": 13.25,
+            "geometry_head_to_housing_edge_mm": 13.15,
+            "geometry_driver_to_battery_body_mm": 89.8448,
+            "geometry_driver_to_power_switch_body_mm": 81.2075,
+            "geometry_driver_to_power_switch_actuator_sweep_mm": 81.0642,
             "step_pilot_open_at_z_2_49": true,
             "step_pilot_open_at_z_minus_0_25": true,
             "step_pilot_closed_at_z_minus_0_35": true,
@@ -899,6 +1283,23 @@
             "step_pilot_closed_at_z_minus_0_99": true
           }
         ],
+        "analytical_rail_relief": null,
+        "minimum_unrelated_support_reserve_mm": 0.25,
+        "service_body_envelopes": {
+          "battery_body_size_mm": [
+            30.0,
+            12.0
+          ],
+          "power_switch_body_size_mm": [
+            10.0,
+            2.5
+          ],
+          "power_switch_actuator_travel_mm": 1.6,
+          "power_switch_actuator_sweep_size_mm": [
+            13.2,
+            2.5
+          ]
+        },
         "part_distribution": {
           "whole": 8
         },
@@ -913,7 +1314,30 @@
           "whole": 8
         },
         "geometry_part_distribution_matches_plan": true,
-        "geometry_primary_support_load_span_unchanged": true
+        "geometry_primary_support_load_span_unchanged": true,
+        "geometry_fastener_head_style": "non_countersunk_rounded_pan_or_button",
+        "geometry_head_envelope_mm": [
+          3.0,
+          1.2
+        ],
+        "geometry_head_reserve_mm": 0.25,
+        "geometry_head_height_and_keycap_skirt_physical_status": "pending",
+        "geometry_analytical_rail_relief": null,
+        "geometry_service_body_envelopes": {
+          "battery_body_size_mm": [
+            30.0,
+            12.0
+          ],
+          "power_switch_body_size_mm": [
+            10.0,
+            2.5
+          ],
+          "power_switch_actuator_travel_mm": 1.6,
+          "power_switch_actuator_sweep_size_mm": [
+            13.2,
+            2.5
+          ]
+        }
       },
       "maximum_load_point_to_support_mm": 15.464,
       "maximum_seam_load_point_to_support_mm": 2.85,
@@ -1322,7 +1746,7 @@
             ],
             [
               27.5,
-              28.75
+              28.65
             ],
             [
               28.8375,
@@ -1333,16 +1757,16 @@
               56.849
             ],
             [
-              36.5,
-              92.25
-            ],
-            [
               41.5,
               47.25
             ],
             [
               44.05,
               24.2
+            ],
+            [
+              45.4,
+              85.85
             ],
             [
               51.5313,
@@ -1353,12 +1777,12 @@
               92.781
             ],
             [
-              67.5,
-              107.75
+              61.6,
+              47.75
             ],
             [
-              70.0,
-              54.25
+              67.5,
+              107.75
             ],
             [
               78.0812,
@@ -1381,7 +1805,7 @@
               56.849
             ],
             [
-              113.0,
+              112.7,
               59.75
             ],
             [
@@ -1416,7 +1840,7 @@
             ],
             [
               27.5,
-              28.75
+              28.65
             ],
             [
               28.8375,
@@ -1427,16 +1851,16 @@
               56.849
             ],
             [
-              36.5,
-              92.25
-            ],
-            [
               41.5,
               47.25
             ],
             [
               44.05,
               24.2
+            ],
+            [
+              45.4,
+              85.85
             ],
             [
               51.5313,
@@ -1447,12 +1871,12 @@
               92.781
             ],
             [
-              67.5,
-              107.75
+              61.6,
+              47.75
             ],
             [
-              70.0,
-              54.25
+              67.5,
+              107.75
             ],
             [
               78.0812,
@@ -1475,7 +1899,7 @@
               56.849
             ],
             [
-              113.0,
+              112.7,
               59.75
             ],
             [
@@ -1499,7 +1923,7 @@
     },
     "right": {
       "source_board": "hardware/kicad/draft/x3-v2/kc2_right-x3-v2/kc2_right-x3-v2.kicad_pcb",
-      "source_board_sha256": "a6a49f8875e506064ce4bf9e11839b4d932d326ee271fcf4b6bf863c8270b374",
+      "source_board_sha256": "4500956acec4e9f8ada2da285d9fad6c6accad5263da9128d0a14d300af3209c",
       "source_board_sha256_matches": true,
       "key_count": 39,
       "legacy_registration_refs": [],
@@ -1523,7 +1947,7 @@
         "housing_body_cutout": false,
         "side": "right",
         "source_board": "hardware/kicad/draft/x3-v2/kc2_right-x3-v2/kc2_right-x3-v2.kicad_pcb",
-        "source_board_sha256": "a6a49f8875e506064ce4bf9e11839b4d932d326ee271fcf4b6bf863c8270b374",
+        "source_board_sha256": "4500956acec4e9f8ada2da285d9fad6c6accad5263da9128d0a14d300af3209c",
         "fresh_extraction_manifest_binding": true
       },
       "exterior_bottom_z_mm": 0.0,
@@ -1691,9 +2115,10 @@
           24.2
         ],
         "footprint_side": "top",
+        "footprint_rotation_deg": 180.0,
         "actuator_projection_size_mm": [
-          1.3,
-          2.7
+          2.7,
+          1.3
         ],
         "support_diameter_mm": 3.0,
         "support_top_z_mm": 2.5,
@@ -1705,61 +2130,76 @@
         "bottom_exposed_pad_collision_count": 0,
         "via_collision_count": 0,
         "bottom_routed_copper_overlap_count": 0,
+        "bottom_mask_opening_overlap_count": 0,
+        "bottom_exposed_routed_copper_overlap_count": 0,
         "bottom_routed_copper_solder_mask_protected": true,
+        "bottom_routed_copper_solder_mask_protection_basis": "derived_from_exact_B.Cu_and_B.Mask_geometry",
         "electrically_safe": true,
-        "electrical_safety_basis": "SW_RST1 pads are F.Cu-only; no via or exterior-open cutout intersects the support, and any B.Cu route overlap remains inside the PCB stack under solder mask.",
+        "electrical_safety_basis": "SW_RST1 pads are F.Cu-only; no via or exterior-open cutout intersects the support, and exact B.Cu route overlap is rejected wherever an exact B.Mask opening exposes it.",
         "manifest_matches_generator": true,
         "geometry_board_center_mm": [
           84.05,
           63.45
         ],
+        "geometry_footprint_rotation_deg": 180.0,
         "geometry_actuator_projection_covered": true,
         "geometry_support_surface_covered": true,
         "geometry_component_cutout_collision_count": 0,
         "geometry_bottom_exposed_pad_collision_count": 0,
         "geometry_via_collision_count": 0,
+        "geometry_bottom_routed_copper_overlap_count": 0,
+        "geometry_bottom_mask_opening_overlap_count": 0,
+        "geometry_bottom_exposed_routed_copper_overlap_count": 0,
+        "geometry_bottom_routed_copper_solder_mask_protected": true,
         "geometry_electrically_safe": true
       },
       "mounting_system": {
-        "fastener_envelope": "M1.4 provisional direct-plastic prototype",
+        "fastener_envelope": "M1.4 provisional direct-plastic prototype; non-countersunk rounded pan/button head",
+        "fastener_head_style": "non_countersunk_rounded_pan_or_button",
+        "head_envelope_mm": [
+          3.0,
+          1.2
+        ],
+        "head_reserve_mm": 0.25,
+        "head_height_and_keycap_skirt_physical_status": "pending",
         "physical_registration_status": "pending",
         "count": 10,
         "board_coordinates_mm": [
           [
             71.6875,
-            68.0
+            67.9
           ],
           [
-            181.1875,
+            181.0875,
             85.5
           ],
           [
-            147.6875,
-            93.5
+            156.1875,
+            87.0
           ],
           [
             109.6875,
-            96.5
+            104.8
           ],
           [
             71.6875,
             105.5
           ],
           [
-            42.1875,
-            106.0
+            62.0875,
+            69.3
           ],
           [
             181.1875,
-            134.5
+            143.0
           ],
           [
-            143.1875,
-            134.5
+            143.0875,
+            143.0
           ],
           [
-            51.6875,
-            144.0
+            66.8875,
+            153.4
           ],
           [
             95.6875,
@@ -1772,11 +2212,11 @@
             "ref": "MH1",
             "board_center_mm": [
               71.6875,
-              68.0
+              67.9
             ],
             "housing_center_mm": [
               127.0,
-              28.75
+              28.65
             ],
             "printable_part": "part_b",
             "pcb_npth_diameter_mm": 1.6,
@@ -1785,6 +2225,16 @@
             "support_land_annular_width_mm": 0.95,
             "support_land_top_z_mm": 2.5,
             "support_land_vertical_gap_mm": 0.0,
+            "support_land_to_existing_support_mm": 10.139,
+            "head_to_existing_support_mm": 10.139,
+            "head_to_support_posts_mm": 10.139,
+            "head_to_analytical_rail_mm": 11.0439,
+            "head_to_installed_component_mm": 0.325,
+            "head_to_routed_copper_or_via_mm": 0.5625,
+            "head_to_board_edge_mm": 11.7935,
+            "head_to_housing_edge_mm": 11.6936,
+            "head_reserve_mm": 0.25,
+            "minimum_unrelated_support_reserve_mm": 0.25,
             "desk_column_diameter_mm": 3.0,
             "desk_column_bottom_z_mm": -1.0,
             "pilot_diameter_mm": 1.1,
@@ -1801,20 +2251,34 @@
             ],
             "minimum_tip_clearance_mm": 0.24,
             "head_envelope_mm": [
-              2.0,
-              0.5
+              3.0,
+              1.2
             ],
             "driver_envelope_diameter_mm": 3.0,
+            "driver_to_battery_body_mm": 9.65,
+            "driver_to_power_switch_body_mm": 16.4009,
+            "driver_to_power_switch_actuator_sweep_mm": 14.8291,
             "service_condition": "keycaps-off, switches-installed",
             "collision_checks": {
               "support_land_leaves_support_surface": false,
               "support_land_component_cutout": false,
               "support_land_existing_support": false,
+              "support_land_existing_support_reserve": false,
+              "head_existing_support_reserve": false,
+              "head_support_post_reserve": false,
+              "head_analytical_rail_reserve": false,
+              "head_installed_component_reserve": false,
+              "head_routed_copper_or_via_reserve": false,
+              "head_board_edge_reserve": false,
+              "head_housing_edge_reserve": false,
               "pilot_component_cutout": false,
               "head_leaves_housing_outline": false,
               "driver_leaves_housing_outline": false,
               "driver_switch_body": false,
               "driver_component": false,
+              "driver_battery_body": false,
+              "driver_power_switch_body": false,
+              "driver_power_switch_actuator_sweep": false,
               "driver_routed_copper_or_via": false,
               "right_split_feature": false,
               "part_assignment": false
@@ -1824,11 +2288,22 @@
               "support_land_leaves_support_surface": false,
               "support_land_component_cutout": false,
               "support_land_existing_support": false,
+              "support_land_existing_support_reserve": false,
+              "head_existing_support_reserve": false,
+              "head_support_post_reserve": false,
+              "head_analytical_rail_reserve": false,
+              "head_installed_component_reserve": false,
+              "head_routed_copper_or_via_reserve": false,
+              "head_board_edge_reserve": false,
+              "head_housing_edge_reserve": false,
               "pilot_component_cutout": false,
               "head_leaves_housing_outline": false,
               "driver_leaves_housing_outline": false,
               "driver_switch_body": false,
               "driver_component": false,
+              "driver_battery_body": false,
+              "driver_power_switch_body": false,
+              "driver_power_switch_actuator_sweep": false,
               "driver_routed_copper_or_via": false,
               "right_split_feature": false,
               "part_assignment": false
@@ -1836,6 +2311,17 @@
             "geometry_collision_count": 0,
             "geometry_printable_part": "part_b",
             "geometry_board_feature_matches": true,
+            "geometry_support_land_to_existing_support_mm": 10.139,
+            "geometry_head_to_existing_support_mm": 10.139,
+            "geometry_head_to_support_posts_mm": 10.139,
+            "geometry_head_to_analytical_rail_mm": 11.0439,
+            "geometry_head_to_installed_component_mm": 0.325,
+            "geometry_head_to_routed_copper_or_via_mm": 0.5625,
+            "geometry_head_to_board_edge_mm": 11.7935,
+            "geometry_head_to_housing_edge_mm": 11.6936,
+            "geometry_driver_to_battery_body_mm": 9.65,
+            "geometry_driver_to_power_switch_body_mm": 16.4009,
+            "geometry_driver_to_power_switch_actuator_sweep_mm": 14.8291,
             "step_pilot_open_at_z_2_49": true,
             "step_pilot_open_at_z_minus_0_25": true,
             "step_pilot_closed_at_z_minus_0_35": true,
@@ -1845,11 +2331,11 @@
           {
             "ref": "MH2",
             "board_center_mm": [
-              181.1875,
+              181.0875,
               85.5
             ],
             "housing_center_mm": [
-              17.5,
+              17.6,
               46.25
             ],
             "printable_part": "part_a",
@@ -1859,6 +2345,16 @@
             "support_land_annular_width_mm": 0.95,
             "support_land_top_z_mm": 2.5,
             "support_land_vertical_gap_mm": 0.0,
+            "support_land_to_existing_support_mm": 13.75,
+            "head_to_existing_support_mm": 13.75,
+            "head_to_support_posts_mm": 18.7903,
+            "head_to_analytical_rail_mm": 13.75,
+            "head_to_installed_component_mm": 0.2836,
+            "head_to_routed_copper_or_via_mm": 2.6408,
+            "head_to_board_edge_mm": 14.5,
+            "head_to_housing_edge_mm": 14.4,
+            "head_reserve_mm": 0.25,
+            "minimum_unrelated_support_reserve_mm": 0.25,
             "desk_column_diameter_mm": 3.0,
             "desk_column_bottom_z_mm": -1.0,
             "pilot_diameter_mm": 1.1,
@@ -1875,20 +2371,34 @@
             ],
             "minimum_tip_clearance_mm": 0.24,
             "head_envelope_mm": [
-              2.0,
-              0.5
+              3.0,
+              1.2
             ],
             "driver_envelope_diameter_mm": 3.0,
+            "driver_to_battery_body_mm": 90.7803,
+            "driver_to_power_switch_body_mm": 82.891,
+            "driver_to_power_switch_actuator_sweep_mm": 81.3413,
             "service_condition": "keycaps-off, switches-installed",
             "collision_checks": {
               "support_land_leaves_support_surface": false,
               "support_land_component_cutout": false,
               "support_land_existing_support": false,
+              "support_land_existing_support_reserve": false,
+              "head_existing_support_reserve": false,
+              "head_support_post_reserve": false,
+              "head_analytical_rail_reserve": false,
+              "head_installed_component_reserve": false,
+              "head_routed_copper_or_via_reserve": false,
+              "head_board_edge_reserve": false,
+              "head_housing_edge_reserve": false,
               "pilot_component_cutout": false,
               "head_leaves_housing_outline": false,
               "driver_leaves_housing_outline": false,
               "driver_switch_body": false,
               "driver_component": false,
+              "driver_battery_body": false,
+              "driver_power_switch_body": false,
+              "driver_power_switch_actuator_sweep": false,
               "driver_routed_copper_or_via": false,
               "right_split_feature": false,
               "part_assignment": false
@@ -1898,11 +2408,22 @@
               "support_land_leaves_support_surface": false,
               "support_land_component_cutout": false,
               "support_land_existing_support": false,
+              "support_land_existing_support_reserve": false,
+              "head_existing_support_reserve": false,
+              "head_support_post_reserve": false,
+              "head_analytical_rail_reserve": false,
+              "head_installed_component_reserve": false,
+              "head_routed_copper_or_via_reserve": false,
+              "head_board_edge_reserve": false,
+              "head_housing_edge_reserve": false,
               "pilot_component_cutout": false,
               "head_leaves_housing_outline": false,
               "driver_leaves_housing_outline": false,
               "driver_switch_body": false,
               "driver_component": false,
+              "driver_battery_body": false,
+              "driver_power_switch_body": false,
+              "driver_power_switch_actuator_sweep": false,
               "driver_routed_copper_or_via": false,
               "right_split_feature": false,
               "part_assignment": false
@@ -1910,6 +2431,17 @@
             "geometry_collision_count": 0,
             "geometry_printable_part": "part_a",
             "geometry_board_feature_matches": true,
+            "geometry_support_land_to_existing_support_mm": 13.75,
+            "geometry_head_to_existing_support_mm": 13.75,
+            "geometry_head_to_support_posts_mm": 18.7903,
+            "geometry_head_to_analytical_rail_mm": 13.75,
+            "geometry_head_to_installed_component_mm": 0.2836,
+            "geometry_head_to_routed_copper_or_via_mm": 2.6408,
+            "geometry_head_to_board_edge_mm": 14.5,
+            "geometry_head_to_housing_edge_mm": 14.4,
+            "geometry_driver_to_battery_body_mm": 90.7803,
+            "geometry_driver_to_power_switch_body_mm": 82.891,
+            "geometry_driver_to_power_switch_actuator_sweep_mm": 81.3413,
             "step_pilot_open_at_z_2_49": true,
             "step_pilot_open_at_z_minus_0_25": true,
             "step_pilot_closed_at_z_minus_0_35": true,
@@ -1919,12 +2451,12 @@
           {
             "ref": "MH3",
             "board_center_mm": [
-              147.6875,
-              93.5
+              156.1875,
+              87.0
             ],
             "housing_center_mm": [
-              51.0,
-              54.25
+              42.5,
+              47.75
             ],
             "printable_part": "part_a",
             "pcb_npth_diameter_mm": 1.6,
@@ -1933,6 +2465,16 @@
             "support_land_annular_width_mm": 0.95,
             "support_land_top_z_mm": 2.5,
             "support_land_vertical_gap_mm": 0.0,
+            "support_land_to_existing_support_mm": 12.953,
+            "head_to_existing_support_mm": 12.953,
+            "head_to_support_posts_mm": 12.953,
+            "head_to_analytical_rail_mm": 15.25,
+            "head_to_installed_component_mm": 0.275,
+            "head_to_routed_copper_or_via_mm": 0.6433,
+            "head_to_board_edge_mm": 16.0,
+            "head_to_housing_edge_mm": 15.9,
+            "head_reserve_mm": 0.25,
+            "minimum_unrelated_support_reserve_mm": 0.25,
             "desk_column_diameter_mm": 3.0,
             "desk_column_bottom_z_mm": -1.0,
             "pilot_diameter_mm": 1.1,
@@ -1949,20 +2491,34 @@
             ],
             "minimum_tip_clearance_mm": 0.24,
             "head_envelope_mm": [
-              2.0,
-              0.5
+              3.0,
+              1.2
             ],
             "driver_envelope_diameter_mm": 3.0,
+            "driver_to_battery_body_mm": 68.1946,
+            "driver_to_power_switch_body_mm": 59.6022,
+            "driver_to_power_switch_actuator_sweep_mm": 58.1155,
             "service_condition": "keycaps-off, switches-installed",
             "collision_checks": {
               "support_land_leaves_support_surface": false,
               "support_land_component_cutout": false,
               "support_land_existing_support": false,
+              "support_land_existing_support_reserve": false,
+              "head_existing_support_reserve": false,
+              "head_support_post_reserve": false,
+              "head_analytical_rail_reserve": false,
+              "head_installed_component_reserve": false,
+              "head_routed_copper_or_via_reserve": false,
+              "head_board_edge_reserve": false,
+              "head_housing_edge_reserve": false,
               "pilot_component_cutout": false,
               "head_leaves_housing_outline": false,
               "driver_leaves_housing_outline": false,
               "driver_switch_body": false,
               "driver_component": false,
+              "driver_battery_body": false,
+              "driver_power_switch_body": false,
+              "driver_power_switch_actuator_sweep": false,
               "driver_routed_copper_or_via": false,
               "right_split_feature": false,
               "part_assignment": false
@@ -1972,11 +2528,22 @@
               "support_land_leaves_support_surface": false,
               "support_land_component_cutout": false,
               "support_land_existing_support": false,
+              "support_land_existing_support_reserve": false,
+              "head_existing_support_reserve": false,
+              "head_support_post_reserve": false,
+              "head_analytical_rail_reserve": false,
+              "head_installed_component_reserve": false,
+              "head_routed_copper_or_via_reserve": false,
+              "head_board_edge_reserve": false,
+              "head_housing_edge_reserve": false,
               "pilot_component_cutout": false,
               "head_leaves_housing_outline": false,
               "driver_leaves_housing_outline": false,
               "driver_switch_body": false,
               "driver_component": false,
+              "driver_battery_body": false,
+              "driver_power_switch_body": false,
+              "driver_power_switch_actuator_sweep": false,
               "driver_routed_copper_or_via": false,
               "right_split_feature": false,
               "part_assignment": false
@@ -1984,6 +2551,17 @@
             "geometry_collision_count": 0,
             "geometry_printable_part": "part_a",
             "geometry_board_feature_matches": true,
+            "geometry_support_land_to_existing_support_mm": 12.953,
+            "geometry_head_to_existing_support_mm": 12.953,
+            "geometry_head_to_support_posts_mm": 12.953,
+            "geometry_head_to_analytical_rail_mm": 15.25,
+            "geometry_head_to_installed_component_mm": 0.275,
+            "geometry_head_to_routed_copper_or_via_mm": 0.6433,
+            "geometry_head_to_board_edge_mm": 16.0,
+            "geometry_head_to_housing_edge_mm": 15.9,
+            "geometry_driver_to_battery_body_mm": 68.1946,
+            "geometry_driver_to_power_switch_body_mm": 59.6022,
+            "geometry_driver_to_power_switch_actuator_sweep_mm": 58.1155,
             "step_pilot_open_at_z_2_49": true,
             "step_pilot_open_at_z_minus_0_25": true,
             "step_pilot_closed_at_z_minus_0_35": true,
@@ -1994,11 +2572,11 @@
             "ref": "MH4",
             "board_center_mm": [
               109.6875,
-              96.5
+              104.8
             ],
             "housing_center_mm": [
               89.0,
-              57.25
+              65.55
             ],
             "printable_part": "part_b",
             "pcb_npth_diameter_mm": 1.6,
@@ -2007,6 +2585,16 @@
             "support_land_annular_width_mm": 0.95,
             "support_land_top_z_mm": 2.5,
             "support_land_vertical_gap_mm": 0.0,
+            "support_land_to_existing_support_mm": 17.9595,
+            "head_to_existing_support_mm": 17.9595,
+            "head_to_support_posts_mm": 17.9595,
+            "head_to_analytical_rail_mm": 33.05,
+            "head_to_installed_component_mm": 0.2645,
+            "head_to_routed_copper_or_via_mm": 0.585,
+            "head_to_board_edge_mm": 33.8,
+            "head_to_housing_edge_mm": 33.7,
+            "head_reserve_mm": 0.25,
+            "minimum_unrelated_support_reserve_mm": 0.25,
             "desk_column_diameter_mm": 3.0,
             "desk_column_bottom_z_mm": -1.0,
             "pilot_diameter_mm": 1.1,
@@ -2023,20 +2611,34 @@
             ],
             "minimum_tip_clearance_mm": 0.24,
             "head_envelope_mm": [
-              2.0,
-              0.5
+              3.0,
+              1.2
             ],
             "driver_envelope_diameter_mm": 3.0,
+            "driver_to_battery_body_mm": 49.2355,
+            "driver_to_power_switch_body_mm": 39.9236,
+            "driver_to_power_switch_actuator_sweep_mm": 39.5516,
             "service_condition": "keycaps-off, switches-installed",
             "collision_checks": {
               "support_land_leaves_support_surface": false,
               "support_land_component_cutout": false,
               "support_land_existing_support": false,
+              "support_land_existing_support_reserve": false,
+              "head_existing_support_reserve": false,
+              "head_support_post_reserve": false,
+              "head_analytical_rail_reserve": false,
+              "head_installed_component_reserve": false,
+              "head_routed_copper_or_via_reserve": false,
+              "head_board_edge_reserve": false,
+              "head_housing_edge_reserve": false,
               "pilot_component_cutout": false,
               "head_leaves_housing_outline": false,
               "driver_leaves_housing_outline": false,
               "driver_switch_body": false,
               "driver_component": false,
+              "driver_battery_body": false,
+              "driver_power_switch_body": false,
+              "driver_power_switch_actuator_sweep": false,
               "driver_routed_copper_or_via": false,
               "right_split_feature": false,
               "part_assignment": false
@@ -2046,11 +2648,22 @@
               "support_land_leaves_support_surface": false,
               "support_land_component_cutout": false,
               "support_land_existing_support": false,
+              "support_land_existing_support_reserve": false,
+              "head_existing_support_reserve": false,
+              "head_support_post_reserve": false,
+              "head_analytical_rail_reserve": false,
+              "head_installed_component_reserve": false,
+              "head_routed_copper_or_via_reserve": false,
+              "head_board_edge_reserve": false,
+              "head_housing_edge_reserve": false,
               "pilot_component_cutout": false,
               "head_leaves_housing_outline": false,
               "driver_leaves_housing_outline": false,
               "driver_switch_body": false,
               "driver_component": false,
+              "driver_battery_body": false,
+              "driver_power_switch_body": false,
+              "driver_power_switch_actuator_sweep": false,
               "driver_routed_copper_or_via": false,
               "right_split_feature": false,
               "part_assignment": false
@@ -2058,6 +2671,17 @@
             "geometry_collision_count": 0,
             "geometry_printable_part": "part_b",
             "geometry_board_feature_matches": true,
+            "geometry_support_land_to_existing_support_mm": 17.9595,
+            "geometry_head_to_existing_support_mm": 17.9595,
+            "geometry_head_to_support_posts_mm": 17.9595,
+            "geometry_head_to_analytical_rail_mm": 33.05,
+            "geometry_head_to_installed_component_mm": 0.2645,
+            "geometry_head_to_routed_copper_or_via_mm": 0.585,
+            "geometry_head_to_board_edge_mm": 33.8,
+            "geometry_head_to_housing_edge_mm": 33.7,
+            "geometry_driver_to_battery_body_mm": 49.2355,
+            "geometry_driver_to_power_switch_body_mm": 39.9236,
+            "geometry_driver_to_power_switch_actuator_sweep_mm": 39.5516,
             "step_pilot_open_at_z_2_49": true,
             "step_pilot_open_at_z_minus_0_25": true,
             "step_pilot_closed_at_z_minus_0_35": true,
@@ -2081,6 +2705,16 @@
             "support_land_annular_width_mm": 0.95,
             "support_land_top_z_mm": 2.5,
             "support_land_vertical_gap_mm": 0.0,
+            "support_land_to_existing_support_mm": 6.9168,
+            "head_to_existing_support_mm": 6.9168,
+            "head_to_support_posts_mm": 6.9168,
+            "head_to_analytical_rail_mm": 27.9005,
+            "head_to_installed_component_mm": 0.4868,
+            "head_to_routed_copper_or_via_mm": 0.2992,
+            "head_to_board_edge_mm": 28.6502,
+            "head_to_housing_edge_mm": 28.5504,
+            "head_reserve_mm": 0.25,
+            "minimum_unrelated_support_reserve_mm": 0.25,
             "desk_column_diameter_mm": 3.0,
             "desk_column_bottom_z_mm": -1.0,
             "pilot_diameter_mm": 1.1,
@@ -2097,20 +2731,34 @@
             ],
             "minimum_tip_clearance_mm": 0.24,
             "head_envelope_mm": [
-              2.0,
-              0.5
+              3.0,
+              1.2
             ],
             "driver_envelope_diameter_mm": 3.0,
+            "driver_to_battery_body_mm": 47.25,
+            "driver_to_power_switch_body_mm": 42.9392,
+            "driver_to_power_switch_actuator_sweep_mm": 42.3297,
             "service_condition": "keycaps-off, switches-installed",
             "collision_checks": {
               "support_land_leaves_support_surface": false,
               "support_land_component_cutout": false,
               "support_land_existing_support": false,
+              "support_land_existing_support_reserve": false,
+              "head_existing_support_reserve": false,
+              "head_support_post_reserve": false,
+              "head_analytical_rail_reserve": false,
+              "head_installed_component_reserve": false,
+              "head_routed_copper_or_via_reserve": false,
+              "head_board_edge_reserve": false,
+              "head_housing_edge_reserve": false,
               "pilot_component_cutout": false,
               "head_leaves_housing_outline": false,
               "driver_leaves_housing_outline": false,
               "driver_switch_body": false,
               "driver_component": false,
+              "driver_battery_body": false,
+              "driver_power_switch_body": false,
+              "driver_power_switch_actuator_sweep": false,
               "driver_routed_copper_or_via": false,
               "right_split_feature": false,
               "part_assignment": false
@@ -2120,11 +2768,22 @@
               "support_land_leaves_support_surface": false,
               "support_land_component_cutout": false,
               "support_land_existing_support": false,
+              "support_land_existing_support_reserve": false,
+              "head_existing_support_reserve": false,
+              "head_support_post_reserve": false,
+              "head_analytical_rail_reserve": false,
+              "head_installed_component_reserve": false,
+              "head_routed_copper_or_via_reserve": false,
+              "head_board_edge_reserve": false,
+              "head_housing_edge_reserve": false,
               "pilot_component_cutout": false,
               "head_leaves_housing_outline": false,
               "driver_leaves_housing_outline": false,
               "driver_switch_body": false,
               "driver_component": false,
+              "driver_battery_body": false,
+              "driver_power_switch_body": false,
+              "driver_power_switch_actuator_sweep": false,
               "driver_routed_copper_or_via": false,
               "right_split_feature": false,
               "part_assignment": false
@@ -2132,6 +2791,17 @@
             "geometry_collision_count": 0,
             "geometry_printable_part": "part_b",
             "geometry_board_feature_matches": true,
+            "geometry_support_land_to_existing_support_mm": 6.9168,
+            "geometry_head_to_existing_support_mm": 6.9168,
+            "geometry_head_to_support_posts_mm": 6.9168,
+            "geometry_head_to_analytical_rail_mm": 27.9005,
+            "geometry_head_to_installed_component_mm": 0.4868,
+            "geometry_head_to_routed_copper_or_via_mm": 0.2992,
+            "geometry_head_to_board_edge_mm": 28.6502,
+            "geometry_head_to_housing_edge_mm": 28.5504,
+            "geometry_driver_to_battery_body_mm": 47.25,
+            "geometry_driver_to_power_switch_body_mm": 42.9392,
+            "geometry_driver_to_power_switch_actuator_sweep_mm": 42.3297,
             "step_pilot_open_at_z_2_49": true,
             "step_pilot_open_at_z_minus_0_25": true,
             "step_pilot_closed_at_z_minus_0_35": true,
@@ -2141,12 +2811,12 @@
           {
             "ref": "MH6",
             "board_center_mm": [
-              42.1875,
-              106.0
+              62.0875,
+              69.3
             ],
             "housing_center_mm": [
-              156.5,
-              66.75
+              136.6,
+              30.05
             ],
             "printable_part": "part_b",
             "pcb_npth_diameter_mm": 1.6,
@@ -2155,6 +2825,16 @@
             "support_land_annular_width_mm": 0.95,
             "support_land_top_z_mm": 2.5,
             "support_land_vertical_gap_mm": 0.0,
+            "support_land_to_existing_support_mm": 1.6696,
+            "head_to_existing_support_mm": 1.6696,
+            "head_to_support_posts_mm": 19.7284,
+            "head_to_analytical_rail_mm": 1.6696,
+            "head_to_installed_component_mm": 0.2645,
+            "head_to_routed_copper_or_via_mm": 0.2533,
+            "head_to_board_edge_mm": 2.4193,
+            "head_to_housing_edge_mm": 2.3201,
+            "head_reserve_mm": 0.25,
+            "minimum_unrelated_support_reserve_mm": 0.25,
             "desk_column_diameter_mm": 3.0,
             "desk_column_bottom_z_mm": -1.0,
             "pilot_diameter_mm": 1.1,
@@ -2171,20 +2851,34 @@
             ],
             "minimum_tip_clearance_mm": 0.24,
             "head_envelope_mm": [
-              2.0,
-              0.5
+              3.0,
+              1.2
             ],
             "driver_envelope_diameter_mm": 3.0,
+            "driver_to_battery_body_mm": 11.1185,
+            "driver_to_power_switch_body_mm": 26.0986,
+            "driver_to_power_switch_actuator_sweep_mm": 24.5223,
             "service_condition": "keycaps-off, switches-installed",
             "collision_checks": {
               "support_land_leaves_support_surface": false,
               "support_land_component_cutout": false,
               "support_land_existing_support": false,
+              "support_land_existing_support_reserve": false,
+              "head_existing_support_reserve": false,
+              "head_support_post_reserve": false,
+              "head_analytical_rail_reserve": false,
+              "head_installed_component_reserve": false,
+              "head_routed_copper_or_via_reserve": false,
+              "head_board_edge_reserve": false,
+              "head_housing_edge_reserve": false,
               "pilot_component_cutout": false,
               "head_leaves_housing_outline": false,
               "driver_leaves_housing_outline": false,
               "driver_switch_body": false,
               "driver_component": false,
+              "driver_battery_body": false,
+              "driver_power_switch_body": false,
+              "driver_power_switch_actuator_sweep": false,
               "driver_routed_copper_or_via": false,
               "right_split_feature": false,
               "part_assignment": false
@@ -2194,11 +2888,22 @@
               "support_land_leaves_support_surface": false,
               "support_land_component_cutout": false,
               "support_land_existing_support": false,
+              "support_land_existing_support_reserve": false,
+              "head_existing_support_reserve": false,
+              "head_support_post_reserve": false,
+              "head_analytical_rail_reserve": false,
+              "head_installed_component_reserve": false,
+              "head_routed_copper_or_via_reserve": false,
+              "head_board_edge_reserve": false,
+              "head_housing_edge_reserve": false,
               "pilot_component_cutout": false,
               "head_leaves_housing_outline": false,
               "driver_leaves_housing_outline": false,
               "driver_switch_body": false,
               "driver_component": false,
+              "driver_battery_body": false,
+              "driver_power_switch_body": false,
+              "driver_power_switch_actuator_sweep": false,
               "driver_routed_copper_or_via": false,
               "right_split_feature": false,
               "part_assignment": false
@@ -2206,6 +2911,17 @@
             "geometry_collision_count": 0,
             "geometry_printable_part": "part_b",
             "geometry_board_feature_matches": true,
+            "geometry_support_land_to_existing_support_mm": 1.6696,
+            "geometry_head_to_existing_support_mm": 1.6696,
+            "geometry_head_to_support_posts_mm": 19.7284,
+            "geometry_head_to_analytical_rail_mm": 1.6696,
+            "geometry_head_to_installed_component_mm": 0.2645,
+            "geometry_head_to_routed_copper_or_via_mm": 0.2533,
+            "geometry_head_to_board_edge_mm": 2.4193,
+            "geometry_head_to_housing_edge_mm": 2.3201,
+            "geometry_driver_to_battery_body_mm": 11.1185,
+            "geometry_driver_to_power_switch_body_mm": 26.0986,
+            "geometry_driver_to_power_switch_actuator_sweep_mm": 24.5223,
             "step_pilot_open_at_z_2_49": true,
             "step_pilot_open_at_z_minus_0_25": true,
             "step_pilot_closed_at_z_minus_0_35": true,
@@ -2216,11 +2932,11 @@
             "ref": "MH7",
             "board_center_mm": [
               181.1875,
-              134.5
+              143.0
             ],
             "housing_center_mm": [
               17.5,
-              95.25
+              103.75
             ],
             "printable_part": "part_a",
             "pcb_npth_diameter_mm": 1.6,
@@ -2229,6 +2945,16 @@
             "support_land_annular_width_mm": 0.95,
             "support_land_top_z_mm": 2.5,
             "support_land_vertical_gap_mm": 0.0,
+            "support_land_to_existing_support_mm": 5.2869,
+            "head_to_existing_support_mm": 5.2869,
+            "head_to_support_posts_mm": 5.2869,
+            "head_to_analytical_rail_mm": 15.25,
+            "head_to_installed_component_mm": 0.2555,
+            "head_to_routed_copper_or_via_mm": 0.2553,
+            "head_to_board_edge_mm": 16.0,
+            "head_to_housing_edge_mm": 15.9,
+            "head_reserve_mm": 0.25,
+            "minimum_unrelated_support_reserve_mm": 0.25,
             "desk_column_diameter_mm": 3.0,
             "desk_column_bottom_z_mm": -1.0,
             "pilot_diameter_mm": 1.1,
@@ -2245,20 +2971,34 @@
             ],
             "minimum_tip_clearance_mm": 0.24,
             "head_envelope_mm": [
-              2.0,
-              0.5
+              3.0,
+              1.2
             ],
             "driver_envelope_diameter_mm": 3.0,
+            "driver_to_battery_body_mm": 121.568,
+            "driver_to_power_switch_body_mm": 111.7981,
+            "driver_to_power_switch_actuator_sweep_mm": 110.6472,
             "service_condition": "keycaps-off, switches-installed",
             "collision_checks": {
               "support_land_leaves_support_surface": false,
               "support_land_component_cutout": false,
               "support_land_existing_support": false,
+              "support_land_existing_support_reserve": false,
+              "head_existing_support_reserve": false,
+              "head_support_post_reserve": false,
+              "head_analytical_rail_reserve": false,
+              "head_installed_component_reserve": false,
+              "head_routed_copper_or_via_reserve": false,
+              "head_board_edge_reserve": false,
+              "head_housing_edge_reserve": false,
               "pilot_component_cutout": false,
               "head_leaves_housing_outline": false,
               "driver_leaves_housing_outline": false,
               "driver_switch_body": false,
               "driver_component": false,
+              "driver_battery_body": false,
+              "driver_power_switch_body": false,
+              "driver_power_switch_actuator_sweep": false,
               "driver_routed_copper_or_via": false,
               "right_split_feature": false,
               "part_assignment": false
@@ -2268,11 +3008,22 @@
               "support_land_leaves_support_surface": false,
               "support_land_component_cutout": false,
               "support_land_existing_support": false,
+              "support_land_existing_support_reserve": false,
+              "head_existing_support_reserve": false,
+              "head_support_post_reserve": false,
+              "head_analytical_rail_reserve": false,
+              "head_installed_component_reserve": false,
+              "head_routed_copper_or_via_reserve": false,
+              "head_board_edge_reserve": false,
+              "head_housing_edge_reserve": false,
               "pilot_component_cutout": false,
               "head_leaves_housing_outline": false,
               "driver_leaves_housing_outline": false,
               "driver_switch_body": false,
               "driver_component": false,
+              "driver_battery_body": false,
+              "driver_power_switch_body": false,
+              "driver_power_switch_actuator_sweep": false,
               "driver_routed_copper_or_via": false,
               "right_split_feature": false,
               "part_assignment": false
@@ -2280,6 +3031,17 @@
             "geometry_collision_count": 0,
             "geometry_printable_part": "part_a",
             "geometry_board_feature_matches": true,
+            "geometry_support_land_to_existing_support_mm": 5.2869,
+            "geometry_head_to_existing_support_mm": 5.2869,
+            "geometry_head_to_support_posts_mm": 5.2869,
+            "geometry_head_to_analytical_rail_mm": 15.25,
+            "geometry_head_to_installed_component_mm": 0.2555,
+            "geometry_head_to_routed_copper_or_via_mm": 0.2553,
+            "geometry_head_to_board_edge_mm": 16.0,
+            "geometry_head_to_housing_edge_mm": 15.9,
+            "geometry_driver_to_battery_body_mm": 121.568,
+            "geometry_driver_to_power_switch_body_mm": 111.7981,
+            "geometry_driver_to_power_switch_actuator_sweep_mm": 110.6472,
             "step_pilot_open_at_z_2_49": true,
             "step_pilot_open_at_z_minus_0_25": true,
             "step_pilot_closed_at_z_minus_0_35": true,
@@ -2289,12 +3051,12 @@
           {
             "ref": "MH8",
             "board_center_mm": [
-              143.1875,
-              134.5
+              143.0875,
+              143.0
             ],
             "housing_center_mm": [
-              55.5,
-              95.25
+              55.6,
+              103.75
             ],
             "printable_part": "part_a",
             "pcb_npth_diameter_mm": 1.6,
@@ -2303,6 +3065,16 @@
             "support_land_annular_width_mm": 0.95,
             "support_land_top_z_mm": 2.5,
             "support_land_vertical_gap_mm": 0.0,
+            "support_land_to_existing_support_mm": 1.4697,
+            "head_to_existing_support_mm": 1.4697,
+            "head_to_support_posts_mm": 1.4697,
+            "head_to_analytical_rail_mm": 16.5,
+            "head_to_installed_component_mm": 0.2555,
+            "head_to_routed_copper_or_via_mm": 0.27,
+            "head_to_board_edge_mm": 17.25,
+            "head_to_housing_edge_mm": 17.15,
+            "head_reserve_mm": 0.25,
+            "minimum_unrelated_support_reserve_mm": 0.25,
             "desk_column_diameter_mm": 3.0,
             "desk_column_bottom_z_mm": -1.0,
             "pilot_diameter_mm": 1.1,
@@ -2319,20 +3091,34 @@
             ],
             "minimum_tip_clearance_mm": 0.24,
             "head_envelope_mm": [
-              2.0,
-              0.5
+              3.0,
+              1.2
             ],
             "driver_envelope_diameter_mm": 3.0,
+            "driver_to_battery_body_mm": 98.0385,
+            "driver_to_power_switch_body_mm": 88.212,
+            "driver_to_power_switch_actuator_sweep_mm": 87.442,
             "service_condition": "keycaps-off, switches-installed",
             "collision_checks": {
               "support_land_leaves_support_surface": false,
               "support_land_component_cutout": false,
               "support_land_existing_support": false,
+              "support_land_existing_support_reserve": false,
+              "head_existing_support_reserve": false,
+              "head_support_post_reserve": false,
+              "head_analytical_rail_reserve": false,
+              "head_installed_component_reserve": false,
+              "head_routed_copper_or_via_reserve": false,
+              "head_board_edge_reserve": false,
+              "head_housing_edge_reserve": false,
               "pilot_component_cutout": false,
               "head_leaves_housing_outline": false,
               "driver_leaves_housing_outline": false,
               "driver_switch_body": false,
               "driver_component": false,
+              "driver_battery_body": false,
+              "driver_power_switch_body": false,
+              "driver_power_switch_actuator_sweep": false,
               "driver_routed_copper_or_via": false,
               "right_split_feature": false,
               "part_assignment": false
@@ -2342,11 +3128,22 @@
               "support_land_leaves_support_surface": false,
               "support_land_component_cutout": false,
               "support_land_existing_support": false,
+              "support_land_existing_support_reserve": false,
+              "head_existing_support_reserve": false,
+              "head_support_post_reserve": false,
+              "head_analytical_rail_reserve": false,
+              "head_installed_component_reserve": false,
+              "head_routed_copper_or_via_reserve": false,
+              "head_board_edge_reserve": false,
+              "head_housing_edge_reserve": false,
               "pilot_component_cutout": false,
               "head_leaves_housing_outline": false,
               "driver_leaves_housing_outline": false,
               "driver_switch_body": false,
               "driver_component": false,
+              "driver_battery_body": false,
+              "driver_power_switch_body": false,
+              "driver_power_switch_actuator_sweep": false,
               "driver_routed_copper_or_via": false,
               "right_split_feature": false,
               "part_assignment": false
@@ -2354,6 +3151,17 @@
             "geometry_collision_count": 0,
             "geometry_printable_part": "part_a",
             "geometry_board_feature_matches": true,
+            "geometry_support_land_to_existing_support_mm": 1.4697,
+            "geometry_head_to_existing_support_mm": 1.4697,
+            "geometry_head_to_support_posts_mm": 1.4697,
+            "geometry_head_to_analytical_rail_mm": 16.5,
+            "geometry_head_to_installed_component_mm": 0.2555,
+            "geometry_head_to_routed_copper_or_via_mm": 0.27,
+            "geometry_head_to_board_edge_mm": 17.25,
+            "geometry_head_to_housing_edge_mm": 17.15,
+            "geometry_driver_to_battery_body_mm": 98.0385,
+            "geometry_driver_to_power_switch_body_mm": 88.212,
+            "geometry_driver_to_power_switch_actuator_sweep_mm": 87.442,
             "step_pilot_open_at_z_2_49": true,
             "step_pilot_open_at_z_minus_0_25": true,
             "step_pilot_closed_at_z_minus_0_35": true,
@@ -2363,12 +3171,12 @@
           {
             "ref": "MH9",
             "board_center_mm": [
-              51.6875,
-              144.0
+              66.8875,
+              153.4
             ],
             "housing_center_mm": [
-              147.0,
-              104.75
+              131.8,
+              114.15
             ],
             "printable_part": "part_b",
             "pcb_npth_diameter_mm": 1.6,
@@ -2377,6 +3185,16 @@
             "support_land_annular_width_mm": 0.95,
             "support_land_top_z_mm": 2.5,
             "support_land_vertical_gap_mm": 0.0,
+            "support_land_to_existing_support_mm": 5.3066,
+            "head_to_existing_support_mm": 5.3066,
+            "head_to_support_posts_mm": 5.3066,
+            "head_to_analytical_rail_mm": 6.1,
+            "head_to_installed_component_mm": 0.275,
+            "head_to_routed_copper_or_via_mm": 0.6426,
+            "head_to_board_edge_mm": 6.85,
+            "head_to_housing_edge_mm": 6.75,
+            "head_reserve_mm": 0.25,
+            "minimum_unrelated_support_reserve_mm": 0.25,
             "desk_column_diameter_mm": 3.0,
             "desk_column_bottom_z_mm": -1.0,
             "pilot_diameter_mm": 1.1,
@@ -2393,20 +3211,34 @@
             ],
             "minimum_tip_clearance_mm": 0.24,
             "head_envelope_mm": [
-              2.0,
-              0.5
+              3.0,
+              1.2
             ],
             "driver_envelope_diameter_mm": 3.0,
+            "driver_to_battery_body_mm": 95.15,
+            "driver_to_power_switch_body_mm": 89.9878,
+            "driver_to_power_switch_actuator_sweep_mm": 89.6091,
             "service_condition": "keycaps-off, switches-installed",
             "collision_checks": {
               "support_land_leaves_support_surface": false,
               "support_land_component_cutout": false,
               "support_land_existing_support": false,
+              "support_land_existing_support_reserve": false,
+              "head_existing_support_reserve": false,
+              "head_support_post_reserve": false,
+              "head_analytical_rail_reserve": false,
+              "head_installed_component_reserve": false,
+              "head_routed_copper_or_via_reserve": false,
+              "head_board_edge_reserve": false,
+              "head_housing_edge_reserve": false,
               "pilot_component_cutout": false,
               "head_leaves_housing_outline": false,
               "driver_leaves_housing_outline": false,
               "driver_switch_body": false,
               "driver_component": false,
+              "driver_battery_body": false,
+              "driver_power_switch_body": false,
+              "driver_power_switch_actuator_sweep": false,
               "driver_routed_copper_or_via": false,
               "right_split_feature": false,
               "part_assignment": false
@@ -2416,11 +3248,22 @@
               "support_land_leaves_support_surface": false,
               "support_land_component_cutout": false,
               "support_land_existing_support": false,
+              "support_land_existing_support_reserve": false,
+              "head_existing_support_reserve": false,
+              "head_support_post_reserve": false,
+              "head_analytical_rail_reserve": false,
+              "head_installed_component_reserve": false,
+              "head_routed_copper_or_via_reserve": false,
+              "head_board_edge_reserve": false,
+              "head_housing_edge_reserve": false,
               "pilot_component_cutout": false,
               "head_leaves_housing_outline": false,
               "driver_leaves_housing_outline": false,
               "driver_switch_body": false,
               "driver_component": false,
+              "driver_battery_body": false,
+              "driver_power_switch_body": false,
+              "driver_power_switch_actuator_sweep": false,
               "driver_routed_copper_or_via": false,
               "right_split_feature": false,
               "part_assignment": false
@@ -2428,6 +3271,17 @@
             "geometry_collision_count": 0,
             "geometry_printable_part": "part_b",
             "geometry_board_feature_matches": true,
+            "geometry_support_land_to_existing_support_mm": 5.3066,
+            "geometry_head_to_existing_support_mm": 5.3066,
+            "geometry_head_to_support_posts_mm": 5.3066,
+            "geometry_head_to_analytical_rail_mm": 6.1,
+            "geometry_head_to_installed_component_mm": 0.275,
+            "geometry_head_to_routed_copper_or_via_mm": 0.6426,
+            "geometry_head_to_board_edge_mm": 6.85,
+            "geometry_head_to_housing_edge_mm": 6.75,
+            "geometry_driver_to_battery_body_mm": 95.15,
+            "geometry_driver_to_power_switch_body_mm": 89.9878,
+            "geometry_driver_to_power_switch_actuator_sweep_mm": 89.6091,
             "step_pilot_open_at_z_2_49": true,
             "step_pilot_open_at_z_minus_0_25": true,
             "step_pilot_closed_at_z_minus_0_35": true,
@@ -2451,6 +3305,16 @@
             "support_land_annular_width_mm": 0.95,
             "support_land_top_z_mm": 2.5,
             "support_land_vertical_gap_mm": 0.0,
+            "support_land_to_existing_support_mm": 12.5,
+            "head_to_existing_support_mm": 12.5,
+            "head_to_support_posts_mm": 18.9754,
+            "head_to_analytical_rail_mm": 12.5,
+            "head_to_installed_component_mm": 2.525,
+            "head_to_routed_copper_or_via_mm": 0.2551,
+            "head_to_board_edge_mm": 13.25,
+            "head_to_housing_edge_mm": 13.15,
+            "head_reserve_mm": 0.25,
+            "minimum_unrelated_support_reserve_mm": 0.25,
             "desk_column_diameter_mm": 3.0,
             "desk_column_bottom_z_mm": -1.0,
             "pilot_diameter_mm": 1.1,
@@ -2467,20 +3331,34 @@
             ],
             "minimum_tip_clearance_mm": 0.24,
             "head_envelope_mm": [
-              2.0,
-              0.5
+              3.0,
+              1.2
             ],
             "driver_envelope_diameter_mm": 3.0,
+            "driver_to_battery_body_mm": 88.779,
+            "driver_to_power_switch_body_mm": 80.8,
+            "driver_to_power_switch_actuator_sweep_mm": 80.8,
             "service_condition": "keycaps-off, switches-installed",
             "collision_checks": {
               "support_land_leaves_support_surface": false,
               "support_land_component_cutout": false,
               "support_land_existing_support": false,
+              "support_land_existing_support_reserve": false,
+              "head_existing_support_reserve": false,
+              "head_support_post_reserve": false,
+              "head_analytical_rail_reserve": false,
+              "head_installed_component_reserve": false,
+              "head_routed_copper_or_via_reserve": false,
+              "head_board_edge_reserve": false,
+              "head_housing_edge_reserve": false,
               "pilot_component_cutout": false,
               "head_leaves_housing_outline": false,
               "driver_leaves_housing_outline": false,
               "driver_switch_body": false,
               "driver_component": false,
+              "driver_battery_body": false,
+              "driver_power_switch_body": false,
+              "driver_power_switch_actuator_sweep": false,
               "driver_routed_copper_or_via": false,
               "right_split_feature": false,
               "part_assignment": false
@@ -2490,11 +3368,22 @@
               "support_land_leaves_support_surface": false,
               "support_land_component_cutout": false,
               "support_land_existing_support": false,
+              "support_land_existing_support_reserve": false,
+              "head_existing_support_reserve": false,
+              "head_support_post_reserve": false,
+              "head_analytical_rail_reserve": false,
+              "head_installed_component_reserve": false,
+              "head_routed_copper_or_via_reserve": false,
+              "head_board_edge_reserve": false,
+              "head_housing_edge_reserve": false,
               "pilot_component_cutout": false,
               "head_leaves_housing_outline": false,
               "driver_leaves_housing_outline": false,
               "driver_switch_body": false,
               "driver_component": false,
+              "driver_battery_body": false,
+              "driver_power_switch_body": false,
+              "driver_power_switch_actuator_sweep": false,
               "driver_routed_copper_or_via": false,
               "right_split_feature": false,
               "part_assignment": false
@@ -2502,6 +3391,17 @@
             "geometry_collision_count": 0,
             "geometry_printable_part": "part_b",
             "geometry_board_feature_matches": true,
+            "geometry_support_land_to_existing_support_mm": 12.5,
+            "geometry_head_to_existing_support_mm": 12.5,
+            "geometry_head_to_support_posts_mm": 18.9754,
+            "geometry_head_to_analytical_rail_mm": 12.5,
+            "geometry_head_to_installed_component_mm": 2.525,
+            "geometry_head_to_routed_copper_or_via_mm": 0.2551,
+            "geometry_head_to_board_edge_mm": 13.25,
+            "geometry_head_to_housing_edge_mm": 13.15,
+            "geometry_driver_to_battery_body_mm": 88.779,
+            "geometry_driver_to_power_switch_body_mm": 80.8,
+            "geometry_driver_to_power_switch_actuator_sweep_mm": 80.8,
             "step_pilot_open_at_z_2_49": true,
             "step_pilot_open_at_z_minus_0_25": true,
             "step_pilot_closed_at_z_minus_0_35": true,
@@ -2509,6 +3409,23 @@
             "step_pilot_closed_at_z_minus_0_99": true
           }
         ],
+        "analytical_rail_relief": null,
+        "minimum_unrelated_support_reserve_mm": 0.25,
+        "service_body_envelopes": {
+          "battery_body_size_mm": [
+            30.0,
+            12.0
+          ],
+          "power_switch_body_size_mm": [
+            10.0,
+            2.5
+          ],
+          "power_switch_actuator_travel_mm": 1.6,
+          "power_switch_actuator_sweep_size_mm": [
+            13.2,
+            2.5
+          ]
+        },
         "part_distribution": {
           "part_b": 6,
           "part_a": 4
@@ -2526,7 +3443,30 @@
           "part_a": 4
         },
         "geometry_part_distribution_matches_plan": true,
-        "geometry_primary_support_load_span_unchanged": true
+        "geometry_primary_support_load_span_unchanged": true,
+        "geometry_fastener_head_style": "non_countersunk_rounded_pan_or_button",
+        "geometry_head_envelope_mm": [
+          3.0,
+          1.2
+        ],
+        "geometry_head_reserve_mm": 0.25,
+        "geometry_head_height_and_keycap_skirt_physical_status": "pending",
+        "geometry_analytical_rail_relief": null,
+        "geometry_service_body_envelopes": {
+          "battery_body_size_mm": [
+            30.0,
+            12.0
+          ],
+          "power_switch_body_size_mm": [
+            10.0,
+            2.5
+          ],
+          "power_switch_actuator_travel_mm": 1.6,
+          "power_switch_actuator_sweep_size_mm": [
+            13.2,
+            2.5
+          ]
+        }
       },
       "maximum_load_point_to_support_mm": 18.9619,
       "maximum_seam_load_point_to_support_mm": 2.85,
@@ -2893,11 +3833,11 @@
             ],
             [
               17.5,
-              46.25
+              103.75
             ],
             [
-              17.5,
-              95.25
+              17.6,
+              46.25
             ],
             [
               33.5525,
@@ -2908,12 +3848,12 @@
               85.781
             ],
             [
-              51.0,
-              54.25
+              42.5,
+              47.75
             ],
             [
-              55.5,
-              95.25
+              55.6,
+              103.75
             ],
             [
               59.175,
@@ -2935,11 +3875,11 @@
             ],
             [
               17.5,
-              46.25
+              103.75
             ],
             [
-              17.5,
-              95.25
+              17.6,
+              46.25
             ],
             [
               33.5525,
@@ -2950,12 +3890,12 @@
               85.781
             ],
             [
-              51.0,
-              54.25
+              42.5,
+              47.75
             ],
             [
-              55.5,
-              95.25
+              55.6,
+              103.75
             ],
             [
               59.175,
@@ -3031,7 +3971,7 @@
           "expected_desk_contact_centers_mm": [
             [
               89.0,
-              57.25
+              65.55
             ],
             [
               103.0,
@@ -3055,7 +3995,7 @@
             ],
             [
               127.0,
-              28.75
+              28.65
             ],
             [
               127.0,
@@ -3070,18 +4010,18 @@
               106.475
             ],
             [
-              147.0,
-              104.75
+              131.8,
+              114.15
             ],
             [
-              156.5,
-              66.75
+              136.6,
+              30.05
             ]
           ],
           "actual_desk_contact_centers_mm": [
             [
               89.0,
-              57.25
+              65.55
             ],
             [
               103.0,
@@ -3105,7 +4045,7 @@
             ],
             [
               127.0,
-              28.75
+              28.65
             ],
             [
               127.0,
@@ -3120,12 +4060,12 @@
               106.475
             ],
             [
-              147.0,
-              104.75
+              131.8,
+              114.15
             ],
             [
-              156.5,
-              66.75
+              136.6,
+              30.05
             ]
           ],
           "desk_contact_z_mm": -1.0,
@@ -3184,6 +4124,6 @@
     "maximum_displacement_mm": 0.3
   },
   "fabrication_or_order_ready": false,
-  "order_readiness_blocker": "CON-ARCH-006 AC-7 physical coupon evidence is pending: exact screw MPN and drawing; minimum and maximum head diameter and height; maximum finished PCB-hole diameter and minimum radial bearing width or equivalent pull-through/clamp-retention evidence; exact driver MPN, maximum shaft diameter, and runout; printed pilot diameter, actual PCB thickness, installed penetration, and tip clearance; tapping torque, stripping torque with at least 2.0 ratio and 3.0 target, and selected installation torque; ten install/remove cycles without cracking, spin, or pull-out; full-pattern assembly without sequential forcing; actual installed switch and keycap-skirt clearance; and a 2.0 N deflection test at every worst-case support span with no more than 0.30 mm displacement, rocking, permanent deformation, support disengagement, or fastener loosening. CON-ARCH-006 AC-11 controller-service physical evidence is also pending: exact reset supplier Z/travel/force/reflow limits, actual socketed-controller and nonconductive-probe service, USB shell/cable clearance, ten successful double-reset cycles and bootloader enumeration, plus exact protected-pack MPN, maximum swollen thickness, socket/controller stack clearance, insulation, lead bend, strain relief, J_BAT1/IMMS solder protrusion, and actual POWER/RESET access. REL-ARCH-001 AC-3/4/5 evidence is also pending: 20 cold OFF-to-ON and 20 ON-to-OFF transitions at each required pack voltage, final-assembly RSSI and packet-loss/disconnect A/B limits, and battery-only, USB charging, charge-complete, and USB-unplug state coverage.",
+  "order_readiness_blocker": "CON-ARCH-006 AC-7 physical coupon evidence is pending: exact screw MPN and drawing; minimum and maximum head diameter and height; maximum finished PCB-hole diameter and minimum radial bearing width or equivalent pull-through/clamp-retention evidence; confirmation that the provisional 3.00 x 1.20 mm non-countersunk rounded pan/button head envelope bounds the selected part; exact driver MPN, maximum shaft diameter, and runout; printed pilot diameter, actual PCB thickness, installed penetration, and tip clearance; tapping torque, stripping torque with at least 2.0 ratio and 3.0 target, and selected installation torque; ten install/remove cycles without cracking, spin, or pull-out; full-pattern assembly without sequential forcing; actual installed switch and keycap-skirt rest/full-travel clearance under the measured head height; and a 2.0 N deflection test at every worst-case support span with no more than 0.30 mm displacement, rocking, permanent deformation, support disengagement, or fastener loosening. CON-ARCH-006 AC-11 controller-service physical evidence is also pending: exact reset supplier Z/travel/force/reflow limits, actual socketed-controller and nonconductive-probe service, USB shell/cable clearance, ten successful double-reset cycles and bootloader enumeration, plus exact protected-pack MPN, maximum swollen thickness, socket/controller stack clearance, insulation, lead bend, strain relief, J_BAT1/IMMS solder protrusion, and actual POWER/RESET access. REL-ARCH-001 AC-3/4/5 evidence is also pending: 20 cold OFF-to-ON and 20 ON-to-OFF transitions at each required pack voltage, final-assembly RSSI and packet-loss/disconnect A/B limits, and battery-only, USB charging, charge-complete, and USB-unplug state coverage.",
   "stale_monolithic_right_stl_present": false
 }

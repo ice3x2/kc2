@@ -1,0 +1,295 @@
+{
+  "schema": "kc2-x3-v2-render-evidence-v1",
+  "requirement_ids": [
+    "CON-ARCH-006",
+    "CON-ARCH-007"
+  ],
+  "variant": "x3-v2",
+  "hash_policy": "lf-normalized-utf8-text-else-raw-v1",
+  "renderer": {
+    "path": "tools/render_kc2_x3_joined.py",
+    "canonical_sha256": "d72e170da1149a29aa919c9a2ce16245343271c0f9bbff41ec88b83a0608fec1"
+  },
+  "render_parameters": {
+    "clearance_mm": 1.0,
+    "scale_px_per_mm": 5.0,
+    "placement_mode": "key-pitch",
+    "full_margin_px": 40.0,
+    "zoom_width_mm": 64.0
+  },
+  "source_boards": {
+    "left": {
+      "path": "hardware/kicad/draft/x3-v2/kc2_left-x3-v2/kc2_left-x3-v2.kicad_pcb",
+      "canonical_sha256": "7f629b7f48c7432ddc34429b12d7883a2fd1389a40187b2eeb93d549fba1be6d"
+    },
+    "right": {
+      "path": "hardware/kicad/draft/x3-v2/kc2_right-x3-v2/kc2_right-x3-v2.kicad_pcb",
+      "canonical_sha256": "4500956acec4e9f8ada2da285d9fad6c6accad5263da9128d0a14d300af3209c"
+    }
+  },
+  "service_reference_counts": {
+    "left": {
+      "BAT1": 1,
+      "J_BAT1": 1,
+      "SW_PWR1": 1,
+      "SW_RST1": 1
+    },
+    "right": {
+      "BAT1": 1,
+      "J_BAT1": 1,
+      "SW_PWR1": 1,
+      "SW_RST1": 1
+    }
+  },
+  "mount_reference_counts": {
+    "left": 8,
+    "right": 10
+  },
+  "mount_centers_mm": {
+    "left": {
+      "MH1": [
+        142.6125,
+        67.9
+      ],
+      "MH2": [
+        128.6125,
+        86.5
+      ],
+      "MH3": [
+        108.5125,
+        87.0
+      ],
+      "MH4": [
+        57.4125,
+        99.0
+      ],
+      "MH5": [
+        124.7125,
+        125.1
+      ],
+      "MH6": [
+        55.1125,
+        144.0
+      ],
+      "MH7": [
+        165.6125,
+        145.0
+      ],
+      "MH8": [
+        102.6125,
+        147.0
+      ]
+    },
+    "right": {
+      "MH1": [
+        71.6875,
+        67.9
+      ],
+      "MH10": [
+        95.6875,
+        147.0
+      ],
+      "MH2": [
+        181.0875,
+        85.5
+      ],
+      "MH3": [
+        156.1875,
+        87.0
+      ],
+      "MH4": [
+        109.6875,
+        104.8
+      ],
+      "MH5": [
+        71.6875,
+        105.5
+      ],
+      "MH6": [
+        62.0875,
+        69.3
+      ],
+      "MH7": [
+        181.1875,
+        143.0
+      ],
+      "MH8": [
+        143.0875,
+        143.0
+      ],
+      "MH9": [
+        66.8875,
+        153.4
+      ]
+    }
+  },
+  "battery_terminal_legend_counts": {
+    "left": {
+      "B+": 1,
+      "B-/GND": 1
+    },
+    "right": {
+      "B+": 1,
+      "B-/GND": 1
+    }
+  },
+  "semantic_contract": "SVG service-component, battery-terminal-legend, and mounting-hole groups are recomputed from exact board references, positions, footprint bounds, rotations, visible F.Silkscreen B+/B-/GND text, and joined transforms; PNGs must regenerate byte-identically from the same RenderContext.",
+  "outputs": {
+    "joined_top_svg": {
+      "path": "hardware/kicad/draft/x3-v2/renders/kc2_x3_v2_joined_top.svg",
+      "media_type": "image/svg+xml",
+      "zoom": false,
+      "width_px": 1522,
+      "height_px": 692,
+      "deterministic_regeneration": true,
+      "service_reference_counts": {
+        "left": {
+          "BAT1": 1,
+          "J_BAT1": 1,
+          "SW_PWR1": 1,
+          "SW_RST1": 1
+        },
+        "right": {
+          "BAT1": 1,
+          "J_BAT1": 1,
+          "SW_PWR1": 1,
+          "SW_RST1": 1
+        }
+      },
+      "mount_reference_counts": {
+        "left": 8,
+        "right": 10
+      },
+      "battery_terminal_legend_counts": {
+        "left": {
+          "B+": 1,
+          "B-/GND": 1
+        },
+        "right": {
+          "B+": 1,
+          "B-/GND": 1
+        }
+      },
+      "digest_mode": "canonical_text",
+      "canonical_sha256": "618e2f2d1f524002a7b478a264852d88e6918cac6d9237f1bd9163e3d631ea31",
+      "regenerated_canonical_sha256": "618e2f2d1f524002a7b478a264852d88e6918cac6d9237f1bd9163e3d631ea31"
+    },
+    "join_seam_zoom_svg": {
+      "path": "hardware/kicad/draft/x3-v2/renders/kc2_x3_v2_join_seam_zoom.svg",
+      "media_type": "image/svg+xml",
+      "zoom": true,
+      "width_px": 320,
+      "height_px": 692,
+      "deterministic_regeneration": true,
+      "service_reference_counts": {
+        "left": {
+          "BAT1": 1,
+          "J_BAT1": 1,
+          "SW_PWR1": 1,
+          "SW_RST1": 1
+        },
+        "right": {
+          "BAT1": 1,
+          "J_BAT1": 1,
+          "SW_PWR1": 1,
+          "SW_RST1": 1
+        }
+      },
+      "mount_reference_counts": {
+        "left": 8,
+        "right": 10
+      },
+      "battery_terminal_legend_counts": {
+        "left": {
+          "B+": 1,
+          "B-/GND": 1
+        },
+        "right": {
+          "B+": 1,
+          "B-/GND": 1
+        }
+      },
+      "digest_mode": "canonical_text",
+      "canonical_sha256": "3a296b9da65dabce6b174005db4c544e75767a8e2f5daac52ff8b5681951355b",
+      "regenerated_canonical_sha256": "3a296b9da65dabce6b174005db4c544e75767a8e2f5daac52ff8b5681951355b"
+    },
+    "joined_top_png": {
+      "path": "hardware/kicad/draft/x3-v2/renders/kc2_x3_v2_joined_top.png",
+      "media_type": "image/png",
+      "zoom": false,
+      "width_px": 1522,
+      "height_px": 692,
+      "deterministic_regeneration": true,
+      "service_reference_counts": {
+        "left": {
+          "BAT1": 1,
+          "J_BAT1": 1,
+          "SW_PWR1": 1,
+          "SW_RST1": 1
+        },
+        "right": {
+          "BAT1": 1,
+          "J_BAT1": 1,
+          "SW_PWR1": 1,
+          "SW_RST1": 1
+        }
+      },
+      "mount_reference_counts": {
+        "left": 8,
+        "right": 10
+      },
+      "battery_terminal_legend_counts": {
+        "left": {
+          "B+": 1,
+          "B-/GND": 1
+        },
+        "right": {
+          "B+": 1,
+          "B-/GND": 1
+        }
+      },
+      "digest_mode": "raw_binary",
+      "raw_sha256": "54cbedcc6415edad0d946e1e00b5a2c91280ba98747aa4d80605bf216c0e19f2",
+      "regenerated_raw_sha256": "54cbedcc6415edad0d946e1e00b5a2c91280ba98747aa4d80605bf216c0e19f2"
+    },
+    "join_seam_zoom_png": {
+      "path": "hardware/kicad/draft/x3-v2/renders/kc2_x3_v2_join_seam_zoom.png",
+      "media_type": "image/png",
+      "zoom": true,
+      "width_px": 320,
+      "height_px": 692,
+      "deterministic_regeneration": true,
+      "service_reference_counts": {
+        "left": {
+          "BAT1": 1,
+          "J_BAT1": 1,
+          "SW_PWR1": 1,
+          "SW_RST1": 1
+        },
+        "right": {
+          "BAT1": 1,
+          "J_BAT1": 1,
+          "SW_PWR1": 1,
+          "SW_RST1": 1
+        }
+      },
+      "mount_reference_counts": {
+        "left": 8,
+        "right": 10
+      },
+      "battery_terminal_legend_counts": {
+        "left": {
+          "B+": 1,
+          "B-/GND": 1
+        },
+        "right": {
+          "B+": 1,
+          "B-/GND": 1
+        }
+      },
+      "digest_mode": "raw_binary",
+      "raw_sha256": "180249af9f04b29bdd0a4f2fa5ad956b3fc9c0eab2379eaa5ef260c14ee4eb3b",
+      "regenerated_raw_sha256": "180249af9f04b29bdd0a4f2fa5ad956b3fc9c0eab2379eaa5ef260c14ee4eb3b"
+    }
+  }
+}

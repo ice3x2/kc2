@@ -309,15 +309,17 @@ class V2CouponTests(unittest.TestCase):
         )
         con_arch_004 = srs.split("### CON-ARCH-004", 1)[1].split("\n### ", 1)[0]
         con_arch_006 = srs.split("### CON-ARCH-006", 1)[1].split("\n### ", 1)[0]
-        for acceptance_criterion in ("AC-7", "AC-11"):
+        for acceptance_criterion in ("AC-11",):
             self.assertIn(f"- [x] {acceptance_criterion}:", con_arch_004)
-        for acceptance_criterion in ("AC-8", "AC-9", "AC-10"):
+        for acceptance_criterion in ("AC-2", "AC-7", "AC-8", "AC-9", "AC-10"):
             self.assertIn(f"- [ ] {acceptance_criterion}:", con_arch_004)
         for acceptance_criterion in ("AC-4", "AC-5", "AC-6", "AC-7", "AC-8", "AC-9", "AC-10"):
             self.assertIn(f"- [ ] {acceptance_criterion}:", con_arch_006)
         self.assertIn("Thirteen focused coupon tests pass", con_arch_004)
         self.assertIn(COUPON_EVIDENCE_NAME, con_arch_004)
-        self.assertIn("Seventeen focused housing tests pass", con_arch_006)
+        self.assertIn("29/29 housing tests", con_arch_006)
+        self.assertNotIn("Twenty-five focused housing tests pass", con_arch_006)
+        self.assertNotIn("Seventeen focused housing tests pass", con_arch_006)
         self.assertNotIn("Fourteen focused housing tests pass", con_arch_006)
         self.assertNotIn("Twelve focused housing tests pass", srs)
 

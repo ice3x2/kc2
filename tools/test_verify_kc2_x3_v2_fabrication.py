@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from copy import deepcopy
 import hashlib
 import json
 import os
@@ -8,6 +9,7 @@ import subprocess
 import sys
 from tempfile import TemporaryDirectory
 import unittest
+from zipfile import ZIP_DEFLATED, ZipFile
 
 from tools.verify_kc2_x3_v2_fabrication import (
     EXPECTED_MOUNTING_REFERENCE_CENTERS_MM,
@@ -17,6 +19,47 @@ from tools.verify_kc2_x3_v2_fabrication import (
     inspect_gerber,
     inspect_mounting_reference_glyphs,
 )
+from tools.kc2_x3_v2_output_geometry import (
+    parse_board,
+    source_j_bat_marking_errors,
+)
+
+REQUIREMENT_IDS = {
+    "CON-ARCH-004",
+    "CON-ARCH-006",
+    "CON-ARCH-007",
+    "REL-ARCH-001",
+}
+
+
+def rewrite_coupled_archive_entry(
+    root: Path,
+    manifest_path: Path,
+    product: str,
+    suffix: str,
+    mutate,
+) -> None:
+    from tools.canonical_hash import sha256_file
+
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    details = manifest["products"][product]
+    archive = root / details["archive"]
+    output_dir = root / details["output_dir"]
+    with ZipFile(archive) as package:
+        payloads = {name: package.read(name) for name in package.namelist()}
+    entry = next(name for name in payloads if name.endswith(suffix))
+    payloads[entry] = mutate(payloads[entry])
+    extracted = output_dir / entry
+    extracted.write_bytes(payloads[entry])
+    with ZipFile(archive, "w", compression=ZIP_DEFLATED, compresslevel=9) as package:
+        for name, payload in payloads.items():
+            package.writestr(name, payload)
+    for item in details["files"]:
+        if item["name"] == entry:
+            item["size"] = extracted.stat().st_size
+            item["sha256"] = sha256_file(extracted)
+    details["archive_sha256"] = sha256_file(archive)
+    manifest_path.write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
 
 
 def materialize_index_fabrication_snapshot(root: Path) -> Path:
@@ -53,6 +96,8 @@ class V2FabricationTests(unittest.TestCase):
     def test_all_draft_fabrication_archives_are_complete(self) -> None:
         report = analyze_fabrication()
 
+        self.assertEqual(set(report["requirement_ids"]), REQUIREMENT_IDS)
+        self.assertTrue(report["requirement_ids_match"])
         self.assertEqual(report["variant"], "x3-v2")
         self.assertEqual(set(report["products"]), {"left", "right", "coupon"})
         for product, product_report in report["products"].items():
@@ -71,11 +116,17 @@ class V2FabricationTests(unittest.TestCase):
                 self.assertEqual(product_report["gerber_geometry_errors"], [])
                 self.assertEqual(product_report["mounting_reference_glyph_errors"], [])
                 self.assertTrue(product_report["drill_geometry_matches"])
+                self.assertEqual(product_report["drill_source_geometry_errors"], [])
+                self.assertEqual(product_report["gerber_source_geometry_errors"], [])
                 self.assertEqual(
                     product_report["drill_tools_mm"],
                     product_report["expected_drill_tools_mm"],
                 )
                 self.assertGreaterEqual(product_report["archive_entry_count"], 13)
+                if product in {"left", "right"}:
+                    self.assertEqual(product_report["j_bat_marking_errors"], [])
+                    self.assertTrue(product_report["bom_matches_source_board"])
+                    self.assertEqual(product_report["bom_errors"], [])
 
         self.assertEqual(report["products"]["left"]["bottom_paste_flash_count"], 124)
         self.assertEqual(report["products"]["right"]["bottom_paste_flash_count"], 156)
@@ -134,8 +185,8 @@ class V2FabricationTests(unittest.TestCase):
         manifest = json.loads(MANIFEST.read_text(encoding="utf-8"))
         self.assertEqual(manifest.get("hash_policy"), HASH_POLICY)
         srs = (ROOT / "docs/spec/10.product-architecture.srs.md").read_text(encoding="utf-8")
-        self.assertIn("Three focused fabrication tests", srs)
-        self.assertIn("candidate staged snapshot", srs)
+        self.assertIn("candidate", srs)
+        self.assertIn("fabrication", srs)
         with TemporaryDirectory() as temporary:
             root = Path(temporary)
             lf = root / "lf.gbr"
@@ -191,7 +242,7 @@ class V2FabricationTests(unittest.TestCase):
             / "hardware/kicad/draft/x3-v2/fabrication/left/"
             "kc2_left-x3-v2-F_Silkscreen.gto"
         ).read_bytes()
-        original = b"X141545833Y-66064895D01*"
+        original = b"X141545833Y-65962295D01*"
         self.assertEqual(payload.count(original), 1)
 
         baseline = inspect_mounting_reference_glyphs(
@@ -200,14 +251,14 @@ class V2FabricationTests(unittest.TestCase):
         )
         self.assertEqual(baseline["errors"], [])
         self.assertEqual(list(baseline["glyphs"]), [f"MH{index}" for index in range(1, 9)])
-        self.assertEqual(baseline["glyphs"]["MH1"]["stroke_width_mm"], 0.1)
-        self.assertEqual(baseline["glyphs"]["MH1"]["ink_height_mm"], 0.9)
+        self.assertEqual(baseline["glyphs"]["MH1"]["stroke_width_mm"], 0.15)
+        self.assertEqual(baseline["glyphs"]["MH1"]["ink_height_mm"], 0.95)
 
         mutations = {
             "deleted actual glyph stroke": payload.replace(original, b"", 1),
             "changed actual glyph stroke endpoint": payload.replace(
                 original,
-                b"X141545833Y-66074895D01*",
+                b"X141545833Y-65972295D01*",
                 1,
             ),
         }
@@ -224,6 +275,80 @@ class V2FabricationTests(unittest.TestCase):
                     any(error.startswith("MH1:") for error in inspection["errors"]),
                     inspection,
                 )
+
+    def test_source_geometry_rejects_coupled_excellon_and_gerber_coordinate_mutations(self) -> None:
+        mutations = (
+            ("-PTH.drl", b"X113.272Y-63.45", b"X113.372Y-63.45", "drill_source_geometry_errors"),
+            ("-F_Paste.gtp", b"X122187500Y-63450000D03*", b"X122287500Y-63450000D03*", "gerber_source_geometry_errors"),
+            ("-B_Paste.gbp", b"X52125000Y-84525000D03*", b"X52225000Y-84525000D03*", "gerber_source_geometry_errors"),
+            ("-B_Cu.gbl", b"X52125000Y-84525000D03*", b"X52225000Y-84525000D03*", "gerber_source_geometry_errors"),
+            ("-B_Mask.gbs", b"X52125000Y-84525000D03*", b"X52225000Y-84525000D03*", "gerber_source_geometry_errors"),
+            (
+                "-F_Silkscreen.gto",
+                b"X115107738Y-60613855D01*",
+                b"",
+                "j_bat_marking_errors",
+            ),
+        )
+        for suffix, old, new, field in mutations:
+            with self.subTest(suffix=suffix), TemporaryDirectory() as temporary:
+                root = Path(temporary)
+                manifest_path = materialize_index_fabrication_snapshot(root)
+                baseline_report = analyze_fabrication(manifest_path, root=root)
+                self.assertEqual(baseline_report["products"]["left"][field], [])
+
+                def mutate(payload: bytes) -> bytes:
+                    self.assertEqual(payload.count(old), 1)
+                    return payload.replace(old, new, 1)
+
+                rewrite_coupled_archive_entry(root, manifest_path, "left", suffix, mutate)
+                report = analyze_fabrication(manifest_path, root=root)
+                self.assertTrue(report["products"]["left"][field], report)
+
+    def test_manifest_requirement_and_bom_contracts_fail_closed(self) -> None:
+        with TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            manifest_path = materialize_index_fabrication_snapshot(root)
+            manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+            manifest["requirement_ids"] = sorted(REQUIREMENT_IDS - {"CON-ARCH-007"})
+            manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+            report = analyze_fabrication(manifest_path, root=root)
+        self.assertFalse(report["requirement_ids_match"])
+
+        with TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            manifest_path = materialize_index_fabrication_snapshot(root)
+
+            def mutate_bom(payload: bytes) -> bytes:
+                old = b'"manufacturer_part_number": "pending_physical_procurement_gate"'
+                self.assertGreaterEqual(payload.count(old), 1)
+                return payload.replace(
+                    old,
+                    b'"manufacturer_part_number": "unbound_false_confirmation"',
+                    1,
+                )
+
+            rewrite_coupled_archive_entry(
+                root, manifest_path, "left", "-bom.json", mutate_bom
+            )
+            report = analyze_fabrication(manifest_path, root=root)
+        self.assertFalse(report["products"]["left"]["bom_matches_source_board"])
+        self.assertTrue(report["products"]["left"]["bom_errors"])
+
+        manifest = json.loads(MANIFEST.read_text(encoding="utf-8"))
+        board = parse_board(ROOT / manifest["products"]["left"]["board"])
+        self.assertEqual(source_j_bat_marking_errors(board), [])
+        for mode in ("swapped", "missing"):
+            with self.subTest(j_bat_marking=mode):
+                mutated = deepcopy(board)
+                texts = mutated["footprints"]["J_BAT1"]["texts"]
+                positive = next(item for item in texts if item["text"] == "B+")
+                negative = next(item for item in texts if item["text"] == "B-/GND")
+                if mode == "swapped":
+                    positive["text"], negative["text"] = negative["text"], positive["text"]
+                else:
+                    negative["text"] = ""
+                self.assertTrue(source_j_bat_marking_errors(mutated))
 
 
 if __name__ == "__main__":

@@ -23,7 +23,7 @@ KC2는 KC1 핸드와이어링 키보드의 배열 철학과 결합/분리 사용
 - 스위치 footprint 기준: 일반 KC2 footprint는 다중 호환 hole/pad pattern을 목표로 하되, 더 좁은 variant별 SRS requirement가 있으면 그 요구사항을 우선한다.
 - 큰 키: 현재 X3 no-stabilizer layout은 `>=2u` 키를 모두 분할하므로 stabilizer footprint를 생성하지 않는다. stabilizer가 필요한 별도 layout은 실물 체결 검증 전 generic/MX-style placeholder hole로 발주하지 않는다.
 - 프로그래밍용 택트 스위치: 디바이스마트 상품번호 1322056 `NW3-A06-B3`, SMD micro tact switch, 6.1 mm x 3.7 mm급 body, 2.55 mm급 높이
-- 전원 스위치: `kc2-x3-v2`의 각 half에 IMMS-12V 1개를 둔다. Top/component-side view에서 USB 바깥쪽부터 POWER, RESET, antenna 순서이며, 절대 좌→우 순서는 왼쪽 `PWR|RST`, 오른쪽 `RST|PWR`이다.
+- 전원 스위치: `kc2-x3-v2`의 각 half에 IMMS-12V 형상 후보 1개를 둔다. `IMMS-12V`와 `BSI-10` 명칭은 동일 제조품임이 확인된 것으로 간주하지 않으며, exact manufacturer/MPN/drawing 또는 incoming inspection이 물리 gate로 남는다. Top/component-side view에서 USB 바깥쪽부터 POWER, RESET, antenna 순서이며, 절대 좌→우 순서는 왼쪽 `PWR|RST`, 오른쪽 `RST|PWR`이다.
 - 보강판: 없음
 - 하우징: 상부 하우징 없음. 3D 프린터 하부 바닥판을 사용한다.
 - PCB 수량: 좌우 독립 PCB 2장
@@ -32,7 +32,7 @@ KC2는 KC1 핸드와이어링 키보드의 배열 철학과 결합/분리 사용
 
 이 절의 promoted main path와 fabrication ZIP은 검증된 historical `kc2-x3` 전용이다. 활성 `kc2-x3-v2`는 `hardware/kicad/draft/x3-v2/`에 있으며, promoted X3 Gerber/ZIP이나 주문 가능 판정을 V2 증거로 사용할 수 없다. V2의 디지털 PCB 검증은 통과했지만 `CON-ARCH-004`, `CON-ARCH-006`, `CON-ARCH-007`, `REL-ARCH-001`의 물리 gate가 남아 있으므로 **ORDER READY: NO**이다.
 
-2026-08-29 기준 V2 fabrication, 1:1 mechanical, housing STEP/STL, joined SVG/PNG 산출물은 현재 좌우 보드 SHA-256 `90430a97aa2e13dbf8325525f9841b60e0b64d058406dd218162970b01f8e6f6` / `a6a49f8875e506064ce4bf9e11839b4d932d326ee271fcf4b6bf863c8270b374`에 맞춰 재생성했다. 전용 verifier가 통과했고 joined render는 최소 Edge.Cuts clearance `1.1000 mm`, cross-seam keycap gap `1.8000 mm`를 기록한다. 이는 디지털 증거이며 주문 승인은 아니다. 활성 V2 실행 gate는 `tools.verify_kc2_x3_v2`와 V2 전용 fabrication/mechanical/housing verifier이다. `kc2-pcb-preflight` skill의 부품별·회로별 review workflow는 추가 감사에 적용하되, 번들 CLI는 historical `--variant x3`만 지원하므로 그 `ORDER READY` 결과를 V2 근거로 사용할 수 없다.
+2026-08-29 기준 V2 fabrication, 1:1 mechanical, housing STEP/STL, joined SVG/PNG 산출물은 현재 둥근머리 P1 좌우 보드 SHA-256 `7f629b7f48c7432ddc34429b12d7883a2fd1389a40187b2eeb93d549fba1be6d` / `4500956acec4e9f8ada2da285d9fad6c6accad5263da9128d0a14d300af3209c`에 맞춰 재생성했다. 전용 verifier가 통과했고 joined render는 최소 Edge.Cuts clearance `1.1000 mm`, cross-seam keycap gap `1.8000 mm`를 기록한다. 이는 디지털 증거이며 주문 승인은 아니다. 활성 V2 실행 gate는 `tools.verify_kc2_x3_v2`와 V2 전용 fabrication/mechanical/housing verifier이다. `kc2-pcb-preflight` skill의 부품별·회로별 review workflow는 추가 감사에 적용하되, 번들 CLI는 historical `--variant x3`만 지원하므로 그 `ORDER READY` 결과를 V2 근거로 사용할 수 없다.
 
 Historical KC2 X3 main PCB는 좌우 독립 PCB 2장이므로 PCB 제조사 제출 파일도 좌/우를 분리해서 다룬다. `hardware/kicad/fabrication/kc2_fabrication.zip`처럼 좌/우 산출물을 함께 담은 합본 ZIP은 저장소 내부 검증/보관용 묶음이며, JLCPCB 같은 제조사에 단일 비패널 PCB 주문으로 그대로 제출하지 않는다.
 
@@ -72,7 +72,7 @@ KC1과의 관계는 배열 철학과 사용성의 계승이며, KC2의 하드웨
 - PCB 아래에는 3D 프린터로 제작한 하부 바닥판을 둔다.
 - PCB가 전기 회로이자 variant별 switch footprint, socket, 또는 solder joint의 기준 구조물이다.
 - 키스위치 고정/실장 방식은 variant별 SRS requirement를 따른다. 현재 주문 가능한 historical X3는 기존 Choc V1 중심 footprint를 유지하고, 디지털 검증만 통과한 `kc2-x3-v2` draft는 `CON-ARCH-004`에 따라 Choc V2 bottom-side socket assembly와 MX 5-pin direct-solder assembly만 허용한다.
-- 디지털 검증만 통과한 `kc2-x3-v2` draft는 `CON-ARCH-006`의 조건부 M1.4 retention prototype을 사용한다. PCB에는 좌 8개/우 10개의 `1.60 mm` copper-free NPTH가 있고, 2.50 mm 하우징에는 해당 위치의 zero-gap land/desk column과 `1.10 x 2.80 mm` blind pilot가 있다. 기존 14/11 분산 지지대가 주 하중 경로이며, exact screw/driver, full-pattern fit, torque/repeat cycle, keycap skirt, 2 N deflection 실측 전에는 주문할 수 없다.
+- 디지털 검증만 통과한 `kc2-x3-v2` draft는 `CON-ARCH-006`의 조건부 M1.4 retention prototype을 사용한다. PCB에는 좌 8개/우 10개의 `1.60 mm` copper-free NPTH가 있고, 2.50 mm 하우징에는 해당 위치의 zero-gap land/desk column과 `1.10 x 2.80 mm` blind pilot가 있다. 사용자가 선택한 나사 머리는 접시/저두형이 아닌 둥근 pan/button 형상이며, exact MPN 도면 전까지 최대 `3.00 x 1.20 mm` 포락선과 별도 `0.25 mm` 조립 여유를 적용한다. 기존 14/11 분산 지지대가 주 하중 경로이며, exact screw/driver, full-pattern fit, torque/repeat cycle, keycap skirt, 2 N deflection 실측 전에는 주문할 수 없다.
 - stabilizer가 필요한 별도 layout의 큰 키 stabilizer는 plate-mounted가 아니라, 무보강판에서 실제로 고정되는 PCB-mounted/PCB-retained 방식을 사용한다.
 - PCB 외곽선은 키 배열, 결합부, controller 돌출부, USB-C 접근 방향을 따라 최대한 타이트하게 잡는다.
 - 실리콘 feet는 PCB가 아니라 3D 프린터 하부 바닥판 아래에 부착한다.
@@ -368,7 +368,7 @@ Row 5: Ctrl GUI Alt Fn Space     |  B  Space RAlt Fn RCtrl Left Down Right
 - 현재 main PCB는 기존 `x3` 변형을 승격한 no-stabilizer layout 개선판이다.
 - `x3` 변형은 switch footprint, diode footprint, diode y offset을 `x2`와 동일하게 유지하되, preflight copper-edge clearance를 위해 상단 outline relief는 왼쪽 half 0.3 mm, 오른쪽 half 0.6 mm를 사용한다.
 - `x3` 변형은 `docs/spec/20.kc2-no-stabilizer-layout.md`의 77-key layout을 사용하며, 물리 키 최대 폭은 `1.75u`이다.
-- SpecKiwi SRS source of truth: `docs/spec/10.product-architecture.srs.md`의 `CON-ARCH-004`가 `kc2-x3-v2` switch-footprint requirement를 정의한다. 요약: 디지털 구현/검증은 통과했지만 물리 검증은 남은 별도 V2 board이며, Choc V2/PG1353-class low-profile switch는 bottom-side Choc hot-swap socket으로만 지원하고 Cherry MX-style switch는 5-pin PCB-mount through-hole direct-solder로만 지원한다. Promoted historical X3 경로나 물리 coupon 실장 증거 없는 V2는 주문 가능 상태가 아니다.
+- SpecKiwi SRS source of truth: `docs/spec/10.product-architecture.srs.md`의 `CON-ARCH-004`가 `kc2-x3-v2` switch-footprint requirement를 정의한다. 요약: 디지털 구현/검증은 통과했지만 물리 검증은 남은 별도 V2 board이며, Choc V2/PG1353-family low-profile switch는 bottom-side Choc hot-swap socket으로만 지원하고 Cherry MX-style switch는 5-pin PCB-mount through-hole direct-solder로만 지원한다. 정확한 Kailh manufacturer MPN과 controlled drawing revision은 아직 조달 gate이며 `Deep Sea Whale` 같은 판매명만으로 부품을 확정하지 않는다. Promoted historical X3 경로나 물리 coupon 실장 증거 없는 V2는 주문 가능 상태가 아니다.
 - `kc2-x3-v2` 변형은 Choc V1/PG1350 switch, Choc V1 전용 locator/direct-solder geometry, Choc V2 direct-solder pad, MX hot-swap socket pad를 지원하지 않는다.
 - `kc2-x3-v2` 산출물은 현재 주문 가능한 `hardware/kicad/kc2_left/`, `hardware/kicad/kc2_right/`, `hardware/kicad/fabrication/kc2_left_jlcpcb.zip`, `hardware/kicad/fabrication/kc2_right_jlcpcb.zip`를 대체하지 않는다. 별도 draft 또는 V2 전용 output path에 유지하고, 모든 검증이 통과한 뒤에도 별도 SRS promotion requirement 없이는 orderable X3 산출물로 승격하지 않는다.
 - active V2의 현재 M1.4-hole-aware compact-controller route input/session은 `kc2_left-x3-v2-70-es1b-controller-r3.dsn/.ses` 및 `kc2_right-x3-v2-70-es1b-controller-r3.dsn/.ses`이다. Exact service geometry와 precondition-checked edge cleanup을 적용해 최종 보드를 재현한다. 이전 `70-es1b-mh-r2`, pre-MH `70-es1b-r1`, left `70-v5-r1`, right `71-r12`는 historical evidence이며 active V2 재현에 사용하지 않는다.
@@ -407,7 +407,7 @@ Row 5: Ctrl GUI Alt Fn Space     |  B  Space RAlt Fn RCtrl Left Down Right
 ## 미확정 항목
 
 - CON-ARCH-004로 좁혀지지 않은 future variant용 다중 호환 switch hole/pad pattern 검증. 현재 주문 가능한 historical X3 switch footprint는 verified X3 evidence를 따르며, 물리 검증 대기 중인 `kc2-x3-v2` draft는 CON-ARCH-004의 Choc V2 socket-only/MX solder-only 제한을 따른다.
-- `kc2-x3-v2` 물리 coupon에 Kailh Deep Sea Whale Choc V2와 `CPG135001S30` socket을 하단 0/180도 양방향으로 실장하고, 5-pin MX switch를 상면 직납하여 실제 fit, keycap pitch, diode, solder joint, 하우징 간섭을 확인해야 한다.
+- `kc2-x3-v2` 물리 coupon에 조달 전에 확정한 exact Kailh low-profile Choc V2/PG1353-family MPN·drawing revision과 `CPG135001S30` socket을 하단 0/180도 양방향으로 실장하고, 5-pin MX switch를 상면 직납하여 실제 fit, keycap pitch, diode, solder joint, 하우징 간섭을 확인해야 한다.
 - Historical/future non-V2 SMD 전환 시 손납땜이면 SOD-123 우선, PCBA 또는 극한 compact 배치가 필요하면 SOD-323 허용. Active V2는 larger exact Jingdao ES1B/SMA hand-solder requirement를 따른다.
 - stabilizer가 필요한 별도 layout의 keycap unit, 실제 keycap underside stem 간격, 무보강판에서 체결 가능한 PCB-mounted/PCB-retained stabilizer footprint
 - stabilizer가 필요한 별도 layout의 stabilizer 1:1 출력물 또는 test coupon 기반 실물 끼움 테스트
@@ -415,6 +415,7 @@ Row 5: Ctrl GUI Alt Fn Space     |  B  Space RAlt Fn RCtrl Left Down Right
 - Fully seated controller stack의 caliper 간격과 battery/절연/retainer first-article fit
 - J_BAT1 drill, strain-relief 및 service pull 조건의 purchased-lead drawing 기반 확정
 - 최종 좌우 first article의 battery-only/USB charging/charge-complete RSSI, packet loss, disconnect 및 IMMS power-transition 측정
+- `hardware/kicad/draft/x3-v2/kc2_x3_v2_physical_evidence.json`의 네 evidence bundle이 exact source와 raw measurement artifact 경로·SHA-256·크기·측정일·장비/교정 정보 및 SRS 임계값을 모두 통과해야 한다. 생성형 PCB/하우징 JSON의 `passed`/`order_ready` 문자열만 바꾸는 것은 주문 증거가 아니다.
 - Promoted/historical X3의 `NW3-A06-B3` antenna-side 상면 위치 검증; X3 V2는 `CON-ARCH-007`의 mirrored controller-key-gap service gate 적용
 - X3 screwless rail/capture 하부 바닥판의 실제 레일, 턱, peg, rib 치수
 - X3 screwless 구조에서 접착제가 필요한 경우의 보조 적용 위치와 서비스성
@@ -434,9 +435,9 @@ Row 5: Ctrl GUI Alt Fn Space     |  B  Space RAlt Fn RCtrl Left Down Right
 | Matrix diode (active X3 V2, exact part) | 70 pcs Jingdao Microelectronics `ES1B`, LCSC `C437840`, Eleparts goods `9475342`, SMA on B.Cu, 100 V, 1 A; pin 1=row/cathode, pin 2=per-key/anode; bottom view mirrored | https://www.eleparts.co.kr/goods/view?no=9475342 |
 | Controller socket | 디바이스마트 상품번호 5494 `싱글라운드소켓(64핀)`, 2.54 mm pitch, 1열 round socket | https://www.devicemart.co.kr/goods/view?no=5494 |
 | Battery (X3 V2) | 301230-class, 3.7 V, 100 mAh, pre-attached insulated leads; exact protected-pack MPN pending physical gate | https://nicekeyboards.com/docs/nice-nano/ |
-| Power switch (X3 V2) | `IMMS-12V` / controlled BSI-10 straight-lead SPDT, 3 x 0.80 mm drill, 2.54 mm pitch; used as BAT+ disconnect | https://www.devicemart.co.kr/goods/view?no=2647 |
+| Power switch (X3 V2) | provisional `IMMS-12V` / `BSI-10` nominal collision proxy, 3 x 0.80 mm drill, 2.54 mm pitch; exact manufacturer/MPN/drawing or incoming equivalence inspection pending | https://www.devicemart.co.kr/goods/view?no=2647 |
 | Programming tact switch | 디바이스마트 상품번호 1322056 `NW3-A06-B3`, SMD micro tact switch, 6.1 mm x 3.7 mm급 body, 2.55 mm급 높이 | https://www.devicemart.co.kr/goods/view?no=1322056 |
-| KC2 X3 V2 target switch | Kailh Deep Sea Whale low-profile Choc V2 / PG1353-class, 70개. Bottom-side socket assembly only. | https://www.kailhswitch.com/mechanical-keyboard-switches/key-switches/kailh-low-profile-switch-choc-v2.html |
+| KC2 X3 V2 target switch | Kailh low-profile Choc V2 / PG1353-family, 70개. Exact manufacturer MPN and controlled drawing revision pending; bottom-side socket assembly only. | https://www.kailhswitch.com/mechanical-keyboard-switches/key-switches/kailh-low-profile-switch-choc-v2.html |
 | KC2 X3 V2 socket | Kailh Choc hot-swap socket `CPG135001S30` class, 70개 when using Choc V2 mode. Do not populate in MX mode. | https://www.kailhswitch.com/uploads/15927/files/CPG135001S30.pdf?rnd=925 |
 | KC2 X3 V2 MX alternative | Cherry MX-style 5-pin PCB-mount switches, 70개 when using MX direct-solder mode. Do not populate Choc sockets at the same positions. | https://www.cherry.de/fileadmin/media/Industrial/Switch/MX_BLACK/Data_sheet_MX2A_Black.pdf |
 | Historical draft hot-swap socket variant | Kailh Choc/PG1350 low-profile hot-swap socket, `CPG135001S30` 계열. 기존 `-hotswap` draft 변형 기록으로만 유지하며 `kc2-x3-v2` 기준 부품이 아니다. | https://ko.aliexpress.com/item/1005009187521124.html |

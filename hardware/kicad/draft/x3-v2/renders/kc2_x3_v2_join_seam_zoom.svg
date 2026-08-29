@@ -305,6 +305,66 @@
 <text x="146.09" y="615.84" text-anchor="middle" font-family="Arial" font-size="10" fill="#101010">Space</text>
 <rect x="-39.41" y="54.90" width="148.70" height="85.20" fill="none" stroke="#252525" stroke-width="1.5" stroke-dasharray="4 3"/>
 <text x="34.94" y="50.90" text-anchor="middle" font-family="Arial" font-size="9" fill="#222">U1</text>
+<g id="left-service-components" data-service-reference-count="4">
+<g class="service-component" data-side="left" data-reference="BAT1" data-board-center-x-mm="131.7125" data-board-center-y-mm="50.7500" data-joined-center-x-mm="131.7125" data-joined-center-y-mm="50.7500" data-board-bounds-mm="116.6625,44.7000,146.7625,56.8000" data-joined-bounds-mm="116.6625,44.7000,146.7625,56.8000" data-rotation-degrees="0.0000">
+<rect x="-45.31" y="67.25" width="150.50" height="60.50" rx="2" ry="2" fill="#f1e7ff" fill-opacity="0.82" stroke="#7951a8" stroke-width="1.4"/>
+<text x="29.94" y="100.50" text-anchor="middle" font-family="Arial" font-size="9" font-weight="bold" fill="#7951a8">BAT1</text>
+</g>
+<g class="service-component" data-side="left" data-reference="J_BAT1" data-board-center-x-mm="115.8125" data-board-center-y-mm="59.4000" data-joined-center-x-mm="115.8125" data-joined-center-y-mm="59.4000" data-board-bounds-mm="111.6975,58.2250,117.3875,60.5750" data-joined-bounds-mm="111.6975,58.2250,117.3875,60.5750" data-rotation-degrees="180.0000">
+<rect x="-70.14" y="134.88" width="28.45" height="11.75" rx="2" ry="2" fill="#fff1d8" fill-opacity="0.82" stroke="#b66a13" stroke-width="1.4"/>
+<text x="-49.56" y="143.75" text-anchor="middle" font-family="Arial" font-size="9" font-weight="bold" fill="#b66a13">J_BAT1</text>
+</g>
+<g class="service-component" data-side="left" data-reference="SW_PWR1" data-board-center-x-mm="115.8125" data-board-center-y-mm="63.4500" data-joined-center-x-mm="115.8125" data-joined-center-y-mm="63.4500" data-board-bounds-mm="110.5375,61.9250,121.0875,64.9750" data-joined-bounds-mm="110.5375,61.9250,121.0875,64.9750" data-rotation-degrees="0.0000">
+<rect x="-75.94" y="153.38" width="52.75" height="15.25" rx="2" ry="2" fill="#ffe5dd" fill-opacity="0.82" stroke="#b83d27" stroke-width="1.4"/>
+<text x="-49.56" y="164.00" text-anchor="middle" font-family="Arial" font-size="9" font-weight="bold" fill="#b83d27">SW_PWR1</text>
+</g>
+<g class="service-component" data-side="left" data-reference="SW_RST1" data-board-center-x-mm="126.0625" data-board-center-y-mm="63.4500" data-joined-center-x-mm="126.0625" data-joined-center-y-mm="63.4500" data-board-bounds-mm="121.0875,61.2750,131.0375,65.6250" data-joined-bounds-mm="121.0875,61.2750,131.0375,65.6250" data-rotation-degrees="0.0000">
+<rect x="-23.19" y="150.12" width="49.75" height="21.75" rx="2" ry="2" fill="#ffe8f2" fill-opacity="0.82" stroke="#a83267" stroke-width="1.4"/>
+<text x="1.69" y="164.00" text-anchor="middle" font-family="Arial" font-size="9" font-weight="bold" fill="#a83267">SW_RST1</text>
+</g>
+</g>
+<g id="left-battery-terminal-legends" data-terminal-legend-count="2">
+<g class="battery-terminal-legend" data-side="left" data-text="B+" data-board-center-x-mm="115.8125" data-board-center-y-mm="61.0500" data-joined-center-x-mm="115.8125" data-joined-center-y-mm="61.0500">
+<text x="-49.56" y="151.40" text-anchor="middle" font-family="Arial" font-size="7" font-weight="bold" fill="#5f2e00">B+</text>
+</g>
+<g class="battery-terminal-legend" data-side="left" data-text="B-/GND" data-board-center-x-mm="113.2725" data-board-center-y-mm="57.6000" data-joined-center-x-mm="113.2725" data-joined-center-y-mm="57.6000">
+<text x="-62.26" y="134.15" text-anchor="middle" font-family="Arial" font-size="7" font-weight="bold" fill="#5f2e00">B-/GND</text>
+</g>
+</g>
+<g id="left-mounting-holes" data-mount-reference-count="8">
+<g class="mounting-hole" data-side="left" data-reference="MH1" data-board-center-x-mm="142.6125" data-board-center-y-mm="67.9000" data-joined-center-x-mm="142.6125" data-joined-center-y-mm="67.9000">
+<circle cx="84.44" cy="183.25" r="7" fill="white" fill-opacity="0.94" stroke="#555" stroke-width="1"/>
+<text x="84.44" y="185.95" text-anchor="middle" font-family="Arial" font-size="7" font-weight="bold" fill="#333">MH1</text>
+</g>
+<g class="mounting-hole" data-side="left" data-reference="MH2" data-board-center-x-mm="128.6125" data-board-center-y-mm="86.5000" data-joined-center-x-mm="128.6125" data-joined-center-y-mm="86.5000">
+<circle cx="14.44" cy="276.25" r="7" fill="white" fill-opacity="0.94" stroke="#555" stroke-width="1"/>
+<text x="14.44" y="278.95" text-anchor="middle" font-family="Arial" font-size="7" font-weight="bold" fill="#333">MH2</text>
+</g>
+<g class="mounting-hole" data-side="left" data-reference="MH3" data-board-center-x-mm="108.5125" data-board-center-y-mm="87.0000" data-joined-center-x-mm="108.5125" data-joined-center-y-mm="87.0000">
+<circle cx="-86.06" cy="278.75" r="7" fill="white" fill-opacity="0.94" stroke="#555" stroke-width="1"/>
+<text x="-86.06" y="281.45" text-anchor="middle" font-family="Arial" font-size="7" font-weight="bold" fill="#333">MH3</text>
+</g>
+<g class="mounting-hole" data-side="left" data-reference="MH4" data-board-center-x-mm="57.4125" data-board-center-y-mm="99.0000" data-joined-center-x-mm="57.4125" data-joined-center-y-mm="99.0000">
+<circle cx="-341.56" cy="338.75" r="7" fill="white" fill-opacity="0.94" stroke="#555" stroke-width="1"/>
+<text x="-341.56" y="341.45" text-anchor="middle" font-family="Arial" font-size="7" font-weight="bold" fill="#333">MH4</text>
+</g>
+<g class="mounting-hole" data-side="left" data-reference="MH5" data-board-center-x-mm="124.7125" data-board-center-y-mm="125.1000" data-joined-center-x-mm="124.7125" data-joined-center-y-mm="125.1000">
+<circle cx="-5.06" cy="469.25" r="7" fill="white" fill-opacity="0.94" stroke="#555" stroke-width="1"/>
+<text x="-5.06" y="471.95" text-anchor="middle" font-family="Arial" font-size="7" font-weight="bold" fill="#333">MH5</text>
+</g>
+<g class="mounting-hole" data-side="left" data-reference="MH6" data-board-center-x-mm="55.1125" data-board-center-y-mm="144.0000" data-joined-center-x-mm="55.1125" data-joined-center-y-mm="144.0000">
+<circle cx="-353.06" cy="563.75" r="7" fill="white" fill-opacity="0.94" stroke="#555" stroke-width="1"/>
+<text x="-353.06" y="566.45" text-anchor="middle" font-family="Arial" font-size="7" font-weight="bold" fill="#333">MH6</text>
+</g>
+<g class="mounting-hole" data-side="left" data-reference="MH7" data-board-center-x-mm="165.6125" data-board-center-y-mm="145.0000" data-joined-center-x-mm="165.6125" data-joined-center-y-mm="145.0000">
+<circle cx="199.44" cy="568.75" r="7" fill="white" fill-opacity="0.94" stroke="#555" stroke-width="1"/>
+<text x="199.44" y="571.45" text-anchor="middle" font-family="Arial" font-size="7" font-weight="bold" fill="#333">MH7</text>
+</g>
+<g class="mounting-hole" data-side="left" data-reference="MH8" data-board-center-x-mm="102.6125" data-board-center-y-mm="147.0000" data-joined-center-x-mm="102.6125" data-joined-center-y-mm="147.0000">
+<circle cx="-115.56" cy="578.75" r="7" fill="white" fill-opacity="0.94" stroke="#555" stroke-width="1"/>
+<text x="-115.56" y="581.45" text-anchor="middle" font-family="Arial" font-size="7" font-weight="bold" fill="#333">MH8</text>
+</g>
+</g>
 <rect x="212.12" y="186.25" width="90.25" height="90.25" rx="2" ry="2" fill="#eef5ff" stroke="#467cc0" stroke-width="1"/>
 <text x="257.25" y="234.84" text-anchor="middle" font-family="Arial" font-size="10" fill="#101010">7</text>
 <rect x="307.37" y="186.25" width="90.25" height="90.25" rx="2" ry="2" fill="#eef5ff" stroke="#467cc0" stroke-width="1"/>
@@ -385,6 +445,74 @@
 <text x="947.81" y="615.84" text-anchor="middle" font-family="Arial" font-size="10" fill="#101010">Right</text>
 <rect x="307.15" y="54.90" width="148.70" height="85.20" fill="none" stroke="#252525" stroke-width="1.5" stroke-dasharray="4 3"/>
 <text x="381.50" y="50.90" text-anchor="middle" font-family="Arial" font-size="9" fill="#222">U1</text>
+<g id="right-service-components" data-service-reference-count="4">
+<g class="service-component" data-side="right" data-reference="BAT1" data-board-center-x-mm="78.4000" data-board-center-y-mm="50.7500" data-joined-center-x-mm="203.0250" data-joined-center-y-mm="50.7500" data-board-bounds-mm="63.3500,44.7000,93.4500,56.8000" data-joined-bounds-mm="187.9750,44.7000,218.0750,56.8000" data-rotation-degrees="0.0000">
+<rect x="311.25" y="67.25" width="150.50" height="60.50" rx="2" ry="2" fill="#f1e7ff" fill-opacity="0.82" stroke="#7951a8" stroke-width="1.4"/>
+<text x="386.50" y="100.50" text-anchor="middle" font-family="Arial" font-size="9" font-weight="bold" fill="#7951a8">BAT1</text>
+</g>
+<g class="service-component" data-side="right" data-reference="J_BAT1" data-board-center-x-mm="94.3000" data-board-center-y-mm="59.4000" data-joined-center-x-mm="218.9250" data-joined-center-y-mm="59.4000" data-board-bounds-mm="92.7250,58.2250,98.4150,60.5750" data-joined-bounds-mm="217.3500,58.2250,223.0400,60.5750" data-rotation-degrees="0.0000">
+<rect x="458.12" y="134.88" width="28.45" height="11.75" rx="2" ry="2" fill="#fff1d8" fill-opacity="0.82" stroke="#b66a13" stroke-width="1.4"/>
+<text x="466.00" y="143.75" text-anchor="middle" font-family="Arial" font-size="9" font-weight="bold" fill="#b66a13">J_BAT1</text>
+</g>
+<g class="service-component" data-side="right" data-reference="SW_PWR1" data-board-center-x-mm="94.3000" data-board-center-y-mm="63.4500" data-joined-center-x-mm="218.9250" data-joined-center-y-mm="63.4500" data-board-bounds-mm="89.0250,61.9250,99.5750,64.9750" data-joined-bounds-mm="213.6500,61.9250,224.2000,64.9750" data-rotation-degrees="180.0000">
+<rect x="439.62" y="153.38" width="52.75" height="15.25" rx="2" ry="2" fill="#ffe5dd" fill-opacity="0.82" stroke="#b83d27" stroke-width="1.4"/>
+<text x="466.00" y="164.00" text-anchor="middle" font-family="Arial" font-size="9" font-weight="bold" fill="#b83d27">SW_PWR1</text>
+</g>
+<g class="service-component" data-side="right" data-reference="SW_RST1" data-board-center-x-mm="84.0500" data-board-center-y-mm="63.4500" data-joined-center-x-mm="208.6750" data-joined-center-y-mm="63.4500" data-board-bounds-mm="79.0750,61.2750,89.0250,65.6250" data-joined-bounds-mm="203.7000,61.2750,213.6500,65.6250" data-rotation-degrees="180.0000">
+<rect x="389.88" y="150.12" width="49.75" height="21.75" rx="2" ry="2" fill="#ffe8f2" fill-opacity="0.82" stroke="#a83267" stroke-width="1.4"/>
+<text x="414.75" y="164.00" text-anchor="middle" font-family="Arial" font-size="9" font-weight="bold" fill="#a83267">SW_RST1</text>
+</g>
+</g>
+<g id="right-battery-terminal-legends" data-terminal-legend-count="2">
+<g class="battery-terminal-legend" data-side="right" data-text="B+" data-board-center-x-mm="94.3000" data-board-center-y-mm="57.7500" data-joined-center-x-mm="218.9250" data-joined-center-y-mm="57.7500">
+<text x="466.00" y="134.90" text-anchor="middle" font-family="Arial" font-size="7" font-weight="bold" fill="#5f2e00">B+</text>
+</g>
+<g class="battery-terminal-legend" data-side="right" data-text="B-/GND" data-board-center-x-mm="96.8400" data-board-center-y-mm="61.2000" data-joined-center-x-mm="221.4650" data-joined-center-y-mm="61.2000">
+<text x="478.70" y="152.15" text-anchor="middle" font-family="Arial" font-size="7" font-weight="bold" fill="#5f2e00">B-/GND</text>
+</g>
+</g>
+<g id="right-mounting-holes" data-mount-reference-count="10">
+<g class="mounting-hole" data-side="right" data-reference="MH1" data-board-center-x-mm="71.6875" data-board-center-y-mm="67.9000" data-joined-center-x-mm="196.3125" data-joined-center-y-mm="67.9000">
+<circle cx="352.94" cy="183.25" r="7" fill="white" fill-opacity="0.94" stroke="#555" stroke-width="1"/>
+<text x="352.94" y="185.95" text-anchor="middle" font-family="Arial" font-size="7" font-weight="bold" fill="#333">MH1</text>
+</g>
+<g class="mounting-hole" data-side="right" data-reference="MH10" data-board-center-x-mm="95.6875" data-board-center-y-mm="147.0000" data-joined-center-x-mm="220.3125" data-joined-center-y-mm="147.0000">
+<circle cx="472.94" cy="578.75" r="7" fill="white" fill-opacity="0.94" stroke="#555" stroke-width="1"/>
+<text x="472.94" y="581.45" text-anchor="middle" font-family="Arial" font-size="7" font-weight="bold" fill="#333">MH10</text>
+</g>
+<g class="mounting-hole" data-side="right" data-reference="MH2" data-board-center-x-mm="181.0875" data-board-center-y-mm="85.5000" data-joined-center-x-mm="305.7125" data-joined-center-y-mm="85.5000">
+<circle cx="899.94" cy="271.25" r="7" fill="white" fill-opacity="0.94" stroke="#555" stroke-width="1"/>
+<text x="899.94" y="273.95" text-anchor="middle" font-family="Arial" font-size="7" font-weight="bold" fill="#333">MH2</text>
+</g>
+<g class="mounting-hole" data-side="right" data-reference="MH3" data-board-center-x-mm="156.1875" data-board-center-y-mm="87.0000" data-joined-center-x-mm="280.8125" data-joined-center-y-mm="87.0000">
+<circle cx="775.44" cy="278.75" r="7" fill="white" fill-opacity="0.94" stroke="#555" stroke-width="1"/>
+<text x="775.44" y="281.45" text-anchor="middle" font-family="Arial" font-size="7" font-weight="bold" fill="#333">MH3</text>
+</g>
+<g class="mounting-hole" data-side="right" data-reference="MH4" data-board-center-x-mm="109.6875" data-board-center-y-mm="104.8000" data-joined-center-x-mm="234.3125" data-joined-center-y-mm="104.8000">
+<circle cx="542.94" cy="367.75" r="7" fill="white" fill-opacity="0.94" stroke="#555" stroke-width="1"/>
+<text x="542.94" y="370.45" text-anchor="middle" font-family="Arial" font-size="7" font-weight="bold" fill="#333">MH4</text>
+</g>
+<g class="mounting-hole" data-side="right" data-reference="MH5" data-board-center-x-mm="71.6875" data-board-center-y-mm="105.5000" data-joined-center-x-mm="196.3125" data-joined-center-y-mm="105.5000">
+<circle cx="352.94" cy="371.25" r="7" fill="white" fill-opacity="0.94" stroke="#555" stroke-width="1"/>
+<text x="352.94" y="373.95" text-anchor="middle" font-family="Arial" font-size="7" font-weight="bold" fill="#333">MH5</text>
+</g>
+<g class="mounting-hole" data-side="right" data-reference="MH6" data-board-center-x-mm="62.0875" data-board-center-y-mm="69.3000" data-joined-center-x-mm="186.7125" data-joined-center-y-mm="69.3000">
+<circle cx="304.94" cy="190.25" r="7" fill="white" fill-opacity="0.94" stroke="#555" stroke-width="1"/>
+<text x="304.94" y="192.95" text-anchor="middle" font-family="Arial" font-size="7" font-weight="bold" fill="#333">MH6</text>
+</g>
+<g class="mounting-hole" data-side="right" data-reference="MH7" data-board-center-x-mm="181.1875" data-board-center-y-mm="143.0000" data-joined-center-x-mm="305.8125" data-joined-center-y-mm="143.0000">
+<circle cx="900.44" cy="558.75" r="7" fill="white" fill-opacity="0.94" stroke="#555" stroke-width="1"/>
+<text x="900.44" y="561.45" text-anchor="middle" font-family="Arial" font-size="7" font-weight="bold" fill="#333">MH7</text>
+</g>
+<g class="mounting-hole" data-side="right" data-reference="MH8" data-board-center-x-mm="143.0875" data-board-center-y-mm="143.0000" data-joined-center-x-mm="267.7125" data-joined-center-y-mm="143.0000">
+<circle cx="709.94" cy="558.75" r="7" fill="white" fill-opacity="0.94" stroke="#555" stroke-width="1"/>
+<text x="709.94" y="561.45" text-anchor="middle" font-family="Arial" font-size="7" font-weight="bold" fill="#333">MH8</text>
+</g>
+<g class="mounting-hole" data-side="right" data-reference="MH9" data-board-center-x-mm="66.8875" data-board-center-y-mm="153.4000" data-joined-center-x-mm="191.5125" data-joined-center-y-mm="153.4000">
+<circle cx="328.94" cy="610.75" r="7" fill="white" fill-opacity="0.94" stroke="#555" stroke-width="1"/>
+<text x="328.94" y="613.45" text-anchor="middle" font-family="Arial" font-size="7" font-weight="bold" fill="#333">MH9</text>
+</g>
+</g>
 <g id="key-horizontal-clearance" data-key-horizontal-clearance-mm="1.8000" data-left-key="6" data-right-key="7">
 <line x1="203.12" y1="231.38" x2="212.12" y2="231.38" stroke="#1c5fb8" stroke-width="2.4"/>
 <line x1="203.12" y1="231.38" x2="209.12" y2="227.38" stroke="#1c5fb8" stroke-width="2.4"/>
