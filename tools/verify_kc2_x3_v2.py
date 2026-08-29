@@ -3531,12 +3531,13 @@ def _housing_head_adjacency_contracts(
         for record in contracts.values()
     )
     if (
-        len(contracts) != 34
-        or len(per_hole_counts) != 18
-        or sum(count > 1 for count in per_hole_counts.values()) != 13
+        len(contracts) != 14
+        or len(per_hole_counts) != 12
+        or sum(count > 1 for count in per_hole_counts.values()) != 2
     ):
         errors.append(
-            "housing head-adjacency is not the exact 34 overlaps at 18 holes (13 multi-switch)"
+            "housing head-adjacency is not the exact P2 set of 14 overlaps at 12 holes "
+            "(2 multi-switch)"
         )
     return contracts, errors
 
@@ -4232,9 +4233,9 @@ def _housing_metrics(
             or travel <= 0.0
         ):
             errors.append(f"housing mounting-head-adjacent fit {key} does not pass")
-    if seen_head_fit_keys != expected_head_fit_keys or len(seen_head_fit_keys) != 68:
+    if seen_head_fit_keys != expected_head_fit_keys or len(seen_head_fit_keys) != 28:
         errors.append(
-            "housing mounting-head-adjacent fit does not cover both modes for all 34 overlaps"
+            "housing mounting-head-adjacent fit does not cover both modes for all 14 P2 overlaps"
         )
 
     deflections = data.get("deflection_records")

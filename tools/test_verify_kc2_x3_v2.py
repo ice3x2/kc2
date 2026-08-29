@@ -2886,13 +2886,13 @@ class V2GeneratorTests(unittest.TestCase):
                 "left": {
                     "dsn": "hardware/kicad/draft/x3-v2/autoroute/kc2_left-x3-v2-70-es1b-controller-r3.dsn",
                     "dsn_role": "current_mh_compact_controller_trackless_routing_input",
-                    "dsn_mounting_hole_count": 8,
+                    "dsn_mounting_hole_count": 7,
                     "session_source_dsn": "hardware/kicad/draft/x3-v2/autoroute/kc2_left-x3-v2-70-es1b-controller-r3.dsn",
-                    "session_source_dsn_sha256": "b0f75b6eee7d8b63fd295c058106630383f4cebb1a5a132233fae480bd8a8abd",
+                    "session_source_dsn_sha256": "466edfbcf4e8b318791feac944d8acf045bf1cde439d769a33b7c2d218999507",
                     "ses": "hardware/kicad/draft/x3-v2/autoroute/kc2_left-x3-v2-70-es1b-controller-r3.ses",
                     "ses_role": "reviewed_matrix_import_plus_exact_edge_cleanup_and_power_reset_service_routing",
-                    "dsn_sha256": "b0f75b6eee7d8b63fd295c058106630383f4cebb1a5a132233fae480bd8a8abd",
-                    "ses_sha256": "b4223b6e3ad937e9523a3777ab0657a97aa788b17ca3c78cd62036b3a5d48c4e",
+                    "dsn_sha256": "466edfbcf4e8b318791feac944d8acf045bf1cde439d769a33b7c2d218999507",
+                    "ses_sha256": "8340b7dfcbffe90862c265f3f5b05ce4cee510442d1a45f16f19c4f98f785bf9",
                     "dsn_default_clearance_internal_units": 300,
                     "dsn_clearances_internal_units": {"global": 300, "kicad_default": 300},
                     "final_track_via_count": 590,
@@ -2901,13 +2901,13 @@ class V2GeneratorTests(unittest.TestCase):
                 "right": {
                     "dsn": "hardware/kicad/draft/x3-v2/autoroute/kc2_right-x3-v2-70-es1b-controller-r3.dsn",
                     "dsn_role": "current_mh_compact_controller_trackless_routing_input",
-                    "dsn_mounting_hole_count": 10,
+                    "dsn_mounting_hole_count": 8,
                     "session_source_dsn": "hardware/kicad/draft/x3-v2/autoroute/kc2_right-x3-v2-70-es1b-controller-r3.dsn",
-                    "session_source_dsn_sha256": "bcadb826bcc0d28672e9a6124bbe1b31ec6272809f1100c2d941623d47876013",
+                    "session_source_dsn_sha256": "658056b39cb7a792c52d4fc4f75498f25adeb61f6a43c736c61ba1bfb82b9334",
                     "ses": "hardware/kicad/draft/x3-v2/autoroute/kc2_right-x3-v2-70-es1b-controller-r3.ses",
                     "ses_role": "reviewed_matrix_import_plus_exact_edge_cleanup_and_power_reset_service_routing",
-                    "dsn_sha256": "bcadb826bcc0d28672e9a6124bbe1b31ec6272809f1100c2d941623d47876013",
-                    "ses_sha256": "0e986c0013ea66d5a4f97ebf8b89001e91da4539f1f1e4fac8cfece0a953f445",
+                    "dsn_sha256": "658056b39cb7a792c52d4fc4f75498f25adeb61f6a43c736c61ba1bfb82b9334",
+                    "ses_sha256": "9fac7be12764e95a714072b2bf036bd3e1e8fb9439d83af75620cac5bcbcbc78",
                     "dsn_default_clearance_internal_units": 300,
                     "dsn_clearances_internal_units": {"global": 300, "kicad_default": 300},
                     "final_track_via_count": 764,
@@ -3811,14 +3811,14 @@ class V2GeneratorTests(unittest.TestCase):
                 _housing_head_adjacency_contracts(source_paths)
             )
             self.assertEqual(head_adjacency_errors, [])
-            self.assertEqual(len(head_adjacency_contracts), 34)
+            self.assertEqual(len(head_adjacency_contracts), 14)
             head_adjacency_counts = Counter(
                 (record["half"], record["mounting_hole_reference"])
                 for record in head_adjacency_contracts.values()
             )
             self.assertEqual(
                 sum(count > 1 for count in head_adjacency_counts.values()),
-                13,
+                2,
             )
             housing_data = {
                 "fastener_identity": fastener_identity,
@@ -3952,7 +3952,7 @@ class V2GeneratorTests(unittest.TestCase):
                 "production_print": production_print,
                 "assembly_identity": assembly_identity,
                 "assembly_fit_condition_count": 16,
-                "head_adjacent_fit_condition_count": 68,
+                "head_adjacent_fit_condition_count": 28,
                 "install_remove_cycles": 10,
                 "torque_ratio": 3.0,
                 "tested_switch_positions": 70,

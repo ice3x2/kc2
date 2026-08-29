@@ -192,8 +192,8 @@ physical first-article evidence. The digital package remains not orderable.
 
 The fabrication, mechanical, and housing derivatives were regenerated from
 the current left/right board hashes
-`7f629b7f48c7432ddc34429b12d7883a2fd1389a40187b2eeb93d549fba1be6d` and
-`4500956acec4e9f8ada2da285d9fad6c6accad5263da9128d0a14d300af3209c`.
+`934f47ec2195be604f370f571e5d82a68d1a93e05ebcfbe277626d3d4a33eceb` and
+`56ff42c7de16ffd24f96234b68b77dd32bf222020a688678cee08e1e61d00d91`.
 Their dedicated V2 verifiers pass. The joined SVG/PNG set was regenerated from
 the same current boards and reports 1.1000 mm minimum Edge.Cuts clearance and
 1.8000 mm cross-seam keycap gap. All outputs remain digital draft evidence and

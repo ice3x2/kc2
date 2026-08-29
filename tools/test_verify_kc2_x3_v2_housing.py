@@ -455,10 +455,16 @@ class V2LoadBearingHousingTests(unittest.TestCase):
             self.assertTrue(housing["rail_plan_area_matches_manifest"])
             self.assertTrue(housing["support_plan_matches_generator"])
             categories = {post["category"] for post in housing["support_posts"]}
-            self.assertTrue({"thumb", "span"}.issubset(categories))
-            self.assertGreaterEqual(len(housing["support_posts"]), 6)
-            self.assertLessEqual(housing["maximum_load_point_to_support_mm"], 24.0)
-            self.assertLessEqual(housing["maximum_seam_load_point_to_support_mm"], 10.0)
+            self.assertEqual(categories, {"key_load"})
+            self.assertEqual(len(housing["support_posts"]), housing["key_count"])
+            self.assertEqual(
+                len({post["switch_ref"] for post in housing["support_posts"]}),
+                housing["key_count"],
+            )
+            self.assertTrue(housing["all_key_loads_have_dedicated_support"])
+            self.assertTrue(housing["key_load_support_network_matches_contract"])
+            self.assertLessEqual(housing["maximum_load_point_to_support_mm"], 3.60)
+            self.assertLessEqual(housing["maximum_seam_load_point_to_support_mm"], 3.60)
             for post in housing["support_posts"]:
                 self.assertEqual(post["diameter_mm"], 2.00)
                 self.assertEqual(post["bottom_z_mm"], 0.00)

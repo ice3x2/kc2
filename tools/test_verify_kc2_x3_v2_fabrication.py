@@ -133,20 +133,20 @@ class V2FabricationTests(unittest.TestCase):
         self.assertEqual(report["products"]["coupon"]["bottom_paste_flash_count"], 12)
         self.assertEqual(
             report["products"]["left"]["mounting_reference_labels"],
-            [f"MH{index}" for index in range(1, 9)],
+            [f"MH{index}" for index in range(1, 8)],
         )
         self.assertEqual(
             report["products"]["right"]["mounting_reference_labels"],
-            [f"MH{index}" for index in range(1, 11)],
+            [f"MH{index}" for index in range(1, 9)],
         )
         self.assertEqual(report["products"]["coupon"]["mounting_reference_labels"], [])
         self.assertEqual(
             list(report["products"]["left"]["mounting_reference_glyphs"]),
-            [f"MH{index}" for index in range(1, 9)],
+            [f"MH{index}" for index in range(1, 8)],
         )
         self.assertEqual(
             list(report["products"]["right"]["mounting_reference_glyphs"]),
-            [f"MH{index}" for index in range(1, 11)],
+            [f"MH{index}" for index in range(1, 9)],
         )
 
         left_product = report["products"]["left"]
@@ -154,7 +154,7 @@ class V2FabricationTests(unittest.TestCase):
         self.assertEqual(left_product["drill_tools_mm"]["PTH"]["1.500"], 62)
         self.assertEqual(
             left_product["drill_tools_mm"]["NPTH"],
-            {"1.600": 8, "1.650": 31, "1.700": 62, "2.200": 1, "3.000": 62, "5.000": 31},
+            {"1.600": 7, "1.650": 31, "1.700": 62, "2.200": 1, "3.000": 62, "5.000": 31},
         )
         self.assertEqual(
             left_product["drill_tools_mm"]["PTH"].get("0.300", 0),
@@ -165,7 +165,7 @@ class V2FabricationTests(unittest.TestCase):
         self.assertEqual(right_product["drill_tools_mm"]["PTH"]["1.500"], 78)
         self.assertEqual(
             right_product["drill_tools_mm"]["NPTH"],
-            {"1.600": 10, "1.650": 39, "1.700": 78, "2.200": 1, "3.000": 78, "5.000": 39},
+            {"1.600": 8, "1.650": 39, "1.700": 78, "2.200": 1, "3.000": 78, "5.000": 39},
         )
         self.assertEqual(
             right_product["drill_tools_mm"]["PTH"].get("0.300", 0),
@@ -242,7 +242,7 @@ class V2FabricationTests(unittest.TestCase):
             / "hardware/kicad/draft/x3-v2/fabrication/left/"
             "kc2_left-x3-v2-F_Silkscreen.gto"
         ).read_bytes()
-        original = b"X141545833Y-65962295D01*"
+        original = b"X111795833Y-41062295D01*"
         self.assertEqual(payload.count(original), 1)
 
         baseline = inspect_mounting_reference_glyphs(
@@ -250,7 +250,7 @@ class V2FabricationTests(unittest.TestCase):
             EXPECTED_MOUNTING_REFERENCE_CENTERS_MM["left"],
         )
         self.assertEqual(baseline["errors"], [])
-        self.assertEqual(list(baseline["glyphs"]), [f"MH{index}" for index in range(1, 9)])
+        self.assertEqual(list(baseline["glyphs"]), [f"MH{index}" for index in range(1, 8)])
         self.assertEqual(baseline["glyphs"]["MH1"]["stroke_width_mm"], 0.15)
         self.assertEqual(baseline["glyphs"]["MH1"]["ink_height_mm"], 0.95)
 
@@ -258,7 +258,7 @@ class V2FabricationTests(unittest.TestCase):
             "deleted actual glyph stroke": payload.replace(original, b"", 1),
             "changed actual glyph stroke endpoint": payload.replace(
                 original,
-                b"X141545833Y-65972295D01*",
+                b"X111795833Y-41072295D01*",
                 1,
             ),
         }
