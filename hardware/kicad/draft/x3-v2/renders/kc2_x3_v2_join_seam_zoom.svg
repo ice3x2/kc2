@@ -331,38 +331,34 @@
 <text x="-62.26" y="134.15" text-anchor="middle" font-family="Arial" font-size="7" font-weight="bold" fill="#5f2e00">B-/GND</text>
 </g>
 </g>
-<g id="left-mounting-holes" data-mount-reference-count="8">
-<g class="mounting-hole" data-side="left" data-reference="MH1" data-board-center-x-mm="142.6125" data-board-center-y-mm="67.9000" data-joined-center-x-mm="142.6125" data-joined-center-y-mm="67.9000">
-<circle cx="84.44" cy="183.25" r="7" fill="white" fill-opacity="0.94" stroke="#555" stroke-width="1"/>
-<text x="84.44" y="185.95" text-anchor="middle" font-family="Arial" font-size="7" font-weight="bold" fill="#333">MH1</text>
+<g id="left-mounting-holes" data-mount-reference-count="7">
+<g class="mounting-hole" data-side="left" data-reference="MH1" data-board-center-x-mm="112.8625" data-board-center-y-mm="43.0000" data-joined-center-x-mm="112.8625" data-joined-center-y-mm="43.0000">
+<circle cx="-64.31" cy="58.75" r="7" fill="white" fill-opacity="0.94" stroke="#555" stroke-width="1"/>
+<text x="-64.31" y="61.45" text-anchor="middle" font-family="Arial" font-size="7" font-weight="bold" fill="#333">MH1</text>
 </g>
-<g class="mounting-hole" data-side="left" data-reference="MH2" data-board-center-x-mm="128.6125" data-board-center-y-mm="86.5000" data-joined-center-x-mm="128.6125" data-joined-center-y-mm="86.5000">
-<circle cx="14.44" cy="276.25" r="7" fill="white" fill-opacity="0.94" stroke="#555" stroke-width="1"/>
-<text x="14.44" y="278.95" text-anchor="middle" font-family="Arial" font-size="7" font-weight="bold" fill="#333">MH2</text>
+<g class="mounting-hole" data-side="left" data-reference="MH2" data-board-center-x-mm="144.1125" data-board-center-y-mm="66.2500" data-joined-center-x-mm="144.1125" data-joined-center-y-mm="66.2500">
+<circle cx="91.94" cy="175.00" r="7" fill="white" fill-opacity="0.94" stroke="#555" stroke-width="1"/>
+<text x="91.94" y="177.70" text-anchor="middle" font-family="Arial" font-size="7" font-weight="bold" fill="#333">MH2</text>
 </g>
-<g class="mounting-hole" data-side="left" data-reference="MH3" data-board-center-x-mm="108.5125" data-board-center-y-mm="87.0000" data-joined-center-x-mm="108.5125" data-joined-center-y-mm="87.0000">
-<circle cx="-86.06" cy="278.75" r="7" fill="white" fill-opacity="0.94" stroke="#555" stroke-width="1"/>
-<text x="-86.06" y="281.45" text-anchor="middle" font-family="Arial" font-size="7" font-weight="bold" fill="#333">MH3</text>
+<g class="mounting-hole" data-side="left" data-reference="MH3" data-board-center-x-mm="38.6125" data-board-center-y-mm="111.0000" data-joined-center-x-mm="38.6125" data-joined-center-y-mm="111.0000">
+<circle cx="-435.56" cy="398.75" r="7" fill="white" fill-opacity="0.94" stroke="#555" stroke-width="1"/>
+<text x="-435.56" y="401.45" text-anchor="middle" font-family="Arial" font-size="7" font-weight="bold" fill="#333">MH3</text>
 </g>
-<g class="mounting-hole" data-side="left" data-reference="MH4" data-board-center-x-mm="57.4125" data-board-center-y-mm="99.0000" data-joined-center-x-mm="57.4125" data-joined-center-y-mm="99.0000">
-<circle cx="-341.56" cy="338.75" r="7" fill="white" fill-opacity="0.94" stroke="#555" stroke-width="1"/>
-<text x="-341.56" y="341.45" text-anchor="middle" font-family="Arial" font-size="7" font-weight="bold" fill="#333">MH4</text>
+<g class="mounting-hole" data-side="left" data-reference="MH4" data-board-center-x-mm="63.6125" data-board-center-y-mm="123.0000" data-joined-center-x-mm="63.6125" data-joined-center-y-mm="123.0000">
+<circle cx="-310.56" cy="458.75" r="7" fill="white" fill-opacity="0.94" stroke="#555" stroke-width="1"/>
+<text x="-310.56" y="461.45" text-anchor="middle" font-family="Arial" font-size="7" font-weight="bold" fill="#333">MH4</text>
 </g>
-<g class="mounting-hole" data-side="left" data-reference="MH5" data-board-center-x-mm="124.7125" data-board-center-y-mm="125.1000" data-joined-center-x-mm="124.7125" data-joined-center-y-mm="125.1000">
-<circle cx="-5.06" cy="469.25" r="7" fill="white" fill-opacity="0.94" stroke="#555" stroke-width="1"/>
-<text x="-5.06" y="471.95" text-anchor="middle" font-family="Arial" font-size="7" font-weight="bold" fill="#333">MH5</text>
+<g class="mounting-hole" data-side="left" data-reference="MH5" data-board-center-x-mm="81.1125" data-board-center-y-mm="151.7500" data-joined-center-x-mm="81.1125" data-joined-center-y-mm="151.7500">
+<circle cx="-223.06" cy="602.50" r="7" fill="white" fill-opacity="0.94" stroke="#555" stroke-width="1"/>
+<text x="-223.06" y="605.20" text-anchor="middle" font-family="Arial" font-size="7" font-weight="bold" fill="#333">MH5</text>
 </g>
-<g class="mounting-hole" data-side="left" data-reference="MH6" data-board-center-x-mm="55.1125" data-board-center-y-mm="144.0000" data-joined-center-x-mm="55.1125" data-joined-center-y-mm="144.0000">
-<circle cx="-353.06" cy="563.75" r="7" fill="white" fill-opacity="0.94" stroke="#555" stroke-width="1"/>
-<text x="-353.06" y="566.45" text-anchor="middle" font-family="Arial" font-size="7" font-weight="bold" fill="#333">MH6</text>
+<g class="mounting-hole" data-side="left" data-reference="MH6" data-board-center-x-mm="137.3625" data-board-center-y-mm="153.5000" data-joined-center-x-mm="137.3625" data-joined-center-y-mm="153.5000">
+<circle cx="58.19" cy="611.25" r="7" fill="white" fill-opacity="0.94" stroke="#555" stroke-width="1"/>
+<text x="58.19" y="613.95" text-anchor="middle" font-family="Arial" font-size="7" font-weight="bold" fill="#333">MH6</text>
 </g>
-<g class="mounting-hole" data-side="left" data-reference="MH7" data-board-center-x-mm="165.6125" data-board-center-y-mm="145.0000" data-joined-center-x-mm="165.6125" data-joined-center-y-mm="145.0000">
-<circle cx="199.44" cy="568.75" r="7" fill="white" fill-opacity="0.94" stroke="#555" stroke-width="1"/>
-<text x="199.44" y="571.45" text-anchor="middle" font-family="Arial" font-size="7" font-weight="bold" fill="#333">MH7</text>
-</g>
-<g class="mounting-hole" data-side="left" data-reference="MH8" data-board-center-x-mm="102.6125" data-board-center-y-mm="147.0000" data-joined-center-x-mm="102.6125" data-joined-center-y-mm="147.0000">
-<circle cx="-115.56" cy="578.75" r="7" fill="white" fill-opacity="0.94" stroke="#555" stroke-width="1"/>
-<text x="-115.56" y="581.45" text-anchor="middle" font-family="Arial" font-size="7" font-weight="bold" fill="#333">MH8</text>
+<g class="mounting-hole" data-side="left" data-reference="MH7" data-board-center-x-mm="166.3625" data-board-center-y-mm="148.7500" data-joined-center-x-mm="166.3625" data-joined-center-y-mm="148.7500">
+<circle cx="203.19" cy="587.50" r="7" fill="white" fill-opacity="0.94" stroke="#555" stroke-width="1"/>
+<text x="203.19" y="590.20" text-anchor="middle" font-family="Arial" font-size="7" font-weight="bold" fill="#333">MH7</text>
 </g>
 </g>
 <rect x="212.12" y="186.25" width="90.25" height="90.25" rx="2" ry="2" fill="#eef5ff" stroke="#467cc0" stroke-width="1"/>
@@ -471,46 +467,38 @@
 <text x="478.70" y="152.15" text-anchor="middle" font-family="Arial" font-size="7" font-weight="bold" fill="#5f2e00">B-/GND</text>
 </g>
 </g>
-<g id="right-mounting-holes" data-mount-reference-count="10">
-<g class="mounting-hole" data-side="right" data-reference="MH1" data-board-center-x-mm="71.6875" data-board-center-y-mm="67.9000" data-joined-center-x-mm="196.3125" data-joined-center-y-mm="67.9000">
-<circle cx="352.94" cy="183.25" r="7" fill="white" fill-opacity="0.94" stroke="#555" stroke-width="1"/>
-<text x="352.94" y="185.95" text-anchor="middle" font-family="Arial" font-size="7" font-weight="bold" fill="#333">MH1</text>
+<g id="right-mounting-holes" data-mount-reference-count="8">
+<g class="mounting-hole" data-side="right" data-reference="MH1" data-board-center-x-mm="97.0625" data-board-center-y-mm="43.2500" data-joined-center-x-mm="221.6875" data-joined-center-y-mm="43.2500">
+<circle cx="479.81" cy="60.00" r="7" fill="white" fill-opacity="0.94" stroke="#555" stroke-width="1"/>
+<text x="479.81" y="62.70" text-anchor="middle" font-family="Arial" font-size="7" font-weight="bold" fill="#333">MH1</text>
 </g>
-<g class="mounting-hole" data-side="right" data-reference="MH10" data-board-center-x-mm="95.6875" data-board-center-y-mm="147.0000" data-joined-center-x-mm="220.3125" data-joined-center-y-mm="147.0000">
-<circle cx="472.94" cy="578.75" r="7" fill="white" fill-opacity="0.94" stroke="#555" stroke-width="1"/>
-<text x="472.94" y="581.45" text-anchor="middle" font-family="Arial" font-size="7" font-weight="bold" fill="#333">MH10</text>
+<g class="mounting-hole" data-side="right" data-reference="MH2" data-board-center-x-mm="72.4375" data-board-center-y-mm="67.0000" data-joined-center-x-mm="197.0625" data-joined-center-y-mm="67.0000">
+<circle cx="356.69" cy="178.75" r="7" fill="white" fill-opacity="0.94" stroke="#555" stroke-width="1"/>
+<text x="356.69" y="181.45" text-anchor="middle" font-family="Arial" font-size="7" font-weight="bold" fill="#333">MH2</text>
 </g>
-<g class="mounting-hole" data-side="right" data-reference="MH2" data-board-center-x-mm="181.0875" data-board-center-y-mm="85.5000" data-joined-center-x-mm="305.7125" data-joined-center-y-mm="85.5000">
-<circle cx="899.94" cy="271.25" r="7" fill="white" fill-opacity="0.94" stroke="#555" stroke-width="1"/>
-<text x="899.94" y="273.95" text-anchor="middle" font-family="Arial" font-size="7" font-weight="bold" fill="#333">MH2</text>
+<g class="mounting-hole" data-side="right" data-reference="MH3" data-board-center-x-mm="169.9375" data-board-center-y-mm="95.2500" data-joined-center-x-mm="294.5625" data-joined-center-y-mm="95.2500">
+<circle cx="844.19" cy="320.00" r="7" fill="white" fill-opacity="0.94" stroke="#555" stroke-width="1"/>
+<text x="844.19" y="322.70" text-anchor="middle" font-family="Arial" font-size="7" font-weight="bold" fill="#333">MH3</text>
 </g>
-<g class="mounting-hole" data-side="right" data-reference="MH3" data-board-center-x-mm="156.1875" data-board-center-y-mm="87.0000" data-joined-center-x-mm="280.8125" data-joined-center-y-mm="87.0000">
-<circle cx="775.44" cy="278.75" r="7" fill="white" fill-opacity="0.94" stroke="#555" stroke-width="1"/>
-<text x="775.44" y="281.45" text-anchor="middle" font-family="Arial" font-size="7" font-weight="bold" fill="#333">MH3</text>
+<g class="mounting-hole" data-side="right" data-reference="MH4" data-board-center-x-mm="194.9375" data-board-center-y-mm="98.7500" data-joined-center-x-mm="319.5625" data-joined-center-y-mm="98.7500">
+<circle cx="969.19" cy="337.50" r="7" fill="white" fill-opacity="0.94" stroke="#555" stroke-width="1"/>
+<text x="969.19" y="340.20" text-anchor="middle" font-family="Arial" font-size="7" font-weight="bold" fill="#333">MH4</text>
 </g>
-<g class="mounting-hole" data-side="right" data-reference="MH4" data-board-center-x-mm="109.6875" data-board-center-y-mm="104.8000" data-joined-center-x-mm="234.3125" data-joined-center-y-mm="104.8000">
-<circle cx="542.94" cy="367.75" r="7" fill="white" fill-opacity="0.94" stroke="#555" stroke-width="1"/>
-<text x="542.94" y="370.45" text-anchor="middle" font-family="Arial" font-size="7" font-weight="bold" fill="#333">MH4</text>
+<g class="mounting-hole" data-side="right" data-reference="MH5" data-board-center-x-mm="156.1875" data-board-center-y-mm="112.5000" data-joined-center-x-mm="280.8125" data-joined-center-y-mm="112.5000">
+<circle cx="775.44" cy="406.25" r="7" fill="white" fill-opacity="0.94" stroke="#555" stroke-width="1"/>
+<text x="775.44" y="408.95" text-anchor="middle" font-family="Arial" font-size="7" font-weight="bold" fill="#333">MH5</text>
 </g>
-<g class="mounting-hole" data-side="right" data-reference="MH5" data-board-center-x-mm="71.6875" data-board-center-y-mm="105.5000" data-joined-center-x-mm="196.3125" data-joined-center-y-mm="105.5000">
-<circle cx="352.94" cy="371.25" r="7" fill="white" fill-opacity="0.94" stroke="#555" stroke-width="1"/>
-<text x="352.94" y="373.95" text-anchor="middle" font-family="Arial" font-size="7" font-weight="bold" fill="#333">MH5</text>
+<g class="mounting-hole" data-side="right" data-reference="MH6" data-board-center-x-mm="69.9375" data-board-center-y-mm="146.2500" data-joined-center-x-mm="194.5625" data-joined-center-y-mm="146.2500">
+<circle cx="344.19" cy="575.00" r="7" fill="white" fill-opacity="0.94" stroke="#555" stroke-width="1"/>
+<text x="344.19" y="577.70" text-anchor="middle" font-family="Arial" font-size="7" font-weight="bold" fill="#333">MH6</text>
 </g>
-<g class="mounting-hole" data-side="right" data-reference="MH6" data-board-center-x-mm="62.0875" data-board-center-y-mm="69.3000" data-joined-center-x-mm="186.7125" data-joined-center-y-mm="69.3000">
-<circle cx="304.94" cy="190.25" r="7" fill="white" fill-opacity="0.94" stroke="#555" stroke-width="1"/>
-<text x="304.94" y="192.95" text-anchor="middle" font-family="Arial" font-size="7" font-weight="bold" fill="#333">MH6</text>
+<g class="mounting-hole" data-side="right" data-reference="MH7" data-board-center-x-mm="97.4375" data-board-center-y-mm="152.0000" data-joined-center-x-mm="222.0625" data-joined-center-y-mm="152.0000">
+<circle cx="481.69" cy="603.75" r="7" fill="white" fill-opacity="0.94" stroke="#555" stroke-width="1"/>
+<text x="481.69" y="606.45" text-anchor="middle" font-family="Arial" font-size="7" font-weight="bold" fill="#333">MH7</text>
 </g>
-<g class="mounting-hole" data-side="right" data-reference="MH7" data-board-center-x-mm="181.1875" data-board-center-y-mm="143.0000" data-joined-center-x-mm="305.8125" data-joined-center-y-mm="143.0000">
-<circle cx="900.44" cy="558.75" r="7" fill="white" fill-opacity="0.94" stroke="#555" stroke-width="1"/>
-<text x="900.44" y="561.45" text-anchor="middle" font-family="Arial" font-size="7" font-weight="bold" fill="#333">MH7</text>
-</g>
-<g class="mounting-hole" data-side="right" data-reference="MH8" data-board-center-x-mm="143.0875" data-board-center-y-mm="143.0000" data-joined-center-x-mm="267.7125" data-joined-center-y-mm="143.0000">
-<circle cx="709.94" cy="558.75" r="7" fill="white" fill-opacity="0.94" stroke="#555" stroke-width="1"/>
-<text x="709.94" y="561.45" text-anchor="middle" font-family="Arial" font-size="7" font-weight="bold" fill="#333">MH8</text>
-</g>
-<g class="mounting-hole" data-side="right" data-reference="MH9" data-board-center-x-mm="66.8875" data-board-center-y-mm="153.4000" data-joined-center-x-mm="191.5125" data-joined-center-y-mm="153.4000">
-<circle cx="328.94" cy="610.75" r="7" fill="white" fill-opacity="0.94" stroke="#555" stroke-width="1"/>
-<text x="328.94" y="613.45" text-anchor="middle" font-family="Arial" font-size="7" font-weight="bold" fill="#333">MH9</text>
+<g class="mounting-hole" data-side="right" data-reference="MH8" data-board-center-x-mm="122.6875" data-board-center-y-mm="151.0000" data-joined-center-x-mm="247.3125" data-joined-center-y-mm="151.0000">
+<circle cx="607.94" cy="598.75" r="7" fill="white" fill-opacity="0.94" stroke="#555" stroke-width="1"/>
+<text x="607.94" y="601.45" text-anchor="middle" font-family="Arial" font-size="7" font-weight="bold" fill="#333">MH8</text>
 </g>
 </g>
 <g id="key-horizontal-clearance" data-key-horizontal-clearance-mm="1.8000" data-left-key="6" data-right-key="7">

@@ -101,10 +101,10 @@ still required before ordering.
 
 ## M1.4 retention prototype
 
-The PCB contains eight left and ten right `MH*` features using the owned
+The PCB contains seven left and eight right `MH*` features using the owned
 `MH_M1.4_NPTH_1.60` footprint. Each is an unnetted, copper-free `1.60 mm`
-round NPTH. Each hole is visibly numbered `MH1..MH8` on the left and
-`MH1..MH10` on the right using `0.80 mm` / `0.15 mm` front-silkscreen text.
+round NPTH. Each hole is visibly numbered `MH1..MH7` on the left and
+`MH1..MH8` on the right using `0.80 mm` / `0.15 mm` front-silkscreen text.
 Service is modeled with keycaps removed and either supported switch
 type still installed. A final `3.00 mm` vertical PH0 driver envelope and a
 provisional non-countersunk rounded pan/button head envelope of maximum
@@ -114,9 +114,11 @@ and must not be buffered a second time.
 
 The matching lower housing provides a `3.00 mm` zero-gap support land and desk
 column at every hole, with a provisional `1.10 x 2.80 mm` blind pilot and a
-`0.70 mm` closed bottom at the common Z=-1.00 mm desk datum. The original
-14-left/11-right distributed supports
-remain the primary typing-load path. The provisional 4.00 mm under-head screw
+`0.70 mm` closed bottom at the common Z=-1.00 mm desk datum. A separate exact
+one-to-one network of 31-left/39-right `2.00 mm` key-load feet provides every
+switch center with a local desk load path whose worst center-to-support-edge
+distance is at most `3.60 mm`; mounting columns are not credited as typing-load
+supports. The provisional 4.00 mm under-head screw
 length, exact screw and driver, full-pattern registration, installation and
 stripping torque, ten service cycles, keycap-skirt clearance, and 2.0 N
 deflection must be proven on physical coupons. These digital files are not a
@@ -286,7 +288,7 @@ exact, precondition-checked edge cleanup:
 The helper rejects wrong controller/reset/switch geometry, stale sessions, and
 partial or unexpected nonempty routes. Both importers verify complete matrix connectivity,
 reproduce the committed route exactly, and are covered by second-run
-idempotence tests. The deterministic P1 rounded-head final track/via counts are
+idempotence tests. The retained deterministic route reconstruction has final track/via counts of
 590 left and 764 right, with route digests
 `94c49ca2749d83cd05969e46b2afb6b610c2067ce6a2acad84790a19e081be18`
 and `b54d29e27f1f319863ec5808b31188420ad4c47fa001d21ece98db80044c6946`.

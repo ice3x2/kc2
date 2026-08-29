@@ -88,13 +88,13 @@
     "left": {
       "dsn": "hardware/kicad/draft/x3-v2/autoroute/kc2_left-x3-v2-70-es1b-controller-r3.dsn",
       "dsn_role": "current_mh_compact_controller_trackless_routing_input",
-      "dsn_mounting_hole_count": 8,
+      "dsn_mounting_hole_count": 7,
       "session_source_dsn": "hardware/kicad/draft/x3-v2/autoroute/kc2_left-x3-v2-70-es1b-controller-r3.dsn",
-      "session_source_dsn_sha256": "b0f75b6eee7d8b63fd295c058106630383f4cebb1a5a132233fae480bd8a8abd",
+      "session_source_dsn_sha256": "466edfbcf4e8b318791feac944d8acf045bf1cde439d769a33b7c2d218999507",
       "ses": "hardware/kicad/draft/x3-v2/autoroute/kc2_left-x3-v2-70-es1b-controller-r3.ses",
       "ses_role": "reviewed_matrix_import_plus_exact_edge_cleanup_and_power_reset_service_routing",
-      "dsn_sha256": "b0f75b6eee7d8b63fd295c058106630383f4cebb1a5a132233fae480bd8a8abd",
-      "ses_sha256": "b4223b6e3ad937e9523a3777ab0657a97aa788b17ca3c78cd62036b3a5d48c4e",
+      "dsn_sha256": "466edfbcf4e8b318791feac944d8acf045bf1cde439d769a33b7c2d218999507",
+      "ses_sha256": "8340b7dfcbffe90862c265f3f5b05ce4cee510442d1a45f16f19c4f98f785bf9",
       "dsn_default_clearance_internal_units": 300,
       "dsn_clearances_internal_units": {
         "global": 300,
@@ -106,13 +106,13 @@
     "right": {
       "dsn": "hardware/kicad/draft/x3-v2/autoroute/kc2_right-x3-v2-70-es1b-controller-r3.dsn",
       "dsn_role": "current_mh_compact_controller_trackless_routing_input",
-      "dsn_mounting_hole_count": 10,
+      "dsn_mounting_hole_count": 8,
       "session_source_dsn": "hardware/kicad/draft/x3-v2/autoroute/kc2_right-x3-v2-70-es1b-controller-r3.dsn",
-      "session_source_dsn_sha256": "bcadb826bcc0d28672e9a6124bbe1b31ec6272809f1100c2d941623d47876013",
+      "session_source_dsn_sha256": "658056b39cb7a792c52d4fc4f75498f25adeb61f6a43c736c61ba1bfb82b9334",
       "ses": "hardware/kicad/draft/x3-v2/autoroute/kc2_right-x3-v2-70-es1b-controller-r3.ses",
       "ses_role": "reviewed_matrix_import_plus_exact_edge_cleanup_and_power_reset_service_routing",
-      "dsn_sha256": "bcadb826bcc0d28672e9a6124bbe1b31ec6272809f1100c2d941623d47876013",
-      "ses_sha256": "0e986c0013ea66d5a4f97ebf8b89001e91da4539f1f1e4fac8cfece0a953f445",
+      "dsn_sha256": "658056b39cb7a792c52d4fc4f75498f25adeb61f6a43c736c61ba1bfb82b9334",
+      "ses_sha256": "9fac7be12764e95a714072b2bf036bd3e1e8fb9439d83af75620cac5bcbcbc78",
       "dsn_default_clearance_internal_units": 300,
       "dsn_clearances_internal_units": {
         "global": 300,
@@ -328,105 +328,90 @@
   "housing_assumption": "FDM PLA+ lower tray with external perimeter capture and independent underside supports",
   "pcb_fastener_holes": {
     "footprint": "kc2.pretty:MH_M1.4_NPTH_1.60",
-    "references": "MH1..MH8 left; MH1..MH10 right",
+    "references": "MH1..MH7 left; MH1..MH8 right",
     "counts": {
-      "left": 8,
-      "right": 10,
-      "total": 18
+      "left": 7,
+      "right": 8,
+      "total": 15
     },
     "positions_mm": {
       "left": [
         {
           "ref": "MH1",
-          "x": 142.6125,
-          "y": 67.9
+          "x": 112.8625,
+          "y": 43.0
         },
         {
           "ref": "MH2",
-          "x": 128.6125,
-          "y": 86.5
+          "x": 144.1125,
+          "y": 66.25
         },
         {
           "ref": "MH3",
-          "x": 108.5125,
-          "y": 87.0
+          "x": 38.6125,
+          "y": 111.0
         },
         {
           "ref": "MH4",
-          "x": 57.4125,
-          "y": 99.0
+          "x": 63.6125,
+          "y": 123.0
         },
         {
           "ref": "MH5",
-          "x": 124.7125,
-          "y": 125.1
+          "x": 81.1125,
+          "y": 151.75
         },
         {
           "ref": "MH6",
-          "x": 55.1125,
-          "y": 144.0
+          "x": 137.3625,
+          "y": 153.5
         },
         {
           "ref": "MH7",
-          "x": 165.6125,
-          "y": 145.0
-        },
-        {
-          "ref": "MH8",
-          "x": 102.6125,
-          "y": 147.0
+          "x": 166.3625,
+          "y": 148.75
         }
       ],
       "right": [
         {
           "ref": "MH1",
-          "x": 71.6875,
-          "y": 67.9
+          "x": 97.0625,
+          "y": 43.25
         },
         {
           "ref": "MH2",
-          "x": 181.0875,
-          "y": 85.5
+          "x": 72.4375,
+          "y": 67.0
         },
         {
           "ref": "MH3",
-          "x": 156.1875,
-          "y": 87.0
+          "x": 169.9375,
+          "y": 95.25
         },
         {
           "ref": "MH4",
-          "x": 109.6875,
-          "y": 104.8
+          "x": 194.9375,
+          "y": 98.75
         },
         {
           "ref": "MH5",
-          "x": 71.6875,
-          "y": 105.5
+          "x": 156.1875,
+          "y": 112.5
         },
         {
           "ref": "MH6",
-          "x": 62.0875,
-          "y": 69.3
+          "x": 69.9375,
+          "y": 146.25
         },
         {
           "ref": "MH7",
-          "x": 181.1875,
-          "y": 143.0
+          "x": 97.4375,
+          "y": 152.0
         },
         {
           "ref": "MH8",
-          "x": 143.0875,
-          "y": 143.0
-        },
-        {
-          "ref": "MH9",
-          "x": 66.8875,
-          "y": 153.4
-        },
-        {
-          "ref": "MH10",
-          "x": 95.6875,
-          "y": 147.0
+          "x": 122.6875,
+          "y": 151.0
         }
       ]
     },
@@ -577,6 +562,6 @@
     "X3 V2 places the 301230 battery beneath socketed U1 and mirrors POWER then RESET from each USB-facing edge. J_BAT1 direct-solders insulated leads, SW_PWR1 switches BAT+ into U1 RAW/NN_B+, and B- remains on local GND. Physical stack, service, and RF validation are pending.",
     "X3 V2 uses the exact Jingdao ES1B / LCSC C437840 / Eleparts 9475342 manufacturer-recommended SMA land on B.Cu: 1.8 x 1.8 mm pads, 2.4 mm inner gap, pin 1 cathode to row and pin 2 anode to the per-key switch net.",
     "The ES1B placements and rotations preserve at least 1.30 mm to Edge.Cuts, 1.00 mm to switch copper/unused NPTH/unrelated exposed copper, and one unobstructed 1.50 mm cardinal hand-solder approach per pad.",
-    "X3 V2 uses the selected 8-left / 10-right M1.4 retention prototype: 1.60 mm copper-free NPTHs, keycaps removed and switches installed for PH0 service. Physical pilot, torque, full-pattern fit, and deflection evidence remain pending; the board is not order-ready."
+    "X3 V2 uses the selected 7-left / 8-right M1.4 retention prototype: 1.60 mm copper-free NPTHs, keycaps removed and switches installed for PH0 service. Physical pilot, torque, full-pattern fit, and deflection evidence remain pending; the board is not order-ready."
   ]
 }

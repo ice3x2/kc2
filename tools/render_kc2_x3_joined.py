@@ -628,7 +628,7 @@ def build_context(
         service_references,
     )
     if variant == "x3-v2":
-        for data, count in ((left, 8), (right, 10)):
+        for data, count in ((left, 7), (right, 8)):
             expected_mounts = {f"MH{index}" for index in range(1, count + 1)}
             actual_mounts = {mount.reference for mount in data.mounts}
             if actual_mounts != expected_mounts:

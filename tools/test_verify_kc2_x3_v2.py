@@ -578,7 +578,7 @@ class V2GeneratorTests(unittest.TestCase):
                     (166.3625, 148.75),
                 ],
                 "right": [
-                    (96.9375, 43.25),
+                    (97.0625, 43.25),
                     (72.4375, 67.0),
                     (169.9375, 95.25),
                     (194.9375, 98.75),
@@ -1052,8 +1052,8 @@ class V2GeneratorTests(unittest.TestCase):
         self.assertIn("actual selected keycap envelope for each corresponding physical key", product_srs)
         self.assertIn("-m tools.render_kc2_x3_joined", v2_readme)
         self.assertIn("KC2_HEADLESS_BROWSER", v2_readme)
-        self.assertIn("visibly numbered `MH1..MH8`", v2_readme)
-        self.assertIn("`MH1..MH10` on the right", v2_readme)
+        self.assertIn("visibly numbered `MH1..MH7`", v2_readme)
+        self.assertIn("`MH1..MH8` on the right", v2_readme)
         self.assertIn("CON-ARCH-007", product_srs)
         self.assertIn("SW_PWR1 is (115.8125, 63.4500) mm left and (94.3000, 63.4500) mm right", product_srs)
         self.assertIn("SW_RST1 is (126.0625, 63.4500) mm left and (84.0500, 63.4500) mm right", product_srs)
@@ -1288,7 +1288,7 @@ class V2GeneratorTests(unittest.TestCase):
                 )
                 self.assertEqual(
                     len(generated_mounts),
-                    8 if side == "left" else 10,
+                    7 if side == "left" else 8,
                 )
                 self.assertEqual(
                     [
@@ -2074,26 +2074,23 @@ class V2GeneratorTests(unittest.TestCase):
     def test_production_boards_use_exact_selected_m1_4_mounting_pattern(self) -> None:
         expected = {
             "left": [
-                ("MH1", 142.6125, 67.9),
-                ("MH2", 128.6125, 86.5),
-                ("MH3", 108.5125, 87.0),
-                ("MH4", 57.4125, 99.0),
-                ("MH5", 124.7125, 125.1),
-                ("MH6", 55.1125, 144.0),
-                ("MH7", 165.6125, 145.0),
-                ("MH8", 102.6125, 147.0),
+                ("MH1", 112.8625, 43.0),
+                ("MH2", 144.1125, 66.25),
+                ("MH3", 38.6125, 111.0),
+                ("MH4", 63.6125, 123.0),
+                ("MH5", 81.1125, 151.75),
+                ("MH6", 137.3625, 153.5),
+                ("MH7", 166.3625, 148.75),
             ],
             "right": [
-                ("MH1", 71.6875, 67.9),
-                ("MH2", 181.0875, 85.5),
-                ("MH3", 156.1875, 87.0),
-                ("MH4", 109.6875, 104.8),
-                ("MH5", 71.6875, 105.5),
-                ("MH6", 62.0875, 69.3),
-                ("MH7", 181.1875, 143.0),
-                ("MH8", 143.0875, 143.0),
-                ("MH9", 66.8875, 153.4),
-                ("MH10", 95.6875, 147.0),
+                ("MH1", 97.0625, 43.25),
+                ("MH2", 72.4375, 67.0),
+                ("MH3", 169.9375, 95.25),
+                ("MH4", 194.9375, 98.75),
+                ("MH5", 156.1875, 112.5),
+                ("MH6", 69.9375, 146.25),
+                ("MH7", 97.4375, 152.0),
+                ("MH8", 122.6875, 151.0),
             ],
         }
         for side, board_path in (("left", LEFT_BOARD), ("right", RIGHT_BOARD)):
@@ -2108,23 +2105,23 @@ class V2GeneratorTests(unittest.TestCase):
                     report["mounting_hole_clearances"][
                         "minimum_driver_to_copper_mm"
                     ],
-                    0.0,
+                    0.85,
                 )
                 self.assertGreaterEqual(
                     report["mounting_hole_clearances"][
                         "minimum_head_to_installed_body_mm"
                     ],
-                    0.25,
+                    1.20,
                 )
                 self.assertGreaterEqual(
                     report["mounting_hole_clearances"][
                         "minimum_head_to_exposed_copper_fillet_mm"
                     ],
-                    0.25,
+                    0.85,
                 )
                 self.assertGreaterEqual(
                     report["mounting_hole_clearances"]["minimum_head_to_edge_cuts_mm"],
-                    0.25,
+                    2.10,
                 )
                 route_record = analyze_v2_manifest(MANIFEST)[
                     "canonical_route_evidence"
@@ -2701,30 +2698,27 @@ class V2GeneratorTests(unittest.TestCase):
             report["pcb_fastener_holes"],
             {
                 "footprint": "kc2.pretty:MH_M1.4_NPTH_1.60",
-                "references": "MH1..MH8 left; MH1..MH10 right",
-                "counts": {"left": 8, "right": 10, "total": 18},
+                "references": "MH1..MH7 left; MH1..MH8 right",
+                "counts": {"left": 7, "right": 8, "total": 15},
                 "positions_mm": {
                     "left": [
-                        {"ref": "MH1", "x": 142.6125, "y": 67.9},
-                        {"ref": "MH2", "x": 128.6125, "y": 86.5},
-                        {"ref": "MH3", "x": 108.5125, "y": 87.0},
-                        {"ref": "MH4", "x": 57.4125, "y": 99.0},
-                        {"ref": "MH5", "x": 124.7125, "y": 125.1},
-                        {"ref": "MH6", "x": 55.1125, "y": 144.0},
-                        {"ref": "MH7", "x": 165.6125, "y": 145.0},
-                        {"ref": "MH8", "x": 102.6125, "y": 147.0},
+                        {"ref": "MH1", "x": 112.8625, "y": 43.0},
+                        {"ref": "MH2", "x": 144.1125, "y": 66.25},
+                        {"ref": "MH3", "x": 38.6125, "y": 111.0},
+                        {"ref": "MH4", "x": 63.6125, "y": 123.0},
+                        {"ref": "MH5", "x": 81.1125, "y": 151.75},
+                        {"ref": "MH6", "x": 137.3625, "y": 153.5},
+                        {"ref": "MH7", "x": 166.3625, "y": 148.75},
                     ],
                     "right": [
-                        {"ref": "MH1", "x": 71.6875, "y": 67.9},
-                        {"ref": "MH2", "x": 181.0875, "y": 85.5},
-                        {"ref": "MH3", "x": 156.1875, "y": 87.0},
-                        {"ref": "MH4", "x": 109.6875, "y": 104.8},
-                        {"ref": "MH5", "x": 71.6875, "y": 105.5},
-                        {"ref": "MH6", "x": 62.0875, "y": 69.3},
-                        {"ref": "MH7", "x": 181.1875, "y": 143.0},
-                        {"ref": "MH8", "x": 143.0875, "y": 143.0},
-                        {"ref": "MH9", "x": 66.8875, "y": 153.4},
-                        {"ref": "MH10", "x": 95.6875, "y": 147.0},
+                        {"ref": "MH1", "x": 97.0625, "y": 43.25},
+                        {"ref": "MH2", "x": 72.4375, "y": 67.0},
+                        {"ref": "MH3", "x": 169.9375, "y": 95.25},
+                        {"ref": "MH4", "x": 194.9375, "y": 98.75},
+                        {"ref": "MH5", "x": 156.1875, "y": 112.5},
+                        {"ref": "MH6", "x": 69.9375, "y": 146.25},
+                        {"ref": "MH7", "x": 97.4375, "y": 152.0},
+                        {"ref": "MH8", "x": 122.6875, "y": 151.0},
                     ],
                 },
                 "hole": {
@@ -2942,7 +2936,7 @@ class V2GeneratorTests(unittest.TestCase):
 
     def test_canonical_dsn_truthfully_binds_compact_controller_board_and_session(self) -> None:
         manifest = analyze_v2_manifest(MANIFEST)
-        for side, expected_count in (("left", 8), ("right", 10)):
+        for side, expected_count in (("left", 7), ("right", 8)):
             with self.subTest(side=side):
                 record = manifest["canonical_route_evidence"][side]
                 self.assertTrue(record["dsn"].endswith("-controller-r3.dsn"))
@@ -5327,8 +5321,8 @@ class V2GeneratorTests(unittest.TestCase):
                     )
 
             for side, original, replacement in (
-                ("left", "(place MH1 1426125 -679000", "(place MH1 1426125 -679001"),
-                ("right", "(place MH1 716875 -679000", "(place MH1 716875 -679001"),
+                ("left", "(place MH1 1128625 -430000", "(place MH1 1128625 -430001"),
+                ("right", "(place MH1 970625 -432500", "(place MH1 970625 -432501"),
             ):
                 with self.subTest(side=side, stale_mounting_geometry=True):
                     board_path = (
@@ -5353,7 +5347,7 @@ class V2GeneratorTests(unittest.TestCase):
                     )
                     with self.assertRaisesRegex(
                         RuntimeError,
-                        f"reviewed {side} controller-compaction session moved the P1 mounting pattern",
+                        f"reviewed {side} controller-compaction session moved the P2 mounting pattern",
                     ):
                         import_reviewed_controller_compact_session(
                             board,

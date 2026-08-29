@@ -424,7 +424,7 @@ X3_V2_MOUNTING_POINTS = {
         (166.3625, 148.7500),
     ],
     "right": [
-        (96.9375, 43.2500),
+        (97.0625, 43.2500),
         (72.4375, 67.0000),
         (169.9375, 95.2500),
         (194.9375, 98.7500),
@@ -2966,7 +2966,7 @@ def generate_variant(variant: str, output_dir: Path | None = None) -> dict[str, 
         "pcb_fastener_holes": (
             {
                 "footprint": f"{X3_V2_MOUNT_LIB.name}:{X3_V2_MOUNT_FP}",
-                "references": "MH1..MH8 left; MH1..MH10 right",
+                "references": "MH1..MH7 left; MH1..MH8 right",
                 "counts": {
                     "left": len(X3_V2_MOUNTING_POINTS["left"]),
                     "right": len(X3_V2_MOUNTING_POINTS["right"]),

@@ -8,7 +8,7 @@
   "hash_policy": "lf-normalized-utf8-text-else-raw-v1",
   "renderer": {
     "path": "tools/render_kc2_x3_joined.py",
-    "canonical_sha256": "d72e170da1149a29aa919c9a2ce16245343271c0f9bbff41ec88b83a0608fec1"
+    "canonical_sha256": "ee5c6943c1bcc00a16f05ba9baae624c1c60774987a27bb6bc96a941e6e41c99"
   },
   "render_parameters": {
     "clearance_mm": 1.0,
@@ -20,11 +20,11 @@
   "source_boards": {
     "left": {
       "path": "hardware/kicad/draft/x3-v2/kc2_left-x3-v2/kc2_left-x3-v2.kicad_pcb",
-      "canonical_sha256": "7f629b7f48c7432ddc34429b12d7883a2fd1389a40187b2eeb93d549fba1be6d"
+      "canonical_sha256": "934f47ec2195be604f370f571e5d82a68d1a93e05ebcfbe277626d3d4a33eceb"
     },
     "right": {
       "path": "hardware/kicad/draft/x3-v2/kc2_right-x3-v2/kc2_right-x3-v2.kicad_pcb",
-      "canonical_sha256": "4500956acec4e9f8ada2da285d9fad6c6accad5263da9128d0a14d300af3209c"
+      "canonical_sha256": "56ff42c7de16ffd24f96234b68b77dd32bf222020a688678cee08e1e61d00d91"
     }
   },
   "service_reference_counts": {
@@ -42,84 +42,72 @@
     }
   },
   "mount_reference_counts": {
-    "left": 8,
-    "right": 10
+    "left": 7,
+    "right": 8
   },
   "mount_centers_mm": {
     "left": {
       "MH1": [
-        142.6125,
-        67.9
+        112.8625,
+        43.0
       ],
       "MH2": [
-        128.6125,
-        86.5
+        144.1125,
+        66.25
       ],
       "MH3": [
-        108.5125,
-        87.0
+        38.6125,
+        111.0
       ],
       "MH4": [
-        57.4125,
-        99.0
+        63.6125,
+        123.0
       ],
       "MH5": [
-        124.7125,
-        125.1
+        81.1125,
+        151.75
       ],
       "MH6": [
-        55.1125,
-        144.0
+        137.3625,
+        153.5
       ],
       "MH7": [
-        165.6125,
-        145.0
-      ],
-      "MH8": [
-        102.6125,
-        147.0
+        166.3625,
+        148.75
       ]
     },
     "right": {
       "MH1": [
-        71.6875,
-        67.9
-      ],
-      "MH10": [
-        95.6875,
-        147.0
+        97.0625,
+        43.25
       ],
       "MH2": [
-        181.0875,
-        85.5
+        72.4375,
+        67.0
       ],
       "MH3": [
-        156.1875,
-        87.0
+        169.9375,
+        95.25
       ],
       "MH4": [
-        109.6875,
-        104.8
+        194.9375,
+        98.75
       ],
       "MH5": [
-        71.6875,
-        105.5
+        156.1875,
+        112.5
       ],
       "MH6": [
-        62.0875,
-        69.3
+        69.9375,
+        146.25
       ],
       "MH7": [
-        181.1875,
-        143.0
+        97.4375,
+        152.0
       ],
       "MH8": [
-        143.0875,
-        143.0
-      ],
-      "MH9": [
-        66.8875,
-        153.4
+        122.6875,
+        151.0
       ]
     }
   },
@@ -157,8 +145,8 @@
         }
       },
       "mount_reference_counts": {
-        "left": 8,
-        "right": 10
+        "left": 7,
+        "right": 8
       },
       "battery_terminal_legend_counts": {
         "left": {
@@ -171,8 +159,8 @@
         }
       },
       "digest_mode": "canonical_text",
-      "canonical_sha256": "618e2f2d1f524002a7b478a264852d88e6918cac6d9237f1bd9163e3d631ea31",
-      "regenerated_canonical_sha256": "618e2f2d1f524002a7b478a264852d88e6918cac6d9237f1bd9163e3d631ea31"
+      "canonical_sha256": "289deb46737df8695fdd79504e002b4db826d4028bcf8742bc8012217888dd8c",
+      "regenerated_canonical_sha256": "289deb46737df8695fdd79504e002b4db826d4028bcf8742bc8012217888dd8c"
     },
     "join_seam_zoom_svg": {
       "path": "hardware/kicad/draft/x3-v2/renders/kc2_x3_v2_join_seam_zoom.svg",
@@ -196,8 +184,8 @@
         }
       },
       "mount_reference_counts": {
-        "left": 8,
-        "right": 10
+        "left": 7,
+        "right": 8
       },
       "battery_terminal_legend_counts": {
         "left": {
@@ -210,8 +198,8 @@
         }
       },
       "digest_mode": "canonical_text",
-      "canonical_sha256": "3a296b9da65dabce6b174005db4c544e75767a8e2f5daac52ff8b5681951355b",
-      "regenerated_canonical_sha256": "3a296b9da65dabce6b174005db4c544e75767a8e2f5daac52ff8b5681951355b"
+      "canonical_sha256": "ced91d7f85b4a2537e3557843e7b8bb12a0fe1812d8f996a493527c70a500d62",
+      "regenerated_canonical_sha256": "ced91d7f85b4a2537e3557843e7b8bb12a0fe1812d8f996a493527c70a500d62"
     },
     "joined_top_png": {
       "path": "hardware/kicad/draft/x3-v2/renders/kc2_x3_v2_joined_top.png",
@@ -235,8 +223,8 @@
         }
       },
       "mount_reference_counts": {
-        "left": 8,
-        "right": 10
+        "left": 7,
+        "right": 8
       },
       "battery_terminal_legend_counts": {
         "left": {
@@ -249,8 +237,8 @@
         }
       },
       "digest_mode": "raw_binary",
-      "raw_sha256": "54cbedcc6415edad0d946e1e00b5a2c91280ba98747aa4d80605bf216c0e19f2",
-      "regenerated_raw_sha256": "54cbedcc6415edad0d946e1e00b5a2c91280ba98747aa4d80605bf216c0e19f2"
+      "raw_sha256": "41339cf38001c51b33418002741346174f9694b173ddaa3b5e556c3b241e2dcb",
+      "regenerated_raw_sha256": "41339cf38001c51b33418002741346174f9694b173ddaa3b5e556c3b241e2dcb"
     },
     "join_seam_zoom_png": {
       "path": "hardware/kicad/draft/x3-v2/renders/kc2_x3_v2_join_seam_zoom.png",
@@ -274,8 +262,8 @@
         }
       },
       "mount_reference_counts": {
-        "left": 8,
-        "right": 10
+        "left": 7,
+        "right": 8
       },
       "battery_terminal_legend_counts": {
         "left": {
@@ -288,8 +276,8 @@
         }
       },
       "digest_mode": "raw_binary",
-      "raw_sha256": "180249af9f04b29bdd0a4f2fa5ad956b3fc9c0eab2379eaa5ef260c14ee4eb3b",
-      "regenerated_raw_sha256": "180249af9f04b29bdd0a4f2fa5ad956b3fc9c0eab2379eaa5ef260c14ee4eb3b"
+      "raw_sha256": "16c45d189617faa798fe8812a2e986630af9b846f7f8e03bde7a3876977a46cd",
+      "regenerated_raw_sha256": "16c45d189617faa798fe8812a2e986630af9b846f7f8e03bde7a3876977a46cd"
     }
   }
 }

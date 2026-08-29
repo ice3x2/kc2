@@ -6,4 +6,4 @@ battery_pack,1,BAT1,301230-class 3.7 V 100 mAh Li-Po with insulated leads,pendin
 battery_direct_solder_termination,1,J_BAT1,BAT_2Pin_PTH_DirectSolder,pending
 power_switch,1,SW_PWR1,IMMS-12V/BSI-10 nominal collision proxy; equivalence not assumed,pending
 reset_switch,1,SW_RST1,NW3-A06-B3 / DeviceMart 1322056,controlled
-mounting_hole,8,MH1;MH2;MH3;MH4;MH5;MH6;MH7;MH8,"M1.4 service/retention, 1.60 mm NPTH",controlled
+mounting_hole,7,MH1;MH2;MH3;MH4;MH5;MH6;MH7,"M1.4 service/retention, 1.60 mm NPTH",controlled

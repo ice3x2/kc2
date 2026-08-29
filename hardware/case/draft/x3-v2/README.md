@@ -12,25 +12,25 @@ REG/H registration pattern.
   exterior bottom `Z=0.00 mm` to PCB support plane `Z=2.50 mm`.
 - There is no raised key-field bezel. The housing outline is inset `0.10 mm`
   from the PCB outline, preserving the keycap-concealed edge requirement.
-- Clearance-cut perimeter regions and distributed `2.00 mm` support datum
+- Clearance-cut perimeter regions and dedicated `2.00 mm` key-load support datum
   regions terminate at exactly Z `2.50 mm`, so the PCB has zero nominal
   vertical support gap without screw preload.
-- The generated support set contains 14 left and 11 right seam/thumb/span
-  regions. The measured worst switch-center distance to support is
-  `15.4640 mm` left and `18.9619 mm` right; seam distance is `2.85 mm`
-  on both halves.
-- A `2.00 mm` diameter foot continues downward from every distributed support
-  datum to desk datum Z `-1.00 mm`. The eight left and ten right mounting
+- The generated support set contains exactly one local support for every
+  switch: 31 left and 39 right. Each support records its `SW*` source reference,
+  and the measured worst switch-center-to-support-edge distance is `3.5621 mm`
+  on both halves. Mounting columns are not credited as typing-load supports.
+- A `2.00 mm` diameter foot continues downward from every key-load support
+  datum to desk datum Z `-1.00 mm`. The seven left and eight right mounting
   points add coaxial `3.00 mm` desk-contact columns. A separate `3.00 mm`
   column also backs the exact top-side `SW_RST1` actuator at zero gap. The
-  left part therefore has 23 coplanar desk contacts; right parts A/B have
-  10/12. Each set is
+  left part therefore has 39 coplanar desk contacts; right parts A/B each have
+  24. Each set is
   non-collinear and its contact hull contains
   the projected plate centroid, so every printable part has an independent
   no-rocking digital support proof. Feet remain inside the housing silhouette
   and have zero intersections with exterior-open component cutouts.
 - There are no legacy REG/H pegs or separate fastener bosses. The exact
-  `MH1..MH8` left and `MH1..MH10` right M1.4 pattern adds `3.00 mm` zero-gap
+  `MH1..MH7` left and `MH1..MH8` right M1.4 pattern adds `3.00 mm` zero-gap
   annular support lands at Z `2.50 mm`, aligned `3.00 mm` columns to Z
   `-1.00 mm`, and provisional `1.10 mm x 2.80 mm` blind pilots. Each pilot
   ends at Z `-0.30 mm`, leaving a nominal `0.70 mm` closed column bottom.
@@ -38,18 +38,18 @@ REG/H registration pattern.
   penetration across the PCB thickness tolerance and at least `0.24 mm`
   nominal tip clearance. The exact screw MPN, printed pilot, torque, repeated
   service, and full-pattern registration remain physical gates.
-- The exact P1 board centers are left `MH1..MH8`: `(142.6125,67.9000)`,
-  `(128.6125,86.5000)`, `(108.5125,87.0000)`, `(57.4125,99.0000)`,
-  `(124.7125,125.1000)`, `(55.1125,144.0000)`, `(165.6125,145.0000)`,
-  `(102.6125,147.0000)`; and right `MH1..MH10`: `(71.6875,67.9000)`,
-  `(181.0875,85.5000)`, `(156.1875,87.0000)`, `(109.6875,104.8000)`,
-  `(71.6875,105.5000)`, `(62.0875,69.3000)`, `(181.1875,143.0000)`,
-  `(143.0875,143.0000)`, `(66.8875,153.4000)`, `(95.6875,147.0000)`.
-- The P1 pattern requires no analytical-rail relief. Every mounting land
-  retains its independent `0.25 mm` unrelated-support reserve, and the full
-  rounded-head envelope independently retains `0.25 mm` to installed switch
-  and component envelopes, routed copper/vias, board and housing edges,
-  distributed/reset supports, and the unmodified analytical rail.
+- The exact P2 board centers are left `MH1..MH7`: `(112.8625,43.0000)`,
+  `(144.1125,66.2500)`, `(38.6125,111.0000)`, `(63.6125,123.0000)`,
+  `(81.1125,151.7500)`, `(137.3625,153.5000)`, `(166.3625,148.7500)`;
+  and right `MH1..MH8`: `(97.0625,43.2500)`, `(72.4375,67.0000)`,
+  `(169.9375,95.2500)`, `(194.9375,98.7500)`, `(156.1875,112.5000)`,
+  `(69.9375,146.2500)`, `(97.4375,152.0000)`, `(122.6875,151.0000)`.
+- The P2 pattern requires no analytical-rail relief. The complete rounded-head
+  envelope retains at least `1.20 mm` to installed component bodies, `0.85 mm`
+  to routed copper/vias, `2.10 mm` to PCB Edge.Cuts, `2.00 mm` to the housing
+  edge, and `3.70 mm` to an unrelated key-load support. Actual limiting values
+  are left `1.6438/0.8750/2.1125/2.0125/4.6758 mm` and right
+  `1.2250/1.1375/2.2500/2.1500/3.7310 mm` in that order.
 - The mounting service model removes keycaps but leaves switches installed.
   All selected points pass the final `3.00 mm` PH0 driver cylinder and
   provisional `3.00 x 1.20 mm` non-countersunk rounded pan/button-head
@@ -60,7 +60,7 @@ REG/H registration pattern.
   longitudinal envelope covering the full `1.60 mm` actuator travel in both
   directions, independently of the unchanged through-hole lead geometry.
   The screw pattern clamps and registers the PCB; it does not replace the
-  perimeter rail or the retained 14/11 distributed supports. Exact head
+  perimeter rail or the dedicated 31/39 key-load support network. Exact head
   height, installed keycap-skirt rest clearance, and full-travel clearance
   remain pending physical gates until the final screw MPN is qualified.
 

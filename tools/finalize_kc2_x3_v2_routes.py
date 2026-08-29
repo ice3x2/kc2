@@ -726,7 +726,7 @@ def export_current_mh_trackless_dsn(
     side: str,
 ) -> None:
     """Export the deterministic compact-controller routing input from a trackless board."""
-    expected_holes = 8 if side == "left" else 10 if side == "right" else None
+    expected_holes = 7 if side == "left" else 8 if side == "right" else None
     if expected_holes is None:
         raise RuntimeError(f"unsupported current-MH DSN side {side!r}")
     holes = [
@@ -951,7 +951,7 @@ def import_reviewed_controller_compact_session(
     restore_v2_controller_service_placements(board, side)
     if not _has_exact_current_mounting_geometry(board, side):
         raise RuntimeError(
-            f"reviewed {side} controller-compaction session moved the P1 mounting pattern"
+            f"reviewed {side} controller-compaction session moved the P2 mounting pattern"
         )
 
     expected_removals = Counter(CONTROLLER_COMPACT_ROUTE_REMOVALS[side])
