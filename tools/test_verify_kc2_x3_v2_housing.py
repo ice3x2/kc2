@@ -1059,6 +1059,14 @@ class V2LoadBearingHousingTests(unittest.TestCase):
             encoding="utf-8"
         )
         con_arch_006 = srs.split("### CON-ARCH-006", 1)[1].split("### CON-ARCH-007", 1)[0]
+        self.assertIn(
+            "Typing-load support density shall be provided by the lower housing rather than by adding PCB mounting holes",
+            con_arch_006,
+        )
+        self.assertIn(
+            "A request for more typing-load support shall not by itself justify an additional `MH*` PCB feature.",
+            con_arch_006,
+        )
         self.assertIn("| VE-3 | current-mount-housing-cad |", con_arch_006)
         self.assertIn("Physical validation remains required; order_ready=false", con_arch_006)
         self.assertIn("`order_ready` and `fabrication_or_order_ready` remain false", con_arch_006)
