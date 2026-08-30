@@ -726,7 +726,7 @@ def export_current_mh_trackless_dsn(
     side: str,
 ) -> None:
     """Export the deterministic compact-controller routing input from a trackless board."""
-    expected_holes = 7 if side == "left" else 8 if side == "right" else None
+    expected_holes = 8 if side == "left" else 9 if side == "right" else None
     if expected_holes is None:
         raise RuntimeError(f"unsupported current-MH DSN side {side!r}")
     holes = [

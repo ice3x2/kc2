@@ -38,8 +38,8 @@ RENDERER_PATH = ROOT / "tools" / "render_kc2_x3_joined.py"
 EXPECTED_SERVICE_REFERENCES = X3_V2_SERVICE_REFERENCES
 EXPECTED_BATTERY_TERMINAL_LEGENDS = X3_V2_BATTERY_TERMINAL_LEGENDS
 EXPECTED_BOARD_CANONICAL_SHA256 = {
-    "left": "934f47ec2195be604f370f571e5d82a68d1a93e05ebcfbe277626d3d4a33eceb",
-    "right": "56ff42c7de16ffd24f96234b68b77dd32bf222020a688678cee08e1e61d00d91",
+    "left": "92c46f364f0cc647928029f6b42a54abfcc94485a491e5a6177e84cc7800d26f",
+    "right": "cff0e6ad90ab9eacebd84e7555b77c47437921ac7c082b395ba24cbada85ad2f",
 }
 EXPECTED_MOUNT_CENTERS_MM = {
     "left": {
@@ -50,6 +50,7 @@ EXPECTED_MOUNT_CENTERS_MM = {
         "MH5": [81.1125, 151.75],
         "MH6": [137.3625, 153.5],
         "MH7": [166.3625, 148.75],
+        "MH8": [75.0, 134.0],
     },
     "right": {
         "MH1": [97.0625, 43.25],
@@ -60,6 +61,7 @@ EXPECTED_MOUNT_CENTERS_MM = {
         "MH6": [69.9375, 146.25],
         "MH7": [97.4375, 152.0],
         "MH8": [122.6875, 151.0],
+        "MH9": [177.5, 118.0],
     },
 }
 EXPECTED_RENDER_PARAMETERS = {

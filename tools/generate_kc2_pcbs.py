@@ -422,6 +422,7 @@ X3_V2_MOUNTING_POINTS = {
         (81.1125, 151.7500),
         (137.3625, 153.5000),
         (166.3625, 148.7500),
+        (75.0000, 134.0000),
     ],
     "right": [
         (97.0625, 43.2500),
@@ -432,6 +433,7 @@ X3_V2_MOUNTING_POINTS = {
         (69.9375, 146.2500),
         (97.4375, 152.0000),
         (122.6875, 151.0000),
+        (177.5000, 118.0000),
     ],
 }
 EDGE_WIDTH = 0.10
@@ -2714,7 +2716,7 @@ def generate_variant(variant: str, output_dir: Path | None = None) -> dict[str, 
         notes.append(f"Controller protrusion tab width is {CONTROLLER_TAB_W:g} mm and grows away from the inner joining edge.")
     switch_footprint_file_present = (switch_lib / f"{switch_fp}.kicad_mod").exists()
     manifest: dict[str, object] = {
-        "generated": "2026-08-29" if variant == "x3-v2" else "2026-06-08",
+        "generated": "2026-08-30" if variant == "x3-v2" else "2026-06-08",
         "variant": variant,
         **(
             {"requirement_ids": X3_V2_REQUIREMENT_IDS}
@@ -2966,7 +2968,7 @@ def generate_variant(variant: str, output_dir: Path | None = None) -> dict[str, 
         "pcb_fastener_holes": (
             {
                 "footprint": f"{X3_V2_MOUNT_LIB.name}:{X3_V2_MOUNT_FP}",
-                "references": "MH1..MH7 left; MH1..MH8 right",
+                "references": "MH1..MH8 left; MH1..MH9 right",
                 "counts": {
                     "left": len(X3_V2_MOUNTING_POINTS["left"]),
                     "right": len(X3_V2_MOUNTING_POINTS["right"]),

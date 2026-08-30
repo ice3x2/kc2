@@ -145,6 +145,7 @@ MOUNTING_HOLE_COORDINATES_MM = {
         ("MH5", 81.1125, 151.7500),
         ("MH6", 137.3625, 153.5000),
         ("MH7", 166.3625, 148.7500),
+        ("MH8", 75.0000, 134.0000),
     ),
     "right": (
         ("MH1", 97.0625, 43.2500),
@@ -155,6 +156,7 @@ MOUNTING_HOLE_COORDINATES_MM = {
         ("MH6", 69.9375, 146.2500),
         ("MH7", 97.4375, 152.0000),
         ("MH8", 122.6875, 151.0000),
+        ("MH9", 177.5000, 118.0000),
     ),
 }
 
@@ -1801,7 +1803,7 @@ def mounting_system_manifest(
     expected_distribution = (
         {"whole": len(MOUNTING_HOLE_COORDINATES_MM[side])}
         if side == "left"
-        else {"part_a": 4, "part_b": 4}
+        else {"part_a": 5, "part_b": 4}
     )
     support_refs = [post.get("switch_ref") for post in plan["support_posts"]]
     expected_support_refs = [switch["ref"] for switch in plan["switches"]]

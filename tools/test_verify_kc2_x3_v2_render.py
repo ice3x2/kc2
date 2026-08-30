@@ -63,7 +63,7 @@ class X3V2RenderEvidenceTests(unittest.TestCase):
                 "right": {reference: 1 for reference in EXPECTED_SERVICE_REFERENCES},
             },
         )
-        self.assertEqual(manifest["mount_reference_counts"], {"left": 7, "right": 8})
+        self.assertEqual(manifest["mount_reference_counts"], {"left": 8, "right": 9})
         self.assertEqual(
             manifest["mount_centers_mm"],
             {
@@ -75,6 +75,7 @@ class X3V2RenderEvidenceTests(unittest.TestCase):
                     "MH5": [81.1125, 151.75],
                     "MH6": [137.3625, 153.5],
                     "MH7": [166.3625, 148.75],
+                    "MH8": [75.0, 134.0],
                 },
                 "right": {
                     "MH1": [97.0625, 43.25],
@@ -85,6 +86,7 @@ class X3V2RenderEvidenceTests(unittest.TestCase):
                     "MH6": [69.9375, 146.25],
                     "MH7": [97.4375, 152.0],
                     "MH8": [122.6875, 151.0],
+                    "MH9": [177.5, 118.0],
                 },
             },
         )

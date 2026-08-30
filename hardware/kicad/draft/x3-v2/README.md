@@ -101,10 +101,10 @@ still required before ordering.
 
 ## M1.4 retention prototype
 
-The PCB contains seven left and eight right `MH*` features using the owned
+The PCB contains eight left and nine right `MH*` features using the owned
 `MH_M1.4_NPTH_1.60` footprint. Each is an unnetted, copper-free `1.60 mm`
-round NPTH. Each hole is visibly numbered `MH1..MH7` on the left and
-`MH1..MH8` on the right using `0.80 mm` / `0.15 mm` front-silkscreen text.
+round NPTH. Each hole is visibly numbered `MH1..MH8` on the left and
+`MH1..MH9` on the right using `0.80 mm` / `0.15 mm` front-silkscreen text.
 Service is modeled with keycaps removed and either supported switch
 type still installed. A final `3.00 mm` vertical PH0 driver envelope and a
 provisional non-countersunk rounded pan/button head envelope of maximum
@@ -156,7 +156,7 @@ strain-relief, IMMS lead, and solder-fillet openings.
 
 ## Compact controller tab
 
-The V2-only compact-controller layout keeps all 70 key centers and all 18
+The V2-only compact-controller layout keeps all 70 key centers and all 17
 numbered mounting-hole centers fixed. U1 centers are left
 `(132.7125, 50.7500)` and right `(77.4000, 50.7500)` mm. The top Edge.Cuts
 centerline is `Y=39.2500 mm`, and the nominal board height is `122.50 mm`.
@@ -192,8 +192,8 @@ physical first-article evidence. The digital package remains not orderable.
 
 The fabrication, mechanical, and housing derivatives were regenerated from
 the current left/right board hashes
-`934f47ec2195be604f370f571e5d82a68d1a93e05ebcfbe277626d3d4a33eceb` and
-`56ff42c7de16ffd24f96234b68b77dd32bf222020a688678cee08e1e61d00d91`.
+`92c46f364f0cc647928029f6b42a54abfcc94485a491e5a6177e84cc7800d26f` and
+`cff0e6ad90ab9eacebd84e7555b77c47437921ac7c082b395ba24cbada85ad2f`.
 Their dedicated V2 verifiers pass. The joined SVG/PNG set was regenerated from
 the same current boards and reports 1.1000 mm minimum Edge.Cuts clearance and
 1.8000 mm cross-seam keycap gap. All outputs remain digital draft evidence and
@@ -227,7 +227,7 @@ physical evidence is still pending. The current expected result is exit `2`.
 ```powershell
 $kpy = 'C:\Program Files\KiCad\10.0\bin\python.exe'
 & $kpy -m tools.generate_kc2_pcbs --variant x3-v2 --output-dir tmp_x3_v2_clean
-& $kpy -m tools.render_kc2_x3_joined --variant x3-v2 --placement-mode key-pitch --scale 7 --output-dir hardware/kicad/draft/x3-v2/renders
+& $kpy -m tools.render_kc2_x3_joined --variant x3-v2 --placement-mode key-pitch --scale 5 --output-dir hardware/kicad/draft/x3-v2/renders
 & $kpy -m tools.verify_kc2_x3_v2
 & $kpy -m tools.verify_kc2_x3_v2_coupon
 & $kpy -m tools.verify_kc2_x3_v2_outline

@@ -59,11 +59,11 @@ EXPECTED_FILE_FUNCTIONS = {
 EXPECTED_FIXED_DRILL_TOOLS = {
     "left": {
         "PTH": {"0.800": 3, "0.900": 2, "0.950": 24, "1.500": 62},
-        "NPTH": {"1.600": 7, "1.650": 31, "1.700": 62, "2.200": 1, "3.000": 62, "5.000": 31},
+        "NPTH": {"1.600": 8, "1.650": 31, "1.700": 62, "2.200": 1, "3.000": 62, "5.000": 31},
     },
     "right": {
         "PTH": {"0.800": 3, "0.900": 2, "0.950": 24, "1.500": 78},
-        "NPTH": {"1.600": 8, "1.650": 39, "1.700": 78, "2.200": 1, "3.000": 78, "5.000": 39},
+        "NPTH": {"1.600": 9, "1.650": 39, "1.700": 78, "2.200": 1, "3.000": 78, "5.000": 39},
     },
     "coupon": {
         "PTH": {"1.500": 6, "2.000": 9},
@@ -73,8 +73,8 @@ EXPECTED_FIXED_DRILL_TOOLS = {
 EXPECTED_BOTTOM_PASTE_FLASHES = {"left": 124, "right": 156, "coupon": 12}
 EXPECTED_KEY_COUNTS = {"left": 31, "right": 39, "coupon": 3}
 EXPECTED_MOUNTING_REFERENCE_LABELS = {
-    "left": [f"MH{index}" for index in range(1, 8)],
-    "right": [f"MH{index}" for index in range(1, 9)],
+    "left": [f"MH{index}" for index in range(1, 9)],
+    "right": [f"MH{index}" for index in range(1, 10)],
     "coupon": [],
 }
 EXPECTED_MOUNTING_REFERENCE_CENTERS_MM = {
@@ -86,6 +86,7 @@ EXPECTED_MOUNTING_REFERENCE_CENTERS_MM = {
         "MH5": (81.1125, 151.75),
         "MH6": (137.3625, 153.5),
         "MH7": (166.3625, 148.75),
+        "MH8": (75.0, 134.0),
     },
     "right": {
         "MH1": (97.0625, 43.25),
@@ -96,6 +97,7 @@ EXPECTED_MOUNTING_REFERENCE_CENTERS_MM = {
         "MH6": (69.9375, 146.25),
         "MH7": (97.4375, 152.0),
         "MH8": (122.6875, 151.0),
+        "MH9": (177.5, 118.0),
     },
     "coupon": {},
 }

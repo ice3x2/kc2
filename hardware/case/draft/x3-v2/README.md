@@ -20,7 +20,7 @@ REG/H registration pattern.
   and the measured worst switch-center-to-support-edge distance is `3.5621 mm`
   on both halves. Mounting columns are not credited as typing-load supports.
 - A `2.00 mm` diameter foot continues downward from every key-load support
-  datum to desk datum Z `-1.00 mm`. The seven left and eight right mounting
+  datum to desk datum Z `-1.00 mm`. The eight left and nine right mounting
   points add coaxial `3.00 mm` desk-contact columns. A separate `3.00 mm`
   column also backs the exact top-side `SW_RST1` actuator at zero gap. The
   left part therefore has 39 coplanar desk contacts; right parts A/B each have
@@ -30,7 +30,7 @@ REG/H registration pattern.
   no-rocking digital support proof. Feet remain inside the housing silhouette
   and have zero intersections with exterior-open component cutouts.
 - There are no legacy REG/H pegs or separate fastener bosses. The exact
-  `MH1..MH7` left and `MH1..MH8` right M1.4 pattern adds `3.00 mm` zero-gap
+  `MH1..MH8` left and `MH1..MH9` right M1.4 pattern adds `3.00 mm` zero-gap
   annular support lands at Z `2.50 mm`, aligned `3.00 mm` columns to Z
   `-1.00 mm`, and provisional `1.10 mm x 2.80 mm` blind pilots. Each pilot
   ends at Z `-0.30 mm`, leaving a nominal `0.70 mm` closed column bottom.
@@ -38,12 +38,13 @@ REG/H registration pattern.
   penetration across the PCB thickness tolerance and at least `0.24 mm`
   nominal tip clearance. The exact screw MPN, printed pilot, torque, repeated
   service, and full-pattern registration remain physical gates.
-- The exact P2 board centers are left `MH1..MH7`: `(112.8625,43.0000)`,
+- The exact P2 reinforcement board centers are left `MH1..MH8`: `(112.8625,43.0000)`,
   `(144.1125,66.2500)`, `(38.6125,111.0000)`, `(63.6125,123.0000)`,
-  `(81.1125,151.7500)`, `(137.3625,153.5000)`, `(166.3625,148.7500)`;
-  and right `MH1..MH8`: `(97.0625,43.2500)`, `(72.4375,67.0000)`,
+  `(81.1125,151.7500)`, `(137.3625,153.5000)`, `(166.3625,148.7500)`,
+  `(75.0000,134.0000)`; and right `MH1..MH9`: `(97.0625,43.2500)`, `(72.4375,67.0000)`,
   `(169.9375,95.2500)`, `(194.9375,98.7500)`, `(156.1875,112.5000)`,
-  `(69.9375,146.2500)`, `(97.4375,152.0000)`, `(122.6875,151.0000)`.
+  `(69.9375,146.2500)`, `(97.4375,152.0000)`, `(122.6875,151.0000)`,
+  `(177.5000,118.0000)`.
 - The P2 pattern requires no analytical-rail relief. The complete rounded-head
   envelope retains at least `1.20 mm` to installed component bodies, `0.85 mm`
   to routed copper/vias, `2.10 mm` to PCB Edge.Cuts, `2.00 mm` to the housing

@@ -108,7 +108,8 @@
       (place MH2 72437.5 -67000 front 0 (PN M1.4_NPTH_1.60))
       (place MH8 122687.5 -151000 front 0 (PN M1.4_NPTH_1.60))
       (place MH6 69937.5 -146250 front 0 (PN M1.4_NPTH_1.60))
-      (place MH3 169937.5 -95250 front 0 (PN M1.4_NPTH_1.60))
+    (place MH3 169937.5 -95250 front 0 (PN M1.4_NPTH_1.60))
+    (place MH9 177500 -118000 front 0 (PN M1.4_NPTH_1.60))
     )
     (component KC2:NiceNanoV2_Socket_24Pin_USB_OUT_RIGHT
       (place U1 77400 -50750 front 0 (PN nice!nano_v2_socket_24pin))

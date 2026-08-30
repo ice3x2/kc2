@@ -9,7 +9,7 @@
   "variant": "x3-v2",
   "product": "right",
   "source_board": "hardware\\kicad\\draft\\x3-v2\\kc2_right-x3-v2\\kc2_right-x3-v2.kicad_pcb",
-  "source_board_sha256": "56ff42c7de16ffd24f96234b68b77dd32bf222020a688678cee08e1e61d00d91",
+  "source_board_sha256": "cff0e6ad90ab9eacebd84e7555b77c47437921ac7c082b395ba24cbada85ad2f",
   "order_ready": false,
   "line_items": [
     {
@@ -167,7 +167,7 @@
     },
     {
       "category": "mounting_hole",
-      "quantity": 8,
+      "quantity": 9,
       "references": [
         "MH1",
         "MH2",
@@ -176,7 +176,8 @@
         "MH5",
         "MH6",
         "MH7",
-        "MH8"
+        "MH8",
+        "MH9"
       ],
       "identity": "M1.4 service/retention, 1.60 mm NPTH",
       "fitted_component": false

@@ -47,6 +47,7 @@
       (place MH6 699375 -1462500 front 0)
       (place MH7 974375 -1520000 front 0)
       (place MH8 1226875 -1510000 front 0)
+      (place MH9 1775000 -1180000 front 0)
     )
     (component SW_Choc_V2_Socket_MX_THT::1
       (place SW25 573125 -1346750 front 180)

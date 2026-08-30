@@ -425,10 +425,20 @@ class V2FirmwareContractTests(unittest.TestCase):
         self.assertIn("`0.3279 mm`", housing_readme)
         self.assertIn("`0.3282 mm`", housing_readme)
         self.assertIn("`1.0250 mm`", housing_readme)
-        self.assertIn("retained 14/11 distributed supports", housing_readme)
+        self.assertIn("31/39 key-load support network", housing_readme)
+        self.assertIn("둥근머리 P2 reinforcement", summary)
+        self.assertIn(
+            "92c46f364f0cc647928029f6b42a54abfcc94485a491e5a6177e84cc7800d26f",
+            summary,
+        )
+        self.assertIn(
+            "cff0e6ad90ab9eacebd84e7555b77c47437921ac7c082b395ba24cbada85ad2f",
+            summary,
+        )
+        self.assertNotIn("현재 둥근머리 P1", summary)
         self.assertIn("29/29 tests", srs)
         self.assertIn(
-            "physical Z, fit, exact fastener, keycap-skirt, deflection, service, and RF gates remain open",
+            "exact fastener, keycap-skirt, deflection, service, and RF gates remain open",
             srs,
         )
         self.assertNotIn("Seventeen focused housing tests pass", srs)
@@ -443,11 +453,11 @@ class V2FirmwareContractTests(unittest.TestCase):
                     "dsn_role": "current_mh_compact_controller_trackless_routing_input",
                     "dsn_mounting_hole_count": 8,
                     "session_source_dsn": "hardware/kicad/draft/x3-v2/autoroute/kc2_left-x3-v2-70-es1b-controller-r3.dsn",
-                    "session_source_dsn_sha256": "b0f75b6eee7d8b63fd295c058106630383f4cebb1a5a132233fae480bd8a8abd",
+                    "session_source_dsn_sha256": "00e347ed6a197a3016f73b4ddc1cd72d4d5b22ff916d253a20ef1fc11094e30c",
                     "ses": "hardware/kicad/draft/x3-v2/autoroute/kc2_left-x3-v2-70-es1b-controller-r3.ses",
                     "ses_role": "reviewed_matrix_import_plus_exact_edge_cleanup_and_power_reset_service_routing",
-                    "dsn_sha256": "b0f75b6eee7d8b63fd295c058106630383f4cebb1a5a132233fae480bd8a8abd",
-                    "ses_sha256": "b4223b6e3ad937e9523a3777ab0657a97aa788b17ca3c78cd62036b3a5d48c4e",
+                    "dsn_sha256": "00e347ed6a197a3016f73b4ddc1cd72d4d5b22ff916d253a20ef1fc11094e30c",
+                    "ses_sha256": "4c97f1040bcbfbda39bc1e445edb81863d030629190be1ee50f6b3ab50441832",
                     "dsn_default_clearance_internal_units": 300,
                     "dsn_clearances_internal_units": {
                         "global": 300,
@@ -459,13 +469,13 @@ class V2FirmwareContractTests(unittest.TestCase):
                 "right": {
                     "dsn": "hardware/kicad/draft/x3-v2/autoroute/kc2_right-x3-v2-70-es1b-controller-r3.dsn",
                     "dsn_role": "current_mh_compact_controller_trackless_routing_input",
-                    "dsn_mounting_hole_count": 10,
+                    "dsn_mounting_hole_count": 9,
                     "session_source_dsn": "hardware/kicad/draft/x3-v2/autoroute/kc2_right-x3-v2-70-es1b-controller-r3.dsn",
-                    "session_source_dsn_sha256": "bcadb826bcc0d28672e9a6124bbe1b31ec6272809f1100c2d941623d47876013",
+                    "session_source_dsn_sha256": "cdb19dfbbfc3c9129df64aaa9f899142fbaf15de3a4775ea4826dbdd8519c425",
                     "ses": "hardware/kicad/draft/x3-v2/autoroute/kc2_right-x3-v2-70-es1b-controller-r3.ses",
                     "ses_role": "reviewed_matrix_import_plus_exact_edge_cleanup_and_power_reset_service_routing",
-                    "dsn_sha256": "bcadb826bcc0d28672e9a6124bbe1b31ec6272809f1100c2d941623d47876013",
-                    "ses_sha256": "0e986c0013ea66d5a4f97ebf8b89001e91da4539f1f1e4fac8cfece0a953f445",
+                    "dsn_sha256": "cdb19dfbbfc3c9129df64aaa9f899142fbaf15de3a4775ea4826dbdd8519c425",
+                    "ses_sha256": "b5bd3f7f622af8bb50b1292fb05d08b6d3b7a6ce5f893c0d20ef51d814a48717",
                     "dsn_default_clearance_internal_units": 300,
                     "dsn_clearances_internal_units": {
                         "global": 300,

@@ -98,7 +98,8 @@
       (place MH2 144112.5 -66250 front 0 (PN M1.4_NPTH_1.60))
       (place MH6 137362.5 -153500 front 0 (PN M1.4_NPTH_1.60))
       (place MH7 166362.5 -148750 front 0 (PN M1.4_NPTH_1.60))
-      (place MH3 38612.5 -111000 front 0 (PN M1.4_NPTH_1.60))
+    (place MH3 38612.5 -111000 front 0 (PN M1.4_NPTH_1.60))
+    (place MH8 75000 -134000 front 0 (PN M1.4_NPTH_1.60))
     )
     (component KC2:SW_IMMS_12V_BSI10_THT
       (place SW_PWR1 115812.5 -63450 front 0 (PN SW_IMMS_12V_BSI10_THT))

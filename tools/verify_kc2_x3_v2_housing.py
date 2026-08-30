@@ -102,6 +102,7 @@ VERIFIED_MOUNTING_COORDINATES_MM = {
         [81.1125, 151.7500],
         [137.3625, 153.5000],
         [166.3625, 148.7500],
+        [75.0000, 134.0000],
     ],
     "right": [
         [97.0625, 43.2500],
@@ -112,6 +113,7 @@ VERIFIED_MOUNTING_COORDINATES_MM = {
         [69.9375, 146.2500],
         [97.4375, 152.0000],
         [122.6875, 151.0000],
+        [177.5000, 118.0000],
     ],
 }
 
@@ -136,8 +138,8 @@ def service_cutout_contract_errors(
 
 
 VERIFIED_MOUNTING_PART_DISTRIBUTION = {
-    "left": {"whole": 7},
-    "right": {"part_a": 4, "part_b": 4},
+    "left": {"whole": 8},
+    "right": {"part_a": 5, "part_b": 4},
 }
 VERIFIED_DISTRIBUTED_SUPPORT_COUNTS = {"left": 31, "right": 39}
 VERIFIED_PRIMARY_SUPPORT_LOAD_SPAN_MM = {"left": 3.5621, "right": 3.5621}

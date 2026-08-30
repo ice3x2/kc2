@@ -250,6 +250,7 @@ EXPECTED_M1_4_MOUNTING_POINTS = {
         ("MH5", 81.1125, 151.7500),
         ("MH6", 137.3625, 153.5000),
         ("MH7", 166.3625, 148.7500),
+        ("MH8", 75.0000, 134.0000),
     ],
     "right": [
         ("MH1", 97.0625, 43.2500),
@@ -260,6 +261,7 @@ EXPECTED_M1_4_MOUNTING_POINTS = {
         ("MH6", 69.9375, 146.2500),
         ("MH7", 97.4375, 152.0000),
         ("MH8", 122.6875, 151.0000),
+        ("MH9", 177.5000, 118.0000),
     ],
 }
 
@@ -1405,8 +1407,8 @@ def verify_placed_footprint_contracts(
 def expected_m1_4_mount_manifest() -> dict[str, object]:
     return {
         "footprint": "kc2.pretty:MH_M1.4_NPTH_1.60",
-        "references": "MH1..MH7 left; MH1..MH8 right",
-        "counts": {"left": 7, "right": 8, "total": 15},
+        "references": "MH1..MH8 left; MH1..MH9 right",
+        "counts": {"left": 8, "right": 9, "total": 17},
         "positions_mm": {
             side: [
                 {"ref": ref, "x": x, "y": y}
@@ -1857,7 +1859,7 @@ def verify_canonical_route_evidence(
             errors.append(f"{side}: SES SHA-256 mismatch")
         if record.get("session_source_dsn_sha256") != session_source_dsn_sha:
             errors.append(f"{side}: reviewed SES source DSN SHA-256 mismatch")
-        expected_holes = 7 if side == "left" else 8
+        expected_holes = len(X3_V2_MOUNTING_POINTS[side])
         if reports[side]["dsn_mounting_hole_count"] != expected_holes:
             errors.append(f"{side}: current DSN does not contain the exact MH pattern")
         if record.get("dsn_mounting_hole_count") != expected_holes:
@@ -3493,7 +3495,7 @@ def _housing_head_adjacency_contracts(
             ),
             key=lambda reference: int(reference[2:]),
         )
-        expected_count = 7 if half == "left" else 8
+        expected_count = 8 if half == "left" else 9
         if len(mounting_refs) != expected_count:
             errors.append(f"housing head-adjacency {half} mounting-hole set is incomplete")
             continue
@@ -3531,12 +3533,12 @@ def _housing_head_adjacency_contracts(
         for record in contracts.values()
     )
     if (
-        len(contracts) != 14
-        or len(per_hole_counts) != 12
+        len(contracts) != 16
+        or len(per_hole_counts) != 14
         or sum(count > 1 for count in per_hole_counts.values()) != 2
     ):
         errors.append(
-            "housing head-adjacency is not the exact P2 set of 14 overlaps at 12 holes "
+            "housing head-adjacency is not the exact P2 reinforcement set of 16 overlaps at 14 holes "
             "(2 multi-switch)"
         )
     return contracts, errors
@@ -4233,9 +4235,9 @@ def _housing_metrics(
             or travel <= 0.0
         ):
             errors.append(f"housing mounting-head-adjacent fit {key} does not pass")
-    if seen_head_fit_keys != expected_head_fit_keys or len(seen_head_fit_keys) != 28:
+    if seen_head_fit_keys != expected_head_fit_keys or len(seen_head_fit_keys) != 32:
         errors.append(
-            "housing mounting-head-adjacent fit does not cover both modes for all 14 P2 overlaps"
+            "housing mounting-head-adjacent fit does not cover both modes for all 16 P2 reinforcement overlaps"
         )
 
     deflections = data.get("deflection_records")

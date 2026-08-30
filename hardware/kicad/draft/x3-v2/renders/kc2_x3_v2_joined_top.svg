@@ -331,7 +331,7 @@
 <text x="431.36" y="134.15" text-anchor="middle" font-family="Arial" font-size="7" font-weight="bold" fill="#5f2e00">B-/GND</text>
 </g>
 </g>
-<g id="left-mounting-holes" data-mount-reference-count="7">
+<g id="left-mounting-holes" data-mount-reference-count="8">
 <g class="mounting-hole" data-side="left" data-reference="MH1" data-board-center-x-mm="112.8625" data-board-center-y-mm="43.0000" data-joined-center-x-mm="112.8625" data-joined-center-y-mm="43.0000">
 <circle cx="429.31" cy="58.75" r="7" fill="white" fill-opacity="0.94" stroke="#555" stroke-width="1"/>
 <text x="429.31" y="61.45" text-anchor="middle" font-family="Arial" font-size="7" font-weight="bold" fill="#333">MH1</text>
@@ -359,6 +359,10 @@
 <g class="mounting-hole" data-side="left" data-reference="MH7" data-board-center-x-mm="166.3625" data-board-center-y-mm="148.7500" data-joined-center-x-mm="166.3625" data-joined-center-y-mm="148.7500">
 <circle cx="696.81" cy="587.50" r="7" fill="white" fill-opacity="0.94" stroke="#555" stroke-width="1"/>
 <text x="696.81" y="590.20" text-anchor="middle" font-family="Arial" font-size="7" font-weight="bold" fill="#333">MH7</text>
+</g>
+<g class="mounting-hole" data-side="left" data-reference="MH8" data-board-center-x-mm="75.0000" data-board-center-y-mm="134.0000" data-joined-center-x-mm="75.0000" data-joined-center-y-mm="134.0000">
+<circle cx="240.00" cy="513.75" r="7" fill="white" fill-opacity="0.94" stroke="#555" stroke-width="1"/>
+<text x="240.00" y="516.45" text-anchor="middle" font-family="Arial" font-size="7" font-weight="bold" fill="#333">MH8</text>
 </g>
 </g>
 <rect x="705.75" y="186.25" width="90.25" height="90.25" rx="2" ry="2" fill="#eef5ff" stroke="#467cc0" stroke-width="1"/>
@@ -467,7 +471,7 @@
 <text x="972.32" y="152.15" text-anchor="middle" font-family="Arial" font-size="7" font-weight="bold" fill="#5f2e00">B-/GND</text>
 </g>
 </g>
-<g id="right-mounting-holes" data-mount-reference-count="8">
+<g id="right-mounting-holes" data-mount-reference-count="9">
 <g class="mounting-hole" data-side="right" data-reference="MH1" data-board-center-x-mm="97.0625" data-board-center-y-mm="43.2500" data-joined-center-x-mm="221.6875" data-joined-center-y-mm="43.2500">
 <circle cx="973.44" cy="60.00" r="7" fill="white" fill-opacity="0.94" stroke="#555" stroke-width="1"/>
 <text x="973.44" y="62.70" text-anchor="middle" font-family="Arial" font-size="7" font-weight="bold" fill="#333">MH1</text>
@@ -499,6 +503,10 @@
 <g class="mounting-hole" data-side="right" data-reference="MH8" data-board-center-x-mm="122.6875" data-board-center-y-mm="151.0000" data-joined-center-x-mm="247.3125" data-joined-center-y-mm="151.0000">
 <circle cx="1101.56" cy="598.75" r="7" fill="white" fill-opacity="0.94" stroke="#555" stroke-width="1"/>
 <text x="1101.56" y="601.45" text-anchor="middle" font-family="Arial" font-size="7" font-weight="bold" fill="#333">MH8</text>
+</g>
+<g class="mounting-hole" data-side="right" data-reference="MH9" data-board-center-x-mm="177.5000" data-board-center-y-mm="118.0000" data-joined-center-x-mm="302.1250" data-joined-center-y-mm="118.0000">
+<circle cx="1375.62" cy="433.75" r="7" fill="white" fill-opacity="0.94" stroke="#555" stroke-width="1"/>
+<text x="1375.62" y="436.45" text-anchor="middle" font-family="Arial" font-size="7" font-weight="bold" fill="#333">MH9</text>
 </g>
 </g>
 <g id="key-horizontal-clearance" data-key-horizontal-clearance-mm="1.8000" data-left-key="6" data-right-key="7">

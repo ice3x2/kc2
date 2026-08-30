@@ -576,6 +576,7 @@ class V2GeneratorTests(unittest.TestCase):
                     (81.1125, 151.75),
                     (137.3625, 153.5),
                     (166.3625, 148.75),
+                    (75.0, 134.0),
                 ],
                 "right": [
                     (97.0625, 43.25),
@@ -586,6 +587,7 @@ class V2GeneratorTests(unittest.TestCase):
                     (69.9375, 146.25),
                     (97.4375, 152.0),
                     (122.6875, 151.0),
+                    (177.5, 118.0),
                 ],
             },
         )
@@ -1052,8 +1054,8 @@ class V2GeneratorTests(unittest.TestCase):
         self.assertIn("actual selected keycap envelope for each corresponding physical key", product_srs)
         self.assertIn("-m tools.render_kc2_x3_joined", v2_readme)
         self.assertIn("KC2_HEADLESS_BROWSER", v2_readme)
-        self.assertIn("visibly numbered `MH1..MH7`", v2_readme)
-        self.assertIn("`MH1..MH8` on the right", v2_readme)
+        self.assertIn("visibly numbered `MH1..MH8`", v2_readme)
+        self.assertIn("`MH1..MH9` on the right", v2_readme)
         self.assertIn("CON-ARCH-007", product_srs)
         self.assertIn("SW_PWR1 is (115.8125, 63.4500) mm left and (94.3000, 63.4500) mm right", product_srs)
         self.assertIn("SW_RST1 is (126.0625, 63.4500) mm left and (84.0500, 63.4500) mm right", product_srs)
@@ -1288,7 +1290,7 @@ class V2GeneratorTests(unittest.TestCase):
                 )
                 self.assertEqual(
                     len(generated_mounts),
-                    7 if side == "left" else 8,
+                    8 if side == "left" else 9,
                 )
                 self.assertEqual(
                     [
@@ -2081,6 +2083,7 @@ class V2GeneratorTests(unittest.TestCase):
                 ("MH5", 81.1125, 151.75),
                 ("MH6", 137.3625, 153.5),
                 ("MH7", 166.3625, 148.75),
+                ("MH8", 75.0, 134.0),
             ],
             "right": [
                 ("MH1", 97.0625, 43.25),
@@ -2091,6 +2094,7 @@ class V2GeneratorTests(unittest.TestCase):
                 ("MH6", 69.9375, 146.25),
                 ("MH7", 97.4375, 152.0),
                 ("MH8", 122.6875, 151.0),
+                ("MH9", 177.5, 118.0),
             ],
         }
         for side, board_path in (("left", LEFT_BOARD), ("right", RIGHT_BOARD)):
@@ -2672,7 +2676,7 @@ class V2GeneratorTests(unittest.TestCase):
             ).stdout
             self.assertNotIn(b"\r\n", staged)
             self.assertEqual(sha256_file(MANIFEST), sha256_bytes(staged))
-        self.assertEqual(report["generated"], "2026-08-29")
+        self.assertEqual(report["generated"], "2026-08-30")
         self.assertEqual(report["variant"], "x3-v2")
         self.assertEqual(report["key_count"], {"left": 31, "right": 39, "total": 70})
         self.assertEqual(report["max_key_width_u"], 1.75)
@@ -2698,8 +2702,8 @@ class V2GeneratorTests(unittest.TestCase):
             report["pcb_fastener_holes"],
             {
                 "footprint": "kc2.pretty:MH_M1.4_NPTH_1.60",
-                "references": "MH1..MH7 left; MH1..MH8 right",
-                "counts": {"left": 7, "right": 8, "total": 15},
+                "references": "MH1..MH8 left; MH1..MH9 right",
+                "counts": {"left": 8, "right": 9, "total": 17},
                 "positions_mm": {
                     "left": [
                         {"ref": "MH1", "x": 112.8625, "y": 43.0},
@@ -2709,6 +2713,7 @@ class V2GeneratorTests(unittest.TestCase):
                         {"ref": "MH5", "x": 81.1125, "y": 151.75},
                         {"ref": "MH6", "x": 137.3625, "y": 153.5},
                         {"ref": "MH7", "x": 166.3625, "y": 148.75},
+                        {"ref": "MH8", "x": 75.0, "y": 134.0},
                     ],
                     "right": [
                         {"ref": "MH1", "x": 97.0625, "y": 43.25},
@@ -2719,6 +2724,7 @@ class V2GeneratorTests(unittest.TestCase):
                         {"ref": "MH6", "x": 69.9375, "y": 146.25},
                         {"ref": "MH7", "x": 97.4375, "y": 152.0},
                         {"ref": "MH8", "x": 122.6875, "y": 151.0},
+                        {"ref": "MH9", "x": 177.5, "y": 118.0},
                     ],
                 },
                 "hole": {
@@ -2886,13 +2892,13 @@ class V2GeneratorTests(unittest.TestCase):
                 "left": {
                     "dsn": "hardware/kicad/draft/x3-v2/autoroute/kc2_left-x3-v2-70-es1b-controller-r3.dsn",
                     "dsn_role": "current_mh_compact_controller_trackless_routing_input",
-                    "dsn_mounting_hole_count": 7,
+                    "dsn_mounting_hole_count": 8,
                     "session_source_dsn": "hardware/kicad/draft/x3-v2/autoroute/kc2_left-x3-v2-70-es1b-controller-r3.dsn",
-                    "session_source_dsn_sha256": "466edfbcf4e8b318791feac944d8acf045bf1cde439d769a33b7c2d218999507",
+                    "session_source_dsn_sha256": "00e347ed6a197a3016f73b4ddc1cd72d4d5b22ff916d253a20ef1fc11094e30c",
                     "ses": "hardware/kicad/draft/x3-v2/autoroute/kc2_left-x3-v2-70-es1b-controller-r3.ses",
                     "ses_role": "reviewed_matrix_import_plus_exact_edge_cleanup_and_power_reset_service_routing",
-                    "dsn_sha256": "466edfbcf4e8b318791feac944d8acf045bf1cde439d769a33b7c2d218999507",
-                    "ses_sha256": "8340b7dfcbffe90862c265f3f5b05ce4cee510442d1a45f16f19c4f98f785bf9",
+                    "dsn_sha256": "00e347ed6a197a3016f73b4ddc1cd72d4d5b22ff916d253a20ef1fc11094e30c",
+                    "ses_sha256": "4c97f1040bcbfbda39bc1e445edb81863d030629190be1ee50f6b3ab50441832",
                     "dsn_default_clearance_internal_units": 300,
                     "dsn_clearances_internal_units": {"global": 300, "kicad_default": 300},
                     "final_track_via_count": 590,
@@ -2901,13 +2907,13 @@ class V2GeneratorTests(unittest.TestCase):
                 "right": {
                     "dsn": "hardware/kicad/draft/x3-v2/autoroute/kc2_right-x3-v2-70-es1b-controller-r3.dsn",
                     "dsn_role": "current_mh_compact_controller_trackless_routing_input",
-                    "dsn_mounting_hole_count": 8,
+                    "dsn_mounting_hole_count": 9,
                     "session_source_dsn": "hardware/kicad/draft/x3-v2/autoroute/kc2_right-x3-v2-70-es1b-controller-r3.dsn",
-                    "session_source_dsn_sha256": "658056b39cb7a792c52d4fc4f75498f25adeb61f6a43c736c61ba1bfb82b9334",
+                    "session_source_dsn_sha256": "cdb19dfbbfc3c9129df64aaa9f899142fbaf15de3a4775ea4826dbdd8519c425",
                     "ses": "hardware/kicad/draft/x3-v2/autoroute/kc2_right-x3-v2-70-es1b-controller-r3.ses",
                     "ses_role": "reviewed_matrix_import_plus_exact_edge_cleanup_and_power_reset_service_routing",
-                    "dsn_sha256": "658056b39cb7a792c52d4fc4f75498f25adeb61f6a43c736c61ba1bfb82b9334",
-                    "ses_sha256": "9fac7be12764e95a714072b2bf036bd3e1e8fb9439d83af75620cac5bcbcbc78",
+                    "dsn_sha256": "cdb19dfbbfc3c9129df64aaa9f899142fbaf15de3a4775ea4826dbdd8519c425",
+                    "ses_sha256": "b5bd3f7f622af8bb50b1292fb05d08b6d3b7a6ce5f893c0d20ef51d814a48717",
                     "dsn_default_clearance_internal_units": 300,
                     "dsn_clearances_internal_units": {"global": 300, "kicad_default": 300},
                     "final_track_via_count": 764,
@@ -2936,7 +2942,7 @@ class V2GeneratorTests(unittest.TestCase):
 
     def test_canonical_dsn_truthfully_binds_compact_controller_board_and_session(self) -> None:
         manifest = analyze_v2_manifest(MANIFEST)
-        for side, expected_count in (("left", 7), ("right", 8)):
+        for side, expected_count in (("left", 8), ("right", 9)):
             with self.subTest(side=side):
                 record = manifest["canonical_route_evidence"][side]
                 self.assertTrue(record["dsn"].endswith("-controller-r3.dsn"))
@@ -3811,7 +3817,7 @@ class V2GeneratorTests(unittest.TestCase):
                 _housing_head_adjacency_contracts(source_paths)
             )
             self.assertEqual(head_adjacency_errors, [])
-            self.assertEqual(len(head_adjacency_contracts), 14)
+            self.assertEqual(len(head_adjacency_contracts), 16)
             head_adjacency_counts = Counter(
                 (record["half"], record["mounting_hole_reference"])
                 for record in head_adjacency_contracts.values()
@@ -3952,7 +3958,7 @@ class V2GeneratorTests(unittest.TestCase):
                 "production_print": production_print,
                 "assembly_identity": assembly_identity,
                 "assembly_fit_condition_count": 16,
-                "head_adjacent_fit_condition_count": 28,
+                "head_adjacent_fit_condition_count": 32,
                 "install_remove_cycles": 10,
                 "torque_ratio": 3.0,
                 "tested_switch_positions": 70,

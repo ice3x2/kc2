@@ -32,7 +32,7 @@ KC2는 KC1 핸드와이어링 키보드의 배열 철학과 결합/분리 사용
 
 이 절의 promoted main path와 fabrication ZIP은 검증된 historical `kc2-x3` 전용이다. 활성 `kc2-x3-v2`는 `hardware/kicad/draft/x3-v2/`에 있으며, promoted X3 Gerber/ZIP이나 주문 가능 판정을 V2 증거로 사용할 수 없다. V2의 디지털 PCB 검증은 통과했지만 `CON-ARCH-004`, `CON-ARCH-006`, `CON-ARCH-007`, `REL-ARCH-001`의 물리 gate가 남아 있으므로 **ORDER READY: NO**이다.
 
-2026-08-29 기준 V2 fabrication, 1:1 mechanical, housing STEP/STL, joined SVG/PNG 산출물은 현재 둥근머리 P1 좌우 보드 SHA-256 `7f629b7f48c7432ddc34429b12d7883a2fd1389a40187b2eeb93d549fba1be6d` / `4500956acec4e9f8ada2da285d9fad6c6accad5263da9128d0a14d300af3209c`에 맞춰 재생성했다. 전용 verifier가 통과했고 joined render는 최소 Edge.Cuts clearance `1.1000 mm`, cross-seam keycap gap `1.8000 mm`를 기록한다. 이는 디지털 증거이며 주문 승인은 아니다. 활성 V2 실행 gate는 `tools.verify_kc2_x3_v2`와 V2 전용 fabrication/mechanical/housing verifier이다. `kc2-pcb-preflight` skill의 부품별·회로별 review workflow는 추가 감사에 적용하되, 번들 CLI는 historical `--variant x3`만 지원하므로 그 `ORDER READY` 결과를 V2 근거로 사용할 수 없다.
+2026-08-30 기준 V2 fabrication, 1:1 mechanical, housing STEP/STL, joined SVG/PNG 산출물은 현재 둥근머리 P2 reinforcement 좌우 보드 SHA-256 `92c46f364f0cc647928029f6b42a54abfcc94485a491e5a6177e84cc7800d26f` / `cff0e6ad90ab9eacebd84e7555b77c47437921ac7c082b395ba24cbada85ad2f`에 맞춰 재생성했다. 전용 verifier가 통과했고 joined render는 최소 Edge.Cuts clearance `1.1000 mm`, cross-seam keycap gap `1.8000 mm`를 기록한다. 이는 디지털 증거이며 주문 승인은 아니다. 활성 V2 실행 gate는 `tools.verify_kc2_x3_v2`와 V2 전용 fabrication/mechanical/housing verifier이다. `kc2-pcb-preflight` skill의 부품별·회로별 review workflow는 추가 감사에 적용하되, 번들 CLI는 historical `--variant x3`만 지원하므로 그 `ORDER READY` 결과를 V2 근거로 사용할 수 없다.
 
 Historical KC2 X3 main PCB는 좌우 독립 PCB 2장이므로 PCB 제조사 제출 파일도 좌/우를 분리해서 다룬다. `hardware/kicad/fabrication/kc2_fabrication.zip`처럼 좌/우 산출물을 함께 담은 합본 ZIP은 저장소 내부 검증/보관용 묶음이며, JLCPCB 같은 제조사에 단일 비패널 PCB 주문으로 그대로 제출하지 않는다.
 
@@ -72,7 +72,7 @@ KC1과의 관계는 배열 철학과 사용성의 계승이며, KC2의 하드웨
 - PCB 아래에는 3D 프린터로 제작한 하부 바닥판을 둔다.
 - PCB가 전기 회로이자 variant별 switch footprint, socket, 또는 solder joint의 기준 구조물이다.
 - 키스위치 고정/실장 방식은 variant별 SRS requirement를 따른다. 현재 주문 가능한 historical X3는 기존 Choc V1 중심 footprint를 유지하고, 디지털 검증만 통과한 `kc2-x3-v2` draft는 `CON-ARCH-004`에 따라 Choc V2 bottom-side socket assembly와 MX 5-pin direct-solder assembly만 허용한다.
-- 디지털 검증만 통과한 `kc2-x3-v2` draft는 `CON-ARCH-006`의 조건부 M1.4 retention prototype을 사용한다. PCB에는 좌 8개/우 10개의 `1.60 mm` copper-free NPTH가 있고, 2.50 mm 하우징에는 해당 위치의 zero-gap land/desk column과 `1.10 x 2.80 mm` blind pilot가 있다. 사용자가 선택한 나사 머리는 접시/저두형이 아닌 둥근 pan/button 형상이며, exact MPN 도면 전까지 최대 `3.00 x 1.20 mm` 포락선과 별도 `0.25 mm` 조립 여유를 적용한다. 기존 14/11 분산 지지대가 주 하중 경로이며, exact screw/driver, full-pattern fit, torque/repeat cycle, keycap skirt, 2 N deflection 실측 전에는 주문할 수 없다.
+- 디지털 검증만 통과한 `kc2-x3-v2` draft는 `CON-ARCH-006`의 조건부 M1.4 retention prototype을 사용한다. PCB에는 좌 8개/우 9개의 `1.60 mm` copper-free NPTH가 있고, 2.50 mm 하우징에는 해당 위치의 zero-gap land/desk column과 `1.10 x 2.80 mm` blind pilot가 있다. 사용자가 선택한 나사 머리는 접시/저두형이 아닌 둥근 pan/button 형상이며, exact MPN 도면 전까지 최대 `3.00 x 1.20 mm` 포락선과 별도 `0.25 mm` 조립 여유를 적용한다. 31/39 일대일 키 하중 지지대가 주 타건 하중 경로이며, exact screw/driver, full-pattern fit, torque/repeat cycle, keycap skirt, 2 N deflection 실측 전에는 주문할 수 없다.
 - stabilizer가 필요한 별도 layout의 큰 키 stabilizer는 plate-mounted가 아니라, 무보강판에서 실제로 고정되는 PCB-mounted/PCB-retained 방식을 사용한다.
 - PCB 외곽선은 키 배열, 결합부, controller 돌출부, USB-C 접근 방향을 따라 최대한 타이트하게 잡는다.
 - 실리콘 feet는 PCB가 아니라 3D 프린터 하부 바닥판 아래에 부착한다.

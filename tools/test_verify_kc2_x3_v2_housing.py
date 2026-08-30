@@ -608,6 +608,7 @@ class V2LoadBearingHousingTests(unittest.TestCase):
                 [81.1125, 151.7500],
                 [137.3625, 153.5000],
                 [166.3625, 148.7500],
+                [75.0000, 134.0000],
             ],
             "right": [
                 [97.0625, 43.2500],
@@ -618,13 +619,14 @@ class V2LoadBearingHousingTests(unittest.TestCase):
                 [69.9375, 146.2500],
                 [97.4375, 152.0000],
                 [122.6875, 151.0000],
+                [177.5000, 118.0000],
             ],
         }
         expected_support_counts = {"left": 31, "right": 39}
         expected_load_spans = {"left": 3.5621, "right": 3.5621}
         expected_part_distribution = {
-            "left": {"whole": 7},
-            "right": {"part_a": 4, "part_b": 4},
+            "left": {"whole": 8},
+            "right": {"part_a": 5, "part_b": 4},
         }
 
         self.assertFalse(self.report["order_ready"])
@@ -704,7 +706,7 @@ class V2LoadBearingHousingTests(unittest.TestCase):
 
     def test_verifier_rejects_mounting_contract_mutations(self) -> None:
         mutations = (
-            ("wrong mounting-hole count", lambda item: item.__setitem__("count", 9)),
+            ("wrong mounting-hole count", lambda item: item.__setitem__("count", 8)),
             ("board coordinate", lambda item: item["board_coordinates_mm"][0].__setitem__(0, 0.0)),
             ("board MH", lambda item: item.__setitem__("board_features_match_selected_pattern", False)),
             ("mounting manifest", lambda item: item.__setitem__("manifest_matches_generator", False)),

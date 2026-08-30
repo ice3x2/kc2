@@ -454,6 +454,68 @@
 		)
 		(embedded_fonts no)
 	)
+	(footprint "MH_M1.4_NPTH_1.60"
+		(layer "F.Cu")
+		(uuid "08b7c85b-f287-4ead-a53d-937310c07e2a")
+		(at 75 134)
+		(descr "KC2 X3 V2 M1.4 service mounting hole, 1.60 mm copper-free NPTH")
+		(tags "KC2 X3 V2 M1.4 mounting NPTH copper-free")
+		(property "Reference" "MH8"
+			(at 0 -1.5 0)
+			(layer "F.SilkS")
+			(uuid "c74ab5ed-6b3e-4105-87db-4b289bebee38")
+			(effects
+				(font
+					(size 0.8 0.8)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "Value" "M1.4_NPTH_1.60"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "4feaed1b-2d42-4c1e-97f3-2c56376c66cd")
+			(effects
+				(font
+					(size 0.8 0.8)
+					(thickness 0.1)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "101754ec-10ee-47fe-b616-12e6cb432003")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" ""
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "56f0a494-8b12-4997-b914-f176cadb350f")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(attr exclude_from_pos_files exclude_from_bom)
+		(duplicate_pad_numbers_are_jumpers no)
+		(pad "" np_thru_hole circle
+			(at 0 0)
+			(size 1.6 1.6)
+			(drill 1.6)
+			(layers "*.Mask")
+			(uuid "a1e18097-c20c-467d-b929-e336e2ca174a")
+		)
+		(embedded_fonts no)
+	)
 	(footprint "KC2:SW_IMMS_12V_BSI10_THT"
 		(layer "F.Cu")
 		(uuid "08e98791-1782-4b14-91ce-5456530ab81a")
