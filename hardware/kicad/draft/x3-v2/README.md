@@ -186,6 +186,9 @@ physical first-article evidence. The digital package remains not orderable.
 - Routed boards: `kc2_left-x3-v2/` and `kc2_right-x3-v2/`
 - Physical fit coupon CAD: `coupon/`
 - Draft Gerber/Excellon packages: `fabrication/`
+- JLCPCB upload-preview archives: `fabrication/kc2_x3_v2_left_jlcpcb.zip`,
+  `fabrication/kc2_x3_v2_right_jlcpcb.zip`, and
+  `fabrication/kc2_x3_v2_coupon_jlcpcb.zip`
 - 1:1 top/bottom assembly PDFs: `mechanical/`
 - KiCad 3D inspection renders: `renders/`
 - Housing clearance evidence: `../../../case/draft/x3-v2/`
@@ -193,11 +196,25 @@ physical first-article evidence. The digital package remains not orderable.
 The fabrication, mechanical, and housing derivatives were regenerated from
 the current left/right board hashes
 `92c46f364f0cc647928029f6b42a54abfcc94485a491e5a6177e84cc7800d26f` and
-`cff0e6ad90ab9eacebd84e7555b77c47437921ac7c082b395ba24cbada85ad2f`.
+`8769b5792386357a876008f20152f836012a299a1230b359aaa530ffa85e7b0a`.
 Their dedicated V2 verifiers pass. The joined SVG/PNG set was regenerated from
 the same current boards and reports 1.1000 mm minimum Edge.Cuts clearance and
 1.8000 mm cross-seam keycap gap. All outputs remain digital draft evidence and
 do not change **ORDER READY: NO**.
+
+The JLCPCB upload-preview archives contain exactly 15 root-level manufacturing
+files each: copper, mask, paste, silkscreen, Edge.Cuts, plated/non-plated drill,
+drill maps/report, and the Gerber job. They intentionally exclude the BOM JSON
+and CSV carried by the broader traceability archives. The machine-readable
+profile in `fabrication/kc2_x3_v2_fabrication_manifest.json` records 2-layer
+FR-4, 1.6 mm, 1 oz, ENIG, green solder mask, white silkscreen, hand assembly,
+and both-side tented vias with a 0.50 mm maximum tented drill. The verifier
+checks the source-board tenting settings and confirms that neither mask Gerber
+opens at any via center. JLCPCB production-file confirmation must be enabled
+and the engineer-generated production Gerbers must be downloaded and reviewed
+before approval. These are prototype upload previews only while the physical
+coupon, housing/fastener, controller-service, and power/RF evidence remains
+pending.
 
 The coupon contains conservative representative 0-degree and 180-degree
 bottom socket orientations plus a 5-pin MX direct-solder sample at 19.05 mm
@@ -322,3 +339,30 @@ Official geometry references:
 - Jingdao ES1B / LCSC C437840 datasheet: https://www.lcsc.com/datasheet/C437840.pdf
 - Eleparts goods 9475342: https://www.eleparts.co.kr/goods/view?no=9475342
 - nice!nano v2 pinout and schematic: https://nicekeyboards.com/docs/nice-nano/pinout-schematic/
+
+## Component and terminal audit
+
+The 2026-08-31 procurement audit compares the placed footprints with the
+published part drawings rather than relying only on KiCad DRC. `PASS` below
+means the nominal PCB land pattern matches the cited drawing; it does not
+replace incoming inspection or the physical evidence gates.
+
+| Placed item | Published body / terminal contract | Actual KC2 footprint | Result |
+|---|---|---|---|
+| nice!nano v2 `U1` | Published plan `34.1 x 18.3 mm`; official total thickness `3.2 mm` and official Pro Micro pinout. B+ and B- are not socketed; `RAW` and `GND` are their respective carrier equivalents. | Conservative collision envelope `34.1 x 18.3 mm`; 2 x 12 PTH, `2.54 mm` longitudinal pitch, `15.24 mm` row spacing, pad `1.80 mm`, drill `0.95 mm`; `RAW=NN_B+`, `GND_C=GND`, `RST=RST`. | Plan/pinout PASS; exact female socket and pin-leg MPN/tail height PENDING. |
+| Kailh Choc V2 socket | Kailh `CPG135001S30`, drawing `KH-PS-1702-35` Rev D; T=1.6 recommended pattern with `2.60 mm` contacts and specified NPTH locations. | Bottom socket body `9.55 x 6.80 mm`, B.Cu pads `2.60 mm`, exact official mechanical holes; duplicate pads 1 and 2 share the MX electrical nets. | Socket PASS; exact mating Kailh switch MPN/drawing PENDING. |
+| Cherry MX alternative | Official MX2A 5-pin PCB-fixation variants; nominal `15 x 15 mm` body and two electrical plus three fixation terminals. | F.Fab `15 x 15 mm`; electrical pads `2.50 mm` with `1.50 mm` drill plus `5.00/3.00/1.65 mm` fixation NPTHs. | Nominal 5-pin geometry PASS; exact optional MX MPN PENDING. |
+| `ES1B` diode | Jingdao `ES1B`, LCSC `C437840`, SMA body `4.5 x 2.7 mm`; recommended `1.8 x 1.8 mm` lands with `2.4 mm` inner gap; pin 1 cathode, pin 2 anode. | B.Fab `4.5 x 2.7 mm`, pads `1.8 x 1.8 mm`, center pitch `4.2 mm`; pad 1 row/cathode, pad 2 per-key/anode. | PASS. |
+| `SW_PWR1` | SM Switch `BSI-10`: `10 x 2.5 x 6.4 mm`, `1.6 mm` travel, three `0.6 mm` pins on `2.54 mm` pitch, recommended `0.8 mm` drills; terminal 1 common. | F.Fab `10 x 2.5 mm`, three `1.60 mm` pads / `0.80 mm` drills at `2.54 mm`; pad 1 `BAT+`, pad 2 `NN_B+`, pad 3 NC. | Geometry/net PASS; exact purchased MPN/drawing and former IMMS equivalence PENDING. |
+| `SW_RST1` | DeviceMart `NW3-A06-B3`, nominal body `6.1 x 3.7 mm`. | Controlled body `6.1 x 3.7 mm` inside an `8.0 x 3.7 mm` lead-span drawing; SMD pads `1.75 x 1.00 mm`; pad 1 RST, pad 2 GND. | Nominal PASS; purchased-lot drawing/actuation test PENDING. |
+| `BAT1` / `J_BAT1` | Nice Keyboards recommends a rechargeable 3.7 V 301230 cell; exact protected-pack maximum, swelling and lead drawing are supplier-specific. | Nominal body `30 x 12 x 3 mm`; direct-lead pads `2.20 x 1.80 mm`, drill `0.90 mm`, pitch `2.54 mm`; pad 1 BAT+, pad 2 GND/B-. | Nominal only; exact protected pack, lead diameter and maximum envelope BLOCK ORDER. |
+| `MH*` | Provisional M1.4 non-countersunk rounded head up to `3.00 x 1.20 mm`. | Copper-free unnetted `1.60 mm` NPTH with housing pilot `1.10 x 2.80 mm`. | Digital clearance PASS; exact screw/driver MPN and physical torque/deflection PENDING. |
+
+Dimension and terminal sources additionally used by this audit:
+
+- nice!nano mounting/battery guidance: https://nicekeyboards.com/docs/nice-nano/
+- nice!nano installation and B+/B-/RAW/GND guidance: https://nicekeyboards.com/docs/nice-nano/getting-started/
+- nice!nano published reseller dimensions: https://mechboards.co.uk/products/nice-nano-v2
+- SM Switch BSI-10 drawing: https://pf02.ickimg.com/datasheet/upload/2023/10/07/BSI-10.pdf
+- DeviceMart NW3-A06-B3 dimensions: https://www.devicemart.co.kr/goods/view?no=1322056
+- LCSC Jingdao ES1B/C437840: https://www.lcsc.com/product-detail/C437840.html

@@ -24,7 +24,7 @@
     },
     "right": {
       "path": "hardware/kicad/draft/x3-v2/kc2_right-x3-v2/kc2_right-x3-v2.kicad_pcb",
-      "canonical_sha256": "cff0e6ad90ab9eacebd84e7555b77c47437921ac7c082b395ba24cbada85ad2f"
+      "canonical_sha256": "8769b5792386357a876008f20152f836012a299a1230b359aaa530ffa85e7b0a"
     }
   },
   "service_reference_counts": {
@@ -82,7 +82,7 @@
     },
     "right": {
       "MH1": [
-        97.0625,
+        97.1875,
         43.25
       ],
       "MH2": [
@@ -167,8 +167,8 @@
         }
       },
       "digest_mode": "canonical_text",
-      "canonical_sha256": "afaedaabc7cd1eb62596ab0a1f561da15836f807a62309803171f5093ac066e8",
-      "regenerated_canonical_sha256": "afaedaabc7cd1eb62596ab0a1f561da15836f807a62309803171f5093ac066e8"
+      "canonical_sha256": "5c56fa3817b10b5e6e0fb818fd7f4962e1ba2c1f3c62b6f1278444fa01e04174",
+      "regenerated_canonical_sha256": "5c56fa3817b10b5e6e0fb818fd7f4962e1ba2c1f3c62b6f1278444fa01e04174"
     },
     "join_seam_zoom_svg": {
       "path": "hardware/kicad/draft/x3-v2/renders/kc2_x3_v2_join_seam_zoom.svg",
@@ -206,8 +206,8 @@
         }
       },
       "digest_mode": "canonical_text",
-      "canonical_sha256": "34cf68af37417a10bb2823ad52c443a58eb361d6eaedbcae8e605e7b2fb51c26",
-      "regenerated_canonical_sha256": "34cf68af37417a10bb2823ad52c443a58eb361d6eaedbcae8e605e7b2fb51c26"
+      "canonical_sha256": "ba9fbf23692e3e4340936ee2438fa27d8db5c79e49f0f84b34bdd830fc02692e",
+      "regenerated_canonical_sha256": "ba9fbf23692e3e4340936ee2438fa27d8db5c79e49f0f84b34bdd830fc02692e"
     },
     "joined_top_png": {
       "path": "hardware/kicad/draft/x3-v2/renders/kc2_x3_v2_joined_top.png",
@@ -245,8 +245,8 @@
         }
       },
       "digest_mode": "raw_binary",
-      "raw_sha256": "7b3bf6ed80eb3dfe0fa23366a9dd5afca807bbd7a08dad7f369130c0827db30b",
-      "regenerated_raw_sha256": "7b3bf6ed80eb3dfe0fa23366a9dd5afca807bbd7a08dad7f369130c0827db30b"
+      "raw_sha256": "93f2239eade39127ebb2f83e4e4c365bf88bd9410651e06e76f927571591f242",
+      "regenerated_raw_sha256": "93f2239eade39127ebb2f83e4e4c365bf88bd9410651e06e76f927571591f242"
     },
     "join_seam_zoom_png": {
       "path": "hardware/kicad/draft/x3-v2/renders/kc2_x3_v2_join_seam_zoom.png",

@@ -11,6 +11,9 @@ if __package__:
         REQUIREMENT_IDS,
         bom_csv_bytes,
         build_board_bom,
+        build_jlcpcb_pcba_quote,
+        jlcpcb_pcba_bom_csv_bytes,
+        jlcpcb_pcba_cpl_csv_bytes,
         parse_board,
     )
 else:
@@ -19,6 +22,9 @@ else:
         REQUIREMENT_IDS,
         bom_csv_bytes,
         build_board_bom,
+        build_jlcpcb_pcba_quote,
+        jlcpcb_pcba_bom_csv_bytes,
+        jlcpcb_pcba_cpl_csv_bytes,
         parse_board,
     )
 
@@ -32,6 +38,59 @@ PRODUCTS = {
     "coupon": ROOT / "hardware" / "kicad" / "draft" / "x3-v2" / "coupon" / "kc2_x3_v2_switch_coupon.kicad_pcb",
 }
 LAYERS = "F.Cu,B.Cu,F.Mask,B.Mask,F.Paste,B.Paste,F.Silkscreen,B.Silkscreen,Edge.Cuts"
+JLCPCB_FABRICATION_SUFFIXES = (
+    "-F_Cu.gtl",
+    "-B_Cu.gbl",
+    "-F_Mask.gts",
+    "-B_Mask.gbs",
+    "-F_Paste.gtp",
+    "-B_Paste.gbp",
+    "-F_Silkscreen.gto",
+    "-B_Silkscreen.gbo",
+    "-Edge_Cuts.gm1",
+    "-PTH.drl",
+    "-NPTH.drl",
+    "-PTH-drl_map.gbr",
+    "-NPTH-drl_map.gbr",
+    "-drill-report.txt",
+    "-job.gbrjob",
+)
+JLCPCB_PROFILE = {
+    "schema": "kc2-x3-v2-jlcpcb-profile-v1",
+    "vendor": "JLCPCB",
+    "purpose": "prototype_only_pending_physical_evidence",
+    "layer_count": 2,
+    "material": "FR-4",
+    "board_thickness_mm": 1.6,
+    "copper_weight_oz": 1.0,
+    "surface_finish": "enig",
+    "solder_mask_color": "green",
+    "silkscreen_color": "white",
+    "via_covering": "tented",
+    "maximum_tented_via_drill_mm": 0.5,
+    "assembly_service": "none_hand_assembly",
+    "confirm_production_file": True,
+    "order_ready": False,
+}
+JLCPCB_PCBA_QUOTE_PROFILE = {
+    "schema": "kc2-x3-v2-jlcpcb-pcba-quote-v1",
+    "vendor": "JLCPCB",
+    "purpose": "pricing_quote_only_not_order_authorization",
+    "assembly_side": "bottom",
+    "assembled_reference_families": ["D", "SW"],
+    "assembled_parts": {
+        "D": {"manufacturer_part_number": "ES1B", "lcsc_part_number": "C437840"},
+        "SW": {
+            "manufacturer_part_number": "CPG135001S30",
+            "lcsc_part_number": "C5333465",
+        },
+    },
+    "inventory_recheck_required": True,
+    "placement_and_orientation_confirmation_required": True,
+    "bom_only_1n4148_substitution_allowed": False,
+    "board_revision_required_for_1n4148_family": True,
+    "order_ready": False,
+}
 
 
 def clear_owned_output(path: Path) -> None:
@@ -94,6 +153,7 @@ def export_product(product: str, board: Path) -> dict[str, object]:
     )
     source_board_sha256 = sha256_file(board)
     bom: dict[str, str] | None = None
+    pcba_quote: dict[str, object] | None = None
     if product in {"left", "right"}:
         bom_json = output_dir / f"{board.stem}-bom.json"
         bom_csv = output_dir / f"{board.stem}-bom.csv"
@@ -109,10 +169,41 @@ def export_product(product: str, board: Path) -> dict[str, object]:
             "json": str(bom_json.relative_to(ROOT)),
             "csv": str(bom_csv.relative_to(ROOT)),
         }
+        quote_payload = build_jlcpcb_pcba_quote(
+            product,
+            str(board.relative_to(ROOT)),
+            source_board_sha256,
+            parse_board(board),
+        )
+        quote_dir = FAB_ROOT / "pcba_quote"
+        quote_dir.mkdir(parents=True, exist_ok=True)
+        quote_bom = quote_dir / f"kc2_x3_v2_{product}_jlcpcb_pcba_bom.csv"
+        quote_cpl = quote_dir / f"kc2_x3_v2_{product}_jlcpcb_pcba_cpl.csv"
+        quote_bom.write_bytes(jlcpcb_pcba_bom_csv_bytes(quote_payload))
+        quote_cpl.write_bytes(jlcpcb_pcba_cpl_csv_bytes(quote_payload))
+        pcba_quote = {
+            "bom": str(quote_bom.relative_to(ROOT)),
+            "bom_sha256": sha256_file(quote_bom),
+            "cpl": str(quote_cpl.relative_to(ROOT)),
+            "cpl_sha256": sha256_file(quote_cpl),
+            "diode_count": len(quote_payload["line_items"][0]["designators"]),
+            "socket_count": len(quote_payload["line_items"][1]["designators"]),
+            "assembled_reference_count": len(quote_payload["placements"]),
+            "order_ready": False,
+        }
     files = sorted(path for path in output_dir.iterdir() if path.is_file())
     archive = FAB_ROOT / f"kc2_x3_v2_{product}.zip"
     with ZipFile(archive, "w", compression=ZIP_DEFLATED, compresslevel=9) as package:
         for path in files:
+            package.write(path, arcname=path.name)
+    jlcpcb_files = [
+        path
+        for path in files
+        if any(path.name.endswith(suffix) for suffix in JLCPCB_FABRICATION_SUFFIXES)
+    ]
+    jlcpcb_archive = FAB_ROOT / f"kc2_x3_v2_{product}_jlcpcb.zip"
+    with ZipFile(jlcpcb_archive, "w", compression=ZIP_DEFLATED, compresslevel=9) as package:
+        for path in jlcpcb_files:
             package.write(path, arcname=path.name)
     result = {
         "board": str(board.relative_to(ROOT)),
@@ -121,6 +212,9 @@ def export_product(product: str, board: Path) -> dict[str, object]:
         "output_dir": str(output_dir.relative_to(ROOT)),
         "archive": str(archive.relative_to(ROOT)),
         "archive_sha256": sha256_file(archive),
+        "jlcpcb_archive": str(jlcpcb_archive.relative_to(ROOT)),
+        "jlcpcb_archive_sha256": sha256_file(jlcpcb_archive),
+        "jlcpcb_entry_count": len(jlcpcb_files),
         "files": [
             {
                 "name": path.name,
@@ -132,6 +226,8 @@ def export_product(product: str, board: Path) -> dict[str, object]:
     }
     if bom is not None:
         result["bom"] = bom
+    if pcba_quote is not None:
+        result["pcba_quote"] = pcba_quote
     return result
 
 
@@ -139,6 +235,7 @@ def main() -> None:
     if not KICAD_CLI.is_file():
         raise SystemExit(f"KiCad 10 CLI not found: {KICAD_CLI}")
     FAB_ROOT.mkdir(parents=True, exist_ok=True)
+    clear_owned_output(FAB_ROOT / "pcba_quote")
     outputs = {
         product: export_product(product, board)
         for product, board in PRODUCTS.items()
@@ -150,6 +247,8 @@ def main() -> None:
         "status": "draft_not_orderable_pending_physical_coupon",
         "kicad_cli": str(KICAD_CLI),
         "layers": LAYERS.split(","),
+        "jlcpcb_profile": JLCPCB_PROFILE,
+        "jlcpcb_pcba_quote_profile": JLCPCB_PCBA_QUOTE_PROFILE,
         "products": outputs,
     }
     manifest_path = FAB_ROOT / "kc2_x3_v2_fabrication_manifest.json"

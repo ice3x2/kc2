@@ -462,3 +462,133 @@ def bom_csv_bytes(bom: dict[str, object]) -> bytes:
             )
         )
     return output.getvalue().encode("utf-8")
+
+
+def _numbered_reference_key(reference: str) -> tuple[str, int]:
+    match = re.fullmatch(r"([A-Z_]+)(\d+)", reference)
+    if match is None:
+        raise ValueError(f"reference is not a numbered designator: {reference!r}")
+    return (match.group(1), int(match.group(2)))
+
+
+def _bottom_fab_body_centroid(footprint: dict[str, object]) -> tuple[float, float]:
+    points: list[tuple[float, float]] = []
+    for segment in footprint["fab_segments"]:
+        if segment["layer"] == "B.Fab":
+            points.extend((tuple(segment["start"]), tuple(segment["end"])))
+    if not points:
+        raise ValueError(f"{footprint['reference']}: no B.Fab body geometry")
+    xs = [float(point[0]) for point in points]
+    ys = [float(point[1]) for point in points]
+    return (round((min(xs) + max(xs)) / 2.0, 6), round((min(ys) + max(ys)) / 2.0, 6))
+
+
+def build_jlcpcb_pcba_quote(
+    product: str, board_path: str, source_board_sha256: str, board: dict[str, object]
+) -> dict[str, object]:
+    if product not in {"left", "right"}:
+        raise ValueError(f"PCBA quote is only defined for left/right boards, got {product!r}")
+    footprints = board["footprints"]
+    diode_refs = sorted(
+        (ref for ref in footprints if re.fullmatch(r"D\d+", ref)),
+        key=_numbered_reference_key,
+    )
+    socket_refs = sorted(
+        (ref for ref in footprints if re.fullmatch(r"SW\d+", ref)),
+        key=_numbered_reference_key,
+    )
+    expected_count = {"left": 31, "right": 39}[product]
+    if len(diode_refs) != expected_count or len(socket_refs) != expected_count:
+        raise ValueError(
+            f"{product}: expected {expected_count} diodes/sockets, "
+            f"got {len(diode_refs)}/{len(socket_refs)}"
+        )
+    placements: list[dict[str, object]] = []
+    for reference in diode_refs:
+        footprint = footprints[reference]
+        if footprint["name"] != "D_ES1B_SMA_HandSolder_C437840":
+            raise ValueError(f"{reference}: unexpected diode footprint {footprint['name']!r}")
+        center = tuple(footprint["center"])
+        placements.append(
+            {
+                "designator": reference,
+                "mid_x_mm": round(float(center[0]), 6),
+                "mid_y_mm": round(-float(center[1]), 6),
+                "layer": "Bottom",
+                "rotation_degrees": round(float(footprint["rotation"]) % 360.0, 6),
+                "centroid_source": "footprint_origin",
+            }
+        )
+    for reference in socket_refs:
+        footprint = footprints[reference]
+        if footprint["name"] != "SW_Choc_V2_Socket_MX_THT":
+            raise ValueError(f"{reference}: unexpected switch footprint {footprint['name']!r}")
+        center = _bottom_fab_body_centroid(footprint)
+        placements.append(
+            {
+                "designator": reference,
+                "mid_x_mm": round(float(center[0]), 6),
+                "mid_y_mm": round(-float(center[1]), 6),
+                "layer": "Bottom",
+                "rotation_degrees": round(float(footprint["rotation"]) % 360.0, 6),
+                "centroid_source": "bottom_fab_body_bbox",
+            }
+        )
+    return {
+        "schema_version": 1,
+        "requirement_ids": ["CON-ARCH-004"],
+        "variant": "x3-v2",
+        "product": product,
+        "source_board": board_path,
+        "source_board_sha256": source_board_sha256,
+        "purpose": "jlcpcb_price_quote_only",
+        "order_ready": False,
+        "line_items": [
+            {
+                "comment": "Jingdao ES1B",
+                "designators": diode_refs,
+                "footprint": "SMA",
+                "lcsc_part_number": "C437840",
+            },
+            {
+                "comment": "Kailh CPG135001S30 Choc hot-swap socket",
+                "designators": socket_refs,
+                "footprint": "Kailh CPG135001S30",
+                "lcsc_part_number": "C5333465",
+            },
+        ],
+        "placements": placements,
+    }
+
+
+def jlcpcb_pcba_bom_csv_bytes(quote: dict[str, object]) -> bytes:
+    output = io.StringIO(newline="")
+    writer = csv.writer(output, lineterminator="\n")
+    writer.writerow(("Comment", "Designator", "Footprint", "LCSC Part #"))
+    for item in quote["line_items"]:
+        writer.writerow(
+            (
+                item["comment"],
+                ",".join(item["designators"]),
+                item["footprint"],
+                item["lcsc_part_number"],
+            )
+        )
+    return output.getvalue().encode("utf-8")
+
+
+def jlcpcb_pcba_cpl_csv_bytes(quote: dict[str, object]) -> bytes:
+    output = io.StringIO(newline="")
+    writer = csv.writer(output, lineterminator="\n")
+    writer.writerow(("Designator", "Mid X", "Mid Y", "Layer", "Rotation"))
+    for item in quote["placements"]:
+        writer.writerow(
+            (
+                item["designator"],
+                f"{float(item['mid_x_mm']):.4f}mm",
+                f"{float(item['mid_y_mm']):.4f}mm",
+                item["layer"],
+                f"{float(item['rotation_degrees']):.3f}",
+            )
+        )
+    return output.getvalue().encode("utf-8")

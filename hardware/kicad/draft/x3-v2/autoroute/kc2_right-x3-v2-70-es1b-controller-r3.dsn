@@ -103,7 +103,7 @@
     (component MH_M1.4_NPTH_1.60
       (place MH5 156187.5 -112500 front 0 (PN M1.4_NPTH_1.60))
       (place MH7 97437.5 -152000 front 0 (PN M1.4_NPTH_1.60))
-      (place MH1 97062.5 -43250 front 0 (PN M1.4_NPTH_1.60))
+      (place MH1 97187.5 -43250 front 0 (PN M1.4_NPTH_1.60))
       (place MH4 194937.5 -98750 front 0 (PN M1.4_NPTH_1.60))
       (place MH2 72437.5 -67000 front 0 (PN M1.4_NPTH_1.60))
       (place MH8 122687.5 -151000 front 0 (PN M1.4_NPTH_1.60))

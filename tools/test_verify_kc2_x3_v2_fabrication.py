@@ -12,12 +12,16 @@ import unittest
 from zipfile import ZIP_DEFLATED, ZipFile
 
 from tools.verify_kc2_x3_v2_fabrication import (
+    EXPECTED_JLCPCB_PCBA_QUOTE_PROFILE,
+    EXPECTED_JLCPCB_PROFILE,
     EXPECTED_MOUNTING_REFERENCE_CENTERS_MM,
     MANIFEST,
     ROOT,
     analyze_fabrication,
     inspect_gerber,
     inspect_mounting_reference_glyphs,
+    jlcpcb_pcba_quote_profile_errors,
+    jlcpcb_profile_errors,
 )
 from tools.kc2_x3_v2_output_geometry import (
     parse_board,
@@ -68,8 +72,13 @@ def materialize_index_fabrication_snapshot(root: Path) -> Path:
     for details in manifest["products"].values():
         paths.add(Path(details["board"]))
         paths.add(Path(details["archive"]))
+        paths.add(Path(details["jlcpcb_archive"]))
         output_dir = Path(details["output_dir"])
         paths.update(output_dir / item["name"] for item in details["files"])
+        quote = details.get("pcba_quote")
+        if quote:
+            paths.add(Path(quote["bom"]))
+            paths.add(Path(quote["cpl"]))
     manifest_relative = MANIFEST.relative_to(ROOT)
     paths.add(manifest_relative)
     environment = os.environ.copy()
@@ -178,6 +187,82 @@ class V2FabricationTests(unittest.TestCase):
                 "NPTH": {"1.650": 3, "1.700": 6, "3.000": 6, "5.000": 3},
             },
         )
+
+    def test_jlcpcb_order_archives_and_tented_via_profile_fail_closed(self) -> None:
+        report = analyze_fabrication()
+        self.assertEqual(report["jlcpcb_profile"], EXPECTED_JLCPCB_PROFILE)
+        self.assertEqual(report["jlcpcb_profile_errors"], [])
+        for product, details in report["products"].items():
+            with self.subTest(product=product):
+                self.assertTrue(details["jlcpcb_archive_exists"])
+                self.assertTrue(details["jlcpcb_archive_sha256_matches"])
+                self.assertEqual(details["jlcpcb_nested_archive_entries"], [])
+                self.assertEqual(details["jlcpcb_unexpected_entries"], [])
+                self.assertEqual(details["jlcpcb_missing_entries"], [])
+                self.assertEqual(details["jlcpcb_archive_entry_count"], 15)
+                self.assertEqual(details["via_tenting_errors"], [])
+                self.assertEqual(details["mask_open_via_centers"], {"front": [], "back": []})
+
+        mutated = deepcopy(EXPECTED_JLCPCB_PROFILE)
+        mutated["via_covering"] = "untented"
+        self.assertTrue(jlcpcb_profile_errors(mutated))
+        mutated = deepcopy(EXPECTED_JLCPCB_PROFILE)
+        mutated["surface_finish"] = "lead_free_hasl"
+        self.assertTrue(jlcpcb_profile_errors(mutated))
+        mutated = deepcopy(EXPECTED_JLCPCB_PROFILE)
+        mutated["confirm_production_file"] = False
+        self.assertTrue(jlcpcb_profile_errors(mutated))
+
+    def test_jlcpcb_pcba_quote_contains_only_bottom_diodes_and_choc_sockets(self) -> None:
+        from tools.canonical_hash import sha256_file
+
+        report = analyze_fabrication()
+        self.assertEqual(
+            report["jlcpcb_pcba_quote_profile"],
+            EXPECTED_JLCPCB_PCBA_QUOTE_PROFILE,
+        )
+        self.assertEqual(report["jlcpcb_pcba_quote_profile_errors"], [])
+        for product, expected_count in (("left", 31), ("right", 39)):
+            with self.subTest(product=product):
+                quote = report["products"][product]["pcba_quote"]
+                self.assertTrue(quote["bom_exists"])
+                self.assertTrue(quote["cpl_exists"])
+                self.assertTrue(quote["bom_sha256_matches"])
+                self.assertTrue(quote["cpl_sha256_matches"])
+                self.assertEqual(quote["errors"], [])
+                self.assertEqual(quote["diode_count"], expected_count)
+                self.assertEqual(quote["socket_count"], expected_count)
+                self.assertEqual(quote["assembled_reference_count"], expected_count * 2)
+                self.assertEqual(quote["layers"], ["Bottom"])
+                self.assertEqual(quote["lcsc_part_numbers"], ["C437840", "C5333465"])
+                self.assertTrue(quote["socket_centroids_are_body_derived"])
+                self.assertFalse(quote["order_ready"])
+
+        mutated = deepcopy(EXPECTED_JLCPCB_PCBA_QUOTE_PROFILE)
+        mutated["order_ready"] = True
+        self.assertTrue(jlcpcb_pcba_quote_profile_errors(mutated))
+        mutated = deepcopy(EXPECTED_JLCPCB_PCBA_QUOTE_PROFILE)
+        mutated["assembled_reference_families"] = ["D", "SW", "U"]
+        self.assertTrue(jlcpcb_pcba_quote_profile_errors(mutated))
+
+        mutations = (
+            ("bom", b"Jingdao ES1B", b"U1,Jingdao ES1B"),
+            ("cpl", b"SW1,45.5250mm", b"SW1,45.6250mm"),
+        )
+        for field, old, new in mutations:
+            with self.subTest(coupled_quote_mutation=field), TemporaryDirectory() as temporary:
+                root = Path(temporary)
+                manifest_path = materialize_index_fabrication_snapshot(root)
+                manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+                record = manifest["products"]["left"]["pcba_quote"]
+                path = root / record[field]
+                payload = path.read_bytes()
+                self.assertEqual(payload.count(old), 1)
+                path.write_bytes(payload.replace(old, new, 1))
+                record[f"{field}_sha256"] = sha256_file(path)
+                manifest_path.write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
+                mutated_report = analyze_fabrication(manifest_path, root=root)
+                self.assertTrue(mutated_report["products"]["left"]["pcba_quote"]["errors"])
 
     def test_canonical_hash_policy_accepts_crlf_and_exact_index_snapshot(self) -> None:
         from tools.canonical_hash import HASH_POLICY, sha256_file

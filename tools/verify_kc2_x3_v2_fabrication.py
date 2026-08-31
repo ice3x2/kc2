@@ -2,6 +2,8 @@ from __future__ import annotations
 
 import argparse
 from collections import Counter
+import csv
+import io
 import json
 import re
 from pathlib import Path
@@ -13,6 +15,9 @@ if __package__:
         REQUIREMENT_IDS,
         bom_csv_bytes,
         build_board_bom,
+        build_jlcpcb_pcba_quote,
+        jlcpcb_pcba_bom_csv_bytes,
+        jlcpcb_pcba_cpl_csv_bytes,
         parse_board,
         source_control_flashes,
         source_drill_geometry,
@@ -24,6 +29,9 @@ else:
         REQUIREMENT_IDS,
         bom_csv_bytes,
         build_board_bom,
+        build_jlcpcb_pcba_quote,
+        jlcpcb_pcba_bom_csv_bytes,
+        jlcpcb_pcba_cpl_csv_bytes,
         parse_board,
         source_control_flashes,
         source_drill_geometry,
@@ -89,7 +97,7 @@ EXPECTED_MOUNTING_REFERENCE_CENTERS_MM = {
         "MH8": (75.0, 134.0),
     },
     "right": {
-        "MH1": (97.0625, 43.25),
+        "MH1": (97.1875, 43.25),
         "MH2": (72.4375, 67.0),
         "MH3": (169.9375, 95.25),
         "MH4": (194.9375, 98.75),
@@ -101,6 +109,59 @@ EXPECTED_MOUNTING_REFERENCE_CENTERS_MM = {
     },
     "coupon": {},
 }
+EXPECTED_JLCPCB_PROFILE = {
+    "schema": "kc2-x3-v2-jlcpcb-profile-v1",
+    "vendor": "JLCPCB",
+    "purpose": "prototype_only_pending_physical_evidence",
+    "layer_count": 2,
+    "material": "FR-4",
+    "board_thickness_mm": 1.6,
+    "copper_weight_oz": 1.0,
+    "surface_finish": "enig",
+    "solder_mask_color": "green",
+    "silkscreen_color": "white",
+    "via_covering": "tented",
+    "maximum_tented_via_drill_mm": 0.5,
+    "assembly_service": "none_hand_assembly",
+    "confirm_production_file": True,
+    "order_ready": False,
+}
+EXPECTED_JLCPCB_PCBA_QUOTE_PROFILE = {
+    "schema": "kc2-x3-v2-jlcpcb-pcba-quote-v1",
+    "vendor": "JLCPCB",
+    "purpose": "pricing_quote_only_not_order_authorization",
+    "assembly_side": "bottom",
+    "assembled_reference_families": ["D", "SW"],
+    "assembled_parts": {
+        "D": {"manufacturer_part_number": "ES1B", "lcsc_part_number": "C437840"},
+        "SW": {
+            "manufacturer_part_number": "CPG135001S30",
+            "lcsc_part_number": "C5333465",
+        },
+    },
+    "inventory_recheck_required": True,
+    "placement_and_orientation_confirmation_required": True,
+    "bom_only_1n4148_substitution_allowed": False,
+    "board_revision_required_for_1n4148_family": True,
+    "order_ready": False,
+}
+JLCPCB_FABRICATION_SUFFIXES = (
+    "-F_Cu.gtl",
+    "-B_Cu.gbl",
+    "-F_Mask.gts",
+    "-B_Mask.gbs",
+    "-F_Paste.gtp",
+    "-B_Paste.gbp",
+    "-F_Silkscreen.gto",
+    "-B_Silkscreen.gbo",
+    "-Edge_Cuts.gm1",
+    "-PTH.drl",
+    "-NPTH.drl",
+    "-PTH-drl_map.gbr",
+    "-NPTH-drl_map.gbr",
+    "-drill-report.txt",
+    "-job.gbrjob",
+)
 EXPECTED_J_BAT_MARKING_GLYPHS = {
     "B+": {
         "stroke_count": 20,
@@ -592,6 +653,160 @@ def source_board_via_drills(path: Path) -> dict[str, int]:
     return dict(sorted(Counter(f"{float(value):.3f}" for value in drills).items()))
 
 
+def jlcpcb_profile_errors(profile: object) -> list[str]:
+    if not isinstance(profile, dict):
+        return ["JLCPCB profile is missing or not an object"]
+    errors = [
+        f"JLCPCB profile {key}={profile.get(key)!r}, expected {expected!r}"
+        for key, expected in EXPECTED_JLCPCB_PROFILE.items()
+        if profile.get(key) != expected
+    ]
+    unexpected = sorted(set(profile) - set(EXPECTED_JLCPCB_PROFILE))
+    if unexpected:
+        errors.append(f"JLCPCB profile has unexpected fields {unexpected}")
+    return errors
+
+
+def jlcpcb_pcba_quote_profile_errors(profile: object) -> list[str]:
+    if not isinstance(profile, dict):
+        return ["JLCPCB PCBA quote profile is missing or not an object"]
+    errors = [
+        f"JLCPCB PCBA quote profile {key}={profile.get(key)!r}, expected {expected!r}"
+        for key, expected in EXPECTED_JLCPCB_PCBA_QUOTE_PROFILE.items()
+        if profile.get(key) != expected
+    ]
+    unexpected = sorted(set(profile) - set(EXPECTED_JLCPCB_PCBA_QUOTE_PROFILE))
+    if unexpected:
+        errors.append(f"JLCPCB PCBA quote profile has unexpected fields {unexpected}")
+    return errors
+
+
+def inspect_jlcpcb_pcba_quote(
+    product: str,
+    details: dict[str, object],
+    board_geometry: dict[str, object] | None,
+    source_board: Path,
+    root: Path,
+) -> dict[str, object]:
+    quote_details = details.get("pcba_quote")
+    errors: list[str] = []
+    if not isinstance(quote_details, dict):
+        return {
+            "bom_exists": False,
+            "cpl_exists": False,
+            "bom_sha256_matches": False,
+            "cpl_sha256_matches": False,
+            "diode_count": 0,
+            "socket_count": 0,
+            "assembled_reference_count": 0,
+            "layers": [],
+            "lcsc_part_numbers": [],
+            "socket_centroids_are_body_derived": False,
+            "order_ready": None,
+            "errors": ["manifest PCBA quote record missing"],
+        }
+    bom_path = root / str(quote_details.get("bom", "<missing-bom>"))
+    cpl_path = root / str(quote_details.get("cpl", "<missing-cpl>"))
+    bom_exists, cpl_exists = bom_path.is_file(), cpl_path.is_file()
+    bom_hash_matches = bom_exists and sha256_file(bom_path) == quote_details.get("bom_sha256")
+    cpl_hash_matches = cpl_exists and sha256_file(cpl_path) == quote_details.get("cpl_sha256")
+    if not bom_exists:
+        errors.append("JLCPCB PCBA quote BOM missing")
+    if not cpl_exists:
+        errors.append("JLCPCB PCBA quote CPL missing")
+    if bom_exists and not bom_hash_matches:
+        errors.append("JLCPCB PCBA quote BOM SHA-256 mismatch")
+    if cpl_exists and not cpl_hash_matches:
+        errors.append("JLCPCB PCBA quote CPL SHA-256 mismatch")
+
+    expected: dict[str, object] | None = None
+    if board_geometry is not None:
+        expected = build_jlcpcb_pcba_quote(
+            product,
+            str(source_board.relative_to(root)),
+            str(details.get("source_board_sha256")),
+            board_geometry,
+        )
+        if bom_exists and bom_path.read_bytes() != jlcpcb_pcba_bom_csv_bytes(expected):
+            errors.append("JLCPCB PCBA quote BOM is not the exact source-board selection")
+        if cpl_exists and cpl_path.read_bytes() != jlcpcb_pcba_cpl_csv_bytes(expected):
+            errors.append("JLCPCB PCBA quote CPL is not the exact source-board placement set")
+        expected_diode_count = len(expected["line_items"][0]["designators"])
+        expected_socket_count = len(expected["line_items"][1]["designators"])
+        expected_placement_count = len(expected["placements"])
+        for key, value in (
+            ("diode_count", expected_diode_count),
+            ("socket_count", expected_socket_count),
+            ("assembled_reference_count", expected_placement_count),
+        ):
+            if quote_details.get(key) != value:
+                errors.append(f"manifest PCBA quote {key}={quote_details.get(key)!r}, expected {value}")
+    else:
+        expected_diode_count = expected_socket_count = expected_placement_count = 0
+    if quote_details.get("order_ready") is not False:
+        errors.append("manifest PCBA quote order_ready must be false")
+
+    bom_rows: list[dict[str, str]] = []
+    cpl_rows: list[dict[str, str]] = []
+    if bom_exists:
+        bom_rows = list(csv.DictReader(io.StringIO(bom_path.read_text(encoding="utf-8"))))
+    if cpl_exists:
+        cpl_rows = list(csv.DictReader(io.StringIO(cpl_path.read_text(encoding="utf-8"))))
+    layers = sorted({row.get("Layer", "") for row in cpl_rows if row.get("Layer")})
+    lcsc_numbers = sorted(
+        {row.get("LCSC Part #", "") for row in bom_rows if row.get("LCSC Part #")}
+    )
+    socket_centroids_are_body_derived = bool(expected) and all(
+        item["centroid_source"] == "bottom_fab_body_bbox"
+        for item in expected["placements"]
+        if str(item["designator"]).startswith("SW")
+    )
+    return {
+        "bom_exists": bom_exists,
+        "cpl_exists": cpl_exists,
+        "bom_sha256_matches": bom_hash_matches,
+        "cpl_sha256_matches": cpl_hash_matches,
+        "diode_count": expected_diode_count,
+        "socket_count": expected_socket_count,
+        "assembled_reference_count": expected_placement_count,
+        "layers": layers,
+        "lcsc_part_numbers": lcsc_numbers,
+        "socket_centroids_are_body_derived": socket_centroids_are_body_derived,
+        "order_ready": quote_details.get("order_ready"),
+        "errors": errors,
+    }
+
+
+def source_board_tenting(path: Path) -> dict[str, bool]:
+    if not path.is_file():
+        return {"front": False, "back": False}
+    text = path.read_text(encoding="utf-8")
+    match = re.search(
+        r"\(tenting\s+\(front\s+(yes|no)\)\s+\(back\s+(yes|no)\)\s*\)",
+        text,
+        flags=re.DOTALL,
+    )
+    if match is None:
+        return {"front": False, "back": False}
+    return {"front": match.group(1) == "yes", "back": match.group(2) == "yes"}
+
+
+def mask_open_via_centers(
+    board_geometry: dict[str, object], payload: bytes
+) -> list[list[float]]:
+    openings = inspect_gerber_flashes(payload)
+    result: list[list[float]] = []
+    for via in board_geometry.get("vias", []):
+        center = tuple(via["center"])
+        if any(
+            abs(float(flash["center"][0]) - float(center[0])) <= 0.0001
+            and abs(float(flash["center"][1]) - float(center[1])) <= 0.0001
+            for flash in openings
+        ):
+            result.append([round(float(center[0]), 4), round(float(center[1]), 4)])
+    return result
+
+
 def expected_drill_tools(product: str, source_board: Path) -> dict[str, dict[str, int]]:
     fixed = EXPECTED_FIXED_DRILL_TOOLS[product]
     pth = dict(fixed["PTH"])
@@ -606,6 +821,8 @@ def analyze_fabrication(manifest_path: Path = MANIFEST, root: Path = ROOT) -> di
     products: dict[str, object] = {}
     for product, details in manifest["products"].items():
         archive = root / details["archive"]
+        jlcpcb_archive_value = details.get("jlcpcb_archive", "<missing-jlcpcb-archive>")
+        jlcpcb_archive = root / jlcpcb_archive_value
         source_board = root / details["board"]
         output_dir = root / details["output_dir"]
         expected_drills = expected_drill_tools(product, source_board)
@@ -627,6 +844,7 @@ def analyze_fabrication(manifest_path: Path = MANIFEST, root: Path = ROOT) -> di
         drill_source_geometry_errors: list[str] = []
         gerber_source_geometry_errors: list[str] = []
         bom_errors: list[str] = []
+        mask_open_vias: dict[str, list[list[float]]] = {"front": [], "back": []}
         if archive.is_file():
             archive_digest = sha256_file(archive)
             with ZipFile(archive) as package:
@@ -741,6 +959,11 @@ def analyze_fabrication(manifest_path: Path = MANIFEST, root: Path = ROOT) -> di
                                     f"extracted {error}"
                                     for error in extracted_inspection["errors"]
                                 )
+                    if board_geometry is not None and layer in {"F.Mask", "B.Mask"}:
+                        side = "front" if layer == "F.Mask" else "back"
+                        mask_open_vias[side] = mask_open_via_centers(
+                            board_geometry, package.read(entry)
+                        )
         if EXPECTED_MOUNTING_REFERENCE_CENTERS_MM[product] and not mounting_reference_glyphs:
             mounting_reference_glyph_errors.append(
                 "F.Silkscreen: no mounting-reference glyph geometry"
@@ -789,6 +1012,56 @@ def analyze_fabrication(manifest_path: Path = MANIFEST, root: Path = ROOT) -> di
                     bom_errors.append("board-derived BOM CSV missing")
                 elif csv_path.read_bytes() != bom_csv_bytes(expected_bom):
                     bom_errors.append("BOM CSV does not match source-board inventory contract")
+        source_tenting = source_board_tenting(source_board)
+        via_tenting_errors: list[str] = []
+        source_vias = board_geometry.get("vias", []) if board_geometry is not None else []
+        if source_vias and source_tenting != {"front": True, "back": True}:
+            via_tenting_errors.append(
+                f"source board tenting must be enabled on both sides, got {source_tenting}"
+            )
+        maximum_tented_drill = float(
+            EXPECTED_JLCPCB_PROFILE["maximum_tented_via_drill_mm"]
+        )
+        oversized_vias = [
+            [round(float(via["center"][0]), 4), round(float(via["center"][1]), 4)]
+            for via in source_vias
+            if float(via["diameter"]) > maximum_tented_drill + 0.0001
+        ]
+        if oversized_vias:
+            via_tenting_errors.append(
+                f"source vias exceed {maximum_tented_drill:.2f} mm tenting drill: {oversized_vias}"
+            )
+        for side, centers in mask_open_vias.items():
+            if centers:
+                via_tenting_errors.append(f"{side} solder mask opens at via centers {centers}")
+
+        expected_jlcpcb_entries = sorted(
+            item["name"]
+            for item in details["files"]
+            if any(item["name"].endswith(suffix) for suffix in JLCPCB_FABRICATION_SUFFIXES)
+        )
+        jlcpcb_entries: list[str] = []
+        jlcpcb_file_hash_mismatches: list[str] = []
+        jlcpcb_archive_digest = ""
+        if jlcpcb_archive.is_file():
+            jlcpcb_archive_digest = sha256_file(jlcpcb_archive)
+            expected_hashes = {item["name"]: item["sha256"] for item in details["files"]}
+            with ZipFile(jlcpcb_archive) as package:
+                jlcpcb_entries = package.namelist()
+                for entry in jlcpcb_entries:
+                    if sha256_bytes(package.read(entry)) != expected_hashes.get(entry):
+                        jlcpcb_file_hash_mismatches.append(entry)
+        pcba_quote = (
+            inspect_jlcpcb_pcba_quote(
+                product,
+                details,
+                board_geometry,
+                source_board,
+                root,
+            )
+            if product in {"left", "right"}
+            else None
+        )
         products[product] = {
             "source_board_exists": source_board.is_file(),
             "source_board_sha256_matches": source_board.is_file()
@@ -804,10 +1077,27 @@ def analyze_fabrication(manifest_path: Path = MANIFEST, root: Path = ROOT) -> di
             "has_job_file": any(entry.endswith(".gbrjob") for entry in entries),
             "archive_sha256_matches": bool(archive_digest)
             and archive_digest == details["archive_sha256"],
+            "jlcpcb_archive_exists": jlcpcb_archive.is_file(),
+            "jlcpcb_archive_entry_count": len(jlcpcb_entries),
+            "jlcpcb_archive_sha256_matches": bool(jlcpcb_archive_digest)
+            and jlcpcb_archive_digest == details.get("jlcpcb_archive_sha256"),
+            "jlcpcb_nested_archive_entries": [
+                entry for entry in jlcpcb_entries if "/" in entry or "\\" in entry
+            ],
+            "jlcpcb_unexpected_entries": sorted(
+                set(jlcpcb_entries) - set(expected_jlcpcb_entries)
+            ),
+            "jlcpcb_missing_entries": sorted(
+                set(expected_jlcpcb_entries) - set(jlcpcb_entries)
+            ),
+            "jlcpcb_file_hash_mismatches": jlcpcb_file_hash_mismatches,
             "file_hash_mismatches": file_hash_mismatches,
             "output_file_hash_mismatches": output_file_hash_mismatches,
             "drill_tools_mm": drill_tools,
             "source_board_via_drills_mm": source_board_via_drills(source_board),
+            "source_board_tenting": source_tenting,
+            "mask_open_via_centers": mask_open_vias,
+            "via_tenting_errors": via_tenting_errors,
             "expected_drill_tools_mm": expected_drills,
             "drill_geometry_matches": drill_tools == expected_drills,
             "drill_source_geometry_errors": drill_source_geometry_errors,
@@ -830,12 +1120,19 @@ def analyze_fabrication(manifest_path: Path = MANIFEST, root: Path = ROOT) -> di
             == EXPECTED_BOTTOM_PASTE_FLASHES[product],
             "bom_matches_source_board": not bom_errors if product in {"left", "right"} else None,
             "bom_errors": bom_errors,
+            "pcba_quote": pcba_quote,
         }
     return {
         "requirement_ids": manifest.get("requirement_ids", []),
         "requirement_ids_match": tuple(manifest.get("requirement_ids", ())) == REQUIREMENT_IDS,
         "hash_policy": manifest.get("hash_policy"),
         "hash_policy_matches": manifest.get("hash_policy") == HASH_POLICY,
+        "jlcpcb_profile": manifest.get("jlcpcb_profile"),
+        "jlcpcb_profile_errors": jlcpcb_profile_errors(manifest.get("jlcpcb_profile")),
+        "jlcpcb_pcba_quote_profile": manifest.get("jlcpcb_pcba_quote_profile"),
+        "jlcpcb_pcba_quote_profile_errors": jlcpcb_pcba_quote_profile_errors(
+            manifest.get("jlcpcb_pcba_quote_profile")
+        ),
         "variant": manifest.get("variant"),
         "products": products,
     }
@@ -853,6 +1150,10 @@ def main() -> None:
         errors.append(f"requirement_ids must be {list(REQUIREMENT_IDS)!r}")
     if not report["hash_policy_matches"]:
         errors.append(f"hash policy must be {HASH_POLICY!r}")
+    if report["jlcpcb_profile_errors"]:
+        errors.extend(report["jlcpcb_profile_errors"])
+    if report["jlcpcb_pcba_quote_profile_errors"]:
+        errors.extend(report["jlcpcb_pcba_quote_profile_errors"])
     for product, details in report["products"].items():
         if not details["archive_exists"]:
             errors.append(f"{product}: archive missing")
@@ -870,6 +1171,38 @@ def main() -> None:
             errors.append(f"{product}: nested entries {details['nested_archive_entries']}")
         if not details["archive_sha256_matches"]:
             errors.append(f"{product}: archive SHA-256 mismatch")
+        if not details["jlcpcb_archive_exists"]:
+            errors.append(f"{product}: JLCPCB upload archive missing")
+        if not details["jlcpcb_archive_sha256_matches"]:
+            errors.append(f"{product}: JLCPCB upload archive SHA-256 mismatch")
+        if details["jlcpcb_archive_entry_count"] != len(JLCPCB_FABRICATION_SUFFIXES):
+            errors.append(
+                f"{product}: JLCPCB upload archive has "
+                f"{details['jlcpcb_archive_entry_count']} entries, expected "
+                f"{len(JLCPCB_FABRICATION_SUFFIXES)}"
+            )
+        if details["jlcpcb_nested_archive_entries"]:
+            errors.append(
+                f"{product}: JLCPCB upload archive has nested entries "
+                f"{details['jlcpcb_nested_archive_entries']}"
+            )
+        if details["jlcpcb_unexpected_entries"]:
+            errors.append(
+                f"{product}: JLCPCB upload archive has unexpected entries "
+                f"{details['jlcpcb_unexpected_entries']}"
+            )
+        if details["jlcpcb_missing_entries"]:
+            errors.append(
+                f"{product}: JLCPCB upload archive is missing entries "
+                f"{details['jlcpcb_missing_entries']}"
+            )
+        if details["jlcpcb_file_hash_mismatches"]:
+            errors.append(
+                f"{product}: JLCPCB upload file SHA-256 mismatches "
+                f"{details['jlcpcb_file_hash_mismatches']}"
+            )
+        if details["via_tenting_errors"]:
+            errors.append(f"{product}: via tenting {details['via_tenting_errors']}")
         if details["file_hash_mismatches"]:
             errors.append(f"{product}: file SHA-256 mismatches {details['file_hash_mismatches']}")
         if details["output_file_hash_mismatches"]:
@@ -914,6 +1247,8 @@ def main() -> None:
             )
         if product in {"left", "right"} and not details["bom_matches_source_board"]:
             errors.append(f"{product}: BOM {details['bom_errors']}")
+        if product in {"left", "right"} and details["pcba_quote"]["errors"]:
+            errors.append(f"{product}: JLCPCB PCBA quote {details['pcba_quote']['errors']}")
     if errors:
         raise SystemExit("FAIL: KC2 X3 V2 fabrication archives\n- " + "\n- ".join(errors))
     print(json.dumps(report, indent=2))

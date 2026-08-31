@@ -2364,7 +2364,7 @@
     },
     "right": {
       "source_board": "hardware/kicad/draft/x3-v2/kc2_right-x3-v2/kc2_right-x3-v2.kicad_pcb",
-      "source_board_sha256": "cff0e6ad90ab9eacebd84e7555b77c47437921ac7c082b395ba24cbada85ad2f",
+      "source_board_sha256": "8769b5792386357a876008f20152f836012a299a1230b359aaa530ffa85e7b0a",
       "source_board_sha256_matches": true,
       "key_count": 39,
       "legacy_registration_refs": [],
@@ -2388,7 +2388,7 @@
         "housing_body_cutout": false,
         "side": "right",
         "source_board": "hardware/kicad/draft/x3-v2/kc2_right-x3-v2/kc2_right-x3-v2.kicad_pcb",
-        "source_board_sha256": "cff0e6ad90ab9eacebd84e7555b77c47437921ac7c082b395ba24cbada85ad2f",
+        "source_board_sha256": "8769b5792386357a876008f20152f836012a299a1230b359aaa530ffa85e7b0a",
         "fresh_extraction_manifest_binding": true
       },
       "exterior_bottom_z_mm": 0.0,
@@ -3023,7 +3023,7 @@
         "count": 9,
         "board_coordinates_mm": [
           [
-            97.0625,
+            97.1875,
             43.25
           ],
           [
@@ -3064,11 +3064,11 @@
           {
             "ref": "MH1",
             "board_center_mm": [
-              97.0625,
+              97.1875,
               43.25
             ],
             "housing_center_mm": [
-              101.625,
+              101.5,
               4.0
             ],
             "printable_part": "part_b",
@@ -3078,14 +3078,14 @@
             "support_land_annular_width_mm": 0.95,
             "support_land_top_z_mm": 2.5,
             "support_land_vertical_gap_mm": 0.0,
-            "support_land_to_existing_support_mm": 1.5875,
-            "head_to_existing_support_mm": 1.5875,
-            "head_to_support_posts_mm": 21.0285,
-            "head_to_analytical_rail_mm": 1.5875,
-            "head_to_installed_component_mm": 2.4578,
+            "support_land_to_existing_support_mm": 1.4625,
+            "head_to_existing_support_mm": 1.4625,
+            "head_to_support_posts_mm": 21.0966,
+            "head_to_analytical_rail_mm": 1.4625,
+            "head_to_installed_component_mm": 2.5738,
             "head_to_routed_copper_or_via_mm": 9.325,
-            "head_to_board_edge_mm": 2.3375,
-            "head_to_housing_edge_mm": 2.2375,
+            "head_to_board_edge_mm": 2.2125,
+            "head_to_housing_edge_mm": 2.1125,
             "head_reserve_mm": 0.25,
             "minimum_unrelated_support_reserve_mm": 0.25,
             "desk_column_diameter_mm": 3.0,
@@ -3108,7 +3108,7 @@
               1.2
             ],
             "driver_envelope_diameter_mm": 3.0,
-            "driver_to_battery_body_mm": 2.4578,
+            "driver_to_battery_body_mm": 2.5738,
             "driver_to_power_switch_body_mm": 17.45,
             "driver_to_power_switch_actuator_sweep_mm": 17.45,
             "service_condition": "keycaps-off, switches-installed",
@@ -3164,15 +3164,15 @@
             "geometry_collision_count": 0,
             "geometry_printable_part": "part_b",
             "geometry_board_feature_matches": true,
-            "geometry_support_land_to_existing_support_mm": 1.5875,
-            "geometry_head_to_existing_support_mm": 1.5875,
-            "geometry_head_to_support_posts_mm": 21.0285,
-            "geometry_head_to_analytical_rail_mm": 1.5875,
-            "geometry_head_to_installed_component_mm": 2.4578,
+            "geometry_support_land_to_existing_support_mm": 1.4625,
+            "geometry_head_to_existing_support_mm": 1.4625,
+            "geometry_head_to_support_posts_mm": 21.0966,
+            "geometry_head_to_analytical_rail_mm": 1.4625,
+            "geometry_head_to_installed_component_mm": 2.5738,
             "geometry_head_to_routed_copper_or_via_mm": 9.325,
-            "geometry_head_to_board_edge_mm": 2.3375,
-            "geometry_head_to_housing_edge_mm": 2.2375,
-            "geometry_driver_to_battery_body_mm": 2.4578,
+            "geometry_head_to_board_edge_mm": 2.2125,
+            "geometry_head_to_housing_edge_mm": 2.1125,
+            "geometry_driver_to_battery_body_mm": 2.5738,
             "geometry_driver_to_power_switch_body_mm": 17.45,
             "geometry_driver_to_power_switch_actuator_sweep_mm": 17.45,
             "step_pilot_open_at_z_2_49": true,
@@ -4904,7 +4904,7 @@
               112.75
             ],
             [
-              101.625,
+              101.5,
               4.0
             ],
             [
@@ -5002,7 +5002,7 @@
               112.75
             ],
             [
-              101.625,
+              101.5,
               4.0
             ],
             [

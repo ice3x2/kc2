@@ -425,7 +425,7 @@ X3_V2_MOUNTING_POINTS = {
         (75.0000, 134.0000),
     ],
     "right": [
-        (97.0625, 43.2500),
+        (97.1875, 43.2500),
         (72.4375, 67.0000),
         (169.9375, 95.2500),
         (194.9375, 98.7500),
@@ -446,6 +446,16 @@ X2_DIODE_Y_OFFSET = -7.6
 
 CONTROLLER_LEN = 33.8
 CONTROLLER_W = 18.3
+# Keep the established placement datum above stable, but use the larger published
+# nice!nano v2 plan envelope for collision and procurement evidence.  Nice!nano's
+# official documentation is authoritative for the pinout; Mechboards publishes
+# the 34.1 x 18.3 mm assembled-board dimensions pending first-article caliper data.
+CONTROLLER_BODY_LEN_MAX = 34.1
+CONTROLLER_BODY_SOURCE = {
+    "kind": "retailer_published_dimensions_pending_physical_confirmation",
+    "url": "https://mechboards.co.uk/products/nice-nano-v2",
+}
+CONTROLLER_PINOUT_SOURCE = "https://nicekeyboards.com/docs/nice-nano/pinout-schematic/"
 # Pro Micro / nice!nano physical socket-row center spacing is 0.600 inch.
 # 17.78 mm is the nominal controller board width and must not be used here.
 SOCKET_ROW_SPACING = 15.24
@@ -2863,7 +2873,9 @@ def generate_variant(variant: str, output_dir: Path | None = None) -> dict[str, 
             {
                 "top_edge_y_mm": X3_V2_TOP_EDGE_Y_MM,
                 "nominal_board_height_mm": 122.50,
-                "controller_body_mm": [CONTROLLER_LEN, CONTROLLER_W],
+                "controller_body_mm": [CONTROLLER_BODY_LEN_MAX, CONTROLLER_W],
+                "controller_body_source": CONTROLLER_BODY_SOURCE,
+                "controller_pinout_source": CONTROLLER_PINOUT_SOURCE,
                 "positions_mm": {
                     side: {
                         name: [position[0], position[1]]

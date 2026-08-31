@@ -1,5 +1,5 @@
 Drill report for kc2_left-x3-v2.kicad_pcb
-Created on 2026-08-30T09:47:24
+Created on 2026-08-31T23:18:03
 
 Copper Layer Stackup:
     =============================================================

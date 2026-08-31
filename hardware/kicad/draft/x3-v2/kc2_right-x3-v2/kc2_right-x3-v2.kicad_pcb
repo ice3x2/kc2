@@ -1041,7 +1041,7 @@
 	(footprint "MH_M1.4_NPTH_1.60"
 		(layer "F.Cu")
 		(uuid "11e11885-0617-4068-8063-795bf2cdef14")
-		(at 97.0625 43.25)
+		(at 97.1875 43.25)
 		(descr "KC2 X3 V2 M1.4 service mounting hole, 1.60 mm copper-free NPTH")
 		(tags "KC2 X3 V2 M1.4 mounting NPTH copper-free")
 		(property "Reference" "MH1"

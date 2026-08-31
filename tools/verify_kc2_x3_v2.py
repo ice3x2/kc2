@@ -19,6 +19,10 @@ import pcbnew
 
 from tools.canonical_hash import HASH_POLICY, sha256_bytes, sha256_file
 from tools.generate_kc2_pcbs import (
+    CONTROLLER_BODY_LEN_MAX,
+    CONTROLLER_BODY_SOURCE,
+    CONTROLLER_PINOUT_SOURCE,
+    CONTROLLER_W,
     X3_V2_CONTROLLER_SERVICE_POSITIONS_MM,
     X3_V2_J_BAT1_ROTATIONS_DEGREES,
     X3_V2_MOUNTING_POINTS,
@@ -253,7 +257,7 @@ EXPECTED_M1_4_MOUNTING_POINTS = {
         ("MH8", 75.0000, 134.0000),
     ],
     "right": [
-        ("MH1", 97.0625, 43.2500),
+        ("MH1", 97.1875, 43.2500),
         ("MH2", 72.4375, 67.0000),
         ("MH3", 169.9375, 95.2500),
         ("MH4", 194.9375, 98.7500),
@@ -535,6 +539,13 @@ def verify_controller_service_manifest_clearances(
         ),
     }
     service = manifest.get("controller_service_region")
+    if isinstance(service, dict):
+        if service.get("controller_body_mm") != [CONTROLLER_BODY_LEN_MAX, CONTROLLER_W]:
+            return ["manifest: nice!nano v2 physical body envelope is missing or stale"]
+        if service.get("controller_body_source") != CONTROLLER_BODY_SOURCE:
+            return ["manifest: nice!nano v2 body-dimension source is missing or stale"]
+        if service.get("controller_pinout_source") != CONTROLLER_PINOUT_SOURCE:
+            return ["manifest: nice!nano v2 official pinout source is missing or stale"]
     clearances = (
         service.get("nominal_clearances_mm")
         if isinstance(service, dict)
@@ -1652,7 +1663,15 @@ def verify_m1_4_mounting_holes(
         at = controller.GetPosition()
         center = (pcbnew.ToMM(at.x), pcbnew.ToMM(at.y))
         installed_body_boxes.append(
-            ("U1 controlled 33.80 x 18.30 mm body", (center[0] - 16.9, center[1] - 9.15, center[0] + 16.9, center[1] + 9.15))
+            (
+                "U1 conservative 34.10 x 18.30 mm body",
+                (
+                    center[0] - CONTROLLER_BODY_LEN_MAX / 2.0,
+                    center[1] - CONTROLLER_W / 2.0,
+                    center[0] + CONTROLLER_BODY_LEN_MAX / 2.0,
+                    center[1] + CONTROLLER_W / 2.0,
+                ),
+            )
         )
     battery = board.FindFootprintByReference("BAT1")
     if battery is not None:

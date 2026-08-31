@@ -579,7 +579,7 @@ class V2GeneratorTests(unittest.TestCase):
                     (75.0, 134.0),
                 ],
                 "right": [
-                    (97.0625, 43.25),
+                    (97.1875, 43.25),
                     (72.4375, 67.0),
                     (169.9375, 95.25),
                     (194.9375, 98.75),
@@ -1381,7 +1381,12 @@ class V2GeneratorTests(unittest.TestCase):
                 {
                     "top_edge_y_mm": 39.25,
                     "nominal_board_height_mm": 122.5,
-                    "controller_body_mm": [33.8, 18.3],
+                    "controller_body_mm": [34.1, 18.3],
+                    "controller_body_source": {
+                        "kind": "retailer_published_dimensions_pending_physical_confirmation",
+                        "url": "https://mechboards.co.uk/products/nice-nano-v2",
+                    },
+                    "controller_pinout_source": "https://nicekeyboards.com/docs/nice-nano/pinout-schematic/",
                     "positions_mm": {
                         "left": {
                             "u1": [132.7125, 50.75],
@@ -2086,7 +2091,7 @@ class V2GeneratorTests(unittest.TestCase):
                 ("MH8", 75.0, 134.0),
             ],
             "right": [
-                ("MH1", 97.0625, 43.25),
+                ("MH1", 97.1875, 43.25),
                 ("MH2", 72.4375, 67.0),
                 ("MH3", 169.9375, 95.25),
                 ("MH4", 194.9375, 98.75),
@@ -2604,6 +2609,24 @@ class V2GeneratorTests(unittest.TestCase):
                 mutated["controller_service_region"]["nominal_clearances_mm"][field] = 0.0
                 self.assertTrue(verify_controller_service_manifest_clearances(mutated))
 
+        service_mutations = {
+            "controller_body_mm": [33.8, 18.3],
+            "controller_body_source": {
+                "kind": "unverified_nominal",
+                "url": "https://example.invalid/controller",
+            },
+            "controller_pinout_source": "https://example.invalid/pinout",
+        }
+        for field, stale_value in service_mutations.items():
+            with self.subTest(field=field, mutation="missing"):
+                mutated = json.loads(json.dumps(manifest))
+                del mutated["controller_service_region"][field]
+                self.assertTrue(verify_controller_service_manifest_clearances(mutated))
+            with self.subTest(field=field, mutation="stale"):
+                mutated = json.loads(json.dumps(manifest))
+                mutated["controller_service_region"][field] = stale_value
+                self.assertTrue(verify_controller_service_manifest_clearances(mutated))
+
     def test_clearance_bindings_reject_029_project_299_dsn_and_stale_route_hash(self) -> None:
         from tools.verify_kc2_x3_v2 import (
             build_drc_evidence,
@@ -2716,7 +2739,7 @@ class V2GeneratorTests(unittest.TestCase):
                         {"ref": "MH8", "x": 75.0, "y": 134.0},
                     ],
                     "right": [
-                        {"ref": "MH1", "x": 97.0625, "y": 43.25},
+                        {"ref": "MH1", "x": 97.1875, "y": 43.25},
                         {"ref": "MH2", "x": 72.4375, "y": 67.0},
                         {"ref": "MH3", "x": 169.9375, "y": 95.25},
                         {"ref": "MH4", "x": 194.9375, "y": 98.75},
@@ -2909,11 +2932,11 @@ class V2GeneratorTests(unittest.TestCase):
                     "dsn_role": "current_mh_compact_controller_trackless_routing_input",
                     "dsn_mounting_hole_count": 9,
                     "session_source_dsn": "hardware/kicad/draft/x3-v2/autoroute/kc2_right-x3-v2-70-es1b-controller-r3.dsn",
-                    "session_source_dsn_sha256": "cdb19dfbbfc3c9129df64aaa9f899142fbaf15de3a4775ea4826dbdd8519c425",
+                    "session_source_dsn_sha256": "652edcfba0c8aa418b030f1f85aea0be4eb952536e18a87b226df9eaa3a6a26a",
                     "ses": "hardware/kicad/draft/x3-v2/autoroute/kc2_right-x3-v2-70-es1b-controller-r3.ses",
                     "ses_role": "reviewed_matrix_import_plus_exact_edge_cleanup_and_power_reset_service_routing",
-                    "dsn_sha256": "cdb19dfbbfc3c9129df64aaa9f899142fbaf15de3a4775ea4826dbdd8519c425",
-                    "ses_sha256": "b5bd3f7f622af8bb50b1292fb05d08b6d3b7a6ce5f893c0d20ef51d814a48717",
+                    "dsn_sha256": "652edcfba0c8aa418b030f1f85aea0be4eb952536e18a87b226df9eaa3a6a26a",
+                    "ses_sha256": "4a22cc465cd6088ebcf1c25fa929b1a14e5f09bf092d70f5892709ff7d78cef4",
                     "dsn_default_clearance_internal_units": 300,
                     "dsn_clearances_internal_units": {"global": 300, "kicad_default": 300},
                     "final_track_via_count": 764,
@@ -5328,7 +5351,7 @@ class V2GeneratorTests(unittest.TestCase):
 
             for side, original, replacement in (
                 ("left", "(place MH1 1128625 -430000", "(place MH1 1128625 -430001"),
-                ("right", "(place MH1 970625 -432500", "(place MH1 970625 -432501"),
+                ("right", "(place MH1 971875 -432500", "(place MH1 971875 -432501"),
             ):
                 with self.subTest(side=side, stale_mounting_geometry=True):
                     board_path = (

@@ -8,7 +8,7 @@
   "variant": "x3-v2",
   "generated_by": "tools/generate_kc2_x3_v2_housings.py",
   "hash_policy": "lf-normalized-utf8-text-else-raw-v1",
-  "generator_sha256": "950fe40ea2b1ac555971ef12b9f63e2a4336b1a2e79d5bdd87ac504f99b7c812",
+  "generator_sha256": "20eeeb1fab572cc53ed3484c1a14c032949f415dedceee9189659ea0e871ea39",
   "coordinate_system": "board-local, X-reflected physical lower-housing assembly view",
   "order_ready": false,
   "parameters": {
@@ -126,7 +126,7 @@
         "source_board_sha256": "92c46f364f0cc647928029f6b42a54abfcc94485a491e5a6177e84cc7800d26f"
       },
       "step": "hardware/case/draft/x3-v2/kc2_left_x3_v2_lower_housing.step",
-      "step_sha256": "6157ee81dae029ab649f3dc6ec7a1913860498de0115e82ac9a234d4f7276059",
+      "step_sha256": "b7ca8b83e56e78a074754c1bbd0e57150881eecf56d29694d48fb66babb7656e",
       "step_has_trailing_whitespace": false,
       "printable_parts": [
         {
@@ -2025,7 +2025,7 @@
     },
     "right": {
       "source_board": "hardware/kicad/draft/x3-v2/kc2_right-x3-v2/kc2_right-x3-v2.kicad_pcb",
-      "source_board_sha256": "cff0e6ad90ab9eacebd84e7555b77c47437921ac7c082b395ba24cbada85ad2f",
+      "source_board_sha256": "8769b5792386357a876008f20152f836012a299a1230b359aaa530ffa85e7b0a",
       "key_count": 39,
       "legacy_registration_refs": [],
       "battery_above_carrier": {
@@ -2048,10 +2048,10 @@
         "housing_body_cutout": false,
         "side": "right",
         "source_board": "hardware/kicad/draft/x3-v2/kc2_right-x3-v2/kc2_right-x3-v2.kicad_pcb",
-        "source_board_sha256": "cff0e6ad90ab9eacebd84e7555b77c47437921ac7c082b395ba24cbada85ad2f"
+        "source_board_sha256": "8769b5792386357a876008f20152f836012a299a1230b359aaa530ffa85e7b0a"
       },
       "step": "hardware/case/draft/x3-v2/kc2_right_x3_v2_lower_housing.step",
-      "step_sha256": "9a944775d02bdde16175a5d4a497c94fcb6ca5b4fcc8730c29d0df2925e11564",
+      "step_sha256": "249a3f00da5cef2fd78e56b3c6a24681f4a6b66135ff8cd6cad36b197042700b",
       "step_has_trailing_whitespace": false,
       "printable_parts": [
         {
@@ -2115,7 +2115,7 @@
         {
           "name": "part_b",
           "stl": "hardware/case/draft/x3-v2/kc2_right_x3_v2_lower_housing_part_b.stl",
-          "stl_sha256": "849cb3959fda772b491a78f98d8b0a1e61e4a717d15f27b05c9113c3d3700da1",
+          "stl_sha256": "030aaa283a0a2ebb854ef1635c090ab006421084cdf74e2829b484e389abaaee",
           "solid_count": 1,
           "volume_mm3": 10008.803,
           "desk_contact_ids": [
@@ -2147,7 +2147,7 @@
           "desk_contact_count": 24,
           "desk_contact_z_mm": -1.0,
           "desk_contact_coplanarity_mm": 0.0,
-          "desk_contact_hull_area_mm2": 5596.9958,
+          "desk_contact_hull_area_mm2": 5596.4333,
           "projected_plate_centroid_mm": [
             118.5024,
             62.1331
@@ -2643,7 +2643,7 @@
           "id": "RIGHT-MH1-COLUMN",
           "source_support_id": "MH1",
           "category": "mounting",
-          "x_mm": 101.625,
+          "x_mm": 101.5,
           "y_mm": 4.0,
           "diameter_mm": 3.0,
           "top_z_mm": 0.0,
@@ -3515,7 +3515,7 @@
         "count": 9,
         "board_coordinates_mm": [
           [
-            97.0625,
+            97.1875,
             43.25
           ],
           [
@@ -3556,11 +3556,11 @@
           {
             "ref": "MH1",
             "board_center_mm": [
-              97.0625,
+              97.1875,
               43.25
             ],
             "housing_center_mm": [
-              101.625,
+              101.5,
               4.0
             ],
             "printable_part": "part_b",
@@ -3570,14 +3570,14 @@
             "support_land_annular_width_mm": 0.95,
             "support_land_top_z_mm": 2.5,
             "support_land_vertical_gap_mm": 0.0,
-            "support_land_to_existing_support_mm": 1.5875,
-            "head_to_existing_support_mm": 1.5875,
-            "head_to_support_posts_mm": 21.0285,
-            "head_to_analytical_rail_mm": 1.5875,
-            "head_to_installed_component_mm": 2.4578,
+            "support_land_to_existing_support_mm": 1.4625,
+            "head_to_existing_support_mm": 1.4625,
+            "head_to_support_posts_mm": 21.0966,
+            "head_to_analytical_rail_mm": 1.4625,
+            "head_to_installed_component_mm": 2.5738,
             "head_to_routed_copper_or_via_mm": 9.325,
-            "head_to_board_edge_mm": 2.3375,
-            "head_to_housing_edge_mm": 2.2375,
+            "head_to_board_edge_mm": 2.2125,
+            "head_to_housing_edge_mm": 2.1125,
             "head_reserve_mm": 0.25,
             "minimum_unrelated_support_reserve_mm": 0.25,
             "desk_column_diameter_mm": 3.0,
@@ -3600,7 +3600,7 @@
               1.2
             ],
             "driver_envelope_diameter_mm": 3.0,
-            "driver_to_battery_body_mm": 2.4578,
+            "driver_to_battery_body_mm": 2.5738,
             "driver_to_power_switch_body_mm": 17.45,
             "driver_to_power_switch_actuator_sweep_mm": 17.45,
             "service_condition": "keycaps-off, switches-installed",

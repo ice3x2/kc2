@@ -472,9 +472,9 @@
 </g>
 </g>
 <g id="right-mounting-holes" data-mount-reference-count="9">
-<g class="mounting-hole" data-side="right" data-reference="MH1" data-board-center-x-mm="97.0625" data-board-center-y-mm="43.2500" data-joined-center-x-mm="221.6875" data-joined-center-y-mm="43.2500">
-<circle cx="973.44" cy="60.00" r="7" fill="white" fill-opacity="0.94" stroke="#555" stroke-width="1"/>
-<text x="973.44" y="62.70" text-anchor="middle" font-family="Arial" font-size="7" font-weight="bold" fill="#333">MH1</text>
+<g class="mounting-hole" data-side="right" data-reference="MH1" data-board-center-x-mm="97.1875" data-board-center-y-mm="43.2500" data-joined-center-x-mm="221.8125" data-joined-center-y-mm="43.2500">
+<circle cx="974.06" cy="60.00" r="7" fill="white" fill-opacity="0.94" stroke="#555" stroke-width="1"/>
+<text x="974.06" y="62.70" text-anchor="middle" font-family="Arial" font-size="7" font-weight="bold" fill="#333">MH1</text>
 </g>
 <g class="mounting-hole" data-side="right" data-reference="MH2" data-board-center-x-mm="72.4375" data-board-center-y-mm="67.0000" data-joined-center-x-mm="197.0625" data-joined-center-y-mm="67.0000">
 <circle cx="850.31" cy="178.75" r="7" fill="white" fill-opacity="0.94" stroke="#555" stroke-width="1"/>

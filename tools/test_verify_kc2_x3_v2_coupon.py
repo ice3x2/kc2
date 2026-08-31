@@ -313,7 +313,9 @@ class V2CouponTests(unittest.TestCase):
             self.assertIn(f"- [x] {acceptance_criterion}:", con_arch_004)
         for acceptance_criterion in ("AC-2", "AC-7", "AC-8", "AC-9", "AC-10"):
             self.assertIn(f"- [ ] {acceptance_criterion}:", con_arch_004)
-        for acceptance_criterion in ("AC-4", "AC-5", "AC-6", "AC-7", "AC-8", "AC-9", "AC-10"):
+        for acceptance_criterion in ("AC-5", "AC-6", "AC-9", "AC-10"):
+            self.assertIn(f"- [x] {acceptance_criterion}:", con_arch_006)
+        for acceptance_criterion in ("AC-4", "AC-7", "AC-8", "AC-11"):
             self.assertIn(f"- [ ] {acceptance_criterion}:", con_arch_006)
         self.assertIn("Thirteen focused coupon tests pass", con_arch_004)
         self.assertIn(COUPON_EVIDENCE_NAME, con_arch_004)
