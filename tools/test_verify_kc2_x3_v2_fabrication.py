@@ -221,6 +221,44 @@ class V2FabricationTests(unittest.TestCase):
             report["jlcpcb_pcba_quote_profile"],
             EXPECTED_JLCPCB_PCBA_QUOTE_PROFILE,
         )
+        self.assertEqual(
+            report["jlcpcb_pcba_quote_profile"]["assembled_parts"]["D"][
+                "jlcpcb_part_number"
+            ],
+            "C112342",
+        )
+        self.assertEqual(
+            report["jlcpcb_pcba_quote_profile"]["assembly_service"],
+            "none_hand_assembly",
+        )
+        self.assertEqual(
+            report["jlcpcb_pcba_quote_profile"]["parts_procurement"],
+            "user_external_mall_procurement",
+        )
+        self.assertFalse(
+            report["jlcpcb_pcba_quote_profile"]["machine_placement_requested"]
+        )
+        self.assertFalse(
+            report["jlcpcb_pcba_quote_profile"]["bom_cpl_upload_authorization"]
+        )
+        self.assertEqual(
+            report["jlcpcb_pcba_quote_profile"]["selected_switch_assembly"],
+            "mx_direct_solder",
+        )
+        self.assertEqual(
+            report["jlcpcb_pcba_quote_profile"]["reference_switch_assembly"],
+            "choc_socket_alternative_not_selected",
+        )
+        self.assertTrue(
+            report["jlcpcb_pcba_quote_profile"][
+                "switch_assemblies_mutually_exclusive"
+            ]
+        )
+        self.assertFalse(
+            report["jlcpcb_pcba_quote_profile"][
+                "socket_population_for_selected_assembly"
+            ]
+        )
         self.assertEqual(report["jlcpcb_pcba_quote_profile_errors"], [])
         for product, expected_count in (("left", 31), ("right", 39)):
             with self.subTest(product=product):
@@ -243,6 +281,13 @@ class V2FabricationTests(unittest.TestCase):
         self.assertTrue(jlcpcb_pcba_quote_profile_errors(mutated))
         mutated = deepcopy(EXPECTED_JLCPCB_PCBA_QUOTE_PROFILE)
         mutated["assembled_reference_families"] = ["D", "SW", "U"]
+        self.assertTrue(jlcpcb_pcba_quote_profile_errors(mutated))
+        mutated = deepcopy(EXPECTED_JLCPCB_PCBA_QUOTE_PROFILE)
+        mutated["selected_switch_assembly"] = "choc_socket"
+        mutated["socket_population_for_selected_assembly"] = True
+        self.assertTrue(jlcpcb_pcba_quote_profile_errors(mutated))
+        mutated = deepcopy(EXPECTED_JLCPCB_PCBA_QUOTE_PROFILE)
+        mutated["bom_cpl_upload_authorization"] = True
         self.assertTrue(jlcpcb_pcba_quote_profile_errors(mutated))
 
         mutations = (

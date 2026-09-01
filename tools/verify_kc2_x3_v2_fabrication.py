@@ -129,7 +129,15 @@ EXPECTED_JLCPCB_PROFILE = {
 EXPECTED_JLCPCB_PCBA_QUOTE_PROFILE = {
     "schema": "kc2-x3-v2-jlcpcb-pcba-quote-v2",
     "vendor": "JLCPCB",
-    "purpose": "pricing_quote_only_not_order_authorization",
+    "purpose": "manual_assembly_reference_and_price_discovery_only_not_order_authorization",
+    "assembly_service": "none_hand_assembly",
+    "parts_procurement": "user_external_mall_procurement",
+    "machine_placement_requested": False,
+    "bom_cpl_upload_authorization": False,
+    "selected_switch_assembly": "mx_direct_solder",
+    "reference_switch_assembly": "choc_socket_alternative_not_selected",
+    "switch_assemblies_mutually_exclusive": True,
+    "socket_population_for_selected_assembly": False,
     "assembly_side": "bottom",
     "assembled_reference_families": ["D", "SW"],
     "assembled_parts": {
@@ -137,7 +145,7 @@ EXPECTED_JLCPCB_PCBA_QUOTE_PROFILE = {
             "manufacturer": "Diodes Incorporated",
             "manufacturer_part_number": "1N4148W-13-F",
             "lcsc_part_number": "C112342",
-            "jlcpcb_part_number": "C526199",
+            "jlcpcb_part_number": "C112342",
             "package": "SOD-123",
         },
         "SW": {

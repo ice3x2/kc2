@@ -200,11 +200,11 @@ def generate_coupon() -> dict[str, object]:
             diode_offset_y,
         )
 
-    gen.add_board_text(board, "CHOC V1 UNSUPPORTED", 18.0, 21.0, pcbnew.F_Fab, 0.9)
-    gen.add_board_text(board, "DO NOT POPULATE BOTH MODES", 43.0, 21.0, pcbnew.F_Fab, 0.9)
-    gen.add_board_text(board, "CHOC LEFT", 23.0, 57.0, pcbnew.F_Fab, 0.8)
-    gen.add_board_text(board, "MX 5PIN", 43.0, 57.0, pcbnew.F_Fab, 0.8)
-    gen.add_board_text(board, "CHOC RIGHT BOARD", 60.0, 57.0, pcbnew.F_Fab, 0.8)
+    gen.add_board_text(board, "CHOC V1 UNSUPPORTED", 25.0, 21.0, pcbnew.F_SilkS, 0.9)
+    gen.add_board_text(board, "DO NOT POPULATE BOTH MODES", 60.0, 21.0, pcbnew.F_SilkS, 0.9)
+    gen.add_board_text(board, "CHOC LEFT", 23.0, 57.0, pcbnew.F_SilkS, 0.8)
+    gen.add_board_text(board, "MX 5PIN", 43.0, 57.0, pcbnew.F_SilkS, 0.8)
+    gen.add_board_text(board, "CHOC RIGHT BOARD", 60.0, 57.0, pcbnew.F_SilkS, 0.8)
     gen.add_board_text(
         board,
         "1N4148W-13-F SOD-123: K/P1=ROW A/P2=SWITCH",
@@ -246,7 +246,7 @@ def generate_coupon() -> dict[str, object]:
             "manufacturer": "Diodes Incorporated",
             "mpn": "1N4148W-13-F",
             "lcsc": "C112342",
-            "jlcpcb_part_number": "C526199",
+            "jlcpcb_part_number": "C112342",
             "eleparts_goods_no": "3417687",
             "footprint": "kc2.pretty:D_1N4148W_SOD123_HandSolder_DiodesInc",
             "assembly_side": "bottom",

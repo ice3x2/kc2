@@ -439,7 +439,7 @@ def analyze_coupon(
         "manufacturer": "Diodes Incorporated",
         "mpn": "1N4148W-13-F",
         "lcsc": "C112342",
-        "jlcpcb_part_number": "C526199",
+        "jlcpcb_part_number": "C112342",
         "eleparts_goods_no": "3417687",
         "footprint": "kc2.pretty:D_1N4148W_SOD123_HandSolder_DiodesInc",
         "assembly_side": "bottom",
@@ -464,11 +464,32 @@ def analyze_coupon(
     }
     if manifest.get("service_probes") != expected_probes:
         manifest_errors.append("manifest service-probe contract differs")
-    board_text = "\n".join(
-        drawing.GetText()
+    board_text_items = [
+        drawing
         for drawing in board.GetDrawings()
         if isinstance(drawing, pcbnew.PCB_TEXT)
+    ]
+    board_text = "\n".join(drawing.GetText() for drawing in board_text_items)
+    critical_mode_labels = (
+        "CHOC LEFT",
+        "CHOC RIGHT BOARD",
+        "CHOC V1 UNSUPPORTED",
+        "DO NOT POPULATE BOTH MODES",
+        "MX 5PIN",
     )
+    critical_mode_label_layers: dict[str, str] = {}
+    critical_mode_label_errors: list[str] = []
+    for label in critical_mode_labels:
+        matches = [drawing for drawing in board_text_items if drawing.GetText() == label]
+        if len(matches) != 1:
+            critical_mode_label_errors.append(f"{label}: text count={len(matches)}")
+            continue
+        layer_name = board.GetLayerName(matches[0].GetLayer())
+        critical_mode_label_layers[label] = layer_name
+        if matches[0].GetLayer() != pcbnew.F_SilkS:
+            critical_mode_label_errors.append(
+                f"{label}: layer={layer_name!r}, expected='F.Silkscreen'"
+            )
     return {
         "switch_refs": [switch.GetReference() for switch in switches],
         "switch_footprint_names": {
@@ -511,6 +532,8 @@ def analyze_coupon(
             round(pcbnew.ToMM(bounds.GetHeight()), 3),
         ],
         "board_text": board_text,
+        "critical_mode_label_layers": critical_mode_label_layers,
+        "critical_mode_label_errors": critical_mode_label_errors,
         "order_ready": manifest.get("order_ready"),
         "physical_evidence_status": manifest.get("physical_evidence_status"),
         "coverage_limitations": manifest.get("coverage_limitations", {}),
@@ -548,6 +571,7 @@ def coupon_errors(report: dict[str, object]) -> list[str]:
         "probe_pad_errors",
         "probe_net_errors",
         "drc_evidence_errors",
+        "critical_mode_label_errors",
         "manifest_errors",
     ):
         errors.extend(report[field])

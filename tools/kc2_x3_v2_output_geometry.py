@@ -395,7 +395,7 @@ def build_board_bom(
         manufacturer="Diodes Incorporated",
         manufacturer_part_number="1N4148W-13-F",
         lcsc_part_number="C112342",
-        jlcpcb_part_number="C526199",
+        jlcpcb_part_number="C112342",
         eleparts_goods_number="3417687",
         assembly_side="bottom",
         polarity="pad_1_cathode_band",

@@ -7,13 +7,13 @@
   "hash_policy": "lf-normalized-utf8-text-else-raw-v1",
   "board": {
     "board_path": "hardware/kicad/draft/x3-v2/coupon/kc2_x3_v2_switch_coupon.kicad_pcb",
-    "board_sha256": "314fe8a43d3cf095baacb29c9483be02e0f64698e52f3ce56f6c0eabe8ff2f83",
+    "board_sha256": "d7fff590231b6ae6df46448811f3b631986297a7bf8c8565b88075071ff20757",
     "drc_report_path": "hardware/kicad/draft/x3-v2/coupon/kc2_x3_v2_switch_coupon.drc.json",
-    "drc_report_sha256": "2211500225684f67025b17778c1541dcf4b56cc7f55b5685e60d67fa3ae28abb",
+    "drc_report_sha256": "b83b890d76e8e51c2283f7807f36c288a01cf3b7a520b5b04845c42f6b6fd140",
     "schema": "https://schemas.kicad.org/drc.v1.json",
     "source": "kc2_x3_v2_switch_coupon.kicad_pcb",
     "kicad_version": "10.0.3",
-    "date": "2026-09-01T20:01:29",
+    "date": "2026-09-02T08:03:33",
     "included_severities": [
       "error",
       "warning",

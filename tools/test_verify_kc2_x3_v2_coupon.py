@@ -39,8 +39,14 @@ def copy_coupon_drc_evidence_tree(destination: Path) -> tuple[Path, Path, Path]:
 class V2CouponTests(unittest.TestCase):
     def test_coupon_covers_left_right_socket_and_mx_fit(self) -> None:
         report = analyze_coupon()
+        manifest = json.loads(
+            (COUPON_DIR / "kc2_x3_v2_switch_coupon_manifest.json").read_text(
+                encoding="utf-8"
+            )
+        )
 
         self.assertEqual(report["switch_refs"], ["SW_L", "SW_MX", "SW_R"])
+        self.assertEqual(manifest["matrix_diode"]["jlcpcb_part_number"], "C112342")
         self.assertEqual(
             report["switch_footprint_names"], {"SW_Choc_V2_Socket_MX_THT"}
         )
@@ -86,6 +92,17 @@ class V2CouponTests(unittest.TestCase):
         self.assertIn("CHOC V1 UNSUPPORTED", report["board_text"].upper())
         self.assertIn("DO NOT POPULATE BOTH MODES", report["board_text"].upper())
         self.assertIn("CHOC RIGHT BOARD", report["board_text"].upper())
+        self.assertEqual(
+            report["critical_mode_label_layers"],
+            {
+                "CHOC LEFT": "F.Silkscreen",
+                "CHOC RIGHT BOARD": "F.Silkscreen",
+                "CHOC V1 UNSUPPORTED": "F.Silkscreen",
+                "DO NOT POPULATE BOTH MODES": "F.Silkscreen",
+                "MX 5PIN": "F.Silkscreen",
+            },
+        )
+        self.assertEqual(report["critical_mode_label_errors"], [])
         self.assertIn("1N4148W-13-F", report["board_text"].upper())
         self.assertFalse(report["order_ready"])
         self.assertEqual(
