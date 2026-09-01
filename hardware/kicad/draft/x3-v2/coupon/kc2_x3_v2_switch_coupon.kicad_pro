@@ -14,8 +14,6 @@
       },
       "rule_severities": {
         "courtyards_overlap": "warning",
-        "npth_inside_courtyard": "ignore",
-        "pth_inside_courtyard": "ignore",
         "silk_over_copper": "warning",
         "silk_edge_clearance": "warning"
       },

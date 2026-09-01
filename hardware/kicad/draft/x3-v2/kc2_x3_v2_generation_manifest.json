@@ -1,5 +1,5 @@
 {
-  "generated": "2026-08-30",
+  "generated": "2026-09-01",
   "variant": "x3-v2",
   "requirement_ids": [
     "CON-ARCH-004",
@@ -49,77 +49,80 @@
   ],
   "switch_footprint_file_present": true,
   "switch_footprint_fallback_source": null,
-  "diode_footprint": "kc2.pretty:D_ES1B_SMA_HandSolder_C437840",
-  "diode_value": "ES1B_Jingdao_C437840_Eleparts9475342",
+  "diode_footprint": "kc2.pretty:D_1N4148W_SOD123_HandSolder_DiodesInc",
+  "diode_value": "1N4148W-13-F_DiodesInc_SOD123",
   "matrix_diode": {
-    "manufacturer": "Jingdao Microelectronics",
-    "mpn": "ES1B",
-    "lcsc": "C437840",
-    "eleparts_goods_no": "9475342",
-    "footprint": "kc2.pretty:D_ES1B_SMA_HandSolder_C437840",
-    "package": "SMA",
+    "manufacturer": "Diodes Incorporated",
+    "mpn": "1N4148W-13-F",
+    "eleparts_goods_no": "3417687",
+    "footprint": "kc2.pretty:D_1N4148W_SOD123_HandSolder_DiodesInc",
+    "package": "SOD-123",
     "assembly_side": "bottom",
     "pin_1": "cathode_row",
     "pin_2": "anode_switch",
-    "recommended_land_mm": {
+    "datasheet": "DS30086 Rev. 31-2",
+    "official_source": "https://www.diodes.com/datasheet/download/1N4148W.pdf",
+    "official_suggested_land_mm": {
       "pad_size": [
-        1.8,
-        1.8
+        0.9,
+        0.95
       ],
-      "inner_gap": 2.4
+      "pad_center_span": 4.05
     },
     "implemented_land_mm": {
+      "classification": "kc2_enlarged_hand_solder_not_manufacturer_recommended",
       "pad_size": [
-        1.8,
-        1.8
+        1.4,
+        1.55
       ],
-      "inner_gap": 2.4,
-      "outer_span": 6.0
+      "pad_center_span": 3.6,
+      "inner_gap": 2.2,
+      "outer_span": 5.0
     },
     "maximum_package_mm": {
-      "lead_span": 5.2,
-      "body_length": 4.5,
-      "body_width": 2.7,
-      "height": 2.2
+      "terminal_span": 3.85,
+      "body_length": 2.85,
+      "body_width": 1.7,
+      "height": 1.35
     }
   },
   "matrix_route_clearance_mm": 0.3,
   "canonical_route_evidence": {
     "left": {
-      "dsn": "hardware/kicad/draft/x3-v2/autoroute/kc2_left-x3-v2-70-es1b-controller-r3.dsn",
+      "dsn": "hardware/kicad/draft/x3-v2/autoroute/kc2_left-x3-v2-70-1n4148w-p3.dsn",
       "dsn_role": "current_mh_compact_controller_trackless_routing_input",
       "dsn_mounting_hole_count": 8,
-      "session_source_dsn": "hardware/kicad/draft/x3-v2/autoroute/kc2_left-x3-v2-70-es1b-controller-r3.dsn",
-      "session_source_dsn_sha256": "00e347ed6a197a3016f73b4ddc1cd72d4d5b22ff916d253a20ef1fc11094e30c",
-      "ses": "hardware/kicad/draft/x3-v2/autoroute/kc2_left-x3-v2-70-es1b-controller-r3.ses",
+      "session_source_dsn": "hardware/kicad/draft/x3-v2/autoroute/kc2_left-x3-v2-70-1n4148w-p3.dsn",
+      "session_source_dsn_sha256": "3171f44d8c65a5881e6f9d3c52adaf22b5268c68559ef0d136fd6ab9f943a58c",
+      "ses": "hardware/kicad/draft/x3-v2/autoroute/kc2_left-x3-v2-70-1n4148w-p3.ses",
       "ses_role": "reviewed_matrix_import_plus_exact_edge_cleanup_and_power_reset_service_routing",
-      "dsn_sha256": "00e347ed6a197a3016f73b4ddc1cd72d4d5b22ff916d253a20ef1fc11094e30c",
-      "ses_sha256": "4c97f1040bcbfbda39bc1e445edb81863d030629190be1ee50f6b3ab50441832",
+      "dsn_sha256": "3171f44d8c65a5881e6f9d3c52adaf22b5268c68559ef0d136fd6ab9f943a58c",
+      "ses_sha256": "eeb142f28e5077bb4f523c9f85a9e547c9f3a38f740596cbe6df4bf269d18c39",
       "dsn_default_clearance_internal_units": 300,
       "dsn_clearances_internal_units": {
         "global": 300,
         "kicad_default": 300
       },
       "final_track_via_count": 590,
-      "route_digest_sha256": "94c49ca2749d83cd05969e46b2afb6b610c2067ce6a2acad84790a19e081be18"
+      "route_digest_sha256": "b8adeac705f846714f7f201b63487369ef486cb1624df8d0ddbb8cde3053e316"
     },
     "right": {
-      "dsn": "hardware/kicad/draft/x3-v2/autoroute/kc2_right-x3-v2-70-es1b-controller-r3.dsn",
+      "dsn": "hardware/kicad/draft/x3-v2/autoroute/kc2_right-x3-v2-70-1n4148w-p3.dsn",
       "dsn_role": "current_mh_compact_controller_trackless_routing_input",
       "dsn_mounting_hole_count": 9,
-      "session_source_dsn": "hardware/kicad/draft/x3-v2/autoroute/kc2_right-x3-v2-70-es1b-controller-r3.dsn",
-      "session_source_dsn_sha256": "652edcfba0c8aa418b030f1f85aea0be4eb952536e18a87b226df9eaa3a6a26a",
-      "ses": "hardware/kicad/draft/x3-v2/autoroute/kc2_right-x3-v2-70-es1b-controller-r3.ses",
+      "session_source_dsn": "hardware/kicad/draft/x3-v2/autoroute/kc2_right-x3-v2-70-1n4148w-p3.dsn",
+      "session_source_dsn_sha256": "bf25cb75dbab88693fec22038a5b90583221bdb6fbc41036cd6e328c7a863a3b",
+      "ses": "hardware/kicad/draft/x3-v2/autoroute/kc2_right-x3-v2-70-1n4148w-p3.ses",
       "ses_role": "reviewed_matrix_import_plus_exact_edge_cleanup_and_power_reset_service_routing",
-      "dsn_sha256": "652edcfba0c8aa418b030f1f85aea0be4eb952536e18a87b226df9eaa3a6a26a",
-      "ses_sha256": "4a22cc465cd6088ebcf1c25fa929b1a14e5f09bf092d70f5892709ff7d78cef4",
+      "dsn_sha256": "bf25cb75dbab88693fec22038a5b90583221bdb6fbc41036cd6e328c7a863a3b",
+      "ses_sha256": "ac703dbde3f35e4dffdb35de5c8d09d4f12a56ba09439ef5b02473200e55b039",
       "dsn_default_clearance_internal_units": 300,
       "dsn_clearances_internal_units": {
         "global": 300,
         "kicad_default": 300
       },
-      "final_track_via_count": 764,
-      "route_digest_sha256": "b54d29e27f1f319863ec5808b31188420ad4c47fa001d21ece98db80044c6946"
+      "final_track_via_count": 766,
+      "route_digest_sha256": "530d6927eacd7e57a48cb6c62e5c5916ef1f4b3f21d67b592e80962ef7af4c1b"
     }
   },
   "firmware_matrix_compatibility": {
@@ -353,7 +356,7 @@
         },
         {
           "ref": "MH3",
-          "x": 38.6125,
+          "x": 39.3625,
           "y": 111.0
         },
         {
@@ -373,12 +376,12 @@
         },
         {
           "ref": "MH7",
-          "x": 166.3625,
+          "x": 165.8625,
           "y": 148.75
         },
         {
           "ref": "MH8",
-          "x": 75.0,
+          "x": 75.25,
           "y": 134.0
         }
       ],
@@ -395,27 +398,27 @@
         },
         {
           "ref": "MH3",
-          "x": 169.9375,
+          "x": 170.4375,
           "y": 95.25
         },
         {
           "ref": "MH4",
-          "x": 194.9375,
+          "x": 194.4375,
           "y": 98.75
         },
         {
           "ref": "MH5",
-          "x": 156.1875,
+          "x": 155.9375,
           "y": 112.5
         },
         {
           "ref": "MH6",
-          "x": 69.9375,
-          "y": 146.25
+          "x": 70.1875,
+          "y": 146.75
         },
         {
           "ref": "MH7",
-          "x": 97.4375,
+          "x": 97.6875,
           "y": 152.0
         },
         {
@@ -425,8 +428,8 @@
         },
         {
           "ref": "MH9",
-          "x": 177.5,
-          "y": 118.0
+          "x": 177.75,
+          "y": 117.25
         }
       ]
     },
@@ -575,8 +578,8 @@
     "X3 V2 contains no legacy H1-H9 or REG1-REG9 key-field through-holes.",
     "BAT_LEAD_SLOT1 is retained as a netless copper-free strain-relief slot; the 301230 battery remains above the carrier beneath socketed U1.",
     "X3 V2 places the 301230 battery beneath socketed U1 and mirrors POWER then RESET from each USB-facing edge. J_BAT1 direct-solders insulated leads, SW_PWR1 switches BAT+ into U1 RAW/NN_B+, and B- remains on local GND. Physical stack, service, and RF validation are pending.",
-    "X3 V2 uses the exact Jingdao ES1B / LCSC C437840 / Eleparts 9475342 manufacturer-recommended SMA land on B.Cu: 1.8 x 1.8 mm pads, 2.4 mm inner gap, pin 1 cathode to row and pin 2 anode to the per-key switch net.",
-    "The ES1B placements and rotations preserve at least 1.30 mm to Edge.Cuts, 1.00 mm to switch copper/unused NPTH/unrelated exposed copper, and one unobstructed 1.50 mm cardinal hand-solder approach per pad.",
+    "X3 V2 uses the exact Diodes Incorporated 1N4148W-13-F SOD-123 on B.Cu with a KC2 enlarged hand-solder land: 1.40 x 1.55 mm pads, 2.20 mm inner gap, pin 1 cathode to row and pin 2 anode to the per-key switch net.",
+    "The 1N4148W placements and rotations preserve at least 1.30 mm to Edge.Cuts, 1.00 mm to switch copper/unused NPTH/unrelated exposed copper, and one unobstructed 1.50 mm cardinal hand-solder approach per pad.",
     "X3 V2 uses the selected 8-left / 9-right M1.4 retention prototype: 1.60 mm copper-free NPTHs, keycaps removed and switches installed for PH0 service. Physical pilot, torque, full-pattern fit, and deflection evidence remain pending; the board is not order-ready."
   ]
 }

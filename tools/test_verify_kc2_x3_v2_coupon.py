@@ -52,7 +52,7 @@ class V2CouponTests(unittest.TestCase):
         self.assertEqual(report["diode_refs"], ["D_L", "D_MX", "D_R"])
         self.assertEqual(
             report["diode_footprint_names"],
-            {"D_ES1B_SMA_HandSolder_C437840"},
+            {"D_1N4148W_SOD123_HandSolder_DiodesInc"},
         )
         self.assertEqual(report["diode_value_errors"], [])
         self.assertEqual(report["diode_layer_errors"], [])
@@ -86,7 +86,7 @@ class V2CouponTests(unittest.TestCase):
         self.assertIn("CHOC V1 UNSUPPORTED", report["board_text"].upper())
         self.assertIn("DO NOT POPULATE BOTH MODES", report["board_text"].upper())
         self.assertIn("CHOC RIGHT BOARD", report["board_text"].upper())
-        self.assertIn("ES1B", report["board_text"].upper())
+        self.assertIn("1N4148W-13-F", report["board_text"].upper())
         self.assertFalse(report["order_ready"])
         self.assertEqual(
             report["physical_evidence_status"],
@@ -103,7 +103,7 @@ class V2CouponTests(unittest.TestCase):
             {"low_current_vf", "row_high_3v0_3v3", "zero_wait_scan"},
         )
 
-    def test_coupon_rejects_wrong_es1b_pin_net(self) -> None:
+    def test_coupon_rejects_wrong_1n4148w_pin_net(self) -> None:
         source = Path(
             "hardware/kicad/draft/x3-v2/coupon/kc2_x3_v2_switch_coupon.kicad_pcb"
         )
@@ -117,7 +117,7 @@ class V2CouponTests(unittest.TestCase):
             report = analyze_coupon(mutated)
         self.assertTrue(report["diode_pin_net_errors"])
 
-    def test_coupon_rejects_nonrecommended_es1b_land(self) -> None:
+    def test_coupon_rejects_noncontrolled_1n4148w_hand_solder_land(self) -> None:
         source = Path(
             "hardware/kicad/draft/x3-v2/coupon/kc2_x3_v2_switch_coupon.kicad_pcb"
         )
@@ -150,7 +150,7 @@ class V2CouponTests(unittest.TestCase):
             report = analyze_coupon(mutated)
         self.assertTrue(report["polarity_mark_errors"])
 
-    def test_coupon_rejects_es1b_switch_clearance_regression(self) -> None:
+    def test_coupon_rejects_1n4148w_switch_clearance_regression(self) -> None:
         source = Path(
             "hardware/kicad/draft/x3-v2/coupon/kc2_x3_v2_switch_coupon.kicad_pcb"
         )
@@ -231,7 +231,7 @@ class V2CouponTests(unittest.TestCase):
                 Path(temporary_directory)
             )
             evidence = json.loads(evidence_path.read_text(encoding="utf-8"))
-            evidence["board"]["ignored_check_rationale"].pop("pth_inside_courtyard")
+            evidence["board"]["ignored_check_rationale"].pop("footprint_type_mismatch")
             evidence_path.write_text(
                 json.dumps(evidence, indent=2) + "\n", encoding="utf-8"
             )

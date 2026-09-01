@@ -13,7 +13,7 @@
   "products": {
     "left": {
       "board": "hardware\\kicad\\draft\\x3-v2\\kc2_left-x3-v2\\kc2_left-x3-v2.kicad_pcb",
-      "source_board_sha256": "92c46f364f0cc647928029f6b42a54abfcc94485a491e5a6177e84cc7800d26f",
+      "source_board_sha256": "7de01a7f0c60585c1845ab3ad17c2b7d18e17ae8c2090a3594e6edf0cbf9d7cf",
       "drawings": {
         "top": {
           "path": "hardware\\kicad\\draft\\x3-v2\\mechanical\\left_top_1to1.pdf",
@@ -26,8 +26,8 @@
           "mirrored": false,
           "scale": 1.0,
           "page_size": "A4_landscape",
-          "size": 100012,
-          "sha256": "154fc945b3bd0ebfed6b0c74cca871a20f99c843c9f3c07b42491af4a78313f9"
+          "size": 101456,
+          "sha256": "bd3cd5fdf9dc5e722e47e73c3779b4f24daa0c134719cb6b66144982251b7bc7"
         },
         "bottom": {
           "path": "hardware\\kicad\\draft\\x3-v2\\mechanical\\left_bottom_1to1.pdf",
@@ -39,8 +39,8 @@
           "mirrored": true,
           "scale": 1.0,
           "page_size": "A4_landscape",
-          "size": 107525,
-          "sha256": "3441a069a22e94119c846864717a186eb51a968a4a445a98846fe94bbddfb8b0"
+          "size": 109053,
+          "sha256": "cce102ee7b0d374d5e01eada99bd1eb6e4936683713b1e4c0efb03f41bef117a"
         }
       },
       "outline_svg": {
@@ -52,13 +52,13 @@
           "F.Silkscreen",
           "Edge.Cuts"
         ],
-        "size": 164713,
-        "sha256": "31e80eb5bf5fbc8d1ade17ff3ebb57d34c13ccbfa077c25b3540e347dd91c2de"
+        "size": 164199,
+        "sha256": "52434fad1e1ec5ecd527f856a8ba695b95989fd1a11d21ae8c77ae3bfd15ff0a"
       }
     },
     "right": {
       "board": "hardware\\kicad\\draft\\x3-v2\\kc2_right-x3-v2\\kc2_right-x3-v2.kicad_pcb",
-      "source_board_sha256": "8769b5792386357a876008f20152f836012a299a1230b359aaa530ffa85e7b0a",
+      "source_board_sha256": "b4173e7bb16189690b06bc3a8d6487e8c56e7e69100e6c04d798d687213f2adc",
       "drawings": {
         "top": {
           "path": "hardware\\kicad\\draft\\x3-v2\\mechanical\\right_top_1to1.pdf",
@@ -71,8 +71,8 @@
           "mirrored": false,
           "scale": 1.0,
           "page_size": "A4_landscape",
-          "size": 118181,
-          "sha256": "76b5887dfb149f77f2ab819a367f9ff08b52f73a5a806356a230ee87c3aca71b"
+          "size": 119790,
+          "sha256": "14615a86aeae8c95815b805accf5a01ba902585f568f146b55b0481967c087e8"
         },
         "bottom": {
           "path": "hardware\\kicad\\draft\\x3-v2\\mechanical\\right_bottom_1to1.pdf",
@@ -84,8 +84,8 @@
           "mirrored": true,
           "scale": 1.0,
           "page_size": "A4_landscape",
-          "size": 127903,
-          "sha256": "1b61ce5aa679fc6990d0ec8bfc282bb488be7500abd677dc201bb2fa0ef379c7"
+          "size": 130458,
+          "sha256": "cc094c3a0d34b126dd8d52709e38e3f6dfbbda458c1dd3f6eef6ec0e928fac19"
         }
       },
       "outline_svg": {
@@ -97,13 +97,13 @@
           "F.Silkscreen",
           "Edge.Cuts"
         ],
-        "size": 180369,
-        "sha256": "85021fe2a2ee21404127bc941189f79d510232d4d10473cce3a728cb5022d868"
+        "size": 180353,
+        "sha256": "df05afad6104bf5ef64b96e458a6db827c8d2fad2242cbd7659dba082b0ee75a"
       }
     },
     "coupon": {
       "board": "hardware\\kicad\\draft\\x3-v2\\coupon\\kc2_x3_v2_switch_coupon.kicad_pcb",
-      "source_board_sha256": "b7e2a15e1e50e4d8514254052a9e22e1223d114a09020741839f8970c8e35dcf",
+      "source_board_sha256": "314fe8a43d3cf095baacb29c9483be02e0f64698e52f3ce56f6c0eabe8ff2f83",
       "drawings": {
         "top": {
           "path": "hardware\\kicad\\draft\\x3-v2\\mechanical\\coupon_top_1to1.pdf",
@@ -116,8 +116,8 @@
           "mirrored": false,
           "scale": 1.0,
           "page_size": "A4_landscape",
-          "size": 26809,
-          "sha256": "bead64633011bcfcdd7bca384da59131383179cc1f2a01df9396c5777a3b6b2e"
+          "size": 26922,
+          "sha256": "5942cd774843186daa616affd8421f73e49ee2238f91d342ad80057eacb7c004"
         },
         "bottom": {
           "path": "hardware\\kicad\\draft\\x3-v2\\mechanical\\coupon_bottom_1to1.pdf",
@@ -129,8 +129,8 @@
           "mirrored": true,
           "scale": 1.0,
           "page_size": "A4_landscape",
-          "size": 28577,
-          "sha256": "c857d4be3497a76570918fc5ab5db25d99fe3e53d24cad73d13cbafa33ba72bb"
+          "size": 26021,
+          "sha256": "a2b0c6b899a5b580c46eaa4f9e2e32665a191794442c37d97c080b8954258b65"
         }
       }
     }

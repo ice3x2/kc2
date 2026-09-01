@@ -2,9 +2,11 @@
 
 This document records non-normative design research for `CON-ARCH-004` and `CON-ARCH-006`. The acceptance criteria in `docs/spec/10.product-architecture.srs.md` remain the only requirements source.
 
+> **2026-09-01 supersession:** The TW301525, USB-under-reset, ES1B and eighteen-hole geometry below are historical; active controller service and P3 mount geometry are defined by `CON-ARCH-006` and `CON-ARCH-007`.
+
 ## User intent
 
-The key-field perimeter is already extremely thin, but the controller tab and the space between the controller and top-row switches look disproportionately large. The reset tact switch shall be portrait-oriented directly below the USB port, and the controller service region shall be reduced without moving the selected 70-key layout or the eighteen M1.4 mounting points.
+At the time of this review, the key-field perimeter was already extremely thin, but the controller tab and the space between the controller and top-row switches looked disproportionately large. The historical proposal placed the reset tact switch portrait-oriented directly below the USB port and reduced the controller service region without moving the selected 70-key layout or the then-current eighteen M1.4 mounting points.
 
 ## Committee method
 

@@ -4,9 +4,9 @@
 
 This document records the five independent reviews requested before adding mounting holes to the plateless KC2 X3 V2 PCB and its nominal 2.50 mm lower housing.
 
-> **2026-08-30 supersession:** The user subsequently selected a rounded screw head, rejected the rounded-head P1 hole locations and sparse support spans, and then manually explored additional clamp points. All `2.00 x 0.50 mm` low-head dimensions, the original coordinate table, the P1 8-left/10-right table, and the initial P2 7-left/8-right count are historical only. The active source of truth is the P2 reinforcement 8-left/9-right clamp plus 31-left/39-right per-key support contract in `CON-ARCH-006`.
+> **2026-09-01 supersession:** All P1/P2 counts, coordinates and recommendations below are historical. The active source is `CON-ARCH-006` P3: 8 left / 9 right at the exact SRS coordinates with 31/39 `2.40 mm` key supports.
 
-The active rounded-head digital implementation is:
+The reviewed P1 snapshot used:
 
 - M1.4 fastener envelope;
 - 1.60 mm non-plated PCB clearance holes;
@@ -17,7 +17,7 @@ The active rounded-head digital implementation is:
 - a nominal 1.10 mm-diameter by 2.80 mm-deep blind pilot-hole experiment extending into the local desk-contact column;
 - all existing perimeter support and distributed interior supports retained.
 
-The holes are not a substitute for the existing load path. The perimeter rail and the existing 14 left / 11 right distributed supports continue to carry key loads into the desk contacts. The new mounting points are intended to clamp the PCB onto those coplanar supports, provisionally locate it in XY, prevent anti-lift motion, and add local zero-gap support/desk-contact columns. Actual full-pattern XY registration remains pending until the printed-fit coupon proves that the round-hole pattern seats without binding.
+The historical holes were not a substitute for that snapshot's load path. The active P3 design instead uses exact 31-left/39-right one-per-key `2.40 mm` coplanar supports while its 8-left/9-right mounting points provide clamp, provisional XY registration, anti-lift retention, and local zero-gap support/desk-contact columns. Actual full-pattern XY registration remains pending until the printed-fit coupon proves that the round-hole pattern seats without binding.
 
 This is a digital prototype decision, not an order approval. The exact direct-plastic screw SKU, printed-pilot diameter, installation torque, stripping margin, repeated-service durability, keycap-skirt clearance, and 2 N deflection remain physical gates.
 
@@ -211,4 +211,4 @@ The historical P1 digital analysis reported minimum head-to-installed-body clear
 
 ## Final Decision
 
-Proceed with the active rounded-head P2 reinforcement M1.4 8-left / 9-right clamp geometry and a separate one-to-one 31-left / 39-right switch-load support network. The 2026-08-30 three-way review retained the original P2 pattern, restored right `MH5`, added left `MH8 (75.0000,134.0000)`, and moved the only retained right reinforcement to `MH9 (177.5000,118.0000)`; the other copied additions were removed because no nearby nonredundant all-gate solution existed. Treat the `3.00 x 1.20 mm` head, 1.10 mm blind pilot and 4.00 mm under-head length as provisional prototype envelopes, not procurement-approved hardware. Do not claim physical retention, deflection compliance, repeated serviceability, fabrication readiness, or order readiness until the exact MPN/drawing and coupon gates above pass.
+The 2026-08-30 P2 recommendation was an intermediate 8-left / 9-right clamp geometry with a separate one-to-one 31-left / 39-right switch-load support network. It restored right `MH5`, added left `MH8 (75.0000,134.0000)`, and moved the only retained right reinforcement to `MH9 (177.5000,118.0000)`; it was superseded by the exact 1N4148W/P3 coordinates and `2.40 mm` support contract in `CON-ARCH-006`. The `3.00 x 1.20 mm` head, 1.10 mm blind pilot and 4.00 mm under-head length remain provisional prototype envelopes, not procurement-approved hardware. Do not claim physical retention, deflection compliance, repeated serviceability, fabrication readiness, or order readiness until the exact MPN/drawing and coupon gates above pass.

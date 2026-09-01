@@ -38,30 +38,30 @@ RENDERER_PATH = ROOT / "tools" / "render_kc2_x3_joined.py"
 EXPECTED_SERVICE_REFERENCES = X3_V2_SERVICE_REFERENCES
 EXPECTED_BATTERY_TERMINAL_LEGENDS = X3_V2_BATTERY_TERMINAL_LEGENDS
 EXPECTED_BOARD_CANONICAL_SHA256 = {
-    "left": "92c46f364f0cc647928029f6b42a54abfcc94485a491e5a6177e84cc7800d26f",
-    "right": "8769b5792386357a876008f20152f836012a299a1230b359aaa530ffa85e7b0a",
+    "left": "7de01a7f0c60585c1845ab3ad17c2b7d18e17ae8c2090a3594e6edf0cbf9d7cf",
+    "right": "b4173e7bb16189690b06bc3a8d6487e8c56e7e69100e6c04d798d687213f2adc",
 }
 EXPECTED_MOUNT_CENTERS_MM = {
     "left": {
         "MH1": [112.8625, 43.0],
         "MH2": [144.1125, 66.25],
-        "MH3": [38.6125, 111.0],
+        "MH3": [39.3625, 111.0],
         "MH4": [63.6125, 123.0],
         "MH5": [81.1125, 151.75],
         "MH6": [137.3625, 153.5],
-        "MH7": [166.3625, 148.75],
-        "MH8": [75.0, 134.0],
+        "MH7": [165.8625, 148.75],
+        "MH8": [75.25, 134.0],
     },
     "right": {
         "MH1": [97.1875, 43.25],
         "MH2": [72.4375, 67.0],
-        "MH3": [169.9375, 95.25],
-        "MH4": [194.9375, 98.75],
-        "MH5": [156.1875, 112.5],
-        "MH6": [69.9375, 146.25],
-        "MH7": [97.4375, 152.0],
+        "MH3": [170.4375, 95.25],
+        "MH4": [194.4375, 98.75],
+        "MH5": [155.9375, 112.5],
+        "MH6": [70.1875, 146.75],
+        "MH7": [97.6875, 152.0],
         "MH8": [122.6875, 151.0],
-        "MH9": [177.5, 118.0],
+        "MH9": [177.75, 117.25],
     },
 }
 EXPECTED_RENDER_PARAMETERS = {
@@ -430,7 +430,7 @@ def verify_render_manifest(
         if "raw_sha256" in record:
             errors.append(f"{side}: source board must not bind newline-sensitive raw text bytes")
         if enforce_release_board_hashes and canonical_sha != EXPECTED_BOARD_CANONICAL_SHA256[side]:
-            errors.append(f"{side}: source board is not the final CON-ARCH-006/007 P2 board")
+            errors.append(f"{side}: source board is not the final CON-ARCH-006/007 P3 board")
 
     try:
         ctx = build_context(
@@ -456,7 +456,7 @@ def verify_render_manifest(
     if manifest.get("mount_reference_counts") != mount_counts:
         errors.append("manifest: mounting reference counts are missing or stale")
     if actual_mount_centers != EXPECTED_MOUNT_CENTERS_MM:
-        errors.append("source board: mounting centers do not match final CON-ARCH-006 P2")
+        errors.append("source board: mounting centers do not match final CON-ARCH-006 P3")
     if manifest.get("mount_centers_mm") != actual_mount_centers:
         errors.append("manifest: mounting centers are missing or stale")
     if manifest.get("battery_terminal_legend_counts") != terminal_legend_counts:

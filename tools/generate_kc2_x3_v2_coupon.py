@@ -17,7 +17,7 @@ MANIFEST_PATH = OUTPUT_DIR / f"{PROJECT_NAME}_manifest.json"
 TEST_POINT_LIB = gen.KICAD_SHARE / "footprints" / "TestPoint.pretty"
 TEST_POINT_FP = "TestPoint_Plated_Hole_D2.0mm"
 TEST_POINT_VALUE = "2.0mm_PTH_SERVICE_PROBE"
-ES1B_DIODE_OFFSET_MM = 8.6
+DIODE_OFFSET_MM = 8.6
 
 
 def transform(point: tuple[float, float], center: tuple[float, float], angle_deg: float) -> tuple[float, float]:
@@ -178,16 +178,16 @@ def generate_coupon() -> dict[str, object]:
     board = pcbnew.BOARD()
     board.SetCopperLayerCount(2)
     title = board.GetTitleBlock()
-    title.SetTitle("KC2 X3 V2 ES1B switch and electrical coupon")
+    title.SetTitle("KC2 X3 V2 1N4148W switch and electrical coupon")
     title.SetDate("2026-08-24")
     title.SetRevision("coupon-2-es1b")
     gen.add_rect_lines(board, 15.0, 10.0, 79.0, 70.0, pcbnew.Edge_Cuts, gen.EDGE_WIDTH)
 
     nets: dict[str, pcbnew.NETINFO_ITEM] = {"": board.GetNetInfo().GetNetItem(0)}
     samples = (
-        ("SW_L", "D_L", (28.0, 40.0), 0.0, -ES1B_DIODE_OFFSET_MM),
-        ("SW_MX", "D_MX", (47.05, 40.0), 0.0, -ES1B_DIODE_OFFSET_MM),
-        ("SW_R", "D_R", (66.10, 40.0), 180.0, ES1B_DIODE_OFFSET_MM),
+        ("SW_L", "D_L", (28.0, 40.0), 0.0, -DIODE_OFFSET_MM),
+        ("SW_MX", "D_MX", (47.05, 40.0), 0.0, -DIODE_OFFSET_MM),
+        ("SW_R", "D_R", (66.10, 40.0), 180.0, DIODE_OFFSET_MM),
     )
     for reference, diode_reference, center, rotation, diode_offset_y in samples:
         add_coupon_switch(
@@ -205,7 +205,14 @@ def generate_coupon() -> dict[str, object]:
     gen.add_board_text(board, "CHOC LEFT", 23.0, 57.0, pcbnew.F_Fab, 0.8)
     gen.add_board_text(board, "MX 5PIN", 43.0, 57.0, pcbnew.F_Fab, 0.8)
     gen.add_board_text(board, "CHOC RIGHT BOARD", 60.0, 57.0, pcbnew.F_Fab, 0.8)
-    gen.add_board_text(board, "ES1B C437840: K/P1=ROW A/P2=SWITCH", 30.0, 11.5, pcbnew.Cmts_User, 0.7)
+    gen.add_board_text(
+        board,
+        "1N4148W-13-F SOD-123: K/P1=ROW A/P2=SWITCH",
+        30.0,
+        11.5,
+        pcbnew.Cmts_User,
+        0.7,
+    )
     gen.add_board_text(board, "PHYSICAL VF / ROW-HIGH / ZERO-WAIT TEST PENDING", 23.0, 68.5, pcbnew.Cmts_User, 0.7)
     pcbnew.SaveBoard(str(BOARD_PATH), board)
     gen.make_project_file(OUTPUT_DIR, PROJECT_NAME, variant="x3-v2")
@@ -236,18 +243,25 @@ def generate_coupon() -> dict[str, object]:
         "key_pitch_mm": 19.05,
         "switch_footprint": "kc2.pretty:SW_Choc_V2_Socket_MX_THT",
         "matrix_diode": {
-            "manufacturer": "Jingdao Microelectronics",
-            "mpn": "ES1B",
-            "lcsc": "C437840",
-            "eleparts_goods_no": "9475342",
-            "footprint": "kc2.pretty:D_ES1B_SMA_HandSolder_C437840",
+            "manufacturer": "Diodes Incorporated",
+            "mpn": "1N4148W-13-F",
+            "lcsc": "C112342",
+            "jlcpcb_part_number": "C526199",
+            "eleparts_goods_no": "3417687",
+            "footprint": "kc2.pretty:D_1N4148W_SOD123_HandSolder_DiodesInc",
             "assembly_side": "bottom",
             "pin_1": "cathode_row",
             "pin_2": "anode_switch",
-            "recommended_land_mm": {
-                "pad_size": [1.8, 1.8],
-                "inner_gap": 2.4,
-                "outer_span": 6.0,
+            "official_suggested_land_mm": {
+                "pad_size": [0.9, 0.95],
+                "center_span": 4.05,
+            },
+            "implemented_hand_solder_land_mm": {
+                "classification": "kc2_controlled_not_manufacturer_recommended",
+                "pad_size": [1.4, 1.55],
+                "center_span": 3.6,
+                "inner_gap": 2.2,
+                "outer_span": 5.0,
             },
         },
         "service_probes": {
@@ -260,7 +274,7 @@ def generate_coupon() -> dict[str, object]:
             "low_current_vf": {
                 "connect": "external current source between each ANODE and ROW probe",
                 "currents_ua": [100, 1000],
-                "record": "forward voltage and polarity for all three populated ES1B samples",
+                "record": "forward voltage and polarity for all three populated 1N4148W samples",
             },
             "row_high_3v0_3v3": {
                 "connect": "external tester drives COL, closes the matching switch, and senses ROW",

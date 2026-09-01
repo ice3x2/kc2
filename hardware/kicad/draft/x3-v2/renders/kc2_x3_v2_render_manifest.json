@@ -20,11 +20,11 @@
   "source_boards": {
     "left": {
       "path": "hardware/kicad/draft/x3-v2/kc2_left-x3-v2/kc2_left-x3-v2.kicad_pcb",
-      "canonical_sha256": "92c46f364f0cc647928029f6b42a54abfcc94485a491e5a6177e84cc7800d26f"
+      "canonical_sha256": "7de01a7f0c60585c1845ab3ad17c2b7d18e17ae8c2090a3594e6edf0cbf9d7cf"
     },
     "right": {
       "path": "hardware/kicad/draft/x3-v2/kc2_right-x3-v2/kc2_right-x3-v2.kicad_pcb",
-      "canonical_sha256": "8769b5792386357a876008f20152f836012a299a1230b359aaa530ffa85e7b0a"
+      "canonical_sha256": "b4173e7bb16189690b06bc3a8d6487e8c56e7e69100e6c04d798d687213f2adc"
     }
   },
   "service_reference_counts": {
@@ -56,7 +56,7 @@
         66.25
       ],
       "MH3": [
-        38.6125,
+        39.3625,
         111.0
       ],
       "MH4": [
@@ -72,11 +72,11 @@
         153.5
       ],
       "MH7": [
-        166.3625,
+        165.8625,
         148.75
       ],
       "MH8": [
-        75.0,
+        75.25,
         134.0
       ]
     },
@@ -90,23 +90,23 @@
         67.0
       ],
       "MH3": [
-        169.9375,
+        170.4375,
         95.25
       ],
       "MH4": [
-        194.9375,
+        194.4375,
         98.75
       ],
       "MH5": [
-        156.1875,
+        155.9375,
         112.5
       ],
       "MH6": [
-        69.9375,
-        146.25
+        70.1875,
+        146.75
       ],
       "MH7": [
-        97.4375,
+        97.6875,
         152.0
       ],
       "MH8": [
@@ -114,8 +114,8 @@
         151.0
       ],
       "MH9": [
-        177.5,
-        118.0
+        177.75,
+        117.25
       ]
     }
   },
@@ -167,8 +167,8 @@
         }
       },
       "digest_mode": "canonical_text",
-      "canonical_sha256": "5c56fa3817b10b5e6e0fb818fd7f4962e1ba2c1f3c62b6f1278444fa01e04174",
-      "regenerated_canonical_sha256": "5c56fa3817b10b5e6e0fb818fd7f4962e1ba2c1f3c62b6f1278444fa01e04174"
+      "canonical_sha256": "0dc04dc70eb49b3a7c5e90147cd0660779eebd4db3746bfac95fc7116bb24643",
+      "regenerated_canonical_sha256": "0dc04dc70eb49b3a7c5e90147cd0660779eebd4db3746bfac95fc7116bb24643"
     },
     "join_seam_zoom_svg": {
       "path": "hardware/kicad/draft/x3-v2/renders/kc2_x3_v2_join_seam_zoom.svg",
@@ -206,8 +206,8 @@
         }
       },
       "digest_mode": "canonical_text",
-      "canonical_sha256": "ba9fbf23692e3e4340936ee2438fa27d8db5c79e49f0f84b34bdd830fc02692e",
-      "regenerated_canonical_sha256": "ba9fbf23692e3e4340936ee2438fa27d8db5c79e49f0f84b34bdd830fc02692e"
+      "canonical_sha256": "03140de38d52776911d2859a49c2add34c6a345c9ae989d82211623a63022b81",
+      "regenerated_canonical_sha256": "03140de38d52776911d2859a49c2add34c6a345c9ae989d82211623a63022b81"
     },
     "joined_top_png": {
       "path": "hardware/kicad/draft/x3-v2/renders/kc2_x3_v2_joined_top.png",
@@ -245,8 +245,8 @@
         }
       },
       "digest_mode": "raw_binary",
-      "raw_sha256": "93f2239eade39127ebb2f83e4e4c365bf88bd9410651e06e76f927571591f242",
-      "regenerated_raw_sha256": "93f2239eade39127ebb2f83e4e4c365bf88bd9410651e06e76f927571591f242"
+      "raw_sha256": "2a6fd59bd3127070d3713d01cacc05267179aebee2103b1b22ea8a838cf6282f",
+      "regenerated_raw_sha256": "2a6fd59bd3127070d3713d01cacc05267179aebee2103b1b22ea8a838cf6282f"
     },
     "join_seam_zoom_png": {
       "path": "hardware/kicad/draft/x3-v2/renders/kc2_x3_v2_join_seam_zoom.png",
@@ -284,8 +284,8 @@
         }
       },
       "digest_mode": "raw_binary",
-      "raw_sha256": "16c45d189617faa798fe8812a2e986630af9b846f7f8e03bde7a3876977a46cd",
-      "regenerated_raw_sha256": "16c45d189617faa798fe8812a2e986630af9b846f7f8e03bde7a3876977a46cd"
+      "raw_sha256": "0dcf4abc7f7fed8f4901f2e20b698c391543ead6f87265db2974ff831e898f3c",
+      "regenerated_raw_sha256": "0dcf4abc7f7fed8f4901f2e20b698c391543ead6f87265db2974ff831e898f3c"
     }
   }
 }

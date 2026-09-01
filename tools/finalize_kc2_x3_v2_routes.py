@@ -134,11 +134,85 @@ CONTROLLER_COMPACT_IMPORTED_ROUTE_SHA256 = {
     "left": "4048da738ac3f3a5106ed86de5d7a8291014993daa73044c695f55f353d22967",
     "right": "15f7dd78eb1195d4697e0d6f0457cfcdfaf347fc9be28a749ae341ce5ecbae2d",
 }
-CONTROLLER_COMPACT_ROUTE_ITEM_COUNTS = {"left": 590, "right": 764}
+CONTROLLER_COMPACT_ROUTE_ITEM_COUNTS = {"left": 590, "right": 766}
 CONTROLLER_COMPACT_ROUTE_SHA256 = {
-    "left": "94c49ca2749d83cd05969e46b2afb6b610c2067ce6a2acad84790a19e081be18",
-    "right": "b54d29e27f1f319863ec5808b31188420ad4c47fa001d21ece98db80044c6946",
+    "left": "b8adeac705f846714f7f201b63487369ef486cb1624df8d0ddbb8cde3053e316",
+    "right": "530d6927eacd7e57a48cb6c62e5c5916ef1f4b3f21d67b592e80962ef7af4c1b",
 }
+
+
+def center_1n4148w_diode_route_endpoints(
+    board: pcbnew.BOARD,
+    side: str,
+) -> dict[str, int]:
+    """Move reviewed ES1B-era route junctions onto exact SOD-123 pad centres."""
+    expected_count = 31 if side == "left" else 39
+    diodes = sorted(
+        (
+            footprint
+            for footprint in board.GetFootprints()
+            if footprint.GetReference().startswith("D")
+            and footprint.GetReference()[1:].isdigit()
+        ),
+        key=lambda footprint: int(footprint.GetReference()[1:]),
+    )
+    if len(diodes) != expected_count:
+        raise RuntimeError(
+            f"{side} SOD-123 route centering expected {expected_count} diodes, "
+            f"found {len(diodes)}"
+        )
+
+    endpoint_updates = 0
+    centred_pads = 0
+    for diode in diodes:
+        for pad in diode.Pads():
+            centre = pad.GetPosition()
+            net_name = pad.GetNetname()
+            centred: list[tuple[pcbnew.PCB_TRACK, str]] = []
+            legacy: list[tuple[pcbnew.PCB_TRACK, str]] = []
+            for item in board.GetTracks():
+                if isinstance(item, pcbnew.PCB_VIA):
+                    continue
+                if item.GetNetname() != net_name or item.GetLayer() != pcbnew.B_Cu:
+                    continue
+                for endpoint_name, endpoint in (
+                    ("start", item.GetStart()),
+                    ("end", item.GetEnd()),
+                ):
+                    dx = pcbnew.ToMM(endpoint.x - centre.x)
+                    dy = pcbnew.ToMM(endpoint.y - centre.y)
+                    distance = (dx * dx + dy * dy) ** 0.5
+                    if distance <= 0.001:
+                        centred.append((item, endpoint_name))
+                    elif abs(distance - 0.300) <= 0.001:
+                        legacy.append((item, endpoint_name))
+            if centred:
+                if legacy:
+                    raise RuntimeError(
+                        f"{side} {diode.GetReference()} pad {pad.GetNumber()} has "
+                        "mixed centred and legacy diode route endpoints"
+                    )
+                centred_pads += 1
+                continue
+            if not legacy:
+                raise RuntimeError(
+                    f"{side} {diode.GetReference()} pad {pad.GetNumber()} has no "
+                    "exact centred or 0.30 mm legacy route endpoint"
+                )
+            for item, endpoint_name in legacy:
+                if endpoint_name == "start":
+                    item.SetStart(centre)
+                else:
+                    item.SetEnd(centre)
+                endpoint_updates += 1
+            centred_pads += 1
+
+    if centred_pads != expected_count * 2:
+        raise RuntimeError(f"{side} SOD-123 route centering was incomplete")
+    return {
+        "diode_pads_centered": centred_pads,
+        "route_endpoints_updated": endpoint_updates,
+    }
 CONTROLLER_COMPACT_ROUTE_REMOVALS = {
     "left": (
         ("track", "L_COL6", "B.Cu", 155.0477, 72.4450, 146.6825, 64.0798, 0.250),
@@ -399,6 +473,23 @@ P1_ROUNDED_HEAD_ROUTE_ADDITIONS = {
         ("track", "RK33_D", "B.Cu", 63.7500, 154.7500, 62.1366, 156.2650, 0.250),
         ("track", "R_ROW4", "B.Cu", 80.0097, 145.3216, 105.0000, 145.0000, 0.250),
         ("track", "R_ROW4", "B.Cu", 105.0000, 145.0000, 105.7779, 145.3216, 0.250),
+    ),
+}
+
+SOD123_HAND_SOLDER_ROUTE_REMOVALS = {
+    "left": (),
+    "right": (
+        ("track", "R_COL3", "B.Cu", 106.8100, 127.7935, 106.8100, 123.3525, 0.250),
+        ("track", "R_COL3", "B.Cu", 108.6115, 129.5950, 106.8100, 127.7935, 0.250),
+    ),
+}
+SOD123_HAND_SOLDER_ROUTE_ADDITIONS = {
+    "left": (),
+    "right": (
+        ("via", "R_COL3", 108.6115, 129.5950, 0.600, 0.300),
+        ("track", "R_COL3", "F.Cu", 108.6115, 129.5950, 111.8000, 125.3000, 0.250),
+        ("via", "R_COL3", 111.8000, 125.3000, 0.600, 0.300),
+        ("track", "R_COL3", "B.Cu", 111.8000, 125.3000, 106.8100, 123.3525, 0.250),
     ),
 }
 
@@ -720,6 +811,38 @@ def apply_p1_rounded_head_route_detours(
     }
 
 
+def apply_sod123_hand_solder_route_detour(
+    board: pcbnew.BOARD,
+    side: str,
+) -> dict[str, int]:
+    """Keep unrelated routing outside the controlled SOD-123 fillet envelope."""
+    if side not in SOD123_HAND_SOLDER_ROUTE_REMOVALS:
+        raise RuntimeError(f"unsupported SOD-123 hand-solder detour side {side!r}")
+    removals = Counter(SOD123_HAND_SOLDER_ROUTE_REMOVALS[side])
+    additions = Counter(SOD123_HAND_SOLDER_ROUTE_ADDITIONS[side])
+    if not removals:
+        return {"removed": 0, "added": 0}
+    signatures = Counter(_route_signature(item) for item in board.GetTracks())
+    if signatures & additions == additions and not signatures & removals:
+        return {"removed": 0, "added": 0}
+    if signatures & removals != removals or signatures & additions:
+        raise RuntimeError(f"reviewed {side} SOD-123 detour precondition failed")
+    remaining = removals.copy()
+    removed = 0
+    for item in list(board.GetTracks()):
+        signature = _route_signature(item)
+        if remaining[signature] <= 0:
+            continue
+        board.Delete(item)
+        remaining[signature] -= 1
+        removed += 1
+    if any(remaining.values()):
+        raise RuntimeError(f"reviewed {side} SOD-123 detour removal was incomplete")
+    for spec in SOD123_HAND_SOLDER_ROUTE_ADDITIONS[side]:
+        _add_route_spec(board, spec)
+    return {"removed": removed, "added": len(SOD123_HAND_SOLDER_ROUTE_ADDITIONS[side])}
+
+
 def export_current_mh_trackless_dsn(
     board: pcbnew.BOARD,
     output_path: Path,
@@ -744,7 +867,7 @@ def export_current_mh_trackless_dsn(
     if not pcbnew.ExportSpecctraDSN(board, str(output_path)):
         raise RuntimeError(f"failed to export current-MH DSN {output_path}")
     text = output_path.read_text(encoding="utf-8")
-    canonical_name = f"kc2_{side}-x3-v2-70-es1b-controller-r3.dsn"
+    canonical_name = f"kc2_{side}-x3-v2-70-1n4148w-p3.dsn"
     normalized, count = re.subn(
         r'^\(pcb\s+(?:"[^"]*"|[^\r\n]+)',
         f'(pcb "{canonical_name}"',
@@ -922,6 +1045,8 @@ def import_reviewed_controller_compact_session(
             "reviewed_items_removed": 0,
             "reviewed_items_added": 0,
             "final_track_and_via_items": len(existing),
+            "diode_pads_centered": (31 if side == "left" else 39) * 2,
+            "route_endpoints_updated": 0,
         }
     if not session_path.is_file():
         raise RuntimeError(
@@ -951,7 +1076,7 @@ def import_reviewed_controller_compact_session(
     restore_v2_controller_service_placements(board, side)
     if not _has_exact_current_mounting_geometry(board, side):
         raise RuntimeError(
-            f"reviewed {side} controller-compaction session moved the P2 mounting pattern"
+            f"reviewed {side} controller-compaction session moved the P3 mounting pattern"
         )
 
     expected_removals = Counter(CONTROLLER_COMPACT_ROUTE_REMOVALS[side])
@@ -979,6 +1104,8 @@ def import_reviewed_controller_compact_session(
     matrix_detours = apply_matrix_service_detours(board, side)
     connectivity_detours = apply_matrix_connectivity_detours(board, side)
     rounded_head_detours = apply_p1_rounded_head_route_detours(board, side)
+    diode_clearance_detour = apply_sod123_hand_solder_route_detour(board, side)
+    diode_route_centres = center_1n4148w_diode_route_endpoints(board, side)
     if not _has_exact_reviewed_controller_compact_route(board, side):
         raise RuntimeError(
             f"reviewed {side} controller-compaction session did not reconstruct "
@@ -992,6 +1119,7 @@ def import_reviewed_controller_compact_session(
             + matrix_detours["removed"]
             + connectivity_detours["removed"]
             + rounded_head_detours["removed"]
+            + diode_clearance_detour["removed"]
         ),
         "reviewed_items_added": (
             len(CONTROLLER_COMPACT_ROUTE_ADDITIONS[side])
@@ -999,8 +1127,10 @@ def import_reviewed_controller_compact_session(
             + matrix_detours["added"]
             + connectivity_detours["added"]
             + rounded_head_detours["added"]
+            + diode_clearance_detour["added"]
         ),
         "final_track_and_via_items": len(list(board.GetTracks())),
+        **diode_route_centres,
     }
 
 

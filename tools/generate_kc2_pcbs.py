@@ -25,9 +25,9 @@ DRAFT_ROOT = KICAD_ROOT / "draft"
 
 def canonical_x3_v2_route_record(side: str, final_count: int, route_digest: str) -> dict[str, object]:
     base = Path("hardware/kicad/draft/x3-v2/autoroute")
-    dsn_relative = base / f"kc2_{side}-x3-v2-70-es1b-controller-r3.dsn"
+    dsn_relative = base / f"kc2_{side}-x3-v2-70-1n4148w-p3.dsn"
     session_source_dsn_relative = dsn_relative
-    ses_relative = base / f"kc2_{side}-x3-v2-70-es1b-controller-r3.ses"
+    ses_relative = base / f"kc2_{side}-x3-v2-70-1n4148w-p3.ses"
     dsn_path = ROOT / dsn_relative
     session_source_dsn_path = ROOT / session_source_dsn_relative
     ses_path = ROOT / ses_relative
@@ -91,8 +91,8 @@ X1_DIODE_LIB = KC2_FP_LIB
 X1_DIODE_FP = "D_SOD123_HandSolder_14592018"
 X1_DIODE_VALUE = "1N4148W_SOD123_DeviceMart_14592018"
 X3_V2_DIODE_LIB = KC2_FP_LIB
-X3_V2_DIODE_FP = "D_ES1B_SMA_HandSolder_C437840"
-X3_V2_DIODE_VALUE = "ES1B_Jingdao_C437840_Eleparts9475342"
+X3_V2_DIODE_FP = "D_1N4148W_SOD123_HandSolder_DiodesInc"
+X3_V2_DIODE_VALUE = "1N4148W-13-F_DiodesInc_SOD123"
 X3_V2_DIODE_PIN_MAPPING = {"1": "cathode_row", "2": "anode_switch"}
 TACT_LIB = KC2_FP_LIB
 TACT_FP = "SW_NW3_A06_B3_SMD"
@@ -417,23 +417,23 @@ X3_V2_MOUNTING_POINTS = {
     "left": [
         (112.8625, 43.0000),
         (144.1125, 66.2500),
-        (38.6125, 111.0000),
+        (39.3625, 111.0000),
         (63.6125, 123.0000),
         (81.1125, 151.7500),
         (137.3625, 153.5000),
-        (166.3625, 148.7500),
-        (75.0000, 134.0000),
+        (165.8625, 148.7500),
+        (75.2500, 134.0000),
     ],
     "right": [
         (97.1875, 43.2500),
         (72.4375, 67.0000),
-        (169.9375, 95.2500),
-        (194.9375, 98.7500),
-        (156.1875, 112.5000),
-        (69.9375, 146.2500),
-        (97.4375, 152.0000),
+        (170.4375, 95.2500),
+        (194.4375, 98.7500),
+        (155.9375, 112.5000),
+        (70.1875, 146.7500),
+        (97.6875, 152.0000),
         (122.6875, 151.0000),
-        (177.5000, 118.0000),
+        (177.7500, 117.2500),
     ],
 }
 EDGE_WIDTH = 0.10
@@ -1086,7 +1086,8 @@ def diode_placement_for_key(
 ) -> tuple[float, float, float]:
     """Return a diode offset/rotation with an open hand-solder approach.
 
-    V2 puts the exact ES1B SMA land in a verified hand-solder corner.
+    V2 puts the exact Diodes Inc. 1N4148W SOD-123 land in a verified
+    hand-solder corner.
     This moves both manufacturer-recommended pads away from the hybrid
     footprint's unused NPTH features and MX solder pins.
     """
@@ -2165,7 +2166,7 @@ def make_board(
     )
     add_board_text(board, housing_note, 35, 27, pcbnew.F_SilkS, 0.9)
     diode_note = (
-        "Diode: Jingdao ES1B / C437840 / Eleparts 9475342; pad 1 = row cathode"
+        "Diode: Diodes Inc 1N4148W-13-F SOD-123; pad 1 = row cathode"
         if variant == "x3-v2"
         else "Diode fallback: 1N4148W SOD-123 because DO-35 conflicts with compact hybrid footprint"
     )
@@ -2706,12 +2707,12 @@ def generate_variant(variant: str, output_dir: Path | None = None) -> dict[str, 
             "BAT+ into U1 RAW/NN_B+, and B- remains on local GND. Physical stack, service, and RF validation are pending."
         )
         notes.append(
-            "X3 V2 uses the exact Jingdao ES1B / LCSC C437840 / Eleparts 9475342 "
-            "manufacturer-recommended SMA land on B.Cu: 1.8 x 1.8 mm pads, 2.4 mm "
+            "X3 V2 uses the exact Diodes Incorporated 1N4148W-13-F SOD-123 on B.Cu "
+            "with a KC2 enlarged hand-solder land: 1.40 x 1.55 mm pads, 2.20 mm "
             "inner gap, pin 1 cathode to row and pin 2 anode to the per-key switch net."
         )
         notes.append(
-            "The ES1B placements and rotations preserve at least 1.30 mm to Edge.Cuts, "
+            "The 1N4148W placements and rotations preserve at least 1.30 mm to Edge.Cuts, "
             "1.00 mm to switch copper/unused NPTH/unrelated exposed copper, and one "
             "unobstructed 1.50 mm cardinal hand-solder approach per pad."
         )
@@ -2726,7 +2727,7 @@ def generate_variant(variant: str, output_dir: Path | None = None) -> dict[str, 
         notes.append(f"Controller protrusion tab width is {CONTROLLER_TAB_W:g} mm and grows away from the inner joining edge.")
     switch_footprint_file_present = (switch_lib / f"{switch_fp}.kicad_mod").exists()
     manifest: dict[str, object] = {
-        "generated": "2026-08-30" if variant == "x3-v2" else "2026-06-08",
+        "generated": "2026-09-01" if variant == "x3-v2" else "2026-06-08",
         "variant": variant,
         **(
             {"requirement_ids": X3_V2_REQUIREMENT_IDS}
@@ -2771,22 +2772,32 @@ def generate_variant(variant: str, output_dir: Path | None = None) -> dict[str, 
         "diode_value": diode_value,
         "matrix_diode": (
             {
-                "manufacturer": "Jingdao Microelectronics",
-                "mpn": "ES1B",
-                "lcsc": "C437840",
-                "eleparts_goods_no": "9475342",
+                "manufacturer": "Diodes Incorporated",
+                "mpn": "1N4148W-13-F",
+                "eleparts_goods_no": "3417687",
                 "footprint": f"{diode_lib.name}:{diode_fp}",
-                "package": "SMA",
+                "package": "SOD-123",
                 "assembly_side": "bottom",
                 "pin_1": X3_V2_DIODE_PIN_MAPPING["1"],
                 "pin_2": X3_V2_DIODE_PIN_MAPPING["2"],
-                "recommended_land_mm": {"pad_size": [1.8, 1.8], "inner_gap": 2.4},
-                "implemented_land_mm": {"pad_size": [1.8, 1.8], "inner_gap": 2.4, "outer_span": 6.0},
+                "datasheet": "DS30086 Rev. 31-2",
+                "official_source": "https://www.diodes.com/datasheet/download/1N4148W.pdf",
+                "official_suggested_land_mm": {
+                    "pad_size": [0.9, 0.95],
+                    "pad_center_span": 4.05,
+                },
+                "implemented_land_mm": {
+                    "classification": "kc2_enlarged_hand_solder_not_manufacturer_recommended",
+                    "pad_size": [1.4, 1.55],
+                    "pad_center_span": 3.6,
+                    "inner_gap": 2.2,
+                    "outer_span": 5.0,
+                },
                 "maximum_package_mm": {
-                    "lead_span": 5.2,
-                    "body_length": 4.5,
-                    "body_width": 2.7,
-                    "height": 2.2,
+                    "terminal_span": 3.85,
+                    "body_length": 2.85,
+                    "body_width": 1.70,
+                    "height": 1.35,
                 },
             }
             if variant == "x3-v2"
@@ -2797,11 +2808,11 @@ def generate_variant(variant: str, output_dir: Path | None = None) -> dict[str, 
             {
                 "left": canonical_x3_v2_route_record(
                     "left", 590,
-                    "94c49ca2749d83cd05969e46b2afb6b610c2067ce6a2acad84790a19e081be18",
+                    "b8adeac705f846714f7f201b63487369ef486cb1624df8d0ddbb8cde3053e316",
                 ),
                 "right": canonical_x3_v2_route_record(
-                    "right", 764,
-                    "b54d29e27f1f319863ec5808b31188420ad4c47fa001d21ece98db80044c6946",
+                    "right", 766,
+                    "530d6927eacd7e57a48cb6c62e5c5916ef1f4b3f21d67b592e80962ef7af4c1b",
                 ),
             }
             if variant == "x3-v2"

@@ -24,7 +24,7 @@ from tools.verify_kc2_x3_v2 import (
 
 ROOT = Path(__file__).resolve().parents[1]
 FOOTPRINT = ROOT / "third_party" / "kc2.pretty" / "SW_Choc_V2_Socket_MX_THT.kicad_mod"
-DIODE_FOOTPRINT = ROOT / "third_party" / "kc2.pretty" / "D_ES1B_SMA_HandSolder_C437840.kicad_mod"
+DIODE_FOOTPRINT = ROOT / "third_party" / "kc2.pretty" / "D_1N4148W_SOD123_HandSolder_DiodesInc.kicad_mod"
 MOUNT_FOOTPRINT = ROOT / "third_party" / "kc2.pretty" / "MH_M1.4_NPTH_1.60.kicad_mod"
 POWER_SWITCH_FOOTPRINT = ROOT / "third_party" / "kc2.pretty" / "SW_IMMS_12V_BSI10_THT.kicad_mod"
 POWER_SWITCH_MODEL = ROOT / "third_party" / "kc2.3dshapes" / "SW_IMMS_12V_BSI10_THT.step"
@@ -293,12 +293,12 @@ class V2FootprintTests(unittest.TestCase):
             },
         )
 
-    def test_es1b_sma_footprint_matches_official_land_pattern(self) -> None:
+    def test_1n4148w_sod123_footprint_matches_controlled_hand_solder_land(self) -> None:
         import pcbnew
 
         footprint = pcbnew.FootprintLoad(str(DIODE_FOOTPRINT.parent), DIODE_FOOTPRINT.stem)
         self.assertIsNotNone(footprint)
-        self.assertEqual(str(footprint.GetValue()), "ES1B_Jingdao_C437840_Eleparts9475342")
+        self.assertEqual(str(footprint.GetValue()), "1N4148W-13-F_DiodesInc_SOD123")
         pads = {
             pad.GetNumber(): (
                 round(pcbnew.ToMM(pad.GetPosition().x), 3),
@@ -308,18 +308,21 @@ class V2FootprintTests(unittest.TestCase):
             )
             for pad in footprint.Pads()
         }
-        self.assertEqual(pads, {"1": (-2.1, 0.0, 1.8, 1.8), "2": (2.1, 0.0, 1.8, 1.8)})
+        self.assertEqual(
+            pads,
+            {"1": (-1.8, 0.0, 1.4, 1.55), "2": (1.8, 0.0, 1.4, 1.55)},
+        )
         inner_gap = pads["2"][0] - pads["2"][2] / 2 - (pads["1"][0] + pads["1"][2] / 2)
         copper_span = pads["2"][0] + pads["2"][2] / 2 - (pads["1"][0] - pads["1"][2] / 2)
-        self.assertEqual(round(inner_gap, 3), 2.4)
-        self.assertEqual(round(copper_span, 3), 6.0)
-        self.assertGreaterEqual((copper_span - 5.2) / 2, 0.4 - 1e-6)
+        self.assertEqual(round(inner_gap, 3), 2.2)
+        self.assertEqual(round(copper_span, 3), 5.0)
+        self.assertGreaterEqual((copper_span - 3.85) / 2, 0.575 - 1e-6)
         self.assertEqual(
             {
                 pad.GetNumber(): round(pcbnew.ToMM(pad.GetLocalClearance() or 0), 3)
                 for pad in footprint.Pads()
             },
-            {"1": 0.3, "2": 0.3},
+            {"1": 0.0, "2": 0.0},
         )
         courtyard_points = [
             (
@@ -337,7 +340,7 @@ class V2FootprintTests(unittest.TestCase):
                 max(point[0] for point in courtyard_points),
                 max(point[1] for point in courtyard_points),
             ),
-            (-3.25, -1.6, 3.25, 1.6),
+            (-2.75, -1.15, 2.75, 1.15),
         )
 
 
@@ -571,23 +574,23 @@ class V2GeneratorTests(unittest.TestCase):
                 "left": [
                     (112.8625, 43.0),
                     (144.1125, 66.25),
-                    (38.6125, 111.0),
+                    (39.3625, 111.0),
                     (63.6125, 123.0),
                     (81.1125, 151.75),
                     (137.3625, 153.5),
-                    (166.3625, 148.75),
-                    (75.0, 134.0),
+                    (165.8625, 148.75),
+                    (75.25, 134.0),
                 ],
                 "right": [
                     (97.1875, 43.25),
                     (72.4375, 67.0),
-                    (169.9375, 95.25),
-                    (194.9375, 98.75),
-                    (156.1875, 112.5),
-                    (69.9375, 146.25),
-                    (97.4375, 152.0),
+                    (170.4375, 95.25),
+                    (194.4375, 98.75),
+                    (155.9375, 112.5),
+                    (70.1875, 146.75),
+                    (97.6875, 152.0),
                     (122.6875, 151.0),
-                    (177.5, 118.0),
+                    (177.75, 117.25),
                 ],
             },
         )
@@ -806,11 +809,20 @@ class V2GeneratorTests(unittest.TestCase):
                     (dx, dy, rotation),
                 )
 
-    def test_v2_selects_exact_jingdao_es1b_sma_diode(self) -> None:
+    def test_v2_selects_exact_diodes_inc_1n4148w_sod123_diode(self) -> None:
         from tools import generate_kc2_pcbs as generator
+        from tools import verify_kc2_x3_v2 as verifier
 
-        self.assertEqual(generator.X3_V2_DIODE_FP, "D_ES1B_SMA_HandSolder_C437840")
-        self.assertEqual(generator.X3_V2_DIODE_VALUE, "ES1B_Jingdao_C437840_Eleparts9475342")
+        self.assertEqual(generator.X3_V2_DIODE_FP, "D_1N4148W_SOD123_HandSolder_DiodesInc")
+        self.assertEqual(generator.X3_V2_DIODE_VALUE, "1N4148W-13-F_DiodesInc_SOD123")
+        self.assertEqual(generator.X3_V2_DIODE_PIN_MAPPING, {"1": "cathode_row", "2": "anode_switch"})
+        source = verifier.load_footprint(DIODE_FOOTPRINT)
+        pads = {pad.GetNumber(): pad for pad in source.Pads()}
+        self.assertEqual(set(pads), {"1", "2"})
+        self.assertEqual(verifier.pad_size(pads["1"]), (1.4, 1.55))
+        self.assertEqual(verifier.pad_size(pads["2"]), (1.4, 1.55))
+        self.assertEqual(verifier.pad_position(pads["1"]), (-1.8, 0.0))
+        self.assertEqual(verifier.pad_position(pads["2"]), (1.8, 0.0))
         self.assertEqual(generator.X3_V2_DIODE_PIN_MAPPING, {"1": "cathode_row", "2": "anode_switch"})
 
     def test_specctra_routing_boundary_can_be_inset_without_changing_edge_cuts(self) -> None:
@@ -1908,11 +1920,11 @@ class V2GeneratorTests(unittest.TestCase):
                 report = analyze_v2_board(board_path)
                 self.assertEqual(report["switch_count"], expected_keys)
                 self.assertEqual(report["diode_count"], expected_keys)
-                self.assertEqual(report["diode_footprint_names"], {"D_ES1B_SMA_HandSolder_C437840"})
-                self.assertEqual(report["diode_values"], {"ES1B_Jingdao_C437840_Eleparts9475342"})
+                self.assertEqual(report["diode_footprint_names"], {"D_1N4148W_SOD123_HandSolder_DiodesInc"})
+                self.assertEqual(report["diode_values"], {"1N4148W-13-F_DiodesInc_SOD123"})
                 self.assertEqual(report["diode_pin_net_errors"], [])
                 self.assertIn(
-                    "Diode: Jingdao ES1B / C437840 / Eleparts 9475342; pad 1 = row cathode",
+                    "Diode: Diodes Inc 1N4148W-13-F SOD-123; pad 1 = row cathode",
                     report["board_text"],
                 )
                 self.assertFalse(
@@ -2025,7 +2037,7 @@ class V2GeneratorTests(unittest.TestCase):
             board = pcbnew.LoadBoard(str(copy))
             diode = board.FindFootprintByReference("D3")
             self.assertIsNotNone(diode)
-            diode.Move(pcbnew.VECTOR2I(0, -pcbnew.FromMM(0.2)))
+            diode.Move(pcbnew.VECTOR2I(0, -pcbnew.FromMM(0.8)))
             pcbnew.SaveBoard(str(copy), board)
 
             report = analyze_v2_board(copy)
@@ -2083,23 +2095,23 @@ class V2GeneratorTests(unittest.TestCase):
             "left": [
                 ("MH1", 112.8625, 43.0),
                 ("MH2", 144.1125, 66.25),
-                ("MH3", 38.6125, 111.0),
+                ("MH3", 39.3625, 111.0),
                 ("MH4", 63.6125, 123.0),
                 ("MH5", 81.1125, 151.75),
                 ("MH6", 137.3625, 153.5),
-                ("MH7", 166.3625, 148.75),
-                ("MH8", 75.0, 134.0),
+                ("MH7", 165.8625, 148.75),
+                ("MH8", 75.25, 134.0),
             ],
             "right": [
                 ("MH1", 97.1875, 43.25),
                 ("MH2", 72.4375, 67.0),
-                ("MH3", 169.9375, 95.25),
-                ("MH4", 194.9375, 98.75),
-                ("MH5", 156.1875, 112.5),
-                ("MH6", 69.9375, 146.25),
-                ("MH7", 97.4375, 152.0),
+                ("MH3", 170.4375, 95.25),
+                ("MH4", 194.4375, 98.75),
+                ("MH5", 155.9375, 112.5),
+                ("MH6", 70.1875, 146.75),
+                ("MH7", 97.6875, 152.0),
                 ("MH8", 122.6875, 151.0),
-                ("MH9", 177.5, 118.0),
+                ("MH9", 177.75, 117.25),
             ],
         }
         for side, board_path in (("left", LEFT_BOARD), ("right", RIGHT_BOARD)):
@@ -2699,7 +2711,7 @@ class V2GeneratorTests(unittest.TestCase):
             ).stdout
             self.assertNotIn(b"\r\n", staged)
             self.assertEqual(sha256_file(MANIFEST), sha256_bytes(staged))
-        self.assertEqual(report["generated"], "2026-08-30")
+        self.assertEqual(report["generated"], "2026-09-01")
         self.assertEqual(report["variant"], "x3-v2")
         self.assertEqual(report["key_count"], {"left": 31, "right": 39, "total": 70})
         self.assertEqual(report["max_key_width_u"], 1.75)
@@ -2731,23 +2743,23 @@ class V2GeneratorTests(unittest.TestCase):
                     "left": [
                         {"ref": "MH1", "x": 112.8625, "y": 43.0},
                         {"ref": "MH2", "x": 144.1125, "y": 66.25},
-                        {"ref": "MH3", "x": 38.6125, "y": 111.0},
+                        {"ref": "MH3", "x": 39.3625, "y": 111.0},
                         {"ref": "MH4", "x": 63.6125, "y": 123.0},
                         {"ref": "MH5", "x": 81.1125, "y": 151.75},
                         {"ref": "MH6", "x": 137.3625, "y": 153.5},
-                        {"ref": "MH7", "x": 166.3625, "y": 148.75},
-                        {"ref": "MH8", "x": 75.0, "y": 134.0},
+                        {"ref": "MH7", "x": 165.8625, "y": 148.75},
+                        {"ref": "MH8", "x": 75.25, "y": 134.0},
                     ],
                     "right": [
                         {"ref": "MH1", "x": 97.1875, "y": 43.25},
                         {"ref": "MH2", "x": 72.4375, "y": 67.0},
-                        {"ref": "MH3", "x": 169.9375, "y": 95.25},
-                        {"ref": "MH4", "x": 194.9375, "y": 98.75},
-                        {"ref": "MH5", "x": 156.1875, "y": 112.5},
-                        {"ref": "MH6", "x": 69.9375, "y": 146.25},
-                        {"ref": "MH7", "x": 97.4375, "y": 152.0},
+                        {"ref": "MH3", "x": 170.4375, "y": 95.25},
+                        {"ref": "MH4", "x": 194.4375, "y": 98.75},
+                        {"ref": "MH5", "x": 155.9375, "y": 112.5},
+                        {"ref": "MH6", "x": 70.1875, "y": 146.75},
+                        {"ref": "MH7", "x": 97.6875, "y": 152.0},
                         {"ref": "MH8", "x": 122.6875, "y": 151.0},
-                        {"ref": "MH9", "x": 177.5, "y": 118.0},
+                        {"ref": "MH9", "x": 177.75, "y": 117.25},
                     ],
                 },
                 "hole": {
@@ -2889,18 +2901,33 @@ class V2GeneratorTests(unittest.TestCase):
         self.assertEqual(
             report["matrix_diode"],
             {
-                "manufacturer": "Jingdao Microelectronics",
-                "mpn": "ES1B",
-                "lcsc": "C437840",
-                "eleparts_goods_no": "9475342",
-                "footprint": "kc2.pretty:D_ES1B_SMA_HandSolder_C437840",
-                "package": "SMA",
+                "manufacturer": "Diodes Incorporated",
+                "mpn": "1N4148W-13-F",
+                "eleparts_goods_no": "3417687",
+                "footprint": "kc2.pretty:D_1N4148W_SOD123_HandSolder_DiodesInc",
+                "package": "SOD-123",
                 "assembly_side": "bottom",
                 "pin_1": "cathode_row",
                 "pin_2": "anode_switch",
-                "recommended_land_mm": {"pad_size": [1.8, 1.8], "inner_gap": 2.4},
-                "implemented_land_mm": {"pad_size": [1.8, 1.8], "inner_gap": 2.4, "outer_span": 6.0},
-                "maximum_package_mm": {"lead_span": 5.2, "body_length": 4.5, "body_width": 2.7, "height": 2.2},
+                "datasheet": "DS30086 Rev. 31-2",
+                "official_source": "https://www.diodes.com/datasheet/download/1N4148W.pdf",
+                "official_suggested_land_mm": {
+                    "pad_size": [0.9, 0.95],
+                    "pad_center_span": 4.05,
+                },
+                "implemented_land_mm": {
+                    "classification": "kc2_enlarged_hand_solder_not_manufacturer_recommended",
+                    "pad_size": [1.4, 1.55],
+                    "pad_center_span": 3.6,
+                    "inner_gap": 2.2,
+                    "outer_span": 5.0,
+                },
+                "maximum_package_mm": {
+                    "terminal_span": 3.85,
+                    "body_length": 2.85,
+                    "body_width": 1.7,
+                    "height": 1.35,
+                },
             },
         )
         self.assertEqual(report["assembly_modes"], ["choc_v2_bottom_socket", "mx_5pin_top_direct_solder"])
@@ -2913,34 +2940,34 @@ class V2GeneratorTests(unittest.TestCase):
             report["canonical_route_evidence"],
             {
                 "left": {
-                    "dsn": "hardware/kicad/draft/x3-v2/autoroute/kc2_left-x3-v2-70-es1b-controller-r3.dsn",
+                    "dsn": "hardware/kicad/draft/x3-v2/autoroute/kc2_left-x3-v2-70-1n4148w-p3.dsn",
                     "dsn_role": "current_mh_compact_controller_trackless_routing_input",
                     "dsn_mounting_hole_count": 8,
-                    "session_source_dsn": "hardware/kicad/draft/x3-v2/autoroute/kc2_left-x3-v2-70-es1b-controller-r3.dsn",
-                    "session_source_dsn_sha256": "00e347ed6a197a3016f73b4ddc1cd72d4d5b22ff916d253a20ef1fc11094e30c",
-                    "ses": "hardware/kicad/draft/x3-v2/autoroute/kc2_left-x3-v2-70-es1b-controller-r3.ses",
+                    "session_source_dsn": "hardware/kicad/draft/x3-v2/autoroute/kc2_left-x3-v2-70-1n4148w-p3.dsn",
+                    "session_source_dsn_sha256": "3171f44d8c65a5881e6f9d3c52adaf22b5268c68559ef0d136fd6ab9f943a58c",
+                    "ses": "hardware/kicad/draft/x3-v2/autoroute/kc2_left-x3-v2-70-1n4148w-p3.ses",
                     "ses_role": "reviewed_matrix_import_plus_exact_edge_cleanup_and_power_reset_service_routing",
-                    "dsn_sha256": "00e347ed6a197a3016f73b4ddc1cd72d4d5b22ff916d253a20ef1fc11094e30c",
-                    "ses_sha256": "4c97f1040bcbfbda39bc1e445edb81863d030629190be1ee50f6b3ab50441832",
+                    "dsn_sha256": "3171f44d8c65a5881e6f9d3c52adaf22b5268c68559ef0d136fd6ab9f943a58c",
+                    "ses_sha256": "eeb142f28e5077bb4f523c9f85a9e547c9f3a38f740596cbe6df4bf269d18c39",
                     "dsn_default_clearance_internal_units": 300,
                     "dsn_clearances_internal_units": {"global": 300, "kicad_default": 300},
                     "final_track_via_count": 590,
-                    "route_digest_sha256": "94c49ca2749d83cd05969e46b2afb6b610c2067ce6a2acad84790a19e081be18",
+                    "route_digest_sha256": "b8adeac705f846714f7f201b63487369ef486cb1624df8d0ddbb8cde3053e316",
                 },
                 "right": {
-                    "dsn": "hardware/kicad/draft/x3-v2/autoroute/kc2_right-x3-v2-70-es1b-controller-r3.dsn",
+                    "dsn": "hardware/kicad/draft/x3-v2/autoroute/kc2_right-x3-v2-70-1n4148w-p3.dsn",
                     "dsn_role": "current_mh_compact_controller_trackless_routing_input",
                     "dsn_mounting_hole_count": 9,
-                    "session_source_dsn": "hardware/kicad/draft/x3-v2/autoroute/kc2_right-x3-v2-70-es1b-controller-r3.dsn",
-                    "session_source_dsn_sha256": "652edcfba0c8aa418b030f1f85aea0be4eb952536e18a87b226df9eaa3a6a26a",
-                    "ses": "hardware/kicad/draft/x3-v2/autoroute/kc2_right-x3-v2-70-es1b-controller-r3.ses",
+                    "session_source_dsn": "hardware/kicad/draft/x3-v2/autoroute/kc2_right-x3-v2-70-1n4148w-p3.dsn",
+                    "session_source_dsn_sha256": "bf25cb75dbab88693fec22038a5b90583221bdb6fbc41036cd6e328c7a863a3b",
+                    "ses": "hardware/kicad/draft/x3-v2/autoroute/kc2_right-x3-v2-70-1n4148w-p3.ses",
                     "ses_role": "reviewed_matrix_import_plus_exact_edge_cleanup_and_power_reset_service_routing",
-                    "dsn_sha256": "652edcfba0c8aa418b030f1f85aea0be4eb952536e18a87b226df9eaa3a6a26a",
-                    "ses_sha256": "4a22cc465cd6088ebcf1c25fa929b1a14e5f09bf092d70f5892709ff7d78cef4",
+                    "dsn_sha256": "bf25cb75dbab88693fec22038a5b90583221bdb6fbc41036cd6e328c7a863a3b",
+                    "ses_sha256": "ac703dbde3f35e4dffdb35de5c8d09d4f12a56ba09439ef5b02473200e55b039",
                     "dsn_default_clearance_internal_units": 300,
                     "dsn_clearances_internal_units": {"global": 300, "kicad_default": 300},
-                    "final_track_via_count": 764,
-                    "route_digest_sha256": "b54d29e27f1f319863ec5808b31188420ad4c47fa001d21ece98db80044c6946",
+                    "final_track_via_count": 766,
+                    "route_digest_sha256": "530d6927eacd7e57a48cb6c62e5c5916ef1f4b3f21d67b592e80962ef7af4c1b",
                 },
             },
         )
@@ -2968,7 +2995,7 @@ class V2GeneratorTests(unittest.TestCase):
         for side, expected_count in (("left", 8), ("right", 9)):
             with self.subTest(side=side):
                 record = manifest["canonical_route_evidence"][side]
-                self.assertTrue(record["dsn"].endswith("-controller-r3.dsn"))
+                self.assertTrue(record["dsn"].endswith("-70-1n4148w-p3.dsn"))
                 self.assertEqual(record["dsn_role"], "current_mh_compact_controller_trackless_routing_input")
                 self.assertEqual(record["dsn_mounting_hole_count"], expected_count)
                 self.assertEqual(record["session_source_dsn"], record["dsn"])
@@ -2997,7 +3024,7 @@ class V2GeneratorTests(unittest.TestCase):
                     canonical_text = canonical.read_text(encoding="utf-8")
                     self.assertTrue(
                         exported_text.startswith(
-                            f'(pcb "kc2_{side}-x3-v2-70-es1b-controller-r3.dsn"'
+                            f'(pcb "kc2_{side}-x3-v2-70-1n4148w-p3.dsn"'
                         )
                     )
                     self.assertEqual(_dsn_default_clearances(exported), _dsn_default_clearances(canonical))
@@ -3674,8 +3701,8 @@ class V2GeneratorTests(unittest.TestCase):
             diode_records = [
                 {
                     "half": half,
-                    "manufacturer": "Jingdao",
-                    "mpn": "ES1B",
+                    "manufacturer": "Diodes Incorporated",
+                    "mpn": "1N4148W-13-F",
                     "pad1_cathode_polarity_pass": True,
                     "hand_solder_access_pass": True,
                     "minimum_joint_clearance_mm": 0.2,
@@ -4549,19 +4576,19 @@ class V2GeneratorTests(unittest.TestCase):
                     ),
                 ),
                 (
-                    "ES1B polarity failure",
+                    "1N4148W polarity failure",
                     lambda payload: payload["data"]["diode_records"][0].update(
                         pad1_cathode_polarity_pass=False
                     ),
                 ),
                 (
-                    "ES1B hand-solder access failure",
+                    "1N4148W hand-solder access failure",
                     lambda payload: payload["data"]["diode_records"][0].update(
                         hand_solder_access_pass=False
                     ),
                 ),
                 (
-                    "ES1B housing interference",
+                    "1N4148W housing interference",
                     lambda payload: payload["data"]["diode_records"][0].update(
                         minimum_housing_clearance_mm=-0.01
                     ),
@@ -5227,8 +5254,28 @@ class V2GeneratorTests(unittest.TestCase):
             output_dir = Path(temporary) / "x3-v2"
             generator.generate_variant("x3-v2", output_dir=output_dir)
             for side, expected in (
-                ("left", {"imported": 539, "removed": 34, "added": 85, "final": 590}),
-                ("right", {"imported": 703, "removed": 38, "added": 99, "final": 764}),
+                (
+                    "left",
+                    {
+                        "imported": 539,
+                        "removed": 34,
+                        "added": 85,
+                        "final": 590,
+                        "pads": 62,
+                        "endpoints": 80,
+                    },
+                ),
+                (
+                    "right",
+                    {
+                        "imported": 703,
+                        "removed": 40,
+                        "added": 103,
+                        "final": 766,
+                        "pads": 78,
+                        "endpoints": 104,
+                    },
+                ),
             ):
                 with self.subTest(side=side):
                     board_path = (
@@ -5242,7 +5289,7 @@ class V2GeneratorTests(unittest.TestCase):
                     session = (
                         V2_ROOT
                         / "autoroute"
-                        / f"kc2_{side}-x3-v2-70-es1b-controller-r3.ses"
+                        / f"kc2_{side}-x3-v2-70-1n4148w-p3.ses"
                     )
                     first = import_reviewed_controller_compact_session(board, session, side)
                     second = import_reviewed_controller_compact_session(board, session, side)
@@ -5255,6 +5302,8 @@ class V2GeneratorTests(unittest.TestCase):
                             "reviewed_items_removed": expected["removed"],
                             "reviewed_items_added": expected["added"],
                             "final_track_and_via_items": expected["final"],
+                            "diode_pads_centered": expected["pads"],
+                            "route_endpoints_updated": expected["endpoints"],
                         },
                     )
                     self.assertEqual(
@@ -5264,6 +5313,8 @@ class V2GeneratorTests(unittest.TestCase):
                             "reviewed_items_removed": 0,
                             "reviewed_items_added": 0,
                             "final_track_and_via_items": expected["final"],
+                            "diode_pads_centered": expected["pads"],
+                            "route_endpoints_updated": 0,
                         },
                     )
                     signatures = Counter(_route_signature(item) for item in board.GetTracks())
@@ -5312,7 +5363,7 @@ class V2GeneratorTests(unittest.TestCase):
                     session = (
                         V2_ROOT
                         / "autoroute"
-                        / f"kc2_{side}-x3-v2-70-es1b-controller-r3.ses"
+                        / f"kc2_{side}-x3-v2-70-1n4148w-p3.ses"
                     )
                     mutated_session = Path(temporary) / f"mutated-{side}.ses"
                     source = session.read_text(encoding="utf-8")
@@ -5365,7 +5416,7 @@ class V2GeneratorTests(unittest.TestCase):
                     session = (
                         V2_ROOT
                         / "autoroute"
-                        / f"kc2_{side}-x3-v2-70-es1b-controller-r3.ses"
+                        / f"kc2_{side}-x3-v2-70-1n4148w-p3.ses"
                     )
                     source = session.read_text(encoding="utf-8")
                     self.assertEqual(source.count(original), 1)
@@ -5376,7 +5427,7 @@ class V2GeneratorTests(unittest.TestCase):
                     )
                     with self.assertRaisesRegex(
                         RuntimeError,
-                        f"reviewed {side} controller-compaction session moved the P2 mounting pattern",
+                        f"reviewed {side} controller-compaction session moved the P3 mounting pattern",
                     ):
                         import_reviewed_controller_compact_session(
                             board,
@@ -5491,7 +5542,7 @@ class V2GeneratorTests(unittest.TestCase):
                 session = (
                     V2_ROOT
                     / "autoroute"
-                    / f"kc2_{side}-x3-v2-70-es1b-controller-r3.ses"
+                        / f"kc2_{side}-x3-v2-70-1n4148w-p3.ses"
                 )
                 import_reviewed_controller_compact_session(board, session, side)
                 final_path = Path(temporary) / f"final-{side}.kicad_pcb"
@@ -5759,7 +5810,7 @@ class V2GeneratorTests(unittest.TestCase):
         from tools import generate_kc2_pcbs as generator
         from tools.finalize_kc2_x3_v2_routes import import_reviewed_controller_compact_session
 
-        session = V2_ROOT / "autoroute/kc2_right-x3-v2-70-es1b-controller-r3.ses"
+        session = V2_ROOT / "autoroute/kc2_right-x3-v2-70-1n4148w-p3.ses"
         with TemporaryDirectory(dir=ROOT) as temporary:
             output_dir = Path(temporary) / "x3-v2"
             generator.generate_variant("x3-v2", output_dir=output_dir)
@@ -5826,7 +5877,7 @@ class V2GeneratorTests(unittest.TestCase):
         spec_index = (ROOT / "docs/spec/00.index.md").read_text(encoding="utf-8")
 
         self.assertIn(
-            "| Current routes | Left `590`, SHA-256 prefix `94c49ca2749d`; right `764`, SHA-256 prefix `b54d29e27f1f` |",
+            "| Current routes | Left `590`, SHA-256 prefix `b8adeac705f`; right `766`, SHA-256 prefix `530d6927eacd` |",
             spec_index,
         )
         self.assertNotIn(
@@ -5847,7 +5898,7 @@ class V2GeneratorTests(unittest.TestCase):
             "디지털 검증을 통과했지만 물리 검증 대기 중인 `kc2-x3-v2` draft는 `CON-ARCH-004`의 70-key v5 배열(왼쪽 31, 오른쪽 39)",
             "70 for digitally verified but not orderable `kc2-x3-v2` under `CON-ARCH-004` (31 left / 39 right)",
             "current X3 V2 v5 rows 15 / 14 / 14 / 15 / 12",
-            "active draft `kc2-x3-v2` uses exact Jingdao `ES1B`, LCSC `C437840`, Eleparts goods `9475342`, bottom-side SMA at each of its 70 positions",
+            "active draft `kc2-x3-v2` uses exact Diodes Incorporated `1N4148W-13-F`, bottom-side SOD-123 at each of its 70 positions",
             "물리 검증 대기 중인 `kc2-x3-v2` draft는 `CON-ARCH-004`의 70개 switch/diode 배치를 기준으로 별도 검증한다",
             "| KC2 X3 V2 target switch | Kailh low-profile Choc V2 / PG1353-family, 70개.",
             "| KC2 X3 V2 socket | Kailh Choc hot-swap socket `CPG135001S30` class, 70개",
@@ -5865,6 +5916,7 @@ class V2GeneratorTests(unittest.TestCase):
             "implemented draft `kc2-x3-v2`는 `CON-ARCH-004` switch footprint와 SOD-123 diode 71개",
             "implemented draft `kc2-x3-v2` uses the same SOD-123 diode at each of its 70 positions",
             "implemented draft `kc2-x3-v2`는 `CON-ARCH-004` switch footprint와 SOD-123 diode 70개",
+            "active draft `kc2-x3-v2` uses exact Jingdao `ES1B`, LCSC `C437840`, Eleparts goods `9475342`, bottom-side SMA at each of its 70 positions",
         )
         for stale_claim in stale_current_claims:
             self.assertNotIn(stale_claim, product_spec)
@@ -5963,10 +6015,10 @@ class V2GeneratorTests(unittest.TestCase):
             RIGHT_BOARD.with_suffix(".kicad_pro"),
             LEFT_BOARD.with_suffix(".drc.json"),
             RIGHT_BOARD.with_suffix(".drc.json"),
-            ROOT / "hardware/kicad/draft/x3-v2/autoroute/kc2_left-x3-v2-70-es1b-controller-r3.dsn",
-            ROOT / "hardware/kicad/draft/x3-v2/autoroute/kc2_left-x3-v2-70-es1b-controller-r3.ses",
-            ROOT / "hardware/kicad/draft/x3-v2/autoroute/kc2_right-x3-v2-70-es1b-controller-r3.dsn",
-            ROOT / "hardware/kicad/draft/x3-v2/autoroute/kc2_right-x3-v2-70-es1b-controller-r3.ses",
+            ROOT / "hardware/kicad/draft/x3-v2/autoroute/kc2_left-x3-v2-70-1n4148w-p3.dsn",
+            ROOT / "hardware/kicad/draft/x3-v2/autoroute/kc2_left-x3-v2-70-1n4148w-p3.ses",
+            ROOT / "hardware/kicad/draft/x3-v2/autoroute/kc2_right-x3-v2-70-1n4148w-p3.dsn",
+            ROOT / "hardware/kicad/draft/x3-v2/autoroute/kc2_right-x3-v2-70-1n4148w-p3.ses",
         )
         for path in paths:
             relative = path.relative_to(ROOT).as_posix()

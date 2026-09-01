@@ -234,7 +234,7 @@ class V2FabricationTests(unittest.TestCase):
                 self.assertEqual(quote["socket_count"], expected_count)
                 self.assertEqual(quote["assembled_reference_count"], expected_count * 2)
                 self.assertEqual(quote["layers"], ["Bottom"])
-                self.assertEqual(quote["lcsc_part_numbers"], ["C437840", "C5333465"])
+                self.assertEqual(quote["lcsc_part_numbers"], ["C112342", "C5333465"])
                 self.assertTrue(quote["socket_centroids_are_body_derived"])
                 self.assertFalse(quote["order_ready"])
 
@@ -246,7 +246,7 @@ class V2FabricationTests(unittest.TestCase):
         self.assertTrue(jlcpcb_pcba_quote_profile_errors(mutated))
 
         mutations = (
-            ("bom", b"Jingdao ES1B", b"U1,Jingdao ES1B"),
+            ("bom", b"Diodes Inc 1N4148W-13-F", b"U1,Diodes Inc 1N4148W-13-F"),
             ("cpl", b"SW1,45.5250mm", b"SW1,45.6250mm"),
         )
         for field, old, new in mutations:
@@ -365,9 +365,9 @@ class V2FabricationTests(unittest.TestCase):
         mutations = (
             ("-PTH.drl", b"X113.272Y-63.45", b"X113.372Y-63.45", "drill_source_geometry_errors"),
             ("-F_Paste.gtp", b"X122187500Y-63450000D03*", b"X122287500Y-63450000D03*", "gerber_source_geometry_errors"),
-            ("-B_Paste.gbp", b"X52125000Y-84525000D03*", b"X52225000Y-84525000D03*", "gerber_source_geometry_errors"),
-            ("-B_Cu.gbl", b"X52125000Y-84525000D03*", b"X52225000Y-84525000D03*", "gerber_source_geometry_errors"),
-            ("-B_Mask.gbs", b"X52125000Y-84525000D03*", b"X52225000Y-84525000D03*", "gerber_source_geometry_errors"),
+            ("-B_Paste.gbp", b"X51825000Y-84525000D03*", b"X51925000Y-84525000D03*", "gerber_source_geometry_errors"),
+            ("-B_Cu.gbl", b"X51825000Y-84525000D03*", b"X51925000Y-84525000D03*", "gerber_source_geometry_errors"),
+            ("-B_Mask.gbs", b"X51825000Y-84525000D03*", b"X51925000Y-84525000D03*", "gerber_source_geometry_errors"),
             (
                 "-F_Silkscreen.gto",
                 b"X115107738Y-60613855D01*",

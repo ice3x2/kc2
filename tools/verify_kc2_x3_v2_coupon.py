@@ -32,8 +32,6 @@ REVIEWED_IGNORED_DRC_CHECKS = [
     "footprint_filters_mismatch",
     "footprint_type_mismatch",
     "missing_courtyard",
-    "npth_inside_courtyard",
-    "pth_inside_courtyard",
     "track_not_centered_on_via",
     "tuning_profile_track_geometries",
 ]
@@ -41,8 +39,6 @@ REVIEWED_IGNORED_DRC_RATIONALE = {
     "footprint_filters_mismatch": "No schematic footprint-filter source is committed for this PCB-only coupon.",
     "footprint_type_mismatch": "Intentional hybrid plated and SMD switch contacts share one PCB-only footprint.",
     "missing_courtyard": "Board-only service-probe and text helpers without courtyard are visually reviewed.",
-    "npth_inside_courtyard": "Intentional hybrid-switch mechanical NPTH lies within its own switch courtyard.",
-    "pth_inside_courtyard": "Intentional MX and Choc alternate contacts lie within their own hybrid courtyard.",
     "track_not_centered_on_via": "Reviewed coupon probe routes intentionally enter vias off-center.",
     "tuning_profile_track_geometries": "No impedance or length-tuning profiles are used by the coupon.",
 }
@@ -50,8 +46,8 @@ KICAD_10_VERSION_RE = re.compile(r"^10(?:\.\d+)+(?:[-+][0-9A-Za-z.-]+)?$")
 ISO_TIMESTAMP_RE = re.compile(
     r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[+-]\d{2}:\d{2})?$"
 )
-EXPECTED_DIODE_FOOTPRINT = "D_ES1B_SMA_HandSolder_C437840"
-EXPECTED_DIODE_VALUE = "ES1B_Jingdao_C437840_Eleparts9475342"
+EXPECTED_DIODE_FOOTPRINT = "D_1N4148W_SOD123_HandSolder_DiodesInc"
+EXPECTED_DIODE_VALUE = "1N4148W-13-F_DiodesInc_SOD123"
 
 
 def mm(value: int) -> float:
@@ -272,10 +268,10 @@ def analyze_coupon(
             mm(pads[1].GetPosition().x - pads[0].GetPosition().x),
             mm(pads[1].GetPosition().y - pads[0].GetPosition().y),
         )
-        inner_gap = center_pitch - 0.5 * (
-            max(sizes[0]) + max(sizes[1])
+        inner_gap = bounding_box_clearance_mm(
+            bounding_box_mm(pads[0]), bounding_box_mm(pads[1])
         )
-        if sizes != [(1.8, 1.8), (1.8, 1.8)] or abs(center_pitch - 4.2) > 0.001 or abs(inner_gap - 2.4) > 0.001:
+        if sizes != [(1.4, 1.55), (1.4, 1.55)] or abs(center_pitch - 3.6) > 0.001 or abs(inner_gap - 2.2) > 0.001:
             diode_pad_geometry_errors.append(
                 f"{reference}: sizes={sizes} pitch={center_pitch:.3f} gap={inner_gap:.3f}"
             )
@@ -307,8 +303,8 @@ def analyze_coupon(
         body_size = sorted((round(body_bounds[2] - body_bounds[0], 3), round(body_bounds[3] - body_bounds[1], 3)))
         courtyard_size = sorted((round(courtyard_bounds[2] - courtyard_bounds[0], 3), round(courtyard_bounds[3] - courtyard_bounds[1], 3)))
         # KiCad bounding boxes include graphic stroke width and the cathode marker.
-        # The underlying Fab rectangle endpoints remain the official 4.50 x 2.70 mm.
-        if body_size != [2.95, 4.6] or courtyard_size != [3.25, 6.55]:
+        # The underlying Fab rectangle endpoints are the official 2.85 x 1.70 mm body.
+        if body_size != [1.8, 2.95] or courtyard_size != [2.35, 5.55]:
             diode_body_geometry_errors.append(
                 f"{reference}: body={body_size} courtyard={courtyard_size}"
             )
@@ -440,20 +436,26 @@ def analyze_coupon(
             drc_evidence_errors.append(f"DRC date={drc.get('date')!r}")
     manifest_errors: list[str] = []
     expected_part = {
-        "manufacturer": "Jingdao Microelectronics",
-        "mpn": "ES1B",
-        "lcsc": "C437840",
-        "eleparts_goods_no": "9475342",
-        "footprint": "kc2.pretty:D_ES1B_SMA_HandSolder_C437840",
+        "manufacturer": "Diodes Incorporated",
+        "mpn": "1N4148W-13-F",
+        "lcsc": "C112342",
+        "jlcpcb_part_number": "C526199",
+        "eleparts_goods_no": "3417687",
+        "footprint": "kc2.pretty:D_1N4148W_SOD123_HandSolder_DiodesInc",
         "assembly_side": "bottom",
         "pin_1": "cathode_row",
         "pin_2": "anode_switch",
-        "recommended_land_mm": {
-            "pad_size": [1.8, 1.8], "inner_gap": 2.4, "outer_span": 6.0,
+        "official_suggested_land_mm": {
+            "pad_size": [0.9, 0.95], "center_span": 4.05,
+        },
+        "implemented_hand_solder_land_mm": {
+            "classification": "kc2_controlled_not_manufacturer_recommended",
+            "pad_size": [1.4, 1.55], "center_span": 3.6,
+            "inner_gap": 2.2, "outer_span": 5.0,
         },
     }
     if manifest.get("matrix_diode") != expected_part:
-        manifest_errors.append("manifest exact ES1B identity/land/polarity differs")
+        manifest_errors.append("manifest exact 1N4148W identity/land/polarity differs")
     expected_probes = {
         "per_sample": ["COL", "ANODE", "ROW"],
         "footprint": "TestPoint:TestPoint_Plated_Hole_D2.0mm",

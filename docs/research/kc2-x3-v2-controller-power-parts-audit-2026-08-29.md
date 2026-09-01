@@ -4,6 +4,8 @@ Date: 2026-08-29
 Scope requirements: `CON-ARCH-004`, `CON-ARCH-006`, `CON-ARCH-007`, `REL-ARCH-001`
 Status: digital implementation evidence only; fabrication and parts ordering are not approved
 
+> **2026-09-01 supersession:** The ES1B/P1 board and mount data below are a frozen historical snapshot; active V2 is the 1N4148W/P3 candidate in `CON-ARCH-004` and `CON-ARCH-006`.
+
 This note records the five independent component, circuit, structural, fabrication-output, and release-evidence reviews performed after the switched per-half battery service layout was pulled into the X3 V2 branch. It is research evidence, not a second requirements source. The acceptance contract remains in `docs/spec/10.product-architecture.srs.md`.
 
 ## Reviewed assembly
@@ -19,7 +21,7 @@ The frozen digital board contains, per half, one socketed nice!nano v2 controlle
 | `U1` | owned 24-pad side-specific nice!nano v2 socket footprint; `RAW=NN_B+`, `GND_C=GND`, `RST=RST` | Pad labels, geometry and power/reset nets pass. Exact socket-receptacle height, pin-tail and populated controller/USB stack remain physical gates. |
 | Hybrid switch | Choc V2 hot-swap lands on `B.Cu`; MX electrical PTH pads and copper-free locator holes; no stabilizer | Source and all 70 placed footprints now include complete front/back courtyard contracts. “Deep Sea Whale” or `PG1353-class` is not a unique procurement MPN; exact supported low-profile switch drawing remains pending. |
 | ES1B | Jingdao ES1B / LCSC `C437840` / Eleparts `9475342`; SMA lands `1.80 x 1.80 mm`, `2.40 mm` inner gap; pad 1 cathode/row, pad 2 anode/per-key | All 70 placed diode lands, polarity, B.Cu orientation and row/switch nets pass. |
-| M1.4 retention | left 8/right 10 unplated `1.60 mm` holes, visible `MH*` references; rounded-head provisional maximum `3.00 x 1.20 mm`; housing land/column `3.00 mm`, pilot `1.10 x 2.80 mm` | The active P1 centers move into switch-corner pockets to retain `0.25 mm` head clearance while preserving the 14/11 primary supports. Exact screw, driver runout, printed pilot, torque, cycles, registration and 2 N deflection remain pending. |
+| M1.4 retention | historical left 8/right 10 unplated `1.60 mm` holes, visible `MH*` references; rounded-head provisional maximum `3.00 x 1.20 mm`; housing land/column `3.00 mm`, pilot `1.10 x 2.80 mm` | The historical P1 centers moved into switch-corner pockets to retain `0.25 mm` head clearance while preserving the then-current 14/11 primary supports. The active exact screw, driver runout, printed pilot, torque, cycles, registration and 2 N deflection gates remain pending. |
 
 ## Circuit review
 
@@ -36,9 +38,9 @@ KiCad 10 DRC is clean on both frozen halves with zero violations and zero unconn
 
 ## Structural and service review
 
-The existing perimeter rail plus 14 left and 11 right distributed supports remains the primary key-load path. M1.4 screws clamp and register the PCB; they do not replace those supports. The verified maximum key-to-support spans remain `15.4640 mm` left and `18.9619 mm` right.
+In that historical snapshot, the perimeter rail plus 14 left and 11 right distributed supports formed the primary key-load path. M1.4 screws clamped and registered the PCB; they did not replace those supports. The historical maximum key-to-support spans were `15.4640 mm` left and `18.9619 mm` right.
 
-The final PH0 driver envelope is deliberately tight. Keycaps must be removed while switches remain installed. Physical driver shaft/runout and printed-hole tests are therefore mandatory. After the user selected a rounded head, the active P1 coordinates use a conservative `3.00 x 1.20 mm` head envelope and move the limiting holes into corner pockets rather than depend on the obsolete right-MH9-only rail relief or waive the `0.25 mm` reserve.
+The historical PH0 driver envelope was deliberately tight. Keycaps had to be removed while switches remained installed. Physical driver shaft/runout and printed-hole tests therefore remained mandatory. After the user selected a rounded head, the P1 coordinates used a conservative `3.00 x 1.20 mm` head envelope and moved the limiting holes into corner pockets rather than depend on the obsolete right-MH9-only rail relief or waive the `0.25 mm` reserve.
 
 The mounting clearance analysis now includes the full nominal `BAT1 30 x 12 mm` plan, the complete `SW_PWR1 10 x 2.5 mm` body and its actuator sweep, the installed switch bodies, routed copper and vias. Reset support metadata follows the actual left `0 deg` / right `180 deg` rotation and derives bottom-mask protection from the real pad stack rather than a constant.
 

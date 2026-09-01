@@ -182,7 +182,7 @@ class V2FirmwareContractTests(unittest.TestCase):
 
         self.assertTrue(any("digest mismatch" in error for error in errors))
         self.assertTrue(any("build_inputs source set" in error for error in errors))
-        self.assertTrue(any("ES1B hardware compatibility" in error for error in errors))
+        self.assertTrue(any("1N4148W hardware compatibility" in error for error in errors))
         self.assertTrue(any("hash policy" in error for error in errors))
         self.assertFalse(report["manifest_provenance_verified"])
         self.assertFalse(report["hardware_compatibility_verified"])
@@ -347,7 +347,7 @@ class V2FirmwareContractTests(unittest.TestCase):
         self.assertEqual(metadata["unsupported_assembly"], ["choc-v1", "choc-v2-direct-solder", "mx-hotswap"])
         self.assertEqual(metadata["battery_leads"], "direct-to-nice-nano-b-plus-b-minus")
 
-    def test_es1b_transition_preserves_firmware_and_documents_pending_physical_scan_gate(self) -> None:
+    def test_1n4148w_transition_preserves_firmware_and_documents_pending_physical_scan_gate(self) -> None:
         evidence = verifier.read_build_evidence()
 
         self.assertEqual(
@@ -391,10 +391,9 @@ class V2FirmwareContractTests(unittest.TestCase):
         )
 
         for document in (firmware_readme, hardware_readme, summary, srs):
-            self.assertIn("Jingdao", document)
-            self.assertIn("ES1B", document)
-            self.assertIn("C437840", document)
-            self.assertIn("9475342", document)
+            self.assertIn("Diodes Incorporated", document)
+            self.assertIn("1N4148W-13-F", document)
+            self.assertIn("SOD-123", document)
 
         self.assertIn("70", hardware_readme)
         self.assertIn("B.Cu", hardware_readme)
@@ -408,8 +407,8 @@ class V2FirmwareContractTests(unittest.TestCase):
         self.assertIn("zero-wait", hardware_readme)
         self.assertIn("not orderable", hardware_readme.lower())
 
-        self.assertIn("kc2_left-x3-v2-70-es1b-controller-r3.dsn", hardware_readme)
-        self.assertIn("kc2_right-x3-v2-70-es1b-controller-r3.dsn", hardware_readme)
+        self.assertIn("kc2_left-x3-v2-70-1n4148w-p3.dsn", hardware_readme)
+        self.assertIn("kc2_right-x3-v2-70-1n4148w-p3.dsn", hardware_readme)
         self.assertIn("reviewed controller-r3 SES", hardware_readme)
         self.assertIn("controller-r3", srs)
         self.assertIn("controller-r3", summary)
@@ -422,17 +421,17 @@ class V2FirmwareContractTests(unittest.TestCase):
         self.assertIn("zero-wait", firmware_readme)
         self.assertIn("physical coupon", firmware_readme)
 
-        self.assertIn("`0.3279 mm`", housing_readme)
-        self.assertIn("`0.3282 mm`", housing_readme)
-        self.assertIn("`1.0250 mm`", housing_readme)
+        self.assertIn("`1.5250 mm`", housing_readme)
+        self.assertIn("`1.55 mm`", housing_readme)
+        self.assertIn("`4.3902 mm`", housing_readme)
         self.assertIn("31/39 key-load support network", housing_readme)
-        self.assertIn("둥근머리 P2 reinforcement", summary)
+        self.assertIn("P3 reinforcement", summary)
         self.assertIn(
-            "92c46f364f0cc647928029f6b42a54abfcc94485a491e5a6177e84cc7800d26f",
+            "7de01a7f0c60585c1845ab3ad17c2b7d18e17ae8c2090a3594e6edf0cbf9d7cf",
             summary,
         )
         self.assertIn(
-            "8769b5792386357a876008f20152f836012a299a1230b359aaa530ffa85e7b0a",
+            "b4173e7bb16189690b06bc3a8d6487e8c56e7e69100e6c04d798d687213f2adc",
             summary,
         )
         self.assertNotIn("현재 둥근머리 P1", summary)
@@ -449,40 +448,40 @@ class V2FirmwareContractTests(unittest.TestCase):
             generation["canonical_route_evidence"],
             {
                 "left": {
-                    "dsn": "hardware/kicad/draft/x3-v2/autoroute/kc2_left-x3-v2-70-es1b-controller-r3.dsn",
+                    "dsn": "hardware/kicad/draft/x3-v2/autoroute/kc2_left-x3-v2-70-1n4148w-p3.dsn",
                     "dsn_role": "current_mh_compact_controller_trackless_routing_input",
                     "dsn_mounting_hole_count": 8,
-                    "session_source_dsn": "hardware/kicad/draft/x3-v2/autoroute/kc2_left-x3-v2-70-es1b-controller-r3.dsn",
-                    "session_source_dsn_sha256": "00e347ed6a197a3016f73b4ddc1cd72d4d5b22ff916d253a20ef1fc11094e30c",
-                    "ses": "hardware/kicad/draft/x3-v2/autoroute/kc2_left-x3-v2-70-es1b-controller-r3.ses",
+                    "session_source_dsn": "hardware/kicad/draft/x3-v2/autoroute/kc2_left-x3-v2-70-1n4148w-p3.dsn",
+                    "session_source_dsn_sha256": "3171f44d8c65a5881e6f9d3c52adaf22b5268c68559ef0d136fd6ab9f943a58c",
+                    "ses": "hardware/kicad/draft/x3-v2/autoroute/kc2_left-x3-v2-70-1n4148w-p3.ses",
                     "ses_role": "reviewed_matrix_import_plus_exact_edge_cleanup_and_power_reset_service_routing",
-                    "dsn_sha256": "00e347ed6a197a3016f73b4ddc1cd72d4d5b22ff916d253a20ef1fc11094e30c",
-                    "ses_sha256": "4c97f1040bcbfbda39bc1e445edb81863d030629190be1ee50f6b3ab50441832",
+                    "dsn_sha256": "3171f44d8c65a5881e6f9d3c52adaf22b5268c68559ef0d136fd6ab9f943a58c",
+                    "ses_sha256": "eeb142f28e5077bb4f523c9f85a9e547c9f3a38f740596cbe6df4bf269d18c39",
                     "dsn_default_clearance_internal_units": 300,
                     "dsn_clearances_internal_units": {
                         "global": 300,
                         "kicad_default": 300,
                     },
                     "final_track_via_count": 590,
-                    "route_digest_sha256": "94c49ca2749d83cd05969e46b2afb6b610c2067ce6a2acad84790a19e081be18",
+                    "route_digest_sha256": "b8adeac705f846714f7f201b63487369ef486cb1624df8d0ddbb8cde3053e316",
                 },
                 "right": {
-                    "dsn": "hardware/kicad/draft/x3-v2/autoroute/kc2_right-x3-v2-70-es1b-controller-r3.dsn",
+                    "dsn": "hardware/kicad/draft/x3-v2/autoroute/kc2_right-x3-v2-70-1n4148w-p3.dsn",
                     "dsn_role": "current_mh_compact_controller_trackless_routing_input",
                     "dsn_mounting_hole_count": 9,
-                    "session_source_dsn": "hardware/kicad/draft/x3-v2/autoroute/kc2_right-x3-v2-70-es1b-controller-r3.dsn",
-                    "session_source_dsn_sha256": "652edcfba0c8aa418b030f1f85aea0be4eb952536e18a87b226df9eaa3a6a26a",
-                    "ses": "hardware/kicad/draft/x3-v2/autoroute/kc2_right-x3-v2-70-es1b-controller-r3.ses",
+                    "session_source_dsn": "hardware/kicad/draft/x3-v2/autoroute/kc2_right-x3-v2-70-1n4148w-p3.dsn",
+                    "session_source_dsn_sha256": "bf25cb75dbab88693fec22038a5b90583221bdb6fbc41036cd6e328c7a863a3b",
+                    "ses": "hardware/kicad/draft/x3-v2/autoroute/kc2_right-x3-v2-70-1n4148w-p3.ses",
                     "ses_role": "reviewed_matrix_import_plus_exact_edge_cleanup_and_power_reset_service_routing",
-                    "dsn_sha256": "652edcfba0c8aa418b030f1f85aea0be4eb952536e18a87b226df9eaa3a6a26a",
-                    "ses_sha256": "4a22cc465cd6088ebcf1c25fa929b1a14e5f09bf092d70f5892709ff7d78cef4",
+                    "dsn_sha256": "bf25cb75dbab88693fec22038a5b90583221bdb6fbc41036cd6e328c7a863a3b",
+                    "ses_sha256": "ac703dbde3f35e4dffdb35de5c8d09d4f12a56ba09439ef5b02473200e55b039",
                     "dsn_default_clearance_internal_units": 300,
                     "dsn_clearances_internal_units": {
                         "global": 300,
                         "kicad_default": 300,
                     },
-                    "final_track_via_count": 764,
-                    "route_digest_sha256": "b54d29e27f1f319863ec5808b31188420ad4c47fa001d21ece98db80044c6946",
+                    "final_track_via_count": 766,
+                    "route_digest_sha256": "530d6927eacd7e57a48cb6c62e5c5916ef1f4b3f21d67b592e80962ef7af4c1b",
                 },
             },
         )

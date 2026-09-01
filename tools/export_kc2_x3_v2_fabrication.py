@@ -73,22 +73,29 @@ JLCPCB_PROFILE = {
     "order_ready": False,
 }
 JLCPCB_PCBA_QUOTE_PROFILE = {
-    "schema": "kc2-x3-v2-jlcpcb-pcba-quote-v1",
+    "schema": "kc2-x3-v2-jlcpcb-pcba-quote-v2",
     "vendor": "JLCPCB",
     "purpose": "pricing_quote_only_not_order_authorization",
     "assembly_side": "bottom",
     "assembled_reference_families": ["D", "SW"],
     "assembled_parts": {
-        "D": {"manufacturer_part_number": "ES1B", "lcsc_part_number": "C437840"},
+        "D": {
+            "manufacturer": "Diodes Incorporated",
+            "manufacturer_part_number": "1N4148W-13-F",
+            "lcsc_part_number": "C112342",
+            "jlcpcb_part_number": "C526199",
+            "package": "SOD-123",
+        },
         "SW": {
             "manufacturer_part_number": "CPG135001S30",
             "lcsc_part_number": "C5333465",
         },
     },
     "inventory_recheck_required": True,
+    "exact_diode_if_unavailable": "dnp_and_hand_assemble_no_substitution",
     "placement_and_orientation_confirmation_required": True,
     "bom_only_1n4148_substitution_allowed": False,
-    "board_revision_required_for_1n4148_family": True,
+    "board_revision_required_for_1n4148_family": False,
     "order_ready": False,
 }
 

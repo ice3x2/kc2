@@ -8,19 +8,19 @@ The default layer follows the physical switch-reference order recorded in `kc2_x
 
 The PCB supports mutually exclusive Choc V2 bottom-socket or MX direct-solder assembly. Choc V1, Choc V2 direct solder, and MX hot-swap are unsupported. The compact nice!nano v2 carrier uses 15.24 mm socket-row spacing, no carrier battery nets, and direct battery-lead soldering to the nice!nano B+/B- pads.
 
-The active V2 PCB uses exactly 70 Jingdao Microelectronics `ES1B` SMA matrix
-diodes, locked to LCSC `C437840` / Eleparts goods `9475342`. This package
+The active V2 PCB uses exactly 70 Diodes Incorporated `1N4148W-13-F`
+SOD-123 matrix diodes, locked to datasheet `DS30086 Rev. 31-2`. This package
 change preserves the existing `col2row` electrical contract: B.Cu pad 1 is the
 cathode/row and pad 2 is the anode/per-key switch net. Because the bottom
 assembly view is mirrored, the cathode band must be checked against pad 1, not
 an assumed screen-left or screen-right direction.
 
-There is no firmware source or UF2 change for the ES1B PCB geometry change.
+There is no firmware source or UF2 change for the 1N4148W PCB geometry change.
 The recorded build remains zero-wait (`0 us` before input reads and `0 us`
 between driven columns). Scan-delay changes are prohibited until a populated
 physical coupon passes 3.0 V and 3.3 V maximum same-row and same-column stress
 tests. That electrical/physical test is pending and the PCB remains not
-orderable; the unchanged UF2 hashes below do not claim ES1B physical
+orderable; the unchanged UF2 hashes below do not claim 1N4148W physical
 qualification.
 
 ## Reproducible WSL build
@@ -82,7 +82,7 @@ also hashes the two non-build metadata inputs used by the focused verifier.
 `tools.verify_kc2_x3_v2_zmk_firmware` reports
 `manifest_provenance_verified=true` only when every recorded source digest and
 all pinned metadata still match, and separately reports
-`hardware_compatibility_verified=true` only when the ES1B polarity, unchanged
+`hardware_compatibility_verified=true` only when the 1N4148W polarity, unchanged
 matrix contract, unchanged recorded zero-wait settings, and pending physical
 stress gate match. The UF2 files under `firmware/out` are ignored
 build products: in a fresh clone they may be ignored and absent without

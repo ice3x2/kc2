@@ -39,9 +39,9 @@ is already mirrored for a physical bottom view.
 
 ## Matrix diode and polarity
 
-The active V2 BOM contains exactly 70 Jingdao Microelectronics `ES1B` matrix
-diodes: LCSC `C437840`, Eleparts goods `9475342`, SMA, 100 V / 1 A. All are
-assembled on `B.Cu`. Pin/pad 1 is the cathode connected to the row net; pin/pad
+The active V2 BOM contains exactly 70 Diodes Incorporated `1N4148W-13-F`
+matrix diodes in flat SOD-123 packages, controlled by `DS30086 Rev. 31-2`.
+All are assembled on `B.Cu`. Pin/pad 1 is the cathode connected to the row net; pin/pad
 2 is the anode connected to the per-key switch net. A physical bottom view is
 mirrored relative to KiCad's top/front view, so place the cathode band toward
 the marked pad 1 rather than relying on an assumed left/right direction.
@@ -82,20 +82,21 @@ The 2.50 mm lower plate has exterior-bottom-open cutouts through the full plate
 height for every MX terminal and solder joint, rather than a closed component
 cavity. The lateral solder-fillet model includes a 0.30 mm allowance.
 
-The Choc socket and ES1B SMD solder-fillet models each include a 0.30 mm
-lateral allowance. The routed ES1B boards pass the current digital diode gates:
-the minima across both halves are 1.605 mm to unused switch NPTH, 1.000 mm to
-switch pads and unrelated exposed copper, 1.725 mm to socket bodies, 0.400 mm
-between diode and switch-assembly fillet envelopes, and 1.475 mm from the
-diode fillet envelope to Edge.Cuts. The current diode-to-unrelated-route
-minimum is 0.237 mm left and 0.123 mm right, both above the 0.10 mm gate. Every diode
-pad has an unobstructed 1.50 mm cardinal solder-tool approach. These PCB
-measurements supersede the old SOD-123 D2 values. Regenerated ES1B housing
-evidence reports 0.3279 mm minimum cutout XY clearance overall, 0.3282 mm for
-ES1B, and 1.0250 mm minimum diode perimeter land on both halves. The compact
-controller revision extends the common desk datum to Z=-1.00 mm, providing
-1.00 mm nominal diode-to-desk clearance while the provisional 3.00 mm battery
-envelope retains 0.50 mm nominal desk clearance. This remains digital
+The Choc socket and 1N4148W SOD-123 solder-fillet models each include a 0.30 mm
+lateral allowance. The routed boards pass the current digital diode gates:
+the minima across both halves are 1.946 mm to unused switch NPTH, 1.125 mm to
+switch pads and unrelated exposed copper, 2.225 mm to socket bodies, 0.525 mm
+between diode and switch-assembly fillet envelopes, and 1.975 mm from the
+diode fillet envelope to Edge.Cuts. The diode-to-unrelated-route minima are
+0.737 mm left and 0.545 mm right, both above the 0.10 mm gate. Every diode
+pad has an unobstructed cardinal solder-tool approach. The enlarged KC2 hand-
+solder land is deliberately not the manufacturer's recommended land: implemented
+pads are 1.40 x 1.55 mm at 3.60 mm centers, while the official suggested pads
+are 0.90 x 0.95 mm at 4.05 mm centers. Regenerated housing evidence provides
+0.35 mm cutout XY clearance, 1.525 mm minimum diode perimeter land, and 1.85 mm
+nominal / 1.55 mm post-tolerance diode-to-desk clearance. The Choc socket is the
+overall open-component limiter at 1.10 mm nominal / 0.80 mm post-tolerance.
+This remains digital
 evidence only; physical retention, deflection, and populated-coupon tests are
 still required before ordering.
 
@@ -115,9 +116,9 @@ and must not be buffered a second time.
 The matching lower housing provides a `3.00 mm` zero-gap support land and desk
 column at every hole, with a provisional `1.10 x 2.80 mm` blind pilot and a
 `0.70 mm` closed bottom at the common Z=-1.00 mm desk datum. A separate exact
-one-to-one network of 31-left/39-right `2.00 mm` key-load feet provides every
+one-to-one network of 31-left/39-right `2.40 mm` key-load feet provides every
 switch center with a local desk load path whose worst center-to-support-edge
-distance is at most `3.60 mm`; mounting columns are not credited as typing-load
+distance is `4.3902 mm`, within the `4.40 mm` SOD-123/P3 bound; mounting columns are not credited as typing-load
 supports. The provisional 4.00 mm under-head screw
 length, exact screw and driver, full-pattern registration, installation and
 stripping torque, ten service cycles, keycap-skirt clearance, and 2.0 N
@@ -195,8 +196,8 @@ physical first-article evidence. The digital package remains not orderable.
 
 The fabrication, mechanical, and housing derivatives were regenerated from
 the current left/right board hashes
-`92c46f364f0cc647928029f6b42a54abfcc94485a491e5a6177e84cc7800d26f` and
-`8769b5792386357a876008f20152f836012a299a1230b359aaa530ffa85e7b0a`.
+`7de01a7f0c60585c1845ab3ad17c2b7d18e17ae8c2090a3594e6edf0cbf9d7cf` and
+`b4173e7bb16189690b06bc3a8d6487e8c56e7e69100e6c04d798d687213f2adc`.
 Their dedicated V2 verifiers pass. The joined SVG/PNG set was regenerated from
 the same current boards and reports 1.1000 mm minimum Edge.Cuts clearance and
 1.8000 mm cross-seam keycap gap. All outputs remain digital draft evidence and
@@ -221,7 +222,7 @@ bottom socket orientations plus a 5-pin MX direct-solder sample at 19.05 mm
 pitch. The 180-degree sample deliberately exercises the rotated/mirrored
 assembly risk required by `CON-ARCH-004` AC-9. Its CAD and fabrication package
 do not satisfy the physical evidence gate by themselves. A populated coupon
-must additionally verify ES1B polarity and solder access plus the pending 3.0 V
+must additionally verify 1N4148W polarity and solder access plus the pending 3.0 V
 and 3.3 V zero-wait same-row/same-column matrix stress cases.
 
 ## Reproduction and verification
@@ -286,9 +287,9 @@ The command rejects non-rigid switch geometry, replaces only Edge.Cuts, and is
 covered by route/footprint-preservation and idempotence tests.
 
 The current compact-controller, mounting-hole-aware trackless inputs are
-`autoroute/kc2_left-x3-v2-70-es1b-controller-r3.dsn` and
-`autoroute/kc2_right-x3-v2-70-es1b-controller-r3.dsn`; they contain exactly
-eight and ten visibly numbered M1.4 NPTHs. Their reviewed r3 sessions bind the
+`autoroute/kc2_left-x3-v2-70-1n4148w-p3.dsn` and
+`autoroute/kc2_right-x3-v2-70-1n4148w-p3.dsn`; they contain exactly
+eight and nine visibly numbered M1.4 NPTHs. Their reviewed controller-r3 SES files bind the
 moved controller/reset fanout and shortened outline. Against empty-track
 generated boards, the finalizer imports those sessions and applies only the
 exact, precondition-checked edge cleanup:
@@ -296,19 +297,19 @@ exact, precondition-checked edge cleanup:
 ```powershell
 & "C:\Program Files\KiCad\10.0\bin\python.exe" -B -m tools.finalize_kc2_x3_v2_routes `
   hardware/kicad/draft/x3-v2/kc2_left-x3-v2/kc2_left-x3-v2.kicad_pcb `
-  --import-controller-compact-session hardware/kicad/draft/x3-v2/autoroute/kc2_left-x3-v2-70-es1b-controller-r3.ses
+  --import-controller-compact-session hardware/kicad/draft/x3-v2/autoroute/kc2_left-x3-v2-70-1n4148w-p3.ses
 & "C:\Program Files\KiCad\10.0\bin\python.exe" -B -m tools.finalize_kc2_x3_v2_routes `
   hardware/kicad/draft/x3-v2/kc2_right-x3-v2/kc2_right-x3-v2.kicad_pcb `
-  --import-controller-compact-session hardware/kicad/draft/x3-v2/autoroute/kc2_right-x3-v2-70-es1b-controller-r3.ses
+  --import-controller-compact-session hardware/kicad/draft/x3-v2/autoroute/kc2_right-x3-v2-70-1n4148w-p3.ses
 ```
 
 The helper rejects wrong controller/reset/switch geometry, stale sessions, and
 partial or unexpected nonempty routes. Both importers verify complete matrix connectivity,
 reproduce the committed route exactly, and are covered by second-run
 idempotence tests. The retained deterministic route reconstruction has final track/via counts of
-590 left and 764 right, with route digests
-`94c49ca2749d83cd05969e46b2afb6b610c2067ce6a2acad84790a19e081be18`
-and `b54d29e27f1f319863ec5808b31188420ad4c47fa001d21ece98db80044c6946`.
+590 left and 766 right, with route digests
+`b8adeac705f846714f7f201b63487369ef486cb1624df8d0ddbb8cde3053e316`
+and `530d6927eacd7e57a48cb6c62e5c5916ef1f4b3f21d67b592e80962ef7af4c1b`.
 Running either command against its already exact committed board is a verified
 no-op. The generation manifest binds each current controller-r3 DSN and
 reviewed controller-r3 SES by SHA-256. It also verifies both
@@ -324,7 +325,7 @@ electrical implications remain covered by exact footprint geometry checks,
 matrix-island connectivity checks, NPTH copper-free checks, Gerber/Excellon
 inspection, and zero DRC violations/unconnected items.
 
-The production release gate compares every placed ES1B pad, B.Fab body,
+The production release gate compares every placed 1N4148W pad, B.Fab body,
 courtyard, and mirrored B.Silkscreen cathode mark against the KC2-owned
 footprint. It also compares every hybrid-switch pad/NPTH and the side-specific
 24-pad nice!nano socket against its owned footprint, requires the matching
@@ -336,8 +337,8 @@ Official geometry references:
 - Kailh Choc V2 switch: https://www.kailhswitch.com/mechanical-keyboard-switches/key-switches/kailh-low-profile-switch-choc-v2.html
 - Kailh socket drawing: https://www.kailhswitch.com/uploads/15927/files/CPG135001S30.pdf?rnd=925
 - Cherry MX2A 5-pin datasheet: https://www.cherry.de/fileadmin/media/Industrial/Switch/MX_BLACK/Data_sheet_MX2A_Black.pdf
-- Jingdao ES1B / LCSC C437840 datasheet: https://www.lcsc.com/datasheet/C437840.pdf
-- Eleparts goods 9475342: https://www.eleparts.co.kr/goods/view?no=9475342
+- Diodes Incorporated 1N4148W product page: https://www.diodes.com/part/view/1N4148W/
+- Diodes Incorporated DS30086 Rev. 31-2 datasheet: https://www.diodes.com/datasheet/download/1N4148W.pdf
 - nice!nano v2 pinout and schematic: https://nicekeyboards.com/docs/nice-nano/pinout-schematic/
 
 ## Component and terminal audit
@@ -352,7 +353,7 @@ replace incoming inspection or the physical evidence gates.
 | nice!nano v2 `U1` | Published plan `34.1 x 18.3 mm`; official total thickness `3.2 mm` and official Pro Micro pinout. B+ and B- are not socketed; `RAW` and `GND` are their respective carrier equivalents. | Conservative collision envelope `34.1 x 18.3 mm`; 2 x 12 PTH, `2.54 mm` longitudinal pitch, `15.24 mm` row spacing, pad `1.80 mm`, drill `0.95 mm`; `RAW=NN_B+`, `GND_C=GND`, `RST=RST`. | Plan/pinout PASS; exact female socket and pin-leg MPN/tail height PENDING. |
 | Kailh Choc V2 socket | Kailh `CPG135001S30`, drawing `KH-PS-1702-35` Rev D; T=1.6 recommended pattern with `2.60 mm` contacts and specified NPTH locations. | Bottom socket body `9.55 x 6.80 mm`, B.Cu pads `2.60 mm`, exact official mechanical holes; duplicate pads 1 and 2 share the MX electrical nets. | Socket PASS; exact mating Kailh switch MPN/drawing PENDING. |
 | Cherry MX alternative | Official MX2A 5-pin PCB-fixation variants; nominal `15 x 15 mm` body and two electrical plus three fixation terminals. | F.Fab `15 x 15 mm`; electrical pads `2.50 mm` with `1.50 mm` drill plus `5.00/3.00/1.65 mm` fixation NPTHs. | Nominal 5-pin geometry PASS; exact optional MX MPN PENDING. |
-| `ES1B` diode | Jingdao `ES1B`, LCSC `C437840`, SMA body `4.5 x 2.7 mm`; recommended `1.8 x 1.8 mm` lands with `2.4 mm` inner gap; pin 1 cathode, pin 2 anode. | B.Fab `4.5 x 2.7 mm`, pads `1.8 x 1.8 mm`, center pitch `4.2 mm`; pad 1 row/cathode, pad 2 per-key/anode. | PASS. |
+| `1N4148W-13-F` diode | Diodes Incorporated SOD-123, body max `2.85 x 1.70 x 1.35 mm`, terminal span max `3.85 mm`; suggested pads `0.90 x 0.95 mm` at `4.05 mm` centers; pin 1 cathode, pin 2 anode. | B.Fab `2.85 x 1.70 mm`; controlled hand-solder pads `1.40 x 1.55 mm` at `3.60 mm` centers, classified as a KC2 enlargement rather than the manufacturer land; pad 1 row/cathode, pad 2 per-key/anode. | Digital geometry/polarity PASS; populated solder/scan coupon PENDING. |
 | `SW_PWR1` | SM Switch `BSI-10`: `10 x 2.5 x 6.4 mm`, `1.6 mm` travel, three `0.6 mm` pins on `2.54 mm` pitch, recommended `0.8 mm` drills; terminal 1 common. | F.Fab `10 x 2.5 mm`, three `1.60 mm` pads / `0.80 mm` drills at `2.54 mm`; pad 1 `BAT+`, pad 2 `NN_B+`, pad 3 NC. | Geometry/net PASS; exact purchased MPN/drawing and former IMMS equivalence PENDING. |
 | `SW_RST1` | DeviceMart `NW3-A06-B3`, nominal body `6.1 x 3.7 mm`. | Controlled body `6.1 x 3.7 mm` inside an `8.0 x 3.7 mm` lead-span drawing; SMD pads `1.75 x 1.00 mm`; pad 1 RST, pad 2 GND. | Nominal PASS; purchased-lot drawing/actuation test PENDING. |
 | `BAT1` / `J_BAT1` | Nice Keyboards recommends a rechargeable 3.7 V 301230 cell; exact protected-pack maximum, swelling and lead drawing are supplier-specific. | Nominal body `30 x 12 x 3 mm`; direct-lead pads `2.20 x 1.80 mm`, drill `0.90 mm`, pitch `2.54 mm`; pad 1 BAT+, pad 2 GND/B-. | Nominal only; exact protected pack, lead diameter and maximum envelope BLOCK ORDER. |
@@ -365,4 +366,4 @@ Dimension and terminal sources additionally used by this audit:
 - nice!nano published reseller dimensions: https://mechboards.co.uk/products/nice-nano-v2
 - SM Switch BSI-10 drawing: https://pf02.ickimg.com/datasheet/upload/2023/10/07/BSI-10.pdf
 - DeviceMart NW3-A06-B3 dimensions: https://www.devicemart.co.kr/goods/view?no=1322056
-- LCSC Jingdao ES1B/C437840: https://www.lcsc.com/product-detail/C437840.html
+- Diodes Incorporated 1N4148W: https://www.diodes.com/part/view/1N4148W/

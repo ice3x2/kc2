@@ -1,6 +1,6 @@
 category,quantity,references,identity,physical_status
 key_switch_positions,31,SW1;SW2;SW3;SW4;SW5;SW6;SW7;SW8;SW9;SW10;SW11;SW12;SW13;SW14;SW15;SW16;SW17;SW18;SW19;SW20;SW21;SW22;SW23;SW24;SW25;SW26;SW27;SW28;SW29;SW30;SW31,Choc V2/PG1353 bottom socket OR Cherry MX 5-pin direct solder,pending
-matrix_diode,31,D1;D2;D3;D4;D5;D6;D7;D8;D9;D10;D11;D12;D13;D14;D15;D16;D17;D18;D19;D20;D21;D22;D23;D24;D25;D26;D27;D28;D29;D30;D31,Jingdao ES1B / LCSC C437840 / Eleparts 9475342,controlled
+matrix_diode,31,D1;D2;D3;D4;D5;D6;D7;D8;D9;D10;D11;D12;D13;D14;D15;D16;D17;D18;D19;D20;D21;D22;D23;D24;D25;D26;D27;D28;D29;D30;D31,Diodes Inc 1N4148W-13-F / LCSC C112342 / Eleparts 3417687,controlled
 controller_socket,1,U1,nice!nano v2 24-pin socket carrier,controlled
 battery_pack,1,BAT1,301230-class 3.7 V 100 mAh Li-Po with insulated leads,pending
 battery_direct_solder_termination,1,J_BAT1,BAT_2Pin_PTH_DirectSolder,pending

@@ -40,7 +40,12 @@ from tools.generate_kc2_pcbs import (
 
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_FOOTPRINT = ROOT / "third_party" / "kc2.pretty" / "SW_Choc_V2_Socket_MX_THT.kicad_mod"
-DEFAULT_DIODE_FOOTPRINT = ROOT / "third_party" / "kc2.pretty" / "D_ES1B_SMA_HandSolder_C437840.kicad_mod"
+DEFAULT_DIODE_FOOTPRINT = (
+    ROOT
+    / "third_party"
+    / "kc2.pretty"
+    / "D_1N4148W_SOD123_HandSolder_DiodesInc.kicad_mod"
+)
 DEFAULT_MOUNT_FOOTPRINT = ROOT / "third_party" / "kc2.pretty" / "MH_M1.4_NPTH_1.60.kicad_mod"
 DEFAULT_RESET_FOOTPRINT = ROOT / "third_party" / "kc2.pretty" / "SW_NW3_A06_B3_SMD.kicad_mod"
 DEFAULT_POWER_SWITCH_FOOTPRINT = ROOT / "third_party" / "kc2.pretty" / "SW_IMMS_12V_BSI10_THT.kicad_mod"
@@ -249,29 +254,30 @@ EXPECTED_M1_4_MOUNTING_POINTS = {
     "left": [
         ("MH1", 112.8625, 43.0000),
         ("MH2", 144.1125, 66.2500),
-        ("MH3", 38.6125, 111.0000),
+        ("MH3", 39.3625, 111.0000),
         ("MH4", 63.6125, 123.0000),
         ("MH5", 81.1125, 151.7500),
         ("MH6", 137.3625, 153.5000),
-        ("MH7", 166.3625, 148.7500),
-        ("MH8", 75.0000, 134.0000),
+        ("MH7", 165.8625, 148.7500),
+        ("MH8", 75.2500, 134.0000),
     ],
     "right": [
         ("MH1", 97.1875, 43.2500),
         ("MH2", 72.4375, 67.0000),
-        ("MH3", 169.9375, 95.2500),
-        ("MH4", 194.9375, 98.7500),
-        ("MH5", 156.1875, 112.5000),
-        ("MH6", 69.9375, 146.2500),
-        ("MH7", 97.4375, 152.0000),
+        ("MH3", 170.4375, 95.2500),
+        ("MH4", 194.4375, 98.7500),
+        ("MH5", 155.9375, 112.5000),
+        ("MH6", 70.1875, 146.7500),
+        ("MH7", 97.6875, 152.0000),
         ("MH8", 122.6875, 151.0000),
-        ("MH9", 177.5000, 118.0000),
+        ("MH9", 177.7500, 117.2500),
     ],
 }
 
 
 def mm(value: int) -> float:
-    return round(pcbnew.ToMM(value), 3)
+    result = round(pcbnew.ToMM(value), 3)
+    return 0.0 if result == 0.0 else result
 
 
 def pad_position(pad: pcbnew.PAD) -> tuple[float, float]:
@@ -1035,7 +1041,7 @@ def normalized_pad_signatures(
     signatures: list[tuple[object, ...]] = []
     for pad in footprint.Pads():
         relative = pad.GetFPRelativePosition()
-        relative_y = -mm(relative.y) if flipped else mm(relative.y)
+        relative_y = mm(-relative.y) if flipped else mm(relative.y)
         signatures.append(
             (
                 pad.GetNumber(),
@@ -1064,7 +1070,7 @@ def normalized_diode_graphics(
         if flipped and layer.startswith("B."):
             layer = "F." + layer[2:]
         relative = item.GetFPRelativePosition()
-        relative_y = -mm(relative.y) if flipped else mm(relative.y)
+        relative_y = mm(-relative.y) if flipped else mm(relative.y)
         if isinstance(item, pcbnew.PCB_SHAPE):
             signatures.append(
                 (
@@ -1238,13 +1244,15 @@ def verify_placed_footprint_contracts(
     for diode in diodes:
         if diode.GetLayer() != pcbnew.B_Cu or not diode.IsFlipped():
             diode_errors.append(
-                f"{diode.GetReference()}: ES1B must be mirrored on B.Cu"
+                f"{diode.GetReference()}: 1N4148W must be mirrored on B.Cu"
             )
         if normalized_pad_signatures(diode, normalize_flip=True) != expected_diode_pads:
-            diode_errors.append(f"{diode.GetReference()}: pads differ from owned ES1B footprint")
+            diode_errors.append(
+                f"{diode.GetReference()}: pads differ from owned 1N4148W footprint"
+            )
         if normalized_diode_graphics(diode) != expected_diode_graphics:
             diode_errors.append(
-                f"{diode.GetReference()}: B.Fab/courtyard/B.Silk cathode geometry differs from owned ES1B footprint"
+                f"{diode.GetReference()}: B.Fab/courtyard/B.Silk cathode geometry differs from owned 1N4148W footprint"
             )
 
     switch_source = load_footprint(DEFAULT_FOOTPRINT)
@@ -1656,7 +1664,7 @@ def verify_m1_4_mounting_holes(
     for diode in matrix_footprints(board, "D"):
         body_box = graphics_envelope(diode, {pcbnew.B_Fab})
         if body_box is not None:
-            installed_body_boxes.append((f"{diode.GetReference()} ES1B body", body_box))
+            installed_body_boxes.append((f"{diode.GetReference()} 1N4148W body", body_box))
 
     controller = board.FindFootprintByReference("U1")
     if controller is not None:
@@ -1823,12 +1831,12 @@ def verify_canonical_route_evidence(
             continue
         expected_dsn = (
             f"hardware/kicad/draft/x3-v2/autoroute/"
-            f"kc2_{side}-x3-v2-70-es1b-controller-r3.dsn"
+            f"kc2_{side}-x3-v2-70-1n4148w-p3.dsn"
         )
         expected_session_source_dsn = expected_dsn
         expected_ses = (
             f"hardware/kicad/draft/x3-v2/autoroute/"
-            f"kc2_{side}-x3-v2-70-es1b-controller-r3.ses"
+            f"kc2_{side}-x3-v2-70-1n4148w-p3.ses"
         )
         if record.get("dsn") != expected_dsn:
             errors.append(f"{side}: canonical DSN path mismatch")
@@ -1888,9 +1896,9 @@ def verify_canonical_route_evidence(
             for index, position in enumerate(X3_V2_MOUNTING_POINTS[side], start=1)
         }
         if reports[side]["dsn_mounting_hole_positions_mm"] != expected_positions:
-            errors.append(f"{side}: current DSN P2 mounting geometry mismatch")
+            errors.append(f"{side}: current DSN P3 mounting geometry mismatch")
         if reports[side]["ses_mounting_hole_positions_mm"] != expected_positions:
-            errors.append(f"{side}: reviewed SES P2 mounting geometry mismatch")
+            errors.append(f"{side}: reviewed SES P3 mounting geometry mismatch")
         if set(clearances) != {"global", "kicad_default"} or minimum_clearance is None or minimum_clearance < 300:
             errors.append(f"{side}: DSN global/default clearance must be at least 300 internal units")
         if record.get("dsn_default_clearance_internal_units") != minimum_clearance:
@@ -3379,7 +3387,7 @@ def _physical_scan_metrics(
     diode_records = data.get("diode_records")
     seen_diode_halves: set[str] = set()
     if not isinstance(diode_records, list):
-        errors.append("physical scan ES1B records are missing")
+        errors.append("physical scan 1N4148W records are missing")
         diode_records = []
     for record in diode_records:
         if not isinstance(record, dict) or set(record) != {
@@ -3391,18 +3399,18 @@ def _physical_scan_metrics(
             "minimum_joint_clearance_mm",
             "minimum_housing_clearance_mm",
         }:
-            errors.append("physical scan ES1B evidence contains an incomplete record")
+            errors.append("physical scan 1N4148W evidence contains an incomplete record")
             continue
         half = record.get("half")
         joint = _finite_number(record.get("minimum_joint_clearance_mm"))
         housing = _finite_number(record.get("minimum_housing_clearance_mm"))
         if half not in {"left", "right"} or half in seen_diode_halves:
-            errors.append("physical scan ES1B half is invalid or duplicated")
+            errors.append("physical scan 1N4148W half is invalid or duplicated")
             continue
         seen_diode_halves.add(str(half))
         if (
-            record.get("manufacturer") != "Jingdao"
-            or record.get("mpn") != "ES1B"
+            record.get("manufacturer") != "Diodes Incorporated"
+            or record.get("mpn") != "1N4148W-13-F"
             or record.get("pad1_cathode_polarity_pass") is not True
             or record.get("hand_solder_access_pass") is not True
             or joint is None
@@ -3410,9 +3418,9 @@ def _physical_scan_metrics(
             or housing is None
             or housing < 0.0
         ):
-            errors.append(f"physical scan ES1B {half} result does not pass")
+            errors.append(f"physical scan 1N4148W {half} result does not pass")
     if seen_diode_halves != {"left", "right"}:
-        errors.append("physical scan ES1B records do not cover both halves")
+        errors.append("physical scan 1N4148W records do not cover both halves")
     metrics = {
         "supply_volts": [3.0, 3.3],
         "patterns": ["maximum-same-row", "maximum-same-column"],
@@ -3557,7 +3565,7 @@ def _housing_head_adjacency_contracts(
         or sum(count > 1 for count in per_hole_counts.values()) != 2
     ):
         errors.append(
-            "housing head-adjacency is not the exact P2 reinforcement set of 16 overlaps at 14 holes "
+            "housing head-adjacency is not the exact P3 reinforcement set of 16 overlaps at 14 holes "
             "(2 multi-switch)"
         )
     return contracts, errors
@@ -4256,7 +4264,7 @@ def _housing_metrics(
             errors.append(f"housing mounting-head-adjacent fit {key} does not pass")
     if seen_head_fit_keys != expected_head_fit_keys or len(seen_head_fit_keys) != 32:
         errors.append(
-            "housing mounting-head-adjacent fit does not cover both modes for all 16 P2 reinforcement overlaps"
+            "housing mounting-head-adjacent fit does not cover both modes for all 16 P3 reinforcement overlaps"
         )
 
     deflections = data.get("deflection_records")
@@ -5470,12 +5478,12 @@ def verify_v2_release_candidate(
         checks = {
             "switch count": report["switch_count"] == expected_keys,
             "diode count": report["diode_count"] == expected_keys,
-            "owned ES1B diode footprint": report["diode_footprint_names"]
-            == {"D_ES1B_SMA_HandSolder_C437840"},
-            "locked ES1B diode identity": report["diode_values"]
-            == {"ES1B_Jingdao_C437840_Eleparts9475342"},
-            "ES1B cathode/anode nets": not report["diode_pin_net_errors"],
-            "placed ES1B owned geometry": not report["diode_footprint_geometry_errors"],
+            "owned 1N4148W diode footprint": report["diode_footprint_names"]
+            == {"D_1N4148W_SOD123_HandSolder_DiodesInc"},
+            "locked 1N4148W diode identity": report["diode_values"]
+            == {"1N4148W-13-F_DiodesInc_SOD123"},
+            "1N4148W cathode/anode nets": not report["diode_pin_net_errors"],
+            "placed 1N4148W owned geometry": not report["diode_footprint_geometry_errors"],
             "owned switch footprint": report["switch_footprint_names"]
             == {"SW_Choc_V2_Socket_MX_THT"},
             "placed switch owned geometry": not report["switch_footprint_geometry_errors"],

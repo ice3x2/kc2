@@ -69,12 +69,11 @@ EXPECTED_BUILD_ARTIFACTS = {
 }
 EXPECTED_HARDWARE_COMPATIBILITY = {
     "matrix_diode": {
-        "manufacturer": "Jingdao Microelectronics",
-        "mpn": "ES1B",
-        "lcsc": "C437840",
-        "eleparts_goods_no": "9475342",
+        "manufacturer": "Diodes Incorporated",
+        "mpn": "1N4148W-13-F",
+        "package": "SOD-123",
+        "datasheet": "DS30086 Rev. 31-2",
         "quantity": 70,
-        "package": "SMA",
         "assembly_side": "B.Cu",
         "bottom_view": "mirrored",
         "pad_1": "cathode-row",
@@ -88,7 +87,7 @@ EXPECTED_HARDWARE_COMPATIBILITY = {
     "scan_timing": {
         "recorded_wait_before_inputs_us": 0,
         "recorded_wait_between_outputs_us": 0,
-        "firmware_source_changed_for_es1b": False,
+        "firmware_source_changed_for_1n4148w": False,
         "change_policy": "physical-coupon-required-before-scan-delay-change",
         "physical_stress": {
             "status": "pending",
@@ -311,7 +310,7 @@ def verify_build_evidence(
     )
     if not hardware_compatibility_verified:
         provenance_errors.append(
-            "build evidence ES1B hardware compatibility and pending scan gate are stale or incomplete"
+            "build evidence 1N4148W hardware compatibility and pending scan gate are stale or incomplete"
         )
     if manifest.get("uf2_magic") != EXPECTED_UF2_MAGIC:
         provenance_errors.append("build evidence UF2 magic contract is stale or incomplete")

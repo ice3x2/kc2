@@ -12,19 +12,19 @@ REG/H registration pattern.
   exterior bottom `Z=0.00 mm` to PCB support plane `Z=2.50 mm`.
 - There is no raised key-field bezel. The housing outline is inset `0.10 mm`
   from the PCB outline, preserving the keycap-concealed edge requirement.
-- Clearance-cut perimeter regions and dedicated `2.00 mm` key-load support datum
+- Clearance-cut perimeter regions and dedicated `2.40 mm` key-load support datum
   regions terminate at exactly Z `2.50 mm`, so the PCB has zero nominal
   vertical support gap without screw preload.
 - The generated support set contains exactly one local support for every
   switch: 31 left and 39 right. Each support records its `SW*` source reference,
-  and the measured worst switch-center-to-support-edge distance is `3.5621 mm`
+  and the measured worst switch-center-to-support-edge distance is `4.3902 mm`
   on both halves. Mounting columns are not credited as typing-load supports.
-- A `2.00 mm` diameter foot continues downward from every key-load support
+- A `2.40 mm` diameter foot continues downward from every key-load support
   datum to desk datum Z `-1.00 mm`. The eight left and nine right mounting
   points add coaxial `3.00 mm` desk-contact columns. A separate `3.00 mm`
   column also backs the exact top-side `SW_RST1` actuator at zero gap. The
-  left part therefore has 39 coplanar desk contacts; right parts A/B each have
-  24. Each set is
+  left part therefore has 40 coplanar desk contacts; right parts A/B have
+  25 and 24 respectively. Each set is
   non-collinear and its contact hull contains
   the projected plate centroid, so every printable part has an independent
   no-rocking digital support proof. Feet remain inside the housing silhouette
@@ -38,19 +38,20 @@ REG/H registration pattern.
   penetration across the PCB thickness tolerance and at least `0.24 mm`
   nominal tip clearance. The exact screw MPN, printed pilot, torque, repeated
   service, and full-pattern registration remain physical gates.
-- The exact P2 reinforcement board centers are left `MH1..MH8`: `(112.8625,43.0000)`,
-  `(144.1125,66.2500)`, `(38.6125,111.0000)`, `(63.6125,123.0000)`,
-  `(81.1125,151.7500)`, `(137.3625,153.5000)`, `(166.3625,148.7500)`,
-  `(75.0000,134.0000)`; and right `MH1..MH9`: `(97.1875,43.2500)`, `(72.4375,67.0000)`,
-  `(169.9375,95.2500)`, `(194.9375,98.7500)`, `(156.1875,112.5000)`,
-  `(69.9375,146.2500)`, `(97.4375,152.0000)`, `(122.6875,151.0000)`,
-  `(177.5000,118.0000)`.
-- The P2 pattern requires no analytical-rail relief. The complete rounded-head
+- The exact P3 reinforcement board centers are left `MH1..MH8`: `(112.8625,43.0000)`,
+  `(144.1125,66.2500)`, `(39.3625,111.0000)`, `(63.6125,123.0000)`,
+  `(81.1125,151.7500)`, `(137.3625,153.5000)`, `(165.8625,148.7500)`,
+  `(75.2500,134.0000)`; and right `MH1..MH9`: `(97.1875,43.2500)`, `(72.4375,67.0000)`,
+  `(170.4375,95.2500)`, `(194.4375,98.7500)`, `(155.9375,112.5000)`,
+  `(70.1875,146.7500)`, `(97.6875,152.0000)`, `(122.6875,151.0000)`,
+  `(177.7500,117.2500)`.
+- The P3 pattern requires no analytical-rail relief. The complete rounded-head
   envelope retains at least `1.20 mm` to installed component bodies, `0.85 mm`
   to routed copper/vias, `2.10 mm` to PCB Edge.Cuts, `2.00 mm` to the housing
-  edge, and `3.70 mm` to an unrelated key-load support. Actual limiting values
-  are left `1.6438/0.8750/2.1125/2.0125/4.6758 mm` and right
-  `1.2250/1.1375/2.2500/2.1500/3.7310 mm` in that order.
+  edge, and `2.50 mm` plan clearance to an unrelated key-load support. Actual limiting values
+  are left `1.3375/0.8750/2.1500/2.0500/3.4775 mm` and right
+  `1.2250/0.9607/2.2125/2.1125/2.6514 mm` in that order. The support is below
+  the PCB while the screw head is above it; the physical full-pattern gate remains pending.
 - The mounting service model removes keycaps but leaves switches installed.
   All selected points pass the final `3.00 mm` PH0 driver cylinder and
   provisional `3.00 x 1.20 mm` non-countersunk rounded pan/button-head
@@ -77,7 +78,7 @@ The verified openings cover:
 - Choc V2 socket bodies and solder-fillet envelopes;
 - all switch center and locator NPTH/mechanical-pin continuations;
 - MX electrical pins, pads, solder joints, and lead-trimming access;
-- all 70 Jingdao ES1B SMA maximum lead/body, pad, and solder-fillet envelopes;
+- all 70 Diodes Incorporated `1N4148W-13-F` SOD-123 maximum body, pad, and solder-fillet envelopes;
 - nice!nano/controller socket/service geometry;
 - both `J_BAT1` direct-solder lead/solder envelopes;
 - all three `SW_PWR1` IMMS-12V lead/solder envelopes; and
@@ -96,25 +97,29 @@ board. Protection is derived from exact B.Cu and B.Mask geometry rather than
 declared as a constant; a routed-copper overlap exposed by a B.Mask opening is
 a hard failure.
 
-Every class has at least `0.30 mm` nominal XY clearance. The measured overall
-minimum is `0.3279 mm`; the ES1B openings retain at least `0.3282 mm`. No diode
+Every class has at least `0.30 mm` nominal XY clearance. The generated diode
+openings use `0.35 mm` XY clearance. No diode
 opening breaks the lateral housing perimeter: the limiting opening leaves
-`1.0250 mm` of housing material on both sides, against the `0.85 mm` release
+`1.5250 mm` of housing material on both sides, against the `0.85 mm` release
 gate. The
 vertical model uses the official Kailh CPG135001S30 maximum socket depth
 `2.30 mm` plus `0.10 mm` assembly allowance, leaving `0.10 mm` to the
-plate bottom. It uses Jingdao's ES1B maximum `5.20 x 2.70 x 2.20 mm`
-lead/body envelope plus `0.30 mm` solder allowance. This consumes the full
-`2.50 mm` plate depth, but the feet provide `1.00 mm` nominal diode-to-desk
-clearance and `0.70 mm` after the documented `0.30 mm` print allowance.
+plate bottom. It uses Diodes Incorporated's SOD-123 maximum
+`2.85 x 1.70 x 1.35 mm` body and `3.85 mm` terminal span plus `0.30 mm`
+solder allowance. The feet provide `1.85 mm` nominal diode-to-desk clearance
+and `1.55 mm` after the documented `0.30 mm` print allowance. The Choc socket
+controls the overall open-component figures at `1.10 mm` nominal and `0.80 mm`
+after print tolerance.
 Maximum battery thickness/swelling, socket/controller stack clearance,
 insulation, retention, lead bend, strain relief, and J_BAT1/IMMS solder
 protrusion remain physical gates above the carrier and at the service openings.
 
 - Kailh drawing:
   <https://www.kailhswitch.com/uploads/15927/files/CPG135001S30.pdf>
-- Jingdao ES1B / LCSC C437840 datasheet:
-  <https://datasheet.lcsc.com/datasheet/pdf/2343098076327222563a84c9a80dbd7d.pdf?productCode=C437840>
+- Diodes Incorporated 1N4148W product page:
+  <https://www.diodes.com/part/view/1N4148W/>
+- Diodes Incorporated DS30086 Rev. 31-2 datasheet:
+  <https://www.diodes.com/datasheet/download/1N4148W.pdf>
 
 Bottom copper tracks and tented vias do not protrude below the PCB support
 plane. Their electrical/mask state remains covered by the V2 board verifier.

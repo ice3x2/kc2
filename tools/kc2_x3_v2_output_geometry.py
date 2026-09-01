@@ -145,7 +145,7 @@ def _footprint_texts(
         thickness_node = _child(font, "thickness") if font else None
         thickness = _number(thickness_node[1]) if thickness_node and len(thickness_node) > 1 else 0.0
         local_center = _xy(local_at)
-        local_rotation = _angle(local_at)
+        local_rotation = round((rotation + _angle(local_at)) % 360.0, 6)
         texts.append(
             {
                 "kind": str(graphic[1]),
@@ -155,7 +155,7 @@ def _footprint_texts(
                 "local_center": local_center,
                 "center": _global_point(local_center, origin, rotation),
                 "local_rotation": local_rotation,
-                "rotation": round((rotation + local_rotation) % 360.0, 6),
+                "rotation": local_rotation,
                 "size": tuple(round(value, 6) for value in size),
                 "thickness": round(thickness, 6),
             }
@@ -181,7 +181,9 @@ def parse_board(path: Path) -> dict[str, object]:
             pads: list[dict[str, object]] = []
             for pad_node in _children(item, "pad"):
                 local_at = _child(pad_node, "at")
-                total_rotation = (geometry_rotation + _angle(local_at)) % 360.0
+                # KiCad serializes the pad angle in board coordinates even though
+                # the pad position remains footprint-local (and mirrored on B.Cu).
+                total_rotation = _angle(local_at) % 360.0
                 size = _xy(_child(pad_node, "size"))
                 if round(total_rotation % 180.0, 6) in {90.0}:
                     size = (size[1], size[0])
@@ -389,11 +391,12 @@ def build_board_bom(
     add(
         "matrix_diode",
         diode_refs,
-        "Jingdao ES1B / LCSC C437840 / Eleparts 9475342",
-        manufacturer="Jingdao Microelectronics",
-        manufacturer_part_number="ES1B",
-        lcsc_part_number="C437840",
-        eleparts_goods_number="9475342",
+        "Diodes Inc 1N4148W-13-F / LCSC C112342 / Eleparts 3417687",
+        manufacturer="Diodes Incorporated",
+        manufacturer_part_number="1N4148W-13-F",
+        lcsc_part_number="C112342",
+        jlcpcb_part_number="C526199",
+        eleparts_goods_number="3417687",
         assembly_side="bottom",
         polarity="pad_1_cathode_band",
     )
@@ -506,7 +509,7 @@ def build_jlcpcb_pcba_quote(
     placements: list[dict[str, object]] = []
     for reference in diode_refs:
         footprint = footprints[reference]
-        if footprint["name"] != "D_ES1B_SMA_HandSolder_C437840":
+        if footprint["name"] != "D_1N4148W_SOD123_HandSolder_DiodesInc":
             raise ValueError(f"{reference}: unexpected diode footprint {footprint['name']!r}")
         center = tuple(footprint["center"])
         placements.append(
@@ -545,10 +548,10 @@ def build_jlcpcb_pcba_quote(
         "order_ready": False,
         "line_items": [
             {
-                "comment": "Jingdao ES1B",
+                "comment": "Diodes Inc 1N4148W-13-F",
                 "designators": diode_refs,
-                "footprint": "SMA",
-                "lcsc_part_number": "C437840",
+                "footprint": "SOD-123",
+                "lcsc_part_number": "C112342",
             },
             {
                 "comment": "Kailh CPG135001S30 Choc hot-swap socket",

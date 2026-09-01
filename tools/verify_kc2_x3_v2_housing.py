@@ -67,24 +67,42 @@ COLLISION_CLASSES = {
 # separate from generator constants so a coupled generator/manifest mutation
 # cannot manufacture a larger clearance result.
 VERIFIED_STRUCTURAL_PLATE_HEIGHT_MM = 2.50
-VERIFIED_ES1B_DEPTH_MAX_MM = 2.20
-VERIFIED_ES1B_SOLDER_ALLOWANCE_MM = 0.30
+VERIFIED_DIODE_DEPTH_MAX_MM = 1.35
+VERIFIED_DIODE_SOLDER_ALLOWANCE_MM = 0.30
 VERIFIED_DESK_STANDOFF_MM = 1.00
 VERIFIED_DESK_STANDOFF_PRINT_TOLERANCE_MM = 0.30
-VERIFIED_ES1B_PLATE_BOTTOM_CLEARANCE_MM = (
+VERIFIED_DIODE_PLATE_BOTTOM_CLEARANCE_MM = (
     VERIFIED_STRUCTURAL_PLATE_HEIGHT_MM
-    - VERIFIED_ES1B_DEPTH_MAX_MM
-    - VERIFIED_ES1B_SOLDER_ALLOWANCE_MM
+    - VERIFIED_DIODE_DEPTH_MAX_MM
+    - VERIFIED_DIODE_SOLDER_ALLOWANCE_MM
 )
-VERIFIED_ES1B_NOMINAL_DESK_CLEARANCE_MM = (
-    VERIFIED_ES1B_PLATE_BOTTOM_CLEARANCE_MM + VERIFIED_DESK_STANDOFF_MM
+VERIFIED_DIODE_NOMINAL_DESK_CLEARANCE_MM = (
+    VERIFIED_DIODE_PLATE_BOTTOM_CLEARANCE_MM + VERIFIED_DESK_STANDOFF_MM
 )
-VERIFIED_ES1B_WORST_DESK_CLEARANCE_MM = (
-    VERIFIED_ES1B_NOMINAL_DESK_CLEARANCE_MM
+VERIFIED_DIODE_WORST_DESK_CLEARANCE_MM = (
+    VERIFIED_DIODE_NOMINAL_DESK_CLEARANCE_MM
     - VERIFIED_DESK_STANDOFF_PRINT_TOLERANCE_MM
 )
-VERIFIED_OPEN_COMPONENT_NOMINAL_DESK_CLEARANCE_MM = VERIFIED_ES1B_NOMINAL_DESK_CLEARANCE_MM
-VERIFIED_OPEN_COMPONENT_MINIMUM_DESK_CLEARANCE_MM = VERIFIED_ES1B_WORST_DESK_CLEARANCE_MM
+VERIFIED_CHOC_DEPTH_MAX_MM = 2.30
+VERIFIED_CHOC_ASSEMBLY_ALLOWANCE_MM = 0.10
+VERIFIED_CHOC_NOMINAL_DESK_CLEARANCE_MM = (
+    VERIFIED_STRUCTURAL_PLATE_HEIGHT_MM
+    - VERIFIED_CHOC_DEPTH_MAX_MM
+    - VERIFIED_CHOC_ASSEMBLY_ALLOWANCE_MM
+    + VERIFIED_DESK_STANDOFF_MM
+)
+VERIFIED_CHOC_WORST_DESK_CLEARANCE_MM = (
+    VERIFIED_CHOC_NOMINAL_DESK_CLEARANCE_MM
+    - VERIFIED_DESK_STANDOFF_PRINT_TOLERANCE_MM
+)
+VERIFIED_OPEN_COMPONENT_NOMINAL_DESK_CLEARANCE_MM = min(
+    VERIFIED_DIODE_NOMINAL_DESK_CLEARANCE_MM,
+    VERIFIED_CHOC_NOMINAL_DESK_CLEARANCE_MM,
+)
+VERIFIED_OPEN_COMPONENT_MINIMUM_DESK_CLEARANCE_MM = min(
+    VERIFIED_DIODE_WORST_DESK_CLEARANCE_MM,
+    VERIFIED_CHOC_WORST_DESK_CLEARANCE_MM,
+)
 VERIFIED_RESET_CENTERS_MM = {
     "left": [126.0625, 63.4500],
     "right": [84.0500, 63.4500],
@@ -97,23 +115,23 @@ VERIFIED_MOUNTING_COORDINATES_MM = {
     "left": [
         [112.8625, 43.0000],
         [144.1125, 66.2500],
-        [38.6125, 111.0000],
+        [39.3625, 111.0000],
         [63.6125, 123.0000],
         [81.1125, 151.7500],
         [137.3625, 153.5000],
-        [166.3625, 148.7500],
-        [75.0000, 134.0000],
+        [165.8625, 148.7500],
+        [75.2500, 134.0000],
     ],
     "right": [
         [97.1875, 43.2500],
         [72.4375, 67.0000],
-        [169.9375, 95.2500],
-        [194.9375, 98.7500],
-        [156.1875, 112.5000],
-        [69.9375, 146.2500],
-        [97.4375, 152.0000],
+        [170.4375, 95.2500],
+        [194.4375, 98.7500],
+        [155.9375, 112.5000],
+        [70.1875, 146.7500],
+        [97.6875, 152.0000],
         [122.6875, 151.0000],
-        [177.5000, 118.0000],
+        [177.7500, 117.2500],
     ],
 }
 
@@ -142,12 +160,12 @@ VERIFIED_MOUNTING_PART_DISTRIBUTION = {
     "right": {"part_a": 5, "part_b": 4},
 }
 VERIFIED_DISTRIBUTED_SUPPORT_COUNTS = {"left": 31, "right": 39}
-VERIFIED_PRIMARY_SUPPORT_LOAD_SPAN_MM = {"left": 3.5621, "right": 3.5621}
+VERIFIED_PRIMARY_SUPPORT_LOAD_SPAN_MM = {"left": 4.3902, "right": 4.3902}
 VERIFIED_MOUNTING_MINIMUM_COMPONENT_CLEARANCE_MM = 1.20
 VERIFIED_MOUNTING_MINIMUM_COPPER_CLEARANCE_MM = 0.85
 VERIFIED_MOUNTING_MINIMUM_BOARD_EDGE_CLEARANCE_MM = 2.10
 VERIFIED_MOUNTING_MINIMUM_HOUSING_EDGE_CLEARANCE_MM = 2.00
-VERIFIED_MOUNTING_MINIMUM_KEY_SUPPORT_CLEARANCE_MM = 3.70
+VERIFIED_MOUNTING_MINIMUM_KEY_SUPPORT_CLEARANCE_MM = 2.50
 VERIFIED_MOUNTING_NPTH_DIAMETER_MM = 1.60
 VERIFIED_MOUNTING_SUPPORT_LAND_DIAMETER_MM = 3.00
 VERIFIED_MOUNTING_PILOT_DIAMETER_MM = 1.10
@@ -939,11 +957,11 @@ def verify_report(report: dict[str, Any]) -> list[str]:
             )
             if not expected:
                 errors.append(f"{side}: invalid post dimensions/Z for {post.get('id')}")
-            if float(post.get("load_point_to_support_edge_mm", 99.0)) > (
+            if float(post.get("effective_load_point_to_support_edge_mm", 99.0)) > (
                 generator.MAX_LOAD_POINT_TO_SUPPORT_MM + 1e-6
             ):
                 errors.append(
-                    f"{side}: {post.get('switch_ref')} dedicated support is too far from its load point"
+                    f"{side}: {post.get('switch_ref')} support/rail network is too far from its load point"
                 )
         if data["maximum_load_point_to_support_mm"] > generator.MAX_LOAD_POINT_TO_SUPPORT_MM:
             errors.append(
@@ -1237,7 +1255,7 @@ def verify_report(report: dict[str, Any]) -> list[str]:
             for field, minimum in stronger_clearances.items():
                 if float(hole.get(field, -99.0)) + 1e-6 < minimum:
                     errors.append(
-                        f"{side}:{expected_ref}: P2 clearance {field} is below {minimum:.2f} mm"
+                        f"{side}:{expected_ref}: P3 clearance {field} is below {minimum:.2f} mm"
                     )
             if hole.get("head_reserve_mm") != VERIFIED_MOUNTING_HEAD_RESERVE_MM:
                 errors.append(f"{side}:{expected_ref}: head reserve contract is wrong")
@@ -1332,15 +1350,23 @@ def verify_report(report: dict[str, Any]) -> list[str]:
         diode = cutouts.get("diode_body_pads_fillets", {})
         if diode.get("manufacturer") != generator.DIODE_MANUFACTURER:
             errors.append(f"{side}: wrong diode manufacturer")
-        if diode.get("mpn") != generator.DIODE_MPN or diode.get("lcsc") != generator.DIODE_LCSC:
-            errors.append(f"{side}: wrong ES1B ordering identity")
-        if diode.get("official_body_depth_max_mm") != VERIFIED_ES1B_DEPTH_MAX_MM:
+        if (
+            diode.get("mpn") != generator.DIODE_MPN
+            or diode.get("eleparts_goods_no") != generator.DIODE_ELEPARTS_GOODS_NO
+        ):
+            errors.append(f"{side}: wrong 1N4148W ordering identity")
+        if diode.get("official_body_depth_max_mm") != VERIFIED_DIODE_DEPTH_MAX_MM:
             errors.append(f"{side}: wrong official diode depth")
         if diode.get("official_plan_envelope_max_mm") != list(
             generator.DIODE_OFFICIAL_PLAN_ENVELOPE_MAX_MM
         ):
-            errors.append(f"{side}: wrong official ES1B plan envelope")
-        if diode.get("solder_fillet_allowance_mm") != VERIFIED_ES1B_SOLDER_ALLOWANCE_MM:
+            errors.append(f"{side}: wrong official 1N4148W plan envelope")
+        if (
+            diode.get("official_terminal_span_max_mm")
+            != generator.DIODE_OFFICIAL_TERMINAL_SPAN_MAX_MM
+        ):
+            errors.append(f"{side}: wrong official 1N4148W terminal span")
+        if diode.get("solder_fillet_allowance_mm") != VERIFIED_DIODE_SOLDER_ALLOWANCE_MM:
             errors.append(f"{side}: wrong diode solder-fillet allowance")
         if float(diode.get("minimum_plate_bottom_clearance_mm", -99.0)) < -1e-6:
             errors.append(f"{side}: diode plate-bottom clearance is negative")
@@ -1348,19 +1374,19 @@ def verify_report(report: dict[str, Any]) -> list[str]:
             errors.append(f"{side}: diode desk clearance is below 0.50 mm")
         if not math.isclose(
             float(diode.get("minimum_plate_bottom_clearance_mm", -99.0)),
-            VERIFIED_ES1B_PLATE_BOTTOM_CLEARANCE_MM,
+            VERIFIED_DIODE_PLATE_BOTTOM_CLEARANCE_MM,
             abs_tol=1e-9,
         ):
             errors.append(f"{side}: diode plate-bottom clearance formula is stale")
         if not math.isclose(
             float(diode.get("nominal_desk_clearance_mm", -99.0)),
-            VERIFIED_ES1B_NOMINAL_DESK_CLEARANCE_MM,
+            VERIFIED_DIODE_NOMINAL_DESK_CLEARANCE_MM,
             abs_tol=1e-9,
         ):
             errors.append(f"{side}: diode nominal desk-clearance formula is stale")
         if not math.isclose(
             float(diode.get("minimum_desk_clearance_mm", -99.0)),
-            VERIFIED_ES1B_WORST_DESK_CLEARANCE_MM,
+            VERIFIED_DIODE_WORST_DESK_CLEARANCE_MM,
             abs_tol=1e-9,
         ):
             errors.append(f"{side}: diode worst-case desk-clearance formula is stale")

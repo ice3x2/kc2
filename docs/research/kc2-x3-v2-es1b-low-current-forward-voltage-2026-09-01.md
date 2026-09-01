@@ -2,6 +2,8 @@
 
 Date: 2026-09-01
 
+> **2026-09-01 supersession:** This is historical ES1B analysis. Active V2 uses exact Diodes Incorporated `1N4148W-13-F` SOD-123 and P3 geometry; `CON-ARCH-004` is authoritative. Any selected/current/preferred ES1B wording below describes the superseded ES1B snapshot only.
+
 Active target: `kc2-x3-v2`
 
 Scope requirement: `CON-ARCH-004`, especially AC-7 and AC-9
@@ -14,9 +16,9 @@ This note records the manufacturer-data comparison and analytical DC simulation 
 
 The `0.92 V` value is specified at `1 A`; it is not the expected drop at the KC2 row current of approximately `0.20 mA` to `0.25 mA`. Official curves and the Diodes Incorporated manufacturer SPICE model consistently indicate a much lower typical drop at low current. An analytical simulation of the current board topology passes the nRF52840 input-high threshold at both 3.0 V and 3.3 V, including the maximum five simultaneous keys in one active column.
 
-This is not a formal worst-case guarantee for the selected Jingdao `ES1B` / LCSC `C437840`. Jingdao, Vishay, and onsemi do not publish a guaranteed maximum forward voltage at the actual sub-milliampere operating point. The Diodes Incorporated SPICE model describes that manufacturer's device, not the Jingdao production lot. Therefore no diode or firmware change is justified by the available evidence, but `CON-ARCH-004 AC-9` remains open and still requires populated maximum-row and maximum-column press/release testing at 3.0 V and 3.3 V.
+For the historical ES1B candidate, this was not a formal worst-case guarantee for Jingdao `ES1B` / LCSC `C437840`. Jingdao, Vishay, and onsemi do not publish a guaranteed maximum forward voltage at the actual sub-milliampere operating point. The Diodes Incorporated SPICE model describes that manufacturer's device, not the Jingdao production lot. The analysis therefore did not justify a firmware change; the current `CON-ARCH-004 AC-9` still requires populated maximum-row and maximum-column press/release testing at 3.0 V and 3.3 V for the active diode.
 
-## Current KC2 electrical contract
+## Historical ES1B electrical contract and retained firmware invariant
 
 The active firmware overlays preserve:
 
@@ -116,7 +118,7 @@ The official evidence supports these engineering conclusions:
 1. The claimed `0.92 V` to `0.95 V` drop is a high-current value and is not representative of the approximately `0.2 mA` KC2 scan current.
 2. Independent manufacturer curves and the official Diodes Incorporated model support a typical low-current drop near `0.4 V`, not near `0.92 V`.
 3. The conservative five-key calculation still has only about `0.10 V` to `0.14 V` guaranteed-threshold margin with the Diodes Incorporated typical model. This is adequate analytical evidence to retain the present design, but not enough to waive process, temperature, lot, contact, leakage, and dynamic scan testing.
-4. Generic `ES1B` markings do not make different manufacturers electrically identical. Vishay, onsemi, and Diodes Incorporated data are comparison evidence only; the controlled BOM remains Jingdao `ES1B`, LCSC `C437840`, Eleparts `9475342`.
+4. Generic `ES1B` markings do not make different manufacturers electrically identical. Vishay, onsemi, and Diodes Incorporated data were comparison evidence only; the controlled BOM at the time was Jingdao `ES1B`, LCSC `C437840`, Eleparts `9475342`.
 5. No firmware scan-delay change should be made before the unchanged zero-wait baseline is measured, as required by `CON-ARCH-004 AC-9`.
 
 The populated coupon or first article should record, for both halves:
@@ -138,7 +140,7 @@ The following price survey was captured on 2026-09-01 KST for budget planning. P
 
 | Candidate | Displayed terms | Approximate five-keyboard material cost | Assessment |
 | --- | --- | ---: | --- |
-| [Jingdao ES1B, Eleparts goods 9475342](https://www.eleparts.co.kr/goods/view?no=9475342) | Exact selected manufacturer and part; SMA; stock `114,900`; MOQ/sales unit `50`; average dispatch `9` working days; `21.82 KRW` before VAT / about `24 KRW` with VAT per piece | `350 x 24 = 8,400 KRW`; approximately `11,400 KRW` with the site's ordinary sub-60,000 KRW domestic shipping | **Preferred budget source.** It preserves the controlled Jingdao `ES1B` / LCSC `C437840` / Eleparts `9475342` identity and 350 is already a valid multiple of 50. |
+| [Jingdao ES1B, Eleparts goods 9475342](https://www.eleparts.co.kr/goods/view?no=9475342) | Exact selected manufacturer and part for the historical ES1B candidate; SMA; stock `114,900`; MOQ/sales unit `50`; average dispatch `9` working days; `21.82 KRW` before VAT / about `24 KRW` with VAT per piece | `350 x 24 = 8,400 KRW`; approximately `11,400 KRW` with the site's ordinary sub-60,000 KRW domestic shipping | **Historical preferred budget source.** It preserved the then-controlled Jingdao `ES1B` / LCSC `C437840` / Eleparts `9475342` identity and 350 was a valid multiple of 50. |
 | [JSCJ ES1B(SMAG), goods 12614916](https://www.eleparts.co.kr/goods/view?no=12614916) | JSCJ; package listed as `SMAG`; stock `2,520`; MOQ/sales unit `20`; approximately `49 KRW` including VAT each | Must buy `360`; approximately `17,640 KRW` before shipping | Cheap, but `SMAG` drawing and terminal geometry must be compared with the owned SMA footprint before substitution. Not approved by the current BOM. |
 | [Diodes Inc. ES1B-13-F, goods 18843678](https://www.eleparts.co.kr/goods/view?no=18843678) | Diodes Incorporated; DO-214AC/SMA; stock `180,000`; displayed about `309 KRW` including VAT each, but current MOQ/sales unit is `5,000` | Approximately `1,545,000 KRW` minimum purchase | Electrically well documented and has an official SPICE model, but the listed minimum quantity is uneconomical. |
 | [Vishay ES1B-E3/5AT, goods 3409082](https://www.eleparts.co.kr/goods/view?no=3409082) | Vishay; DO-214AC/SMA; stock `320`; MOQ/sales unit `10`; approximately `561 KRW` including VAT each | `350 x 561 = 196,350 KRW` | Controlled manufacturer source, but far more expensive and available stock is ten pieces short of the five-keyboard requirement. |

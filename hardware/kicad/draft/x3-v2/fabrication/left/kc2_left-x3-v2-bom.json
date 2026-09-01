@@ -9,7 +9,7 @@
   "variant": "x3-v2",
   "product": "left",
   "source_board": "hardware\\kicad\\draft\\x3-v2\\kc2_left-x3-v2\\kc2_left-x3-v2.kicad_pcb",
-  "source_board_sha256": "92c46f364f0cc647928029f6b42a54abfcc94485a491e5a6177e84cc7800d26f",
+  "source_board_sha256": "7de01a7f0c60585c1845ab3ad17c2b7d18e17ae8c2090a3594e6edf0cbf9d7cf",
   "order_ready": false,
   "line_items": [
     {
@@ -92,11 +92,12 @@
         "D30",
         "D31"
       ],
-      "identity": "Jingdao ES1B / LCSC C437840 / Eleparts 9475342",
-      "manufacturer": "Jingdao Microelectronics",
-      "manufacturer_part_number": "ES1B",
-      "lcsc_part_number": "C437840",
-      "eleparts_goods_number": "9475342",
+      "identity": "Diodes Inc 1N4148W-13-F / LCSC C112342 / Eleparts 3417687",
+      "manufacturer": "Diodes Incorporated",
+      "manufacturer_part_number": "1N4148W-13-F",
+      "lcsc_part_number": "C112342",
+      "jlcpcb_part_number": "C526199",
+      "eleparts_goods_number": "3417687",
       "assembly_side": "bottom",
       "polarity": "pad_1_cathode_band"
     },

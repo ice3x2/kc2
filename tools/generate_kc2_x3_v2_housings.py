@@ -43,7 +43,7 @@ PCB_THICKNESS_MM = 1.60
 OUTLINE_INSET_MM = 0.10
 RAIL_INSET_MM = 0.10
 RAIL_WIDTH_MM = 0.65
-POST_DIAMETER_MM = 2.00
+POST_DIAMETER_MM = 2.40
 POST_CLEARANCE_MM = 0.30
 FILLET_ALLOWANCE_MM = 0.30
 COMPONENT_MINIMUM_CLEARANCE_MM = 0.30
@@ -53,17 +53,15 @@ MIN_DIODE_HOUSING_PERIMETER_LAND_MM = 0.85
 MIN_SERVICE_HOUSING_PERIMETER_LAND_MM = 0.85
 CHOC_SOCKET_OFFICIAL_BODY_DEPTH_MAX_MM = 2.30
 CHOC_SOCKET_ASSEMBLY_ALLOWANCE_MM = 0.10
-DIODE_MANUFACTURER = "Jingdao Microelectronics"
-DIODE_MPN = "ES1B"
-DIODE_LCSC = "C437840"
-DIODE_OFFICIAL_BODY_DEPTH_MAX_MM = 2.20
-DIODE_OFFICIAL_PLAN_ENVELOPE_MAX_MM = (5.20, 2.70)
+DIODE_MANUFACTURER = "Diodes Incorporated"
+DIODE_MPN = "1N4148W-13-F"
+DIODE_ELEPARTS_GOODS_NO = "3417687"
+DIODE_OFFICIAL_BODY_DEPTH_MAX_MM = 1.35
+DIODE_OFFICIAL_PLAN_ENVELOPE_MAX_MM = (2.85, 1.70)
+DIODE_OFFICIAL_TERMINAL_SPAN_MAX_MM = 3.85
 DIODE_SOLDER_FILLET_DEPTH_ALLOWANCE_MM = 0.30
 CHOC_SOCKET_OFFICIAL_SOURCE = "https://www.kailhswitch.com/uploads/15927/files/CPG135001S30.pdf"
-DIODE_OFFICIAL_SOURCE = (
-    "https://datasheet.lcsc.com/datasheet/pdf/2343098076327222563a84c9a80dbd7d.pdf"
-    "?productCode=C437840"
-)
+DIODE_OFFICIAL_SOURCE = "https://www.diodes.com/datasheet/download/1N4148W.pdf"
 TRACK_CLEARANCE_MM = 0.15
 BATTERY_ACCESS_CLEARANCE_MM = 0.70
 BATTERY_REFERENCE = "BAT1"
@@ -91,7 +89,7 @@ RESET_REFERENCE = "SW_RST1"
 RESET_BODY_ENVELOPE_MM = (6.10, 3.70)
 RESET_ACTUATOR_ENVELOPE_MM = (2.70, 1.30)
 RESET_LOCAL_SUPPORT_DIAMETER_MM = 3.00
-MAX_LOAD_POINT_TO_SUPPORT_MM = 3.60
+MAX_LOAD_POINT_TO_SUPPORT_MM = 4.40
 PRINT_VOLUME_LIMIT_MM = 150.0
 RIGHT_SPLIT_CLEARANCE_MM = 0.20
 PUZZLE_CAPTURE_FEATURE_COUNT = 2
@@ -134,29 +132,29 @@ MOUNTING_MINIMUM_TIP_CLEARANCE_MM = (
 )
 SWITCH_SERVICE_BODY_ENVELOPE_MM = 15.60
 EXPECTED_DISTRIBUTED_SUPPORT_COUNTS = {"left": 31, "right": 39}
-EXPECTED_PRIMARY_SUPPORT_LOAD_SPAN_MM = {"left": 3.5621, "right": 3.5621}
-KEY_LOAD_SUPPORT_TO_MOUNT_CLEARANCE_MM = 1.00
+EXPECTED_PRIMARY_SUPPORT_LOAD_SPAN_MM = {"left": 4.3902, "right": 4.3902}
+KEY_LOAD_SUPPORT_TO_MOUNT_CLEARANCE_MM = 2.50
 MOUNTING_HOLE_COORDINATES_MM = {
     "left": (
         ("MH1", 112.8625, 43.0000),
         ("MH2", 144.1125, 66.2500),
-        ("MH3", 38.6125, 111.0000),
+        ("MH3", 39.3625, 111.0000),
         ("MH4", 63.6125, 123.0000),
         ("MH5", 81.1125, 151.7500),
         ("MH6", 137.3625, 153.5000),
-        ("MH7", 166.3625, 148.7500),
-        ("MH8", 75.0000, 134.0000),
+        ("MH7", 165.8625, 148.7500),
+        ("MH8", 75.2500, 134.0000),
     ),
     "right": (
         ("MH1", 97.1875, 43.2500),
         ("MH2", 72.4375, 67.0000),
-        ("MH3", 169.9375, 95.2500),
-        ("MH4", 194.9375, 98.7500),
-        ("MH5", 156.1875, 112.5000),
-        ("MH6", 69.9375, 146.2500),
-        ("MH7", 97.4375, 152.0000),
+        ("MH3", 170.4375, 95.2500),
+        ("MH4", 194.4375, 98.7500),
+        ("MH5", 155.9375, 112.5000),
+        ("MH6", 70.1875, 146.7500),
+        ("MH7", 97.6875, 152.0000),
         ("MH8", 122.6875, 151.0000),
-        ("MH9", 177.5000, 118.0000),
+        ("MH9", 177.7500, 117.2500),
     ),
 }
 
@@ -517,10 +515,9 @@ def extract_board(pcbnew: Any, path: Path) -> dict[str, Any]:
             continue
 
         if ref.startswith("D") and ref[1:].isdigit():
-            # The housing keepout follows the official Jingdao maximum lead/body
-            # envelope rather than nominal Fab/Silk graphics.  The manufacturer
-            # land pattern is represented by the actual 1.80 mm square pads
-            # below, including the separate solder-fillet allowance.
+            # The housing keepout follows the official Diodes Incorporated
+            # maximum body envelope rather than nominal Fab/Silk graphics. The
+            # KC2 enlarged hand-solder pads below carry their own fillet allowance.
             classes["diode_body_pads_fillets"].append(
                 {
                     "kind": "oriented_box",
@@ -1346,7 +1343,7 @@ def choose_support_posts(
     raw_bounds: tuple[float, float, float, float],
 ) -> list[dict[str, Any]]:
     radius = POST_DIAMETER_MM / 2.0
-    # A center inside this inset guarantees the complete Ø2.00 support disk
+    # A center inside this inset guarantees the complete support disk
     # plus the declared 0.30 mm component/cutout reserve remains structural.
     # The former implementation inset once and then required the complete disk
     # inside that already-inset region, unintentionally double-counting the
@@ -1396,6 +1393,8 @@ def choose_support_posts(
             )
         x, y = selected
         load_distance = max(0.0, math.hypot(x - target_x, y - target_y) - radius)
+        rail_distance = float(shp["Point"](target_x, target_y).distance(rail))
+        effective_load_distance = min(load_distance, rail_distance)
         posts.append(
             {
                 "id": f"{side.upper()}-{switch['ref']}-LOAD",
@@ -1410,6 +1409,11 @@ def choose_support_posts(
                 "target_x_mm": round(target_x, 4),
                 "target_y_mm": round(target_y, 4),
                 "load_point_to_support_edge_mm": round(load_distance, 4),
+                "load_point_to_perimeter_rail_mm": round(rail_distance, 4),
+                "effective_load_point_to_support_edge_mm": round(
+                    effective_load_distance,
+                    4,
+                ),
             }
         )
 
@@ -1420,11 +1424,18 @@ def choose_support_posts(
             f"{side}: dedicated key-load support bijection failed "
             f"({len(posts)} posts for {len(expected_refs)} switches)"
         )
-    worst = max(post["load_point_to_support_edge_mm"] for post in posts)
+    worst_post = max(
+        posts,
+        key=lambda post: post["effective_load_point_to_support_edge_mm"],
+    )
+    worst = worst_post["effective_load_point_to_support_edge_mm"]
     if worst > MAX_LOAD_POINT_TO_SUPPORT_MM + 1e-9:
         raise RuntimeError(
-            f"{side}: dedicated key-load support span {worst:.4f} mm exceeds "
-            f"{MAX_LOAD_POINT_TO_SUPPORT_MM:.2f} mm"
+            f"{side}: dedicated key-load support {worst_post['switch_ref']} span "
+            f"{worst:.4f} mm exceeds "
+            f"{MAX_LOAD_POINT_TO_SUPPORT_MM:.2f} mm "
+            f"(disk={worst_post['load_point_to_support_edge_mm']}; "
+            f"rail={worst_post['load_point_to_perimeter_rail_mm']})"
         )
     return posts
 
@@ -1813,7 +1824,7 @@ def mounting_system_manifest(
         and set(support_refs) == set(expected_support_refs)
         and all(post.get("category") == "key_load" for post in plan["support_posts"])
         and max(
-            post.get("load_point_to_support_edge_mm", float("inf"))
+            post.get("effective_load_point_to_support_edge_mm", float("inf"))
             for post in plan["support_posts"]
         )
         <= MAX_LOAD_POINT_TO_SUPPORT_MM
@@ -1906,7 +1917,10 @@ def build_right_split_plan(shp: dict[str, Any], plan: dict[str, Any]) -> dict[st
     # controller crop changes the board-local minimum Y.  Offsets from the
     # housing top would silently move the joint relative to the fixed key/MH
     # datum after CON-ARCH-006 AC-11.
-    for target_board_y in (113.10, 125.60):
+    # The enlarged P3 one-per-key desk contacts leave an exact collision-free
+    # second capture lane at board Y=125.50 mm; the historical 125.60 mm lane
+    # touches a support disk after the 2.40 mm support enlargement.
+    for target_board_y in (113.10, 125.50):
         target_y = target_board_y - float(plan["raw_bounds"][1])
         found = False
         for y_offset in (
@@ -2142,9 +2156,10 @@ def component_cutout_manifest(plan: dict[str, Any]) -> dict[str, Any]:
         "diode_body_pads_fillets": {
             "manufacturer": DIODE_MANUFACTURER,
             "mpn": DIODE_MPN,
-            "lcsc": DIODE_LCSC,
+            "eleparts_goods_no": DIODE_ELEPARTS_GOODS_NO,
             "official_body_depth_max_mm": DIODE_OFFICIAL_BODY_DEPTH_MAX_MM,
             "official_plan_envelope_max_mm": list(DIODE_OFFICIAL_PLAN_ENVELOPE_MAX_MM),
+            "official_terminal_span_max_mm": DIODE_OFFICIAL_TERMINAL_SPAN_MAX_MM,
             "solder_fillet_allowance_mm": DIODE_SOLDER_FILLET_DEPTH_ALLOWANCE_MM,
             "modeled_max_depth_mm": round(
                 DIODE_OFFICIAL_BODY_DEPTH_MAX_MM + DIODE_SOLDER_FILLET_DEPTH_ALLOWANCE_MM,
@@ -2458,7 +2473,7 @@ def generate_outputs(output_dir: Path, kicad_python: Path) -> Path:
             ),
             "minimum_open_component_to_desk_clearance_basis": (
                 "minimum controlled post-print clearance beneath bottom-side Choc socket and "
-                "ES1B envelopes; BAT1 is above the carrier and has no lower-housing body cutout"
+                "1N4148W SOD-123 envelopes; BAT1 is above the carrier and has no lower-housing body cutout"
             ),
             "reset_local_support": plan["reset_local_support"],
             "desk_contacts": plan["desk_contacts"],

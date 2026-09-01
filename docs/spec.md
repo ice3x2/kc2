@@ -32,7 +32,7 @@ KC2는 KC1 핸드와이어링 키보드의 배열 철학과 결합/분리 사용
 
 이 절의 promoted main path와 fabrication ZIP은 검증된 historical `kc2-x3` 전용이다. 활성 `kc2-x3-v2`는 `hardware/kicad/draft/x3-v2/`에 있으며, promoted X3 Gerber/ZIP이나 주문 가능 판정을 V2 증거로 사용할 수 없다. V2의 디지털 PCB 검증은 통과했지만 `CON-ARCH-004`, `CON-ARCH-006`, `CON-ARCH-007`, `REL-ARCH-001`의 물리 gate가 남아 있으므로 **ORDER READY: NO**이다.
 
-2026-08-31 기준 V2 fabrication, 1:1 mechanical, housing STEP/STL, joined SVG/PNG 산출물은 현재 둥근머리 P2 reinforcement 좌우 보드 SHA-256 `92c46f364f0cc647928029f6b42a54abfcc94485a491e5a6177e84cc7800d26f` / `8769b5792386357a876008f20152f836012a299a1230b359aaa530ffa85e7b0a`에 맞춰 재생성했다. nice!nano v2의 보수 published plan envelope `34.10 x 18.30 mm` 적용으로 우측 MH1을 `(97.1875,43.2500)` mm로 0.125 mm 이동했고, 새 DRC와 모든 소스 결속 산출물이 통과한다. joined render는 최소 Edge.Cuts clearance `1.1000 mm`, cross-seam keycap gap `1.8000 mm`를 기록한다. 이는 디지털 증거이며 주문 승인은 아니다. 활성 V2 실행 gate는 `tools.verify_kc2_x3_v2`와 V2 전용 fabrication/mechanical/housing verifier이다. `kc2-pcb-preflight` skill의 부품별·회로별 review workflow는 추가 감사에 적용하되, 번들 CLI는 historical `--variant x3`만 지원하므로 그 `ORDER READY` 결과를 V2 근거로 사용할 수 없다.
+2026-09-01 기준 V2 fabrication, 1:1 mechanical, housing STEP/STL, coupon, joined SVG/PNG 산출물은 exact Diodes Incorporated `1N4148W-13-F` SOD-123과 둥근머리 P3 reinforcement 좌우 보드 SHA-256 `7de01a7f0c60585c1845ab3ad17c2b7d18e17ae8c2090a3594e6edf0cbf9d7cf` / `b4173e7bb16189690b06bc3a8d6487e8c56e7e69100e6c04d798d687213f2adc`에 맞춰 재생성했다. 현재 라우트는 좌 590 / 우 766 items이고 digest는 `b8adeac705f846714f7f201b63487369ef486cb1624df8d0ddbb8cde3053e316` / `530d6927eacd7e57a48cb6c62e5c5916ef1f4b3f21d67b592e80962ef7af4c1b`이다. 새 DRC와 모든 소스 결속 산출물이 디지털 검증을 통과했다. 이는 디지털 증거이며 주문 승인은 아니다. 활성 V2 실행 gate는 `tools.verify_kc2_x3_v2`와 V2 전용 fabrication/mechanical/housing/coupon/render verifier이다. `kc2-pcb-preflight` skill의 부품별·회로별 review workflow는 추가 감사에 적용하되, 번들 CLI는 historical `--variant x3`만 지원하므로 그 `ORDER READY` 결과를 V2 근거로 사용할 수 없다.
 
 Historical KC2 X3 main PCB는 좌우 독립 PCB 2장이므로 PCB 제조사 제출 파일도 좌/우를 분리해서 다룬다. `hardware/kicad/fabrication/kc2_fabrication.zip`처럼 좌/우 산출물을 함께 담은 합본 ZIP은 저장소 내부 검증/보관용 묶음이며, JLCPCB 같은 제조사에 단일 비패널 PCB 주문으로 그대로 제출하지 않는다.
 
@@ -253,15 +253,15 @@ Row 5: Ctrl GUI Alt Fn Space     |  B  Space RAlt Fn RCtrl Left Down Right
 - mapped positions: 77 for current historical X3 no-stabilizer; 70 for digitally verified but not orderable `kc2-x3-v2` under `CON-ARCH-004` (31 left / 39 right)
 - transform row별 key 수: current X3 no-stabilizer physical rows 16 / 15 / 15 / 16 / 15; current X3 V2 v5 rows 15 / 14 / 14 / 15 / 12; historical earlier 71-key routed draft used 15 / 15 / 14 / 14 / 13
 - diode direction: `col2row`
-- diode: current X3 no-stabilizer main boards use 디바이스마트 상품번호 14592018 `1N4148W`, SOD-123, 총 77개; active draft `kc2-x3-v2` uses exact Jingdao `ES1B`, LCSC `C437840`, Eleparts goods `9475342`, bottom-side SMA at each of its 70 positions; historical earlier 71-key routed draft used 디바이스마트 상품번호 25 `1N4148`, SOD-27(DO-35), 71개
+- diode: current X3 no-stabilizer main boards use 디바이스마트 상품번호 14592018 `1N4148W`, SOD-123, 총 77개; active draft `kc2-x3-v2` uses exact Diodes Incorporated `1N4148W-13-F`, bottom-side SOD-123 at each of its 70 positions; historical earlier 71-key routed draft used 디바이스마트 상품번호 25 `1N4148`, SOD-27(DO-35), 71개
 - `col2row` 기준 diode의 cathode, 즉 표시선 쪽은 row net으로 둔다.
 - X3 SOD-123 diode assembly orientation: solder side/B.Cu가 보이게 PCB를 뒤집고 controller tab이 위로 가게 놓으면, 좌우 half 모두 diode의 흰색 cathode band를 왼쪽으로 둔다. KiCad top/front view에서는 pad 1(row net, cathode)이 오른쪽(+X)에 있지만, bottom-side soldering view에서는 좌우가 mirror되어 왼쪽으로 보인다. PCB를 손에서 돌린 경우에는 left/right보다 `pad 1 = row net = cathode band`를 기준으로 맞춘다. 이 문장은 verified 77-key X3용 historical/current-main 조립 기준이다.
-- X3 V2 ES1B assembly orientation: exact Jingdao datasheet 기준 pin/pad 1은 cathode/row net, pin/pad 2는 anode/per-key switch net이다. B.Cu mirrored assembly drawing에서 cathode band가 pad 1을 향하는지 확인한다; generic `ES1B` 이름만으로 다른 제조사 부품을 섞지 않는다.
-- active draft `kc2-x3-v2`의 이전 SOD-123 70개 DRC, 수납땜 접근, 라우팅, 하우징 증거는 ES1B 전환으로 superseded 상태이다. 새 SMA 풋프린트, 70개 배치, 양쪽 canonical `70-es1b-controller-r3` 라우팅, fresh DRC, fabrication/mechanical/housing 산출물은 현재 ES1B board에 맞춰 재생성·디지털 검증했다. 다만 populated 물리 coupon과 최종 독립/order gate는 여전히 pending이므로 주문할 수 없다.
-- ES1B 전환은 firmware matrix 논리를 바꾸지 않는다. `col2row`, active-high column, active-high pull-down row, pad 1=row/cathode, pad 2=per-key/anode를 유지하며, 기존 pinned V2 firmware source와 UF2 hash도 그대로 둔다. 기록된 zero-wait scan delay를 물리 coupon 전에 임의 변경하지 않는다.
+- X3 V2 1N4148W assembly orientation: exact Diodes Incorporated `1N4148W-13-F` / DS30086 Rev. 31-2 기준 pin/pad 1은 cathode/row net, pin/pad 2는 anode/per-key switch net이다. B.Cu mirrored assembly drawing에서 cathode band가 pad 1을 향하는지 확인하고, generic `1N4148W` 이름만으로 다른 package/manufacturer 부품을 섞지 않는다.
+- active draft `kc2-x3-v2`는 KC2 소유 enlarged hand-solder land와 exact 70개 배치, 양쪽 canonical `70-1n4148w-p3` 라우팅, fresh DRC, fabrication/mechanical/housing/coupon 산출물을 현재 1N4148W board에 맞춰 재생성·디지털 검증했다. 다만 populated 물리 coupon과 최종 독립/order gate는 여전히 pending이므로 주문할 수 없다.
+- 1N4148W 전환은 firmware matrix 논리를 바꾸지 않는다. `col2row`, active-high column, active-high pull-down row, pad 1=row/cathode, pad 2=per-key/anode를 유지하며, 기존 pinned V2 firmware source와 UF2 hash도 그대로 둔다. 기록된 zero-wait scan delay를 물리 coupon 전에 임의 변경하지 않는다.
 - V2 발주 전 물리 coupon에서 기존 zero-wait firmware로 3.0 V와 3.3 V 각각의 maximum same-row 및 maximum same-column press/release stress를 실행하여 missing/false/stuck key가 없음을 확인한다. 이 증거는 현재 pending이다.
 - historical 또는 future variant에서 SOD-27(DO-35) 배치 공간이 실제로 부족하면 SMD diode로 전환한다.
-- Historical/future non-V2 SMD 전환 1순위 후보는 `1N4148W` / `SOD-123`이다. Active V2에는 사용자가 선택한 ES1B/SMA exact-part requirement가 우선한다.
+- Active V2의 exact diode는 Diodes Incorporated `1N4148W-13-F` / SOD-123이다. 다른 제조사 1N4148W, MiniMELF, SOD-323, SOD-523 또는 ES1B/SMA 대체는 footprint·polarity·routing·housing 전체 재검증 없이 허용하지 않는다.
 - Historical/future non-V2 SMD 전환 2순위 후보는 `1N4148WS` / `SOD-323`이다. 공간은 더 작지만 수동 납땜 난도가 높으므로 active V2 후보가 아니다. historical/separate M2 layout에서는 M2 hole도 같은 기준으로 본다.
 
 ## Left Half Matrix
@@ -348,7 +348,7 @@ Row 5: Ctrl GUI Alt Fn Space     |  B  Space RAlt Fn RCtrl Left Down Right
 - 현재 주문 가능한 historical X3는 77개 switch/diode 배치를 기준으로 검증하고, 물리 검증 대기 중인 `kc2-x3-v2` draft는 `CON-ARCH-004`의 70개 switch/diode 배치를 기준으로 별도 검증한다. 그보다 앞선 71-key routed draft의 diode 공간 검토는 historical baseline으로만 유지한다.
 - Historical 또는 future variant에서 DO-35 axial diode를 검토할 경우, through-hole axial 부품은 SMD diode보다 차지하는 면적과 lead bending 공간이 크다.
 - DO-35 유지 실패 기준은 switch footprint 또는 stabilizer가 필요한 별도 layout의 stabilizer footprint와의 courtyard overlap, screwless registration hole 배치 실패, historical/separate M2 layout의 M2 hole 배치 실패, hole-to-hole clearance 위반, 결합 edge 2.5-3.0 mm 여백 침범, 하부 바닥판 지지점 간섭, lead bending 공간 부족 중 하나라도 발생하는 경우로 둔다.
-- 공간이 부족하면 diode 위치 재배치, PCB 반대면 배치, routing 재배치를 먼저 검토한다. Active V2는 exact ES1B/SMA requirement와 concealed-bezel/housing land를 함께 만족해야 하며 작은 SOD 패키지로 임의 회귀하지 않는다. Historical/future non-V2 variant에서만 `1N4148W`/SOD-123, 이후 `1N4148WS`/SOD-323 순서를 검토한다.
+- 공간이 부족하면 diode 위치 재배치, PCB 반대면 배치, routing 재배치를 먼저 검토한다. Active V2는 exact `1N4148W-13-F` SOD-123 requirement와 concealed-bezel/housing land를 함께 만족해야 하며 작은 SOD-323/SOD-523 또는 큰 SMA 패키지로 임의 변경하지 않는다.
 - diode는 keycap, switch/socket solder joint, Choc socket body/pad/solder fillet, MX switch pin/solder joint, controller socket, battery, screwless registration hole, 하부 바닥판 지지점과 간섭하지 않아야 한다. historical/separate M2 layout에서는 M2 고정 홀 간섭도 금지한다.
 - 기존 `-hotswap` draft 산출물은 V2 요구사항이 아니며, `kc2-x3-v2`의 switch footprint 기준으로 사용하지 않는다.
 - 기존 `-hotswap` draft 산출물은 `key-switches.pretty:SW_Kailh_Choc_V1V2_HotSwap_Hybrid`와 Kailh Choc V1/V2 low-profile socket(`CPG135001S30` 계열) 검토 기록을 보존한 것이다.
@@ -371,7 +371,7 @@ Row 5: Ctrl GUI Alt Fn Space     |  B  Space RAlt Fn RCtrl Left Down Right
 - SpecKiwi SRS source of truth: `docs/spec/10.product-architecture.srs.md`의 `CON-ARCH-004`가 `kc2-x3-v2` switch-footprint requirement를 정의한다. 요약: 디지털 구현/검증은 통과했지만 물리 검증은 남은 별도 V2 board이며, Choc V2/PG1353-family low-profile switch는 bottom-side Choc hot-swap socket으로만 지원하고 Cherry MX-style switch는 5-pin PCB-mount through-hole direct-solder로만 지원한다. 정확한 Kailh manufacturer MPN과 controlled drawing revision은 아직 조달 gate이며 `Deep Sea Whale` 같은 판매명만으로 부품을 확정하지 않는다. Promoted historical X3 경로나 물리 coupon 실장 증거 없는 V2는 주문 가능 상태가 아니다.
 - `kc2-x3-v2` 변형은 Choc V1/PG1350 switch, Choc V1 전용 locator/direct-solder geometry, Choc V2 direct-solder pad, MX hot-swap socket pad를 지원하지 않는다.
 - `kc2-x3-v2` 산출물은 현재 주문 가능한 `hardware/kicad/kc2_left/`, `hardware/kicad/kc2_right/`, `hardware/kicad/fabrication/kc2_left_jlcpcb.zip`, `hardware/kicad/fabrication/kc2_right_jlcpcb.zip`를 대체하지 않는다. 별도 draft 또는 V2 전용 output path에 유지하고, 모든 검증이 통과한 뒤에도 별도 SRS promotion requirement 없이는 orderable X3 산출물로 승격하지 않는다.
-- active V2의 현재 M1.4-hole-aware compact-controller route input/session은 `kc2_left-x3-v2-70-es1b-controller-r3.dsn/.ses` 및 `kc2_right-x3-v2-70-es1b-controller-r3.dsn/.ses`이다. Exact service geometry와 precondition-checked edge cleanup을 적용해 최종 보드를 재현한다. 이전 `70-es1b-mh-r2`, pre-MH `70-es1b-r1`, left `70-v5-r1`, right `71-r12`는 historical evidence이며 active V2 재현에 사용하지 않는다.
+- active V2의 현재 M1.4-hole-aware compact-controller route input/session은 `kc2_left-x3-v2-70-1n4148w-p3.dsn/.ses` 및 `kc2_right-x3-v2-70-1n4148w-p3.dsn/.ses`이다. Exact service geometry, diode lands, P3 clamps와 precondition-checked detour를 적용해 좌 590 / 우 766 route items를 재현한다. 이전 `70-es1b-controller-r3`, `70-es1b-mh-r2`, `70-es1b-r1`, left `70-v5-r1`, right `71-r12`는 historical evidence이며 active V2 재현에 사용하지 않는다.
 - `x3` 변형은 `2u 이상` 키가 없으므로 stabilizer footprint를 생성하지 않는다.
 - `x3` 오른쪽 half는 5개 row 모두 9개 matrix column을 사용한다. 기존 `R_COL8=D20`, `R_COL7=D21` pin mapping은 유지하되, firmware keymap에서는 duplicate legend physical key를 별도 위치로 구분해야 한다.
 - `x3` outline은 증가한 matrix 밀도 때문에 양쪽 half의 inner edge에 `0.8 mm` routing relief를 추가한다.
@@ -408,7 +408,7 @@ Row 5: Ctrl GUI Alt Fn Space     |  B  Space RAlt Fn RCtrl Left Down Right
 
 - CON-ARCH-004로 좁혀지지 않은 future variant용 다중 호환 switch hole/pad pattern 검증. 현재 주문 가능한 historical X3 switch footprint는 verified X3 evidence를 따르며, 물리 검증 대기 중인 `kc2-x3-v2` draft는 CON-ARCH-004의 Choc V2 socket-only/MX solder-only 제한을 따른다.
 - `kc2-x3-v2` 물리 coupon에 조달 전에 확정한 exact Kailh low-profile Choc V2/PG1353-family MPN·drawing revision과 `CPG135001S30` socket을 하단 0/180도 양방향으로 실장하고, 5-pin MX switch를 상면 직납하여 실제 fit, keycap pitch, diode, solder joint, 하우징 간섭을 확인해야 한다.
-- Historical/future non-V2 SMD 전환 시 손납땜이면 SOD-123 우선, PCBA 또는 극한 compact 배치가 필요하면 SOD-323 허용. Active V2는 larger exact Jingdao ES1B/SMA hand-solder requirement를 따른다.
+- Active V2는 exact Diodes Incorporated `1N4148W-13-F` SOD-123 hand-solder requirement를 따른다. 다른 패키지 전환은 새 SRS 변경과 전체 검증을 요구한다.
 - stabilizer가 필요한 별도 layout의 keycap unit, 실제 keycap underside stem 간격, 무보강판에서 체결 가능한 PCB-mounted/PCB-retained stabilizer footprint
 - stabilizer가 필요한 별도 layout의 stabilizer 1:1 출력물 또는 test coupon 기반 실물 끼움 테스트
 - 정확한 301230-class 제조사/MPN, single-cell protection 상태, 최대 팽창 두께, lead 인출 방향과 rated pull 조건
@@ -432,7 +432,7 @@ Row 5: Ctrl GUI Alt Fn Space     |  B  Space RAlt Fn RCtrl Left Down Right
 | Matrix diode | 디바이스마트 상품번호 25 `1N4148`, SOD-27(DO-35), 75V, 450mA | https://www.devicemart.co.kr/goods/view?no=25 |
 | Matrix diode alternative 1 | 디바이스마트 상품번호 14592018 `1N4148W`, SOD-123 | https://www.devicemart.co.kr/goods/view?no=14592018 |
 | Matrix diode alternative 2 | 디바이스마트 상품번호 15106773 `1N4148WS`, SOD-323 | https://www.devicemart.co.kr/goods/view?no=15106773 |
-| Matrix diode (active X3 V2, exact part) | 70 pcs Jingdao Microelectronics `ES1B`, LCSC `C437840`, Eleparts goods `9475342`, SMA on B.Cu, 100 V, 1 A; pin 1=row/cathode, pin 2=per-key/anode; bottom view mirrored | https://www.eleparts.co.kr/goods/view?no=9475342 |
+| Matrix diode (active X3 V2, exact part) | 70 pcs Diodes Incorporated `1N4148W-13-F`, SOD-123 on B.Cu, DS30086 Rev. 31-2; pin 1=row/cathode, pin 2=per-key/anode; bottom view mirrored; KC2 enlarged hand-solder land | https://www.diodes.com/part/view/1N4148W/ |
 | Controller socket | 디바이스마트 상품번호 5494 `싱글라운드소켓(64핀)`, 2.54 mm pitch, 1열 round socket | https://www.devicemart.co.kr/goods/view?no=5494 |
 | Battery (X3 V2) | 301230-class, 3.7 V, 100 mAh, pre-attached insulated leads; exact protected-pack MPN pending physical gate | https://nicekeyboards.com/docs/nice-nano/ |
 | Power switch (X3 V2) | provisional `IMMS-12V` / `BSI-10` nominal collision proxy, 3 x 0.80 mm drill, 2.54 mm pitch; exact manufacturer/MPN/drawing or incoming equivalence inspection pending | https://www.devicemart.co.kr/goods/view?no=2647 |

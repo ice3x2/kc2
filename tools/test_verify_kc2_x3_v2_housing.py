@@ -174,7 +174,7 @@ class ServiceInterfaceContractUnitTests(unittest.TestCase):
         ):
             self.assertIn(required, blocker)
 
-    def test_rounded_head_p1_contract_keeps_independent_quarter_mm_reserves(self) -> None:
+    def test_rounded_head_p3_contract_keeps_independent_quarter_mm_reserves(self) -> None:
         shp = generator.legacy_geometry.require_shapely()
         boards = generator.run_extractor(
             generator.legacy_geometry.locate_kicad_python()
@@ -433,8 +433,8 @@ class V2LoadBearingHousingTests(unittest.TestCase):
             self.assertEqual(housing["desk_standoff_nominal_mm"], 1.00)
             self.assertEqual(housing["desk_standoff_print_tolerance_mm"], 0.30)
             self.assertEqual(housing["desk_datum_z_mm"], -1.00)
-            self.assertEqual(housing["minimum_open_component_to_desk_nominal_clearance_mm"], 1.00)
-            self.assertEqual(housing["minimum_open_component_to_desk_clearance_mm"], 0.70)
+            self.assertEqual(housing["minimum_open_component_to_desk_nominal_clearance_mm"], 1.10)
+            self.assertEqual(housing["minimum_open_component_to_desk_clearance_mm"], 0.80)
             self.assertGreaterEqual(housing["minimum_open_component_to_desk_clearance_mm"], 0.50)
             self.assertTrue(housing["desk_contacts_statically_stable"])
             self.assertTrue(housing["desk_contacts_hidden_in_top_view"])
@@ -463,13 +463,17 @@ class V2LoadBearingHousingTests(unittest.TestCase):
             )
             self.assertTrue(housing["all_key_loads_have_dedicated_support"])
             self.assertTrue(housing["key_load_support_network_matches_contract"])
-            self.assertLessEqual(housing["maximum_load_point_to_support_mm"], 3.60)
-            self.assertLessEqual(housing["maximum_seam_load_point_to_support_mm"], 3.60)
+            self.assertLessEqual(housing["maximum_load_point_to_support_mm"], 4.40)
+            self.assertLessEqual(housing["maximum_seam_load_point_to_support_mm"], 3.40)
             for post in housing["support_posts"]:
-                self.assertEqual(post["diameter_mm"], 2.00)
+                self.assertEqual(post["diameter_mm"], 2.40)
                 self.assertEqual(post["bottom_z_mm"], 0.00)
                 self.assertEqual(post["top_z_mm"], housing["pcb_bottom_z_mm"])
                 self.assertEqual(post["nominal_vertical_gap_mm"], 0.0)
+                self.assertLessEqual(
+                    post["effective_load_point_to_support_edge_mm"],
+                    4.40,
+                )
 
             reset = housing["reset_local_support"]
             expected_reset_center = (
@@ -537,11 +541,12 @@ class V2LoadBearingHousingTests(unittest.TestCase):
                 cutouts["choc_socket_body_fillets"]["minimum_exterior_bottom_clearance_mm"],
                 0.10,
             )
-            self.assertEqual(cutouts["diode_body_pads_fillets"]["manufacturer"], "Jingdao Microelectronics")
-            self.assertEqual(cutouts["diode_body_pads_fillets"]["mpn"], "ES1B")
-            self.assertEqual(cutouts["diode_body_pads_fillets"]["lcsc"], "C437840")
-            self.assertEqual(cutouts["diode_body_pads_fillets"]["official_body_depth_max_mm"], 2.20)
-            self.assertEqual(cutouts["diode_body_pads_fillets"]["official_plan_envelope_max_mm"], [5.20, 2.70])
+            self.assertEqual(cutouts["diode_body_pads_fillets"]["manufacturer"], "Diodes Incorporated")
+            self.assertEqual(cutouts["diode_body_pads_fillets"]["mpn"], "1N4148W-13-F")
+            self.assertEqual(cutouts["diode_body_pads_fillets"]["eleparts_goods_no"], "3417687")
+            self.assertEqual(cutouts["diode_body_pads_fillets"]["official_body_depth_max_mm"], 1.35)
+            self.assertEqual(cutouts["diode_body_pads_fillets"]["official_plan_envelope_max_mm"], [2.85, 1.70])
+            self.assertEqual(cutouts["diode_body_pads_fillets"]["official_terminal_span_max_mm"], 3.85)
             self.assertEqual(cutouts["diode_body_pads_fillets"]["solder_fillet_allowance_mm"], 0.30)
             self.assertGreaterEqual(
                 cutouts["diode_body_pads_fillets"]["minimum_plate_bottom_clearance_mm"],
@@ -603,27 +608,27 @@ class V2LoadBearingHousingTests(unittest.TestCase):
             "left": [
                 [112.8625, 43.0000],
                 [144.1125, 66.2500],
-                [38.6125, 111.0000],
+                [39.3625, 111.0000],
                 [63.6125, 123.0000],
                 [81.1125, 151.7500],
                 [137.3625, 153.5000],
-                [166.3625, 148.7500],
-                [75.0000, 134.0000],
+                [165.8625, 148.7500],
+                [75.2500, 134.0000],
             ],
             "right": [
                 [97.1875, 43.2500],
                 [72.4375, 67.0000],
-                [169.9375, 95.2500],
-                [194.9375, 98.7500],
-                [156.1875, 112.5000],
-                [69.9375, 146.2500],
-                [97.4375, 152.0000],
+                [170.4375, 95.2500],
+                [194.4375, 98.7500],
+                [155.9375, 112.5000],
+                [70.1875, 146.7500],
+                [97.6875, 152.0000],
                 [122.6875, 151.0000],
-                [177.5000, 118.0000],
+                [177.7500, 117.2500],
             ],
         }
         expected_support_counts = {"left": 31, "right": 39}
-        expected_load_spans = {"left": 3.5621, "right": 3.5621}
+        expected_load_spans = {"left": 4.3902, "right": 4.3902}
         expected_part_distribution = {
             "left": {"whole": 8},
             "right": {"part_a": 5, "part_b": 4},
@@ -648,10 +653,14 @@ class V2LoadBearingHousingTests(unittest.TestCase):
                 all(post["category"] == "key_load" for post in housing["support_posts"])
             )
             self.assertLessEqual(
-                max(post["load_point_to_support_edge_mm"] for post in housing["support_posts"]),
-                3.60,
+                max(
+                    post["effective_load_point_to_support_edge_mm"]
+                    for post in housing["support_posts"]
+                ),
+                4.40,
             )
             self.assertEqual(mounting["distributed_support_count"], expected_support_counts[side])
+            self.assertTrue(all(post["diameter_mm"] == 2.40 for post in housing["support_posts"]))
             self.assertEqual(mounting["board_coordinates_mm"], expected_coordinates[side])
             self.assertEqual(mounting["part_distribution"], expected_part_distribution[side])
             self.assertTrue(mounting["board_features_match_selected_pattern"])
@@ -677,7 +686,7 @@ class V2LoadBearingHousingTests(unittest.TestCase):
                 self.assertGreaterEqual(hole["head_to_routed_copper_or_via_mm"], 0.85)
                 self.assertGreaterEqual(hole["head_to_board_edge_mm"], 2.10)
                 self.assertGreaterEqual(hole["head_to_housing_edge_mm"], 2.00)
-                self.assertGreaterEqual(hole["head_to_support_posts_mm"], 3.70)
+                self.assertGreaterEqual(hole["head_to_support_posts_mm"], 2.50)
                 self.assertEqual(hole["pcb_npth_diameter_mm"], 1.60)
                 self.assertEqual(hole["support_land_diameter_mm"], 3.00)
                 self.assertEqual(hole["support_land_annular_width_mm"], 0.95)

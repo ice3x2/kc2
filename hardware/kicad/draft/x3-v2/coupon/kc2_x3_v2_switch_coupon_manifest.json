@@ -38,21 +38,31 @@
   "key_pitch_mm": 19.05,
   "switch_footprint": "kc2.pretty:SW_Choc_V2_Socket_MX_THT",
   "matrix_diode": {
-    "manufacturer": "Jingdao Microelectronics",
-    "mpn": "ES1B",
-    "lcsc": "C437840",
-    "eleparts_goods_no": "9475342",
-    "footprint": "kc2.pretty:D_ES1B_SMA_HandSolder_C437840",
+    "manufacturer": "Diodes Incorporated",
+    "mpn": "1N4148W-13-F",
+    "lcsc": "C112342",
+    "jlcpcb_part_number": "C526199",
+    "eleparts_goods_no": "3417687",
+    "footprint": "kc2.pretty:D_1N4148W_SOD123_HandSolder_DiodesInc",
     "assembly_side": "bottom",
     "pin_1": "cathode_row",
     "pin_2": "anode_switch",
-    "recommended_land_mm": {
+    "official_suggested_land_mm": {
       "pad_size": [
-        1.8,
-        1.8
+        0.9,
+        0.95
       ],
-      "inner_gap": 2.4,
-      "outer_span": 6.0
+      "center_span": 4.05
+    },
+    "implemented_hand_solder_land_mm": {
+      "classification": "kc2_controlled_not_manufacturer_recommended",
+      "pad_size": [
+        1.4,
+        1.55
+      ],
+      "center_span": 3.6,
+      "inner_gap": 2.2,
+      "outer_span": 5.0
     }
   },
   "service_probes": {
@@ -72,7 +82,7 @@
         100,
         1000
       ],
-      "record": "forward voltage and polarity for all three populated ES1B samples"
+      "record": "forward voltage and polarity for all three populated 1N4148W samples"
     },
     "row_high_3v0_3v3": {
       "connect": "external tester drives COL, closes the matching switch, and senses ROW",

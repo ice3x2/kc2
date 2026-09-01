@@ -13,12 +13,11 @@
   },
   "hardware_compatibility": {
     "matrix_diode": {
-      "manufacturer": "Jingdao Microelectronics",
-      "mpn": "ES1B",
-      "lcsc": "C437840",
-      "eleparts_goods_no": "9475342",
+      "manufacturer": "Diodes Incorporated",
+      "mpn": "1N4148W-13-F",
+      "datasheet": "DS30086 Rev. 31-2",
       "quantity": 70,
-      "package": "SMA",
+      "package": "SOD-123",
       "assembly_side": "B.Cu",
       "bottom_view": "mirrored",
       "pad_1": "cathode-row",
@@ -32,7 +31,7 @@
     "scan_timing": {
       "recorded_wait_before_inputs_us": 0,
       "recorded_wait_between_outputs_us": 0,
-      "firmware_source_changed_for_es1b": false,
+      "firmware_source_changed_for_1n4148w": false,
       "change_policy": "physical-coupon-required-before-scan-delay-change",
       "physical_stress": {
         "status": "pending",
