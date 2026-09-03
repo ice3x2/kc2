@@ -30,12 +30,12 @@ else:
 
 
 ROOT = Path(__file__).resolve().parents[1]
-FAB_ROOT = ROOT / "hardware" / "kicad" / "draft" / "x3-v2" / "fabrication"
+FAB_ROOT = ROOT / "hardware" / "kicad" / "fabrication"
 KICAD_CLI = Path(r"C:\Program Files\KiCad\10.0\bin\kicad-cli.exe")
 PRODUCTS = {
-    "left": ROOT / "hardware" / "kicad" / "draft" / "x3-v2" / "kc2_left-x3-v2" / "kc2_left-x3-v2.kicad_pcb",
-    "right": ROOT / "hardware" / "kicad" / "draft" / "x3-v2" / "kc2_right-x3-v2" / "kc2_right-x3-v2.kicad_pcb",
-    "coupon": ROOT / "hardware" / "kicad" / "draft" / "x3-v2" / "coupon" / "kc2_x3_v2_switch_coupon.kicad_pcb",
+    "left": ROOT / "hardware" / "kicad" / "kc2_left" / "kc2_left.kicad_pcb",
+    "right": ROOT / "hardware" / "kicad" / "kc2_right" / "kc2_right.kicad_pcb",
+    "coupon": ROOT / "hardware" / "kicad" / "coupon" / "kc2_switch_coupon.kicad_pcb",
 }
 LAYERS = "F.Cu,B.Cu,F.Mask,B.Mask,F.Paste,B.Paste,F.Silkscreen,B.Silkscreen,Edge.Cuts"
 JLCPCB_FABRICATION_SUFFIXES = (
@@ -126,7 +126,7 @@ def run(command: list[str]) -> None:
 def export_product(product: str, board: Path) -> dict[str, object]:
     if not board.is_file():
         raise FileNotFoundError(board)
-    output_dir = FAB_ROOT / product
+    output_dir = FAB_ROOT / (f"kc2_{product}" if product in {"left", "right"} else product)
     clear_owned_output(output_dir)
     run(
         [
@@ -192,8 +192,8 @@ def export_product(product: str, board: Path) -> dict[str, object]:
         )
         quote_dir = FAB_ROOT / "pcba_quote"
         quote_dir.mkdir(parents=True, exist_ok=True)
-        quote_bom = quote_dir / f"kc2_x3_v2_{product}_jlcpcb_pcba_bom.csv"
-        quote_cpl = quote_dir / f"kc2_x3_v2_{product}_jlcpcb_pcba_cpl.csv"
+        quote_bom = quote_dir / f"kc2_{product}_jlcpcb_pcba_bom.csv"
+        quote_cpl = quote_dir / f"kc2_{product}_jlcpcb_pcba_cpl.csv"
         quote_bom.write_bytes(jlcpcb_pcba_bom_csv_bytes(quote_payload))
         quote_cpl.write_bytes(jlcpcb_pcba_cpl_csv_bytes(quote_payload))
         pcba_quote = {
@@ -207,7 +207,7 @@ def export_product(product: str, board: Path) -> dict[str, object]:
             "order_ready": False,
         }
     files = sorted(path for path in output_dir.iterdir() if path.is_file())
-    archive = FAB_ROOT / f"kc2_x3_v2_{product}.zip"
+    archive = FAB_ROOT / f"kc2_{product}.zip"
     with ZipFile(archive, "w", compression=ZIP_DEFLATED, compresslevel=9) as package:
         for path in files:
             package.write(path, arcname=path.name)
@@ -216,7 +216,7 @@ def export_product(product: str, board: Path) -> dict[str, object]:
         for path in files
         if any(path.name.endswith(suffix) for suffix in JLCPCB_FABRICATION_SUFFIXES)
     ]
-    jlcpcb_archive = FAB_ROOT / f"kc2_x3_v2_{product}_jlcpcb.zip"
+    jlcpcb_archive = FAB_ROOT / f"kc2_{product}_jlcpcb.zip"
     with ZipFile(jlcpcb_archive, "w", compression=ZIP_DEFLATED, compresslevel=9) as package:
         for path in jlcpcb_files:
             package.write(path, arcname=path.name)
@@ -259,14 +259,14 @@ def main() -> None:
         "requirement_ids": list(REQUIREMENT_IDS),
         "hash_policy": HASH_POLICY,
         "variant": "x3-v2",
-        "status": "draft_not_orderable_pending_physical_coupon",
+        "status": "canonical_not_orderable_pending_physical_evidence",
         "kicad_cli": str(KICAD_CLI),
         "layers": LAYERS.split(","),
         "jlcpcb_profile": JLCPCB_PROFILE,
         "jlcpcb_pcba_quote_profile": JLCPCB_PCBA_QUOTE_PROFILE,
         "products": outputs,
     }
-    manifest_path = FAB_ROOT / "kc2_x3_v2_fabrication_manifest.json"
+    manifest_path = FAB_ROOT / "kc2_fabrication_manifest.json"
     manifest_path.write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
     print(json.dumps(manifest, indent=2))
 

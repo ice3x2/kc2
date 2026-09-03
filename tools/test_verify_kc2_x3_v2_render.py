@@ -17,9 +17,9 @@ from tools.verify_kc2_x3_v2_render import (
 
 
 ROOT = Path(__file__).resolve().parents[1]
-V2_ROOT = ROOT / "hardware" / "kicad" / "draft" / "x3-v2"
+V2_ROOT = ROOT / "hardware" / "kicad"
 RENDER_ROOT = V2_ROOT / "renders"
-MANIFEST = RENDER_ROOT / "kc2_x3_v2_render_manifest.json"
+MANIFEST = RENDER_ROOT / "kc2_render_manifest.json"
 
 
 def raw_sha256(path: Path) -> str:
@@ -33,7 +33,7 @@ class X3V2RenderEvidenceTests(unittest.TestCase):
         manifest = json.loads(MANIFEST.read_text(encoding="utf-8"))
         self.assertEqual(
             manifest["requirement_ids"],
-            ["CON-ARCH-006", "CON-ARCH-007"],
+            ["CON-ARCH-006", "CON-ARCH-007", "OPS-ARCH-006"],
         )
         self.assertEqual(manifest["hash_policy"], HASH_POLICY)
         self.assertNotIn("raw_sha256", manifest["renderer"])
@@ -151,17 +151,15 @@ class X3V2RenderEvidenceTests(unittest.TestCase):
         with TemporaryDirectory(prefix="kc2-render-board-") as temporary:
             temp_root = Path(temporary)
             for side in ("left", "right"):
-                source_dir = V2_ROOT / f"kc2_{side}-x3-v2"
-                target_dir = temp_root / "hardware" / "kicad" / "draft" / "x3-v2" / source_dir.name
+                source_dir = V2_ROOT / f"kc2_{side}"
+                target_dir = temp_root / "hardware" / "kicad" / source_dir.name
                 target_dir.mkdir(parents=True, exist_ok=True)
-                shutil.copy2(source_dir / f"kc2_{side}-x3-v2.kicad_pcb", target_dir)
-            shutil.copytree(RENDER_ROOT, temp_root / "hardware" / "kicad" / "draft" / "x3-v2" / "renders")
+                shutil.copy2(source_dir / f"kc2_{side}.kicad_pcb", target_dir)
+            shutil.copytree(RENDER_ROOT, temp_root / "hardware" / "kicad" / "renders")
             manifest_path = (
                 temp_root
                 / "hardware"
                 / "kicad"
-                / "draft"
-                / "x3-v2"
                 / "renders"
                 / MANIFEST.name
             )
@@ -169,10 +167,8 @@ class X3V2RenderEvidenceTests(unittest.TestCase):
                 temp_root
                 / "hardware"
                 / "kicad"
-                / "draft"
-                / "x3-v2"
-                / "kc2_left-x3-v2"
-                / "kc2_left-x3-v2.kicad_pcb"
+                / "kc2_left"
+                / "kc2_left.kicad_pcb"
             )
             board_payload = left_board.read_text(encoding="utf-8")
             self.assertIn('(property "Reference" "BAT1"', board_payload)
@@ -197,17 +193,15 @@ class X3V2RenderEvidenceTests(unittest.TestCase):
         with TemporaryDirectory(prefix="kc2-render-polarity-") as temporary:
             temp_root = Path(temporary)
             for side in ("left", "right"):
-                source_dir = V2_ROOT / f"kc2_{side}-x3-v2"
-                target_dir = temp_root / "hardware" / "kicad" / "draft" / "x3-v2" / source_dir.name
+                source_dir = V2_ROOT / f"kc2_{side}"
+                target_dir = temp_root / "hardware" / "kicad" / source_dir.name
                 target_dir.mkdir(parents=True, exist_ok=True)
-                shutil.copy2(source_dir / f"kc2_{side}-x3-v2.kicad_pcb", target_dir)
-            shutil.copytree(RENDER_ROOT, temp_root / "hardware" / "kicad" / "draft" / "x3-v2" / "renders")
+                shutil.copy2(source_dir / f"kc2_{side}.kicad_pcb", target_dir)
+            shutil.copytree(RENDER_ROOT, temp_root / "hardware" / "kicad" / "renders")
             manifest_path = (
                 temp_root
                 / "hardware"
                 / "kicad"
-                / "draft"
-                / "x3-v2"
                 / "renders"
                 / MANIFEST.name
             )
@@ -215,10 +209,8 @@ class X3V2RenderEvidenceTests(unittest.TestCase):
                 temp_root
                 / "hardware"
                 / "kicad"
-                / "draft"
-                / "x3-v2"
-                / "kc2_left-x3-v2"
-                / "kc2_left-x3-v2.kicad_pcb"
+                / "kc2_left"
+                / "kc2_left.kicad_pcb"
             )
             board_payload = left_board.read_text(encoding="utf-8")
             self.assertIn('(fp_text user "B-/GND"', board_payload)
@@ -254,12 +246,12 @@ class X3V2RenderEvidenceTests(unittest.TestCase):
     def test_text_bindings_are_lf_crlf_invariant_but_binary_outputs_remain_raw(self) -> None:
         with TemporaryDirectory(prefix="kc2-render-eol-") as temporary:
             temp_root = Path(temporary)
-            temp_v2_root = temp_root / "hardware" / "kicad" / "draft" / "x3-v2"
+            temp_v2_root = temp_root / "hardware" / "kicad"
             for side in ("left", "right"):
-                source_dir = V2_ROOT / f"kc2_{side}-x3-v2"
+                source_dir = V2_ROOT / f"kc2_{side}"
                 target_dir = temp_v2_root / source_dir.name
                 target_dir.mkdir(parents=True, exist_ok=True)
-                board = target_dir / f"kc2_{side}-x3-v2.kicad_pcb"
+                board = target_dir / f"kc2_{side}.kicad_pcb"
                 shutil.copy2(source_dir / board.name, board)
                 board.write_bytes(board.read_bytes().replace(b"\r\n", b"\n"))
             shutil.copytree(RENDER_ROOT, temp_v2_root / "renders")

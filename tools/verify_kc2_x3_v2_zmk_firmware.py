@@ -1,6 +1,6 @@
 """Verify the isolated KC2 X3 V2 ZMK shield against the 70-key KiCad boards.
 
-Requirement: CON-ARCH-004 AC-5 and AC-7.
+Requirements: CON-ARCH-004 AC-5/AC-7 and CON-ARCH-007 AC-5.
 """
 
 from __future__ import annotations
@@ -24,6 +24,9 @@ else:
 ROOT = Path(__file__).resolve().parents[1]
 SHIELD_DIR = ROOT / "firmware" / "kc2_zmk" / "boards" / "shields" / "kc2_x3_v2"
 BUILD_EVIDENCE_PATH = SHIELD_DIR / "kc2_x3_v2_build_evidence.json"
+GENERATION_MANIFEST_PATH = (
+    ROOT / "hardware" / "kicad" / "kc2_generation_manifest.json"
+)
 BUILD_SOURCE_PATHS = (
     Path("firmware/kc2_zmk/zephyr/module.yml"),
     Path("firmware/kc2_zmk/boards/shields/kc2_x3_v2/CMakeLists.txt"),
@@ -103,8 +106,8 @@ EXPECTED_UF2_MAGIC = {
     "block_size_bytes": 512,
 }
 BOARD_PATHS = {
-    "left": ROOT / "hardware" / "kicad" / "draft" / "x3-v2" / "kc2_left-x3-v2" / "kc2_left-x3-v2.kicad_pcb",
-    "right": ROOT / "hardware" / "kicad" / "draft" / "x3-v2" / "kc2_right-x3-v2" / "kc2_right-x3-v2.kicad_pcb",
+    "left": ROOT / "hardware" / "kicad" / "kc2_left" / "kc2_left.kicad_pcb",
+    "right": ROOT / "hardware" / "kicad" / "kc2_right" / "kc2_right.kicad_pcb",
 }
 EXPECTED_COUNTS = {"left": 31, "right": 39}
 EXPECTED_PINS = {
@@ -156,6 +159,49 @@ EXPECTED_LAYERS = {
     "fn_layer": EXPECTED_FN_BINDINGS,
     "fn_layer2": EXPECTED_FN2_BINDINGS,
 }
+EXPECTED_BATTERY_POWER_METADATA = {
+    "carrier_battery_nets": True,
+    "battery_leads": {
+        "source": "pre-attached-protected-pack-leads",
+        "termination": {"reference": "J_BAT1", "method": "direct-solder"},
+        "direct_to_nice_nano_b_plus_b_minus_top_pads": False,
+    },
+    "battery_power_path": {
+        "requirement_id": "CON-ARCH-007",
+        "scope": "independent-per-half",
+        "connections": [
+            {
+                "from": {"reference": "J_BAT1", "pad": "1", "net": "BAT+"},
+                "to": {"reference": "SW_PWR1", "pad": "1", "net": "BAT+"},
+            },
+            {
+                "from": {"reference": "SW_PWR1", "pad": "2", "net": "NN_B+"},
+                "to": {"reference": "U1", "pad": "RAW", "net": "NN_B+"},
+            },
+            {
+                "from": {"reference": "J_BAT1", "pad": "2", "net": "GND"},
+                "to": {"reference": "U1", "pad": "GND_C", "net": "GND"},
+            },
+        ],
+        "power_switch": {
+            "reference": "SW_PWR1",
+            "common_pad": "1",
+            "selected_on_throw_pad": "2",
+            "no_connect_pad": "3",
+        },
+        "b_minus_net": "GND",
+    },
+}
+EXPECTED_ROUTE_FINGERPRINTS = {
+    "left": {
+        "final_track_via_count": 616,
+        "route_digest_sha256": "b37c88d783baa27e6358d1c3baf33528d282934c41c507f2da5edc44e739ebbb",
+    },
+    "right": {
+        "final_track_via_count": 803,
+        "route_digest_sha256": "44a0c7fdd446f3153d2faf2506194947577b74147713c9a097c7ac83a9c1a964",
+    },
+}
 EXPECTED_METADATA = {
     "variant": "kc2-x3-v2",
     "requirement_id": "CON-ARCH-004",
@@ -166,8 +212,7 @@ EXPECTED_METADATA = {
     "unsupported_assembly": ["choc-v1", "choc-v2-direct-solder", "mx-hotswap"],
     "controller": "nice-nano-v2-socket-15.24-mm-row-spacing",
     "compact_controller": True,
-    "carrier_battery_nets": False,
-    "battery_leads": "direct-to-nice-nano-b-plus-b-minus",
+    **EXPECTED_BATTERY_POWER_METADATA,
     "left_alt_fn_win_combo": {
         "positions": [59, 60],
         "timeout_ms": 50,
@@ -425,6 +470,39 @@ def read_variant_metadata() -> dict[str, object]:
     return json.loads((SHIELD_DIR / "kc2_x3_v2_variant.json").read_text(encoding="utf-8"))
 
 
+def verify_battery_power_metadata(metadata: Mapping[str, object]) -> list[str]:
+    errors: list[str] = []
+    for field, expected in EXPECTED_BATTERY_POWER_METADATA.items():
+        actual = metadata.get(field)
+        if actual != expected:
+            errors.append(
+                f"V2 variant metadata {field} does not match the CON-ARCH-007 carrier power contract"
+            )
+    return errors
+
+
+def verify_route_fingerprints() -> list[str]:
+    try:
+        manifest = json.loads(GENERATION_MANIFEST_PATH.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as error:
+        return [f"Cannot read V2 generation manifest: {error}"]
+    route_evidence = manifest.get("canonical_route_evidence")
+    if not isinstance(route_evidence, dict):
+        return ["V2 generation manifest canonical route evidence is missing"]
+    errors: list[str] = []
+    for side, expected in EXPECTED_ROUTE_FINGERPRINTS.items():
+        actual = route_evidence.get(side)
+        if not isinstance(actual, dict):
+            errors.append(f"V2 generation manifest {side} route evidence is missing")
+            continue
+        for field, value in expected.items():
+            if actual.get(field) != value:
+                errors.append(
+                    f"V2 generation manifest {side} {field} does not match the active route"
+                )
+    return errors
+
+
 def positions_for_half(transform: Iterable[tuple[int, int]], side: str) -> list[tuple[int, int]]:
     if side == "left":
         return [(row, col) for row, col in transform if col < 7]
@@ -505,6 +583,7 @@ def extract_board_positions(board_path: Path, kicad_python: Path, side: str) -> 
 
 def verify(kicad_python: Path) -> list[str]:
     errors, _ = verify_build_evidence()
+    errors.extend(verify_route_fingerprints())
     try:
         transform = read_transform()
     except (OSError, ValueError) as error:
@@ -542,8 +621,12 @@ def verify(kicad_python: Path) -> list[str]:
 
     try:
         metadata = read_variant_metadata()
+        errors.extend(verify_battery_power_metadata(metadata))
         if metadata != EXPECTED_METADATA:
-            errors.append("V2 variant metadata does not match the CON-ARCH-004 identity and assembly contract")
+            errors.append(
+                "V2 variant metadata does not match the CON-ARCH-004 identity/assembly "
+                "and CON-ARCH-007 carrier power contracts"
+            )
     except (OSError, ValueError, json.JSONDecodeError) as error:
         errors.append(f"Cannot read V2 variant metadata: {error}")
 
@@ -579,7 +662,7 @@ def main() -> int:
     except FileNotFoundError as error:
         errors = [str(error)]
     if errors:
-        print("CON-ARCH-004 V2 firmware verification failed:", file=sys.stderr)
+        print("CON-ARCH-004 / CON-ARCH-007 V2 firmware verification failed:", file=sys.stderr)
         for error in errors:
             print(f"- {error}", file=sys.stderr)
         return 1
@@ -589,7 +672,8 @@ def main() -> int:
         for side, state in build_report["local_artifacts"].items()
     )
     print(
-        "CON-ARCH-004 V2 firmware verification passed: 70 keys (31 left, 39 right); "
+        "CON-ARCH-004 / CON-ARCH-007 V2 firmware verification passed: "
+        "70 keys (31 left, 39 right); carrier_power_path_verified=true; "
         f"manifest_provenance_verified={str(build_report['manifest_provenance_verified']).lower()}; "
         f"local_artifacts={artifact_states}."
     )

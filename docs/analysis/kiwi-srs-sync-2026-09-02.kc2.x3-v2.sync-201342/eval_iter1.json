@@ -1,0 +1,11 @@
+{
+  "status": "PASS",
+  "findings": {
+    "CRITICAL": 0,
+    "HIGH": 0,
+    "MEDIUM": 0,
+    "LOW": 0
+  },
+  "note": "Semantic validation passed; MCP dry-run then exposed argument/section constraints."
+}
+

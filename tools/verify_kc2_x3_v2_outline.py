@@ -282,14 +282,14 @@ def analyze_outline(repo: Path = ROOT) -> dict[str, object]:
     context = build_context(repo.resolve(), 1.0, 5.0, "key-pitch", variant="x3-v2")
     left_report, left_errors = analyze_board(context.left)
     right_report, right_errors = analyze_board(context.right)
-    mechanical = repo / "hardware" / "kicad" / "draft" / "x3-v2" / "mechanical"
+    mechanical = repo / "hardware" / "kicad" / "mechanical"
     left_svg, left_svg_errors = analyze_one_to_one_svg(
-        mechanical / "kc2_left_x3_v2_1to1.svg",
+        mechanical / "kc2_left_1to1.svg",
         context.left,
         repo,
     )
     right_svg, right_svg_errors = analyze_one_to_one_svg(
-        mechanical / "kc2_right_x3_v2_1to1.svg",
+        mechanical / "kc2_right_1to1.svg",
         context.right,
         repo,
     )
@@ -386,10 +386,8 @@ def main() -> None:
         default=ROOT
         / "hardware"
         / "kicad"
-        / "draft"
-        / "x3-v2"
         / "mechanical"
-        / "kc2_x3_v2_outline_report.json",
+        / "kc2_outline_report.json",
     )
     args = parser.parse_args()
     report = analyze_outline(args.repo)

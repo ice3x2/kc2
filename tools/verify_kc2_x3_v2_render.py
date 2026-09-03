@@ -32,14 +32,14 @@ from tools.render_kc2_x3_joined import (
 )
 
 
-RENDER_ROOT = ROOT / "hardware" / "kicad" / "draft" / "x3-v2" / "renders"
-DEFAULT_MANIFEST = RENDER_ROOT / "kc2_x3_v2_render_manifest.json"
+RENDER_ROOT = ROOT / "hardware" / "kicad" / "renders"
+DEFAULT_MANIFEST = RENDER_ROOT / "kc2_render_manifest.json"
 RENDERER_PATH = ROOT / "tools" / "render_kc2_x3_joined.py"
 EXPECTED_SERVICE_REFERENCES = X3_V2_SERVICE_REFERENCES
 EXPECTED_BATTERY_TERMINAL_LEGENDS = X3_V2_BATTERY_TERMINAL_LEGENDS
 EXPECTED_BOARD_CANONICAL_SHA256 = {
-    "left": "7de01a7f0c60585c1845ab3ad17c2b7d18e17ae8c2090a3594e6edf0cbf9d7cf",
-    "right": "b4173e7bb16189690b06bc3a8d6487e8c56e7e69100e6c04d798d687213f2adc",
+    "left": "3a6f80a5bc1afe897056107be9522a26079766fd4963f2115a9237737470268d",
+    "right": "a4361040d81b3189cce8cdfcedaf54e570248d2fd513835dfadf80bcc187ef6d",
 }
 EXPECTED_MOUNT_CENTERS_MM = {
     "left": {
@@ -72,16 +72,16 @@ EXPECTED_RENDER_PARAMETERS = {
     "zoom_width_mm": ZOOM_WIDTH_MM,
 }
 EXPECTED_OUTPUTS = {
-    "joined_top_svg": ("kc2_x3_v2_joined_top.svg", False, "image/svg+xml", render_svg),
+    "joined_top_svg": ("kc2_joined_top.svg", False, "image/svg+xml", render_svg),
     "join_seam_zoom_svg": (
-        "kc2_x3_v2_join_seam_zoom.svg",
+        "kc2_join_seam_zoom.svg",
         True,
         "image/svg+xml",
         render_svg,
     ),
-    "joined_top_png": ("kc2_x3_v2_joined_top.png", False, "image/png", render_png),
+    "joined_top_png": ("kc2_joined_top.png", False, "image/png", render_png),
     "join_seam_zoom_png": (
-        "kc2_x3_v2_join_seam_zoom.png",
+        "kc2_join_seam_zoom.png",
         True,
         "image/png",
         render_png,
@@ -94,13 +94,11 @@ def _raw_sha256(path: Path) -> str:
 
 
 def _expected_board_path(repo_root: Path, side: str) -> Path:
-    directory = f"kc2_{side}-x3-v2"
+    directory = f"kc2_{side}"
     return (
         repo_root
         / "hardware"
         / "kicad"
-        / "draft"
-        / "x3-v2"
         / directory
         / f"{directory}.kicad_pcb"
     )
@@ -389,7 +387,11 @@ def verify_render_manifest(
         return [f"manifest cannot be read: {error}"]
     if manifest.get("schema") != "kc2-x3-v2-render-evidence-v1":
         errors.append("manifest: wrong render evidence schema")
-    if manifest.get("requirement_ids") != ["CON-ARCH-006", "CON-ARCH-007"]:
+    if manifest.get("requirement_ids") != [
+        "CON-ARCH-006",
+        "CON-ARCH-007",
+        "OPS-ARCH-006",
+    ]:
         errors.append("manifest: requirement IDs are missing or stale")
     if manifest.get("variant") != "x3-v2":
         errors.append("manifest: variant is missing or stale")
@@ -537,7 +539,7 @@ def main() -> int:
     args = parser.parse_args()
     errors = verify_render_manifest(args.manifest)
     report = {
-        "requirements": ["CON-ARCH-006", "CON-ARCH-007"],
+        "requirements": ["CON-ARCH-006", "CON-ARCH-007", "OPS-ARCH-006"],
         "manifest": str(args.manifest),
         "deterministic_regeneration_checked": True,
         "errors": errors,

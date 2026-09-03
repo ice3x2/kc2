@@ -10,8 +10,8 @@ from tools import generate_kc2_pcbs as gen
 
 
 ROOT = Path(__file__).resolve().parents[1]
-OUTPUT_DIR = ROOT / "hardware" / "kicad" / "draft" / "x3-v2" / "coupon"
-PROJECT_NAME = "kc2_x3_v2_switch_coupon"
+OUTPUT_DIR = ROOT / "hardware" / "kicad" / "coupon"
+PROJECT_NAME = "kc2_switch_coupon"
 BOARD_PATH = OUTPUT_DIR / f"{PROJECT_NAME}.kicad_pcb"
 MANIFEST_PATH = OUTPUT_DIR / f"{PROJECT_NAME}_manifest.json"
 TEST_POINT_LIB = gen.KICAD_SHARE / "footprints" / "TestPoint.pretty"

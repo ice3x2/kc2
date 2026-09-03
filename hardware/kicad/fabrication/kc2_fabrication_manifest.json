@@ -1,0 +1,392 @@
+{
+  "requirement_ids": [
+    "CON-ARCH-004",
+    "CON-ARCH-006",
+    "CON-ARCH-007",
+    "REL-ARCH-001",
+    "OPS-ARCH-006"
+  ],
+  "hash_policy": "lf-normalized-utf8-text-else-raw-v1",
+  "variant": "x3-v2",
+  "status": "canonical_not_orderable_pending_physical_evidence",
+  "kicad_cli": "C:\\Program Files\\KiCad\\10.0\\bin\\kicad-cli.exe",
+  "layers": [
+    "F.Cu",
+    "B.Cu",
+    "F.Mask",
+    "B.Mask",
+    "F.Paste",
+    "B.Paste",
+    "F.Silkscreen",
+    "B.Silkscreen",
+    "Edge.Cuts"
+  ],
+  "jlcpcb_profile": {
+    "schema": "kc2-x3-v2-jlcpcb-profile-v1",
+    "vendor": "JLCPCB",
+    "purpose": "prototype_only_pending_physical_evidence",
+    "layer_count": 2,
+    "material": "FR-4",
+    "board_thickness_mm": 1.6,
+    "copper_weight_oz": 1.0,
+    "surface_finish": "enig",
+    "solder_mask_color": "green",
+    "silkscreen_color": "white",
+    "via_covering": "tented",
+    "maximum_tented_via_drill_mm": 0.5,
+    "assembly_service": "none_hand_assembly",
+    "confirm_production_file": true,
+    "order_ready": false
+  },
+  "jlcpcb_pcba_quote_profile": {
+    "schema": "kc2-x3-v2-jlcpcb-pcba-quote-v2",
+    "vendor": "JLCPCB",
+    "purpose": "manual_assembly_reference_and_price_discovery_only_not_order_authorization",
+    "assembly_service": "none_hand_assembly",
+    "parts_procurement": "user_external_mall_procurement",
+    "machine_placement_requested": false,
+    "bom_cpl_upload_authorization": false,
+    "selected_switch_assembly": "mx_direct_solder",
+    "reference_switch_assembly": "choc_socket_alternative_not_selected",
+    "switch_assemblies_mutually_exclusive": true,
+    "socket_population_for_selected_assembly": false,
+    "assembly_side": "bottom",
+    "assembled_reference_families": [
+      "D",
+      "SW"
+    ],
+    "assembled_parts": {
+      "D": {
+        "manufacturer": "Diodes Incorporated",
+        "manufacturer_part_number": "1N4148W-13-F",
+        "lcsc_part_number": "C112342",
+        "jlcpcb_part_number": "C112342",
+        "package": "SOD-123"
+      },
+      "SW": {
+        "manufacturer_part_number": "CPG135001S30",
+        "lcsc_part_number": "C5333465"
+      }
+    },
+    "inventory_recheck_required": true,
+    "exact_diode_if_unavailable": "dnp_and_hand_assemble_no_substitution",
+    "placement_and_orientation_confirmation_required": true,
+    "bom_only_1n4148_substitution_allowed": false,
+    "board_revision_required_for_1n4148_family": false,
+    "order_ready": false
+  },
+  "products": {
+    "left": {
+      "board": "hardware\\kicad\\kc2_left\\kc2_left.kicad_pcb",
+      "source_board_sha256": "3a6f80a5bc1afe897056107be9522a26079766fd4963f2115a9237737470268d",
+      "key_count": 31,
+      "output_dir": "hardware\\kicad\\fabrication\\kc2_left",
+      "archive": "hardware\\kicad\\fabrication\\kc2_left.zip",
+      "archive_sha256": "1c17ff2dadc732b3009e250d6dfbdada55f10a870b376df27c7db5c91d52f6e5",
+      "jlcpcb_archive": "hardware\\kicad\\fabrication\\kc2_left_jlcpcb.zip",
+      "jlcpcb_archive_sha256": "ce75086426b963a285fa14bcca3a84d483baf288a3610507c6ee8b5c8e464e8e",
+      "jlcpcb_entry_count": 15,
+      "files": [
+        {
+          "name": "kc2_left-B_Cu.gbl",
+          "size": 39279,
+          "sha256": "5f36f167ac822a6a8bb5e33734caaa82627d379cfa73bb615e01cd6169998379"
+        },
+        {
+          "name": "kc2_left-B_Mask.gbs",
+          "size": 15140,
+          "sha256": "38dd9384bb3cfecd8888300f4a814355d61b386e4411a60f8ab23488e07563d5"
+        },
+        {
+          "name": "kc2_left-B_Paste.gbp",
+          "size": 6198,
+          "sha256": "baef79e86bd5db06d320040e78108a01b3084b292b49fe5c1c9edc0ab7197c76"
+        },
+        {
+          "name": "kc2_left-B_Silkscreen.gbo",
+          "size": 20819,
+          "sha256": "e2893a4966cb3c8cdf25e5b232f4fa744f1f77333bd53f730428308dfe14bf15"
+        },
+        {
+          "name": "kc2_left-bom.csv",
+          "size": 982,
+          "sha256": "5df92d49f43fa8649bcc5704829c8508ea63f971af5c8de924438df1898a9342"
+        },
+        {
+          "name": "kc2_left-bom.json",
+          "size": 4186,
+          "sha256": "5134772a58e9278179d2be72d4619bd38c49b777acfebbc96bcd4aee7e8e608f"
+        },
+        {
+          "name": "kc2_left-drill-report.txt",
+          "size": 1005,
+          "sha256": "ce7126409c8fcd7cdd1b25b94c89aa82e0795b2875cca2bf13f207338fe879a1"
+        },
+        {
+          "name": "kc2_left-Edge_Cuts.gm1",
+          "size": 6481,
+          "sha256": "383e31bd0683e5c52f0c331bf92d94dd1c85c58df29e4db0c946ae5a566adf25"
+        },
+        {
+          "name": "kc2_left-F_Cu.gtl",
+          "size": 14250,
+          "sha256": "e85b5b304f373df02116713faf3aa3c6f479803819fe3a65433f052a8b46ba1e"
+        },
+        {
+          "name": "kc2_left-F_Mask.gts",
+          "size": 9861,
+          "sha256": "c783a2ce4573376e9b79f9de80aad3e8ac4b5d7475fdf59d7848d7c3d90440d1"
+        },
+        {
+          "name": "kc2_left-F_Paste.gtp",
+          "size": 583,
+          "sha256": "cb3b3bdb6bf6a0a2894552e26209ce021a0f395eca14921879fc8c4f0e67d84f"
+        },
+        {
+          "name": "kc2_left-F_Silkscreen.gto",
+          "size": 113434,
+          "sha256": "bf453da291dff6479294545567c5c50b05a0348e4e6fbfa5f75ea8e015f382c6"
+        },
+        {
+          "name": "kc2_left-job.gbrjob",
+          "size": 2764,
+          "sha256": "e6bd00dc5dc29b88bf88ffcac649feb607d44c986a20d79420c37800a9750fd4"
+        },
+        {
+          "name": "kc2_left-NPTH-drl_map.gbr",
+          "size": 152610,
+          "sha256": "31b6c0fe2f8f2eda0fe1118e60f72c7ba9167780ec68844ccf11d180c417ea0b"
+        },
+        {
+          "name": "kc2_left-NPTH.drl",
+          "size": 4183,
+          "sha256": "65e6567a3a122261c3dcfeae5d0e7c1eac7b81b4a1afeee050cc71ef31cdabed"
+        },
+        {
+          "name": "kc2_left-PTH-drl_map.gbr",
+          "size": 90123,
+          "sha256": "2d3eb9a518965c173f65d8f7f72abdfab90f2fc2df856f6f1d1969e904690f72"
+        },
+        {
+          "name": "kc2_left-PTH.drl",
+          "size": 2544,
+          "sha256": "ae314e4a0136d8d094959380d7e5b4fa7a9a840ca9e4dc0fdc608b4fd3a0c469"
+        }
+      ],
+      "bom": {
+        "json": "hardware\\kicad\\fabrication\\kc2_left\\kc2_left-bom.json",
+        "csv": "hardware\\kicad\\fabrication\\kc2_left\\kc2_left-bom.csv"
+      },
+      "pcba_quote": {
+        "bom": "hardware\\kicad\\fabrication\\pcba_quote\\kc2_left_jlcpcb_pcba_bom.csv",
+        "bom_sha256": "21beed8cfa18b97fe561268b01f19ba558236f1ab270c1f9dbbfbe0902a03c12",
+        "cpl": "hardware\\kicad\\fabrication\\pcba_quote\\kc2_left_jlcpcb_pcba_cpl.csv",
+        "cpl_sha256": "af291b038ab01be1b27ba2e9c8247485e65e903915c852b3a916f65e7c66aee1",
+        "diode_count": 31,
+        "socket_count": 31,
+        "assembled_reference_count": 62,
+        "order_ready": false
+      }
+    },
+    "right": {
+      "board": "hardware\\kicad\\kc2_right\\kc2_right.kicad_pcb",
+      "source_board_sha256": "a4361040d81b3189cce8cdfcedaf54e570248d2fd513835dfadf80bcc187ef6d",
+      "key_count": 39,
+      "output_dir": "hardware\\kicad\\fabrication\\kc2_right",
+      "archive": "hardware\\kicad\\fabrication\\kc2_right.zip",
+      "archive_sha256": "b057328b171af07d082261ae44910b79d4100a9cc55032fea21d0a3dce4a9062",
+      "jlcpcb_archive": "hardware\\kicad\\fabrication\\kc2_right_jlcpcb.zip",
+      "jlcpcb_archive_sha256": "db51599eae16657ede44b6fecf33a735a459cff4a932b0f34bcf0e3f71226ef8",
+      "jlcpcb_entry_count": 15,
+      "files": [
+        {
+          "name": "kc2_right-B_Cu.gbl",
+          "size": 49708,
+          "sha256": "4a149c41aa4f33574862be4d198c6daa8a0c8466783e480d6ce2b4781134f8fd"
+        },
+        {
+          "name": "kc2_right-B_Mask.gbs",
+          "size": 18522,
+          "sha256": "66c4770cd9108a738431f643cd8868aac73338783a9c8e540c55e1647e1a61a0"
+        },
+        {
+          "name": "kc2_right-B_Paste.gbp",
+          "size": 7393,
+          "sha256": "eb22a9e44fec9a273c2b948cfcaa728c6943e7a8f2edfcdbf06fbfdd28e4b655"
+        },
+        {
+          "name": "kc2_right-B_Silkscreen.gbo",
+          "size": 25685,
+          "sha256": "5737f2dffb47c86d92481f4f3f9d058184c038c3704f39db4065fbcaf9681209"
+        },
+        {
+          "name": "kc2_right-bom.csv",
+          "size": 1058,
+          "sha256": "003a843a135ab67d26273dc986d0cbce262b58887d7776683a38e297121d0de1"
+        },
+        {
+          "name": "kc2_right-bom.json",
+          "size": 4469,
+          "sha256": "0d57b62b4451bcb6670ffa7b50419979bbbb4740dd828394a368585d7afae978"
+        },
+        {
+          "name": "kc2_right-drill-report.txt",
+          "size": 1008,
+          "sha256": "b43533b71782cbdfae5bc8b65d8be77a2f828ec4501ae8d87bb865aa09bf297d"
+        },
+        {
+          "name": "kc2_right-Edge_Cuts.gm1",
+          "size": 6418,
+          "sha256": "87578bc19a6ba59176c24f81d287f7933a35f7c53de2e3d4e52470eaec77171d"
+        },
+        {
+          "name": "kc2_right-F_Cu.gtl",
+          "size": 17430,
+          "sha256": "8748c27837aa29ad6c4fb5656d00dd177fedc230d4e9de29dae595caea6c08f8"
+        },
+        {
+          "name": "kc2_right-F_Mask.gts",
+          "size": 12125,
+          "sha256": "79a35be1b4ade2ab68a7de4618e60aa083d4349236897591815ff1505e1149f0"
+        },
+        {
+          "name": "kc2_right-F_Paste.gtp",
+          "size": 582,
+          "sha256": "fade66f114b510efb742bc233f5d21083dc5e031f6a4785d5f522816e409c0cd"
+        },
+        {
+          "name": "kc2_right-F_Silkscreen.gto",
+          "size": 117488,
+          "sha256": "b154873da9ad13a1be04a860642c8ef98b2416412778c037a6f25b2c6d2052c0"
+        },
+        {
+          "name": "kc2_right-job.gbrjob",
+          "size": 2774,
+          "sha256": "28f5268548c6f73adc5774c808982e6ed678dcfa704921008a300ebc501f950f"
+        },
+        {
+          "name": "kc2_right-NPTH-drl_map.gbr",
+          "size": 160696,
+          "sha256": "5ca889609cdc054fbccdeec334524bccc34b9d3c32cdedb9f8b1b56680e2efa3"
+        },
+        {
+          "name": "kc2_right-NPTH.drl",
+          "size": 5086,
+          "sha256": "f235db32fd3a8ec8a3588c95075f583f98e9d23f2114c6b7372cf5efa3baee23"
+        },
+        {
+          "name": "kc2_right-PTH-drl_map.gbr",
+          "size": 95612,
+          "sha256": "054c55b01c532657077b84306f13a1d93164e7d655b6b3b57aab725b5c131e69"
+        },
+        {
+          "name": "kc2_right-PTH.drl",
+          "size": 3289,
+          "sha256": "9292719a890572ae134d08d8da4528531b00ce52e6ec837ad482b723f165c269"
+        }
+      ],
+      "bom": {
+        "json": "hardware\\kicad\\fabrication\\kc2_right\\kc2_right-bom.json",
+        "csv": "hardware\\kicad\\fabrication\\kc2_right\\kc2_right-bom.csv"
+      },
+      "pcba_quote": {
+        "bom": "hardware\\kicad\\fabrication\\pcba_quote\\kc2_right_jlcpcb_pcba_bom.csv",
+        "bom_sha256": "e0418ec4fe1ca6b9efd1fdf2e68dcb73b63ec25fa77334ad0bd8676381baee5a",
+        "cpl": "hardware\\kicad\\fabrication\\pcba_quote\\kc2_right_jlcpcb_pcba_cpl.csv",
+        "cpl_sha256": "d5f52a27760ec1e3f138c5200de9f01480a0a65124b9058d664f82cbe06c5c6d",
+        "diode_count": 39,
+        "socket_count": 39,
+        "assembled_reference_count": 78,
+        "order_ready": false
+      }
+    },
+    "coupon": {
+      "board": "hardware\\kicad\\coupon\\kc2_switch_coupon.kicad_pcb",
+      "source_board_sha256": "d7fff590231b6ae6df46448811f3b631986297a7bf8c8565b88075071ff20757",
+      "key_count": 3,
+      "output_dir": "hardware\\kicad\\fabrication\\coupon",
+      "archive": "hardware\\kicad\\fabrication\\kc2_coupon.zip",
+      "archive_sha256": "5574b62981e4be7c256ddc987441e3b16c3a05af527a459ccf74cce2d5133c74",
+      "jlcpcb_archive": "hardware\\kicad\\fabrication\\kc2_coupon_jlcpcb.zip",
+      "jlcpcb_archive_sha256": "5574b62981e4be7c256ddc987441e3b16c3a05af527a459ccf74cce2d5133c74",
+      "jlcpcb_entry_count": 15,
+      "files": [
+        {
+          "name": "kc2_switch_coupon-B_Cu.gbl",
+          "size": 5576,
+          "sha256": "d04a5d8ae3fffd002bd71d1f064ba820800dcbfbd671fa4e8fd0d243457fd275"
+        },
+        {
+          "name": "kc2_switch_coupon-B_Mask.gbs",
+          "size": 3266,
+          "sha256": "17cd0b46606682c8b7a7308a656452320d1fb43625eb39717160eeb9ac3898db"
+        },
+        {
+          "name": "kc2_switch_coupon-B_Paste.gbp",
+          "size": 1928,
+          "sha256": "f2deaa7dab620399ea883f3091a5db82542d86592a70d77c6d720edc57ee990c"
+        },
+        {
+          "name": "kc2_switch_coupon-B_Silkscreen.gbo",
+          "size": 27383,
+          "sha256": "176ceb836872af409a298cd6312cb863a9dec8bc8d624e94a50bc1345e99a219"
+        },
+        {
+          "name": "kc2_switch_coupon-drill-report.txt",
+          "size": 825,
+          "sha256": "421f5297f1b8fcae6bda6009b790620313b2acd115e1295c4e766e4cec5cc7b5"
+        },
+        {
+          "name": "kc2_switch_coupon-Edge_Cuts.gm1",
+          "size": 719,
+          "sha256": "9412cd7603ad78022572e9e9652feeaa41a4567b2ca3c8505c51792f1f173b8e"
+        },
+        {
+          "name": "kc2_switch_coupon-F_Cu.gtl",
+          "size": 1670,
+          "sha256": "5c64f9fae2b3fd4c497be1dbab880a15e783289a91180f480cb8a297b3a44e68"
+        },
+        {
+          "name": "kc2_switch_coupon-F_Mask.gts",
+          "size": 1864,
+          "sha256": "51cdf3096a90909621c2a4ddbeb5b717c64fb0463c16cbd23c449095595f9ae4"
+        },
+        {
+          "name": "kc2_switch_coupon-F_Paste.gtp",
+          "size": 486,
+          "sha256": "ffcf8b71a69da20705f19f51be60dc6a4c0918d9f23ad7f9d4dcb9d0309521bc"
+        },
+        {
+          "name": "kc2_switch_coupon-F_Silkscreen.gto",
+          "size": 42525,
+          "sha256": "67321b4c120914a02fd27e46e0dd142176ad3577b6b4754bf6547de2a55e0e83"
+        },
+        {
+          "name": "kc2_switch_coupon-job.gbrjob",
+          "size": 2856,
+          "sha256": "799259aac87b2949a550c58400c1d5a0a06b5869f60f63b3f62babb23a4ea27b"
+        },
+        {
+          "name": "kc2_switch_coupon-NPTH-drl_map.gbr",
+          "size": 78506,
+          "sha256": "9b3dac680d81c3205894f514b6cf3d78cef17e834ef3e12bf7f05359c7bc835b"
+        },
+        {
+          "name": "kc2_switch_coupon-NPTH.drl",
+          "size": 791,
+          "sha256": "391763959652c52167b5961e071ec00d4d2457648f35c9cf5c1a8f010b8b5c1c"
+        },
+        {
+          "name": "kc2_switch_coupon-PTH-drl_map.gbr",
+          "size": 31629,
+          "sha256": "b0dfe13cc86d45154a963ed8b10103f6408ffc5e69572188011a4f20a09f888d"
+        },
+        {
+          "name": "kc2_switch_coupon-PTH.drl",
+          "size": 608,
+          "sha256": "96a788ef29e65ab1f380d368c005e17c72a34e7d06deeaf9200db8547d8d288c"
+        }
+      ]
+    }
+  }
+}

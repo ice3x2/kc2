@@ -1,0 +1,220 @@
+{
+  "requirement": "CON-ARCH-006",
+  "boards": {
+    "left": {
+      "maximum_outer_overhang_mm": 0.0,
+      "maximum_top_bottom_overhang_mm": 0.0,
+      "maximum_keyfield_perimeter_overhang_mm": 0.0,
+      "outer_cap_relative_setback_by_row_mm": [
+        1.0,
+        1.0,
+        1.0001,
+        1.0,
+        0.9999
+      ],
+      "top_bottom_setback_mm": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "permitted_exceptions": [
+        {
+          "edge": "top",
+          "key_index": 5,
+          "key_label": "4",
+          "clearance_driving_features": [
+            "U1 nice!nano socket",
+            "USB connector access",
+            "reset/service access"
+          ],
+          "controller_span_mm": [
+            117.8425,
+            147.5825
+          ]
+        },
+        {
+          "edge": "top",
+          "key_index": 6,
+          "key_label": "5",
+          "clearance_driving_features": [
+            "U1 nice!nano socket",
+            "USB connector access",
+            "reset/service access"
+          ],
+          "controller_span_mm": [
+            117.8425,
+            147.5825
+          ]
+        }
+      ],
+      "perimeter_sample_step_mm": 0.05,
+      "join_setback_by_row_mm": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    "right": {
+      "maximum_outer_overhang_mm": 0.0,
+      "maximum_top_bottom_overhang_mm": 0.0,
+      "maximum_keyfield_perimeter_overhang_mm": 0.0,
+      "outer_cap_relative_setback_by_row_mm": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "top_bottom_setback_mm": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "permitted_exceptions": [
+        {
+          "edge": "top",
+          "key_index": 2,
+          "key_label": "8",
+          "clearance_driving_features": [
+            "U1 nice!nano socket",
+            "USB connector access",
+            "reset/service access"
+          ],
+          "controller_span_mm": [
+            62.53,
+            92.27
+          ]
+        },
+        {
+          "edge": "top",
+          "key_index": 3,
+          "key_label": "9",
+          "clearance_driving_features": [
+            "U1 nice!nano socket",
+            "USB connector access",
+            "reset/service access"
+          ],
+          "controller_span_mm": [
+            62.53,
+            92.27
+          ]
+        }
+      ],
+      "perimeter_sample_step_mm": 0.05,
+      "join_setback_by_row_mm": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ]
+    }
+  },
+  "one_unit_cross_seam_center_pitch_mm": 19.85,
+  "cross_seam_keycap_gap_mm": 1.8,
+  "row_center_joined_pcb_gap_mm": 3.8,
+  "cross_seam_pairs": [
+    {
+      "row": 0,
+      "left_key": "6",
+      "right_key": "7",
+      "left_cap_width_mm": 18.05,
+      "right_cap_width_mm": 18.05,
+      "center_pitch_mm": 19.85,
+      "cap_gap_mm": 1.8,
+      "left_center_to_pcb_edge_mm": 8.025,
+      "right_center_to_pcb_edge_mm": 8.025,
+      "pcb_gap_mm": 3.8
+    },
+    {
+      "row": 1,
+      "left_key": "T",
+      "right_key": "Y",
+      "left_cap_width_mm": 18.05,
+      "right_cap_width_mm": 18.05,
+      "center_pitch_mm": 19.85,
+      "cap_gap_mm": 1.8,
+      "left_center_to_pcb_edge_mm": 8.025,
+      "right_center_to_pcb_edge_mm": 8.025,
+      "pcb_gap_mm": 3.8
+    },
+    {
+      "row": 2,
+      "left_key": "G",
+      "right_key": "H",
+      "left_cap_width_mm": 18.05,
+      "right_cap_width_mm": 18.05,
+      "center_pitch_mm": 19.85,
+      "cap_gap_mm": 1.8,
+      "left_center_to_pcb_edge_mm": 8.025,
+      "right_center_to_pcb_edge_mm": 8.025,
+      "pcb_gap_mm": 3.8
+    },
+    {
+      "row": 3,
+      "left_key": "B",
+      "right_key": "N",
+      "left_cap_width_mm": 18.05,
+      "right_cap_width_mm": 18.05,
+      "center_pitch_mm": 19.85,
+      "cap_gap_mm": 1.8,
+      "left_center_to_pcb_edge_mm": 8.025,
+      "right_center_to_pcb_edge_mm": 8.025,
+      "pcb_gap_mm": 3.8
+    },
+    {
+      "row": 4,
+      "left_key": "Space",
+      "right_key": "B",
+      "left_cap_width_mm": 32.3375,
+      "right_cap_width_mm": 18.05,
+      "center_pitch_mm": 26.9937,
+      "cap_gap_mm": 1.7999,
+      "left_center_to_pcb_edge_mm": 15.1687,
+      "right_center_to_pcb_edge_mm": 8.025,
+      "pcb_gap_mm": 3.8
+    }
+  ],
+  "keycell_edge_inset_mm": 1.5,
+  "one_unit_join_center_to_edge_mm": 8.025,
+  "minimum_joined_pcb_gap_mm": 1.1,
+  "outline_x_range_nesting_mm": 10.4875,
+  "one_to_one_exports": {
+    "left": {
+      "path": "hardware/kicad/mechanical/kc2_left_1to1.svg",
+      "declared_width_mm": 135.1026,
+      "declared_height_mm": 122.4788,
+      "edge_cuts_width_mm": 135.1125,
+      "edge_cuts_height_mm": 122.5,
+      "maximum_dimension_error_mm": 0.0212
+    },
+    "right": {
+      "path": "hardware/kicad/mechanical/kc2_right_1to1.svg",
+      "declared_width_mm": 163.6776,
+      "declared_height_mm": 122.4788,
+      "edge_cuts_width_mm": 163.6875,
+      "edge_cuts_height_mm": 122.5,
+      "maximum_dimension_error_mm": 0.0212
+    }
+  },
+  "errors": []
+}

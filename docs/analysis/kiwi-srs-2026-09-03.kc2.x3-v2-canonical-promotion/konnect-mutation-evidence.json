@@ -1,0 +1,64 @@
+{
+  "requirement_id": "OPS-ARCH-006",
+  "server": {
+    "name": "konnect",
+    "version": "0.9.0",
+    "persistent_log": "C:/Users/beom/AppData/Roaming/konnect/logs/calls.jsonl",
+    "selected_log_records_sha256": "40eef419112b9611464c01c90fc067767905b051c9ecfadd700d7728de5e5e53"
+  },
+  "selected_log_records": [
+    {"call_id":"34a6d41400000004","ts":1788378085883,"tool":"rename_project","toolset":"project","dur_ms":2,"status":"ok","args_bytes":177,"result_bytes":549},
+    {"call_id":"35d8182000000005","ts":1788378085903,"tool":"rename_project","toolset":"project","dur_ms":2,"status":"ok","args_bytes":180,"result_bytes":561},
+    {"call_id":"36e87a9800000006","ts":1788378085921,"tool":"rename_project","toolset":"project","dur_ms":1,"status":"ok","args_bytes":188,"result_bytes":580},
+    {"call_id":"09479ab000000007","ts":1788378093155,"tool":"rename_project","toolset":"project","dur_ms":22,"status":"ok","args_bytes":178,"result_bytes":497},
+    {"call_id":"0b7838a800000008","ts":1788378093192,"tool":"rename_project","toolset":"project","dur_ms":16,"status":"ok","args_bytes":181,"result_bytes":508},
+    {"call_id":"0d4242dc00000009","ts":1788378093222,"tool":"rename_project","toolset":"project","dur_ms":10,"status":"ok","args_bytes":189,"result_bytes":519},
+    {"call_id":"292e07c400000001","ts":1788378856690,"tool":"register_footprint_library","toolset":"library","dur_ms":13,"status":"ok","args_bytes":221,"result_bytes":230},
+    {"call_id":"29fdd82800000002","ts":1788378856704,"tool":"register_footprint_library","toolset":"library","dur_ms":7,"status":"ok","args_bytes":223,"result_bytes":231},
+    {"call_id":"2a70846800000003","ts":1788378856712,"tool":"register_footprint_library","toolset":"library","dur_ms":6,"status":"ok","args_bytes":228,"result_bytes":228}
+  ],
+  "rename_results": [
+    {
+      "project": "left",
+      "dry_run_call_id": "34a6d41400000004",
+      "apply_call_id": "09479ab000000007",
+      "from": "kc2_left-x3-v2",
+      "to": "kc2_left",
+      "dry_run_files": ["kc2_left.kicad_pro", "kc2_left.kicad_pcb", "kc2_left.kicad_prl"],
+      "dry_run_reference_updates": {"kicad_pro": 3, "kicad_pcb": 0, "kicad_prl": 1},
+      "apply_reference_updates": {"kicad_pro": 3, "kicad_prl": 1},
+      "status": "ok"
+    },
+    {
+      "project": "right",
+      "dry_run_call_id": "35d8182000000005",
+      "apply_call_id": "0b7838a800000008",
+      "from": "kc2_right-x3-v2",
+      "to": "kc2_right",
+      "dry_run_files": ["kc2_right.kicad_pro", "kc2_right.kicad_pcb", "kc2_right.kicad_prl"],
+      "dry_run_reference_updates": {"kicad_pro": 3, "kicad_pcb": 0, "kicad_prl": 1},
+      "apply_reference_updates": {"kicad_pro": 3, "kicad_prl": 1},
+      "status": "ok"
+    },
+    {
+      "project": "coupon",
+      "dry_run_call_id": "36e87a9800000006",
+      "apply_call_id": "0d4242dc00000009",
+      "from": "kc2_x3_v2_switch_coupon",
+      "to": "kc2_switch_coupon",
+      "dry_run_files": ["kc2_switch_coupon.kicad_pro", "kc2_switch_coupon.kicad_pcb", "kc2_switch_coupon.kicad_prl"],
+      "dry_run_reference_updates": {"kicad_pro": 1, "kicad_pcb": 0, "kicad_prl": 1},
+      "apply_reference_updates": {"kicad_pro": 1, "kicad_prl": 1},
+      "status": "ok"
+    }
+  ],
+  "library_registration_results": {
+    "call_ids": ["292e07c400000001", "29fdd82800000002", "2a70846800000003"],
+    "nickname": "KC2",
+    "scope": "project",
+    "replace_existing": true,
+    "result_state": "updated",
+    "uri": "${KIPRJMOD}/../../../third_party/kc2.pretty",
+    "list_verification_count_per_project": 1
+  }
+}

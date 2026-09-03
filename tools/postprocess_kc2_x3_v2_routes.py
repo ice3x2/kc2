@@ -18,8 +18,8 @@ from tools.postprocess_kc2_routes import (
 
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_BOARDS = (
-    ROOT / "hardware" / "kicad" / "draft" / "x3-v2" / "kc2_left-x3-v2" / "kc2_left-x3-v2.kicad_pcb",
-    ROOT / "hardware" / "kicad" / "draft" / "x3-v2" / "kc2_right-x3-v2" / "kc2_right-x3-v2.kicad_pcb",
+    ROOT / "hardware" / "kicad" / "kc2_left" / "kc2_left.kicad_pcb",
+    ROOT / "hardware" / "kicad" / "kc2_right" / "kc2_right.kicad_pcb",
 )
 
 
@@ -224,7 +224,7 @@ def process_board(path: Path, backup_dir: Path | None = None) -> dict[str, int]:
     board = pcbnew.LoadBoard(str(path))
     title = board.GetTitleBlock()
     title.SetDate("2026-08-03")
-    title.SetRevision("draft-v2")
+    title.SetRevision("canonical-v2")
     result = {
         "x3_top_edge_relief_points": apply_x3_top_edge_relief(board, side),
         "assembly_graphics_moved_to_fab": move_v2_assembly_graphics_to_fab(board),

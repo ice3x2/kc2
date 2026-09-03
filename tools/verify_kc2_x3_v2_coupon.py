@@ -20,11 +20,11 @@ from tools.verify_kc2_x3_v2 import (
 
 
 ROOT = Path(__file__).resolve().parents[1]
-COUPON_DIR = ROOT / "hardware" / "kicad" / "draft" / "x3-v2" / "coupon"
-DEFAULT_BOARD = COUPON_DIR / "kc2_x3_v2_switch_coupon.kicad_pcb"
-DEFAULT_MANIFEST = COUPON_DIR / "kc2_x3_v2_switch_coupon_manifest.json"
-DEFAULT_DRC_REPORT = COUPON_DIR / "kc2_x3_v2_switch_coupon.drc.json"
-DEFAULT_DRC_EVIDENCE = COUPON_DIR / "kc2_x3_v2_switch_coupon_drc_evidence.json"
+COUPON_DIR = ROOT / "hardware" / "kicad" / "coupon"
+DEFAULT_BOARD = COUPON_DIR / "kc2_switch_coupon.kicad_pcb"
+DEFAULT_MANIFEST = COUPON_DIR / "kc2_switch_coupon_manifest.json"
+DEFAULT_DRC_REPORT = COUPON_DIR / "kc2_switch_coupon.drc.json"
+DEFAULT_DRC_EVIDENCE = COUPON_DIR / "kc2_switch_coupon_drc_evidence.json"
 CANONICAL_BOARD_PATH = DEFAULT_BOARD.relative_to(ROOT).as_posix()
 CANONICAL_DRC_REPORT_PATH = DEFAULT_DRC_REPORT.relative_to(ROOT).as_posix()
 EXACT_DRC_SEVERITIES = ["error", "warning", "exclusion"]
@@ -82,7 +82,7 @@ def build_coupon_drc_evidence(
     return {
         "requirement_ids": ["CON-ARCH-004"],
         "variant": "x3-v2-switch-coupon",
-        "status": "draft_not_orderable_pending_physical_evidence",
+        "status": "canonical_not_orderable_pending_physical_evidence",
         "hash_policy": HASH_POLICY,
         "board": {
             "board_path": CANONICAL_BOARD_PATH,
@@ -119,8 +119,8 @@ def verify_coupon_drc_evidence(
         errors.append("coupon DRC evidence requirement IDs differ")
     if evidence.get("variant") != "x3-v2-switch-coupon":
         errors.append("coupon DRC evidence variant differs")
-    if evidence.get("status") != "draft_not_orderable_pending_physical_evidence":
-        errors.append("coupon DRC evidence must remain draft and not order-ready")
+    if evidence.get("status") != "canonical_not_orderable_pending_physical_evidence":
+        errors.append("coupon DRC evidence must remain canonical and not order-ready")
     if evidence.get("hash_policy") != HASH_POLICY:
         errors.append("coupon DRC evidence canonical hash policy mismatch")
     if record.get("board_path") != CANONICAL_BOARD_PATH:
@@ -406,7 +406,7 @@ def analyze_coupon(
     drc_path = path.with_suffix(".drc.json")
     drc = json.loads(drc_path.read_text(encoding="utf-8")) if drc_path.is_file() else {}
     if manifest_path is None:
-        manifest_path = path.with_name("kc2_x3_v2_switch_coupon_manifest.json")
+        manifest_path = path.with_name("kc2_switch_coupon_manifest.json")
     if drc_evidence_path is None:
         drc_evidence_path = path.with_name(DEFAULT_DRC_EVIDENCE.name)
     manifest = (

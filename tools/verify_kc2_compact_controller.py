@@ -178,9 +178,10 @@ def expected_slot_center(
     u1_x: float,
     u1_y: float,
     board_path: Path | None = None,
+    is_v2: bool = False,
 ) -> tuple[float, float]:
     usb_direction = 1 if side == "left" else -1
-    if board_path is not None and "x3-v2" in str(board_path).lower():
+    if is_v2 or (board_path is not None and "x3-v2" in str(board_path).lower()):
         usb_edge_x = u1_x - usb_direction * CONTROLLER_LEN / 2.0
         return (
             usb_edge_x
@@ -207,7 +208,11 @@ def check_side(side: str, board_path: Path) -> list[str]:
     errors: list[str] = []
     board = pcbnew.LoadBoard(str(board_path))
     fps = {fp.GetReference(): fp for fp in board.GetFootprints()}
-    is_v2 = "x3-v2" in str(board_path).lower()
+    is_v2 = "x3-v2" in str(board_path).lower() or {
+        "BAT1",
+        "J_BAT1",
+        "SW_PWR1",
+    }.issubset(fps)
 
     if not is_v2 and "J_PWR1" in fps:
         errors.append(f"{side}: J_PWR1 carrier power pad footprint is still present")
@@ -377,7 +382,13 @@ def check_side(side: str, board_path: Path) -> list[str]:
     if slot.GetValue() != BATTERY_LEAD_SLOT_VALUE:
         errors.append(f"{side}: {BATTERY_LEAD_SLOT_REF} value is {slot.GetValue()!r}")
     slot_x, slot_y = fp_center(slot)
-    expected_x, expected_y = expected_slot_center(side, u1_x, u1_y, board_path)
+    expected_x, expected_y = expected_slot_center(
+        side,
+        u1_x,
+        u1_y,
+        board_path,
+        is_v2=is_v2,
+    )
     if abs(slot_x - expected_x) > SLOT_POSITION_TOLERANCE or abs(slot_y - expected_y) > SLOT_POSITION_TOLERANCE:
         errors.append(
             f"{side}: {BATTERY_LEAD_SLOT_REF} at ({slot_x:.3f}, {slot_y:.3f}) mm, "

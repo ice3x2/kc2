@@ -1,0 +1,139 @@
+{
+  "requirement_ids": [
+    "CON-ARCH-004",
+    "CON-ARCH-006",
+    "CON-ARCH-007",
+    "REL-ARCH-001",
+    "OPS-ARCH-006"
+  ],
+  "hash_policy": "lf-normalized-utf8-text-else-raw-v1",
+  "status": "canonical_not_orderable_pending_physical_evidence",
+  "scale": 1.0,
+  "units": "mm",
+  "kicad_cli": "C:\\Program Files\\KiCad\\10.0\\bin\\kicad-cli.exe",
+  "products": {
+    "left": {
+      "board": "hardware\\kicad\\kc2_left\\kc2_left.kicad_pcb",
+      "source_board_sha256": "3a6f80a5bc1afe897056107be9522a26079766fd4963f2115a9237737470268d",
+      "drawings": {
+        "top": {
+          "path": "hardware\\kicad\\mechanical\\left_top_1to1.pdf",
+          "layer": "F.Fab",
+          "layers": [
+            "F.Fab",
+            "F.Silkscreen",
+            "Edge.Cuts"
+          ],
+          "mirrored": false,
+          "scale": 1.0,
+          "page_size": "A4_landscape",
+          "size": 101456,
+          "sha256": "bd9f776802157ec47e9c243b8cc3859a107309b061dfaba8d358d8aeb29084c0"
+        },
+        "bottom": {
+          "path": "hardware\\kicad\\mechanical\\left_bottom_1to1.pdf",
+          "layer": "B.Fab",
+          "layers": [
+            "B.Fab",
+            "Edge.Cuts"
+          ],
+          "mirrored": true,
+          "scale": 1.0,
+          "page_size": "A4_landscape",
+          "size": 109053,
+          "sha256": "ed247816cdb89e3e587670e13cbedca36805c531b50f1789215535e29ee3eab9"
+        }
+      },
+      "outline_svg": {
+        "path": "hardware\\kicad\\mechanical\\kc2_left_1to1.svg",
+        "scale": 1.0,
+        "layers": [
+          "F.Cu",
+          "F.Mask",
+          "F.Silkscreen",
+          "Edge.Cuts"
+        ],
+        "size": 164193,
+        "sha256": "e7cf190236f0cbf4fbb923dfd806bd437ff312100dae22f25467c750956e5aad"
+      }
+    },
+    "right": {
+      "board": "hardware\\kicad\\kc2_right\\kc2_right.kicad_pcb",
+      "source_board_sha256": "a4361040d81b3189cce8cdfcedaf54e570248d2fd513835dfadf80bcc187ef6d",
+      "drawings": {
+        "top": {
+          "path": "hardware\\kicad\\mechanical\\right_top_1to1.pdf",
+          "layer": "F.Fab",
+          "layers": [
+            "F.Fab",
+            "F.Silkscreen",
+            "Edge.Cuts"
+          ],
+          "mirrored": false,
+          "scale": 1.0,
+          "page_size": "A4_landscape",
+          "size": 119790,
+          "sha256": "ddc0bac37ea78f1052e64db77cbe448f1b2c45fe2073ee82c5fb63c22e7a9ff1"
+        },
+        "bottom": {
+          "path": "hardware\\kicad\\mechanical\\right_bottom_1to1.pdf",
+          "layer": "B.Fab",
+          "layers": [
+            "B.Fab",
+            "Edge.Cuts"
+          ],
+          "mirrored": true,
+          "scale": 1.0,
+          "page_size": "A4_landscape",
+          "size": 130458,
+          "sha256": "f33d83b7c7bb3cb88b740212b598519b199978f6fb0848992bcfee3c41c90e20"
+        }
+      },
+      "outline_svg": {
+        "path": "hardware\\kicad\\mechanical\\kc2_right_1to1.svg",
+        "scale": 1.0,
+        "layers": [
+          "F.Cu",
+          "F.Mask",
+          "F.Silkscreen",
+          "Edge.Cuts"
+        ],
+        "size": 180827,
+        "sha256": "2c46782a68e3564d4c7bf33efb048711359cd566ec8fbeb85c1695ec6402de74"
+      }
+    },
+    "coupon": {
+      "board": "hardware\\kicad\\coupon\\kc2_switch_coupon.kicad_pcb",
+      "source_board_sha256": "d7fff590231b6ae6df46448811f3b631986297a7bf8c8565b88075071ff20757",
+      "drawings": {
+        "top": {
+          "path": "hardware\\kicad\\mechanical\\coupon_top_1to1.pdf",
+          "layer": "F.Fab",
+          "layers": [
+            "F.Fab",
+            "F.Silkscreen",
+            "Edge.Cuts"
+          ],
+          "mirrored": false,
+          "scale": 1.0,
+          "page_size": "A4_landscape",
+          "size": 26866,
+          "sha256": "8e560bdbb00110457958ca905367e78cafb3208cbe3637734dd8ad455bfda546"
+        },
+        "bottom": {
+          "path": "hardware\\kicad\\mechanical\\coupon_bottom_1to1.pdf",
+          "layer": "B.Fab",
+          "layers": [
+            "B.Fab",
+            "Edge.Cuts"
+          ],
+          "mirrored": true,
+          "scale": 1.0,
+          "page_size": "A4_landscape",
+          "size": 26043,
+          "sha256": "5ad94e766dfb2c5caa4a77abce1abbf86f25f378c408f21f1ba4642a4c383409"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "evaluator": "verify-pass-1",
+  "iter": 1,
+  "findings": [
+    {
+      "id": "internal_coherence-1-1",
+      "finding_hash": "fba349832974f186dc3f31b46faafb84c6661197",
+      "severity": "CRITICAL",
+      "axis": "internal_coherence",
+      "req_id": "OPS-ARCH-006",
+      "evidence_path": "docs/spec/10.product-architecture.srs.md:1064",
+      "description": "AC-9 says promotion shall not check an acceptance criterion without limiting that prohibition to the pre-existing physical and order gates. Read literally, this also forbids checking OPS-ARCH-006 AC-1 through AC-9, so the requirement cannot complete its own verification while satisfying AC-9. The approved clarification only preserves the existing physical/order gates; it does not prohibit verification of this migration requirement.",
+      "suggested_action": "fix_via_mcp",
+      "vague_terms": [],
+      "linked_oq": []
+    }
+  ],
+  "summary": {
+    "CRITICAL": 1,
+    "HIGH": 0,
+    "MEDIUM": 0,
+    "LOW": 0
+  }
+}

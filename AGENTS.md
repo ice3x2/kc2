@@ -37,6 +37,19 @@ Current work status workflow:
 
 Completed Work Log is a read-only summary for agents. Requirement Block status, Acceptance Criteria, Verification Evidence, and Change Notes remain the source of truth for completion.
 
+## Canonical Hardware Paths
+
+The active hardware target must occupy the repository's canonical project and
+artifact paths. It must not be duplicated under a `draft` hierarchy. When a new
+target replaces the canonical working-tree revision, preserve the replaced
+revision through Git history, branches, or tags instead of retaining a second
+active copy.
+
+Non-active historical draft variants remain unchanged unless a separately
+approved requirement explicitly moves or removes them. Canonical promotion is
+only a path and identity change; it does not imply fabrication readiness and
+must not waive PCB, physical-evidence, procurement, or order-readiness gates.
+
 ## Hardware / PCB Fabrication Gate
 
 PCB fabrication, assembly, and parts ordering are irreversible money-risk operations. Before any agent says a board is ready to order, creates a fabrication package, or recommends fabrication, agents MUST perform a component-by-component and circuit-by-circuit review in addition to automated DRC.

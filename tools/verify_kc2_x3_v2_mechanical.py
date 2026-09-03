@@ -32,10 +32,8 @@ DEFAULT_MANIFEST = (
     ROOT
     / "hardware"
     / "kicad"
-    / "draft"
-    / "x3-v2"
     / "mechanical"
-    / "kc2_x3_v2_mechanical_manifest.json"
+    / "kc2_mechanical_manifest.json"
 )
 A4_LANDSCAPE_POINTS = (841.896, 595.296)
 GEOMETRY_TOLERANCE_MM = 0.012

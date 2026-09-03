@@ -1,0 +1,58 @@
+{
+  "relevant_files": [
+    {
+      "path": "hardware/kicad/draft/x3-v2/kc2_left-x3-v2",
+      "line_range": "N/A",
+      "signature": "left V2 KiCad project",
+      "relevance": "promotion source"
+    },
+    {
+      "path": "hardware/kicad/draft/x3-v2/kc2_right-x3-v2",
+      "line_range": "N/A",
+      "signature": "right V2 KiCad project",
+      "relevance": "promotion source"
+    },
+    {
+      "path": "hardware/kicad/kc2_left; hardware/kicad/kc2_right",
+      "line_range": "N/A",
+      "signature": "canonical KiCad project destinations",
+      "relevance": "replacement destinations"
+    },
+    {
+      "path": "tools/generate_kc2_pcbs.py:27-30",
+      "line_range": "27-30",
+      "signature": "V2 route path declarations",
+      "relevance": "canonical generation and route binding"
+    },
+    {
+      "path": "tools/verify_kc2_x3_v2.py:58-66",
+      "line_range": "58-66",
+      "signature": "V2 source and housing path declarations",
+      "relevance": "fail-closed verification path binding"
+    },
+    {
+      "path": "AGENTS.md:1-62",
+      "line_range": "1-62",
+      "signature": "repository agent rules",
+      "relevance": "canonical-path policy"
+    }
+  ],
+  "related_modules": [
+    "tools/finalize_kc2_x3_v2_routes.py",
+    "tools/export_kc2_x3_v2_fabrication.py",
+    "tools/export_kc2_x3_v2_mechanical.py",
+    "tools/generate_kc2_x3_v2_housings.py",
+    "tools/render_kc2_x3_joined.py",
+    "tools/verify_kc2_x3_v2*.py",
+    "docs/spec.md",
+    "docs/spec/00.index.md",
+    "docs/spec/10.product-architecture.srs.md",
+    "docs/reports/kc2-x3-v2-jlcpcb-preflight-2026-09-02.md"
+  ],
+  "missing_evidence": [
+    "A V2-specific promotion requirement is required before implementation.",
+    "Post-move tests must prove canonical path and hash bindings while order_ready remains false.",
+    "Protected KiCad project names must be changed with Konnect."
+  ],
+  "external_paths_detected": []
+}

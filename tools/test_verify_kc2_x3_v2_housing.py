@@ -25,7 +25,7 @@ class ServiceInterfaceContractUnitTests(unittest.TestCase):
         manifest = json.loads(generator.MANIFEST_PATH.read_text(encoding="utf-8"))
         self.assertEqual(
             manifest["requirement_ids"],
-            ["CON-ARCH-006", "CON-ARCH-007", "REL-ARCH-001"],
+            ["CON-ARCH-006", "CON-ARCH-007", "REL-ARCH-001", "OPS-ARCH-006"],
         )
 
     def test_reset_support_centers_match_final_mirrored_service_layout(self) -> None:
@@ -342,19 +342,89 @@ class ServiceInterfaceContractUnitTests(unittest.TestCase):
         with self.assertRaisesRegex(RuntimeError, "reset local support is not electrically safe"):
             generator.build_plan_geometry(shp, "left", mutated)
 
+    def test_every_key_load_support_clears_exact_bottom_routed_copper_by_030_mm(self) -> None:
+        shp = generator.legacy_geometry.require_shapely()
+        boards = generator.run_extractor(
+            generator.legacy_geometry.locate_kicad_python()
+        )["boards"]
+        violations: list[str] = []
+        for side in ("left", "right"):
+            plan = generator.build_plan_geometry(shp, side, boards[side])
+            wear_features = [
+                feature
+                for feature in boards[side]["routed_copper_exact"]
+                if feature.get("layer") in {"B.Cu", "via"}
+            ]
+            wear_geometries = [
+                generator._feature_geometry(
+                    shp,
+                    feature,
+                    plan["raw_bounds"],
+                )
+                for feature in wear_features
+            ]
+            for post in plan["support_posts"]:
+                support_disk = shp["Point"](
+                    float(post["x_mm"]),
+                    float(post["y_mm"]),
+                ).buffer(float(post["diameter_mm"]) / 2.0, quad_segs=64)
+                clearance = min(
+                    float(support_disk.distance(geometry))
+                    for geometry in wear_geometries
+                )
+                if clearance + 1e-9 < 0.30:
+                    hit_count = sum(
+                        support_disk.distance(geometry) + 1e-9 < 0.30
+                        for geometry in wear_geometries
+                    )
+                    violations.append(
+                        f"{side}:{post['switch_ref']} clearance={clearance:.4f} mm "
+                        f"features={hit_count}"
+                    )
+
+        self.assertEqual(
+            violations,
+            [],
+            "CON-ARCH-006 requires every 2.40 mm key-load support disk to retain "
+            "at least 0.30 mm plan clearance from exact B.Cu/via geometry: "
+            + "; ".join(violations),
+        )
+
+    def test_verifier_requires_geometry_derived_bottom_copper_wear_clearance(self) -> None:
+        report = json.loads(housing_verifier.REPORT_PATH.read_text(encoding="utf-8"))
+        for side in ("left", "right"):
+            for feature_class in ("bottom_copper_tracks", "vias"):
+                result = report["sides"][side]["collision_checks"][feature_class]
+                self.assertEqual(result["minimum_required_plan_clearance_mm"], 0.30)
+                self.assertGreaterEqual(result["minimum_plan_clearance_mm"] + 1e-9, 0.30)
+                self.assertNotIn("support terminates at the PCB underside", result.get("reason", ""))
+
+        mutated = copy.deepcopy(report)
+        mutated["sides"]["left"]["collision_checks"]["bottom_copper_tracks"][
+            "minimum_plan_clearance_mm"
+        ] = 0.2999
+        self.assertTrue(
+            any("bottom_copper_tracks plan clearance" in error for error in verify_report(mutated)),
+            verify_report(mutated),
+        )
+
 
 class V2LoadBearingHousingTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
         cls.report = analyze_v2_housing()
 
-    def test_uses_only_current_draft_v2_boards(self) -> None:
+    def test_uses_only_current_canonical_v2_boards(self) -> None:
         self.assertEqual(self.report["requirement"], "CON-ARCH-006")
         self.assertEqual(self.report["variant"], "x3-v2")
         self.assertTrue(self.report["generator_sha256_matches"])
         for side in ("left", "right"):
             board = self.report["sides"][side]
-            self.assertIn("hardware/kicad/draft/x3-v2/", board["source_board"])
+            self.assertEqual(
+                board["source_board"],
+                f"hardware/kicad/kc2_{side}/kc2_{side}.kicad_pcb",
+            )
+            self.assertNotIn("/draft/", board["source_board"])
             self.assertTrue(board["source_board_sha256_matches"])
             self.assertEqual(board["key_count"], 31 if side == "left" else 39)
             self.assertEqual(board["legacy_registration_refs"], [])

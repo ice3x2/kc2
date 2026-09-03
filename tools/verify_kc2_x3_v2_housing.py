@@ -1,4 +1,4 @@
-"""Verify the CON-ARCH-006 draft X3 V2 load-bearing housing."""
+"""Verify the CON-ARCH-006 canonical X3 V2 load-bearing housing."""
 
 from __future__ import annotations
 
@@ -21,7 +21,7 @@ import generate_kc2_x3_v2_housings as generator  # noqa: E402
 from canonical_hash import HASH_POLICY, sha256_file  # noqa: E402
 
 
-REPORT_PATH = generator.OUTPUT_DIR / "kc2_x3_v2_housing_clearance.json"
+REPORT_PATH = generator.OUTPUT_DIR / "kc2_housing_clearance.json"
 ORDER_READINESS_BLOCKER = (
     "CON-ARCH-006 AC-7 physical coupon evidence is pending: exact screw MPN and "
     "drawing; minimum and maximum head diameter and height; maximum finished PCB-hole "
@@ -320,7 +320,7 @@ def analyze_v2_housing() -> dict[str, Any]:
         "fabrication_or_order_ready": False,
         "order_readiness_blocker": ORDER_READINESS_BLOCKER,
         "stale_monolithic_right_stl_present": (
-            generator.OUTPUT_DIR / "kc2_right_x3_v2_lower_housing.stl"
+            generator.OUTPUT_DIR / "kc2_right_lower_housing.stl"
         ).exists(),
     }
 
@@ -337,13 +337,16 @@ def analyze_v2_housing() -> dict[str, Any]:
             name: _collision_result(contacts, geometry)
             for name, geometry in plan["feature_geometries"].items()
         }
-        for flush_name in ("bottom_copper_tracks", "vias"):
+        key_load_supports = _support_union(shp, posts)
+        for flush_name, geometry in plan["routed_copper_wear_geometries"].items():
             collision_checks[flush_name] = {
-                "collision_count": 0,
-                "reason": (
-                    "support terminates at the PCB underside; routed copper is inside the PCB "
-                    "stack or protected by bottom solder mask and has no negative-Z body envelope"
+                **_collision_result(key_load_supports, geometry),
+                "minimum_required_plan_clearance_mm": (
+                    generator.KEY_LOAD_SUPPORT_ROUTED_COPPER_CLEARANCE_MM
                 ),
+                "support_count": len(posts),
+                "support_diameter_mm": generator.POST_DIAMETER_MM,
+                "source_geometry": "exact routed B.Cu tracks" if flush_name == "bottom_copper_tracks" else "exact plated vias",
                 "support_top_z_mm": generator.PCB_BOTTOM_Z_MM,
             }
         # Key/switch travel is entirely above the PCB top while support geometry
@@ -987,6 +990,13 @@ def verify_report(report: dict[str, Any]) -> list[str]:
                 errors.append(f"{side}: missing collision class {name}")
             elif result["collision_count"] != 0:
                 errors.append(f"{side}: {name} collisions={result['collision_count']}")
+        for name in ("bottom_copper_tracks", "vias"):
+            result = data["collision_checks"].get(name, {})
+            required = generator.KEY_LOAD_SUPPORT_ROUTED_COPPER_CLEARANCE_MM
+            if result.get("minimum_required_plan_clearance_mm") != required:
+                errors.append(f"{side}: {name} required plan clearance is stale")
+            if float(result.get("minimum_plan_clearance_mm", -99.0)) + 1e-9 < required:
+                errors.append(f"{side}: {name} plan clearance is below {required:.2f} mm")
         for field in ("registration_peg_count", "fastener_boss_count"):
             if data[field] != 0:
                 errors.append(f"{side}: {field}={data[field]}")
@@ -1531,14 +1541,14 @@ def verify_report(report: dict[str, Any]) -> list[str]:
     if report["physical_deflection_test"]["status"] != "pending":
         errors.append("physical deflection gate must remain pending until measured")
     if report["fabrication_or_order_ready"]:
-        errors.append("draft housing must not claim fabrication/order readiness")
+        errors.append("canonical housing must not claim fabrication/order readiness")
     if report["stale_monolithic_right_stl_present"]:
         errors.append("stale monolithic right STL is present")
     return errors
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Verify CON-ARCH-006 X3 V2 draft housing supports")
+    parser = argparse.ArgumentParser(description="Verify CON-ARCH-006 X3 V2 canonical housing supports")
     parser.add_argument("--output", type=Path, default=REPORT_PATH)
     args = parser.parse_args()
     report = analyze_v2_housing()

@@ -33,6 +33,7 @@ REQUIREMENT_IDS = {
     "CON-ARCH-006",
     "CON-ARCH-007",
     "REL-ARCH-001",
+    "OPS-ARCH-006",
 }
 
 
@@ -102,7 +103,7 @@ def materialize_index_fabrication_snapshot(root: Path) -> Path:
 
 
 class V2FabricationTests(unittest.TestCase):
-    def test_all_draft_fabrication_archives_are_complete(self) -> None:
+    def test_all_canonical_fabrication_archives_are_complete(self) -> None:
         report = analyze_fabrication()
 
         self.assertEqual(set(report["requirement_ids"]), REQUIREMENT_IDS)
@@ -347,6 +348,85 @@ class V2FabricationTests(unittest.TestCase):
             self.assertEqual(product["file_hash_mismatches"], [])
             self.assertEqual(product["output_file_hash_mismatches"], [])
 
+    def test_csv_source_bindings_accept_crlf_but_reject_content_drift(self) -> None:
+        from tools.canonical_hash import sha256_file
+
+        with TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            manifest_path = materialize_index_fabrication_snapshot(root)
+            manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+            for product in ("left", "right"):
+                details = manifest["products"][product]
+                csv_paths = (
+                    root / details["bom"]["csv"],
+                    root / details["pcba_quote"]["bom"],
+                    root / details["pcba_quote"]["cpl"],
+                )
+                for path in csv_paths:
+                    payload = path.read_bytes()
+                    self.assertNotIn(b"\r\n", payload)
+                    path.write_bytes(payload.replace(b"\n", b"\r\n"))
+
+            crlf_report = analyze_fabrication(manifest_path, root=root)
+            for product in ("left", "right"):
+                with self.subTest(product=product, newline="crlf"):
+                    details = crlf_report["products"][product]
+                    self.assertEqual(details["bom_errors"], [])
+                    self.assertEqual(details["pcba_quote"]["errors"], [])
+                    self.assertEqual(details["output_file_hash_mismatches"], [])
+                    self.assertTrue(details["pcba_quote"]["bom_sha256_matches"])
+                    self.assertTrue(details["pcba_quote"]["cpl_sha256_matches"])
+
+            for product in ("left", "right"):
+                details = manifest["products"][product]
+                bom_path = root / details["bom"]["csv"]
+                bom_payload = bom_path.read_bytes()
+                self.assertGreaterEqual(bom_payload.count(b"1N4148W-13-F"), 1)
+                bom_path.write_bytes(
+                    bom_payload.replace(b"1N4148W-13-F", b"1N4148W-13-X", 1)
+                )
+
+                quote = details["pcba_quote"]
+                quote_bom_path = root / quote["bom"]
+                quote_bom_payload = quote_bom_path.read_bytes()
+                self.assertEqual(quote_bom_payload.count(b"Diodes Inc 1N4148W-13-F"), 1)
+                quote_bom_path.write_bytes(
+                    quote_bom_payload.replace(
+                        b"Diodes Inc 1N4148W-13-F",
+                        b"Diodes Inc 1N4148W-13-X",
+                        1,
+                    )
+                )
+                quote["bom_sha256"] = sha256_file(quote_bom_path)
+
+                quote_cpl_path = root / quote["cpl"]
+                quote_cpl_payload = quote_cpl_path.read_bytes()
+                self.assertGreaterEqual(quote_cpl_payload.count(b"Bottom"), 1)
+                quote_cpl_path.write_bytes(
+                    quote_cpl_payload.replace(b"Bottom", b"Top", 1)
+                )
+                quote["cpl_sha256"] = sha256_file(quote_cpl_path)
+
+            manifest_path.write_text(
+                json.dumps(manifest, indent=2) + "\n", encoding="utf-8"
+            )
+            mutated_report = analyze_fabrication(manifest_path, root=root)
+            for product in ("left", "right"):
+                with self.subTest(product=product, mutation="content"):
+                    details = mutated_report["products"][product]
+                    self.assertIn(
+                        "BOM CSV does not match source-board inventory contract",
+                        details["bom_errors"],
+                    )
+                    self.assertIn(
+                        "JLCPCB PCBA quote BOM is not the exact source-board selection",
+                        details["pcba_quote"]["errors"],
+                    )
+                    self.assertIn(
+                        "JLCPCB PCBA quote CPL is not the exact source-board placement set",
+                        details["pcba_quote"]["errors"],
+                    )
+
     def test_hash_policy_gate_and_real_artifact_mutation(self) -> None:
         manifest = json.loads(MANIFEST.read_text(encoding="utf-8"))
         with TemporaryDirectory() as temporary:
@@ -369,8 +449,8 @@ class V2FabricationTests(unittest.TestCase):
 
         payload = (
             ROOT
-            / "hardware/kicad/draft/x3-v2/fabrication/left/"
-            "kc2_left-x3-v2-F_Silkscreen.gto"
+            / "hardware/kicad/fabrication/kc2_left/"
+            "kc2_left-F_Silkscreen.gto"
         ).read_bytes()
         original = b"X111795833Y-41062295D01*"
         self.assertEqual(payload.count(original), 1)

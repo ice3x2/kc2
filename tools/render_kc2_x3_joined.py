@@ -599,9 +599,9 @@ def build_context(
     variant: str = "x3",
 ) -> RenderContext:
     if variant == "x3-v2":
-        board_root = repo / "hardware" / "kicad" / "draft" / "x3-v2"
-        left_path = board_root / "kc2_left-x3-v2" / "kc2_left-x3-v2.kicad_pcb"
-        right_path = board_root / "kc2_right-x3-v2" / "kc2_right-x3-v2.kicad_pcb"
+        board_root = repo / "hardware" / "kicad"
+        left_path = board_root / "kc2_left" / "kc2_left.kicad_pcb"
+        right_path = board_root / "kc2_right" / "kc2_right.kicad_pcb"
         left_keys = make_left_keys_x3_v2()
         right_keys = make_right_keys_x3_v2()
         right_seam_label = "7"
@@ -1234,7 +1234,7 @@ def write_x3_v2_render_manifest(
     }
     manifest = {
         "schema": "kc2-x3-v2-render-evidence-v1",
-        "requirement_ids": ["CON-ARCH-006", "CON-ARCH-007"],
+        "requirement_ids": ["CON-ARCH-006", "CON-ARCH-007", "OPS-ARCH-006"],
         "variant": "x3-v2",
         "hash_policy": HASH_POLICY,
         "renderer": {
@@ -1261,7 +1261,7 @@ def write_x3_v2_render_manifest(
         ),
         "outputs": output_records,
     }
-    manifest_path = output_dir / "kc2_x3_v2_render_manifest.json"
+    manifest_path = output_dir / "kc2_render_manifest.json"
     manifest_path.write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
     return manifest_path
 
@@ -1290,12 +1290,12 @@ def main() -> int:
         variant=args.variant,
     )
     output_dir = args.output_dir or (
-        ROOT / "hardware" / "kicad" / "draft" / "x3-v2" / "renders"
+        ROOT / "hardware" / "kicad" / "renders"
         if args.variant == "x3-v2"
         else ROOT / "hardware" / "kicad" / "renders"
     )
     output_dir.mkdir(parents=True, exist_ok=True)
-    stem = "kc2_x3_v2" if args.variant == "x3-v2" else "kc2"
+    stem = "kc2"
     outputs = [
         ("joined_top_svg", output_dir / f"{stem}_joined_top.svg", False, render_svg),
         ("join_seam_zoom_svg", output_dir / f"{stem}_join_seam_zoom.svg", True, render_svg),

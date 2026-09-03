@@ -9,7 +9,7 @@ KC2는 KC1 핸드와이어링 키보드의 배열 철학과 결합/분리 사용
 - 이름: KC2
 - 형식: 좌우 분리형 split keyboard
 - 배열: 일반 row-stagger 기반
-- 키 수: 현재 주문 가능한 historical X3는 77키이고, 디지털 검증을 통과했지만 물리 검증 대기 중인 `kc2-x3-v2` draft는 `CON-ARCH-004`의 70-key v5 배열(왼쪽 31, 오른쪽 39)을 사용한다. 그보다 앞선 71키 배열 설명은 historical routed draft baseline으로만 유지한다.
+- 키 수: 현재 정본 `kc2-x3-v2`는 `CON-ARCH-004`의 70-key v5 배열(왼쪽 31, 오른쪽 39)을 사용한다. 이전 77키 X3 정본은 Git 이력에서 보존하고, 그보다 앞선 71키 배열 설명은 historical routed draft baseline으로만 유지한다.
 - 펌웨어: ZMK
 - 컨트롤러: nice!nano v2, 좌우 각 1개
 - 연결: BLE 중심, USB는 firmware flash/debug 및 필요 시 유선 출력용
@@ -19,7 +19,7 @@ KC2는 KC1 핸드와이어링 키보드의 배열 철학과 결합/분리 사용
 - 배터리/컨트롤러 전원 연결: `CON-ARCH-007`에 따라 배터리는 carrier PCB 상면과 socketed nice!nano 사이에 두고, 이미 배터리에 부착된 절연 lead만 `J_BAT1`에 직접 납땜한다. 탈착식 A2501/JST 배터리 커넥터와 bare pouch tab 납땜은 사용하지 않는다. `BAT_LEAD_SLOT1`은 하부 배터리 출구가 아니라 copper-free strain relief로 유지한다.
 - PCB 전원 커넥터/패드: `kc2-x3-v2`에는 direct-solder `J_BAT1`, `SW_PWR1`, local `BAT+`, `NN_B+`, `GND` 경로를 둔다. `BAT+`만 IMMS-12V로 차단하고 B-는 local GND에 직접 연결한다. Promoted/historical X3의 no-carrier-power 계약은 `CON-ARCH-002` 기록으로만 유지한다.
 - 키스위치: variant별 SRS requirement가 지원 switch family와 assembly mode를 정의한다. `kc2-x3-v2`는 `CON-ARCH-004`에 따라 Choc V2 socket-only 및 MX solder-only로 제한한다.
-- 스위치 실장: 현재 주문 가능한 historical X3는 기존 Choc V1 중심 footprint를 유지하고, 디지털 검증을 통과한 `kc2-x3-v2` draft는 Choc V2 bottom-side socket assembly와 MX 5-pin direct-solder assembly만 허용한다. V2는 물리 coupon 실장 검증 전까지 주문 불가이다.
+- 스위치 실장: 현재 정본 `kc2-x3-v2`는 Choc V2 bottom-side socket assembly와 MX 5-pin direct-solder assembly만 허용한다. 이전 Choc V1 중심 X3 정본은 Git 이력에서만 보존한다. V2는 물리 coupon 실장 검증 전까지 주문 불가이다.
 - 스위치 footprint 기준: 일반 KC2 footprint는 다중 호환 hole/pad pattern을 목표로 하되, 더 좁은 variant별 SRS requirement가 있으면 그 요구사항을 우선한다.
 - 큰 키: 현재 X3 no-stabilizer layout은 `>=2u` 키를 모두 분할하므로 stabilizer footprint를 생성하지 않는다. stabilizer가 필요한 별도 layout은 실물 체결 검증 전 generic/MX-style placeholder hole로 발주하지 않는다.
 - 프로그래밍용 택트 스위치: 디바이스마트 상품번호 1322056 `NW3-A06-B3`, SMD micro tact switch, 6.1 mm x 3.7 mm급 body, 2.55 mm급 높이
@@ -30,9 +30,9 @@ KC2는 KC1 핸드와이어링 키보드의 배열 철학과 결합/분리 사용
 
 ## 제조 파일 제출
 
-이 절의 promoted main path와 fabrication ZIP은 검증된 historical `kc2-x3` 전용이다. 활성 `kc2-x3-v2`는 `hardware/kicad/draft/x3-v2/`에 있으며, promoted X3 Gerber/ZIP이나 주문 가능 판정을 V2 증거로 사용할 수 없다. V2의 디지털 PCB 검증은 통과했지만 `CON-ARCH-004`, `CON-ARCH-006`, `CON-ARCH-007`, `REL-ARCH-001`의 물리 gate가 남아 있으므로 **ORDER READY: NO**이다.
+`OPS-ARCH-006`에 따라 main path와 fabrication ZIP은 현재 정본 `kc2-x3-v2` 전용이다. 이전 X3 Gerber/ZIP이나 주문 가능 판정을 V2 증거로 사용할 수 없다. V2의 디지털 PCB 검증은 통과했지만 `CON-ARCH-004`, `CON-ARCH-006`, `CON-ARCH-007`, `REL-ARCH-001`의 물리 gate가 남아 있으므로 **ORDER READY: NO**이다.
 
-2026-09-01 기준 V2 fabrication, 1:1 mechanical, housing STEP/STL, coupon, joined SVG/PNG 산출물은 exact Diodes Incorporated `1N4148W-13-F` SOD-123과 둥근머리 P3 reinforcement 좌우 보드 SHA-256 `7de01a7f0c60585c1845ab3ad17c2b7d18e17ae8c2090a3594e6edf0cbf9d7cf` / `b4173e7bb16189690b06bc3a8d6487e8c56e7e69100e6c04d798d687213f2adc`에 맞춰 재생성했다. 현재 라우트는 좌 590 / 우 766 items이고 digest는 `b8adeac705f846714f7f201b63487369ef486cb1624df8d0ddbb8cde3053e316` / `530d6927eacd7e57a48cb6c62e5c5916ef1f4b3f21d67b592e80962ef7af4c1b`이다. 새 DRC와 모든 소스 결속 산출물이 디지털 검증을 통과했다. 이는 디지털 증거이며 주문 승인은 아니다. 활성 V2 실행 gate는 `tools.verify_kc2_x3_v2`와 V2 전용 fabrication/mechanical/housing/coupon/render verifier이다. `kc2-pcb-preflight` skill의 부품별·회로별 review workflow는 추가 감사에 적용하되, 번들 CLI는 historical `--variant x3`만 지원하므로 그 `ORDER READY` 결과를 V2 근거로 사용할 수 없다.
+2026-09-03 기준 V2 fabrication, 1:1 mechanical, housing STEP/STL, coupon, joined SVG/PNG 산출물은 exact Diodes Incorporated `1N4148W-13-F` SOD-123과 둥근머리 P3 reinforcement 좌우 정본 보드 SHA-256 `3a6f80a5bc1afe897056107be9522a26079766fd4963f2115a9237737470268d` / `a4361040d81b3189cce8cdfcedaf54e570248d2fd513835dfadf80bcc187ef6d`에 맞춰 재생성했다. 현재 라우트는 좌 616 / 우 803 items이고 digest는 `b37c88d783baa27e6358d1c3baf33528d282934c41c507f2da5edc44e739ebbb` / `44a0c7fdd446f3153d2faf2506194947577b74147713c9a097c7ac83a9c1a964`이다. 새 DRC와 모든 소스 결속 산출물이 디지털 검증을 통과했다. 이는 디지털 증거이며 주문 승인은 아니다. 활성 V2 실행 gate는 `tools.verify_kc2_x3_v2`와 V2 전용 fabrication/mechanical/housing/coupon/render verifier이다. `kc2-pcb-preflight` skill의 부품별·회로별 review workflow는 추가 감사에 적용하되, 번들 CLI는 historical `--variant x3`만 지원하므로 그 `ORDER READY` 결과를 V2 근거로 사용할 수 없다.
 
 Historical KC2 X3 main PCB는 좌우 독립 PCB 2장이므로 PCB 제조사 제출 파일도 좌/우를 분리해서 다룬다. `hardware/kicad/fabrication/kc2_fabrication.zip`처럼 좌/우 산출물을 함께 담은 합본 ZIP은 저장소 내부 검증/보관용 묶음이며, JLCPCB 같은 제조사에 단일 비패널 PCB 주문으로 그대로 제출하지 않는다.
 
@@ -71,8 +71,8 @@ KC1과의 관계는 배열 철학과 사용성의 계승이며, KC2의 하드웨
 - 상부 하우징은 없다.
 - PCB 아래에는 3D 프린터로 제작한 하부 바닥판을 둔다.
 - PCB가 전기 회로이자 variant별 switch footprint, socket, 또는 solder joint의 기준 구조물이다.
-- 키스위치 고정/실장 방식은 variant별 SRS requirement를 따른다. 현재 주문 가능한 historical X3는 기존 Choc V1 중심 footprint를 유지하고, 디지털 검증만 통과한 `kc2-x3-v2` draft는 `CON-ARCH-004`에 따라 Choc V2 bottom-side socket assembly와 MX 5-pin direct-solder assembly만 허용한다.
-- 디지털 검증만 통과한 `kc2-x3-v2` draft는 `CON-ARCH-006`의 조건부 M1.4 retention prototype을 사용한다. PCB에는 좌 8개/우 9개의 `1.60 mm` copper-free NPTH가 있고, 2.50 mm 하우징에는 해당 위치의 zero-gap land/desk column과 `1.10 x 2.80 mm` blind pilot가 있다. 사용자가 선택한 나사 머리는 접시/저두형이 아닌 둥근 pan/button 형상이며, exact MPN 도면 전까지 최대 `3.00 x 1.20 mm` 포락선과 별도 `0.25 mm` 조립 여유를 적용한다. 31/39 일대일 키 하중 지지대가 주 타건 하중 경로이며, exact screw/driver, full-pattern fit, torque/repeat cycle, keycap skirt, 2 N deflection 실측 전에는 주문할 수 없다.
+- 키스위치 고정/실장 방식은 variant별 SRS requirement를 따른다. 현재 정본 `kc2-x3-v2`는 `CON-ARCH-004`에 따라 Choc V2 bottom-side socket assembly와 MX 5-pin direct-solder assembly만 허용한다.
+- 현재 정본 `kc2-x3-v2`는 `CON-ARCH-006`의 조건부 M1.4 retention prototype을 사용한다. PCB에는 좌 8개/우 9개의 `1.60 mm` copper-free NPTH가 있고, 2.50 mm 하우징에는 해당 위치의 zero-gap land/desk column과 `1.10 x 2.80 mm` blind pilot가 있다. 사용자가 선택한 나사 머리는 접시/저두형이 아닌 둥근 pan/button 형상이며, exact MPN 도면 전까지 최대 `3.00 x 1.20 mm` 포락선과 별도 `0.25 mm` 조립 여유를 적용한다. 31/39 일대일 키 하중 지지대가 주 타건 하중 경로이며, exact screw/driver, full-pattern fit, torque/repeat cycle, keycap skirt, 2 N deflection 실측 전에는 주문할 수 없다.
 - stabilizer가 필요한 별도 layout의 큰 키 stabilizer는 plate-mounted가 아니라, 무보강판에서 실제로 고정되는 PCB-mounted/PCB-retained 방식을 사용한다.
 - PCB 외곽선은 키 배열, 결합부, controller 돌출부, USB-C 접근 방향을 따라 최대한 타이트하게 잡는다.
 - 실리콘 feet는 PCB가 아니라 3D 프린터 하부 바닥판 아래에 부착한다.
@@ -87,7 +87,7 @@ KC1과의 관계는 배열 철학과 사용성의 계승이며, KC2의 하드웨
 
 KC2는 상부 보강판이 없고 PCB 또는 switch socket이 switch retention/assembly 구조의 일부가 되므로, 큰 키의 stabilizer는 단순한 plate-mounted low-profile stabilizer를 사용할 수 없다. 조사 결과 Kailh Choc V1/V2 계열 stabilizer는 일반적으로 PCB cutout과 1.2 mm급 switch plate cutout을 함께 요구한다. 따라서 KC2에서는 "PCB에 구멍만 있는 상태"로 실제 부품이 고정되는지 검증되지 않은 footprint를 발주용으로 인정하지 않는다.
 
-현재 주문 가능한 historical X3는 77-key no-stabilizer layout을 사용하고, 디지털 검증만 통과한 `kc2-x3-v2` draft는 `CON-ARCH-004`와 `docs/spec/20.kc2-no-stabilizer-layout.md`가 정의한 70-key v5 layout(왼쪽 31, 오른쪽 39)을 사용한다. 두 variant 모두 stabilizer footprint를 생성하지 않는다. 아래 2u 이상 key/stabilizer 검토 내용은 이전 71-key routed draft baseline 또는 stabilizer가 필요한 별도 layout을 위한 historical design constraint로만 유지한다.
+현재 정본 `kc2-x3-v2`는 `CON-ARCH-004`와 `docs/spec/20.kc2-no-stabilizer-layout.md`가 정의한 70-key v5 layout(왼쪽 31, 오른쪽 39)을 사용한다. 이전 77-key X3는 Git 이력의 historical baseline이며 두 variant 모두 stabilizer footprint를 생성하지 않는다. 아래 2u 이상 key/stabilizer 검토 내용은 이전 71-key routed draft baseline 또는 stabilizer가 필요한 별도 layout을 위한 historical design constraint로만 유지한다.
 
 기존 71-key routed draft baseline과 stabilizer가 필요한 별도 layout에 대한 5개 서브에이전트 검토 결론:
 
@@ -168,7 +168,7 @@ stabilizer가 필요한 별도 layout의 제조 및 routing keepout:
 
 KC2의 PCB 설계에서는 물리 배열과 firmware 동작을 분리해서 본다. 사용자 제공 KLE와 실물 측정은 switch center, key size, stabilizer 위치의 기준이고, ZMK keymap은 각 물리 키의 동작 기준이다.
 
-무보강판 low-profile no-stabilizer 방향의 최종 split layout은 하위 문서 `docs/spec/20.kc2-no-stabilizer-layout.md`를 따른다. 이 하위 문서는 주문 가능한 X3의 77-key layout과 `CON-ARCH-004`가 정의한 draft X3 V2의 70-key v5 layout(왼쪽 31, 오른쪽 39)을 각각 규정하며, 이 문서의 그보다 앞선 71-key 배열 설명은 historical routed draft baseline으로 유지한다.
+무보강판 low-profile no-stabilizer 방향의 최종 split layout은 하위 문서 `docs/spec/20.kc2-no-stabilizer-layout.md`를 따른다. 현재 정본은 `CON-ARCH-004`가 정의한 X3 V2 70-key v5 layout(왼쪽 31, 오른쪽 39)이며, 이전 X3 77-key layout과 그보다 앞선 71-key 배열 설명은 historical baseline으로 유지한다.
 
 기존 71-key routed draft baseline의 왼쪽 half 물리 배열:
 
@@ -253,11 +253,11 @@ Row 5: Ctrl GUI Alt Fn Space     |  B  Space RAlt Fn RCtrl Left Down Right
 - mapped positions: 77 for current historical X3 no-stabilizer; 70 for digitally verified but not orderable `kc2-x3-v2` under `CON-ARCH-004` (31 left / 39 right)
 - transform row별 key 수: current X3 no-stabilizer physical rows 16 / 15 / 15 / 16 / 15; current X3 V2 v5 rows 15 / 14 / 14 / 15 / 12; historical earlier 71-key routed draft used 15 / 15 / 14 / 14 / 13
 - diode direction: `col2row`
-- diode: current X3 no-stabilizer main boards use 디바이스마트 상품번호 14592018 `1N4148W`, SOD-123, 총 77개; active draft `kc2-x3-v2` uses exact Diodes Incorporated `1N4148W-13-F`, bottom-side SOD-123 at each of its 70 positions; historical earlier 71-key routed draft used 디바이스마트 상품번호 25 `1N4148`, SOD-27(DO-35), 71개
+- diode: current canonical `kc2-x3-v2` uses exact Diodes Incorporated `1N4148W-13-F`, bottom-side SOD-123 at each of its 70 positions; the previous X3 main boards used 디바이스마트 상품번호 14592018 `1N4148W`, SOD-123, 총 77개 and are retained through Git history; historical earlier 71-key routed draft used 디바이스마트 상품번호 25 `1N4148`, SOD-27(DO-35), 71개
 - `col2row` 기준 diode의 cathode, 즉 표시선 쪽은 row net으로 둔다.
 - X3 SOD-123 diode assembly orientation: solder side/B.Cu가 보이게 PCB를 뒤집고 controller tab이 위로 가게 놓으면, 좌우 half 모두 diode의 흰색 cathode band를 왼쪽으로 둔다. KiCad top/front view에서는 pad 1(row net, cathode)이 오른쪽(+X)에 있지만, bottom-side soldering view에서는 좌우가 mirror되어 왼쪽으로 보인다. PCB를 손에서 돌린 경우에는 left/right보다 `pad 1 = row net = cathode band`를 기준으로 맞춘다. 이 문장은 verified 77-key X3용 historical/current-main 조립 기준이다.
 - X3 V2 1N4148W assembly orientation: exact Diodes Incorporated `1N4148W-13-F` / DS30086 Rev. 31-2 기준 pin/pad 1은 cathode/row net, pin/pad 2는 anode/per-key switch net이다. B.Cu mirrored assembly drawing에서 cathode band가 pad 1을 향하는지 확인하고, generic `1N4148W` 이름만으로 다른 package/manufacturer 부품을 섞지 않는다.
-- active draft `kc2-x3-v2`는 KC2 소유 enlarged hand-solder land와 exact 70개 배치, 양쪽 canonical `70-1n4148w-p3` 라우팅, fresh DRC, fabrication/mechanical/housing/coupon 산출물을 현재 1N4148W board에 맞춰 재생성·디지털 검증했다. 다만 populated 물리 coupon과 최종 독립/order gate는 여전히 pending이므로 주문할 수 없다.
+- active canonical `kc2-x3-v2`는 KC2 소유 enlarged hand-solder land와 exact 70개 배치, 양쪽 canonical `kc2_left.dsn/.ses` 및 `kc2_right.dsn/.ses` 라우팅, fresh DRC, fabrication/mechanical/housing/coupon 산출물을 현재 1N4148W board에 맞춰 재생성·디지털 검증했다. 다만 populated 물리 coupon과 최종 독립/order gate는 여전히 pending이므로 주문할 수 없다.
 - 1N4148W 전환은 firmware matrix 논리를 바꾸지 않는다. `col2row`, active-high column, active-high pull-down row, pad 1=row/cathode, pad 2=per-key/anode를 유지하며, 기존 pinned V2 firmware source와 UF2 hash도 그대로 둔다. 기록된 zero-wait scan delay를 물리 coupon 전에 임의 변경하지 않는다.
 - V2 발주 전 물리 coupon에서 기존 zero-wait firmware로 3.0 V와 3.3 V 각각의 maximum same-row 및 maximum same-column press/release stress를 실행하여 missing/false/stuck key가 없음을 확인한다. 이 증거는 현재 pending이다.
 - historical 또는 future variant에서 SOD-27(DO-35) 배치 공간이 실제로 부족하면 SMD diode로 전환한다.
@@ -342,10 +342,10 @@ Row 5: Ctrl GUI Alt Fn Space     |  B  Space RAlt Fn RCtrl Left Down Right
 - 일반 KC2 switch footprint는 다중 호환 hole/pad pattern을 목표로 하되, `kc2-x3-v2`는 `CON-ARCH-004`에 따라 Choc V2 socket-only 및 MX solder-only로 제한한다.
 - 하나의 PCB에서 가능한 한 여러 switch family를 납땜할 수 있게 하는 목표는 SRS가 더 좁은 variant별 assembly mode를 지정하지 않은 경우에만 적용한다.
 - 단일 hole pattern이 모든 제조사/모든 switch를 물리적으로 지원할 수는 없으므로, KiCad footprint 작성 전에 지원하려는 switch family별 pin pitch, metal pin, center/locator hole, keycap 간섭 치수를 라이브러리와 실물로 검증한다.
-- `무보강판 스테빌라이저` 섹션은 stabilizer가 필요한 별도 layout에만 적용한다. Historical X3 no-stabilizer layout 및 물리 검증 대기 중인 `kc2-x3-v2` draft는 stabilizer footprint와 keepout을 생성하지 않는다.
+- `무보강판 스테빌라이저` 섹션은 stabilizer가 필요한 별도 layout에만 적용한다. Historical X3 no-stabilizer layout 및 현재 정본 `kc2-x3-v2`는 stabilizer footprint와 keepout을 생성하지 않는다.
 - 보강판에 의존하는 plate-mounted stabilizer는 KC2 기본 구조와 맞지 않으므로 final footprint로 사용하지 않는다.
 - 현 draft의 MX-style `KC2:PCB_Mount_2u_Stabilizer_NPTH`는 위치/공간 확인용 placeholder이며, low-profile 무보강판 실물 체결 검증 전에는 fabrication footprint로 사용하지 않는다.
-- 현재 주문 가능한 historical X3는 77개 switch/diode 배치를 기준으로 검증하고, 물리 검증 대기 중인 `kc2-x3-v2` draft는 `CON-ARCH-004`의 70개 switch/diode 배치를 기준으로 별도 검증한다. 그보다 앞선 71-key routed draft의 diode 공간 검토는 historical baseline으로만 유지한다.
+- 현재 정본 `kc2-x3-v2`는 `CON-ARCH-004`의 70개 switch/diode 배치를 기준으로 검증한다. 이전 X3 77개 배치와 그보다 앞선 71-key routed draft의 diode 공간 검토는 historical baseline으로만 유지한다.
 - Historical 또는 future variant에서 DO-35 axial diode를 검토할 경우, through-hole axial 부품은 SMD diode보다 차지하는 면적과 lead bending 공간이 크다.
 - DO-35 유지 실패 기준은 switch footprint 또는 stabilizer가 필요한 별도 layout의 stabilizer footprint와의 courtyard overlap, screwless registration hole 배치 실패, historical/separate M2 layout의 M2 hole 배치 실패, hole-to-hole clearance 위반, 결합 edge 2.5-3.0 mm 여백 침범, 하부 바닥판 지지점 간섭, lead bending 공간 부족 중 하나라도 발생하는 경우로 둔다.
 - 공간이 부족하면 diode 위치 재배치, PCB 반대면 배치, routing 재배치를 먼저 검토한다. Active V2는 exact `1N4148W-13-F` SOD-123 requirement와 concealed-bezel/housing land를 함께 만족해야 하며 작은 SOD-323/SOD-523 또는 큰 SMA 패키지로 임의 변경하지 않는다.
@@ -355,7 +355,7 @@ Row 5: Ctrl GUI Alt Fn Space     |  B  Space RAlt Fn RCtrl Left Down Right
 - `kc2-x3-v2`의 Choc V2 socket-only/MX solder-only footprint는 `CON-ARCH-004`를 따른다. V2에는 Choc V1/PG1350 switch geometry, Choc V1 전용 locator/direct-solder geometry, Choc V2 direct-solder pad, MX hot-swap socket pad를 포함하지 않는다.
 - Choc V2 hot-swap socket은 bottom-side SMD pad를 갖는 부품이므로 공식 Choc V2 switch/socket 및 5-pin MX switch 도면/데이터시트 기준으로 PCB 하부면 socket soldering 방향, MX top-side direct-solder 방향, left/right 회전 또는 mirror 배치, socket orientation, Choc V2 center/switch-pin/locator NPTH clearance, MX center/electrical-pin/locator hole clearance를 검토한다. 1:1 출력물과 실물 소켓 확인은 사전 sanity check로만 사용하며, V2 발주 가능 증거로는 인정하지 않는다.
 - 무보강판 no-stabilizer 구조에서는 Choc V2 hot-swap socket만으로 switch/keycap 흔들림과 이탈을 충분히 억제하지 못할 수 있다. 하부 바닥판, keycap, Choc V2 socket body/pad/solder fillet, MX switch pin/solder joint, nearby diode body/lead/pad 간섭과 target Choc V2 switch/socket 및 target 5-pin MX switch의 실물 fit은 intended footprint, stackup, drill, mask, paste data로 제작된 1:1 physical test coupon 또는 first-article PCB section에서 실제 부품을 장착/납땜해 검증한 뒤에만 V2를 발주 가능 상태로 본다. CAD-only render, paper check, unsoldered visual inspection은 이 gate의 충분한 증거가 아니다. stabilizer가 필요한 별도 layout에서는 stabilizer 간섭도 별도로 검증한다.
-- 아래 `x1`/`x2` 항목은 historical draft variant 기록이며, 현재 주문 가능한 historical X3 또는 물리 검증 대기 중인 `kc2-x3-v2` 요구사항으로 사용하지 않는다.
+- 아래 `x1`/`x2` 항목은 historical draft variant 기록이며, 현재 정본 `kc2-x3-v2` 요구사항으로 사용하지 않는다.
 - `x1` 변형은 `hotswap` 변형을 복사한 hand-solder diode 개선판이다.
 - `x1` 변형의 diode는 디바이스마트 상품번호 14592018 `1N4148W`, SOD-123을 사용한다.
 - `x1` 변형의 diode footprint는 `kc2.pretty:D_SOD123_HandSolder_14592018`이며, KiCad 기본 `D_SOD-123`의 `0.9 mm x 1.2 mm` pad보다 큰 `1.4 mm x 1.55 mm` pad를 사용한다.
@@ -365,14 +365,14 @@ Row 5: Ctrl GUI Alt Fn Space     |  B  Space RAlt Fn RCtrl Left Down Right
 - `x2` 변형은 `x1`의 Choc V1/V2 hot-swap-only footprint를 유지하지 않는다. Choc V2까지 포함하는 socket+THT 통합 footprint는 현재 채택하지 않는다.
 - `x2` 변형은 추가된 switch THT pad와 diode 간섭을 피하기 위해 diode y offset을 switch center 기준 `-7.6 mm`로 둔다.
 - `x2` 오른쪽 half는 `x1`과 같은 상단 outline 0.3 mm relief를 유지한다.
-- 현재 main PCB는 기존 `x3` 변형을 승격한 no-stabilizer layout 개선판이다.
+- 이전 main PCB는 기존 `x3` 변형을 승격한 no-stabilizer layout 개선판이며 Git 이력으로 보존한다. 현재 main PCB는 `OPS-ARCH-006`이 승격한 `kc2-x3-v2`이다.
 - `x3` 변형은 switch footprint, diode footprint, diode y offset을 `x2`와 동일하게 유지하되, preflight copper-edge clearance를 위해 상단 outline relief는 왼쪽 half 0.3 mm, 오른쪽 half 0.6 mm를 사용한다.
 - `x3` 변형은 `docs/spec/20.kc2-no-stabilizer-layout.md`의 77-key layout을 사용하며, 물리 키 최대 폭은 `1.75u`이다.
-- SpecKiwi SRS source of truth: `docs/spec/10.product-architecture.srs.md`의 `CON-ARCH-004`가 `kc2-x3-v2` switch-footprint requirement를 정의한다. 요약: 디지털 구현/검증은 통과했지만 물리 검증은 남은 별도 V2 board이며, Choc V2/PG1353-family low-profile switch는 bottom-side Choc hot-swap socket으로만 지원하고 Cherry MX-style switch는 5-pin PCB-mount through-hole direct-solder로만 지원한다. 정확한 Kailh manufacturer MPN과 controlled drawing revision은 아직 조달 gate이며 `Deep Sea Whale` 같은 판매명만으로 부품을 확정하지 않는다. Promoted historical X3 경로나 물리 coupon 실장 증거 없는 V2는 주문 가능 상태가 아니다.
+- SpecKiwi SRS source of truth: `docs/spec/10.product-architecture.srs.md`의 `CON-ARCH-004`가 `kc2-x3-v2` switch-footprint requirement를 정의한다. 요약: 디지털 구현/검증은 통과했지만 물리 검증은 남은 현재 정본 V2 board이며, Choc V2/PG1353-family low-profile switch는 bottom-side Choc hot-swap socket으로만 지원하고 Cherry MX-style switch는 5-pin PCB-mount through-hole direct-solder로만 지원한다. 정확한 Kailh manufacturer MPN과 controlled drawing revision은 아직 조달 gate이며 `Deep Sea Whale` 같은 판매명만으로 부품을 확정하지 않는다. Historical X3 증거나 물리 coupon 실장 증거 없는 V2는 주문 가능 상태가 아니다.
 - `kc2-x3-v2` 변형은 Choc V1/PG1350 switch, Choc V1 전용 locator/direct-solder geometry, Choc V2 direct-solder pad, MX hot-swap socket pad를 지원하지 않는다.
-- `kc2-x3-v2` 산출물은 현재 주문 가능한 `hardware/kicad/kc2_left/`, `hardware/kicad/kc2_right/`, `hardware/kicad/fabrication/kc2_left_jlcpcb.zip`, `hardware/kicad/fabrication/kc2_right_jlcpcb.zip`를 대체하지 않는다. 별도 draft 또는 V2 전용 output path에 유지하고, 모든 검증이 통과한 뒤에도 별도 SRS promotion requirement 없이는 orderable X3 산출물로 승격하지 않는다.
-- active V2의 현재 M1.4-hole-aware compact-controller route input/session은 `kc2_left-x3-v2-70-1n4148w-p3.dsn/.ses` 및 `kc2_right-x3-v2-70-1n4148w-p3.dsn/.ses`이다. Exact service geometry, diode lands, P3 clamps와 precondition-checked detour를 적용해 좌 590 / 우 766 route items를 재현한다. 이전 `70-es1b-controller-r3`, `70-es1b-mh-r2`, `70-es1b-r1`, left `70-v5-r1`, right `71-r12`는 historical evidence이며 active V2 재현에 사용하지 않는다.
-- `x3` 변형은 `2u 이상` 키가 없으므로 stabilizer footprint를 생성하지 않는다.
+- `OPS-ARCH-006`에 따라 `kc2-x3-v2` 산출물은 `hardware/kicad/kc2_left/`, `hardware/kicad/kc2_right/`, `hardware/kicad/fabrication/kc2_left_jlcpcb.zip`, `hardware/kicad/fabrication/kc2_right_jlcpcb.zip` 정본을 대체한다. 활성 V2의 draft 중복본은 두지 않으며 이전 정본은 Git 이력으로 보존한다. 이 경로 승격은 물리 검증이나 주문 승인을 의미하지 않는다.
+- active V2의 현재 M1.4-hole-aware compact-controller route input/session은 `kc2_left.dsn/.ses` 및 `kc2_right.dsn/.ses`이다. Exact service geometry, diode lands, P3 clamps와 precondition-checked detour를 적용해 좌 616 / 우 803 route items를 재현한다. 이전 `70-es1b-controller-r3`, `70-es1b-mh-r2`, `70-es1b-r1`, left `70-v5-r1`, right `71-r12`는 historical evidence이며 active V2 재현에 사용하지 않는다.
+- Historical `x3`와 현재 정본 `kc2-x3-v2`는 모두 `2u 이상` 키가 없으므로 stabilizer footprint를 생성하지 않는다.
 - `x3` 오른쪽 half는 5개 row 모두 9개 matrix column을 사용한다. 기존 `R_COL8=D20`, `R_COL7=D21` pin mapping은 유지하되, firmware keymap에서는 duplicate legend physical key를 별도 위치로 구분해야 한다.
 - `x3` outline은 증가한 matrix 밀도 때문에 양쪽 half의 inner edge에 `0.8 mm` routing relief를 추가한다.
 - `x3` joined mechanical reference는 오른쪽 `Y`/`H` 돌출부를 왼쪽 `T`/`G` 홈으로 넣은 interlocked 배치에서 Edge.Cuts 간 최소 `1.0 mm` clearance를 유지한다. 오른쪽 `Y`/`H` 돌출부는 세로 inner Edge.Cuts 면을 `3.6 mm` margin으로 유지하고 가로 ledge만 `0.8 mm` 안쪽 relief 처리하되, 전기적 copper-to-edge clearance는 fabrication gate 기준을 계속 만족해야 한다.
@@ -406,7 +406,7 @@ Row 5: Ctrl GUI Alt Fn Space     |  B  Space RAlt Fn RCtrl Left Down Right
 
 ## 미확정 항목
 
-- CON-ARCH-004로 좁혀지지 않은 future variant용 다중 호환 switch hole/pad pattern 검증. 현재 주문 가능한 historical X3 switch footprint는 verified X3 evidence를 따르며, 물리 검증 대기 중인 `kc2-x3-v2` draft는 CON-ARCH-004의 Choc V2 socket-only/MX solder-only 제한을 따른다.
+- CON-ARCH-004로 좁혀지지 않은 future variant용 다중 호환 switch hole/pad pattern 검증. 현재 정본 `kc2-x3-v2`는 CON-ARCH-004의 Choc V2 socket-only/MX solder-only 제한을 따르며 이전 X3 footprint는 historical evidence이다.
 - `kc2-x3-v2` 물리 coupon에 조달 전에 확정한 exact Kailh low-profile Choc V2/PG1353-family MPN·drawing revision과 `CPG135001S30` socket을 하단 0/180도 양방향으로 실장하고, 5-pin MX switch를 상면 직납하여 실제 fit, keycap pitch, diode, solder joint, 하우징 간섭을 확인해야 한다.
 - Active V2는 exact Diodes Incorporated `1N4148W-13-F` SOD-123 hand-solder requirement를 따른다. 다른 패키지 전환은 새 SRS 변경과 전체 검증을 요구한다.
 - stabilizer가 필요한 별도 layout의 keycap unit, 실제 keycap underside stem 간격, 무보강판에서 체결 가능한 PCB-mounted/PCB-retained stabilizer footprint
@@ -415,7 +415,7 @@ Row 5: Ctrl GUI Alt Fn Space     |  B  Space RAlt Fn RCtrl Left Down Right
 - Fully seated controller stack의 caliper 간격과 battery/절연/retainer first-article fit
 - J_BAT1 drill, strain-relief 및 service pull 조건의 purchased-lead drawing 기반 확정
 - 최종 좌우 first article의 battery-only/USB charging/charge-complete RSSI, packet loss, disconnect 및 IMMS power-transition 측정
-- `hardware/kicad/draft/x3-v2/kc2_x3_v2_physical_evidence.json`의 네 evidence bundle이 exact source와 raw measurement artifact 경로·SHA-256·크기·측정일·장비/교정 정보 및 SRS 임계값을 모두 통과해야 한다. 생성형 PCB/하우징 JSON의 `passed`/`order_ready` 문자열만 바꾸는 것은 주문 증거가 아니다.
+- `hardware/kicad/kc2_physical_evidence.json`의 네 evidence bundle이 exact source와 raw measurement artifact 경로·SHA-256·크기·측정일·장비/교정 정보 및 SRS 임계값을 모두 통과해야 한다. 생성형 PCB/하우징 JSON의 `passed`/`order_ready` 문자열만 바꾸는 것은 주문 증거가 아니다.
 - Promoted/historical X3의 `NW3-A06-B3` antenna-side 상면 위치 검증; X3 V2는 `CON-ARCH-007`의 mirrored controller-key-gap service gate 적용
 - X3 screwless rail/capture 하부 바닥판의 실제 레일, 턱, peg, rib 치수
 - X3 screwless 구조에서 접착제가 필요한 경우의 보조 적용 위치와 서비스성

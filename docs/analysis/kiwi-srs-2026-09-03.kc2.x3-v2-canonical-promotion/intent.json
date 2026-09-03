@@ -1,0 +1,32 @@
+{
+  "summary": "Promote the active kc2-x3-v2 hardware from its draft paths to the repository canonical paths, retain no active draft duplicate, preserve prior revisions through Git, and record the rule in the repository AGENTS.md.",
+  "intent_type_hint": "new-feature",
+  "key_entities": [
+    "kc2-x3-v2",
+    "hardware/kicad/kc2_left",
+    "hardware/kicad/kc2_right",
+    "canonical hardware paths",
+    "Git history",
+    "AGENTS.md"
+  ],
+  "ambiguities": [],
+  "implied_requirements": [
+    "Promote only the active kc2-x3-v2 files; do not reorganize other historical draft variants.",
+    "Replace the existing canonical X3 working-tree outputs with V2 and preserve the replaced revision through Git history.",
+    "Update generators, verifiers, manifests, reports, and documentation to the canonical paths.",
+    "Do not treat path promotion as fabrication approval; physical gates and order_ready=false remain authoritative.",
+    "Use Konnect for protected KiCad project renames."
+  ],
+  "semantic_equivalences": [
+    {
+      "prompt_term": "draft 에서 정본",
+      "oos_term": "replace the current canonical kc2_left/kc2_right working-tree outputs with kc2-x3-v2",
+      "confidence": "high"
+    },
+    {
+      "prompt_term": "git 으로 관리",
+      "oos_term": "preserve replaced revisions through Git history, branches, or tags instead of a duplicate active draft tree",
+      "confidence": "high"
+    }
+  ]
+}

@@ -1,0 +1,295 @@
+{
+  "run_id": "2026-09-02.kc2.x3-v2.sync-201342",
+  "target": "kc2-x3-v2",
+  "summary": {
+    "cu_total": 3,
+    "classifications": {
+      "conflict": 0,
+      "update": 3,
+      "new_feature": 0,
+      "new_scope": 0
+    },
+    "mutation_total": 17
+  },
+  "mutations": [
+    {
+      "ordinal": 1,
+      "cu_id": "CU-001",
+      "classification": "update",
+      "tool": "append_section_note",
+      "args": {
+        "id": "CON-ARCH-006",
+        "section": "implementation_notes",
+        "mode": "append",
+        "text": "2026-09-02 — Current support-clear digital candidate: canonical board SHA-256 left `3a6f80a5bc1afe897056107be9522a26079766fd4963f2115a9237737470268d`, right `a4361040d81b3189cce8cdfcedaf54e570248d2fd513835dfadf80bcc187ef6d`; route fingerprints left 616 / `b37c88d783baa27e6358d1c3baf33528d282934c41c507f2da5edc44e739ebbb`, right 803 / `44a0c7fdd446f3153d2faf2506194947577b74147713c9a097c7ac83a9c1a964`. Exact B.Cu/via support clearance is at least 0.30 mm."
+      },
+      "args_hash": "da3d02c4ca6eaacefc8e7cf4023973fb9d53d95f",
+      "blocking_question": null
+    },
+    {
+      "ordinal": 2,
+      "cu_id": "CU-001",
+      "classification": "update",
+      "tool": "append_section_note",
+      "args": {
+        "id": "CON-ARCH-006",
+        "section": "implementation_notes",
+        "mode": "append",
+        "text": "2026-09-02 — Supersession: canonical boards `7de01a7f0c60585c1845ab3ad17c2b7d18e17ae8c2090a3594e6edf0cbf9d7cf` / `b4173e7bb16189690b06bc3a8d6487e8c56e7e69100e6c04d798d687213f2adc` and route fingerprints 590 / `b8adeac705f846714f7f201b63487369ef486cb1624df8d0ddbb8cde3053e316`, 766 / `530d6927eacd7e57a48cb6c62e5c5916ef1f4b3f21d67b592e80962ef7af4c1b` are historical only. Physical gates remain pending; `order_ready=false`."
+      },
+      "args_hash": "97ca579089427712216365ed146e542e630fb9f7",
+      "blocking_question": null
+    },
+    {
+      "ordinal": 3,
+      "cu_id": "CU-001",
+      "classification": "update",
+      "tool": "append_section_note",
+      "args": {
+        "id": "CON-ARCH-004",
+        "section": "implementation_notes",
+        "mode": "append",
+        "text": "2026-09-02 — Current support-clear digital candidate: canonical board SHA-256 left `3a6f80a5bc1afe897056107be9522a26079766fd4963f2115a9237737470268d`, right `a4361040d81b3189cce8cdfcedaf54e570248d2fd513835dfadf80bcc187ef6d`; route fingerprints left 616 / `b37c88d783baa27e6358d1c3baf33528d282934c41c507f2da5edc44e739ebbb`, right 803 / `44a0c7fdd446f3153d2faf2506194947577b74147713c9a097c7ac83a9c1a964`. Matrix connectivity remains digitally verified."
+      },
+      "args_hash": "13a56cf7cb7fe1970c9e93e25a9b68ef710ece3b",
+      "blocking_question": null
+    },
+    {
+      "ordinal": 4,
+      "cu_id": "CU-001",
+      "classification": "update",
+      "tool": "append_section_note",
+      "args": {
+        "id": "CON-ARCH-004",
+        "section": "implementation_notes",
+        "mode": "append",
+        "text": "2026-09-02 — Supersession: canonical boards `7de01a7f0c60585c1845ab3ad17c2b7d18e17ae8c2090a3594e6edf0cbf9d7cf` / `b4173e7bb16189690b06bc3a8d6487e8c56e7e69100e6c04d798d687213f2adc` and route fingerprints 590 / `b8adeac705f846714f7f201b63487369ef486cb1624df8d0ddbb8cde3053e316`, 766 / `530d6927eacd7e57a48cb6c62e5c5916ef1f4b3f21d67b592e80962ef7af4c1b` are historical only. Physical gates remain pending; `order_ready=false`."
+      },
+      "args_hash": "2b833469571f61aab52b5b638e7cbb7bf2d517e6",
+      "blocking_question": null
+    },
+    {
+      "ordinal": 5,
+      "cu_id": "CU-002",
+      "classification": "update",
+      "tool": "append_section_note",
+      "args": {
+        "id": "CON-ARCH-007",
+        "section": "implementation_notes",
+        "mode": "append",
+        "text": "2026-09-02 — Firmware metadata now matches the carrier-power contract: J_BAT1.1 BAT+ to SW_PWR1.1; SW_PWR1.2 NN_B+ to U1 RAW; J_BAT1.2 GND to U1 GND_C; SW_PWR1.3 NC; B- remains unswitched GND. The verifier cross-binds current 616/803 route fingerprints. Firmware source and UF2 artifacts are unchanged. Physical continuity, service, transition, and RF gates remain pending; `order_ready=false`."
+      },
+      "args_hash": "3f2eca2d5282870946b704600f9e14932b8cdacc",
+      "blocking_question": null
+    },
+    {
+      "ordinal": 6,
+      "cu_id": "CU-002",
+      "classification": "update",
+      "tool": "append_section_note",
+      "args": {
+        "id": "CON-ARCH-004",
+        "section": "implementation_notes",
+        "mode": "append",
+        "text": "2026-09-02 — Firmware compatibility metadata now represents the CON-ARCH-007 J_BAT1/SW_PWR1/U1 RAW/GND circuit and is cross-bound to current L616/R803 routes. The V2 manifest declares eight active right columns R_COL0..R_COL7 and R_COL8/D20 absent; historical X3 retains nine columns. The `col2row`, active-high-column, active-high-pulled-down-row, zero-scan-wait, firmware source, and UF2 contracts remain unchanged. Physical scan and first-article gates remain pending; `order_ready=false`."
+      },
+      "args_hash": "9bc344495da03a4629157aefbfff07c6e02982d5",
+      "blocking_question": null
+    },
+    {
+      "ordinal": 7,
+      "cu_id": "CU-003",
+      "classification": "update",
+      "tool": "append_section_note",
+      "args": {
+        "id": "CON-ARCH-004",
+        "section": "implementation_notes",
+        "mode": "append",
+        "text": "2026-09-02 — Fabrication CSV comparison now applies canonical LF-normalized UTF-8 hashing, so LF and CRLF encodings compare equal. Tests still reject exact-part identity and Bottom/Top placement drift after manifest hashes are recomputed; source-board inventory, BOM selection, and CPL placement semantics are not weakened. Physical gates remain pending; `order_ready=false`."
+      },
+      "args_hash": "c29a8c8347419a144c2aed3d4f40c94ae4af7c9c",
+      "blocking_question": null
+    },
+    {
+      "ordinal": 8,
+      "cu_id": "CU-001",
+      "classification": "update",
+      "tool": "add_trace_link",
+      "args": {
+        "id": "CON-ARCH-006",
+        "type": "Code",
+        "reference": "tools/finalize_kc2_x3_v2_routes.py; tools/generate_kc2_x3_v2_housings.py; tools/verify_kc2_x3_v2_housing.py; tools/test_verify_kc2_x3_v2.py; tools/test_verify_kc2_x3_v2_housing.py",
+        "relation": "implements",
+        "notes": "Deterministic support-clear route replay, exact fingerprint fail-close, and 0.30 mm B.Cu/via clearance verification."
+      },
+      "args_hash": "83173e3e556c082c441f5f9576b990b4e44cde8e",
+      "blocking_question": null
+    },
+    {
+      "ordinal": 9,
+      "cu_id": "CU-001",
+      "classification": "update",
+      "tool": "add_verification_evidence",
+      "args": {
+        "id": "CON-ARCH-006",
+        "type": "digital-route-housing-and-derived-output-verification",
+        "reference": "hardware/kicad/draft/x3-v2/kc2_x3_v2_generation_manifest.json; hardware/kicad/draft/x3-v2/kc2_x3_v2_drc_evidence.json; hardware/case/draft/x3-v2/kc2_x3_v2_housing_clearance.json; hardware/case/draft/x3-v2/kc2_x3_v2_housing_manifest.json; hardware/kicad/draft/x3-v2/fabrication/kc2_x3_v2_fabrication_manifest.json; hardware/kicad/draft/x3-v2/mechanical/kc2_x3_v2_mechanical_manifest.json; hardware/kicad/draft/x3-v2/renders/kc2_x3_v2_render_manifest.json",
+        "covers": "Digital support placement, routed-copper/via clearance, source binding, regeneration, and DRC; not physical retention, deflection, service, or first article.",
+        "notes": "Current candidate is L616/R803 with DRC 0/0/0 and 0.35 mm B.Cu clearance on both halves. Physical/order gates remain pending."
+      },
+      "args_hash": "7c901ef0760eaa847918b838c0e6e1b073057da9",
+      "blocking_question": null
+    },
+    {
+      "ordinal": 10,
+      "cu_id": "CU-001",
+      "classification": "update",
+      "tool": "add_trace_link",
+      "args": {
+        "id": "CON-ARCH-004",
+        "type": "Code",
+        "reference": "tools/finalize_kc2_x3_v2_routes.py; tools/generate_kc2_pcbs.py; tools/test_verify_kc2_x3_v2.py",
+        "relation": "implements",
+        "notes": "Binds active V2 routing to deterministic support-clear detours and exact fingerprints."
+      },
+      "args_hash": "6875d203925dc67b48693f2c962da75639222243",
+      "blocking_question": null
+    },
+    {
+      "ordinal": 11,
+      "cu_id": "CU-001",
+      "classification": "update",
+      "tool": "add_verification_evidence",
+      "args": {
+        "id": "CON-ARCH-004",
+        "type": "current-candidate-digital-regeneration",
+        "reference": "hardware/kicad/draft/x3-v2/kc2_x3_v2_generation_manifest.json; hardware/kicad/draft/x3-v2/kc2_x3_v2_drc_evidence.json; hardware/kicad/draft/x3-v2/fabrication/kc2_x3_v2_fabrication_manifest.json; hardware/kicad/draft/x3-v2/mechanical/kc2_x3_v2_mechanical_manifest.json; hardware/case/draft/x3-v2/kc2_x3_v2_housing_manifest.json; hardware/kicad/draft/x3-v2/renders/kc2_x3_v2_render_manifest.json",
+        "covers": "AC-4 and digital portions of AC-7, AC-11, AC-12; not AC-8/9/10 or physical AC-12.",
+        "notes": "Artifacts bind current canonical boards and L616/R803 with DRC 0/0/0. Physical evidence remains pending."
+      },
+      "args_hash": "4c5b3fcf844c831507fab9e32724ca119042f896",
+      "blocking_question": null
+    },
+    {
+      "ordinal": 12,
+      "cu_id": "CU-002",
+      "classification": "update",
+      "tool": "add_trace_link",
+      "args": {
+        "id": "CON-ARCH-007",
+        "type": "Code",
+        "reference": "firmware/kc2_zmk/boards/shields/kc2_x3_v2/kc2_x3_v2_variant.json; tools/verify_kc2_x3_v2_zmk_firmware.py; tools/test_verify_kc2_x3_v2_zmk_firmware.py",
+        "relation": "implements",
+        "notes": "Fail-closes exact J_BAT1/SW_PWR1/U1 RAW/GND metadata and current route binding."
+      },
+      "args_hash": "a1d87057dd456a39260e004870cd476bc008ef4d",
+      "blocking_question": null
+    },
+    {
+      "ordinal": 13,
+      "cu_id": "CU-002",
+      "classification": "update",
+      "tool": "add_verification_evidence",
+      "args": {
+        "id": "CON-ARCH-007",
+        "type": "firmware-metadata-and-route-cross-binding-test",
+        "reference": "firmware/kc2_zmk/boards/shields/kc2_x3_v2/kc2_x3_v2_variant.json; firmware/kc2_zmk/boards/shields/kc2_x3_v2/kc2_x3_v2_build_evidence.json; tools/verify_kc2_x3_v2_zmk_firmware.py; tools/test_verify_kc2_x3_v2_zmk_firmware.py; hardware/kicad/draft/x3-v2/kc2_x3_v2_generation_manifest.json",
+        "covers": "AC-5 and digital source-binding portion of AC-11 only.",
+        "notes": "Negative tests reject historical/no-carrier and malformed power paths. Physical continuity is not proven."
+      },
+      "args_hash": "9a139b98482097d6bbd7b3a6593cfb75f129bbc1",
+      "blocking_question": null
+    },
+    {
+      "ordinal": 14,
+      "cu_id": "CU-002",
+      "classification": "update",
+      "tool": "add_trace_link",
+      "args": {
+        "id": "CON-ARCH-004",
+        "type": "Code",
+        "reference": "firmware/kc2_zmk/boards/shields/kc2_x3_v2/kc2_x3_v2_variant.json; tools/verify_kc2_x3_v2_zmk_firmware.py; tools/test_verify_kc2_x3_v2_zmk_firmware.py",
+        "relation": "verifies",
+        "notes": "Checks unchanged matrix/scan behavior with corrected carrier-power metadata and route binding."
+      },
+      "args_hash": "a3c71539210dbfefa9329b46b020037c5ee7414c",
+      "blocking_question": null
+    },
+    {
+      "ordinal": 15,
+      "cu_id": "CU-002",
+      "classification": "update",
+      "tool": "add_verification_evidence",
+      "args": {
+        "id": "CON-ARCH-004",
+        "type": "firmware-compatibility-metadata-test",
+        "reference": "firmware/kc2_zmk/boards/shields/kc2_x3_v2/kc2_x3_v2_variant.json; firmware/kc2_zmk/boards/shields/kc2_x3_v2/kc2_x3_v2_build_evidence.json; tools/verify_kc2_x3_v2_zmk_firmware.py; tools/test_verify_kc2_x3_v2_zmk_firmware.py",
+        "covers": "AC-7 digital firmware/metadata consistency only.",
+        "notes": "Metadata matches CON-ARCH-007 and current fingerprints; physical scan remains open."
+      },
+      "args_hash": "7bdbe09028bd3ded8f5bb1fa952ef0a7d7660c87",
+      "blocking_question": null
+    },
+    {
+      "ordinal": 16,
+      "cu_id": "CU-003",
+      "classification": "update",
+      "tool": "add_trace_link",
+      "args": {
+        "id": "CON-ARCH-004",
+        "type": "Code",
+        "reference": "tools/verify_kc2_x3_v2_fabrication.py; tools/test_verify_kc2_x3_v2_fabrication.py",
+        "relation": "verifies",
+        "notes": "Normalizes line endings while retaining semantic rejection tests."
+      },
+      "args_hash": "936c15660db31665477895d4a6670753de407d01",
+      "blocking_question": null
+    },
+    {
+      "ordinal": 17,
+      "cu_id": "CU-003",
+      "classification": "update",
+      "tool": "add_verification_evidence",
+      "args": {
+        "id": "CON-ARCH-004",
+        "type": "fabrication-csv-canonicalization-test",
+        "reference": "tools/test_verify_kc2_x3_v2_fabrication.py#test_csv_source_bindings_accept_crlf_but_reject_content_drift; tools/verify_kc2_x3_v2_fabrication.py",
+        "covers": "AC-7 digital BOM/CPL identity and portability only; not AC-8 or physical gates.",
+        "notes": "LF/CRLF passes; diode identity and Bottom-to-Top mutations remain rejected after hash recomputation."
+      },
+      "args_hash": "6a794e5066565298211df57300540f672347faff",
+      "blocking_question": null
+    }
+  ],
+  "deferred_completed_work": {
+    "tool": "add_completed_work",
+    "args": {
+      "target": "kc2-x3-v2",
+      "scope": "ARCH",
+      "date": "2026-09-02",
+      "requirementIds": [
+        "CON-ARCH-004",
+        "CON-ARCH-006",
+        "CON-ARCH-007"
+      ],
+      "allowIncomplete": true,
+      "summary": "Synchronized support-clear L616/R803 routes, regenerated digital outputs, corrected carrier-power metadata, and added LF/CRLF-stable fabrication CSV verification. Physical/order-readiness gates remain pending.",
+      "reportPaths": [
+        "docs/analysis/kiwi-srs-sync-2026-09-02.kc2.x3-v2.sync-201342/report.md"
+      ]
+    },
+    "args_hash": "7aa58919361011b9106aae3014731903dbd16c78"
+  },
+  "blocking_questions": [],
+  "validate_spec": {
+    "status": "PASS",
+    "errors": 0,
+    "warnings": 0
+  },
+  "user_gate": [
+    "apply-all",
+    "apply-selected",
+    "dry-run-only",
+    "abandon"
+  ]
+}

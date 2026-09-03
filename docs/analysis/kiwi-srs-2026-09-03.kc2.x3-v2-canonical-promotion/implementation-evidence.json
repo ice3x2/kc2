@@ -1,0 +1,128 @@
+{
+  "requirement_id": "OPS-ARCH-006",
+  "target": "kc2-x3-v2",
+  "status": "verified",
+  "scope": {
+    "promoted_target": "kc2-x3-v2",
+    "other_historical_drafts_changed": false,
+    "active_kicad_draft_exists": false,
+    "active_case_draft_exists": false
+  },
+  "konnect": {
+    "raw_evidence": "docs/analysis/kiwi-srs-2026-09-03.kc2.x3-v2-canonical-promotion/konnect-mutation-evidence.json",
+    "project_renames": [
+      {
+        "from": "kc2_left-x3-v2",
+        "to": "kc2_left",
+        "dry_run_reviewed": true,
+        "apply_succeeded": true,
+        "internal_references_updated": 4
+      },
+      {
+        "from": "kc2_right-x3-v2",
+        "to": "kc2_right",
+        "dry_run_reviewed": true,
+        "apply_succeeded": true,
+        "internal_references_updated": 4
+      },
+      {
+        "from": "kc2_x3_v2_switch_coupon",
+        "to": "kc2_switch_coupon",
+        "dry_run_reviewed": true,
+        "apply_succeeded": true,
+        "internal_references_updated": 2
+      }
+    ],
+    "project_footprint_library_registration": {
+      "nickname": "KC2",
+      "uri": "${KIPRJMOD}/../../../third_party/kc2.pretty",
+      "projects": [
+        "hardware/kicad/kc2_left/kc2_left.kicad_pro",
+        "hardware/kicad/kc2_right/kc2_right.kicad_pro",
+        "hardware/kicad/coupon/kc2_switch_coupon.kicad_pro"
+      ],
+      "mcp_state": "updated_and_list_verified"
+    }
+  },
+  "semantic_identity": {
+    "comparison_evidence": "docs/analysis/kiwi-srs-2026-09-03.kc2.x3-v2-canonical-promotion/semantic-comparison.json",
+    "board_sha256_unchanged": true,
+    "boards": {
+      "left": "3a6f80a5bc1afe897056107be9522a26079766fd4963f2115a9237737470268d",
+      "right": "a4361040d81b3189cce8cdfcedaf54e570248d2fd513835dfadf80bcc187ef6d"
+    },
+    "routes": {
+      "left": {
+        "track_via_count": 616,
+        "digest_sha256": "b37c88d783baa27e6358d1c3baf33528d282934c41c507f2da5edc44e739ebbb"
+      },
+      "right": {
+        "track_via_count": 803,
+        "digest_sha256": "44a0c7fdd446f3153d2faf2506194947577b74147713c9a097c7ac83a9c1a964"
+      }
+    },
+    "stabilizer_references": {
+      "left": [],
+      "right": []
+    }
+  },
+  "drc": {
+    "left": {
+      "errors": 0,
+      "warnings": 0,
+      "unconnected": 0
+    },
+    "right": {
+      "errors": 0,
+      "warnings": 0,
+      "unconnected": 0
+    },
+    "coupon": {
+      "errors": 0,
+      "warnings": 0,
+      "unconnected": 0
+    }
+  },
+  "fabrication_packages": {
+    "left": {
+      "path": "hardware/kicad/fabrication/kc2_left_jlcpcb.zip",
+      "sha256": "ce75086426b963a285fa14bcca3a84d483baf288a3610507c6ee8b5c8e464e8e",
+      "entry_count": 15
+    },
+    "right": {
+      "path": "hardware/kicad/fabrication/kc2_right_jlcpcb.zip",
+      "sha256": "db51599eae16657ede44b6fecf33a735a459cff4a932b0f34bcf0e3f71226ef8",
+      "entry_count": 15
+    },
+    "coupon": {
+      "path": "hardware/kicad/fabrication/kc2_coupon_jlcpcb.zip",
+      "sha256": "5574b62981e4be7c256ddc987441e3b16c3a05af527a459ccf74cce2d5133c74",
+      "entry_count": 15
+    }
+  },
+  "verification": {
+    "canonical_path_contract": "9 tests passed",
+    "coupon": "13 tests passed",
+    "fabrication": "7 unchanged tests passed in a full run; the one canonical-directory regression was fixed and passed in isolation; dedicated verifier exit 0",
+    "mechanical": "6 tests passed",
+    "render": "7 tests passed",
+    "firmware": "15 tests passed",
+    "housing": "31 tests reported OK; dedicated verifier clean wrapper exit 0",
+    "housing_canonical_path_assertion": "1/1 focused test reported OK for exact left/right canonical board paths and /draft/ rejection",
+    "aggregate": "DIGITAL PASS with expected logical exit 2 because physical evidence is pending",
+    "focused_main_path_and_manifest": "6 tests passed",
+    "python_compile": "passed",
+    "git_diff_check": "passed"
+  },
+  "physical_gate": {
+    "path": "hardware/kicad/kc2_physical_evidence.json",
+    "status": "pending_physical_evidence",
+    "order_ready": false,
+    "meaning_changed": false
+  },
+  "recovery": {
+    "git_history_is_authoritative_for_versioned_revisions": true,
+    "temporary_untracked_safety_backup": "C:/Users/beom/AppData/Local/Temp/kc2-canonical-promotion-backup-dcc195cba27b427a81e406d01beb1e18",
+    "reason": "Preserves pre-existing untracked .history/MCP backup files while avoiding any active duplicate inside the repository."
+  }
+}

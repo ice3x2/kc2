@@ -1,0 +1,12 @@
+{
+  "run_id": "2026-09-02.kc2.x3-v2.sync-201342",
+  "mcp": true,
+  "git": true,
+  "target": "kc2-x3-v2",
+  "diff_mode": "working-tree-vs-HEAD",
+  "base_ref": "HEAD",
+  "head_ref": "WORKTREE",
+  "external_paths": [],
+  "halted": false
+}
+

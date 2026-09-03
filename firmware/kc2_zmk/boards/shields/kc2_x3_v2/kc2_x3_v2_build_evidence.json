@@ -58,7 +58,7 @@
   },
   "verification_metadata_inputs": {
     "firmware/kc2_zmk/boards/shields/kc2_x3_v2/kc2_x3_v2.zmk.yml": "546543a84e84206cc8c2d05f7eb9e364040e18106cf0497e20632f93fc9bac94",
-    "firmware/kc2_zmk/boards/shields/kc2_x3_v2/kc2_x3_v2_variant.json": "7075aabcfc042f6f9534b836eb2508ad76e739f12b167a633c454c9cab0880d5"
+    "firmware/kc2_zmk/boards/shields/kc2_x3_v2/kc2_x3_v2_variant.json": "a512759acf13d4c632794a476a3aa64052b6310cabbb0cd8edb4a829d42204f2"
   },
   "artifacts": {
     "left": {

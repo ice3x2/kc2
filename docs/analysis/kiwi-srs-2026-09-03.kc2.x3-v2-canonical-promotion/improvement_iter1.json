@@ -1,0 +1,55 @@
+{
+  "agent": "improvement-agent",
+  "iter": 1,
+  "req_id": "OPS-ARCH-006",
+  "input_finding": {
+    "id": "internal_coherence-1-1",
+    "finding_hash": "fba349832974f186dc3f31b46faafb84c6661197",
+    "severity": "CRITICAL",
+    "axis": "internal_coherence",
+    "evidence_path": "docs/spec/10.product-architecture.srs.md:1064"
+  },
+  "resolution": {
+    "tool": "replace_acceptance_criteria",
+    "mcp_only": true,
+    "written": true,
+    "preserved": {
+      "criteria": [
+        "AC-1",
+        "AC-2",
+        "AC-3",
+        "AC-4",
+        "AC-5",
+        "AC-6",
+        "AC-7",
+        "AC-8"
+      ],
+      "text": "verbatim",
+      "checked": false
+    },
+    "changed": {
+      "criterion": "AC-9",
+      "before": "Promotion shall not check an acceptance criterion, without limiting that prohibition to physical or order-related criteria.",
+      "after": "Promotion shall not check, satisfy, or waive physical or order-related acceptance criteria of CON-ARCH-004, CON-ARCH-006, CON-ARCH-007, or REL-ARCH-001, and shall not authorize production, PCBA/general-parts ordering, or reference BOM/CPL upload. The restriction expressly permits checking and completing OPS-ARCH-006 path-migration acceptance criteria."
+    },
+    "invariants": {
+      "order_ready": false,
+      "physical_record_meaning_unchanged": true,
+      "physical_and_order_gates_unchanged": true,
+      "ops_arch_006_self_verification_permitted": true
+    }
+  },
+  "validate_spec": {
+    "strict": true,
+    "failOnWarning": true,
+    "ok": true,
+    "diagnostics": []
+  },
+  "manual_srs_patch_used": false,
+  "remaining_findings": {
+    "CRITICAL": 0,
+    "HIGH": 0,
+    "MEDIUM": 0,
+    "LOW": 0
+  }
+}

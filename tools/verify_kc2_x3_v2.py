@@ -55,24 +55,24 @@ DEFAULT_CONTROLLER_FOOTPRINTS = {
     "left": ROOT / "third_party" / "kc2.pretty" / "NiceNanoV2_Socket_24Pin_USB_OUT_LEFT.kicad_mod",
     "right": ROOT / "third_party" / "kc2.pretty" / "NiceNanoV2_Socket_24Pin_USB_OUT_RIGHT.kicad_mod",
 }
-V2_ROOT = ROOT / "hardware" / "kicad" / "draft" / "x3-v2"
+V2_ROOT = ROOT / "hardware" / "kicad"
 DEFAULT_BOARDS = (
-    V2_ROOT / "kc2_left-x3-v2" / "kc2_left-x3-v2.kicad_pcb",
-    V2_ROOT / "kc2_right-x3-v2" / "kc2_right-x3-v2.kicad_pcb",
+    V2_ROOT / "kc2_left" / "kc2_left.kicad_pcb",
+    V2_ROOT / "kc2_right" / "kc2_right.kicad_pcb",
 )
-DEFAULT_MANIFEST = V2_ROOT / "kc2_x3_v2_generation_manifest.json"
-DEFAULT_DRC_EVIDENCE = V2_ROOT / "kc2_x3_v2_drc_evidence.json"
+DEFAULT_MANIFEST = V2_ROOT / "kc2_generation_manifest.json"
+DEFAULT_DRC_EVIDENCE = V2_ROOT / "kc2_drc_evidence.json"
 DEFAULT_HOUSING_MANIFEST = (
-    ROOT / "hardware" / "case" / "draft" / "x3-v2" / "kc2_x3_v2_housing_manifest.json"
+    ROOT / "hardware" / "case" / "kc2_housing_manifest.json"
 )
 DEFAULT_PHYSICAL_EVIDENCE = (
-    V2_ROOT / "kc2_x3_v2_physical_evidence.json"
+    V2_ROOT / "kc2_physical_evidence.json"
 )
 DEFAULT_FABRICATION_MANIFEST = (
-    V2_ROOT / "fabrication" / "kc2_x3_v2_fabrication_manifest.json"
+    V2_ROOT / "fabrication" / "kc2_fabrication_manifest.json"
 )
 DEFAULT_OUTLINE_REPORT = (
-    V2_ROOT / "mechanical" / "kc2_x3_v2_outline_report.json"
+    V2_ROOT / "mechanical" / "kc2_outline_report.json"
 )
 DEFAULT_FIRMWARE_BUILD_EVIDENCE = (
     ROOT
@@ -1830,13 +1830,13 @@ def verify_canonical_route_evidence(
             errors.append(f"{side}: canonical route evidence is missing")
             continue
         expected_dsn = (
-            f"hardware/kicad/draft/x3-v2/autoroute/"
-            f"kc2_{side}-x3-v2-70-1n4148w-p3.dsn"
+            f"hardware/kicad/autoroute/"
+            f"kc2_{side}.dsn"
         )
         expected_session_source_dsn = expected_dsn
         expected_ses = (
-            f"hardware/kicad/draft/x3-v2/autoroute/"
-            f"kc2_{side}-x3-v2-70-1n4148w-p3.ses"
+            f"hardware/kicad/autoroute/"
+            f"kc2_{side}.ses"
         )
         if record.get("dsn") != expected_dsn:
             errors.append(f"{side}: canonical DSN path mismatch")
@@ -4612,7 +4612,7 @@ def _verify_positive_order_artifact_suite() -> list[str]:
     outline_code = (
         "import json;"
         "from tools.verify_kc2_x3_v2_outline import ROOT,analyze_outline;"
-        "p=ROOT/'hardware/kicad/draft/x3-v2/mechanical/kc2_x3_v2_outline_report.json';"
+        "p=ROOT/'hardware/kicad/mechanical/kc2_outline_report.json';"
         "actual=analyze_outline(ROOT);"
         "bound=json.loads(p.read_text(encoding='utf-8'));"
         "errors=list(actual.get('errors',[]));"
@@ -5038,7 +5038,7 @@ def controller_service_order_readiness_blockers(
             blockers.append("CON-ARCH-006: housing manifest schema is incomplete or stale")
         if housing_manifest.get("requirement") != "CON-ARCH-006" or housing_manifest.get(
             "requirement_ids"
-        ) != ["CON-ARCH-006", "CON-ARCH-007", "REL-ARCH-001"]:
+        ) != ["CON-ARCH-006", "CON-ARCH-007", "REL-ARCH-001", "OPS-ARCH-006"]:
             blockers.append("CON-ARCH-006: housing manifest requirement IDs are stale")
         if housing_manifest.get("variant") != "x3-v2" or housing_manifest.get(
             "hash_policy"
@@ -5131,6 +5131,7 @@ def verify_v2_part_identity_contract(manifest: dict[str, object]) -> list[str]:
         "CON-ARCH-006",
         "CON-ARCH-007",
         "REL-ARCH-001",
+        "OPS-ARCH-006",
     ]
     if manifest.get("requirement_ids") != expected_requirements:
         errors.append("manifest: requirement IDs are missing, stale, or out of order")
@@ -5191,9 +5192,10 @@ def build_drc_evidence(
             "CON-ARCH-006",
             "CON-ARCH-007",
             "REL-ARCH-001",
+            "OPS-ARCH-006",
         ],
         "variant": "x3-v2",
-        "status": "draft_not_orderable_pending_physical_evidence",
+        "status": "canonical_not_orderable_pending_physical_evidence",
         "hash_policy": HASH_POLICY,
         "boards": records,
     }
@@ -5367,6 +5369,7 @@ def verify_v2_release_candidate(
         "CON-ARCH-006",
         "CON-ARCH-007",
         "REL-ARCH-001",
+        "OPS-ARCH-006",
     ]:
         errors.append("DRC evidence: requirement IDs are missing or stale")
     if drc_evidence.get("variant") != "x3-v2":
@@ -5564,10 +5567,10 @@ def verify_v2_release_candidate(
             "fabrication_manifest": DEFAULT_FABRICATION_MANIFEST,
             "mechanical_manifest": V2_ROOT
             / "mechanical"
-            / "kc2_x3_v2_mechanical_manifest.json",
+            / "kc2_mechanical_manifest.json",
             "render_manifest": V2_ROOT
             / "renders"
-            / "kc2_x3_v2_render_manifest.json",
+            / "kc2_render_manifest.json",
             "outline_report": DEFAULT_OUTLINE_REPORT,
             "firmware_build_evidence": DEFAULT_FIRMWARE_BUILD_EVIDENCE,
         },
@@ -5575,7 +5578,7 @@ def verify_v2_release_candidate(
     if errors:
         status = "invalid_release_candidate"
     elif order_readiness_blockers:
-        status = "draft_not_orderable_pending_physical_evidence"
+        status = "canonical_not_orderable_pending_physical_evidence"
     else:
         status = "order_ready_verified_physical_evidence"
 
@@ -5617,7 +5620,7 @@ def _specctra_mount_positions_mm(
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Verify CON-ARCH-004 KC2 X3 V2 routed draft.")
+    parser = argparse.ArgumentParser(description="Verify CON-ARCH-004 KC2 X3 V2 canonical route.")
     parser.add_argument("--footprint", type=Path, default=DEFAULT_FOOTPRINT)
     parser.add_argument("--boards", type=Path, nargs="*", default=DEFAULT_BOARDS)
     parser.add_argument("--manifest", type=Path, default=DEFAULT_MANIFEST)
@@ -5636,7 +5639,7 @@ def main() -> None:
     errors = report["errors"]
     exit_code = release_candidate_exit_code(report)
     if exit_code == 1:
-        raise SystemExit("FAIL: KC2 X3 V2 routed draft verification\n- " + "\n- ".join(errors))
+        raise SystemExit("FAIL: KC2 X3 V2 canonical route verification\n- " + "\n- ".join(errors))
     print(json.dumps(report, indent=2, default=list))
     if exit_code == 2:
         print("DIGITAL PASS: routed boards, connectivity, controller, antenna, and housing bindings")

@@ -1,0 +1,46 @@
+{
+  "run_id": "2026-09-02.kc2.x3-v2.sync-201342",
+  "target": "kc2-x3-v2",
+  "classification_summary": {
+    "conflict": 0,
+    "update": 3,
+    "new_feature": 0,
+    "new_scope": 0
+  },
+  "canonical_state": {
+    "left": {
+      "sha256": "3a6f80a5bc1afe897056107be9522a26079766fd4963f2115a9237737470268d",
+      "route_count": 616,
+      "route_digest": "b37c88d783baa27e6358d1c3baf33528d282934c41c507f2da5edc44e739ebbb"
+    },
+    "right": {
+      "sha256": "a4361040d81b3189cce8cdfcedaf54e570248d2fd513835dfadf80bcc187ef6d",
+      "route_count": 803,
+      "route_digest": "44a0c7fdd446f3153d2faf2506194947577b74147713c9a097c7ac83a9c1a964"
+    }
+  },
+  "mutation_ordinals": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17
+  ],
+  "status_mutations": [],
+  "stability_mutations": [],
+  "blocking_questions": [],
+  "physical_gates": "pending"
+}
+

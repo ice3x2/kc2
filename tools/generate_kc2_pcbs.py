@@ -24,10 +24,10 @@ DRAFT_ROOT = KICAD_ROOT / "draft"
 
 
 def canonical_x3_v2_route_record(side: str, final_count: int, route_digest: str) -> dict[str, object]:
-    base = Path("hardware/kicad/draft/x3-v2/autoroute")
-    dsn_relative = base / f"kc2_{side}-x3-v2-70-1n4148w-p3.dsn"
+    base = Path("hardware/kicad/autoroute")
+    dsn_relative = base / f"kc2_{side}.dsn"
     session_source_dsn_relative = dsn_relative
-    ses_relative = base / f"kc2_{side}-x3-v2-70-1n4148w-p3.ses"
+    ses_relative = base / f"kc2_{side}.ses"
     dsn_path = ROOT / dsn_relative
     session_source_dsn_path = ROOT / session_source_dsn_relative
     ses_path = ROOT / ses_relative
@@ -192,6 +192,7 @@ X3_V2_REQUIREMENT_IDS = [
     "CON-ARCH-006",
     "CON-ARCH-007",
     "REL-ARCH-001",
+    "OPS-ARCH-006",
 ]
 X3_V2_DEEP_SEA_SWITCH_IDENTITY = {
     "family": "Kailh Deep Sea low-profile / PG1353-family",
@@ -502,11 +503,11 @@ def is_x3_family(variant: str) -> bool:
 
 
 def variant_output_dir(variant: str) -> Path:
-    return KICAD_ROOT if variant == "x3" else DRAFT_ROOT / variant
+    return KICAD_ROOT if variant == "x3-v2" else DRAFT_ROOT / variant
 
 
 def variant_project_suffix(variant: str) -> str:
-    return "" if variant in {"soldered", "x3"} else f"-{variant}"
+    return "" if variant in {"soldered", "x3-v2"} else f"-{variant}"
 
 
 def variant_switch_footprint(variant: str) -> str:
@@ -1737,7 +1738,7 @@ def make_board(
     variant_title = "" if variant == "soldered" else f" {variant.upper()}"
     title.SetTitle(f"KC2 {side.capitalize()}{variant_title} PCB Draft")
     title.SetDate("2026-08-20" if variant == "x3-v2" else "2026-06-04")
-    title.SetRevision("draft-v2" if variant == "x3-v2" else "draft-1")
+    title.SetRevision("canonical-v2" if variant == "x3-v2" else "draft-1")
     add_polyline(board, shifted_outline, pcbnew.Edge_Cuts, EDGE_WIDTH, closed=True)
 
     nets: dict[str, pcbnew.NETINFO_ITEM] = {"": board.GetNetInfo().GetNetItem(0)}
@@ -2595,7 +2596,11 @@ def generate_variant(variant: str, output_dir: Path | None = None) -> dict[str, 
         diode_fp = X3_V2_DIODE_FP if variant == "x3-v2" else X1_DIODE_FP
         diode_value = X3_V2_DIODE_VALUE if variant == "x3-v2" else X1_DIODE_VALUE
         diode_y_offset = X2_DIODE_Y_OFFSET
-        manifest_name = "kc2_generation_manifest.json" if variant == "x3" else "kc2_x3_v2_generation_manifest.json"
+        manifest_name = (
+            "kc2_generation_manifest.json"
+            if variant == "x3-v2"
+            else "kc2_x3_generation_manifest.json"
+        )
         if variant == "x3-v2":
             left_keys = make_left_keys_x3_v2()
             right_keys = make_right_keys_x3_v2()
@@ -2643,7 +2648,12 @@ def generate_variant(variant: str, output_dir: Path | None = None) -> dict[str, 
     notes = [
         "Antenna keepout rule areas are generated directly in the board files.",
         "Switch footprint values are sanitized as KEY_XX so Specctra DSN export does not expose legend characters such as backslash to Freerouting.",
-        "Right-half R_COL7 uses D21 and R_COL8 uses D20 to keep the longer outer column on the easier controller fanout pin.",
+        (
+            "X3 V2 right half has eight active matrix columns R_COL0..R_COL7; "
+            "R_COL8/D20 is intentionally absent."
+            if variant == "x3-v2"
+            else "Right-half R_COL7 uses D21 and R_COL8 uses D20 to keep the longer outer column on the easier controller fanout pin."
+        ),
         f"Controller protrusion tabs are aligned toward the inner joining edge: left recessed {LEFT_CONTROLLER_JOIN_EDGE_RECESS:g} mm, right recessed {RIGHT_CONTROLLER_JOIN_EDGE_RECESS:g} mm.",
         "Programming tact switch uses the smaller DeviceMart 1322056 NW3-A06-B3 SMD footprint.",
     ]
@@ -2807,12 +2817,12 @@ def generate_variant(variant: str, output_dir: Path | None = None) -> dict[str, 
         "canonical_route_evidence": (
             {
                 "left": canonical_x3_v2_route_record(
-                    "left", 590,
-                    "b8adeac705f846714f7f201b63487369ef486cb1624df8d0ddbb8cde3053e316",
+                    "left", 616,
+                    "b37c88d783baa27e6358d1c3baf33528d282934c41c507f2da5edc44e739ebbb",
                 ),
                 "right": canonical_x3_v2_route_record(
-                    "right", 766,
-                    "530d6927eacd7e57a48cb6c62e5c5916ef1f4b3f21d67b592e80962ef7af4c1b",
+                    "right", 803,
+                    "44a0c7fdd446f3153d2faf2506194947577b74147713c9a097c7ac83a9c1a964",
                 ),
             }
             if variant == "x3-v2"

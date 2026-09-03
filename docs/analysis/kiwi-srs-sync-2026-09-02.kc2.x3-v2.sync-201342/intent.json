@@ -1,0 +1,22 @@
+{
+  "per_cu": [
+    {
+      "cu_id": "CU-001",
+      "inferred_intent": "Clear routes from support wear areas and regenerate bound outputs.",
+      "confidence": "high"
+    },
+    {
+      "cu_id": "CU-002",
+      "inferred_intent": "Replace no-carrier metadata with the exact J_BAT1/SW_PWR1/U1 contract and state that V2 uses R_COL0..R_COL7 while R_COL8/D20 is absent.",
+      "confidence": "high"
+    },
+    {
+      "cu_id": "CU-003",
+      "inferred_intent": "Normalize line endings only while rejecting semantic drift.",
+      "confidence": "high"
+    }
+  ],
+  "ambiguities": [
+    "Production orderability remains unproven because physical evidence is pending."
+  ]
+}

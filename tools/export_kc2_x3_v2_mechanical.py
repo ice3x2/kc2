@@ -14,14 +14,14 @@ else:
 
 
 ROOT = Path(__file__).resolve().parents[1]
-V2_ROOT = ROOT / "hardware" / "kicad" / "draft" / "x3-v2"
+V2_ROOT = ROOT / "hardware" / "kicad"
 OUTPUT_DIR = V2_ROOT / "mechanical"
-MANIFEST = OUTPUT_DIR / "kc2_x3_v2_mechanical_manifest.json"
+MANIFEST = OUTPUT_DIR / "kc2_mechanical_manifest.json"
 DEFAULT_KICAD_CLI = Path(r"C:\Program Files\KiCad\10.0\bin\kicad-cli.exe")
 BOARDS = {
-    "left": V2_ROOT / "kc2_left-x3-v2" / "kc2_left-x3-v2.kicad_pcb",
-    "right": V2_ROOT / "kc2_right-x3-v2" / "kc2_right-x3-v2.kicad_pcb",
-    "coupon": V2_ROOT / "coupon" / "kc2_x3_v2_switch_coupon.kicad_pcb",
+    "left": V2_ROOT / "kc2_left" / "kc2_left.kicad_pcb",
+    "right": V2_ROOT / "kc2_right" / "kc2_right.kicad_pcb",
+    "coupon": V2_ROOT / "coupon" / "kc2_switch_coupon.kicad_pcb",
 }
 
 
@@ -83,7 +83,7 @@ def export_mechanical(kicad_cli: Path = DEFAULT_KICAD_CLI) -> dict[str, object]:
             "drawings": drawings,
         }
         if product in {"left", "right"}:
-            outline_svg = OUTPUT_DIR / f"kc2_{product}_x3_v2_1to1.svg"
+            outline_svg = OUTPUT_DIR / f"kc2_{product}_1to1.svg"
             subprocess.run(
                 [
                     str(kicad_cli),
@@ -116,7 +116,7 @@ def export_mechanical(kicad_cli: Path = DEFAULT_KICAD_CLI) -> dict[str, object]:
     manifest = {
         "requirement_ids": list(REQUIREMENT_IDS),
         "hash_policy": HASH_POLICY,
-        "status": "draft_not_orderable_pending_physical_coupon",
+        "status": "canonical_not_orderable_pending_physical_evidence",
         "scale": 1.0,
         "units": "mm",
         "kicad_cli": str(kicad_cli),

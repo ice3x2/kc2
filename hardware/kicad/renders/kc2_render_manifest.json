@@ -1,0 +1,292 @@
+{
+  "schema": "kc2-x3-v2-render-evidence-v1",
+  "requirement_ids": [
+    "CON-ARCH-006",
+    "CON-ARCH-007",
+    "OPS-ARCH-006"
+  ],
+  "variant": "x3-v2",
+  "hash_policy": "lf-normalized-utf8-text-else-raw-v1",
+  "renderer": {
+    "path": "tools/render_kc2_x3_joined.py",
+    "canonical_sha256": "2dbc2d835a9b66346cf8221db66b8eb7911eaf435011151a8c1a42e46ed1a0f7"
+  },
+  "render_parameters": {
+    "clearance_mm": 1.0,
+    "scale_px_per_mm": 5.0,
+    "placement_mode": "key-pitch",
+    "full_margin_px": 40.0,
+    "zoom_width_mm": 64.0
+  },
+  "source_boards": {
+    "left": {
+      "path": "hardware/kicad/kc2_left/kc2_left.kicad_pcb",
+      "canonical_sha256": "3a6f80a5bc1afe897056107be9522a26079766fd4963f2115a9237737470268d"
+    },
+    "right": {
+      "path": "hardware/kicad/kc2_right/kc2_right.kicad_pcb",
+      "canonical_sha256": "a4361040d81b3189cce8cdfcedaf54e570248d2fd513835dfadf80bcc187ef6d"
+    }
+  },
+  "service_reference_counts": {
+    "left": {
+      "BAT1": 1,
+      "J_BAT1": 1,
+      "SW_PWR1": 1,
+      "SW_RST1": 1
+    },
+    "right": {
+      "BAT1": 1,
+      "J_BAT1": 1,
+      "SW_PWR1": 1,
+      "SW_RST1": 1
+    }
+  },
+  "mount_reference_counts": {
+    "left": 8,
+    "right": 9
+  },
+  "mount_centers_mm": {
+    "left": {
+      "MH1": [
+        112.8625,
+        43.0
+      ],
+      "MH2": [
+        144.1125,
+        66.25
+      ],
+      "MH3": [
+        39.3625,
+        111.0
+      ],
+      "MH4": [
+        63.6125,
+        123.0
+      ],
+      "MH5": [
+        81.1125,
+        151.75
+      ],
+      "MH6": [
+        137.3625,
+        153.5
+      ],
+      "MH7": [
+        165.8625,
+        148.75
+      ],
+      "MH8": [
+        75.25,
+        134.0
+      ]
+    },
+    "right": {
+      "MH1": [
+        97.1875,
+        43.25
+      ],
+      "MH2": [
+        72.4375,
+        67.0
+      ],
+      "MH3": [
+        170.4375,
+        95.25
+      ],
+      "MH4": [
+        194.4375,
+        98.75
+      ],
+      "MH5": [
+        155.9375,
+        112.5
+      ],
+      "MH6": [
+        70.1875,
+        146.75
+      ],
+      "MH7": [
+        97.6875,
+        152.0
+      ],
+      "MH8": [
+        122.6875,
+        151.0
+      ],
+      "MH9": [
+        177.75,
+        117.25
+      ]
+    }
+  },
+  "battery_terminal_legend_counts": {
+    "left": {
+      "B+": 1,
+      "B-/GND": 1
+    },
+    "right": {
+      "B+": 1,
+      "B-/GND": 1
+    }
+  },
+  "semantic_contract": "SVG service-component, battery-terminal-legend, and mounting-hole groups are recomputed from exact board references, positions, footprint bounds, rotations, visible F.Silkscreen B+/B-/GND text, and joined transforms; PNGs must regenerate byte-identically from the same RenderContext.",
+  "outputs": {
+    "joined_top_svg": {
+      "path": "hardware/kicad/renders/kc2_joined_top.svg",
+      "media_type": "image/svg+xml",
+      "zoom": false,
+      "width_px": 1522,
+      "height_px": 692,
+      "deterministic_regeneration": true,
+      "service_reference_counts": {
+        "left": {
+          "BAT1": 1,
+          "J_BAT1": 1,
+          "SW_PWR1": 1,
+          "SW_RST1": 1
+        },
+        "right": {
+          "BAT1": 1,
+          "J_BAT1": 1,
+          "SW_PWR1": 1,
+          "SW_RST1": 1
+        }
+      },
+      "mount_reference_counts": {
+        "left": 8,
+        "right": 9
+      },
+      "battery_terminal_legend_counts": {
+        "left": {
+          "B+": 1,
+          "B-/GND": 1
+        },
+        "right": {
+          "B+": 1,
+          "B-/GND": 1
+        }
+      },
+      "digest_mode": "canonical_text",
+      "canonical_sha256": "0dc04dc70eb49b3a7c5e90147cd0660779eebd4db3746bfac95fc7116bb24643",
+      "regenerated_canonical_sha256": "0dc04dc70eb49b3a7c5e90147cd0660779eebd4db3746bfac95fc7116bb24643"
+    },
+    "join_seam_zoom_svg": {
+      "path": "hardware/kicad/renders/kc2_join_seam_zoom.svg",
+      "media_type": "image/svg+xml",
+      "zoom": true,
+      "width_px": 320,
+      "height_px": 692,
+      "deterministic_regeneration": true,
+      "service_reference_counts": {
+        "left": {
+          "BAT1": 1,
+          "J_BAT1": 1,
+          "SW_PWR1": 1,
+          "SW_RST1": 1
+        },
+        "right": {
+          "BAT1": 1,
+          "J_BAT1": 1,
+          "SW_PWR1": 1,
+          "SW_RST1": 1
+        }
+      },
+      "mount_reference_counts": {
+        "left": 8,
+        "right": 9
+      },
+      "battery_terminal_legend_counts": {
+        "left": {
+          "B+": 1,
+          "B-/GND": 1
+        },
+        "right": {
+          "B+": 1,
+          "B-/GND": 1
+        }
+      },
+      "digest_mode": "canonical_text",
+      "canonical_sha256": "03140de38d52776911d2859a49c2add34c6a345c9ae989d82211623a63022b81",
+      "regenerated_canonical_sha256": "03140de38d52776911d2859a49c2add34c6a345c9ae989d82211623a63022b81"
+    },
+    "joined_top_png": {
+      "path": "hardware/kicad/renders/kc2_joined_top.png",
+      "media_type": "image/png",
+      "zoom": false,
+      "width_px": 1522,
+      "height_px": 692,
+      "deterministic_regeneration": true,
+      "service_reference_counts": {
+        "left": {
+          "BAT1": 1,
+          "J_BAT1": 1,
+          "SW_PWR1": 1,
+          "SW_RST1": 1
+        },
+        "right": {
+          "BAT1": 1,
+          "J_BAT1": 1,
+          "SW_PWR1": 1,
+          "SW_RST1": 1
+        }
+      },
+      "mount_reference_counts": {
+        "left": 8,
+        "right": 9
+      },
+      "battery_terminal_legend_counts": {
+        "left": {
+          "B+": 1,
+          "B-/GND": 1
+        },
+        "right": {
+          "B+": 1,
+          "B-/GND": 1
+        }
+      },
+      "digest_mode": "raw_binary",
+      "raw_sha256": "2e7b602664a539f91d1ec9ba65bb1a12e2154ac4241e52feff4ca1c500004653",
+      "regenerated_raw_sha256": "2e7b602664a539f91d1ec9ba65bb1a12e2154ac4241e52feff4ca1c500004653"
+    },
+    "join_seam_zoom_png": {
+      "path": "hardware/kicad/renders/kc2_join_seam_zoom.png",
+      "media_type": "image/png",
+      "zoom": true,
+      "width_px": 320,
+      "height_px": 692,
+      "deterministic_regeneration": true,
+      "service_reference_counts": {
+        "left": {
+          "BAT1": 1,
+          "J_BAT1": 1,
+          "SW_PWR1": 1,
+          "SW_RST1": 1
+        },
+        "right": {
+          "BAT1": 1,
+          "J_BAT1": 1,
+          "SW_PWR1": 1,
+          "SW_RST1": 1
+        }
+      },
+      "mount_reference_counts": {
+        "left": 8,
+        "right": 9
+      },
+      "battery_terminal_legend_counts": {
+        "left": {
+          "B+": 1,
+          "B-/GND": 1
+        },
+        "right": {
+          "B+": 1,
+          "B-/GND": 1
+        }
+      },
+      "digest_mode": "raw_binary",
+      "raw_sha256": "e427c12db9c681a86cd7e118bc9d7aa9be7c7f4007e62bc9ed88d7d54a720a52",
+      "regenerated_raw_sha256": "e427c12db9c681a86cd7e118bc9d7aa9be7c7f4007e62bc9ed88d7d54a720a52"
+    }
+  }
+}

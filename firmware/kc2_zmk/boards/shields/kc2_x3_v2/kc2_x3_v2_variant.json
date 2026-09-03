@@ -24,8 +24,40 @@
   ],
   "controller": "nice-nano-v2-socket-15.24-mm-row-spacing",
   "compact_controller": true,
-  "carrier_battery_nets": false,
-  "battery_leads": "direct-to-nice-nano-b-plus-b-minus",
+  "carrier_battery_nets": true,
+  "battery_leads": {
+    "source": "pre-attached-protected-pack-leads",
+    "termination": {
+      "reference": "J_BAT1",
+      "method": "direct-solder"
+    },
+    "direct_to_nice_nano_b_plus_b_minus_top_pads": false
+  },
+  "battery_power_path": {
+    "requirement_id": "CON-ARCH-007",
+    "scope": "independent-per-half",
+    "connections": [
+      {
+        "from": {"reference": "J_BAT1", "pad": "1", "net": "BAT+"},
+        "to": {"reference": "SW_PWR1", "pad": "1", "net": "BAT+"}
+      },
+      {
+        "from": {"reference": "SW_PWR1", "pad": "2", "net": "NN_B+"},
+        "to": {"reference": "U1", "pad": "RAW", "net": "NN_B+"}
+      },
+      {
+        "from": {"reference": "J_BAT1", "pad": "2", "net": "GND"},
+        "to": {"reference": "U1", "pad": "GND_C", "net": "GND"}
+      }
+    ],
+    "power_switch": {
+      "reference": "SW_PWR1",
+      "common_pad": "1",
+      "selected_on_throw_pad": "2",
+      "no_connect_pad": "3"
+    },
+    "b_minus_net": "GND"
+  },
   "left_alt_fn_win_combo": {
     "positions": [59, 60],
     "timeout_ms": 50,

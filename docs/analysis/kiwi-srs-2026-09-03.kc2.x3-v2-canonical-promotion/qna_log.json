@@ -1,0 +1,10 @@
+{
+  "rounds": [
+    {
+      "question": "Promote only kc2-x3-v2 into hardware/kicad/kc2_left and hardware/kicad/kc2_right, leave other historical draft variants untouched, and record the active-canonical/no-duplicate rule in AGENTS.md?",
+      "answer": "go",
+      "resolution": "approved"
+    }
+  ],
+  "remaining_ambiguities": []
+}

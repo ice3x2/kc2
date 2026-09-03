@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import copy
 import json
 import os
 from pathlib import Path
@@ -345,7 +346,72 @@ class V2FirmwareContractTests(unittest.TestCase):
         )
         self.assertEqual(metadata["supported_assembly"], ["choc-v2-bottom-socket", "mx-direct-solder"])
         self.assertEqual(metadata["unsupported_assembly"], ["choc-v1", "choc-v2-direct-solder", "mx-hotswap"])
-        self.assertEqual(metadata["battery_leads"], "direct-to-nice-nano-b-plus-b-minus")
+        self.assertTrue(metadata["carrier_battery_nets"])
+        self.assertEqual(
+            metadata["battery_leads"],
+            {
+                "source": "pre-attached-protected-pack-leads",
+                "termination": {"reference": "J_BAT1", "method": "direct-solder"},
+                "direct_to_nice_nano_b_plus_b_minus_top_pads": False,
+            },
+        )
+        self.assertEqual(
+            metadata["battery_power_path"],
+            {
+                "requirement_id": "CON-ARCH-007",
+                "scope": "independent-per-half",
+                "connections": [
+                    {
+                        "from": {"reference": "J_BAT1", "pad": "1", "net": "BAT+"},
+                        "to": {"reference": "SW_PWR1", "pad": "1", "net": "BAT+"},
+                    },
+                    {
+                        "from": {"reference": "SW_PWR1", "pad": "2", "net": "NN_B+"},
+                        "to": {"reference": "U1", "pad": "RAW", "net": "NN_B+"},
+                    },
+                    {
+                        "from": {"reference": "J_BAT1", "pad": "2", "net": "GND"},
+                        "to": {"reference": "U1", "pad": "GND_C", "net": "GND"},
+                    },
+                ],
+                "power_switch": {
+                    "reference": "SW_PWR1",
+                    "common_pad": "1",
+                    "selected_on_throw_pad": "2",
+                    "no_connect_pad": "3",
+                },
+                "b_minus_net": "GND",
+            },
+        )
+
+    def test_battery_power_metadata_rejects_historical_and_incomplete_contracts(self) -> None:
+        expected = copy.deepcopy(verifier.EXPECTED_BATTERY_POWER_METADATA)
+        self.assertEqual(verifier.verify_battery_power_metadata(expected), [])
+
+        historical = copy.deepcopy(expected)
+        historical["carrier_battery_nets"] = False
+        historical["battery_leads"] = "direct-to-nice-nano-b-plus-b-minus"
+        self.assertTrue(verifier.verify_battery_power_metadata(historical))
+
+        direct_top_pad_solder = copy.deepcopy(expected)
+        direct_top_pad_solder["battery_leads"][
+            "direct_to_nice_nano_b_plus_b_minus_top_pads"
+        ] = True
+        self.assertTrue(verifier.verify_battery_power_metadata(direct_top_pad_solder))
+
+        missing_carrier_connection = copy.deepcopy(expected)
+        missing_carrier_connection["battery_power_path"]["connections"].pop()
+        self.assertTrue(verifier.verify_battery_power_metadata(missing_carrier_connection))
+
+        wrong_switch_contract = copy.deepcopy(expected)
+        wrong_switch_contract["battery_power_path"]["power_switch"][
+            "no_connect_pad"
+        ] = "2"
+        self.assertTrue(verifier.verify_battery_power_metadata(wrong_switch_contract))
+
+        switched_b_minus = copy.deepcopy(expected)
+        switched_b_minus["battery_power_path"]["b_minus_net"] = "BAT_SWITCHED"
+        self.assertTrue(verifier.verify_battery_power_metadata(switched_b_minus))
 
     def test_1n4148w_transition_preserves_firmware_and_documents_pending_physical_scan_gate(self) -> None:
         evidence = verifier.read_build_evidence()
@@ -374,10 +440,10 @@ class V2FirmwareContractTests(unittest.TestCase):
 
         firmware_readme = (verifier.SHIELD_DIR / "README.md").read_text(encoding="utf-8")
         hardware_readme = (
-            verifier.ROOT / "hardware/kicad/draft/x3-v2/README.md"
+            verifier.ROOT / "hardware/kicad/README.md"
         ).read_text(encoding="utf-8")
         housing_readme = (
-            verifier.ROOT / "hardware/case/draft/x3-v2/README.md"
+            verifier.ROOT / "hardware/case/README.md"
         ).read_text(encoding="utf-8")
         summary = (verifier.ROOT / "docs/spec.md").read_text(encoding="utf-8")
         srs = (
@@ -385,8 +451,7 @@ class V2FirmwareContractTests(unittest.TestCase):
         ).read_text(encoding="utf-8")
         generation = json.loads(
             (
-                verifier.ROOT
-                / "hardware/kicad/draft/x3-v2/kc2_x3_v2_generation_manifest.json"
+                verifier.GENERATION_MANIFEST_PATH
             ).read_text(encoding="utf-8")
         )
 
@@ -407,15 +472,15 @@ class V2FirmwareContractTests(unittest.TestCase):
         self.assertIn("zero-wait", hardware_readme)
         self.assertIn("not orderable", hardware_readme.lower())
 
-        self.assertIn("kc2_left-x3-v2-70-1n4148w-p3.dsn", hardware_readme)
-        self.assertIn("kc2_right-x3-v2-70-1n4148w-p3.dsn", hardware_readme)
-        self.assertIn("reviewed controller-r3 SES", hardware_readme)
+        self.assertIn("kc2_left.dsn", hardware_readme)
+        self.assertIn("kc2_right.dsn", hardware_readme)
+        self.assertIn("reviewed canonical SES", hardware_readme)
         self.assertIn("controller-r3", srs)
         self.assertIn("controller-r3", summary)
         self.assertNotIn("current-MH `kc2_left/right-x3-v2-70-es1b-mh-r2.dsn`", srs)
-        self.assertNotIn("현재 M1.4-hole-aware trackless route input은 `kc2_left-x3-v2-70-es1b-mh-r2.dsn`", summary)
-        self.assertNotIn("kc2_left-x3-v2-70-v5-r1", hardware_readme)
-        self.assertNotIn("kc2_right-x3-v2-71-r12", hardware_readme)
+        self.assertNotIn("현재 M1.4-hole-aware trackless route input은 `kc2_left-70-es1b-mh-r2.dsn`", summary)
+        self.assertNotIn("kc2_left-70-v5-r1", hardware_readme)
+        self.assertNotIn("kc2_right-71-r12", hardware_readme)
 
         self.assertIn("no firmware source or UF2 change", firmware_readme)
         self.assertIn("zero-wait", firmware_readme)
@@ -427,11 +492,11 @@ class V2FirmwareContractTests(unittest.TestCase):
         self.assertIn("31/39 key-load support network", housing_readme)
         self.assertIn("P3 reinforcement", summary)
         self.assertIn(
-            "7de01a7f0c60585c1845ab3ad17c2b7d18e17ae8c2090a3594e6edf0cbf9d7cf",
+            "3a6f80a5bc1afe897056107be9522a26079766fd4963f2115a9237737470268d",
             summary,
         )
         self.assertIn(
-            "b4173e7bb16189690b06bc3a8d6487e8c56e7e69100e6c04d798d687213f2adc",
+            "a4361040d81b3189cce8cdfcedaf54e570248d2fd513835dfadf80bcc187ef6d",
             summary,
         )
         self.assertNotIn("현재 둥근머리 P1", summary)
@@ -448,40 +513,38 @@ class V2FirmwareContractTests(unittest.TestCase):
             generation["canonical_route_evidence"],
             {
                 "left": {
-                    "dsn": "hardware/kicad/draft/x3-v2/autoroute/kc2_left-x3-v2-70-1n4148w-p3.dsn",
+                    "dsn": "hardware/kicad/autoroute/kc2_left.dsn",
                     "dsn_role": "current_mh_compact_controller_trackless_routing_input",
                     "dsn_mounting_hole_count": 8,
-                    "session_source_dsn": "hardware/kicad/draft/x3-v2/autoroute/kc2_left-x3-v2-70-1n4148w-p3.dsn",
-                    "session_source_dsn_sha256": "3171f44d8c65a5881e6f9d3c52adaf22b5268c68559ef0d136fd6ab9f943a58c",
-                    "ses": "hardware/kicad/draft/x3-v2/autoroute/kc2_left-x3-v2-70-1n4148w-p3.ses",
+                    "session_source_dsn": "hardware/kicad/autoroute/kc2_left.dsn",
+                    "session_source_dsn_sha256": "3842695d4cb7ec8721736f3cd3816a9322daa620203c461638614fef7c92740c",
+                    "ses": "hardware/kicad/autoroute/kc2_left.ses",
                     "ses_role": "reviewed_matrix_import_plus_exact_edge_cleanup_and_power_reset_service_routing",
-                    "dsn_sha256": "3171f44d8c65a5881e6f9d3c52adaf22b5268c68559ef0d136fd6ab9f943a58c",
-                    "ses_sha256": "eeb142f28e5077bb4f523c9f85a9e547c9f3a38f740596cbe6df4bf269d18c39",
+                    "dsn_sha256": "3842695d4cb7ec8721736f3cd3816a9322daa620203c461638614fef7c92740c",
+                    "ses_sha256": "2e03ccbc870e974b30fd2ea24fe243bf09bbbd6c6626330049bcc5835561c13d",
                     "dsn_default_clearance_internal_units": 300,
                     "dsn_clearances_internal_units": {
                         "global": 300,
                         "kicad_default": 300,
                     },
-                    "final_track_via_count": 590,
-                    "route_digest_sha256": "b8adeac705f846714f7f201b63487369ef486cb1624df8d0ddbb8cde3053e316",
+                    **verifier.EXPECTED_ROUTE_FINGERPRINTS["left"],
                 },
                 "right": {
-                    "dsn": "hardware/kicad/draft/x3-v2/autoroute/kc2_right-x3-v2-70-1n4148w-p3.dsn",
+                    "dsn": "hardware/kicad/autoroute/kc2_right.dsn",
                     "dsn_role": "current_mh_compact_controller_trackless_routing_input",
                     "dsn_mounting_hole_count": 9,
-                    "session_source_dsn": "hardware/kicad/draft/x3-v2/autoroute/kc2_right-x3-v2-70-1n4148w-p3.dsn",
-                    "session_source_dsn_sha256": "bf25cb75dbab88693fec22038a5b90583221bdb6fbc41036cd6e328c7a863a3b",
-                    "ses": "hardware/kicad/draft/x3-v2/autoroute/kc2_right-x3-v2-70-1n4148w-p3.ses",
+                    "session_source_dsn": "hardware/kicad/autoroute/kc2_right.dsn",
+                    "session_source_dsn_sha256": "b976a1b33975926ca53e4033c6449b50bda65494eb94fe94c7d2f498962cfa2a",
+                    "ses": "hardware/kicad/autoroute/kc2_right.ses",
                     "ses_role": "reviewed_matrix_import_plus_exact_edge_cleanup_and_power_reset_service_routing",
-                    "dsn_sha256": "bf25cb75dbab88693fec22038a5b90583221bdb6fbc41036cd6e328c7a863a3b",
-                    "ses_sha256": "ac703dbde3f35e4dffdb35de5c8d09d4f12a56ba09439ef5b02473200e55b039",
+                    "dsn_sha256": "b976a1b33975926ca53e4033c6449b50bda65494eb94fe94c7d2f498962cfa2a",
+                    "ses_sha256": "29329df075afac365ac870b2ab4d1fed689e371c45e6b199777709b177c112d9",
                     "dsn_default_clearance_internal_units": 300,
                     "dsn_clearances_internal_units": {
                         "global": 300,
                         "kicad_default": 300,
                     },
-                    "final_track_via_count": 766,
-                    "route_digest_sha256": "530d6927eacd7e57a48cb6c62e5c5916ef1f4b3f21d67b592e80962ef7af4c1b",
+                    **verifier.EXPECTED_ROUTE_FINGERPRINTS["right"],
                 },
             },
         )

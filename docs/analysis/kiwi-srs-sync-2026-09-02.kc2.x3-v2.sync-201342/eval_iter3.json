@@ -1,0 +1,12 @@
+{
+  "status": "PASS",
+  "findings": {
+    "CRITICAL": 0,
+    "HIGH": 0,
+    "MEDIUM": 0,
+    "LOW": 0
+  },
+  "delta": "CU-002 now includes variant-aware right-column metadata: R_COL0..R_COL7 active, R_COL8/D20 absent.",
+  "mcp_dry_run": "updated note accepted",
+  "physical_order_gate": "pending"
+}

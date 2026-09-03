@@ -1,0 +1,20 @@
+{
+  "implementability": "medium",
+  "product_fit": "core",
+  "rationale": "The repository already has canonical source, fabrication, route, render, and case locations and a prior promotion precedent. The change is mechanically broad but feasible with test-first path contracts, Konnect project renames, exact in-repository moves, and full regeneration.",
+  "code_evidence": [
+    "tools/generate_kc2_pcbs.py:27-30",
+    "tools/verify_kc2_x3_v2.py:58-66",
+    "tools/export_kc2_x3_v2_fabrication.py:33-38",
+    "tools/export_kc2_x3_v2_mechanical.py:17-23",
+    "tools/generate_kc2_x3_v2_housings.py:31-36"
+  ],
+  "blockers": [],
+  "conditions": [
+    "Preserve unrelated dirty working-tree changes.",
+    "Use Konnect rename_project for protected KiCad project renames.",
+    "Keep order_ready=false and all physical evidence gates unchanged.",
+    "Rebind and regenerate every path/hash-derived artifact after the move."
+  ],
+  "external_module_required": false
+}

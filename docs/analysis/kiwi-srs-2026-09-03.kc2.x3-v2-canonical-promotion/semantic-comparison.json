@@ -1,0 +1,87 @@
+{
+  "requirement_id": "OPS-ARCH-006",
+  "acceptance_criterion": "AC-8",
+  "pre_promotion_sources": [
+    "docs/analysis/kiwi-srs-sync-2026-09-02.kc2.x3-v2.sync-201342/senior_analysis.json",
+    "docs/analysis/kiwi-srs-sync-2026-09-02.kc2.x3-v2.sync-201342/proposed-mutations.json",
+    "docs/spec/10.product-architecture.srs.md#CON-ARCH-006-VE-3-historical-pre-OPS-ARCH-006",
+    "docs/reports/kc2-x3-v2-jlcpcb-preflight-2026-09-02.md#final-improvement-update"
+  ],
+  "comparison_method": "Compare path-independent semantic fields. Whole-board canonical SHA-256 covers key layout, nets, footprint geometry, service placement, and PCB geometry. Route count/digest covers copper routing. Housing fields compare source-board bindings, support topology, maximum load span, routed-copper wear clearance, and collision counts; path, filename, generator hash, timestamp, and regenerated artifact hashes are excluded.",
+  "post_promotion_sources": [
+    "hardware/kicad/kc2_generation_manifest.json",
+    "hardware/kicad/kc2_drc_evidence.json",
+    "hardware/kicad/fabrication/kc2_fabrication_manifest.json",
+    "hardware/kicad/mechanical/kc2_mechanical_manifest.json",
+    "hardware/kicad/renders/kc2_render_manifest.json",
+    "hardware/case/kc2_housing_manifest.json",
+    "firmware/kc2_zmk/boards/shields/kc2_x3_v2/kc2_x3_v2_build_evidence.json"
+  ],
+  "comparisons": {
+    "left_board": {
+      "pre_sha256": "3a6f80a5bc1afe897056107be9522a26079766fd4963f2115a9237737470268d",
+      "post_sha256": "3a6f80a5bc1afe897056107be9522a26079766fd4963f2115a9237737470268d",
+      "matches": true,
+      "covers": ["key layout", "nets", "footprints", "service placement", "board geometry"]
+    },
+    "right_board": {
+      "pre_sha256": "a4361040d81b3189cce8cdfcedaf54e570248d2fd513835dfadf80bcc187ef6d",
+      "post_sha256": "a4361040d81b3189cce8cdfcedaf54e570248d2fd513835dfadf80bcc187ef6d",
+      "matches": true,
+      "covers": ["key layout", "nets", "footprints", "service placement", "board geometry"]
+    },
+    "left_route": {
+      "pre_count": 616,
+      "post_count": 616,
+      "pre_digest": "b37c88d783baa27e6358d1c3baf33528d282934c41c507f2da5edc44e739ebbb",
+      "post_digest": "b37c88d783baa27e6358d1c3baf33528d282934c41c507f2da5edc44e739ebbb",
+      "matches": true
+    },
+    "right_route": {
+      "pre_count": 803,
+      "post_count": 803,
+      "pre_digest": "44a0c7fdd446f3153d2faf2506194947577b74147713c9a097c7ac83a9c1a964",
+      "post_digest": "44a0c7fdd446f3153d2faf2506194947577b74147713c9a097c7ac83a9c1a964",
+      "matches": true
+    },
+    "firmware_behavior": {
+      "pre_contract": "col2row; active-high columns; active-high pulled-down rows; zero scan wait",
+      "post_contract": "col2row; active-high columns; active-high pulled-down rows; zero scan wait",
+      "focused_tests": "15/15 passed",
+      "matches": true
+    },
+    "fabrication_profile": {
+      "pre_contract": "2-layer FR-4, 1.6 mm, 1 oz, ENIG, green mask, white silkscreen, tented vias, hand assembly",
+      "post_contract": "2-layer FR-4, 1.6 mm, 1 oz, ENIG, green mask, white silkscreen, tented vias, hand assembly",
+      "dedicated_verifier_exit": 0,
+      "matches": true
+    },
+    "housing_geometry": {
+      "pre_source_board_hashes": {
+        "left": "3a6f80a5bc1afe897056107be9522a26079766fd4963f2115a9237737470268d",
+        "right": "a4361040d81b3189cce8cdfcedaf54e570248d2fd513835dfadf80bcc187ef6d"
+      },
+      "post_source_board_hashes": {
+        "left": "3a6f80a5bc1afe897056107be9522a26079766fd4963f2115a9237737470268d",
+        "right": "a4361040d81b3189cce8cdfcedaf54e570248d2fd513835dfadf80bcc187ef6d"
+      },
+      "pre_key_support_count": {"left": 31, "right": 39},
+      "post_key_support_count": {"left": 31, "right": 39},
+      "pre_maximum_load_span_mm": 4.3902,
+      "post_maximum_load_span_mm": 4.3902,
+      "pre_minimum_b_cu_wear_clearance_mm": {"left": 0.35, "right": 0.35},
+      "post_minimum_b_cu_wear_clearance_mm": {"left": 0.35, "right": 0.35},
+      "pre_support_route_collision_count": 0,
+      "post_support_route_collision_count": 0,
+      "matches": true
+    }
+  },
+  "allowed_differences": [
+    "repository paths",
+    "project and artifact filenames",
+    "project configuration internal identity",
+    "fresh DRC timestamps and hashes",
+    "derived artifact hashes caused by canonical filenames and regeneration"
+  ],
+  "semantic_regressions": []
+}

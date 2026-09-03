@@ -1,0 +1,35 @@
+{
+  "per_cu": [
+    {
+      "cu_id": "CU-001",
+      "affected_modules": [
+        "routing",
+        "DRC",
+        "fabrication",
+        "mechanical",
+        "housing",
+        "render"
+      ],
+      "test_coverage_status": "partial",
+      "external_module_touch": false
+    },
+    {
+      "cu_id": "CU-002",
+      "affected_modules": [
+        "firmware metadata",
+        "provenance"
+      ],
+      "test_coverage_status": "covered",
+      "external_module_touch": false
+    },
+    {
+      "cu_id": "CU-003",
+      "affected_modules": [
+        "fabrication verification"
+      ],
+      "test_coverage_status": "covered",
+      "external_module_touch": false
+    }
+  ]
+}
+

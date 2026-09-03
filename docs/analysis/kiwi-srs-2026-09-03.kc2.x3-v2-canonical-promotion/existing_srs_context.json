@@ -1,0 +1,36 @@
+{
+  "candidate_matches": [
+    {
+      "id": "OPS-ARCH-002",
+      "scope": "ARCH",
+      "title": "X3 main KiCad output promotion",
+      "relation_hint": "promotion precedent for the historical kc2-x3 target; the new V2 requirement assumes the canonical role for the active target",
+      "similarity_score": 0.98
+    },
+    {
+      "id": "CON-ARCH-004",
+      "scope": "ARCH",
+      "title": "X3 V2 hybrid Choc V2 socket, MX solder, 70-key layout, and hand-solderable SOD-123 matrix diodes",
+      "relation_hint": "requires a separate explicit promotion requirement and retains independent physical/order gates",
+      "similarity_score": 0.94
+    },
+    {
+      "id": "CON-ARCH-006",
+      "scope": "ARCH",
+      "title": "X3 V2 concealed bezel, tight join, and load-bearing housing support",
+      "relation_hint": "canonical case and mechanical outputs must remain bound to this V2 design",
+      "similarity_score": 0.72
+    },
+    {
+      "id": "CON-ARCH-007",
+      "scope": "ARCH",
+      "title": "X3 V2 socketed 301230 battery, local hard power switch, and mirrored reset service",
+      "relation_hint": "canonical artifacts must preserve its electrical and service contract",
+      "similarity_score": 0.70
+    }
+  ],
+  "relevant_scopes": ["ARCH"],
+  "no_match_reason": null,
+  "scope_boundary_impact": null,
+  "user_resolution": "Promote only kc2-x3-v2 to the existing canonical paths; leave other historical draft variants untouched."
+}

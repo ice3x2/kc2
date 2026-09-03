@@ -23,6 +23,7 @@ REQUIREMENT_IDS = {
     "CON-ARCH-006",
     "CON-ARCH-007",
     "REL-ARCH-001",
+    "OPS-ARCH-006",
 }
 
 

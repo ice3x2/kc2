@@ -40,8 +40,8 @@ else:
 
 
 ROOT = Path(__file__).resolve().parents[1]
-FAB_ROOT = ROOT / "hardware" / "kicad" / "draft" / "x3-v2" / "fabrication"
-MANIFEST = FAB_ROOT / "kc2_x3_v2_fabrication_manifest.json"
+FAB_ROOT = ROOT / "hardware" / "kicad" / "fabrication"
+MANIFEST = FAB_ROOT / "kc2_fabrication_manifest.json"
 REQUIRED_SUFFIXES = {
     "F.Cu": "-F_Cu.gtl",
     "B.Cu": "-B_Cu.gbl",
@@ -742,9 +742,13 @@ def inspect_jlcpcb_pcba_quote(
             str(details.get("source_board_sha256")),
             board_geometry,
         )
-        if bom_exists and bom_path.read_bytes() != jlcpcb_pcba_bom_csv_bytes(expected):
+        if bom_exists and sha256_bytes(bom_path.read_bytes()) != sha256_bytes(
+            jlcpcb_pcba_bom_csv_bytes(expected)
+        ):
             errors.append("JLCPCB PCBA quote BOM is not the exact source-board selection")
-        if cpl_exists and cpl_path.read_bytes() != jlcpcb_pcba_cpl_csv_bytes(expected):
+        if cpl_exists and sha256_bytes(cpl_path.read_bytes()) != sha256_bytes(
+            jlcpcb_pcba_cpl_csv_bytes(expected)
+        ):
             errors.append("JLCPCB PCBA quote CPL is not the exact source-board placement set")
         expected_diode_count = len(expected["line_items"][0]["designators"])
         expected_socket_count = len(expected["line_items"][1]["designators"])
@@ -1025,7 +1029,9 @@ def analyze_fabrication(manifest_path: Path = MANIFEST, root: Path = ROOT) -> di
                             bom_errors.append("BOM JSON does not match source-board inventory contract")
                 if not csv_path.is_file():
                     bom_errors.append("board-derived BOM CSV missing")
-                elif csv_path.read_bytes() != bom_csv_bytes(expected_bom):
+                elif sha256_bytes(csv_path.read_bytes()) != sha256_bytes(
+                    bom_csv_bytes(expected_bom)
+                ):
                     bom_errors.append("BOM CSV does not match source-board inventory contract")
         source_tenting = source_board_tenting(source_board)
         via_tenting_errors: list[str] = []
@@ -1154,7 +1160,7 @@ def analyze_fabrication(manifest_path: Path = MANIFEST, root: Path = ROOT) -> di
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Verify CON-ARCH-004 draft Gerber and Excellon archives.")
+    parser = argparse.ArgumentParser(description="Verify CON-ARCH-004 canonical Gerber and Excellon archives.")
     parser.add_argument("--manifest", type=Path, default=MANIFEST)
     args = parser.parse_args()
     report = analyze_fabrication(args.manifest)
@@ -1267,7 +1273,7 @@ def main() -> None:
     if errors:
         raise SystemExit("FAIL: KC2 X3 V2 fabrication archives\n- " + "\n- ".join(errors))
     print(json.dumps(report, indent=2))
-    print("PASS: CON-ARCH-004 draft Gerber/Excellon archives are structurally complete")
+    print("PASS: CON-ARCH-004 canonical Gerber/Excellon archives are structurally complete")
 
 
 if __name__ == "__main__":

@@ -1,0 +1,31 @@
+{
+  "change_units": [
+    {
+      "id": "CU-001",
+      "classification": "update",
+      "summary": "Support-clear routes and rebound digital outputs.",
+      "target_reqs": [
+        "CON-ARCH-006",
+        "CON-ARCH-004"
+      ]
+    },
+    {
+      "id": "CU-002",
+      "classification": "update",
+      "summary": "Correct carrier-power firmware metadata and provenance.",
+      "target_reqs": [
+        "CON-ARCH-007",
+        "CON-ARCH-004"
+      ]
+    },
+    {
+      "id": "CU-003",
+      "classification": "update",
+      "summary": "Canonical LF/CRLF CSV comparison with semantic rejection.",
+      "target_reqs": [
+        "CON-ARCH-004"
+      ]
+    }
+  ]
+}
+

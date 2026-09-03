@@ -140,6 +140,154 @@ CONTROLLER_COMPACT_ROUTE_SHA256 = {
     "right": "530d6927eacd7e57a48cb6c62e5c5916ef1f4b3f21d67b592e80962ef7af4c1b",
 }
 
+KEY_LOAD_SUPPORT_ROUTE_REMOVALS = {
+    "left": (
+        ("track", "L_COL6", "B.Cu", 150.9000, 70.2000, 155.0477, 72.4450, 0.250),
+        ("track", "L_COL6", "B.Cu", 159.8650, 72.4450, 155.0477, 72.4450, 0.250),
+        ("track", "L_ROW0", "B.Cu", 128.1183, 70.7683, 111.8817, 70.7683, 0.250),
+        ("track", "L_ROW0", "B.Cu", 147.1277, 70.7277, 130.9723, 70.7277, 0.250),
+        ("track", "L_ROW0", "B.Cu", 73.8261, 70.7239, 89.8498, 70.7239, 0.250),
+        ("track", "L_ROW0", "B.Cu", 92.8317, 70.7683, 109.0683, 70.7683, 0.250),
+        ("track", "L_ROW1", "B.Cu", 107.7647, 89.4970, 111.4413, 93.1736, 0.250),
+        ("track", "L_ROW2", "B.Cu", 140.0168, 108.6250, 128.3125, 108.6250, 0.250),
+    ),
+    "right": (
+        ("track", "R_COL2", "B.Cu", 86.0000, 68.5000, 90.5000, 70.5000, 0.250),
+        ("track", "R_COL2", "F.Cu", 90.5000, 70.5000, 93.1900, 72.4450, 0.250),
+        ("track", "R_COL3", "B.Cu", 117.0025, 129.5950, 108.6115, 129.5950, 0.250),
+        ("track", "R_COL3", "B.Cu", 99.4528, 70.7002, 110.4952, 70.7002, 0.250),
+        ("track", "R_COL6", "B.Cu", 103.6462, 95.4973, 97.3280, 89.1791, 0.250),
+        ("track", "R_ROW0", "B.Cu", 109.4300, 72.1750, 100.9500, 72.4750, 0.250),
+        ("track", "R_ROW0", "B.Cu", 111.6333, 74.3783, 109.4300, 72.1750, 0.250),
+        ("track", "R_ROW0", "B.Cu", 121.4386, 70.7364, 137.6114, 70.7364, 0.250),
+        ("track", "R_ROW0", "B.Cu", 159.0746, 70.7683, 140.4567, 70.7683, 0.250),
+        ("track", "R_ROW0", "B.Cu", 180.5058, 70.7683, 161.8880, 70.7683, 0.250),
+        ("track", "R_ROW0", "B.Cu", 61.1499, 79.2364, 69.6494, 70.7369, 0.250),
+        ("track", "R_ROW0", "B.Cu", 69.6494, 70.7369, 80.4619, 70.7369, 0.250),
+        ("track", "R_ROW0", "B.Cu", 81.9000, 72.4750, 90.1200, 72.1750, 0.250),
+        ("track", "R_ROW0", "B.Cu", 90.1200, 72.1750, 92.0806, 74.1356, 0.250),
+        ("track", "R_ROW1", "B.Cu", 157.5901, 89.5750, 152.1250, 89.5750, 0.250),
+        ("track", "R_ROW1", "B.Cu", 80.2560, 90.6260, 76.2250, 90.6260, 0.250),
+        ("track", "R_ROW1", "B.Cu", 82.8348, 93.2048, 80.2560, 90.6260, 0.250),
+        ("track", "R_ROW3", "B.Cu", 75.9725, 129.2050, 71.4625, 129.2050, 0.250),
+        ("track", "R_ROW3", "B.Cu", 78.0723, 131.3048, 75.9725, 129.2050, 0.250),
+        ("track", "R_ROW3", "B.Cu", 95.3786, 127.9170, 90.7545, 127.9170, 0.250),
+        ("track", "R_ROW3", "F.Cu", 95.3786, 127.9170, 107.0569, 127.9170, 0.250),
+        ("via", "R_COL2", 90.5000, 70.5000, 0.600, 0.300),
+        ("via", "R_ROW3", 95.3786, 127.9170, 0.600, 0.300),
+    ),
+}
+
+KEY_LOAD_SUPPORT_ROUTE_ADDITIONS = {
+    "left": (
+        ("track", "L_COL6", "B.Cu", 154.1250, 72.4450, 150.9000, 70.2000, 0.250),
+        ("track", "L_COL6", "B.Cu", 154.6250, 73.7000, 154.1250, 72.4450, 0.250),
+        ("track", "L_COL6", "B.Cu", 158.0250, 73.7000, 154.6250, 73.7000, 0.250),
+        ("track", "L_COL6", "B.Cu", 158.5250, 72.4450, 158.0250, 73.7000, 0.250),
+        ("track", "L_COL6", "B.Cu", 159.8650, 72.4450, 158.5250, 72.4450, 0.250),
+        ("track", "L_ROW0", "B.Cu", 100.8750, 73.7000, 101.1650, 70.7683, 0.250),
+        ("track", "L_ROW0", "B.Cu", 101.1650, 70.7683, 109.0683, 70.7683, 0.250),
+        ("track", "L_ROW0", "B.Cu", 116.0250, 70.7683, 111.8817, 70.7683, 0.250),
+        ("track", "L_ROW0", "B.Cu", 116.5250, 73.7000, 116.0250, 70.7683, 0.250),
+        ("track", "L_ROW0", "B.Cu", 119.9250, 73.7000, 116.5250, 73.7000, 0.250),
+        ("track", "L_ROW0", "B.Cu", 120.2150, 70.7683, 119.9250, 73.7000, 0.250),
+        ("track", "L_ROW0", "B.Cu", 128.1183, 70.7683, 120.2150, 70.7683, 0.250),
+        ("track", "L_ROW0", "B.Cu", 135.0750, 70.7277, 130.9723, 70.7277, 0.250),
+        ("track", "L_ROW0", "B.Cu", 135.5750, 73.7000, 135.0750, 70.7277, 0.250),
+        ("track", "L_ROW0", "B.Cu", 138.9750, 73.7000, 135.5750, 73.7000, 0.250),
+        ("track", "L_ROW0", "B.Cu", 139.2650, 70.7277, 138.9750, 73.7000, 0.250),
+        ("track", "L_ROW0", "B.Cu", 147.1277, 70.7277, 139.2650, 70.7277, 0.250),
+        ("track", "L_ROW0", "B.Cu", 73.8261, 70.7239, 77.9250, 70.7239, 0.250),
+        ("track", "L_ROW0", "B.Cu", 77.9250, 70.7239, 78.4250, 73.7000, 0.250),
+        ("track", "L_ROW0", "B.Cu", 78.4250, 73.7000, 81.8250, 73.7000, 0.250),
+        ("track", "L_ROW0", "B.Cu", 81.8250, 73.7000, 82.1150, 70.7239, 0.250),
+        ("track", "L_ROW0", "B.Cu", 82.1150, 70.7239, 89.8498, 70.7239, 0.250),
+        ("track", "L_ROW0", "B.Cu", 92.8317, 70.7683, 96.9750, 70.7683, 0.250),
+        ("track", "L_ROW0", "B.Cu", 96.9750, 70.7683, 97.4750, 73.7000, 0.250),
+        ("track", "L_ROW0", "B.Cu", 97.4750, 73.7000, 100.8750, 73.7000, 0.250),
+        ("track", "L_ROW1", "B.Cu", 107.0250, 89.4000, 110.3750, 89.4000, 0.250),
+        ("track", "L_ROW1", "B.Cu", 107.7647, 89.4970, 107.0250, 89.4000, 0.250),
+        ("track", "L_ROW1", "B.Cu", 110.3750, 89.4000, 110.3750, 92.7500, 0.250),
+        ("track", "L_ROW1", "B.Cu", 110.3750, 92.7500, 111.4413, 93.1736, 0.250),
+        ("track", "L_ROW2", "B.Cu", 130.3125, 108.6250, 128.3125, 108.6250, 0.250),
+        ("track", "L_ROW2", "B.Cu", 130.8125, 108.4500, 130.3125, 108.6250, 0.250),
+        ("track", "L_ROW2", "B.Cu", 134.2125, 108.4500, 130.8125, 108.4500, 0.250),
+        ("track", "L_ROW2", "B.Cu", 134.7125, 108.6250, 134.2125, 108.4500, 0.250),
+        ("track", "L_ROW2", "B.Cu", 140.0168, 108.6250, 134.7125, 108.6250, 0.250),
+    ),
+    "right": (
+        ("track", "R_COL2", "B.Cu", 86.0000, 68.5000, 90.6500, 70.3000, 0.250),
+        ("track", "R_COL2", "F.Cu", 90.6500, 70.3000, 93.1900, 72.4450, 0.250),
+        ("track", "R_COL3", "B.Cu", 110.4952, 71.0000, 110.4952, 70.7002, 0.250),
+        ("track", "R_COL3", "B.Cu", 111.2625, 129.5950, 108.6115, 129.5950, 0.250),
+        ("track", "R_COL3", "B.Cu", 111.7625, 127.5000, 111.2625, 129.5950, 0.250),
+        ("track", "R_COL3", "B.Cu", 115.1625, 127.5000, 111.7625, 127.5000, 0.250),
+        ("track", "R_COL3", "B.Cu", 115.6625, 129.5950, 115.1625, 127.5000, 0.250),
+        ("track", "R_COL3", "B.Cu", 117.0025, 129.5950, 115.6625, 129.5950, 0.250),
+        ("track", "R_COL3", "B.Cu", 99.4528, 70.7002, 101.0000, 71.0000, 0.250),
+        ("track", "R_COL3", "F.Cu", 101.0000, 71.0000, 110.4952, 71.0000, 0.250),
+        ("track", "R_COL6", "B.Cu", 100.8500, 92.7500, 103.6462, 95.4973, 0.250),
+        ("track", "R_COL6", "B.Cu", 97.3280, 89.1791, 97.5000, 89.4000, 0.250),
+        ("track", "R_COL6", "B.Cu", 97.5000, 89.4000, 97.5000, 92.7500, 0.250),
+        ("track", "R_COL6", "B.Cu", 97.5000, 92.7500, 100.8500, 92.7500, 0.250),
+        ("track", "R_ROW0", "B.Cu", 100.9500, 72.4750, 106.5000, 72.2787, 0.250),
+        ("track", "R_ROW0", "B.Cu", 106.5000, 72.2787, 107.0000, 73.7000, 0.250),
+        ("track", "R_ROW0", "B.Cu", 107.0000, 73.7000, 110.4000, 73.7000, 0.250),
+        ("track", "R_ROW0", "B.Cu", 110.4000, 73.7000, 110.9000, 73.6450, 0.250),
+        ("track", "R_ROW0", "B.Cu", 110.9000, 73.6450, 111.6333, 74.3783, 0.250),
+        ("track", "R_ROW0", "B.Cu", 121.4386, 70.7364, 125.5500, 70.7364, 0.250),
+        ("track", "R_ROW0", "B.Cu", 125.5500, 70.7364, 126.0500, 73.7000, 0.250),
+        ("track", "R_ROW0", "B.Cu", 126.0500, 73.7000, 129.4500, 73.7000, 0.250),
+        ("track", "R_ROW0", "B.Cu", 129.4500, 73.7000, 129.7400, 70.7364, 0.250),
+        ("track", "R_ROW0", "B.Cu", 129.7400, 70.7364, 137.6114, 70.7364, 0.250),
+        ("track", "R_ROW0", "B.Cu", 144.6000, 70.7683, 140.4567, 70.7683, 0.250),
+        ("track", "R_ROW0", "B.Cu", 145.1000, 73.7000, 144.6000, 70.7683, 0.250),
+        ("track", "R_ROW0", "B.Cu", 148.5000, 73.7000, 145.1000, 73.7000, 0.250),
+        ("track", "R_ROW0", "B.Cu", 148.7900, 70.7683, 148.5000, 73.7000, 0.250),
+        ("track", "R_ROW0", "B.Cu", 159.0746, 70.7683, 148.7900, 70.7683, 0.250),
+        ("track", "R_ROW0", "B.Cu", 166.0313, 70.7683, 161.8880, 70.7683, 0.250),
+        ("track", "R_ROW0", "B.Cu", 166.5313, 73.7000, 166.0313, 70.7683, 0.250),
+        ("track", "R_ROW0", "B.Cu", 169.9313, 73.7000, 166.5313, 73.7000, 0.250),
+        ("track", "R_ROW0", "B.Cu", 170.2213, 70.7683, 169.9313, 73.7000, 0.250),
+        ("track", "R_ROW0", "B.Cu", 180.5058, 70.7683, 170.2213, 70.7683, 0.250),
+        ("track", "R_ROW0", "B.Cu", 61.1499, 79.2364, 68.4000, 71.9863, 0.250),
+        ("track", "R_ROW0", "B.Cu", 68.4000, 71.9863, 68.9000, 73.7000, 0.250),
+        ("track", "R_ROW0", "B.Cu", 68.9000, 73.7000, 72.3000, 73.7000, 0.250),
+        ("track", "R_ROW0", "B.Cu", 72.3000, 73.7000, 72.5900, 70.7369, 0.250),
+        ("track", "R_ROW0", "B.Cu", 72.5900, 70.7369, 80.4619, 70.7369, 0.250),
+        ("track", "R_ROW0", "B.Cu", 81.9000, 72.4750, 87.4500, 72.2724, 0.250),
+        ("track", "R_ROW0", "B.Cu", 87.4500, 72.2724, 87.9500, 73.7000, 0.250),
+        ("track", "R_ROW0", "B.Cu", 87.9500, 73.7000, 91.3500, 73.7000, 0.250),
+        ("track", "R_ROW0", "B.Cu", 91.3500, 73.7000, 92.0806, 74.1356, 0.250),
+        ("track", "R_ROW1", "B.Cu", 154.1250, 89.5750, 152.1250, 89.5750, 0.250),
+        ("track", "R_ROW1", "B.Cu", 154.6250, 89.4000, 154.1250, 89.5750, 0.250),
+        ("track", "R_ROW1", "B.Cu", 157.5901, 89.5750, 158.0250, 89.4000, 0.250),
+        ("track", "R_ROW1", "B.Cu", 158.0250, 89.4000, 154.6250, 89.4000, 0.250),
+        ("track", "R_ROW1", "B.Cu", 76.2250, 90.6260, 77.9250, 90.6260, 0.250),
+        ("track", "R_ROW1", "B.Cu", 77.9250, 90.6260, 78.4250, 89.4000, 0.250),
+        ("track", "R_ROW1", "B.Cu", 78.4250, 89.4000, 81.8250, 89.4000, 0.250),
+        ("track", "R_ROW1", "B.Cu", 81.8010, 92.1710, 82.8348, 93.2048, 0.250),
+        ("track", "R_ROW1", "B.Cu", 81.8250, 89.4000, 81.8010, 92.1710, 0.250),
+        ("track", "R_ROW3", "F.Cu", 71.4625, 129.2050, 78.0723, 131.3048, 0.250),
+        ("track", "R_ROW3", "F.Cu", 90.7545, 127.9170, 107.0569, 127.9170, 0.250),
+        ("via", "R_COL2", 90.6500, 70.3000, 0.600, 0.300),
+        ("via", "R_COL3", 101.0000, 71.0000, 0.600, 0.300),
+        ("via", "R_COL3", 110.4952, 71.0000, 0.600, 0.300),
+        ("via", "R_ROW3", 71.4625, 129.2050, 0.600, 0.300),
+        ("via", "R_ROW3", 78.0723, 131.3048, 0.600, 0.300),
+        ("via", "R_ROW3", 90.7545, 127.9170, 0.600, 0.300),
+    ),
+}
+KEY_LOAD_SUPPORT_ROUTE_FINAL_ITEM_COUNTS = {"left": 616, "right": 803}
+KEY_LOAD_SUPPORT_ROUTE_FINAL_SHA256 = {
+    "left": "b37c88d783baa27e6358d1c3baf33528d282934c41c507f2da5edc44e739ebbb",
+    "right": "44a0c7fdd446f3153d2faf2506194947577b74147713c9a097c7ac83a9c1a964",
+}
+KEY_LOAD_SUPPORT_ROUTE_NETS = {
+    "left": {"L_COL6", "L_ROW0", "L_ROW1", "L_ROW2"},
+    "right": {"R_COL2", "R_COL3", "R_COL6", "R_ROW0", "R_ROW1", "R_ROW3"},
+}
+
 
 def center_1n4148w_diode_route_endpoints(
     board: pcbnew.BOARD,
@@ -843,6 +991,59 @@ def apply_sod123_hand_solder_route_detour(
     return {"removed": removed, "added": len(SOD123_HAND_SOLDER_ROUTE_ADDITIONS[side])}
 
 
+def apply_key_load_support_route_detours(
+    board: pcbnew.BOARD,
+    side: str,
+) -> dict[str, int]:
+    """Replay only the reviewed route changes needed by the key-load supports."""
+    if side not in KEY_LOAD_SUPPORT_ROUTE_REMOVALS:
+        raise RuntimeError(f"unsupported key-load support detour side {side!r}")
+    signatures = Counter(_route_signature(item) for item in board.GetTracks())
+    expected_count = KEY_LOAD_SUPPORT_ROUTE_FINAL_ITEM_COUNTS[side]
+    expected_digest = KEY_LOAD_SUPPORT_ROUTE_FINAL_SHA256[side]
+    if (
+        sum(signatures.values()) == expected_count
+        and _route_counter_digest(signatures) == expected_digest
+    ):
+        return {"removed": 0, "added": 0}
+
+    removals = Counter(KEY_LOAD_SUPPORT_ROUTE_REMOVALS[side])
+    additions = Counter(KEY_LOAD_SUPPORT_ROUTE_ADDITIONS[side])
+    if signatures & removals != removals or signatures & additions:
+        raise RuntimeError(
+            f"reviewed {side} key-load support detour precondition failed"
+        )
+
+    remaining = removals.copy()
+    removed = 0
+    for item in list(board.GetTracks()):
+        signature = _route_signature(item)
+        if remaining[signature] <= 0:
+            continue
+        board.Delete(item)
+        remaining[signature] -= 1
+        removed += 1
+    if any(remaining.values()):
+        raise RuntimeError(
+            f"reviewed {side} key-load support detour removal was incomplete"
+        )
+    for spec in KEY_LOAD_SUPPORT_ROUTE_ADDITIONS[side]:
+        _add_route_spec(board, spec)
+
+    updated = Counter(_route_signature(item) for item in board.GetTracks())
+    if (
+        updated & removals
+        or updated & additions != additions
+        or sum(updated.values()) != expected_count
+        or _route_counter_digest(updated) != expected_digest
+    ):
+        raise RuntimeError(f"reviewed {side} key-load support detour was incomplete")
+    return {
+        "removed": removed,
+        "added": len(KEY_LOAD_SUPPORT_ROUTE_ADDITIONS[side]),
+    }
+
+
 def export_current_mh_trackless_dsn(
     board: pcbnew.BOARD,
     output_path: Path,
@@ -867,7 +1068,7 @@ def export_current_mh_trackless_dsn(
     if not pcbnew.ExportSpecctraDSN(board, str(output_path)):
         raise RuntimeError(f"failed to export current-MH DSN {output_path}")
     text = output_path.read_text(encoding="utf-8")
-    canonical_name = f"kc2_{side}-x3-v2-70-1n4148w-p3.dsn"
+    canonical_name = f"kc2_{side}.dsn"
     normalized, count = re.subn(
         r'^\(pcb\s+(?:"[^"]*"|[^\r\n]+)',
         f'(pcb "{canonical_name}"',
@@ -1035,16 +1236,25 @@ def import_reviewed_controller_compact_session(
     _verify_controller_compact_service_geometry(board, side)
     existing = list(board.GetTracks())
     if existing:
-        if not _has_exact_reviewed_controller_compact_route(board, side):
+        signatures = Counter(_route_signature(item) for item in existing)
+        if (
+            len(existing) == KEY_LOAD_SUPPORT_ROUTE_FINAL_ITEM_COUNTS[side]
+            and _route_counter_digest(signatures)
+            == KEY_LOAD_SUPPORT_ROUTE_FINAL_SHA256[side]
+        ):
+            support_route = {"removed": 0, "added": 0}
+        elif _has_exact_reviewed_controller_compact_route(board, side):
+            support_route = apply_key_load_support_route_detours(board, side)
+        else:
             raise RuntimeError(
                 f"refusing a nonempty board that is not the exact reviewed {side} "
                 "controller-compaction route"
             )
         return {
             "imported_track_and_via_items": 0,
-            "reviewed_items_removed": 0,
-            "reviewed_items_added": 0,
-            "final_track_and_via_items": len(existing),
+            "reviewed_items_removed": support_route["removed"],
+            "reviewed_items_added": support_route["added"],
+            "final_track_and_via_items": len(list(board.GetTracks())),
             "diode_pads_centered": (31 if side == "left" else 39) * 2,
             "route_endpoints_updated": 0,
         }
@@ -1111,6 +1321,7 @@ def import_reviewed_controller_compact_session(
             f"reviewed {side} controller-compaction session did not reconstruct "
             "the exact route"
         )
+    support_route = apply_key_load_support_route_detours(board, side)
     return {
         "imported_track_and_via_items": len(imported),
         "reviewed_items_removed": (
@@ -1120,6 +1331,7 @@ def import_reviewed_controller_compact_session(
             + connectivity_detours["removed"]
             + rounded_head_detours["removed"]
             + diode_clearance_detour["removed"]
+            + support_route["removed"]
         ),
         "reviewed_items_added": (
             len(CONTROLLER_COMPACT_ROUTE_ADDITIONS[side])
@@ -1128,6 +1340,7 @@ def import_reviewed_controller_compact_session(
             + connectivity_detours["added"]
             + rounded_head_detours["added"]
             + diode_clearance_detour["added"]
+            + support_route["added"]
         ),
         "final_track_and_via_items": len(list(board.GetTracks())),
         **diode_route_centres,

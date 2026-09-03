@@ -113,9 +113,9 @@
         "missing_tuning_profile": "warning",
         "net_conflict": "warning",
         "nonmirrored_text_on_back_layer": "warning",
-        "npth_inside_courtyard": "ignore",
+        "npth_inside_courtyard": "error",
         "padstack": "warning",
-        "pth_inside_courtyard": "ignore",
+        "pth_inside_courtyard": "error",
         "shorting_items": "error",
         "silk_edge_clearance": "warning",
         "silk_over_copper": "warning",
@@ -275,7 +275,7 @@
     "classes": [
       {
         "bus_width": 12,
-        "clearance": 0.2,
+        "clearance": 0.3,
         "diff_pair_gap": 0.25,
         "diff_pair_via_gap": 0.25,
         "diff_pair_width": 0.2,

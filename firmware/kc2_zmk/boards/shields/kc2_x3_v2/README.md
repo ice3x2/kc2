@@ -1,12 +1,12 @@
 # KC2 X3 V2 ZMK shield
 
-Requirement: `CON-ARCH-004` AC-5 and AC-7.
+Requirements: `CON-ARCH-004` AC-5/AC-7 and `CON-ARCH-007` AC-5.
 
 This isolated shield is the fixed 70-key v5 variant: 31 keys on `kc2_x3_v2_left` and 39 keys on `kc2_x3_v2_right`. It does not replace the verified 77-key `kc2_left` / `kc2_right` shield.
 
 The default layer follows the physical switch-reference order recorded in `kc2_x3_v2.keymap`. On the left, the former Win position is `Fn`, the former standalone Fn switch is removed, and there is no standalone Win key. Pressing left Fn and left Alt within the 50 ms combo timeout emits `LGUI` on every layer and releases it when either constituent key is first released. An ordinary left Fn press remains the momentary layer-1 key, including its inherited layer-2 behavior while layer 1 is active. On the right, `Fn` is immediately right of `Up` and the bottom row has no `Fn`. `Home`, `PgUp`, and `PgDn` are absent from the default layer.
 
-The PCB supports mutually exclusive Choc V2 bottom-socket or MX direct-solder assembly. Choc V1, Choc V2 direct solder, and MX hot-swap are unsupported. The compact nice!nano v2 carrier uses 15.24 mm socket-row spacing, no carrier battery nets, and direct battery-lead soldering to the nice!nano B+/B- pads.
+The PCB supports mutually exclusive Choc V2 bottom-socket or MX direct-solder assembly. Choc V1, Choc V2 direct solder, and MX hot-swap are unsupported. The compact nice!nano v2 carrier uses 15.24 mm socket-row spacing and an independent battery circuit on each half. Pre-attached insulated leads from the protected 301230-class pack solder to carrier `J_BAT1`, never directly to the nice!nano B+/B- top pads. `J_BAT1.1 BAT+` connects to `SW_PWR1.1 BAT+`; the selected ON throw `SW_PWR1.2 NN_B+` connects to `U1 RAW`; `J_BAT1.2 GND` connects directly to `U1 GND_C`; `SW_PWR1.3` is NC; and battery B- remains local GND.
 
 The active V2 PCB uses exactly 70 Diodes Incorporated `1N4148W-13-F`
 SOD-123 matrix diodes, locked to datasheet `DS30086 Rev. 31-2`. This package

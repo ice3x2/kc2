@@ -1,8 +1,8 @@
-"""Generate the draft KC2 X3 V2 2.50 mm lower support plates.
+"""Generate the canonical KC2 X3 V2 2.50 mm lower support plates.
 
-The V2 design is intentionally independent of the promoted 77-key housing.
-It subtracts exterior-open underside-component envelopes from the current draft
-V2 board outlines, preserves the distributed load path, and adds only the
+The V2 design supersedes the former canonical 77-key housing. It subtracts
+exterior-open underside-component envelopes from the current canonical V2 board
+outlines, preserves the distributed load path, and adds only the
 CON-ARCH-006 M1.4 MH clamp/registration columns and provisional blind pilots.
 """
 
@@ -29,11 +29,11 @@ from canonical_hash import HASH_POLICY, sha256_file  # noqa: E402
 
 REQUIREMENT = "CON-ARCH-006"
 VARIANT = "x3-v2"
-OUTPUT_DIR = ROOT / "hardware" / "case" / "draft" / VARIANT
-MANIFEST_PATH = OUTPUT_DIR / "kc2_x3_v2_housing_manifest.json"
+OUTPUT_DIR = ROOT / "hardware" / "case"
+MANIFEST_PATH = OUTPUT_DIR / "kc2_housing_manifest.json"
 BOARD_PATHS = {
-    "left": ROOT / "hardware" / "kicad" / "draft" / VARIANT / "kc2_left-x3-v2" / "kc2_left-x3-v2.kicad_pcb",
-    "right": ROOT / "hardware" / "kicad" / "draft" / VARIANT / "kc2_right-x3-v2" / "kc2_right-x3-v2.kicad_pcb",
+    "left": ROOT / "hardware" / "kicad" / "kc2_left" / "kc2_left.kicad_pcb",
+    "right": ROOT / "hardware" / "kicad" / "kc2_right" / "kc2_right.kicad_pcb",
 }
 
 EXTERIOR_BOTTOM_Z_MM = 0.00
@@ -45,6 +45,7 @@ RAIL_INSET_MM = 0.10
 RAIL_WIDTH_MM = 0.65
 POST_DIAMETER_MM = 2.40
 POST_CLEARANCE_MM = 0.30
+KEY_LOAD_SUPPORT_ROUTED_COPPER_CLEARANCE_MM = 0.30
 FILLET_ALLOWANCE_MM = 0.30
 COMPONENT_MINIMUM_CLEARANCE_MM = 0.30
 COMPONENT_CUTOUT_CLEARANCE_MM = 0.35
@@ -968,6 +969,16 @@ def build_plan_geometry(shp: dict[str, Any], side: str, board_data: dict[str, An
         if routed_copper_exact_parts
         else shp["Polygon"]()
     )
+    routed_copper_wear_geometries = {}
+    for name, layer in (("bottom_copper_tracks", "B.Cu"), ("vias", "via")):
+        parts = [
+            _feature_geometry(shp, feature, bounds)
+            for feature in board_data.get("routed_copper_exact", [])
+            if feature.get("layer") == layer
+        ]
+        routed_copper_wear_geometries[name] = (
+            shp["unary_union"](parts) if parts else shp["Polygon"]()
+        )
     bottom_mask_opening_parts = [
         _feature_geometry(shp, feature, bounds)
         for feature in board_data.get("bottom_mask_openings", [])
@@ -1295,6 +1306,7 @@ def build_plan_geometry(shp: dict[str, Any], side: str, board_data: dict[str, An
         "analytical_rail_relief": analytical_rail_relief,
         "feature_geometries": feature_geometries,
         "routed_copper_exact_geometry": routed_copper_exact_geometry,
+        "routed_copper_wear_geometries": routed_copper_wear_geometries,
         "bottom_mask_opening_geometry": bottom_mask_opening_geometry,
         "mounting_service_geometries": mounting_service_geometries,
         "component_geometries": component_geometries,
@@ -2268,7 +2280,12 @@ def generate_outputs(output_dir: Path, kicad_python: Path) -> Path:
     output_dir.mkdir(parents=True, exist_ok=True)
     manifest: dict[str, Any] = {
         "requirement": REQUIREMENT,
-        "requirement_ids": ["CON-ARCH-006", "CON-ARCH-007", "REL-ARCH-001"],
+        "requirement_ids": [
+            "CON-ARCH-006",
+            "CON-ARCH-007",
+            "REL-ARCH-001",
+            "OPS-ARCH-006",
+        ],
         "variant": VARIANT,
         "generated_by": "tools/generate_kc2_x3_v2_housings.py",
         "hash_policy": HASH_POLICY,
@@ -2380,7 +2397,7 @@ def generate_outputs(output_dir: Path, kicad_python: Path) -> Path:
                 f"{plan['board_mounting_contract']}"
             )
         housing = build_cad(cq, shp, plan)
-        step_path = output_dir / f"kc2_{side}_x3_v2_lower_housing.step"
+        step_path = output_dir / f"kc2_{side}_lower_housing.step"
         split_joint = None
         part_plans = [plan["support_surface"]]
         if side == "right":
@@ -2405,7 +2422,7 @@ def generate_outputs(output_dir: Path, kicad_python: Path) -> Path:
         printable_parts = []
         for index, (part, part_plan) in enumerate(zip(parts, part_plans)):
             suffix = "" if side == "left" else f"_part_{chr(ord('a') + index)}"
-            stl_path = output_dir / f"kc2_{side}_x3_v2_lower_housing{suffix}.stl"
+            stl_path = output_dir / f"kc2_{side}_lower_housing{suffix}.stl"
             cq.exporters.export(part, str(stl_path), exportType="STL", tolerance=0.03, angularTolerance=0.08, opt={"ascii": True})
             normalize_exported_text(stl_path)
             dimensions = model_bounds(part)
@@ -2428,7 +2445,7 @@ def generate_outputs(output_dir: Path, kicad_python: Path) -> Path:
                     **dimensions,
                 }
             )
-        stale_right_stl = output_dir / "kc2_right_x3_v2_lower_housing.stl"
+        stale_right_stl = output_dir / "kc2_right_lower_housing.stl"
         if side == "right" and stale_right_stl.exists():
             stale_right_stl.unlink()
         manifest["outputs"][side] = {
@@ -2521,7 +2538,7 @@ def generate_outputs(output_dir: Path, kicad_python: Path) -> Path:
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Generate CON-ARCH-006 draft X3 V2 lower housings")
+    parser = argparse.ArgumentParser(description="Generate CON-ARCH-006 canonical X3 V2 lower housings")
     parser.add_argument("--extract-geometry", action="store_true", help=argparse.SUPPRESS)
     parser.add_argument("--output-dir", type=Path, default=OUTPUT_DIR)
     parser.add_argument("--kicad-python", type=Path)

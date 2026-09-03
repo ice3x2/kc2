@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import os
 import shutil
 import subprocess
 import tempfile
@@ -14,10 +15,10 @@ from tools.verify_kc2_x3_v2_coupon import analyze_coupon
 
 
 ROOT = Path(__file__).resolve().parents[1]
-COUPON_RELATIVE_DIR = Path("hardware/kicad/draft/x3-v2/coupon")
-COUPON_BOARD_NAME = "kc2_x3_v2_switch_coupon.kicad_pcb"
-COUPON_DRC_NAME = "kc2_x3_v2_switch_coupon.drc.json"
-COUPON_EVIDENCE_NAME = "kc2_x3_v2_switch_coupon_drc_evidence.json"
+COUPON_RELATIVE_DIR = Path("hardware/kicad/coupon")
+COUPON_BOARD_NAME = "kc2_switch_coupon.kicad_pcb"
+COUPON_DRC_NAME = "kc2_switch_coupon.drc.json"
+COUPON_EVIDENCE_NAME = "kc2_switch_coupon_drc_evidence.json"
 COUPON_DIR = ROOT / COUPON_RELATIVE_DIR
 COUPON_BOARD = COUPON_DIR / COUPON_BOARD_NAME
 COUPON_DRC_REPORT = COUPON_DIR / COUPON_DRC_NAME
@@ -40,7 +41,7 @@ class V2CouponTests(unittest.TestCase):
     def test_coupon_covers_left_right_socket_and_mx_fit(self) -> None:
         report = analyze_coupon()
         manifest = json.loads(
-            (COUPON_DIR / "kc2_x3_v2_switch_coupon_manifest.json").read_text(
+            (COUPON_DIR / "kc2_switch_coupon_manifest.json").read_text(
                 encoding="utf-8"
             )
         )
@@ -122,7 +123,7 @@ class V2CouponTests(unittest.TestCase):
 
     def test_coupon_rejects_wrong_1n4148w_pin_net(self) -> None:
         source = Path(
-            "hardware/kicad/draft/x3-v2/coupon/kc2_x3_v2_switch_coupon.kicad_pcb"
+            "hardware/kicad/coupon/kc2_switch_coupon.kicad_pcb"
         )
         board = pcbnew.LoadBoard(str(source))
         diode = board.FindFootprintByReference("D_L")
@@ -136,7 +137,7 @@ class V2CouponTests(unittest.TestCase):
 
     def test_coupon_rejects_noncontrolled_1n4148w_hand_solder_land(self) -> None:
         source = Path(
-            "hardware/kicad/draft/x3-v2/coupon/kc2_x3_v2_switch_coupon.kicad_pcb"
+            "hardware/kicad/coupon/kc2_switch_coupon.kicad_pcb"
         )
         board = pcbnew.LoadBoard(str(source))
         diode = board.FindFootprintByReference("D_MX")
@@ -151,7 +152,7 @@ class V2CouponTests(unittest.TestCase):
 
     def test_coupon_rejects_missing_bottom_mirrored_polarity_mark(self) -> None:
         source = Path(
-            "hardware/kicad/draft/x3-v2/coupon/kc2_x3_v2_switch_coupon.kicad_pcb"
+            "hardware/kicad/coupon/kc2_switch_coupon.kicad_pcb"
         )
         board = pcbnew.LoadBoard(str(source))
         mark = next(
@@ -169,7 +170,7 @@ class V2CouponTests(unittest.TestCase):
 
     def test_coupon_rejects_1n4148w_switch_clearance_regression(self) -> None:
         source = Path(
-            "hardware/kicad/draft/x3-v2/coupon/kc2_x3_v2_switch_coupon.kicad_pcb"
+            "hardware/kicad/coupon/kc2_switch_coupon.kicad_pcb"
         )
         board = pcbnew.LoadBoard(str(source))
         board.FindFootprintByReference("D_L").SetPosition(
@@ -183,7 +184,7 @@ class V2CouponTests(unittest.TestCase):
 
     def test_coupon_rejects_probe_net_regression(self) -> None:
         source = Path(
-            "hardware/kicad/draft/x3-v2/coupon/kc2_x3_v2_switch_coupon.kicad_pcb"
+            "hardware/kicad/coupon/kc2_switch_coupon.kicad_pcb"
         )
         board = pcbnew.LoadBoard(str(source))
         probe = board.FindFootprintByReference("TP_MX_ROW")
@@ -309,11 +310,31 @@ class V2CouponTests(unittest.TestCase):
             self.assertIn("coupon DRC evidence canonical hash policy mismatch", errors)
 
             if (ROOT / ".git").exists():
+                index = Path(temporary_directory) / "candidate-index"
+                env = os.environ.copy()
+                env["GIT_INDEX_FILE"] = str(index)
+                subprocess.run(
+                    ["git", "read-tree", "HEAD"],
+                    cwd=ROOT,
+                    env=env,
+                    check=True,
+                )
+                relative_paths = [
+                    path.relative_to(ROOT).as_posix()
+                    for path in (COUPON_BOARD, COUPON_DRC_REPORT)
+                ]
+                subprocess.run(
+                    ["git", "add", "--", *relative_paths],
+                    cwd=ROOT,
+                    env=env,
+                    check=True,
+                )
                 for path in (COUPON_BOARD, COUPON_DRC_REPORT):
                     relative = path.relative_to(ROOT).as_posix()
                     staged = subprocess.run(
                         ["git", "show", f":{relative}"],
                         cwd=ROOT,
+                        env=env,
                         check=True,
                         stdout=subprocess.PIPE,
                     ).stdout

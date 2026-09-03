@@ -1,0 +1,41 @@
+{
+  "target": "kc2-x3-v2",
+  "classification": "new-feature",
+  "rationale": "The user resolved the initial repository-wide conflict by limiting the change to the active V2 target. A new V2 operational promotion requirement is needed; historical OPS-ARCH-002 remains evidence for its kc2-x3 target.",
+  "evidence_paths": [
+    "docs/spec.md:33",
+    "docs/spec.md:373",
+    "docs/spec/10.product-architecture.srs.md:171-210",
+    "docs/spec/10.product-architecture.srs.md:396-481",
+    "tools/generate_kc2_pcbs.py:27-30",
+    "tools/verify_kc2_x3_v2.py:58-66"
+  ],
+  "affected_existing_reqs": [
+    {
+      "id": "OPS-ARCH-002",
+      "relation": "extends",
+      "diff_summary": "Applies the historical canonical-promotion pattern to the active V2 target without rewriting the historical requirement."
+    },
+    {
+      "id": "CON-ARCH-004",
+      "relation": "depends_on",
+      "diff_summary": "Promotes the implemented V2 artifact set while retaining all physical and order-readiness gates."
+    },
+    {
+      "id": "CON-ARCH-006",
+      "relation": "depends_on",
+      "diff_summary": "Moves the matching housing and mechanical evidence to canonical paths without changing geometry."
+    },
+    {
+      "id": "CON-ARCH-007",
+      "relation": "depends_on",
+      "diff_summary": "Preserves the V2 power, battery, and service contract through the path migration."
+    }
+  ],
+  "proposed_scope": "ARCH",
+  "proposed_prefix": "OPS",
+  "proposed_type": "operational",
+  "confidence": "high",
+  "scope_boundary_impact": null,
+  "external_module_impact": null
+}

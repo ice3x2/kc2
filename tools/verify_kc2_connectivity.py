@@ -104,6 +104,9 @@ def detect_side(board_path: Path) -> str:
 
 def expected_keys(side: str, board_path: Path) -> list[gen.Key]:
     is_v2 = "x3-v2" in str(board_path).lower()
+    if not is_v2 and board_path.is_file():
+        source = board_path.read_text(encoding="utf-8")
+        is_v2 = "SW_Choc_V2_Socket_MX_THT" in source
     if side == "left":
         return gen.make_left_keys_x3_v2() if is_v2 else gen.make_left_keys_no_stab()
     if side == "right":

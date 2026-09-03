@@ -1,0 +1,219 @@
+{
+  "classification": "new-feature",
+  "mode": "live",
+  "mcp_calls": [
+    {
+      "tool": "add_requirement",
+      "args": {
+        "scope": "ARCH",
+        "target": "kc2-x3-v2",
+        "type": "operational",
+        "title": "X3 V2 canonical artifact promotion and active draft-tree retirement",
+        "status": "proposed",
+        "stability": "evolving",
+        "priority": "high",
+        "risk": "high",
+        "trace_intents": [
+          "tools/generate_kc2_pcbs.py:27-30=negative",
+          "tools/verify_kc2_x3_v2.py:58-66=negative",
+          "tools/export_kc2_x3_v2_fabrication.py:33-38=negative",
+          "tools/export_kc2_x3_v2_mechanical.py:17-23=negative",
+          "tools/generate_kc2_x3_v2_housings.py:31-36=negative"
+        ]
+      },
+      "result_id": null,
+      "ok": false,
+      "error": "MUTATION_DENIED: Change Notes must contain date, change, and reason cells",
+      "written": false
+    },
+    {
+      "tool": "add_requirement",
+      "args": {
+        "scope": "ARCH",
+        "target": "kc2-x3-v2",
+        "type": "operational",
+        "title": "X3 V2 canonical artifact promotion and active draft-tree retirement",
+        "status": "proposed",
+        "stability": "evolving",
+        "priority": "high",
+        "risk": "high",
+        "acceptance_criteria_count": 9,
+        "trace_intents": [
+          "tools/generate_kc2_pcbs.py:27-30=negative",
+          "tools/verify_kc2_x3_v2.py:58-66=negative",
+          "tools/export_kc2_x3_v2_fabrication.py:33-38=negative",
+          "tools/export_kc2_x3_v2_mechanical.py:17-23=negative",
+          "tools/generate_kc2_x3_v2_housings.py:31-36=negative"
+        ]
+      },
+      "result_id": "OPS-ARCH-006",
+      "ok": true,
+      "written": true
+    },
+    {
+      "tool": "add_trace_link",
+      "args": {
+        "id": "OPS-ARCH-006",
+        "type": "Requirement",
+        "reference": "OPS-ARCH-002",
+        "relation": "extends"
+      },
+      "result_id": "OPS-ARCH-006",
+      "ok": true
+    },
+    {
+      "tool": "add_trace_link",
+      "args": {
+        "id": "OPS-ARCH-006",
+        "type": "Requirement",
+        "reference": "CON-ARCH-004",
+        "relation": "depends_on"
+      },
+      "result_id": "OPS-ARCH-006",
+      "ok": true
+    },
+    {
+      "tool": "add_trace_link",
+      "args": {
+        "id": "OPS-ARCH-006",
+        "type": "Requirement",
+        "reference": "CON-ARCH-006",
+        "relation": "depends_on"
+      },
+      "result_id": "OPS-ARCH-006",
+      "ok": true
+    },
+    {
+      "tool": "add_trace_link",
+      "args": {
+        "id": "OPS-ARCH-006",
+        "type": "Requirement",
+        "reference": "CON-ARCH-007",
+        "relation": "depends_on"
+      },
+      "result_id": "OPS-ARCH-006",
+      "ok": true
+    },
+    {
+      "tool": "validate_spec",
+      "args": {
+        "strict": true,
+        "failOnWarning": true
+      },
+      "result_id": null,
+      "ok": false,
+      "diagnostics": [
+        {
+          "code": "SRS-E005",
+          "severity": "error",
+          "message": "Invalid status for OPS-ARCH-006",
+          "cause": "The task requires status=proposed, while docs/rule/SRS-MD-Rules-v1.0.0.md section 14.1 allows only planned, in_progress, blocked, implemented, verified, and discarded."
+        },
+        {
+          "code": "SRS-W019",
+          "severity": "warning",
+          "message": "Status Summary count drift for proposed",
+          "cause": "The current index rollup has no valid proposed status row under the repository rule set."
+        }
+      ]
+    },
+    {
+      "tool": "update_status",
+      "args": {
+        "id": "OPS-ARCH-006",
+        "status": "planned",
+        "reason": "User approved the resolved active-V2-only canonical promotion with `go`; the requirement has negative traces only and no addition_site implementation claim."
+      },
+      "result_id": "OPS-ARCH-006",
+      "ok": true,
+      "written": true,
+      "index_rollup_synced": true
+    },
+    {
+      "tool": "validate_spec",
+      "args": {
+        "strict": true,
+        "failOnWarning": true
+      },
+      "result_id": null,
+      "ok": true,
+      "diagnostics": []
+    },
+    {
+      "tool": "replace_acceptance_criteria",
+      "args": {
+        "id": "OPS-ARCH-006",
+        "item_count": 9,
+        "preserved_verbatim_unchecked": [
+          "AC-1",
+          "AC-2",
+          "AC-3",
+          "AC-4",
+          "AC-5",
+          "AC-6",
+          "AC-7",
+          "AC-8"
+        ],
+        "replaced": [
+          "AC-9"
+        ]
+      },
+      "result_id": "OPS-ARCH-006",
+      "ok": true,
+      "written": true
+    },
+    {
+      "tool": "validate_spec",
+      "args": {
+        "strict": true,
+        "failOnWarning": true
+      },
+      "result_id": null,
+      "ok": true,
+      "diagnostics": []
+    }
+  ],
+  "scope_doc_edits": [
+    {
+      "file": "docs/spec/10.product-architecture.srs.md",
+      "section": "Requirements",
+      "op": "append-via-speckiwi-mcp"
+    },
+    {
+      "file": "docs/spec/00.index.md",
+      "section": "Status Summary and Requirement Type Summary",
+      "op": "rollup-via-speckiwi-mcp"
+    }
+  ],
+  "validate_spec_result": {
+    "ok": true,
+    "diagnostics": []
+  },
+  "change_notes_diff": "2026-09-02 | Created | add-requirement; 2026-09-02 | Status -> planned | User approved the resolved active-V2-only canonical promotion with `go`; negative traces only, no addition_site claim.",
+  "oos_changes": {
+    "removed": [],
+    "added": []
+  },
+  "added_ids": [
+    "OPS-ARCH-006"
+  ],
+  "demoted_ids": [],
+  "discarded_ids": [],
+  "unresolved": [],
+  "resolved": [
+    {
+      "kind": "status-schema-conflict",
+      "initial_status": "proposed",
+      "final_status": "planned",
+      "repository_allowed_statuses": [
+        "planned",
+        "in_progress",
+        "blocked",
+        "implemented",
+        "verified",
+        "discarded"
+      ],
+      "action_taken": "After explicit parent clarification that the project status schema and the user's `go` approval take precedence, update_status promoted OPS-ARCH-006 to planned and automatically repaired the index rollup."
+    }
+  ]
+}

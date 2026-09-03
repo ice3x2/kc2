@@ -1,0 +1,50 @@
+{
+  "per_cu": [
+    {
+      "cu_id": "CU-001",
+      "candidate_reqs": [
+        {
+          "req_id": "CON-ARCH-006",
+          "match_confidence": "high"
+        },
+        {
+          "req_id": "CON-ARCH-004",
+          "match_confidence": "medium"
+        }
+      ],
+      "unmapped": false
+    },
+    {
+      "cu_id": "CU-002",
+      "candidate_reqs": [
+        {
+          "req_id": "CON-ARCH-007",
+          "match_confidence": "high"
+        },
+        {
+          "req_id": "CON-ARCH-004",
+          "match_confidence": "high"
+        }
+      ],
+      "unmapped": false
+    },
+    {
+      "cu_id": "CU-003",
+      "candidate_reqs": [
+        {
+          "req_id": "CON-ARCH-004",
+          "match_confidence": "high"
+        }
+      ],
+      "unmapped": false
+    }
+  ],
+  "no_match_cus": [],
+  "excluded": [
+    "REL-ARCH-001",
+    "OPS-ARCH-003",
+    "OPS-ARCH-004",
+    "OPS-ARCH-005"
+  ]
+}
+
