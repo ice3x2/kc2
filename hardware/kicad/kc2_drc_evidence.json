@@ -12,38 +12,36 @@
   "boards": {
     "left": {
       "board_path": "hardware/kicad/kc2_left/kc2_left.kicad_pcb",
-      "board_sha256": "3a6f80a5bc1afe897056107be9522a26079766fd4963f2115a9237737470268d",
+      "board_sha256": "50c4416559f297cc9cda9d811d7e628e1dcba89335a2d80aacdadc4a73fc8dc7",
       "drc_report_path": "hardware/kicad/kc2_left/kc2_left.drc.json",
-      "drc_report_sha256": "6640e9e1b581a0869004094539683d4fb776b6592417b200daaa11b8f37d0327",
+      "drc_report_sha256": "8ac2a436fbd1a349149b13d884da4bae3d6fd10594eef187bcf041f302532f82",
       "project_path": "hardware/kicad/kc2_left/kc2_left.kicad_pro",
       "project_sha256": "3c55ce78ec0a500e1ce045f2a255fa190359fb5a42e4d0b2fb2a53d5054cf2e7",
       "default_clearance_mm": 0.3,
       "schema": "https://schemas.kicad.org/drc.v1.json",
       "source": "kc2_left.kicad_pcb",
       "kicad_version": "10.0.3",
-      "date": "2026-09-03T04:54:28",
+      "date": "2026-09-06T21:22:53",
       "included_severities": [
         "error",
-        "warning",
-        "exclusion"
+        "warning"
       ]
     },
     "right": {
       "board_path": "hardware/kicad/kc2_right/kc2_right.kicad_pcb",
-      "board_sha256": "a4361040d81b3189cce8cdfcedaf54e570248d2fd513835dfadf80bcc187ef6d",
+      "board_sha256": "057df7a948f9c96414b8c77eb619cf8898ef3262a0090a6bbe7e485aeb65d39d",
       "drc_report_path": "hardware/kicad/kc2_right/kc2_right.drc.json",
-      "drc_report_sha256": "7f60cae0172fd9fe340a39c3fb910e248e597fd449d98b5f0df2c6c9f3d632ae",
+      "drc_report_sha256": "4089f95117a983a15e64d7e3224dd3c03058ae3f618d1b00c7cd83cf7438d39b",
       "project_path": "hardware/kicad/kc2_right/kc2_right.kicad_pro",
       "project_sha256": "66379fefd990ee8cf2e881b06dcd63950df702cc820ad9152def0ad1b9f916be",
       "default_clearance_mm": 0.3,
       "schema": "https://schemas.kicad.org/drc.v1.json",
       "source": "kc2_right.kicad_pcb",
       "kicad_version": "10.0.3",
-      "date": "2026-09-03T04:54:28",
+      "date": "2026-09-06T21:22:53",
       "included_severities": [
         "error",
-        "warning",
-        "exclusion"
+        "warning"
       ]
     }
   }

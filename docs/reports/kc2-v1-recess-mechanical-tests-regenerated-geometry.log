@@ -1,0 +1,7 @@
+...................warning: in the working copy of '.gitattributes', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'housing-snapshot.txt', CRLF will be replaced by LF the next time Git touches it
+...........................
+----------------------------------------------------------------------
+Ran 46 tests in 248.176s
+
+OK

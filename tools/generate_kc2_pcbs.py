@@ -23,6 +23,27 @@ KICAD_ROOT = ROOT / "hardware" / "kicad"
 DRAFT_ROOT = KICAD_ROOT / "draft"
 
 
+def x3_v2_switch_assembly_contract() -> dict[str, object]:
+    """CON-ARCH-004 AC-3/7 nominal dimensional selection, not order approval."""
+    return {
+        "selected_switch_assembly": "mx_receptacle_with_plate",
+        "assembly_modes": ["choc_v1_bottom_socket_with_ring", "choc_v2_bottom_socket", "mx_5pin_top_direct_solder", "mx_receptacle_with_plate"],
+        "assembly_modes_mutually_exclusive": True,
+        "unsupported_switch_geometry": ["choc_v2_direct_solder", "one_piece_mx_smd_socket"],
+        "mx_receptacle": {
+            "nominal_dimensions_mm": {"length": 3.0, "barrel_od": 1.45, "flange_od": 2.0, "flange_thickness": .2},
+            "open_bottom": True,
+            "count_per_switch": 2,
+            "plate_lid_required": True,
+            "qualification_status": "pending",
+            "production_hole_fit_confirmed": False,
+            "trial_finished_pth_mm": 1.6,
+            "copper_land_mm": [2.5, 3.2],
+            "source": "https://ae-pic-a1.aliexpress-media.com/kf/S4b47dab427cd4b539a50618bf16a62d9J.jpg",
+        },
+    }
+
+
 def canonical_x3_v2_route_record(side: str, final_count: int, route_digest: str) -> dict[str, object]:
     base = Path("hardware/kicad/autoroute")
     dsn_relative = base / f"kc2_{side}.dsn"
@@ -179,7 +200,7 @@ X3_V2_POWER_SWITCH_ACTUATOR_TRAVEL_MM = 1.6
 X3_V2_RESET_BODY_SIZE_MM = (6.1, 3.7)
 X3_V2_RESET_KEYCAP_ENVELOPE_MM = 18.05
 X3_V2_RESET_BODY_TO_KEYCAP_MIN_MM = 3.20
-X3_V2_RESET_COURTYARD_TO_U1_SOCKET_COPPER_MIN_MM = 2.03
+X3_V2_RESET_COURTYARD_TO_U1_SOCKET_COPPER_MIN_MM = 1.73
 X3_V2_POWER_SWITCH_DATASHEET = (
     "https://amec-gmbh.de/wp-content/uploads/2022/11/BSI-10.pdf"
 )
@@ -1499,6 +1520,18 @@ def create_controller(
             pad.SetSize(pcbnew.VECTOR2I(mm(1.8), mm(1.8)))
             pad.SetDrillSize(pcbnew.VECTOR2I(mm(0.95), mm(0.95)))
             pad.SetLayerSet(pcbnew.LSET.AllCuMask())
+            if variant == "x3-v2":
+                # CON-ARCH-004 AC-10: AllCuMask means all COPPER layers,
+                # not solder-mask apertures. Expose both hand-solder lands.
+                pad.SetShape(pcbnew.PAD_SHAPE_OVAL)
+                pad.SetSize(pcbnew.VECTOR2I(mm(1.8), mm(2.4)))
+                # Copy the SWIG-owned static set before adding mask layers.
+                # Mutating AllCuMask itself corrupts wildcard parsing/serialization.
+                solder_layers = pcbnew.LSET(pcbnew.LSET.AllCuMask())
+                solder_layers.AddLayer(pcbnew.F_Mask)
+                solder_layers.AddLayer(pcbnew.B_Mask)
+                pad.SetLayerSet(solder_layers)
+                pad.SetLocalSolderMaskMargin(0)
             pad.SetPosition(vxy(x, y))
             net_name = pin_net_map.get(label)
             if label == "GND_C":
@@ -2181,12 +2214,29 @@ def make_board(
     elif variant == "x3":
         add_board_text(board, "X3: X2 electrical stack, no-stabilizer 77-key split layout", 35, 33, pcbnew.Cmts_User, 0.9)
     elif variant == "x3-v2":
-        add_board_text(board, "X3 V2: Choc V2 socket OR rotated MX 5-pin direct solder; Choc V1 unsupported", 35, 33, pcbnew.Cmts_User, 0.9)
+        add_board_text(board, "X3 V2: Choc V1+ring / V2 socket OR MX direct solder / receptacles+plate; contact qualification pending", 35, 33, pcbnew.Cmts_User, 0.9)
     add_product_identity_text(board, side, shifted_outline, variant)
 
     make_project_file(project_dir, name, variant=variant)
     make_fp_lib_table(project_dir, include_switch_lib=switch_lib == SWITCH_LIB)
     board_path = project_dir / f"{name}.kicad_pcb"
+    if variant == "x3-v2":
+        # CON-ARCH-004: the reviewed routed revision stores placement centers
+        # on a 0.0001 mm grid. Normalize the actual integer IU centers here,
+        # including 1 nm float-conversion tails, rather than weakening the
+        # exact pad identity gate used by the reviewed route replay.
+        def nearest_100nm(value: int) -> int:
+            return (1 if value >= 0 else -1) * ((abs(value) + 50) // 100) * 100
+
+        for footprint in board.GetFootprints():
+            position = footprint.GetPosition()
+            footprint.SetPosition(pcbnew.VECTOR2I(
+                nearest_100nm(position.x), nearest_100nm(position.y)
+            ))
+            if str(footprint.GetFPID().GetLibItemName()) == X3_V2_SWITCH_FP:
+                for pad in footprint.Pads():
+                    if pad.GetAttribute() == pcbnew.PAD_ATTRIB_PTH:
+                        pad.SetLocalSolderMaskMargin(0)
     pcbnew.SaveBoard(str(board_path), board)
     make_project_file(project_dir, name, variant=variant)
     ACTIVE_TRACE_KEEP_OUTS = previous_trace_keep_outs
@@ -2694,12 +2744,12 @@ def generate_variant(variant: str, output_dir: Path | None = None) -> dict[str, 
         notes.append(f"X3 uses a {X3_GENERAL_MARGIN:g} mm nominal outer rail land, with 3.6 mm as the verified hard lower bound where local clearance requires it.")
     elif variant == "x3-v2":
         bottom_join = x3_v2_join_geometry_by_row()[-1]
-        notes.append("X3 V2 uses the KC2-owned Choc V2/PG1353 bottom-side hot-swap socket plus Cherry MX 5-pin direct-solder geometry.")
+        notes.append("X3 V2 selects two dimension-specified open-bottom MX receptacles per key with a printed plate-lid; Choc V2 bottom sockets and MX direct solder are mutually exclusive alternatives.")
         notes.append(
             "The exact Kailh Deep Sea low-profile switch MPN and controlled drawing revision "
             "remain pending; no family name or reseller nickname is order approval."
         )
-        notes.append("Choc V1 switch geometry, Choc V2 direct-solder pads, and MX hot-swap socket pads are intentionally excluded.")
+        notes.append("Choc V1 uses the centering ring and shared diameter2.60 locator NPTHs at +/-5.45; MX pad2 retains its enlarged oval area at local45 degrees. Choc V2 direct-solder pads and one-piece MX SMD socket pads are excluded; individual socket contact qualification remains pending.")
         notes.append("The Choc socket and MX switch are mutually exclusive assembly options at every key position.")
         notes.append("X3 V2 uses the fixed 70-key v5 no-stabilizer layout: 31 left keys and 39 right keys, with no key wider than 1.75U.")
         notes.append(
@@ -2761,17 +2811,10 @@ def generate_variant(variant: str, output_dir: Path | None = None) -> dict[str, 
         "deep_sea_switch_identity": (
             X3_V2_DEEP_SEA_SWITCH_IDENTITY if variant == "x3-v2" else None
         ),
-        "assembly_modes": (
-            ["choc_v2_bottom_socket", "mx_5pin_top_direct_solder"]
-            if variant == "x3-v2"
-            else None
-        ),
-        "assembly_modes_mutually_exclusive": variant == "x3-v2",
-        "unsupported_switch_geometry": (
-            ["choc_v1", "choc_v2_direct_solder", "mx_hotswap"]
-            if variant == "x3-v2"
-            else None
-        ),
+        **(x3_v2_switch_assembly_contract() if variant == "x3-v2" else {
+            "assembly_modes": None, "assembly_modes_mutually_exclusive": False,
+            "unsupported_switch_geometry": None,
+        }),
         "switch_footprint_file_present": switch_footprint_file_present,
         "switch_footprint_fallback_source": (
             str(EMBEDDED_FOOTPRINT_SOURCES.get(switch_fp, Path("")).relative_to(ROOT))
@@ -2909,7 +2952,7 @@ def generate_variant(variant: str, output_dir: Path | None = None) -> dict[str, 
                     "nominal_size_mm": list(X3_V2_BATTERY_SIZE_MM),
                     "placement": "between_carrier_and_socketed_controller",
                     "antenna_keepout_clearance_mm": 3.97,
-                    "socket_pad_clearance_mm": 0.72,
+                    "socket_pad_clearance_mm": 0.42,
                     "physical_stack_measurement": "pending",
                 },
                 "battery_termination": {
@@ -2958,7 +3001,7 @@ def generate_variant(variant: str, output_dir: Path | None = None) -> dict[str, 
                 },
                 "nominal_clearances_mm": {
                     "controller_body_to_top_edge": 2.35,
-                    "battery_to_socket_pad": 0.72,
+                    "battery_to_socket_pad": 0.42,
                     "battery_to_antenna_keepout": 3.97,
                     "power_to_reset_body": 2.20,
                     "reset_keycap_envelope_mm": X3_V2_RESET_KEYCAP_ENVELOPE_MM,

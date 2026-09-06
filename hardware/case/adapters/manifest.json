@@ -1,0 +1,26 @@
+{
+  "requirement": "CON-ARCH-004",
+  "units": "mm",
+  "barrel_od_mm": 4.8,
+  "flange_od_mm": 6,
+  "flange_thickness_mm": 0.2,
+  "insertion_length_mm": 1.2,
+  "total_height_mm": 1.4,
+  "print_orientation": "flange on bed, Z=0",
+  "physical_fit_verified": false,
+  "dimensions": "engineering trial, not measured part dimensions",
+  "outputs": [
+    {
+      "file": "kc2_v1_ring_cap_020.stl",
+      "bore_mm": 3.5,
+      "triangles": 2304,
+      "sha256": "a6b7ddfa06f1880251a974d1f3bde65cb4ec585af4e2ebbd1e48a7b31d18e928"
+    },
+    {
+      "file": "kc2_mx_ring_cap_020.stl",
+      "bore_mm": 4.1,
+      "triangles": 2304,
+      "sha256": "e0e07fbb12e3f341636ee27c3f6b4343e56b10f3c090e5e029990b6a142022ea"
+    }
+  ]
+}

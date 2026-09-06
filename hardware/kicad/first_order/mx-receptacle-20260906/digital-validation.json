@@ -1,0 +1,820 @@
+{
+  "requirement": "OPS-ARCH-007",
+  "eligible_to_build": true,
+  "first_order_ready": false,
+  "physical_qualification_complete": false,
+  "bom_cpl_upload_authorization": false,
+  "errors": [],
+  "sides": {
+    "left": {
+      "errors": [],
+      "bom": {
+        "selected_switch_assembly": "mx_receptacle_with_plate",
+        "assembly_service": "none_hand_assembly",
+        "parts_procurement": "user_external_mall_procurement",
+        "machine_placement_requested": false,
+        "bom_cpl_upload_authorization": false,
+        "choc_socket_population_for_selected_assembly": false,
+        "mx_receptacles": {
+          "quantity": 62,
+          "contacts": [
+            {
+              "reference": "SW1",
+              "pads": [
+                "1",
+                "2"
+              ]
+            },
+            {
+              "reference": "SW2",
+              "pads": [
+                "1",
+                "2"
+              ]
+            },
+            {
+              "reference": "SW3",
+              "pads": [
+                "1",
+                "2"
+              ]
+            },
+            {
+              "reference": "SW4",
+              "pads": [
+                "1",
+                "2"
+              ]
+            },
+            {
+              "reference": "SW5",
+              "pads": [
+                "1",
+                "2"
+              ]
+            },
+            {
+              "reference": "SW6",
+              "pads": [
+                "1",
+                "2"
+              ]
+            },
+            {
+              "reference": "SW7",
+              "pads": [
+                "1",
+                "2"
+              ]
+            },
+            {
+              "reference": "SW8",
+              "pads": [
+                "1",
+                "2"
+              ]
+            },
+            {
+              "reference": "SW9",
+              "pads": [
+                "1",
+                "2"
+              ]
+            },
+            {
+              "reference": "SW10",
+              "pads": [
+                "1",
+                "2"
+              ]
+            },
+            {
+              "reference": "SW11",
+              "pads": [
+                "1",
+                "2"
+              ]
+            },
+            {
+              "reference": "SW12",
+              "pads": [
+                "1",
+                "2"
+              ]
+            },
+            {
+              "reference": "SW13",
+              "pads": [
+                "1",
+                "2"
+              ]
+            },
+            {
+              "reference": "SW14",
+              "pads": [
+                "1",
+                "2"
+              ]
+            },
+            {
+              "reference": "SW15",
+              "pads": [
+                "1",
+                "2"
+              ]
+            },
+            {
+              "reference": "SW16",
+              "pads": [
+                "1",
+                "2"
+              ]
+            },
+            {
+              "reference": "SW17",
+              "pads": [
+                "1",
+                "2"
+              ]
+            },
+            {
+              "reference": "SW18",
+              "pads": [
+                "1",
+                "2"
+              ]
+            },
+            {
+              "reference": "SW19",
+              "pads": [
+                "1",
+                "2"
+              ]
+            },
+            {
+              "reference": "SW20",
+              "pads": [
+                "1",
+                "2"
+              ]
+            },
+            {
+              "reference": "SW21",
+              "pads": [
+                "1",
+                "2"
+              ]
+            },
+            {
+              "reference": "SW22",
+              "pads": [
+                "1",
+                "2"
+              ]
+            },
+            {
+              "reference": "SW23",
+              "pads": [
+                "1",
+                "2"
+              ]
+            },
+            {
+              "reference": "SW24",
+              "pads": [
+                "1",
+                "2"
+              ]
+            },
+            {
+              "reference": "SW25",
+              "pads": [
+                "1",
+                "2"
+              ]
+            },
+            {
+              "reference": "SW26",
+              "pads": [
+                "1",
+                "2"
+              ]
+            },
+            {
+              "reference": "SW27",
+              "pads": [
+                "1",
+                "2"
+              ]
+            },
+            {
+              "reference": "SW28",
+              "pads": [
+                "1",
+                "2"
+              ]
+            },
+            {
+              "reference": "SW29",
+              "pads": [
+                "1",
+                "2"
+              ]
+            },
+            {
+              "reference": "SW30",
+              "pads": [
+                "1",
+                "2"
+              ]
+            },
+            {
+              "reference": "SW31",
+              "pads": [
+                "1",
+                "2"
+              ]
+            }
+          ],
+          "specification": "Open-bottom hat: length 3.00 mm; barrel OD 1.45 mm; flange OD 2.00 mm, thickness 0.20 mm",
+          "supplier_trace": "https://ko.aliexpress.com/item/1005010364025678.html",
+          "drawing": "https://ae-pic-a1.aliexpress-media.com/kf/S4b47dab427cd4b539a50618bf16a62d9J.jpg",
+          "nominal_pth_mm": 1.6,
+          "nominal_diametral_clearance_mm": 0.15,
+          "tolerances_and_flat_blade_limits": "unknown; nominal clearance is not worst-case fit",
+          "qualification": "post_receipt_pending",
+          "plate_lid_required": true
+        },
+        "diodes": {
+          "quantity": 31,
+          "references": [
+            "D1",
+            "D2",
+            "D3",
+            "D4",
+            "D5",
+            "D6",
+            "D7",
+            "D8",
+            "D9",
+            "D10",
+            "D11",
+            "D12",
+            "D13",
+            "D14",
+            "D15",
+            "D16",
+            "D17",
+            "D18",
+            "D19",
+            "D20",
+            "D21",
+            "D22",
+            "D23",
+            "D24",
+            "D25",
+            "D26",
+            "D27",
+            "D28",
+            "D29",
+            "D30",
+            "D31"
+          ],
+          "manufacturer": "Diodes Incorporated",
+          "mpn": "1N4148W-13-F",
+          "package": "SOD-123",
+          "drawing": "DS30086 Rev. 31-2",
+          "orientation": "Bottom side; cathode band to pad 1 / row; pad 2 anode to per-key switch"
+        },
+        "other_board_items": [
+          {
+            "reference": "BAT1",
+            "value": "301230_3.7V_100mAh",
+            "footprint": "BAT_301230_30x12mm",
+            "quantity": 1,
+            "procurement_status": "see source-bound component review"
+          },
+          {
+            "reference": "BAT_LEAD_SLOT1",
+            "value": "BAT_LEAD_NPTH_SLOT_3.6x2.2",
+            "footprint": "BAT_LEAD_NPTH_SLOT_3.6x2.2",
+            "quantity": 1,
+            "procurement_status": "see source-bound component review"
+          },
+          {
+            "reference": "J_BAT1",
+            "value": "301230_DIRECT_SOLDER",
+            "footprint": "BAT_2Pin_PTH_DirectSolder",
+            "quantity": 1,
+            "procurement_status": "see source-bound component review"
+          },
+          {
+            "reference": "SW_PWR1",
+            "value": "IMMS-12V_BSI-10",
+            "footprint": "SW_IMMS_12V_BSI10_THT",
+            "quantity": 1,
+            "procurement_status": "see source-bound component review"
+          },
+          {
+            "reference": "SW_RST1",
+            "value": "NW3-A06-B3 RST",
+            "footprint": "SW_NW3_A06_B3_SMD",
+            "quantity": 1,
+            "procurement_status": "see source-bound component review"
+          },
+          {
+            "reference": "U1",
+            "value": "nice!nano_v2_socket_24pin",
+            "footprint": "KC2:NiceNanoV2_Socket_24Pin_USB_OUT_LEFT",
+            "quantity": 1,
+            "procurement_status": "see source-bound component review"
+          }
+        ],
+        "mx_switches": {
+          "quantity": 31,
+          "references": [
+            "SW1",
+            "SW2",
+            "SW3",
+            "SW4",
+            "SW5",
+            "SW6",
+            "SW7",
+            "SW8",
+            "SW9",
+            "SW10",
+            "SW11",
+            "SW12",
+            "SW13",
+            "SW14",
+            "SW15",
+            "SW16",
+            "SW17",
+            "SW18",
+            "SW19",
+            "SW20",
+            "SW21",
+            "SW22",
+            "SW23",
+            "SW24",
+            "SW25",
+            "SW26",
+            "SW27",
+            "SW28",
+            "SW29",
+            "SW30",
+            "SW31"
+          ],
+          "specification": "Generic 5-pin MX nominal geometry analytically reviewed; exact blade/spring contact limits unknown, post-receipt qualification pending"
+        },
+        "stack": "Lower housing / 1.60 mm PCB / printed MX plate-lid; existing M1.4 holes; no stabilizers",
+        "fasteners": "9 mm long-screw nominal candidate; 10 mm prohibited by reviewed stack. Receiver/material and physical retention remain post-receipt qualification. Old 4 mm lower-only screw is not the selected stack."
+      },
+      "drill_counts": {
+        "PTH": 118,
+        "NPTH": 195
+      }
+    },
+    "right": {
+      "errors": [],
+      "bom": {
+        "selected_switch_assembly": "mx_receptacle_with_plate",
+        "assembly_service": "none_hand_assembly",
+        "parts_procurement": "user_external_mall_procurement",
+        "machine_placement_requested": false,
+        "bom_cpl_upload_authorization": false,
+        "choc_socket_population_for_selected_assembly": false,
+        "mx_receptacles": {
+          "quantity": 78,
+          "contacts": [
+            {
+              "reference": "SW1",
+              "pads": [
+                "1",
+                "2"
+              ]
+            },
+            {
+              "reference": "SW2",
+              "pads": [
+                "1",
+                "2"
+              ]
+            },
+            {
+              "reference": "SW3",
+              "pads": [
+                "1",
+                "2"
+              ]
+            },
+            {
+              "reference": "SW4",
+              "pads": [
+                "1",
+                "2"
+              ]
+            },
+            {
+              "reference": "SW5",
+              "pads": [
+                "1",
+                "2"
+              ]
+            },
+            {
+              "reference": "SW6",
+              "pads": [
+                "1",
+                "2"
+              ]
+            },
+            {
+              "reference": "SW7",
+              "pads": [
+                "1",
+                "2"
+              ]
+            },
+            {
+              "reference": "SW8",
+              "pads": [
+                "1",
+                "2"
+              ]
+            },
+            {
+              "reference": "SW9",
+              "pads": [
+                "1",
+                "2"
+              ]
+            },
+            {
+              "reference": "SW10",
+              "pads": [
+                "1",
+                "2"
+              ]
+            },
+            {
+              "reference": "SW11",
+              "pads": [
+                "1",
+                "2"
+              ]
+            },
+            {
+              "reference": "SW12",
+              "pads": [
+                "1",
+                "2"
+              ]
+            },
+            {
+              "reference": "SW13",
+              "pads": [
+                "1",
+                "2"
+              ]
+            },
+            {
+              "reference": "SW14",
+              "pads": [
+                "1",
+                "2"
+              ]
+            },
+            {
+              "reference": "SW15",
+              "pads": [
+                "1",
+                "2"
+              ]
+            },
+            {
+              "reference": "SW16",
+              "pads": [
+                "1",
+                "2"
+              ]
+            },
+            {
+              "reference": "SW17",
+              "pads": [
+                "1",
+                "2"
+              ]
+            },
+            {
+              "reference": "SW18",
+              "pads": [
+                "1",
+                "2"
+              ]
+            },
+            {
+              "reference": "SW19",
+              "pads": [
+                "1",
+                "2"
+              ]
+            },
+            {
+              "reference": "SW20",
+              "pads": [
+                "1",
+                "2"
+              ]
+            },
+            {
+              "reference": "SW21",
+              "pads": [
+                "1",
+                "2"
+              ]
+            },
+            {
+              "reference": "SW22",
+              "pads": [
+                "1",
+                "2"
+              ]
+            },
+            {
+              "reference": "SW23",
+              "pads": [
+                "1",
+                "2"
+              ]
+            },
+            {
+              "reference": "SW24",
+              "pads": [
+                "1",
+                "2"
+              ]
+            },
+            {
+              "reference": "SW25",
+              "pads": [
+                "1",
+                "2"
+              ]
+            },
+            {
+              "reference": "SW26",
+              "pads": [
+                "1",
+                "2"
+              ]
+            },
+            {
+              "reference": "SW27",
+              "pads": [
+                "1",
+                "2"
+              ]
+            },
+            {
+              "reference": "SW28",
+              "pads": [
+                "1",
+                "2"
+              ]
+            },
+            {
+              "reference": "SW29",
+              "pads": [
+                "1",
+                "2"
+              ]
+            },
+            {
+              "reference": "SW30",
+              "pads": [
+                "1",
+                "2"
+              ]
+            },
+            {
+              "reference": "SW31",
+              "pads": [
+                "1",
+                "2"
+              ]
+            },
+            {
+              "reference": "SW32",
+              "pads": [
+                "1",
+                "2"
+              ]
+            },
+            {
+              "reference": "SW33",
+              "pads": [
+                "1",
+                "2"
+              ]
+            },
+            {
+              "reference": "SW34",
+              "pads": [
+                "1",
+                "2"
+              ]
+            },
+            {
+              "reference": "SW35",
+              "pads": [
+                "1",
+                "2"
+              ]
+            },
+            {
+              "reference": "SW36",
+              "pads": [
+                "1",
+                "2"
+              ]
+            },
+            {
+              "reference": "SW37",
+              "pads": [
+                "1",
+                "2"
+              ]
+            },
+            {
+              "reference": "SW38",
+              "pads": [
+                "1",
+                "2"
+              ]
+            },
+            {
+              "reference": "SW39",
+              "pads": [
+                "1",
+                "2"
+              ]
+            }
+          ],
+          "specification": "Open-bottom hat: length 3.00 mm; barrel OD 1.45 mm; flange OD 2.00 mm, thickness 0.20 mm",
+          "supplier_trace": "https://ko.aliexpress.com/item/1005010364025678.html",
+          "drawing": "https://ae-pic-a1.aliexpress-media.com/kf/S4b47dab427cd4b539a50618bf16a62d9J.jpg",
+          "nominal_pth_mm": 1.6,
+          "nominal_diametral_clearance_mm": 0.15,
+          "tolerances_and_flat_blade_limits": "unknown; nominal clearance is not worst-case fit",
+          "qualification": "post_receipt_pending",
+          "plate_lid_required": true
+        },
+        "diodes": {
+          "quantity": 39,
+          "references": [
+            "D1",
+            "D2",
+            "D3",
+            "D4",
+            "D5",
+            "D6",
+            "D7",
+            "D8",
+            "D9",
+            "D10",
+            "D11",
+            "D12",
+            "D13",
+            "D14",
+            "D15",
+            "D16",
+            "D17",
+            "D18",
+            "D19",
+            "D20",
+            "D21",
+            "D22",
+            "D23",
+            "D24",
+            "D25",
+            "D26",
+            "D27",
+            "D28",
+            "D29",
+            "D30",
+            "D31",
+            "D32",
+            "D33",
+            "D34",
+            "D35",
+            "D36",
+            "D37",
+            "D38",
+            "D39"
+          ],
+          "manufacturer": "Diodes Incorporated",
+          "mpn": "1N4148W-13-F",
+          "package": "SOD-123",
+          "drawing": "DS30086 Rev. 31-2",
+          "orientation": "Bottom side; cathode band to pad 1 / row; pad 2 anode to per-key switch"
+        },
+        "other_board_items": [
+          {
+            "reference": "BAT1",
+            "value": "301230_3.7V_100mAh",
+            "footprint": "BAT_301230_30x12mm",
+            "quantity": 1,
+            "procurement_status": "see source-bound component review"
+          },
+          {
+            "reference": "BAT_LEAD_SLOT1",
+            "value": "BAT_LEAD_NPTH_SLOT_3.6x2.2",
+            "footprint": "BAT_LEAD_NPTH_SLOT_3.6x2.2",
+            "quantity": 1,
+            "procurement_status": "see source-bound component review"
+          },
+          {
+            "reference": "J_BAT1",
+            "value": "301230_DIRECT_SOLDER",
+            "footprint": "BAT_2Pin_PTH_DirectSolder",
+            "quantity": 1,
+            "procurement_status": "see source-bound component review"
+          },
+          {
+            "reference": "SW_PWR1",
+            "value": "IMMS-12V_BSI-10",
+            "footprint": "SW_IMMS_12V_BSI10_THT",
+            "quantity": 1,
+            "procurement_status": "see source-bound component review"
+          },
+          {
+            "reference": "SW_RST1",
+            "value": "NW3-A06-B3 RST",
+            "footprint": "SW_NW3_A06_B3_SMD",
+            "quantity": 1,
+            "procurement_status": "see source-bound component review"
+          },
+          {
+            "reference": "U1",
+            "value": "nice!nano_v2_socket_24pin",
+            "footprint": "KC2:NiceNanoV2_Socket_24Pin_USB_OUT_RIGHT",
+            "quantity": 1,
+            "procurement_status": "see source-bound component review"
+          }
+        ],
+        "mx_switches": {
+          "quantity": 39,
+          "references": [
+            "SW1",
+            "SW2",
+            "SW3",
+            "SW4",
+            "SW5",
+            "SW6",
+            "SW7",
+            "SW8",
+            "SW9",
+            "SW10",
+            "SW11",
+            "SW12",
+            "SW13",
+            "SW14",
+            "SW15",
+            "SW16",
+            "SW17",
+            "SW18",
+            "SW19",
+            "SW20",
+            "SW21",
+            "SW22",
+            "SW23",
+            "SW24",
+            "SW25",
+            "SW26",
+            "SW27",
+            "SW28",
+            "SW29",
+            "SW30",
+            "SW31",
+            "SW32",
+            "SW33",
+            "SW34",
+            "SW35",
+            "SW36",
+            "SW37",
+            "SW38",
+            "SW39"
+          ],
+          "specification": "Generic 5-pin MX nominal geometry analytically reviewed; exact blade/spring contact limits unknown, post-receipt qualification pending"
+        },
+        "stack": "Lower housing / 1.60 mm PCB / printed MX plate-lid; existing M1.4 holes; no stabilizers",
+        "fasteners": "9 mm long-screw nominal candidate; 10 mm prohibited by reviewed stack. Receiver/material and physical retention remain post-receipt qualification. Old 4 mm lower-only screw is not the selected stack."
+      },
+      "drill_counts": {
+        "PTH": 166,
+        "NPTH": 244
+      }
+    }
+  }
+}

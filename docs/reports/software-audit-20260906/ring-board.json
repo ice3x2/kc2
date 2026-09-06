@@ -1,0 +1,1042 @@
+{
+  "requirement": "CON-ARCH-004",
+  "sources": {
+    "hardware/kicad/kc2_left/kc2_left.kicad_pcb": "557f25598c6c6c026d3404abaf37d5bb76caee5a0001fc97a18591b4d615235c",
+    "hardware/kicad/kc2_right/kc2_right.kicad_pcb": "ecbe969d980f7c70c96eff12a0bf207b88b6d5bfb8f49687811a65659d9de4d2",
+    "hardware/case/adapters/kc2_v1_ring_cap_020.stl": "a6b7ddfa06f1880251a974d1f3bde65cb4ec585af4e2ebbd1e48a7b31d18e928",
+    "hardware/case/adapters/kc2_mx_ring_cap_020.stl": "e0e07fbb12e3f341636ee27c3f6b4343e56b10f3c090e5e029990b6a142022ea"
+  },
+  "switches": [
+    {
+      "side": "left",
+      "ref": "SW28",
+      "center_mm": [
+        69.2188,
+        153.725
+      ],
+      "central_hole_mm": 5.0,
+      "v1_locator_containment_margins_mm": [
+        -0.47,
+        -0.47
+      ],
+      "ring_barrel_nominal_diametral_clearance_mm": 0.20000000000000018
+    },
+    {
+      "side": "left",
+      "ref": "SW7",
+      "center_mm": [
+        157.325,
+        77.525
+      ],
+      "central_hole_mm": 5.0,
+      "v1_locator_containment_margins_mm": [
+        -0.47,
+        -0.47
+      ],
+      "ring_barrel_nominal_diametral_clearance_mm": 0.20000000000000018
+    },
+    {
+      "side": "left",
+      "ref": "SW29",
+      "center_mm": [
+        93.0313,
+        153.725
+      ],
+      "central_hole_mm": 5.0,
+      "v1_locator_containment_margins_mm": [
+        -0.47,
+        -0.47
+      ],
+      "ring_barrel_nominal_diametral_clearance_mm": 0.20000000000000018
+    },
+    {
+      "side": "left",
+      "ref": "SW25",
+      "center_mm": [
+        143.0375,
+        134.675
+      ],
+      "central_hole_mm": 5.0,
+      "v1_locator_containment_margins_mm": [
+        -0.47,
+        -0.47
+      ],
+      "ring_barrel_nominal_diametral_clearance_mm": 0.20000000000000018
+    },
+    {
+      "side": "left",
+      "ref": "SW9",
+      "center_mm": [
+        71.6,
+        96.575
+      ],
+      "central_hole_mm": 5.0,
+      "v1_locator_containment_margins_mm": [
+        -0.47,
+        -0.47
+      ],
+      "ring_barrel_nominal_diametral_clearance_mm": 0.20000000000000018
+    },
+    {
+      "side": "left",
+      "ref": "SW12",
+      "center_mm": [
+        128.75,
+        96.575
+      ],
+      "central_hole_mm": 5.0,
+      "v1_locator_containment_margins_mm": [
+        -0.47,
+        -0.47
+      ],
+      "ring_barrel_nominal_diametral_clearance_mm": 0.20000000000000018
+    },
+    {
+      "side": "left",
+      "ref": "SW22",
+      "center_mm": [
+        85.8875,
+        134.675
+      ],
+      "central_hole_mm": 5.0,
+      "v1_locator_containment_margins_mm": [
+        -0.47,
+        -0.47
+      ],
+      "ring_barrel_nominal_diametral_clearance_mm": 0.20000000000000018
+    },
+    {
+      "side": "left",
+      "ref": "SW23",
+      "center_mm": [
+        104.9375,
+        134.675
+      ],
+      "central_hole_mm": 5.0,
+      "v1_locator_containment_margins_mm": [
+        -0.47,
+        -0.47
+      ],
+      "ring_barrel_nominal_diametral_clearance_mm": 0.20000000000000018
+    },
+    {
+      "side": "left",
+      "ref": "SW19",
+      "center_mm": [
+        152.5625,
+        115.625
+      ],
+      "central_hole_mm": 5.0,
+      "v1_locator_containment_margins_mm": [
+        -0.47,
+        -0.47
+      ],
+      "ring_barrel_nominal_diametral_clearance_mm": 0.20000000000000018
+    },
+    {
+      "side": "left",
+      "ref": "SW31",
+      "center_mm": [
+        154.9438,
+        153.725
+      ],
+      "central_hole_mm": 5.0,
+      "v1_locator_containment_margins_mm": [
+        -0.47,
+        -0.47
+      ],
+      "ring_barrel_nominal_diametral_clearance_mm": 0.20000000000000018
+    },
+    {
+      "side": "left",
+      "ref": "SW8",
+      "center_mm": [
+        47.7875,
+        96.575
+      ],
+      "central_hole_mm": 5.0,
+      "v1_locator_containment_margins_mm": [
+        -0.47,
+        -0.47
+      ],
+      "ring_barrel_nominal_diametral_clearance_mm": 0.20000000000000018
+    },
+    {
+      "side": "left",
+      "ref": "SW30",
+      "center_mm": [
+        121.6063,
+        153.725
+      ],
+      "central_hole_mm": 5.0,
+      "v1_locator_containment_margins_mm": [
+        -0.47,
+        -0.47
+      ],
+      "ring_barrel_nominal_diametral_clearance_mm": 0.20000000000000018
+    },
+    {
+      "side": "left",
+      "ref": "SW4",
+      "center_mm": [
+        100.175,
+        77.525
+      ],
+      "central_hole_mm": 5.0,
+      "v1_locator_containment_margins_mm": [
+        -0.47,
+        -0.47
+      ],
+      "ring_barrel_nominal_diametral_clearance_mm": 0.20000000000000018
+    },
+    {
+      "side": "left",
+      "ref": "SW13",
+      "center_mm": [
+        147.8,
+        96.575
+      ],
+      "central_hole_mm": 5.0,
+      "v1_locator_containment_margins_mm": [
+        -0.47,
+        -0.47
+      ],
+      "ring_barrel_nominal_diametral_clearance_mm": 0.20000000000000018
+    },
+    {
+      "side": "left",
+      "ref": "SW27",
+      "center_mm": [
+        45.4063,
+        153.725
+      ],
+      "central_hole_mm": 5.0,
+      "v1_locator_containment_margins_mm": [
+        -0.47,
+        -0.47
+      ],
+      "ring_barrel_nominal_diametral_clearance_mm": 0.20000000000000018
+    },
+    {
+      "side": "left",
+      "ref": "SW6",
+      "center_mm": [
+        138.275,
+        77.525
+      ],
+      "central_hole_mm": 5.0,
+      "v1_locator_containment_margins_mm": [
+        -0.47,
+        -0.47
+      ],
+      "ring_barrel_nominal_diametral_clearance_mm": 0.20000000000000018
+    },
+    {
+      "side": "left",
+      "ref": "SW10",
+      "center_mm": [
+        90.65,
+        96.575
+      ],
+      "central_hole_mm": 5.0,
+      "v1_locator_containment_margins_mm": [
+        -0.47,
+        -0.47
+      ],
+      "ring_barrel_nominal_diametral_clearance_mm": 0.20000000000000018
+    },
+    {
+      "side": "left",
+      "ref": "SW18",
+      "center_mm": [
+        133.5125,
+        115.625
+      ],
+      "central_hole_mm": 5.0,
+      "v1_locator_containment_margins_mm": [
+        -0.47,
+        -0.47
+      ],
+      "ring_barrel_nominal_diametral_clearance_mm": 0.20000000000000018
+    },
+    {
+      "side": "left",
+      "ref": "SW11",
+      "center_mm": [
+        109.7,
+        96.575
+      ],
+      "central_hole_mm": 5.0,
+      "v1_locator_containment_margins_mm": [
+        -0.47,
+        -0.47
+      ],
+      "ring_barrel_nominal_diametral_clearance_mm": 0.20000000000000018
+    },
+    {
+      "side": "left",
+      "ref": "SW21",
+      "center_mm": [
+        64.4563,
+        134.675
+      ],
+      "central_hole_mm": 5.0,
+      "v1_locator_containment_margins_mm": [
+        -0.47,
+        -0.47
+      ],
+      "ring_barrel_nominal_diametral_clearance_mm": 0.20000000000000018
+    },
+    {
+      "side": "left",
+      "ref": "SW3",
+      "center_mm": [
+        81.125,
+        77.525
+      ],
+      "central_hole_mm": 5.0,
+      "v1_locator_containment_margins_mm": [
+        -0.47,
+        -0.47
+      ],
+      "ring_barrel_nominal_diametral_clearance_mm": 0.20000000000000018
+    },
+    {
+      "side": "left",
+      "ref": "SW26",
+      "center_mm": [
+        162.0875,
+        134.675
+      ],
+      "central_hole_mm": 5.0,
+      "v1_locator_containment_margins_mm": [
+        -0.47,
+        -0.47
+      ],
+      "ring_barrel_nominal_diametral_clearance_mm": 0.20000000000000018
+    },
+    {
+      "side": "left",
+      "ref": "SW5",
+      "center_mm": [
+        119.225,
+        77.525
+      ],
+      "central_hole_mm": 5.0,
+      "v1_locator_containment_margins_mm": [
+        -0.47,
+        -0.47
+      ],
+      "ring_barrel_nominal_diametral_clearance_mm": 0.20000000000000018
+    },
+    {
+      "side": "left",
+      "ref": "SW14",
+      "center_mm": [
+        50.1687,
+        115.625
+      ],
+      "central_hole_mm": 5.0,
+      "v1_locator_containment_margins_mm": [
+        -0.47,
+        -0.47
+      ],
+      "ring_barrel_nominal_diametral_clearance_mm": 0.20000000000000018
+    },
+    {
+      "side": "left",
+      "ref": "SW16",
+      "center_mm": [
+        95.4125,
+        115.625
+      ],
+      "central_hole_mm": 5.0,
+      "v1_locator_containment_margins_mm": [
+        -0.47,
+        -0.47
+      ],
+      "ring_barrel_nominal_diametral_clearance_mm": 0.20000000000000018
+    },
+    {
+      "side": "left",
+      "ref": "SW24",
+      "center_mm": [
+        123.9875,
+        134.675
+      ],
+      "central_hole_mm": 5.0,
+      "v1_locator_containment_margins_mm": [
+        -0.47,
+        -0.47
+      ],
+      "ring_barrel_nominal_diametral_clearance_mm": 0.20000000000000018
+    },
+    {
+      "side": "left",
+      "ref": "SW1",
+      "center_mm": [
+        43.025,
+        77.525
+      ],
+      "central_hole_mm": 5.0,
+      "v1_locator_containment_margins_mm": [
+        -0.47,
+        -0.47
+      ],
+      "ring_barrel_nominal_diametral_clearance_mm": 0.20000000000000018
+    },
+    {
+      "side": "left",
+      "ref": "SW15",
+      "center_mm": [
+        76.3625,
+        115.625
+      ],
+      "central_hole_mm": 5.0,
+      "v1_locator_containment_margins_mm": [
+        -0.47,
+        -0.47
+      ],
+      "ring_barrel_nominal_diametral_clearance_mm": 0.20000000000000018
+    },
+    {
+      "side": "left",
+      "ref": "SW20",
+      "center_mm": [
+        43.025,
+        134.675
+      ],
+      "central_hole_mm": 5.0,
+      "v1_locator_containment_margins_mm": [
+        -0.47,
+        -0.47
+      ],
+      "ring_barrel_nominal_diametral_clearance_mm": 0.20000000000000018
+    },
+    {
+      "side": "left",
+      "ref": "SW2",
+      "center_mm": [
+        62.075,
+        77.525
+      ],
+      "central_hole_mm": 5.0,
+      "v1_locator_containment_margins_mm": [
+        -0.47,
+        -0.47
+      ],
+      "ring_barrel_nominal_diametral_clearance_mm": 0.20000000000000018
+    },
+    {
+      "side": "left",
+      "ref": "SW17",
+      "center_mm": [
+        114.4625,
+        115.625
+      ],
+      "central_hole_mm": 5.0,
+      "v1_locator_containment_margins_mm": [
+        -0.47,
+        -0.47
+      ],
+      "ring_barrel_nominal_diametral_clearance_mm": 0.20000000000000018
+    },
+    {
+      "side": "right",
+      "ref": "SW2",
+      "center_mm": [
+        71.6,
+        77.525
+      ],
+      "central_hole_mm": 5.0,
+      "v1_locator_containment_margins_mm": [
+        -0.47,
+        -0.47
+      ],
+      "ring_barrel_nominal_diametral_clearance_mm": 0.20000000000000018
+    },
+    {
+      "side": "right",
+      "ref": "SW29",
+      "center_mm": [
+        133.5125,
+        134.675
+      ],
+      "central_hole_mm": 5.0,
+      "v1_locator_containment_margins_mm": [
+        -0.47,
+        -0.47
+      ],
+      "ring_barrel_nominal_diametral_clearance_mm": 0.20000000000000018
+    },
+    {
+      "side": "right",
+      "ref": "SW39",
+      "center_mm": [
+        190.6625,
+        153.725
+      ],
+      "central_hole_mm": 5.0,
+      "v1_locator_containment_margins_mm": [
+        -0.47,
+        -0.47
+      ],
+      "ring_barrel_nominal_diametral_clearance_mm": 0.20000000000000018
+    },
+    {
+      "side": "right",
+      "ref": "SW14",
+      "center_mm": [
+        138.275,
+        96.575
+      ],
+      "central_hole_mm": 5.0,
+      "v1_locator_containment_margins_mm": [
+        -0.47,
+        -0.47
+      ],
+      "ring_barrel_nominal_diametral_clearance_mm": 0.20000000000000018
+    },
+    {
+      "side": "right",
+      "ref": "SW3",
+      "center_mm": [
+        90.65,
+        77.525
+      ],
+      "central_hole_mm": 5.0,
+      "v1_locator_containment_margins_mm": [
+        -0.47,
+        -0.47
+      ],
+      "ring_barrel_nominal_diametral_clearance_mm": 0.20000000000000018
+    },
+    {
+      "side": "right",
+      "ref": "SW30",
+      "center_mm": [
+        152.5625,
+        134.675
+      ],
+      "central_hole_mm": 5.0,
+      "v1_locator_containment_margins_mm": [
+        -0.47,
+        -0.47
+      ],
+      "ring_barrel_nominal_diametral_clearance_mm": 0.20000000000000018
+    },
+    {
+      "side": "right",
+      "ref": "SW24",
+      "center_mm": [
+        190.6625,
+        115.625
+      ],
+      "central_hole_mm": 5.0,
+      "v1_locator_containment_margins_mm": [
+        -0.47,
+        -0.47
+      ],
+      "ring_barrel_nominal_diametral_clearance_mm": 0.20000000000000018
+    },
+    {
+      "side": "right",
+      "ref": "SW23",
+      "center_mm": [
+        166.85,
+        115.625
+      ],
+      "central_hole_mm": 5.0,
+      "v1_locator_containment_margins_mm": [
+        -0.47,
+        -0.47
+      ],
+      "ring_barrel_nominal_diametral_clearance_mm": 0.20000000000000018
+    },
+    {
+      "side": "right",
+      "ref": "SW8",
+      "center_mm": [
+        190.6625,
+        77.525
+      ],
+      "central_hole_mm": 5.0,
+      "v1_locator_containment_margins_mm": [
+        -0.47,
+        -0.47
+      ],
+      "ring_barrel_nominal_diametral_clearance_mm": 0.20000000000000018
+    },
+    {
+      "side": "right",
+      "ref": "SW28",
+      "center_mm": [
+        114.4625,
+        134.675
+      ],
+      "central_hole_mm": 5.0,
+      "v1_locator_containment_margins_mm": [
+        -0.47,
+        -0.47
+      ],
+      "ring_barrel_nominal_diametral_clearance_mm": 0.20000000000000018
+    },
+    {
+      "side": "right",
+      "ref": "SW20",
+      "center_mm": [
+        104.9375,
+        115.625
+      ],
+      "central_hole_mm": 5.0,
+      "v1_locator_containment_margins_mm": [
+        -0.47,
+        -0.47
+      ],
+      "ring_barrel_nominal_diametral_clearance_mm": 0.20000000000000018
+    },
+    {
+      "side": "right",
+      "ref": "SW4",
+      "center_mm": [
+        109.7,
+        77.525
+      ],
+      "central_hole_mm": 5.0,
+      "v1_locator_containment_margins_mm": [
+        -0.47,
+        -0.47
+      ],
+      "ring_barrel_nominal_diametral_clearance_mm": 0.20000000000000018
+    },
+    {
+      "side": "right",
+      "ref": "SW12",
+      "center_mm": [
+        100.175,
+        96.575
+      ],
+      "central_hole_mm": 5.0,
+      "v1_locator_containment_margins_mm": [
+        -0.47,
+        -0.47
+      ],
+      "ring_barrel_nominal_diametral_clearance_mm": 0.20000000000000018
+    },
+    {
+      "side": "right",
+      "ref": "SW21",
+      "center_mm": [
+        123.9875,
+        115.625
+      ],
+      "central_hole_mm": 5.0,
+      "v1_locator_containment_margins_mm": [
+        -0.47,
+        -0.47
+      ],
+      "ring_barrel_nominal_diametral_clearance_mm": 0.20000000000000018
+    },
+    {
+      "side": "right",
+      "ref": "SW36",
+      "center_mm": [
+        133.5125,
+        153.725
+      ],
+      "central_hole_mm": 5.0,
+      "v1_locator_containment_margins_mm": [
+        -0.47,
+        -0.47
+      ],
+      "ring_barrel_nominal_diametral_clearance_mm": 0.20000000000000018
+    },
+    {
+      "side": "right",
+      "ref": "SW38",
+      "center_mm": [
+        171.6125,
+        153.725
+      ],
+      "central_hole_mm": 5.0,
+      "v1_locator_containment_margins_mm": [
+        -0.47,
+        -0.47
+      ],
+      "ring_barrel_nominal_diametral_clearance_mm": 0.20000000000000018
+    },
+    {
+      "side": "right",
+      "ref": "SW26",
+      "center_mm": [
+        76.3625,
+        134.675
+      ],
+      "central_hole_mm": 5.0,
+      "v1_locator_containment_margins_mm": [
+        -0.47,
+        -0.47
+      ],
+      "ring_barrel_nominal_diametral_clearance_mm": 0.20000000000000018
+    },
+    {
+      "side": "right",
+      "ref": "SW10",
+      "center_mm": [
+        62.075,
+        96.575
+      ],
+      "central_hole_mm": 5.0,
+      "v1_locator_containment_margins_mm": [
+        -0.47,
+        -0.47
+      ],
+      "ring_barrel_nominal_diametral_clearance_mm": 0.20000000000000018
+    },
+    {
+      "side": "right",
+      "ref": "SW13",
+      "center_mm": [
+        119.225,
+        96.575
+      ],
+      "central_hole_mm": 5.0,
+      "v1_locator_containment_margins_mm": [
+        -0.47,
+        -0.47
+      ],
+      "ring_barrel_nominal_diametral_clearance_mm": 0.20000000000000018
+    },
+    {
+      "side": "right",
+      "ref": "SW34",
+      "center_mm": [
+        83.5063,
+        153.725
+      ],
+      "central_hole_mm": 5.0,
+      "v1_locator_containment_margins_mm": [
+        -0.47,
+        -0.47
+      ],
+      "ring_barrel_nominal_diametral_clearance_mm": 0.20000000000000018
+    },
+    {
+      "side": "right",
+      "ref": "SW1",
+      "center_mm": [
+        52.55,
+        77.525
+      ],
+      "central_hole_mm": 5.0,
+      "v1_locator_containment_margins_mm": [
+        -0.47,
+        -0.47
+      ],
+      "ring_barrel_nominal_diametral_clearance_mm": 0.20000000000000018
+    },
+    {
+      "side": "right",
+      "ref": "SW22",
+      "center_mm": [
+        143.0375,
+        115.625
+      ],
+      "central_hole_mm": 5.0,
+      "v1_locator_containment_margins_mm": [
+        -0.47,
+        -0.47
+      ],
+      "ring_barrel_nominal_diametral_clearance_mm": 0.20000000000000018
+    },
+    {
+      "side": "right",
+      "ref": "SW17",
+      "center_mm": [
+        47.7875,
+        115.625
+      ],
+      "central_hole_mm": 5.0,
+      "v1_locator_containment_margins_mm": [
+        -0.47,
+        -0.47
+      ],
+      "ring_barrel_nominal_diametral_clearance_mm": 0.20000000000000018
+    },
+    {
+      "side": "right",
+      "ref": "SW35",
+      "center_mm": [
+        112.0813,
+        153.725
+      ],
+      "central_hole_mm": 5.0,
+      "v1_locator_containment_margins_mm": [
+        -0.47,
+        -0.47
+      ],
+      "ring_barrel_nominal_diametral_clearance_mm": 0.20000000000000018
+    },
+    {
+      "side": "right",
+      "ref": "SW25",
+      "center_mm": [
+        57.3125,
+        134.675
+      ],
+      "central_hole_mm": 5.0,
+      "v1_locator_containment_margins_mm": [
+        -0.47,
+        -0.47
+      ],
+      "ring_barrel_nominal_diametral_clearance_mm": 0.20000000000000018
+    },
+    {
+      "side": "right",
+      "ref": "SW19",
+      "center_mm": [
+        85.8875,
+        115.625
+      ],
+      "central_hole_mm": 5.0,
+      "v1_locator_containment_margins_mm": [
+        -0.47,
+        -0.47
+      ],
+      "ring_barrel_nominal_diametral_clearance_mm": 0.20000000000000018
+    },
+    {
+      "side": "right",
+      "ref": "SW7",
+      "center_mm": [
+        169.2313,
+        77.525
+      ],
+      "central_hole_mm": 5.0,
+      "v1_locator_containment_margins_mm": [
+        -0.47,
+        -0.47
+      ],
+      "ring_barrel_nominal_diametral_clearance_mm": 0.20000000000000018
+    },
+    {
+      "side": "right",
+      "ref": "SW31",
+      "center_mm": [
+        171.6125,
+        134.675
+      ],
+      "central_hole_mm": 5.0,
+      "v1_locator_containment_margins_mm": [
+        -0.47,
+        -0.47
+      ],
+      "ring_barrel_nominal_diametral_clearance_mm": 0.20000000000000018
+    },
+    {
+      "side": "right",
+      "ref": "SW27",
+      "center_mm": [
+        95.4125,
+        134.675
+      ],
+      "central_hole_mm": 5.0,
+      "v1_locator_containment_margins_mm": [
+        -0.47,
+        -0.47
+      ],
+      "ring_barrel_nominal_diametral_clearance_mm": 0.20000000000000018
+    },
+    {
+      "side": "right",
+      "ref": "SW9",
+      "center_mm": [
+        43.025,
+        96.575
+      ],
+      "central_hole_mm": 5.0,
+      "v1_locator_containment_margins_mm": [
+        -0.47,
+        -0.47
+      ],
+      "ring_barrel_nominal_diametral_clearance_mm": 0.20000000000000018
+    },
+    {
+      "side": "right",
+      "ref": "SW16",
+      "center_mm": [
+        183.5188,
+        96.575
+      ],
+      "central_hole_mm": 5.0,
+      "v1_locator_containment_margins_mm": [
+        -0.47,
+        -0.47
+      ],
+      "ring_barrel_nominal_diametral_clearance_mm": 0.20000000000000018
+    },
+    {
+      "side": "right",
+      "ref": "SW32",
+      "center_mm": [
+        190.6625,
+        134.675
+      ],
+      "central_hole_mm": 5.0,
+      "v1_locator_containment_margins_mm": [
+        -0.47,
+        -0.47
+      ],
+      "ring_barrel_nominal_diametral_clearance_mm": 0.20000000000000018
+    },
+    {
+      "side": "right",
+      "ref": "SW15",
+      "center_mm": [
+        157.325,
+        96.575
+      ],
+      "central_hole_mm": 5.0,
+      "v1_locator_containment_margins_mm": [
+        -0.47,
+        -0.47
+      ],
+      "ring_barrel_nominal_diametral_clearance_mm": 0.20000000000000018
+    },
+    {
+      "side": "right",
+      "ref": "SW37",
+      "center_mm": [
+        152.5625,
+        153.725
+      ],
+      "central_hole_mm": 5.0,
+      "v1_locator_containment_margins_mm": [
+        -0.47,
+        -0.47
+      ],
+      "ring_barrel_nominal_diametral_clearance_mm": 0.20000000000000018
+    },
+    {
+      "side": "right",
+      "ref": "SW5",
+      "center_mm": [
+        128.75,
+        77.525
+      ],
+      "central_hole_mm": 5.0,
+      "v1_locator_containment_margins_mm": [
+        -0.47,
+        -0.47
+      ],
+      "ring_barrel_nominal_diametral_clearance_mm": 0.20000000000000018
+    },
+    {
+      "side": "right",
+      "ref": "SW6",
+      "center_mm": [
+        147.8,
+        77.525
+      ],
+      "central_hole_mm": 5.0,
+      "v1_locator_containment_margins_mm": [
+        -0.47,
+        -0.47
+      ],
+      "ring_barrel_nominal_diametral_clearance_mm": 0.20000000000000018
+    },
+    {
+      "side": "right",
+      "ref": "SW18",
+      "center_mm": [
+        66.8375,
+        115.625
+      ],
+      "central_hole_mm": 5.0,
+      "v1_locator_containment_margins_mm": [
+        -0.47,
+        -0.47
+      ],
+      "ring_barrel_nominal_diametral_clearance_mm": 0.20000000000000018
+    },
+    {
+      "side": "right",
+      "ref": "SW33",
+      "center_mm": [
+        57.3125,
+        153.725
+      ],
+      "central_hole_mm": 5.0,
+      "v1_locator_containment_margins_mm": [
+        -0.47,
+        -0.47
+      ],
+      "ring_barrel_nominal_diametral_clearance_mm": 0.20000000000000018
+    },
+    {
+      "side": "right",
+      "ref": "SW11",
+      "center_mm": [
+        81.125,
+        96.575
+      ],
+      "central_hole_mm": 5.0,
+      "v1_locator_containment_margins_mm": [
+        -0.47,
+        -0.47
+      ],
+      "ring_barrel_nominal_diametral_clearance_mm": 0.20000000000000018
+    }
+  ],
+  "rings": [
+    {
+      "kind": "v1",
+      "triangles": 2304,
+      "closed_oriented": true,
+      "radii_mm": [
+        1.75,
+        2.4,
+        3.0
+      ],
+      "z_levels_mm": [
+        0.0,
+        0.2,
+        1.4
+      ],
+      "radial_wall_mm": 0.6499999999999999,
+      "first_layer_only_flange": true,
+      "total_layers_at_020": 7
+    },
+    {
+      "kind": "mx",
+      "triangles": 2304,
+      "closed_oriented": true,
+      "radii_mm": [
+        2.05,
+        2.4,
+        3.0
+      ],
+      "z_levels_mm": [
+        0.0,
+        0.2,
+        1.4
+      ],
+      "radial_wall_mm": 0.3500000000000001,
+      "first_layer_only_flange": true,
+      "total_layers_at_020": 7
+    }
+  ],
+  "v1_unmodified_assembly": "FAIL: side locators do not fit existing holes; ring cannot cure this",
+  "nominal_v1_center_pin_diameter_mm": 3.2,
+  "v1_drawing_general_tolerance_up_to_5mm": 0.1,
+  "v1_ring_bore_nominal_mm": 3.5,
+  "v1_center_diametral_clearance_before_print_tolerance_mm": [
+    0.2,
+    0.4
+  ],
+  "v1_pin_protrusion_nominal_mm": 2.65,
+  "v1_pin_protrusion_below_1p6_pcb_with_0p2_flange_mm": 0.85,
+  "socket_usable_contact_depth": "unknown: .85 protrusion is not a proven contact engagement",
+  "v1_source": "https://m.kailhswitch.com/Content/upload/pdf/201915927/CPG135001D02_-_Brown_Tactile_Choc-%281%29.pdf",
+  "mx_bore_fit": "unknown for exact TTC selected part; generic MX compatibility is not exact plastic-post tolerance"
+}

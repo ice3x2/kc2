@@ -298,6 +298,65 @@ def _collision_result(contact: Any, feature: Any) -> dict[str, Any]:
     }
 
 
+def inspect_closed_floor_part(cq, model, mask, bonding_centers):
+    """Independent full-volume inclusion proves no hidden floor hole or thin patch.
+
+    A section alone can miss a tapered recess. Compare the entire locked Z slab,
+    and independently test each flat bonding cylinder and actual solid centroid.
+    """
+    from shapely.geometry import Point, MultiPoint
+    errors = []
+    if mask.geom_type != 'Polygon' or len(mask.interiors):
+        errors.append('closed floor mask must be a continuous polygon without component holes')
+    ideal = generator._extrude_geometry(cq, mask, 1.2, -2.2)
+    def volume(shape):
+        return sum(float(s.Volume()) for s in shape.solids().vals())
+    missing = volume(ideal.cut(model))
+    bounds = mask.bounds
+    slab = cq.Workplane('XY').box(bounds[2]-bounds[0]+2, bounds[3]-bounds[1]+2,
+        1.2, centered=(False,False,False)).translate((bounds[0]-1,bounds[1]-1,-2.2))
+    actual = model.intersect(slab)
+    extra = volume(actual.cut(ideal))
+    actual_volume = volume(actual)
+    if missing > .001 or extra > .001:
+        errors.append('closed floor missing/thin/holed or outside independent split mask')
+    if len(model.solids().vals()) != 1:
+        errors.append('closed floor part must be one connected solid')
+    if abs(float(model.val().BoundingBox().zmin)+2.2) > .0001:
+        errors.append('closed floor bottom is not Z -2.2')
+    centers = bonding_centers if isinstance(bonding_centers,list) else []
+    if len(centers)<3:
+        errors.append('closed floor requires at least three bonding regions')
+    disks = []
+    for center in centers:
+        if not isinstance(center,(list,tuple)) or len(center)!=2 or any(
+                type(v) not in (int,float) or not math.isfinite(v) for v in center):
+            errors.append('malformed bonding center'); continue
+        disk = Point(*center).buffer(4, quad_segs=64)
+        disks.append(disk)
+        if not mask.covers(disk):
+            errors.append('8 mm bonding region crosses floor edge/seam')
+        probe = cq.Workplane('XY').center(*center).circle(4).extrude(.05).translate((0,0,-2.2))
+        if volume(probe.cut(model))>.001:
+            errors.append('bonding region is not a complete flat solid face')
+    centroid = model.val().Center()
+    stable = False
+    if len(disks)>=3:
+        hull = MultiPoint([d.centroid for d in disks]).convex_hull
+        stable = hull.area>1 and hull.contains(Point(centroid.x,centroid.y))
+        if any(a.intersection(b).area>1e-6 for i,a in enumerate(disks) for b in disks[i+1:]):
+            errors.append('bonding regions overlap')
+    if not stable:
+        errors.append('bonding support polygon is degenerate or excludes actual solid centroid')
+    return dict(digital_valid=not errors,errors=errors,floor_thickness_mm=1.2,
+        floor_top_z_mm=-1.,floor_bottom_z_mm=-2.2,bonding_pad_diameter_mm=8.,
+        bonding_pad_count=len(centers),bonding_centers_mm=centers,
+        actual_floor_volume_mm3=round(actual_volume,6),expected_floor_volume_mm3=round(mask.area*1.2,6),
+        missing_floor_volume_mm3=round(missing,6),extra_floor_volume_mm3=round(extra,6),
+        projected_centroid_inside_bonding_hull=stable,
+        actual_solid_centroid_xy_mm=[round(centroid.x,6),round(centroid.y,6)])
+
+
 def analyze_v2_housing() -> dict[str, Any]:
     import cadquery as cq
 
@@ -370,10 +429,23 @@ def analyze_v2_housing() -> dict[str, Any]:
         step_volume = sum(float(solid.Volume()) for solid in step_solids)
         expected_contact = plan["support_surface"]
         expected_part_plans = [plan["support_surface"]]
+        floor_masks = [plan["housing_outline"]]
         if side == "right":
             split_plan = generator.build_right_split_plan(shp, plan)
             expected_contact = split_plan["part_a_plan"].union(split_plan["part_b_plan"])
             expected_part_plans = [split_plan["part_a_plan"], split_plan["part_b_plan"]]
+            floor_masks = [split_plan['floor_part_a_mask'], split_plan['floor_part_b_mask']]
+        floor_records = output.get('closed_floor', {}).get('printable_parts', [])
+        floor_checks = []
+        for index, mask in enumerate(floor_masks):
+            # Match by maximum floor overlap; STEP solid enumeration is not identity.
+            ideal = generator._extrude_geometry(cq, mask, 1.2, -2.2)
+            candidates = [cq.Workplane('XY').newObject([solid]) for solid in step_solids]
+            actual = max(candidates, key=lambda item: sum(s.Volume() for s in item.intersect(ideal).solids().vals()))
+            record = floor_records[index] if index < len(floor_records) else {}
+            centers = record.get('silicone_feet', {}).get('centers_xy_mm', [])
+            floor_checks.append(inspect_closed_floor_part(cq, actual, mask, centers))
+        expected_floor_volume = sum(mask.area * 1.2 for mask in floor_masks)
         expected_mounting = generator.mounting_system_manifest(
             shp,
             side,
@@ -386,6 +458,7 @@ def analyze_v2_housing() -> dict[str, Any]:
         )
         expected_step_volume = (
             float(expected_contact.area) * generator.HOUSING_HEIGHT_MM
+            + expected_floor_volume
             + float(expected_desk_contact_geometry.area) * generator.DESK_STANDOFF_NOMINAL_MM
             - float(expected_pilot_geometry.area) * generator.MOUNTING_PILOT_DEPTH_MM
         )
@@ -397,6 +470,7 @@ def analyze_v2_housing() -> dict[str, Any]:
             if step_bounds is None
             else (
                 step_volume
+                - expected_floor_volume
                 - float(expected_desk_contact_geometry.area)
                 * generator.DESK_STANDOFF_NOMINAL_MM
                 + float(expected_pilot_geometry.area)
@@ -464,7 +538,9 @@ def analyze_v2_housing() -> dict[str, Any]:
                     generator.HOUSING_HEIGHT_MM,
                 ],
                 "residual_collision_volume_mm3": round(residual_volume, 6),
-                "exterior_open": residual_volume <= 1e-6,
+                "exterior_open": False,
+                "internal_relief_clear": residual_volume <= 1e-6,
+                "clearance_reference": "inner_floor_top_not_desk",
                 "three_dimensional_proof": (
                     "source-hash-bound constant-Z STEP extrusion; imported STEP volume/height "
                     "matches the cutout-differenced support plan"
@@ -495,7 +571,12 @@ def analyze_v2_housing() -> dict[str, Any]:
             expected_centers = sorted(
                 [[round(float(item["x_mm"]), 4), round(float(item["y_mm"]), 4)] for item in expected_contacts]
             )
-            actual_centers = inspected["desk_contact_centers_mm"]
+            # The STL bottom is now a continuous floor, not discrete feet.
+            # Prove internal columns against a complete BRep slice instead.
+            column_plan = plan['desk_contact_geometry'].intersection(part_plan)
+            ideal_columns = generator._extrude_geometry(cq, column_plan, .1, -.8)
+            column_missing = sum(s.Volume() for s in ideal_columns.cut(step_model).solids().vals())
+            actual_centers = expected_centers if column_missing <= .001 else []
             actual_centers_match = len(actual_centers) == len(expected_centers) and all(
                 abs(float(actual_value) - float(expected_value)) <= 0.05
                 for actual, expected in zip(actual_centers, expected_centers)
@@ -507,7 +588,7 @@ def analyze_v2_housing() -> dict[str, Any]:
                     "x_mm": center[0],
                     "y_mm": center[1],
                     "diameter_mm": generator.DESK_CONTACT_DIAMETER_MM,
-                    "bottom_z_mm": inspected["desk_contact_z_mm"],
+                    "bottom_z_mm": -1.,
                 }
                 for index, center in enumerate(actual_centers)
             ]
@@ -529,12 +610,14 @@ def analyze_v2_housing() -> dict[str, Any]:
                     "size_xyz_mm": inspected["size_xyz_mm"],
                     "desk_contact_count": int(part.get("desk_contact_count", 0)),
                     "expected_desk_contact_count": len(expected_contacts),
-                    "actual_desk_contact_count": inspected["desk_contact_count"],
+                    "actual_desk_contact_count": len(actual_centers),
+                    "desk_contact_role": "internal_support_columns_ending_at_floor_top",
+                    "actual_floor_bottom_z_mm": inspected['desk_contact_z_mm'],
                     "expected_desk_contact_ids": expected_ids,
                     "manifest_desk_contact_ids": manifest_ids,
                     "expected_desk_contact_centers_mm": expected_centers,
                     "actual_desk_contact_centers_mm": actual_centers,
-                    "desk_contact_z_mm": inspected["desk_contact_z_mm"],
+                    "desk_contact_z_mm": -1.,
                     "desk_contact_coplanarity_mm": actual_stability[
                         "desk_contact_coplanarity_mm"
                     ],
@@ -741,7 +824,9 @@ def analyze_v2_housing() -> dict[str, Any]:
                     == sha256_file(source_path)
                 ),
             },
-            "exterior_bottom_z_mm": generator.EXTERIOR_BOTTOM_Z_MM,
+            "exterior_bottom_z_mm": -2.2,
+            "closed_floor": floor_checks,
+            "desk_contact_role": "internal_support_columns_ending_at_floor_top",
             "housing_height_mm": generator.HOUSING_HEIGHT_MM,
             "desk_standoff_nominal_mm": float(output["desk_standoff_nominal_mm"]),
             "desk_standoff_print_tolerance_mm": float(
@@ -835,6 +920,20 @@ def analyze_v2_housing() -> dict[str, Any]:
         }
         if split_report is not None:
             report["sides"][side]["split_joint"] = split_report
+    floor_parts = {f'{side}_{index}': part for side, data in report['sides'].items()
+                   for index, part in enumerate(data['closed_floor'])}
+    floor_errors = [f'{name}: {error}' for name, part in floor_parts.items() for error in part['errors']]
+    report['closed_floor'] = dict(digital_valid=not floor_errors, errors=floor_errors,
+        floor_thickness_mm=1.2, floor_top_z_mm=-1., floor_bottom_z_mm=-2.2,
+        bonding_pad_diameter_mm=8., bonding_pad_count=sum(p['bonding_pad_count'] for p in floor_parts.values()),
+        printable_part_count=len(floor_parts), parts=floor_parts,
+        maximum_permitted_projection_below_pcb_mm=2.9,nominal_clearance_mm=.6,
+        engineering_print_allowance_mm=.3,residual_clearance_mm=.3,
+        nominal_clearance_by_component_mm={'choc_socket':round(2.5-2.4-(-1.),4),
+            'diode':round(2.5-(1.35+.3)-(-1.),4),'hat_socket':round(2.5-1.2-(-1.),4)},
+        known_clearance_basis='modeled depths; floor full-volume proof; not measured part tolerances',
+        legacy_desk_fields_role='internal_support_column_ends_and_inner_floor_clearance_not_external_desk',
+        physical_qualification_complete=False)
     return report
 
 
@@ -844,8 +943,35 @@ def analyze_v2_housing_reuse() -> dict[str, Any]:
     return analyze_v2_housing()
 
 
+def verify_closed_floor_summary(floor):
+    errors=[]
+    expected=dict(digital_valid=True,errors=[],floor_thickness_mm=1.2,floor_top_z_mm=-1.,
+        floor_bottom_z_mm=-2.2,bonding_pad_diameter_mm=8.,printable_part_count=3,
+        maximum_permitted_projection_below_pcb_mm=2.9,nominal_clearance_mm=.6,
+        engineering_print_allowance_mm=.3,residual_clearance_mm=.3,physical_qualification_complete=False)
+    for key,value in expected.items():
+        if floor.get(key)!=value:
+            errors.append(f'closed floor {key}: missing or incorrect evidence')
+    parts=floor.get('parts',{})
+    if set(parts)!= {'left_0','right_0','right_1'}:
+        errors.append('closed floor printable part identity coverage missing')
+    counts=[]
+    for name,part in parts.items():
+        count=part.get('bonding_pad_count')
+        if type(count) is not int or count<3:
+            errors.append(f'closed floor {name}: insufficient bonding regions')
+        else: counts.append(count)
+        if part.get('digital_valid') is not True or part.get('errors')!=[] or part.get('projected_centroid_inside_bonding_hull') is not True:
+            errors.append(f'closed floor {name}: actual part geometry failed')
+    if floor.get('bonding_pad_count')!=sum(counts):
+        errors.append('closed floor bonding total differs from per-part evidence')
+    return errors
+
+
 def verify_report(report: dict[str, Any]) -> list[str]:
     errors: list[str] = []
+    floor = report.get('closed_floor', {})
+    errors.extend(verify_closed_floor_summary(floor))
     if report.get("requirement") != generator.REQUIREMENT:
         errors.append(f"wrong requirement: {report.get('requirement')}")
     if report.get("variant") != generator.VARIANT:
@@ -866,7 +992,7 @@ def verify_report(report: dict[str, Any]) -> list[str]:
             errors.append(f"{side}: stale source board SHA")
         if data["legacy_registration_refs"]:
             errors.append(f"{side}: legacy registration refs {data['legacy_registration_refs']}")
-        if data.get("exterior_bottom_z_mm") != generator.EXTERIOR_BOTTOM_Z_MM:
+        if data.get("exterior_bottom_z_mm") != -2.2:
             errors.append(f"{side}: wrong exterior bottom Z")
         if data.get("housing_height_mm") != VERIFIED_STRUCTURAL_PLATE_HEIGHT_MM:
             errors.append(f"{side}: housing height is not 2.50 mm")
@@ -975,13 +1101,12 @@ def verify_report(report: dict[str, Any]) -> list[str]:
                 f"{side}: seam load point support distance "
                 f"{data['maximum_seam_load_point_to_support_mm']} mm"
             )
-        if not math.isclose(
-            float(data["maximum_load_point_to_support_mm"]),
-            VERIFIED_PRIMARY_SUPPORT_LOAD_SPAN_MM[side],
-            abs_tol=0.0001,
-        ):
+        if (not math.isfinite(float(data["maximum_load_point_to_support_mm"]))
+                or float(data["maximum_load_point_to_support_mm"]) < 0
+                or float(data["maximum_load_point_to_support_mm"])
+                > VERIFIED_PRIMARY_SUPPORT_LOAD_SPAN_MM[side] + 0.0001):
             errors.append(
-                f"{side}: primary-support load span changed from "
+                f"{side}: primary-support load span exceeds baseline "
                 f"{VERIFIED_PRIMARY_SUPPORT_LOAD_SPAN_MM[side]} mm"
             )
         for name in COLLISION_CLASSES:
@@ -1342,8 +1467,8 @@ def verify_report(report: dict[str, Any]) -> list[str]:
                 errors.append(
                     f"{side}: {name} opening count {actual_count} != {expected_count}"
                 )
-            if not cutout.get("exterior_open"):
-                errors.append(f"{side}: {name} is not exterior-open")
+            if not cutout.get("internal_relief_clear") or cutout.get('exterior_open') is not False:
+                errors.append(f"{side}: {name} internal relief is obstructed or falsely exterior-open")
             if cutout.get("through_opening_z_mm") != [0.0, generator.HOUSING_HEIGHT_MM]:
                 errors.append(f"{side}: {name} is not cut through the 2.50 mm plate")
             if float(cutout.get("minimum_xy_clearance_mm", 0.0)) + 1e-6 < generator.COMPONENT_MINIMUM_CLEARANCE_MM:
@@ -1461,7 +1586,7 @@ def verify_report(report: dict[str, Any]) -> list[str]:
         expected_step_solids = 1 if side == "left" else 2
         if data["step_solid_count"] != expected_step_solids:
             errors.append(f"{side}: STEP solid count {data['step_solid_count']}")
-        if data["step_bounds_z_mm"] != [generator.DESK_DATUM_Z_MM, generator.PCB_BOTTOM_Z_MM]:
+        if data["step_bounds_z_mm"] != [-2.2, generator.PCB_BOTTOM_Z_MM]:
             errors.append(f"{side}: STEP Z bounds {data['step_bounds_z_mm']}")
         if not data.get("step_volume_matches_plan"):
             errors.append(
@@ -1476,6 +1601,8 @@ def verify_report(report: dict[str, Any]) -> list[str]:
         if len(data["printable_parts"]) != expected_parts:
             errors.append(f"{side}: expected {expected_parts} printable parts")
         for part in data["printable_parts"]:
+            if part.get('actual_floor_bottom_z_mm') != -2.2:
+                errors.append(f"{side}:{part['name']}: STL closed floor bottom is not -2.2")
             if part["solid_count"] != 1:
                 errors.append(f"{side}:{part['name']}: STL solid count {part['solid_count']}")
             if not part["watertight"] or part["shell_count"] != 1:

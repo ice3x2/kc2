@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import hashlib
+import math
 import os
 import traceback
 from pathlib import Path
@@ -12,6 +13,57 @@ import adsk.core
 import adsk.fusion
 
 DEFAULT_REPO_ROOT = Path(r"C:\Work\git\kc2")
+EXPECTED_BODY_COUNTS = {
+    "left_lower": 1, "right_lower": 2,
+    "left_mx_upper": 1, "right_mx_upper": 2,
+}
+
+
+def export_jobs(case_dir: Path) -> dict[str, Path]:
+    """CON-ARCH-006: preflight all four source files before any export."""
+    jobs = {
+        f"{side}_{kind}": case_dir / f"kc2_{side}_{kind}_housing.step"
+        for kind in ("lower", "mx_upper")
+        for side in ("left", "right")
+    }
+    missing = [str(path) for path in jobs.values() if not path.is_file()]
+    if missing:
+        raise FileNotFoundError("Missing required housing STEP sources: " + ", ".join(missing))
+    return jobs
+
+
+def solid_records(bodies: list) -> list[dict]:
+    if not bodies or any(not body.isSolid for body in bodies):
+        raise RuntimeError("Housing must contain nonempty solid BRep bodies")
+    return [
+        {"bounds_mm": box, "volume_mm3": body.volume * 1000.0}
+        for body, box in zip(bodies, body_bounding_boxes_mm(bodies))
+    ]
+
+
+def validate_round_trip(source: list[dict], reopened: list[dict]) -> None:
+    """Check solids, print bounds and material volume, independently of body order."""
+    if not source or len(source) != len(reopened):
+        raise RuntimeError("Fusion round-trip solid body count changed or is empty")
+    for record in source + reopened:
+        box = record['bounds_mm']
+        volume = record['volume_mm3']
+        if len(box) != 6 or not all(math.isfinite(v) for v in box):
+            raise RuntimeError("Fusion round-trip bounds are invalid")
+        if not math.isfinite(volume) or volume <= 0:
+            raise RuntimeError("Fusion round-trip solid volume is invalid")
+        for axis in range(3):
+            size = box[axis + 3] - box[axis]
+            if size <= 0 or size > 150.001:
+                raise RuntimeError("Fusion body violates the 150 mm print envelope")
+    unmatched = list(reopened)
+    for before in source:
+        index = next((i for i, after in enumerate(unmatched)
+                      if all(abs(a-b) <= 0.001 for a, b in zip(before['bounds_mm'], after['bounds_mm']))
+                      and abs(before['volume_mm3']-after['volume_mm3']) <= max(0.001, before['volume_mm3'] * 1e-6)), None)
+        if index is None:
+            raise RuntimeError("Fusion round-trip bounds or volume changed")
+        unmatched.pop(index)
 
 
 def find_design(document: adsk.core.Document) -> adsk.fusion.Design | None:
@@ -26,8 +78,10 @@ def component_bodies(root: adsk.fusion.Component) -> list[adsk.fusion.BRepBody]:
     bodies = [root.bRepBodies.item(index) for index in range(root.bRepBodies.count)]
     for index in range(root.allOccurrences.count):
         occurrence = root.allOccurrences.item(index)
-        component = occurrence.component
-        bodies.extend(component.bRepBodies.item(body_index) for body_index in range(component.bRepBodies.count))
+        # Autodesk Occurrence.bRepBodies returns root-context body proxies;
+        # component.bRepBodies would discard occurrence placement transforms.
+        # https://help.autodesk.com/cloudhelp/ENU/Fusion-360-API/files/Occurrence_bRepBodies.htm
+        bodies.extend(occurrence.bRepBodies.item(body_index) for body_index in range(occurrence.bRepBodies.count))
     return bodies
 
 
@@ -78,17 +132,15 @@ def run(_context: str) -> None:
     result = {
         "status": "failed",
         "fusion_version": app.version,
-        "requirement": "CON-ARCH-003",
+        "requirement": "CON-ARCH-006",
+        "assembly_mode": "mx_receptacle_with_plate",
+        "order_ready": False,
         "outputs": {},
     }
 
     try:
         import_manager = app.importManager
-        jobs = {
-            "left": case_dir / "kc2_left_lower_housing.step",
-            "right": case_dir / "kc2_right_lower_housing.step",
-        }
-        expected_body_counts = {"left": 1, "right": 2}
+        jobs = export_jobs(case_dir)
         for side, step_path in jobs.items():
             if not step_path.exists():
                 raise FileNotFoundError(step_path)
@@ -106,7 +158,9 @@ def run(_context: str) -> None:
                     raise RuntimeError(f"Imported document has no Fusion design: {step_path}")
                 root = design.rootComponent
                 bodies = component_bodies(root)
-                expected_body_count = expected_body_counts[side]
+                source_solids = solid_records(bodies)
+                validate_round_trip(source_solids, source_solids)
+                expected_body_count = EXPECTED_BODY_COUNTS[side]
                 if len(bodies) != expected_body_count:
                     raise RuntimeError(
                         f"Expected {expected_body_count} imported bodies for {side}, "
@@ -114,7 +168,7 @@ def run(_context: str) -> None:
                     )
                 for index, body in enumerate(bodies, start=1):
                     suffix = f" Part {index}" if expected_body_count > 1 else ""
-                    body.name = f"KC2 {side.capitalize()} Lower Housing{suffix}"
+                    body.name = f"KC2 {side.replace('_', ' ').title()} Housing{suffix}"
 
                 export_manager = design.exportManager
                 export_options = export_manager.createFusionArchiveExportOptions(str(f3d_path))
@@ -141,6 +195,8 @@ def run(_context: str) -> None:
                     archive_bounding_box = bounding_box_mm(archive_bodies)
                     archive_body_bounding_boxes = body_bounding_boxes_mm(archive_bodies)
                     archive_body_names = [body.name for body in archive_bodies]
+                    archive_solids = solid_records(archive_bodies)
+                    validate_round_trip(source_solids, archive_solids)
                 finally:
                     if archive_document:
                         archive_document.close(False)
@@ -159,13 +215,16 @@ def run(_context: str) -> None:
                     "archive_reimport_bounding_box_mm": archive_bounding_box,
                     "archive_reimport_body_bounding_boxes_mm": archive_body_bounding_boxes,
                     "archive_reimport_body_names": archive_body_names,
+                    "source_solids": source_solids,
+                    "archive_reimport_solids": archive_solids,
+                    "solid_round_trip_verified": True,
                 }
             finally:
                 document.close(False)
 
         result["status"] = "pass"
         write_result(result_path, result)
-        ui.messageBox("KC2 left/right Fusion F3D export completed.", "KC2 STEP to F3D")
+        ui.messageBox("KC2 left/right lower and MX upper Fusion F3D exports completed.", "KC2 STEP to F3D")
     except Exception:
         result["error"] = traceback.format_exc()
         write_result(result_path, result)

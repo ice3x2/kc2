@@ -474,7 +474,27 @@ class V2FirmwareContractTests(unittest.TestCase):
 
         self.assertIn("kc2_left.dsn", hardware_readme)
         self.assertIn("kc2_right.dsn", hardware_readme)
-        self.assertIn("reviewed canonical SES", hardware_readme)
+        # CON-ARCH-004 / OPS-ARCH-007: SES provenance is historical; the
+        # active enlarged-land routing is a pad-bound replay, not that SES.
+        self.assertIn("historical pre-MX-revision inputs", hardware_readme)
+        self.assertIn("autoroute/kc2_mx_solder_support_routes.json", hardware_readme)
+        self.assertIn("post-receipt acceptance", hardware_readme)
+        self.assertIn("not complete assembly compatibility", hardware_readme)
+        import pcbnew
+        from tools.kc2_solder_route_snapshot import capture
+
+        snapshot = json.loads(
+            (verifier.ROOT / "hardware/kicad/autoroute/kc2_mx_solder_support_routes.json")
+            .read_text(encoding="utf-8")
+        )
+        self.assertEqual(snapshot["schema"], 2)
+        for side in ("left", "right"):
+            board = pcbnew.LoadBoard(str(
+                verifier.ROOT / f"hardware/kicad/kc2_{side}/kc2_{side}.kicad_pcb"
+            ))
+            actual = capture(board)
+            self.assertEqual(actual, snapshot["sides"][side])
+            self.assertIn(actual["route_digest_sha256"], hardware_readme)
         self.assertIn("controller-r3", srs)
         self.assertIn("controller-r3", summary)
         self.assertNotIn("current-MH `kc2_left/right-x3-v2-70-es1b-mh-r2.dsn`", srs)
@@ -509,6 +529,17 @@ class V2FirmwareContractTests(unittest.TestCase):
         self.assertNotIn("Fourteen focused housing tests pass", srs)
         self.assertNotIn("Twelve focused housing tests pass", srs)
 
+        self.assertEqual(
+            generation["canonical_route_evidence_role"],
+            "historical_pre_mx_revision_base_only",
+        )
+        replay = generation["mx_solder_route_replay"]
+        self.assertEqual(
+            replay["path"], "hardware/kicad/autoroute/kc2_mx_solder_support_routes.json"
+        )
+        self.assertEqual(replay["sha256"], verifier.sha256_file(verifier.ROOT / replay["path"]))
+        # Keep the exact historical provenance checks, explicitly scoped above;
+        # they must never be mistaken for the current route reconstruction.
         self.assertEqual(
             generation["canonical_route_evidence"],
             {

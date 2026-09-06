@@ -1,7 +1,7 @@
-"""Generate the canonical KC2 X3 V2 2.50 mm lower support plates.
+"""Generate KC2 support webs with integrated closed floors and silicone-pad plans.
 
 The V2 design supersedes the former canonical 77-key housing. It subtracts
-exterior-open underside-component envelopes from the current canonical V2 board
+internal underside-component reliefs from the current canonical V2 board
 outlines, preserves the distributed load path, and adds only the
 CON-ARCH-006 M1.4 MH clamp/registration columns and provisional blind pilots.
 """
@@ -102,6 +102,11 @@ DESK_STANDOFF_NOMINAL_MM = 1.00
 DESK_STANDOFF_PRINT_TOLERANCE_MM = 0.30
 DESK_DATUM_Z_MM = EXTERIOR_BOTTOM_Z_MM - DESK_STANDOFF_NOMINAL_MM
 DESK_CONTACT_DIAMETER_MM = POST_DIAMETER_MM
+CLOSED_FLOOR_TOP_Z_MM = -1.0
+CLOSED_FLOOR_THICKNESS_MM = 1.2
+CLOSED_FLOOR_BOTTOM_Z_MM = -2.2
+SILICONE_FOOT_DIAMETER_MM = 8.0
+SILICONE_FOOT_EDGE_RESERVE_MM = .8
 MOUNTING_NPTH_DIAMETER_MM = 1.60
 MOUNTING_SUPPORT_LAND_DIAMETER_MM = 3.00
 MOUNTING_PILOT_DIAMETER_MM = 1.10
@@ -507,8 +512,15 @@ def extract_board(pcbnew: Any, path: Path) -> dict[str, Any]:
                 if pad.GetAttribute() == pcbnew.PAD_ATTRIB_PTH:
                     classes["mx_pins_pads_fillets"].append(
                         {
-                            "kind": "box",
-                            "bounds": _box(pcbnew, pad),
+                            **({
+                                "kind": "oriented_oval",
+                                "center": _point(pcbnew, pad.GetPosition()),
+                                "size_x_mm": pcbnew.ToMM(pad.GetSize().x),
+                                "size_y_mm": pcbnew.ToMM(pad.GetSize().y),
+                                "angle_deg": float(pad.GetOrientationDegrees()),
+                            } if pad.GetShape() == pcbnew.PAD_SHAPE_OVAL else {
+                                "kind": "box", "bounds": _box(pcbnew, pad),
+                            }),
                             "allowance_mm": FILLET_ALLOWANCE_MM,
                             "ref": ref,
                         }
@@ -881,7 +893,7 @@ def _feature_geometry(shp: dict[str, Any], feature: dict[str, Any], bounds: tupl
         start = _reflect_xy(bounds, *feature["start"])
         end = _reflect_xy(bounds, *feature["end"])
         geometry = shp["LineString"]([start, end]).buffer(float(feature["radius_mm"]), cap_style="round")
-    elif kind == "capsule":
+    elif kind in {"capsule", "oriented_oval"}:
         x, y = _reflect_xy(bounds, *feature["center"])
         size_x = float(feature["size_x_mm"])
         size_y = float(feature["size_y_mm"])
@@ -894,6 +906,8 @@ def _feature_geometry(shp: dict[str, Any], feature: dict[str, Any], bounds: tupl
                 radius, cap_style="round", quad_segs=12
             )
         angle = -float(feature.get("angle_deg", 0.0))
+        if kind == "oriented_oval" and size_y > size_x:
+            angle += 90.0
         if abs(angle) > 1e-9:
             geometry = shp["affinity"].rotate(geometry, angle, origin=(x, y))
     else:
@@ -1098,7 +1112,7 @@ def build_plan_geometry(shp: dict[str, Any], side: str, board_data: dict[str, An
         side,
         support_surface,
         rail,
-        all_component_cutouts,
+        all_component_cutouts.union(shp["unary_union"](list(routed_copper_wear_geometries.values()))),
         switches,
         bounds,
     )
@@ -1365,6 +1379,10 @@ def choose_support_posts(
         join_style="round",
         quad_segs=16,
     )
+    # Bottom tracks may lie under intact mask: they still need the SRS wear
+    # reserve. The old unused `forbidden` argument let newly feasible oval-pad
+    # support positions sit directly on routed copper.
+    allowed_centers = allowed_centers.difference(forbidden.buffer(radius + POST_CLEARANCE_MM))
     mount_centers = [
         _reflect_xy(raw_bounds, board_x, board_y)
         for _ref, board_x, board_y in MOUNTING_HOLE_COORDINATES_MM[side]
@@ -1508,6 +1526,90 @@ def build_cad(cq: Any, shp: dict[str, Any], plan: dict[str, Any]) -> Any:
         pilot_solids.append(cutter.val())
     pilot_cutters = cq.Workplane(obj=cq.Compound.makeCompound(pilot_solids))
     return housing.union(feet).cut(pilot_cutters).clean()
+
+
+def closed_floor_parameters() -> dict[str, Any]:
+    """The old desk-foot datum is now an internal column/floor junction."""
+    return dict(top_z_mm=CLOSED_FLOOR_TOP_Z_MM,bottom_z_mm=CLOSED_FLOOR_BOTTOM_Z_MM,
+        thickness_mm=CLOSED_FLOOR_THICKNESS_MM,continuous_per_part=True,
+        maximum_component_projection_mm=2.9,nominal_projection_clearance_mm=.6,
+        print_allowance_mm=.3,residual_clearance_mm=.3,
+        nominal_clearance_by_component_mm={'choc_socket':1.1,'diode':1.85,'hat_socket':2.3},
+        unknown_projection_qualification='measure_received_lead_post_and_solder_depth_before_assembly',
+        silicone_foot_diameter_mm=SILICONE_FOOT_DIAMETER_MM,
+        silicone_foot_count_per_part=4,silicone_thickness_mm=None,
+        physical_qualification=False,solder_access='remove_PCB_from_lower_housing',
+        legacy_desk_datum_role='internal_support_column_ends_and_floor_top')
+
+
+def silicone_foot_layout(shp: dict[str, Any], floor_plan: Any, centroid_xy: list[float]) -> dict[str, Any]:
+    from shapely.ops import nearest_points
+    inner=floor_plan.buffer(-(SILICONE_FOOT_DIAMETER_MM/2+SILICONE_FOOT_EDGE_RESERVE_MM))
+    if inner.is_empty:
+        raise ValueError('No complete diameter8 silicone bonding region fits this floor')
+    x0,y0,x1,y1=floor_plan.bounds
+    centers=[]
+    for corner in [(x0,y0),(x1,y0),(x1,y1),(x0,y1)]:
+        point=nearest_points(inner,shp['Point'](*corner))[0]
+        centers.append([float(point.x),float(point.y)])
+    points=[shp['Point'](*c) for c in centers]
+    if any(a.distance(b)<SILICONE_FOOT_DIAMETER_MM for i,a in enumerate(points) for b in points[i+1:]):
+        raise ValueError('Silicone bonding regions overlap')
+    hull=shp['unary_union'](points).convex_hull
+    centroid=shp['Point'](*centroid_xy)
+    if hull.geom_type!='Polygon' or not hull.contains(centroid):
+        raise ValueError('Silicone support polygon does not contain part mass centroid')
+    disks=[p.buffer(SILICONE_FOOT_DIAMETER_MM/2,quad_segs=24) for p in points]
+    if not all(floor_plan.buffer(1e-7).covers(d) for d in disks):
+        raise ValueError('Silicone bonding region crosses edge or seam')
+    return dict(centers_xy_mm=centers,diameter_mm=SILICONE_FOOT_DIAMETER_MM,
+        minimum_edge_reserve_mm=min(d.distance(floor_plan.boundary) for d in disks),
+        part_centroid_xy_mm=centroid_xy,centroid_inside_support_polygon=True,
+        centroid_to_support_polygon_edge_mm=centroid.distance(hull.boundary),
+        bonding_z_mm=CLOSED_FLOOR_BOTTOM_Z_MM,flat_bonding_regions=True,
+        adhesive_and_slip_qualification='pending_received_silicone_and_surface_preparation')
+
+
+def inspect_closed_floor(cq: Any, model: Any, floor_plan: Any) -> dict[str, Any]:
+    # Full-area interior axial slab: any unintended drilled opening loses volume.
+    expected=_extrude_geometry(cq,floor_plan,.8,CLOSED_FLOOR_BOTTOM_Z_MM+.2)
+    volume=float(model.intersect(expected).val().Volume())
+    expected_volume=float(floor_plan.area)*.8
+    whole=_extrude_geometry(cq,floor_plan,CLOSED_FLOOR_THICKNESS_MM,CLOSED_FLOOR_BOTTOM_Z_MM)
+    full_volume=float(model.intersect(whole).val().Volume())
+    full_expected=float(floor_plan.area)*CLOSED_FLOOR_THICKNESS_MM
+    errors=[]
+    if abs(volume-expected_volume)>max(.001,expected_volume*1e-6):
+        errors.append('floor_section_volume_mm3: floor is not continuous across full plan')
+    if abs(full_volume-full_expected)>max(.001,full_expected*1e-6):
+        errors.append('floor_full_volume_mm3: floor thickness or bonding face has missing material')
+    if abs(model.val().BoundingBox().zmin-CLOSED_FLOOR_BOTTOM_Z_MM)>1e-6:
+        errors.append('floor_bottom_z_mm: unexpected exterior bottom')
+    return dict(floor_plan_area_mm2=float(floor_plan.area),
+        floor_section_volume_mm3=volume,expected_floor_section_volume_mm3=expected_volume,
+        floor_full_volume_mm3=full_volume,expected_floor_full_volume_mm3=full_expected,
+        floor_section_z_range_mm=[-2.,-1.2],geometry_errors=errors)
+
+
+def attach_closed_floor(cq: Any, shp: dict[str, Any], part: Any, floor_plan: Any,
+                        name: str) -> tuple[Any,dict[str,Any]]:
+    if floor_plan.geom_type!='Polygon' or floor_plan.interiors:
+        raise ValueError('Floor mask must be one polygon without component cutout holes')
+    floor=_extrude_geometry(cq,floor_plan,CLOSED_FLOOR_THICKNESS_MM,CLOSED_FLOOR_BOTTOM_Z_MM)
+    model=part.union(floor).clean()
+    if len(model.solids().vals())!=1 or not model.val().isValid():
+        raise RuntimeError(f'{name}: integrated floor is disconnected or invalid')
+    record=inspect_closed_floor(cq,model,floor_plan)
+    added=float(model.val().Volume()-part.val().Volume())
+    expected=float(floor_plan.area)*CLOSED_FLOOR_THICKNESS_MM
+    if abs(added-expected)>max(.001,expected*1e-6):
+        record['geometry_errors'].append('floor volume addition altered existing support web')
+    if record['geometry_errors']:
+        raise RuntimeError(f'{name}: {record["geometry_errors"]}')
+    center=model.val().Center()
+    record.update(name=name,volume_added_mm3=added,expected_floor_volume_mm3=expected,
+                  floor_mask_has_holes=False,silicone_feet=silicone_foot_layout(shp,floor_plan,[center.x,center.y]))
+    return model,record
 
 
 def _support_plan_union(shp: dict[str, Any], posts: list[dict[str, Any]]) -> Any:
@@ -1884,11 +1986,11 @@ def mounting_system_manifest(
         "primary_support_load_span_unchanged": bool(
             key_load_network_matches
             and len(plan["support_posts"]) == EXPECTED_DISTRIBUTED_SUPPORT_COUNTS[side]
-            and math.isclose(
-                _maximum_load_distance(shp, plan),
-                EXPECTED_PRIMARY_SUPPORT_LOAD_SPAN_MM[side],
-                abs_tol=0.0001,
-            )
+            # Keep the historical manifest key for consumers: the load-path
+            # guarantee is unchanged when a more accurate envelope improves it.
+            # Requiring numeric equality would reject safer, shorter spans.
+            and _maximum_load_distance(shp, plan)
+            <= EXPECTED_PRIMARY_SUPPORT_LOAD_SPAN_MM[side] + 0.0001
         ),
     }
 
@@ -1932,7 +2034,10 @@ def build_right_split_plan(shp: dict[str, Any], plan: dict[str, Any]) -> dict[st
     # The enlarged P3 one-per-key desk contacts leave an exact collision-free
     # second capture lane at board Y=125.50 mm; the historical 125.60 mm lane
     # touches a support disk after the 2.40 mm support enlargement.
-    for target_board_y in (113.10, 125.50):
+    # V1/MX shared locator relief narrows the first admissible lane to
+    # board Y=112.50 mm. Move its center 0.60 mm, keeping the complete key,
+    # slot and all existing component/support clearances unchanged.
+    for target_board_y in (112.50, 125.50):
         target_y = target_board_y - float(plan["raw_bounds"][1])
         found = False
         for y_offset in (
@@ -2003,6 +2108,8 @@ def build_right_split_plan(shp: dict[str, Any], plan: dict[str, Any]) -> dict[st
     part_b_plan, part_b_discarded = primary_polygon(part_b_plan_raw, "part_b")
     return {
         "split_x_mm": round(split_x, 4),
+        "floor_part_a_mask": plan["housing_outline"].intersection(left_base.union(key_union)),
+        "floor_part_b_mask": plan["housing_outline"].intersection(right_base.difference(slot_union)),
         "capture_points": capture_points,
         "key_union": key_union,
         "slot_union": slot_union,
@@ -2137,6 +2244,24 @@ def _maximum_seam_support_distance(shp: dict[str, Any], side: str, plan: dict[st
     )
 
 
+def mx_socket_stack_manifest() -> dict[str, Any]:
+    """CON-ARCH-004/006 nominal seller geometry, never a tolerance proof."""
+    protrusion = round(3.0 - .2 - PCB_THICKNESS_MM, 4)
+    return {
+        "selection": "open_bottom_hat",
+        "source": "https://ko.aliexpress.com/item/1005010364025678.html",
+        "nominal_total_length_mm": 3.0,
+        "nominal_barrel_outer_diameter_mm": 1.45,
+        "nominal_flange_outer_diameter_mm": 2.0,
+        "nominal_flange_above_pcb_mm": .2,
+        "nominal_barrel_below_pcb_mm": protrusion,
+        "nominal_socket_to_desk_clearance_mm": round(PCB_BOTTOM_Z_MM-protrusion-DESK_DATUM_Z_MM, 4),
+        "qualified_minimum_desk_clearance_mm": None,
+        "pending": ["socket_tolerances", "switch_pin_protrusion", "solder_fillet_depth", "physical_fit"],
+        "order_ready": False,
+    }
+
+
 def component_cutout_manifest(plan: dict[str, Any]) -> dict[str, Any]:
     battery_termination_contract = plan["service_pad_contracts"]["battery_termination"]
     power_switch_contract = plan["service_pad_contracts"]["power_switch_leads"]
@@ -2160,6 +2285,7 @@ def component_cutout_manifest(plan: dict[str, Any]) -> dict[str, Any]:
             "assembly_note": "Exterior-open cutouts continue every switch NPTH below the PCB.",
         },
         "mx_pins_pads_fillets": {
+            "selected_receptacle": mx_socket_stack_manifest(),
             "official_body_depth_max_mm": None,
             "assembly_allowance_mm": None,
             "modeled_max_depth_mm": None,
@@ -2250,7 +2376,10 @@ def component_cutout_manifest(plan: dict[str, Any]) -> dict[str, Any]:
         result[name] = {
             "opening_count": plan["component_cutout_counts"][name],
             "minimum_xy_clearance_mm": COMPONENT_CUTOUT_CLEARANCE_MM,
-            "exterior_open": True,
+            "exterior_open": False,
+            "internal_relief": True,
+            "floor_blocks_through_access": True,
+            "clearance_reference": "inner_floor_top_not_desk",
             "through_opening_z_mm": [EXTERIOR_BOTTOM_Z_MM, HOUSING_HEIGHT_MM],
             "opening_plan_area_mm2": round(float(geometry.area), 4),
             "minimum_exterior_bottom_clearance_mm": (
@@ -2266,15 +2395,20 @@ def component_cutout_manifest(plan: dict[str, Any]) -> dict[str, Any]:
             "minimum_desk_clearance_mm": (
                 None if minimum_desk_clearance is None else round(minimum_desk_clearance, 2)
             ),
+            "nominal_inner_floor_clearance_mm": nominal_desk_clearance,
+            "minimum_inner_floor_clearance_mm": minimum_desk_clearance,
+            "maximum_permitted_projection_mm": 2.9,
             **perimeter_fields,
             **modeled_depths[name],
         }
+        result[name]['assembly_note']='Internal relief above closed floor; solder/trim with PCB removed. Measure actual projection <=2.90 mm before assembly; do not force or grind switch/socket bodies.'
     return result
 
 
 def generate_outputs(output_dir: Path, kicad_python: Path) -> Path:
     import cadquery as cq
 
+    output_dir = output_dir.resolve()
     shp = legacy_geometry.require_shapely()
     extracted = run_extractor(kicad_python)
     output_dir.mkdir(parents=True, exist_ok=True)
@@ -2292,6 +2426,8 @@ def generate_outputs(output_dir: Path, kicad_python: Path) -> Path:
         "generator_sha256": sha256_file(GENERATOR_PATH),
         "coordinate_system": "board-local, X-reflected physical lower-housing assembly view",
         "order_ready": False,
+        "mx_receptacle_stack": mx_socket_stack_manifest(),
+        "closed_floor": closed_floor_parameters(),
         "parameters": {
             "exterior_bottom_z_mm": EXTERIOR_BOTTOM_Z_MM,
             "housing_height_mm": HOUSING_HEIGHT_MM,
@@ -2377,7 +2513,8 @@ def generate_outputs(output_dir: Path, kicad_python: Path) -> Path:
             "note": (
                 "M1.4 features clamp/register the PCB but remain a provisional physical interface; "
                 "the 2.50 mm plate, perimeter rail, and one dedicated desk-contact support per "
-                "switch remain the independent vertical load path."
+                "switch remain the independent vertical load path through the integrated floor; "
+                "external silicone feet, adhesive and floor flexure require physical qualification."
             ),
         },
         "physical_deflection_test": {
@@ -2400,14 +2537,22 @@ def generate_outputs(output_dir: Path, kicad_python: Path) -> Path:
         step_path = output_dir / f"kc2_{side}_lower_housing.step"
         split_joint = None
         part_plans = [plan["support_surface"]]
+        floor_plans = [plan["housing_outline"]]
         if side == "right":
             parts, split_joint = split_right_housing_keyed(cq, shp, housing, plan)
             split_plan = build_right_split_plan(shp, plan)
             part_plans = [split_plan["part_a_plan"], split_plan["part_b_plan"]]
-            export_model = cq.Workplane(obj=cq.Compound.makeCompound([part.val() for part in parts]))
+            floor_plans = [split_plan['floor_part_a_mask'],split_plan['floor_part_b_mask']]
         else:
             parts = [housing]
-            export_model = housing
+        closed_parts, floor_records = [], []
+        for index,(part,floor_plan) in enumerate(zip(parts,floor_plans)):
+            name='whole' if side=='left' else f'part_{chr(97+index)}'
+            closed,record=attach_closed_floor(cq,shp,part,floor_plan,name)
+            closed_parts.append(closed)
+            floor_records.append(record)
+        parts=closed_parts
+        export_model=cq.Workplane(obj=cq.Compound.makeCompound([part.val() for part in parts])) if side=='right' else parts[0]
         mounting_system = mounting_system_manifest(shp, side, plan, part_plans)
         if (
             not mounting_system["part_distribution_matches_plan"]
@@ -2448,7 +2593,18 @@ def generate_outputs(output_dir: Path, kicad_python: Path) -> Path:
         stale_right_stl = output_dir / "kc2_right_lower_housing.stl"
         if side == "right" and stale_right_stl.exists():
             stale_right_stl.unlink()
+        foot_svg=output_dir/f'kc2_{side}_silicone_foot_layout.svg'
+        x0,y0,x1,y1=plan['housing_outline'].bounds
+        shapes=''.join(p.svg(scale_factor=.1,fill_color=c) for p,c in zip(floor_plans,['#dce6ed','#e7dfcf']))
+        for record in floor_records:
+            for index,(x,y) in enumerate(record['silicone_feet']['centers_xy_mm']):
+                shapes+=f'<circle cx="{x}" cy="{y}" r="4" fill="none" stroke="blue" stroke-width=".2"/><text x="{x}" y="{y}" font-size="2">{record["name"]}-{index+1}</text>'
+        shapes+=f'<text x="{x0+2}" y="{y0+4}" font-size="2">CON-ARCH-006: D8 flat bonding regions; housing XY; underside Z=-2.2 mm; adhesive unqualified</text>'
+        foot_svg.write_text(f'<svg xmlns="http://www.w3.org/2000/svg" width="{x1-x0}mm" height="{y1-y0}mm" viewBox="{x0} {y0} {x1-x0} {y1-y0}">{shapes}</svg>',encoding='utf-8')
         manifest["outputs"][side] = {
+            "closed_floor": {**closed_floor_parameters(),"printable_parts":floor_records,
+                "foot_layout_svg":foot_svg.relative_to(ROOT).as_posix(),"foot_layout_svg_sha256":sha256_file(foot_svg)},
+            "desk_contact_role": "internal_support_columns_ending_at_floor_top",
             "source_board": board_data["path"],
             "source_board_sha256": sha256_file(BOARD_PATHS[side]),
             "key_count": len(board_data["switches"]),
@@ -2489,8 +2645,9 @@ def generate_outputs(output_dir: Path, kicad_python: Path) -> Path:
                 2,
             ),
             "minimum_open_component_to_desk_clearance_basis": (
-                "minimum controlled post-print clearance beneath bottom-side Choc socket and "
-                "1N4148W SOD-123 envelopes; BAT1 is above the carrier and has no lower-housing body cutout"
+                "Legacy key names now denote inner-floor clearance, not physical desk clearance. "
+                "Controlled Choc/diode allowances retained; unknown lead/post/solder depths must "
+                "meet2.90 mm maximum projection. BAT1 remains above the carrier."
             ),
             "reset_local_support": plan["reset_local_support"],
             "desk_contacts": plan["desk_contacts"],

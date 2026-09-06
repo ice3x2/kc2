@@ -1,0 +1,30 @@
+{
+  "requirement": "CON-ARCH-006",
+  "native_archive_blockers": [],
+  "source_sha256": {
+    "hardware/case/kc2_left_lower_housing.f3d": "9ad68833aac235733d76d7bfd0795cf02c3cc996fbc6239cd77830f83ab6e4c2",
+    "hardware/case/kc2_right_lower_housing.f3d": "d46982388b7631f76d1e1d1166d9e6e86aed642738be076e23aa34ae9ceb253f",
+    "hardware/case/kc2_left_mx_upper_housing.f3d": "0494cf50c653cc59dc0b52b6e16166a53ec61c2a428b625f5a8be518e815fcd2",
+    "hardware/case/kc2_right_mx_upper_housing.f3d": "9f54ac37e369b6ebbd5d579f482c399fb61fb105ed633c9c63921d53719f0e0d",
+    "hardware/case/kc2_left_lower_housing.step": "e6df3db7f0237d535a0b59981f599747a8cc7ac3ba5016d1f8dff0856af44e02",
+    "hardware/case/kc2_right_lower_housing.step": "60f5de6a5d42716e203a39025597b9343baf55c35b698d5ace4fcb3d14928e50",
+    "hardware/case/kc2_left_mx_upper_housing.step": "fecce02a234f49937a6973801303e65dd534b1c724e6e168a9752442a60dcca1",
+    "hardware/case/kc2_right_mx_upper_housing.step": "4e0b0561b60a26298e6944b8526657a91afa9664812f0d569026c4cfca01d279",
+    "hardware/case/kc2_fusion_export_result.json": "930aa96b2c5646d0c4a7490ea41b853f722926acfdbb1a4a5949b043e2eee822",
+    "tools/verify_kc2_housing_f3d.py": "a9766f05002cdfd15d64edbd979b96aed486f99696d9af316bafa3d37a47788b"
+  },
+  "source_sha256_after": {
+    "hardware/case/kc2_left_lower_housing.f3d": "9ad68833aac235733d76d7bfd0795cf02c3cc996fbc6239cd77830f83ab6e4c2",
+    "hardware/case/kc2_right_lower_housing.f3d": "d46982388b7631f76d1e1d1166d9e6e86aed642738be076e23aa34ae9ceb253f",
+    "hardware/case/kc2_left_mx_upper_housing.f3d": "0494cf50c653cc59dc0b52b6e16166a53ec61c2a428b625f5a8be518e815fcd2",
+    "hardware/case/kc2_right_mx_upper_housing.f3d": "9f54ac37e369b6ebbd5d579f482c399fb61fb105ed633c9c63921d53719f0e0d",
+    "hardware/case/kc2_left_lower_housing.step": "e6df3db7f0237d535a0b59981f599747a8cc7ac3ba5016d1f8dff0856af44e02",
+    "hardware/case/kc2_right_lower_housing.step": "60f5de6a5d42716e203a39025597b9343baf55c35b698d5ace4fcb3d14928e50",
+    "hardware/case/kc2_left_mx_upper_housing.step": "fecce02a234f49937a6973801303e65dd534b1c724e6e168a9752442a60dcca1",
+    "hardware/case/kc2_right_mx_upper_housing.step": "4e0b0561b60a26298e6944b8526657a91afa9664812f0d569026c4cfca01d279",
+    "hardware/case/kc2_fusion_export_result.json": "930aa96b2c5646d0c4a7490ea41b853f722926acfdbb1a4a5949b043e2eee822",
+    "tools/verify_kc2_housing_f3d.py": "a9766f05002cdfd15d64edbd979b96aed486f99696d9af316bafa3d37a47788b"
+  },
+  "sources_unchanged": true,
+  "physical_qualification": false
+}

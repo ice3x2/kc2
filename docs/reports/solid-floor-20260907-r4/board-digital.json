@@ -1,0 +1,2251 @@
+{
+  "requirement": "CON-ARCH-004",
+  "status": "canonical_not_orderable_pending_physical_evidence",
+  "boards": {
+    "left": {
+      "switch_count": 31,
+      "diode_count": 31,
+      "diode_footprint_names": [
+        "D_1N4148W_SOD123_HandSolder_DiodesInc"
+      ],
+      "diode_values": [
+        "1N4148W-13-F_DiodesInc_SOD123"
+      ],
+      "diode_pin_net_errors": [],
+      "diode_footprint_geometry_errors": [],
+      "switch_footprint_names": [
+        "SW_Choc_V2_Socket_MX_THT"
+      ],
+      "alternate_contact_net_mismatches": [],
+      "switch_footprint_geometry_errors": [],
+      "switch_layout_errors": [],
+      "switch_layout_max_position_error_mm": 0.0001,
+      "stabilizer_refs": [],
+      "registration_hole_count": 0,
+      "registration_hole_errors": [],
+      "legacy_mount_hole_refs": [],
+      "mounting_hole_positions_mm": [
+        [
+          "MH1",
+          112.8625,
+          43.0
+        ],
+        [
+          "MH2",
+          144.1125,
+          66.25
+        ],
+        [
+          "MH3",
+          39.3625,
+          111.0
+        ],
+        [
+          "MH4",
+          63.6125,
+          123.0
+        ],
+        [
+          "MH5",
+          81.1125,
+          151.75
+        ],
+        [
+          "MH6",
+          137.3625,
+          153.5
+        ],
+        [
+          "MH7",
+          165.8625,
+          148.75
+        ],
+        [
+          "MH8",
+          75.25,
+          134.0
+        ]
+      ],
+      "mounting_hole_errors": [],
+      "mounting_hole_clearances": {
+        "minimum_npth_edge_to_copper_mm": 1.575,
+        "minimum_driver_to_copper_mm": 0.875,
+        "minimum_driver_to_installed_body_mm": 1.3,
+        "minimum_head_to_installed_body_mm": 1.3,
+        "minimum_head_to_exposed_copper_fillet_mm": 0.875,
+        "minimum_head_to_edge_cuts_mm": 2.15
+      },
+      "mounting_hole_driver_copper_errors": [],
+      "mounting_hole_silkscreen_errors": [],
+      "mounting_hole_head_clearance_errors": [],
+      "route_track_via_count": 876,
+      "route_digest_sha256": "ccc6190a8f46e251261c6ef981fda11bd6524fc547ca358be1cde63a10ad2da3",
+      "registration_label_layers": {},
+      "carrier_power_pad_refs": [
+        "J_BAT1",
+        "SW_PWR1"
+      ],
+      "battery_lead_slot_count": 1,
+      "battery_lead_slot_errors": [],
+      "battery_lead_slot_on_usb_side": true,
+      "forbidden_carrier_power_nets": [],
+      "controller_power_nets": [
+        "BAT+",
+        "GND",
+        "NN_B+"
+      ],
+      "controller_power_geometry": {
+        "errors": [],
+        "battery_to_antenna_keepout_mm": 3.97,
+        "battery_to_socket_pad_copper_mm": 0.42,
+        "service_feature_to_antenna_keepout_mm": {
+          "BAT_LEAD_SLOT1": 30.97,
+          "J_BAT1": 33.52,
+          "SW_PWR1": 29.905,
+          "SW_RST1": 19.938
+        },
+        "minimum_service_feature_to_antenna_keepout_mm": 19.938,
+        "maximum_parallel_centerline_separation_mm": 1.972,
+        "power_loop_area_mm2": 64.508,
+        "maximum_antenna_parallel_segment_mm": 8.45
+      },
+      "controller_service_clearance": {
+        "reset_body_to_nearest_18_05_keycap_mm": 3.2,
+        "nearest_keycap_reference": "SW5",
+        "reset_courtyard_to_u1_socket_copper_mm": 1.73,
+        "errors": []
+      },
+      "controller_service_clearance_errors": [],
+      "controller_socket_row_spacing_mm": 15.24,
+      "controller_contract_errors": [],
+      "reset_contract_errors": [],
+      "minimum_diode_to_unused_npth_clearance_mm": 1.201,
+      "minimum_diode_to_unrelated_pad_clearance_mm": 1.125,
+      "minimum_diode_to_unrelated_exposed_copper_clearance_mm": 1.125,
+      "minimum_diode_to_socket_body_clearance_mm": 2.225,
+      "minimum_diode_fillet_to_switch_assembly_clearance_mm": 0.525,
+      "minimum_diode_fillet_to_unrelated_route_mm": 0.737,
+      "minimum_diode_fillet_to_edge_cuts_clearance_mm": 1.975,
+      "diode_clearances": [
+        {
+          "reference": "D1",
+          "unused_npth_mm": 3.187181356622183,
+          "switch_pad_mm": 1.125,
+          "socket_body_mm": 2.2250000000000014,
+          "unrelated_exposed_copper_mm": 1.125,
+          "fillet_to_switch_assembly_mm": 0.5250000000000057,
+          "fillet_to_unrelated_route_mm": 1.7665106396740176,
+          "edge_cuts_mm": 12.225000000000001
+        },
+        {
+          "reference": "D2",
+          "unused_npth_mm": 3.200000000000017,
+          "switch_pad_mm": 1.2250000000000085,
+          "socket_body_mm": 3.8999999999999915,
+          "unrelated_exposed_copper_mm": 1.2250000000000085,
+          "fillet_to_switch_assembly_mm": 0.6250000000000142,
+          "fillet_to_unrelated_route_mm": 0.736699999999999,
+          "edge_cuts_mm": 12.225000000000009
+        },
+        {
+          "reference": "D3",
+          "unused_npth_mm": 1.2250000000000085,
+          "switch_pad_mm": 2.667513000000014,
+          "socket_body_mm": 2.2461077445216135,
+          "unrelated_exposed_copper_mm": 5.533985905294664,
+          "fillet_to_switch_assembly_mm": 0.9250000000000114,
+          "fillet_to_unrelated_route_mm": 5.584400000000002,
+          "edge_cuts_mm": 1.9750000000000085
+        },
+        {
+          "reference": "D4",
+          "unused_npth_mm": 1.2249999999999943,
+          "switch_pad_mm": 2.6675129999999996,
+          "socket_body_mm": 2.2461077445216096,
+          "unrelated_exposed_copper_mm": 5.734999999999999,
+          "fillet_to_switch_assembly_mm": 0.9249999999999972,
+          "fillet_to_unrelated_route_mm": 0.8749990000000025,
+          "edge_cuts_mm": 1.9750000000000085
+        },
+        {
+          "reference": "D5",
+          "unused_npth_mm": 1.2249999999999943,
+          "switch_pad_mm": 2.6675129999999996,
+          "socket_body_mm": 2.2461077445216135,
+          "unrelated_exposed_copper_mm": 5.734999999999999,
+          "fillet_to_switch_assembly_mm": 0.9249999999999972,
+          "fillet_to_unrelated_route_mm": 1.1574000000000098,
+          "edge_cuts_mm": 2.4669196073520423
+        },
+        {
+          "reference": "D6",
+          "unused_npth_mm": 1.2249999999999943,
+          "switch_pad_mm": 2.6675129999999854,
+          "socket_body_mm": 2.2461077445216056,
+          "unrelated_exposed_copper_mm": 5.734999999999999,
+          "fillet_to_switch_assembly_mm": 0.924999999999983,
+          "fillet_to_unrelated_route_mm": 1.1749989999999997,
+          "edge_cuts_mm": 19.589814477171547
+        },
+        {
+          "reference": "D7",
+          "unused_npth_mm": 1.224999999999966,
+          "switch_pad_mm": 2.6675129999999854,
+          "socket_body_mm": 2.2461077445216056,
+          "unrelated_exposed_copper_mm": 5.735000000000014,
+          "fillet_to_switch_assembly_mm": 0.9249999999999545,
+          "fillet_to_unrelated_route_mm": 1.6605321335668937,
+          "edge_cuts_mm": 3.5903346814746753
+        },
+        {
+          "reference": "D8",
+          "unused_npth_mm": 3.924097149663856,
+          "switch_pad_mm": 2.1875129999999956,
+          "socket_body_mm": 2.9750000000000085,
+          "unrelated_exposed_copper_mm": 4.456824121501767,
+          "fillet_to_switch_assembly_mm": 1.5875130000000013,
+          "fillet_to_unrelated_route_mm": 1.8117000000000019,
+          "edge_cuts_mm": 16.987500000000004
+        },
+        {
+          "reference": "D9",
+          "unused_npth_mm": 3.875,
+          "switch_pad_mm": 2.18751300000001,
+          "socket_body_mm": 2.9749999999999943,
+          "unrelated_exposed_copper_mm": 2.142574386106569,
+          "fillet_to_switch_assembly_mm": 1.5875130000000155,
+          "fillet_to_unrelated_route_mm": 1.9126726528076072,
+          "edge_cuts_mm": 19.0
+        },
+        {
+          "reference": "D10",
+          "unused_npth_mm": 3.7333798360198975,
+          "switch_pad_mm": 2.18751300000001,
+          "socket_body_mm": 2.9749999999999943,
+          "unrelated_exposed_copper_mm": 4.075000000000003,
+          "fillet_to_switch_assembly_mm": 1.5875130000000155,
+          "fillet_to_unrelated_route_mm": 2.523114895543624,
+          "edge_cuts_mm": 19.0
+        },
+        {
+          "reference": "D11",
+          "unused_npth_mm": 3.7333798360198975,
+          "switch_pad_mm": 2.18751300000001,
+          "socket_body_mm": 2.9749999999999943,
+          "unrelated_exposed_copper_mm": 4.075000000000003,
+          "fillet_to_switch_assembly_mm": 1.5875130000000155,
+          "fillet_to_unrelated_route_mm": 3.3359000000000094,
+          "edge_cuts_mm": 19.0
+        },
+        {
+          "reference": "D12",
+          "unused_npth_mm": 3.7333798360198975,
+          "switch_pad_mm": 2.18751300000001,
+          "socket_body_mm": 2.9749999999999943,
+          "unrelated_exposed_copper_mm": 4.075000000000003,
+          "fillet_to_switch_assembly_mm": 1.5875130000000155,
+          "fillet_to_unrelated_route_mm": 2.200970030450403,
+          "edge_cuts_mm": 21.96865280917334
+        },
+        {
+          "reference": "D13",
+          "unused_npth_mm": 3.7333798360198975,
+          "switch_pad_mm": 2.18751300000001,
+          "socket_body_mm": 2.9749999999999943,
+          "unrelated_exposed_copper_mm": 4.075000000000003,
+          "fillet_to_switch_assembly_mm": 1.5875130000000155,
+          "fillet_to_unrelated_route_mm": 2.5231148955436136,
+          "edge_cuts_mm": 12.224999999999966
+        },
+        {
+          "reference": "D14",
+          "unused_npth_mm": 4.227957544725344,
+          "switch_pad_mm": 2.1875129999999956,
+          "socket_body_mm": 5.244215355036447,
+          "unrelated_exposed_copper_mm": 3.500000000000014,
+          "fillet_to_switch_assembly_mm": 1.5875130000000013,
+          "fillet_to_unrelated_route_mm": 2.5101000000000084,
+          "edge_cuts_mm": 19.368700000000004
+        },
+        {
+          "reference": "D15",
+          "unused_npth_mm": 3.875,
+          "switch_pad_mm": 2.18751300000001,
+          "socket_body_mm": 2.9749999999999943,
+          "unrelated_exposed_copper_mm": 4.601579212618205,
+          "fillet_to_switch_assembly_mm": 1.5875130000000155,
+          "fillet_to_unrelated_route_mm": 0.8383000000000038,
+          "edge_cuts_mm": 31.5625
+        },
+        {
+          "reference": "D16",
+          "unused_npth_mm": 3.7333798360198984,
+          "switch_pad_mm": 2.18751300000001,
+          "socket_body_mm": 2.9749999999999943,
+          "unrelated_exposed_copper_mm": 4.601579212618205,
+          "fillet_to_switch_assembly_mm": 1.5875130000000155,
+          "fillet_to_unrelated_route_mm": 0.8383000000000038,
+          "edge_cuts_mm": 38.05
+        },
+        {
+          "reference": "D17",
+          "unused_npth_mm": 3.7333798360198984,
+          "switch_pad_mm": 2.18751300000001,
+          "socket_body_mm": 2.9749999999999943,
+          "unrelated_exposed_copper_mm": 4.601579212618205,
+          "fillet_to_switch_assembly_mm": 1.5875130000000155,
+          "fillet_to_unrelated_route_mm": 5.841534274601969,
+          "edge_cuts_mm": 38.05
+        },
+        {
+          "reference": "D18",
+          "unused_npth_mm": 3.7333798360198984,
+          "switch_pad_mm": 2.18751300000001,
+          "socket_body_mm": 2.9749999999999943,
+          "unrelated_exposed_copper_mm": 4.601579212618217,
+          "fillet_to_switch_assembly_mm": 1.5875130000000155,
+          "fillet_to_unrelated_route_mm": 5.682114440494505,
+          "edge_cuts_mm": 26.67063284307291
+        },
+        {
+          "reference": "D19",
+          "unused_npth_mm": 3.7333798360198984,
+          "switch_pad_mm": 2.18751300000001,
+          "socket_body_mm": 2.9749999999999943,
+          "unrelated_exposed_copper_mm": 4.601579212618205,
+          "fillet_to_switch_assembly_mm": 1.5875130000000155,
+          "fillet_to_unrelated_route_mm": 3.070772598292928,
+          "edge_cuts_mm": 7.851223232719843
+        },
+        {
+          "reference": "D20",
+          "unused_npth_mm": 3.924081381673904,
+          "switch_pad_mm": 2.1875129999999956,
+          "socket_body_mm": 2.9749999999999943,
+          "unrelated_exposed_copper_mm": 2.2350715178714085,
+          "fillet_to_switch_assembly_mm": 1.4310781564960007,
+          "fillet_to_unrelated_route_mm": 3.4955171854308387,
+          "edge_cuts_mm": 12.225000000000001
+        },
+        {
+          "reference": "D21",
+          "unused_npth_mm": 4.227957544725344,
+          "switch_pad_mm": 2.1875129999999956,
+          "socket_body_mm": 4.606299999999997,
+          "unrelated_exposed_copper_mm": 2.235071517871394,
+          "fillet_to_switch_assembly_mm": 1.4310781564959902,
+          "fillet_to_unrelated_route_mm": 3.4955171854308165,
+          "edge_cuts_mm": 19.6563
+        },
+        {
+          "reference": "D22",
+          "unused_npth_mm": 3.875,
+          "switch_pad_mm": 2.1875129999999956,
+          "socket_body_mm": 2.9749999999999943,
+          "unrelated_exposed_copper_mm": 4.075000000000017,
+          "fillet_to_switch_assembly_mm": 1.5875129999999729,
+          "fillet_to_unrelated_route_mm": 4.950000000000003,
+          "edge_cuts_mm": 32.99999999999997
+        },
+        {
+          "reference": "D23",
+          "unused_npth_mm": 3.7333798360198958,
+          "switch_pad_mm": 2.1875129999999956,
+          "socket_body_mm": 2.9749999999999943,
+          "unrelated_exposed_copper_mm": 4.075000000000017,
+          "fillet_to_switch_assembly_mm": 1.5875129999999729,
+          "fillet_to_unrelated_route_mm": 2.282900000000012,
+          "edge_cuts_mm": 32.99999999999997
+        },
+        {
+          "reference": "D24",
+          "unused_npth_mm": 3.7333798360198958,
+          "switch_pad_mm": 2.1875129999999956,
+          "socket_body_mm": 2.9749999999999943,
+          "unrelated_exposed_copper_mm": 4.075000000000017,
+          "fillet_to_switch_assembly_mm": 1.5875129999999729,
+          "fillet_to_unrelated_route_mm": 2.0338000000000136,
+          "edge_cuts_mm": 32.99999999999997
+        },
+        {
+          "reference": "D25",
+          "unused_npth_mm": 3.7333798360198958,
+          "switch_pad_mm": 2.1875129999999956,
+          "socket_body_mm": 2.9749999999999943,
+          "unrelated_exposed_copper_mm": 4.075000000000017,
+          "fillet_to_switch_assembly_mm": 1.5875129999999729,
+          "fillet_to_unrelated_route_mm": 1.892379252447704,
+          "edge_cuts_mm": 21.937222654768252
+        },
+        {
+          "reference": "D26",
+          "unused_npth_mm": 3.7333798360198958,
+          "switch_pad_mm": 2.1875129999999956,
+          "socket_body_mm": 2.9749999999999943,
+          "unrelated_exposed_copper_mm": 4.075000000000017,
+          "fillet_to_switch_assembly_mm": 1.5875129999999729,
+          "fillet_to_unrelated_route_mm": 4.950000000000003,
+          "edge_cuts_mm": 3.427068718307222
+        },
+        {
+          "reference": "D27",
+          "unused_npth_mm": 1.2013013776733796,
+          "switch_pad_mm": 1.6925130000000053,
+          "socket_body_mm": 3.8749999999999716,
+          "unrelated_exposed_copper_mm": 1.8125,
+          "fillet_to_switch_assembly_mm": 0.8749999999999716,
+          "fillet_to_unrelated_route_mm": 2.6875,
+          "edge_cuts_mm": 3.6999999999999886
+        },
+        {
+          "reference": "D28",
+          "unused_npth_mm": 3.875,
+          "switch_pad_mm": 2.1875129999999956,
+          "socket_body_mm": 2.9749999999999943,
+          "unrelated_exposed_copper_mm": 4.456824121501767,
+          "fillet_to_switch_assembly_mm": 1.5875129999999729,
+          "fillet_to_unrelated_route_mm": 5.596737607580417,
+          "edge_cuts_mm": 13.949999999999989
+        },
+        {
+          "reference": "D29",
+          "unused_npth_mm": 3.875,
+          "switch_pad_mm": 2.1875129999999956,
+          "socket_body_mm": 2.9749999999999943,
+          "unrelated_exposed_copper_mm": 4.074999999999989,
+          "fillet_to_switch_assembly_mm": 1.5875129999999729,
+          "fillet_to_unrelated_route_mm": 2.5231148955435936,
+          "edge_cuts_mm": 13.949999999999989
+        },
+        {
+          "reference": "D30",
+          "unused_npth_mm": 4.227957544725344,
+          "switch_pad_mm": 2.1875129999999956,
+          "socket_body_mm": 2.9749999999999943,
+          "unrelated_exposed_copper_mm": 4.616201733026832,
+          "fillet_to_switch_assembly_mm": 1.5875129999999729,
+          "fillet_to_unrelated_route_mm": 0.9576999999999884,
+          "edge_cuts_mm": 13.949999999999989
+        },
+        {
+          "reference": "D31",
+          "unused_npth_mm": 3.9795734306581187,
+          "switch_pad_mm": 2.1875129999999956,
+          "socket_body_mm": 2.9761106649451,
+          "unrelated_exposed_copper_mm": 4.074999999999989,
+          "fillet_to_switch_assembly_mm": 1.5875129999999729,
+          "fillet_to_unrelated_route_mm": 1.5474999999999852,
+          "edge_cuts_mm": 13.949999999999989
+        }
+      ],
+      "untented_bottom_via_count": 0,
+      "diode_tool_approach_errors": [],
+      "diode_tool_approaches": [
+        {
+          "reference": "D1",
+          "pad": "1",
+          "direction": "south",
+          "length_mm": 1.5
+        },
+        {
+          "reference": "D1",
+          "pad": "2",
+          "direction": "north",
+          "length_mm": 1.5
+        },
+        {
+          "reference": "D2",
+          "pad": "1",
+          "direction": "north",
+          "length_mm": 1.5
+        },
+        {
+          "reference": "D2",
+          "pad": "2",
+          "direction": "north",
+          "length_mm": 1.5
+        },
+        {
+          "reference": "D3",
+          "pad": "1",
+          "direction": "north",
+          "length_mm": 1.5
+        },
+        {
+          "reference": "D3",
+          "pad": "2",
+          "direction": "north",
+          "length_mm": 1.5
+        },
+        {
+          "reference": "D4",
+          "pad": "1",
+          "direction": "north",
+          "length_mm": 1.5
+        },
+        {
+          "reference": "D4",
+          "pad": "2",
+          "direction": "north",
+          "length_mm": 1.5
+        },
+        {
+          "reference": "D5",
+          "pad": "1",
+          "direction": "north",
+          "length_mm": 1.5
+        },
+        {
+          "reference": "D5",
+          "pad": "2",
+          "direction": "north",
+          "length_mm": 1.5
+        },
+        {
+          "reference": "D6",
+          "pad": "1",
+          "direction": "north",
+          "length_mm": 1.5
+        },
+        {
+          "reference": "D6",
+          "pad": "2",
+          "direction": "north",
+          "length_mm": 1.5
+        },
+        {
+          "reference": "D7",
+          "pad": "1",
+          "direction": "north",
+          "length_mm": 1.5
+        },
+        {
+          "reference": "D7",
+          "pad": "2",
+          "direction": "north",
+          "length_mm": 1.5
+        },
+        {
+          "reference": "D8",
+          "pad": "1",
+          "direction": "north",
+          "length_mm": 1.5
+        },
+        {
+          "reference": "D8",
+          "pad": "2",
+          "direction": "north",
+          "length_mm": 1.5
+        },
+        {
+          "reference": "D9",
+          "pad": "1",
+          "direction": "north",
+          "length_mm": 1.5
+        },
+        {
+          "reference": "D9",
+          "pad": "2",
+          "direction": "north",
+          "length_mm": 1.5
+        },
+        {
+          "reference": "D10",
+          "pad": "1",
+          "direction": "north",
+          "length_mm": 1.5
+        },
+        {
+          "reference": "D10",
+          "pad": "2",
+          "direction": "north",
+          "length_mm": 1.5
+        },
+        {
+          "reference": "D11",
+          "pad": "1",
+          "direction": "north",
+          "length_mm": 1.5
+        },
+        {
+          "reference": "D11",
+          "pad": "2",
+          "direction": "north",
+          "length_mm": 1.5
+        },
+        {
+          "reference": "D12",
+          "pad": "1",
+          "direction": "north",
+          "length_mm": 1.5
+        },
+        {
+          "reference": "D12",
+          "pad": "2",
+          "direction": "north",
+          "length_mm": 1.5
+        },
+        {
+          "reference": "D13",
+          "pad": "1",
+          "direction": "north",
+          "length_mm": 1.5
+        },
+        {
+          "reference": "D13",
+          "pad": "2",
+          "direction": "north",
+          "length_mm": 1.5
+        },
+        {
+          "reference": "D14",
+          "pad": "1",
+          "direction": "north",
+          "length_mm": 1.5
+        },
+        {
+          "reference": "D14",
+          "pad": "2",
+          "direction": "north",
+          "length_mm": 1.5
+        },
+        {
+          "reference": "D15",
+          "pad": "1",
+          "direction": "north",
+          "length_mm": 1.5
+        },
+        {
+          "reference": "D15",
+          "pad": "2",
+          "direction": "north",
+          "length_mm": 1.5
+        },
+        {
+          "reference": "D16",
+          "pad": "1",
+          "direction": "north",
+          "length_mm": 1.5
+        },
+        {
+          "reference": "D16",
+          "pad": "2",
+          "direction": "north",
+          "length_mm": 1.5
+        },
+        {
+          "reference": "D17",
+          "pad": "1",
+          "direction": "north",
+          "length_mm": 1.5
+        },
+        {
+          "reference": "D17",
+          "pad": "2",
+          "direction": "north",
+          "length_mm": 1.5
+        },
+        {
+          "reference": "D18",
+          "pad": "1",
+          "direction": "north",
+          "length_mm": 1.5
+        },
+        {
+          "reference": "D18",
+          "pad": "2",
+          "direction": "north",
+          "length_mm": 1.5
+        },
+        {
+          "reference": "D19",
+          "pad": "1",
+          "direction": "north",
+          "length_mm": 1.5
+        },
+        {
+          "reference": "D19",
+          "pad": "2",
+          "direction": "north",
+          "length_mm": 1.5
+        },
+        {
+          "reference": "D20",
+          "pad": "1",
+          "direction": "north",
+          "length_mm": 1.5
+        },
+        {
+          "reference": "D20",
+          "pad": "2",
+          "direction": "north",
+          "length_mm": 1.5
+        },
+        {
+          "reference": "D21",
+          "pad": "1",
+          "direction": "north",
+          "length_mm": 1.5
+        },
+        {
+          "reference": "D21",
+          "pad": "2",
+          "direction": "north",
+          "length_mm": 1.5
+        },
+        {
+          "reference": "D22",
+          "pad": "1",
+          "direction": "north",
+          "length_mm": 1.5
+        },
+        {
+          "reference": "D22",
+          "pad": "2",
+          "direction": "north",
+          "length_mm": 1.5
+        },
+        {
+          "reference": "D23",
+          "pad": "1",
+          "direction": "north",
+          "length_mm": 1.5
+        },
+        {
+          "reference": "D23",
+          "pad": "2",
+          "direction": "north",
+          "length_mm": 1.5
+        },
+        {
+          "reference": "D24",
+          "pad": "1",
+          "direction": "north",
+          "length_mm": 1.5
+        },
+        {
+          "reference": "D24",
+          "pad": "2",
+          "direction": "north",
+          "length_mm": 1.5
+        },
+        {
+          "reference": "D25",
+          "pad": "1",
+          "direction": "north",
+          "length_mm": 1.5
+        },
+        {
+          "reference": "D25",
+          "pad": "2",
+          "direction": "north",
+          "length_mm": 1.5
+        },
+        {
+          "reference": "D26",
+          "pad": "1",
+          "direction": "north",
+          "length_mm": 1.5
+        },
+        {
+          "reference": "D26",
+          "pad": "2",
+          "direction": "north",
+          "length_mm": 1.5
+        },
+        {
+          "reference": "D27",
+          "pad": "1",
+          "direction": "north",
+          "length_mm": 1.5
+        },
+        {
+          "reference": "D27",
+          "pad": "2",
+          "direction": "south",
+          "length_mm": 1.5
+        },
+        {
+          "reference": "D28",
+          "pad": "1",
+          "direction": "north",
+          "length_mm": 1.5
+        },
+        {
+          "reference": "D28",
+          "pad": "2",
+          "direction": "north",
+          "length_mm": 1.5
+        },
+        {
+          "reference": "D29",
+          "pad": "1",
+          "direction": "north",
+          "length_mm": 1.5
+        },
+        {
+          "reference": "D29",
+          "pad": "2",
+          "direction": "north",
+          "length_mm": 1.5
+        },
+        {
+          "reference": "D30",
+          "pad": "1",
+          "direction": "north",
+          "length_mm": 1.5
+        },
+        {
+          "reference": "D30",
+          "pad": "2",
+          "direction": "north",
+          "length_mm": 1.5
+        },
+        {
+          "reference": "D31",
+          "pad": "1",
+          "direction": "north",
+          "length_mm": 1.5
+        },
+        {
+          "reference": "D31",
+          "pad": "2",
+          "direction": "north",
+          "length_mm": 1.5
+        }
+      ],
+      "diode_to_unrelated_route_errors": [],
+      "diode_edge_clearance_errors": [],
+      "diode_hand_solder_clearance_errors": [],
+      "board_text": [
+        "TAB",
+        "LShift",
+        "G",
+        "C",
+        "ANT KEEPOUT",
+        "KC2 X3 V2 L",
+        "F",
+        "V",
+        "6",
+        "D",
+        "R",
+        "S",
+        "PWR OFF< >ON",
+        "No top housing / selected M1.4 MH retention + independent underside supports",
+        "B",
+        "Z",
+        "5",
+        "X",
+        "Ctrl",
+        "Alt",
+        "X3 V2: Choc V1+ring / V2 socket OR MX direct solder / receptacles+plate; contact qualification pending",
+        "T",
+        "Q",
+        "Diode: Diodes Inc 1N4148W-13-F SOD-123; pad 1 = row cathode",
+        "ANTENNA_INWARD",
+        "4",
+        "KC2 LEFT X3-V2 - 70-key v5 no-stabilizer split layout",
+        "E",
+        "Caps",
+        "1",
+        "BAT STRAIN RELIEF",
+        "Fn",
+        "W",
+        "USB_OUT_LEFT",
+        "3",
+        "Space",
+        "RST",
+        "~",
+        "A",
+        "2"
+      ],
+      "drc_violation_count": 0,
+      "drc_unconnected_count": 0,
+      "drc_ignored_checks": [
+        "footprint_filters_mismatch",
+        "footprint_type_mismatch",
+        "missing_courtyard",
+        "track_not_centered_on_via",
+        "tuning_profile_track_geometries"
+      ]
+    },
+    "right": {
+      "switch_count": 39,
+      "diode_count": 39,
+      "diode_footprint_names": [
+        "D_1N4148W_SOD123_HandSolder_DiodesInc"
+      ],
+      "diode_values": [
+        "1N4148W-13-F_DiodesInc_SOD123"
+      ],
+      "diode_pin_net_errors": [],
+      "diode_footprint_geometry_errors": [],
+      "switch_footprint_names": [
+        "SW_Choc_V2_Socket_MX_THT"
+      ],
+      "alternate_contact_net_mismatches": [],
+      "switch_footprint_geometry_errors": [],
+      "switch_layout_errors": [],
+      "switch_layout_max_position_error_mm": 0.0001,
+      "stabilizer_refs": [],
+      "registration_hole_count": 0,
+      "registration_hole_errors": [],
+      "legacy_mount_hole_refs": [],
+      "mounting_hole_positions_mm": [
+        [
+          "MH1",
+          97.1875,
+          43.25
+        ],
+        [
+          "MH2",
+          72.4375,
+          67.0
+        ],
+        [
+          "MH3",
+          170.4375,
+          95.25
+        ],
+        [
+          "MH4",
+          194.4375,
+          98.75
+        ],
+        [
+          "MH5",
+          155.9375,
+          112.5
+        ],
+        [
+          "MH6",
+          70.1875,
+          146.75
+        ],
+        [
+          "MH7",
+          97.6875,
+          152.0
+        ],
+        [
+          "MH8",
+          122.6875,
+          151.0
+        ],
+        [
+          "MH9",
+          177.75,
+          117.25
+        ]
+      ],
+      "mounting_hole_errors": [],
+      "mounting_hole_clearances": {
+        "minimum_npth_edge_to_copper_mm": 1.6607,
+        "minimum_driver_to_copper_mm": 0.9607,
+        "minimum_driver_to_installed_body_mm": 1.225,
+        "minimum_head_to_installed_body_mm": 1.225,
+        "minimum_head_to_exposed_copper_fillet_mm": 0.9607,
+        "minimum_head_to_edge_cuts_mm": 2.2125
+      },
+      "mounting_hole_driver_copper_errors": [],
+      "mounting_hole_silkscreen_errors": [],
+      "mounting_hole_head_clearance_errors": [],
+      "route_track_via_count": 1089,
+      "route_digest_sha256": "aa78af58190800870654a15ce6f772aea41a806705bb645597ed93b9ef0ac533",
+      "registration_label_layers": {},
+      "carrier_power_pad_refs": [
+        "J_BAT1",
+        "SW_PWR1"
+      ],
+      "battery_lead_slot_count": 1,
+      "battery_lead_slot_errors": [],
+      "battery_lead_slot_on_usb_side": true,
+      "forbidden_carrier_power_nets": [],
+      "controller_power_nets": [
+        "BAT+",
+        "GND",
+        "NN_B+"
+      ],
+      "controller_power_geometry": {
+        "errors": [],
+        "battery_to_antenna_keepout_mm": 3.97,
+        "battery_to_socket_pad_copper_mm": 0.42,
+        "service_feature_to_antenna_keepout_mm": {
+          "BAT_LEAD_SLOT1": 30.97,
+          "J_BAT1": 33.52,
+          "SW_PWR1": 29.905,
+          "SW_RST1": 19.938
+        },
+        "minimum_service_feature_to_antenna_keepout_mm": 19.938,
+        "maximum_parallel_centerline_separation_mm": 1.96,
+        "power_loop_area_mm2": 0.507,
+        "maximum_antenna_parallel_segment_mm": 7.45
+      },
+      "controller_service_clearance": {
+        "reset_body_to_nearest_18_05_keycap_mm": 3.2,
+        "nearest_keycap_reference": "SW3",
+        "reset_courtyard_to_u1_socket_copper_mm": 1.73,
+        "errors": []
+      },
+      "controller_service_clearance_errors": [],
+      "controller_socket_row_spacing_mm": 15.24,
+      "controller_contract_errors": [],
+      "reset_contract_errors": [],
+      "minimum_diode_to_unused_npth_clearance_mm": 1.201,
+      "minimum_diode_to_unrelated_pad_clearance_mm": 1.125,
+      "minimum_diode_to_unrelated_exposed_copper_clearance_mm": 1.125,
+      "minimum_diode_to_socket_body_clearance_mm": 2.225,
+      "minimum_diode_fillet_to_switch_assembly_clearance_mm": 0.525,
+      "minimum_diode_fillet_to_unrelated_route_mm": 0.175,
+      "minimum_diode_fillet_to_edge_cuts_clearance_mm": 1.975,
+      "diode_clearances": [
+        {
+          "reference": "D1",
+          "unused_npth_mm": 3.1871813566221765,
+          "switch_pad_mm": 1.125,
+          "socket_body_mm": 2.2250000000000085,
+          "unrelated_exposed_copper_mm": 1.125,
+          "fillet_to_switch_assembly_mm": 0.5250000000000057,
+          "fillet_to_unrelated_route_mm": 1.7242999999999995,
+          "edge_cuts_mm": 12.225000000000001
+        },
+        {
+          "reference": "D2",
+          "unused_npth_mm": 3.200000000000017,
+          "switch_pad_mm": 1.2250000000000085,
+          "socket_body_mm": 3.8999999999999915,
+          "unrelated_exposed_copper_mm": 1.2250000000000085,
+          "fillet_to_switch_assembly_mm": 0.6250000000000142,
+          "fillet_to_unrelated_route_mm": 1.9404893560606928,
+          "edge_cuts_mm": 23.359816994146176
+        },
+        {
+          "reference": "D3",
+          "unused_npth_mm": 1.2250000000000085,
+          "switch_pad_mm": 2.6675129999999996,
+          "socket_body_mm": 2.2461077445216135,
+          "unrelated_exposed_copper_mm": 5.533985905294664,
+          "fillet_to_switch_assembly_mm": 0.9250000000000114,
+          "fillet_to_unrelated_route_mm": 1.6636999999999915,
+          "edge_cuts_mm": 18.29685902006135
+        },
+        {
+          "reference": "D4",
+          "unused_npth_mm": 1.2250000000000085,
+          "switch_pad_mm": 2.6675129999999996,
+          "socket_body_mm": 2.2461077445216135,
+          "unrelated_exposed_copper_mm": 5.734999999999999,
+          "fillet_to_switch_assembly_mm": 0.9250000000000114,
+          "fillet_to_unrelated_route_mm": 0.17499899999999968,
+          "edge_cuts_mm": 2.0595479612959013
+        },
+        {
+          "reference": "D5",
+          "unused_npth_mm": 1.2250000000000085,
+          "switch_pad_mm": 2.667513000000014,
+          "socket_body_mm": 2.2461077445216135,
+          "unrelated_exposed_copper_mm": 5.734999999999999,
+          "fillet_to_switch_assembly_mm": 0.9250000000000114,
+          "fillet_to_unrelated_route_mm": 1.20150000000001,
+          "edge_cuts_mm": 1.9750000000000085
+        },
+        {
+          "reference": "D6",
+          "unused_npth_mm": 1.2249999999999943,
+          "switch_pad_mm": 2.6675129999999854,
+          "socket_body_mm": 2.2461077445216056,
+          "unrelated_exposed_copper_mm": 5.735000000000014,
+          "fillet_to_switch_assembly_mm": 0.924999999999983,
+          "fillet_to_unrelated_route_mm": 1.20150000000001,
+          "edge_cuts_mm": 1.9750000000000085
+        },
+        {
+          "reference": "D7",
+          "unused_npth_mm": 1.2249999999999943,
+          "switch_pad_mm": 2.6675129999999854,
+          "socket_body_mm": 2.2461077445216056,
+          "unrelated_exposed_copper_mm": 8.116299999999995,
+          "fillet_to_switch_assembly_mm": 0.924999999999983,
+          "fillet_to_unrelated_route_mm": 1.20150000000001,
+          "edge_cuts_mm": 1.9750000000000085
+        },
+        {
+          "reference": "D8",
+          "unused_npth_mm": 1.2249999999999943,
+          "switch_pad_mm": 2.667513000000014,
+          "socket_body_mm": 2.2461077445216135,
+          "unrelated_exposed_copper_mm": 8.116199999999992,
+          "fillet_to_switch_assembly_mm": 0.924999999999983,
+          "fillet_to_unrelated_route_mm": 1.20150000000001,
+          "edge_cuts_mm": 1.9750000000000085
+        },
+        {
+          "reference": "D9",
+          "unused_npth_mm": 3.187181356622183,
+          "switch_pad_mm": 1.125,
+          "socket_body_mm": 2.2250000000000014,
+          "unrelated_exposed_copper_mm": 1.125,
+          "fillet_to_switch_assembly_mm": 0.5250000000000057,
+          "fillet_to_unrelated_route_mm": 2.0700227789250856,
+          "edge_cuts_mm": 7.85122323271986
+        },
+        {
+          "reference": "D10",
+          "unused_npth_mm": 3.1871813566221876,
+          "switch_pad_mm": 1.125,
+          "socket_body_mm": 2.2250000000000014,
+          "unrelated_exposed_copper_mm": 1.125,
+          "fillet_to_switch_assembly_mm": 0.5250000000000057,
+          "fillet_to_unrelated_route_mm": 2.0700227789250993,
+          "edge_cuts_mm": 8.127810283218976
+        },
+        {
+          "reference": "D11",
+          "unused_npth_mm": 3.7333798360198975,
+          "switch_pad_mm": 2.18751300000001,
+          "socket_body_mm": 2.9749999999999943,
+          "unrelated_exposed_copper_mm": 2.142574386106577,
+          "fillet_to_switch_assembly_mm": 1.5875130000000155,
+          "fillet_to_unrelated_route_mm": 1.9026165881539039,
+          "edge_cuts_mm": 23.652662112328915
+        },
+        {
+          "reference": "D12",
+          "unused_npth_mm": 3.7333798360198975,
+          "switch_pad_mm": 2.18751300000001,
+          "socket_body_mm": 2.9749999999999943,
+          "unrelated_exposed_copper_mm": 4.075000000000003,
+          "fillet_to_switch_assembly_mm": 1.5875130000000155,
+          "fillet_to_unrelated_route_mm": 0.7749999999999915,
+          "edge_cuts_mm": 20.063609470880355
+        },
+        {
+          "reference": "D13",
+          "unused_npth_mm": 3.7333798360198975,
+          "switch_pad_mm": 2.18751300000001,
+          "socket_body_mm": 2.9749999999999943,
+          "unrelated_exposed_copper_mm": 4.075000000000003,
+          "fillet_to_switch_assembly_mm": 1.5875130000000155,
+          "fillet_to_unrelated_route_mm": 0.9895000000000067,
+          "edge_cuts_mm": 19.0
+        },
+        {
+          "reference": "D14",
+          "unused_npth_mm": 3.7333798360198975,
+          "switch_pad_mm": 2.18751300000001,
+          "socket_body_mm": 2.9749999999999943,
+          "unrelated_exposed_copper_mm": 4.075000000000003,
+          "fillet_to_switch_assembly_mm": 1.5875130000000155,
+          "fillet_to_unrelated_route_mm": 0.9895000000000067,
+          "edge_cuts_mm": 19.0
+        },
+        {
+          "reference": "D15",
+          "unused_npth_mm": 3.7333798360198975,
+          "switch_pad_mm": 2.18751300000001,
+          "socket_body_mm": 2.9749999999999943,
+          "unrelated_exposed_copper_mm": 4.075000000000003,
+          "fillet_to_switch_assembly_mm": 1.5875130000000155,
+          "fillet_to_unrelated_route_mm": 0.6528174593051782,
+          "edge_cuts_mm": 19.0
+        },
+        {
+          "reference": "D16",
+          "unused_npth_mm": 4.227957544725356,
+          "switch_pad_mm": 2.18751300000001,
+          "socket_body_mm": 3.861933615431523,
+          "unrelated_exposed_copper_mm": 4.075000000000003,
+          "fillet_to_switch_assembly_mm": 1.5875130000000155,
+          "fillet_to_unrelated_route_mm": 4.281194485607727,
+          "edge_cuts_mm": 19.0
+        },
+        {
+          "reference": "D17",
+          "unused_npth_mm": 3.1871813566221765,
+          "switch_pad_mm": 1.125,
+          "socket_body_mm": 2.2250000000000014,
+          "unrelated_exposed_copper_mm": 1.125,
+          "fillet_to_switch_assembly_mm": 0.5250000000000057,
+          "fillet_to_unrelated_route_mm": 2.0700227789250856,
+          "edge_cuts_mm": 3.4270687183072406
+        },
+        {
+          "reference": "D18",
+          "unused_npth_mm": 3.1871813566221805,
+          "switch_pad_mm": 1.1250000000000142,
+          "socket_body_mm": 2.2250000000000014,
+          "unrelated_exposed_copper_mm": 1.1250000000000142,
+          "fillet_to_switch_assembly_mm": 0.5250000000000199,
+          "fillet_to_unrelated_route_mm": 2.0700227789250993,
+          "edge_cuts_mm": 17.275
+        },
+        {
+          "reference": "D19",
+          "unused_npth_mm": 3.7333798360198984,
+          "switch_pad_mm": 2.18751300000001,
+          "socket_body_mm": 2.9749999999999943,
+          "unrelated_exposed_copper_mm": 4.601579212618211,
+          "fillet_to_switch_assembly_mm": 1.5875130000000155,
+          "fillet_to_unrelated_route_mm": 5.841534274601969,
+          "edge_cuts_mm": 31.29662601623377
+        },
+        {
+          "reference": "D20",
+          "unused_npth_mm": 3.7333798360198984,
+          "switch_pad_mm": 2.18751300000001,
+          "socket_body_mm": 2.9749999999999943,
+          "unrelated_exposed_copper_mm": 4.601579212618211,
+          "fillet_to_switch_assembly_mm": 1.5875130000000155,
+          "fillet_to_unrelated_route_mm": 5.682114440494526,
+          "edge_cuts_mm": 38.11140126327028
+        },
+        {
+          "reference": "D21",
+          "unused_npth_mm": 3.7333798360198984,
+          "switch_pad_mm": 2.18751300000001,
+          "socket_body_mm": 2.9749999999999943,
+          "unrelated_exposed_copper_mm": 4.601579212618205,
+          "fillet_to_switch_assembly_mm": 1.5875130000000155,
+          "fillet_to_unrelated_route_mm": 2.8927347332634437,
+          "edge_cuts_mm": 38.05
+        },
+        {
+          "reference": "D22",
+          "unused_npth_mm": 3.7333798360198984,
+          "switch_pad_mm": 2.18751300000001,
+          "socket_body_mm": 2.9749999999999943,
+          "unrelated_exposed_copper_mm": 4.601579212618217,
+          "fillet_to_switch_assembly_mm": 1.5875130000000155,
+          "fillet_to_unrelated_route_mm": 2.7408173092505352,
+          "edge_cuts_mm": 38.05
+        },
+        {
+          "reference": "D23",
+          "unused_npth_mm": 3.875,
+          "switch_pad_mm": 2.18751300000001,
+          "socket_body_mm": 2.9749999999999943,
+          "unrelated_exposed_copper_mm": 4.075000000000003,
+          "fillet_to_switch_assembly_mm": 1.5875130000000155,
+          "fillet_to_unrelated_route_mm": 2.314518395093581,
+          "edge_cuts_mm": 36.037499999999994
+        },
+        {
+          "reference": "D24",
+          "unused_npth_mm": 3.875,
+          "switch_pad_mm": 2.18751300000001,
+          "socket_body_mm": 2.9749999999999943,
+          "unrelated_exposed_copper_mm": 4.075000000000003,
+          "fillet_to_switch_assembly_mm": 1.5875130000000155,
+          "fillet_to_unrelated_route_mm": 3.9983517731331135,
+          "edge_cuts_mm": 12.224999999999994
+        },
+        {
+          "reference": "D25",
+          "unused_npth_mm": 3.1871813566221805,
+          "switch_pad_mm": 1.125,
+          "socket_body_mm": 2.2249999999999943,
+          "unrelated_exposed_copper_mm": 1.125,
+          "fillet_to_switch_assembly_mm": 0.5249999999999773,
+          "fillet_to_unrelated_route_mm": 2.070022778925084,
+          "edge_cuts_mm": 12.225000000000001
+        },
+        {
+          "reference": "D26",
+          "unused_npth_mm": 3.1871813566221725,
+          "switch_pad_mm": 1.1249999999999716,
+          "socket_body_mm": 2.2249999999999943,
+          "unrelated_exposed_copper_mm": 1.1249999999999716,
+          "fillet_to_switch_assembly_mm": 0.5249999999999488,
+          "fillet_to_unrelated_route_mm": 2.0700227789250563,
+          "edge_cuts_mm": 17.275
+        },
+        {
+          "reference": "D27",
+          "unused_npth_mm": 3.7333798360198958,
+          "switch_pad_mm": 2.1875129999999956,
+          "socket_body_mm": 2.9749999999999943,
+          "unrelated_exposed_copper_mm": 4.075000000000017,
+          "fillet_to_switch_assembly_mm": 1.5875129999999729,
+          "fillet_to_unrelated_route_mm": 2.6163822799821204,
+          "edge_cuts_mm": 32.99999999999997
+        },
+        {
+          "reference": "D28",
+          "unused_npth_mm": 3.7333798360198958,
+          "switch_pad_mm": 2.1875129999999956,
+          "socket_body_mm": 2.9749999999999943,
+          "unrelated_exposed_copper_mm": 4.075000000000017,
+          "fillet_to_switch_assembly_mm": 1.5875129999999729,
+          "fillet_to_unrelated_route_mm": 0.5449999999999591,
+          "edge_cuts_mm": 32.99999999999997
+        },
+        {
+          "reference": "D29",
+          "unused_npth_mm": 3.7333798360198958,
+          "switch_pad_mm": 2.1875129999999956,
+          "socket_body_mm": 2.9749999999999943,
+          "unrelated_exposed_copper_mm": 4.075000000000017,
+          "fillet_to_switch_assembly_mm": 1.5875129999999729,
+          "fillet_to_unrelated_route_mm": 2.3904750803774757,
+          "edge_cuts_mm": 32.99999999999997
+        },
+        {
+          "reference": "D30",
+          "unused_npth_mm": 3.7333798360198958,
+          "switch_pad_mm": 2.1875129999999956,
+          "socket_body_mm": 2.9749999999999943,
+          "unrelated_exposed_copper_mm": 4.075000000000017,
+          "fillet_to_switch_assembly_mm": 1.5875129999999729,
+          "fillet_to_unrelated_route_mm": 4.950000000000003,
+          "edge_cuts_mm": 32.99999999999997
+        },
+        {
+          "reference": "D31",
+          "unused_npth_mm": 3.7333798360198958,
+          "switch_pad_mm": 2.1875129999999956,
+          "socket_body_mm": 2.9749999999999943,
+          "unrelated_exposed_copper_mm": 4.601579212618217,
+          "fillet_to_switch_assembly_mm": 1.5875129999999729,
+          "fillet_to_unrelated_route_mm": 5.841534274601962,
+          "edge_cuts_mm": 31.274999999999977
+        },
+        {
+          "reference": "D32",
+          "unused_npth_mm": 3.7333798360198958,
+          "switch_pad_mm": 2.1875129999999956,
+          "socket_body_mm": 2.9749999999999943,
+          "unrelated_exposed_copper_mm": 5.759999999999991,
+          "fillet_to_switch_assembly_mm": 1.5875129999999729,
+          "fillet_to_unrelated_route_mm": 5.891471367836788,
+          "edge_cuts_mm": 12.224999999999994
+        },
+        {
+          "reference": "D33",
+          "unused_npth_mm": 1.2013013776733796,
+          "switch_pad_mm": 1.6925129999999982,
+          "socket_body_mm": 3.8749999999999716,
+          "unrelated_exposed_copper_mm": 4.193799999999996,
+          "fillet_to_switch_assembly_mm": 0.8749999999999716,
+          "fillet_to_unrelated_route_mm": 5.068799999999996,
+          "edge_cuts_mm": 3.6999999999999886
+        },
+        {
+          "reference": "D34",
+          "unused_npth_mm": 3.875,
+          "switch_pad_mm": 2.1875129999999956,
+          "socket_body_mm": 2.9749999999999943,
+          "unrelated_exposed_copper_mm": 4.074999999999989,
+          "fillet_to_switch_assembly_mm": 1.5875129999999729,
+          "fillet_to_unrelated_route_mm": 5.0060294717531955,
+          "edge_cuts_mm": 13.949999999999989
+        },
+        {
+          "reference": "D35",
+          "unused_npth_mm": 4.227957544725344,
+          "switch_pad_mm": 2.1875129999999956,
+          "socket_body_mm": 2.9749999999999943,
+          "unrelated_exposed_copper_mm": 4.616201733026832,
+          "fillet_to_switch_assembly_mm": 1.5875129999999729,
+          "fillet_to_unrelated_route_mm": 3.1275999999999726,
+          "edge_cuts_mm": 13.949999999999989
+        },
+        {
+          "reference": "D36",
+          "unused_npth_mm": 4.227957544725344,
+          "switch_pad_mm": 2.1875129999999956,
+          "socket_body_mm": 2.9749999999999943,
+          "unrelated_exposed_copper_mm": 5.7900000000000205,
+          "fillet_to_switch_assembly_mm": 1.5875129999999729,
+          "fillet_to_unrelated_route_mm": 0.9633999999999787,
+          "edge_cuts_mm": 13.949999999999989
+        },
+        {
+          "reference": "D37",
+          "unused_npth_mm": 3.7333798360198975,
+          "switch_pad_mm": 2.1875129999999956,
+          "socket_body_mm": 2.9749999999999943,
+          "unrelated_exposed_copper_mm": 5.759999999999991,
+          "fillet_to_switch_assembly_mm": 1.5875129999999729,
+          "fillet_to_unrelated_route_mm": 3.3345114521114745,
+          "edge_cuts_mm": 13.949999999999989
+        },
+        {
+          "reference": "D38",
+          "unused_npth_mm": 3.7333798360198975,
+          "switch_pad_mm": 2.1875129999999956,
+          "socket_body_mm": 2.9749999999999943,
+          "unrelated_exposed_copper_mm": 5.760000000000019,
+          "fillet_to_switch_assembly_mm": 1.5875129999999729,
+          "fillet_to_unrelated_route_mm": 0.9419999999999789,
+          "edge_cuts_mm": 13.949999999999989
+        },
+        {
+          "reference": "D39",
+          "unused_npth_mm": 3.7333798360198975,
+          "switch_pad_mm": 2.1875129999999956,
+          "socket_body_mm": 2.9749999999999943,
+          "unrelated_exposed_copper_mm": 5.759999999999991,
+          "fillet_to_switch_assembly_mm": 1.5875129999999729,
+          "fillet_to_unrelated_route_mm": 2.523114895543604,
+          "edge_cuts_mm": 12.224999999999994
+        }
+      ],
+      "untented_bottom_via_count": 0,
+      "diode_tool_approach_errors": [],
+      "diode_tool_approaches": [
+        {
+          "reference": "D1",
+          "pad": "1",
+          "direction": "south",
+          "length_mm": 1.5
+        },
+        {
+          "reference": "D1",
+          "pad": "2",
+          "direction": "north",
+          "length_mm": 1.5
+        },
+        {
+          "reference": "D2",
+          "pad": "1",
+          "direction": "north",
+          "length_mm": 1.5
+        },
+        {
+          "reference": "D2",
+          "pad": "2",
+          "direction": "north",
+          "length_mm": 1.5
+        },
+        {
+          "reference": "D3",
+          "pad": "1",
+          "direction": "north",
+          "length_mm": 1.5
+        },
+        {
+          "reference": "D3",
+          "pad": "2",
+          "direction": "north",
+          "length_mm": 1.5
+        },
+        {
+          "reference": "D4",
+          "pad": "1",
+          "direction": "north",
+          "length_mm": 1.5
+        },
+        {
+          "reference": "D4",
+          "pad": "2",
+          "direction": "north",
+          "length_mm": 1.5
+        },
+        {
+          "reference": "D5",
+          "pad": "1",
+          "direction": "north",
+          "length_mm": 1.5
+        },
+        {
+          "reference": "D5",
+          "pad": "2",
+          "direction": "north",
+          "length_mm": 1.5
+        },
+        {
+          "reference": "D6",
+          "pad": "1",
+          "direction": "north",
+          "length_mm": 1.5
+        },
+        {
+          "reference": "D6",
+          "pad": "2",
+          "direction": "north",
+          "length_mm": 1.5
+        },
+        {
+          "reference": "D7",
+          "pad": "1",
+          "direction": "north",
+          "length_mm": 1.5
+        },
+        {
+          "reference": "D7",
+          "pad": "2",
+          "direction": "north",
+          "length_mm": 1.5
+        },
+        {
+          "reference": "D8",
+          "pad": "1",
+          "direction": "north",
+          "length_mm": 1.5
+        },
+        {
+          "reference": "D8",
+          "pad": "2",
+          "direction": "north",
+          "length_mm": 1.5
+        },
+        {
+          "reference": "D9",
+          "pad": "1",
+          "direction": "south",
+          "length_mm": 1.5
+        },
+        {
+          "reference": "D9",
+          "pad": "2",
+          "direction": "north",
+          "length_mm": 1.5
+        },
+        {
+          "reference": "D10",
+          "pad": "1",
+          "direction": "north",
+          "length_mm": 1.5
+        },
+        {
+          "reference": "D10",
+          "pad": "2",
+          "direction": "north",
+          "length_mm": 1.5
+        },
+        {
+          "reference": "D11",
+          "pad": "1",
+          "direction": "north",
+          "length_mm": 1.5
+        },
+        {
+          "reference": "D11",
+          "pad": "2",
+          "direction": "north",
+          "length_mm": 1.5
+        },
+        {
+          "reference": "D12",
+          "pad": "1",
+          "direction": "north",
+          "length_mm": 1.5
+        },
+        {
+          "reference": "D12",
+          "pad": "2",
+          "direction": "north",
+          "length_mm": 1.5
+        },
+        {
+          "reference": "D13",
+          "pad": "1",
+          "direction": "north",
+          "length_mm": 1.5
+        },
+        {
+          "reference": "D13",
+          "pad": "2",
+          "direction": "north",
+          "length_mm": 1.5
+        },
+        {
+          "reference": "D14",
+          "pad": "1",
+          "direction": "north",
+          "length_mm": 1.5
+        },
+        {
+          "reference": "D14",
+          "pad": "2",
+          "direction": "north",
+          "length_mm": 1.5
+        },
+        {
+          "reference": "D15",
+          "pad": "1",
+          "direction": "north",
+          "length_mm": 1.5
+        },
+        {
+          "reference": "D15",
+          "pad": "2",
+          "direction": "north",
+          "length_mm": 1.5
+        },
+        {
+          "reference": "D16",
+          "pad": "1",
+          "direction": "north",
+          "length_mm": 1.5
+        },
+        {
+          "reference": "D16",
+          "pad": "2",
+          "direction": "north",
+          "length_mm": 1.5
+        },
+        {
+          "reference": "D17",
+          "pad": "1",
+          "direction": "south",
+          "length_mm": 1.5
+        },
+        {
+          "reference": "D17",
+          "pad": "2",
+          "direction": "north",
+          "length_mm": 1.5
+        },
+        {
+          "reference": "D18",
+          "pad": "1",
+          "direction": "north",
+          "length_mm": 1.5
+        },
+        {
+          "reference": "D18",
+          "pad": "2",
+          "direction": "north",
+          "length_mm": 1.5
+        },
+        {
+          "reference": "D19",
+          "pad": "1",
+          "direction": "north",
+          "length_mm": 1.5
+        },
+        {
+          "reference": "D19",
+          "pad": "2",
+          "direction": "north",
+          "length_mm": 1.5
+        },
+        {
+          "reference": "D20",
+          "pad": "1",
+          "direction": "north",
+          "length_mm": 1.5
+        },
+        {
+          "reference": "D20",
+          "pad": "2",
+          "direction": "north",
+          "length_mm": 1.5
+        },
+        {
+          "reference": "D21",
+          "pad": "1",
+          "direction": "north",
+          "length_mm": 1.5
+        },
+        {
+          "reference": "D21",
+          "pad": "2",
+          "direction": "north",
+          "length_mm": 1.5
+        },
+        {
+          "reference": "D22",
+          "pad": "1",
+          "direction": "north",
+          "length_mm": 1.5
+        },
+        {
+          "reference": "D22",
+          "pad": "2",
+          "direction": "north",
+          "length_mm": 1.5
+        },
+        {
+          "reference": "D23",
+          "pad": "1",
+          "direction": "north",
+          "length_mm": 1.5
+        },
+        {
+          "reference": "D23",
+          "pad": "2",
+          "direction": "north",
+          "length_mm": 1.5
+        },
+        {
+          "reference": "D24",
+          "pad": "1",
+          "direction": "north",
+          "length_mm": 1.5
+        },
+        {
+          "reference": "D24",
+          "pad": "2",
+          "direction": "north",
+          "length_mm": 1.5
+        },
+        {
+          "reference": "D25",
+          "pad": "1",
+          "direction": "south",
+          "length_mm": 1.5
+        },
+        {
+          "reference": "D25",
+          "pad": "2",
+          "direction": "north",
+          "length_mm": 1.5
+        },
+        {
+          "reference": "D26",
+          "pad": "1",
+          "direction": "north",
+          "length_mm": 1.5
+        },
+        {
+          "reference": "D26",
+          "pad": "2",
+          "direction": "north",
+          "length_mm": 1.5
+        },
+        {
+          "reference": "D27",
+          "pad": "1",
+          "direction": "north",
+          "length_mm": 1.5
+        },
+        {
+          "reference": "D27",
+          "pad": "2",
+          "direction": "north",
+          "length_mm": 1.5
+        },
+        {
+          "reference": "D28",
+          "pad": "1",
+          "direction": "north",
+          "length_mm": 1.5
+        },
+        {
+          "reference": "D28",
+          "pad": "2",
+          "direction": "north",
+          "length_mm": 1.5
+        },
+        {
+          "reference": "D29",
+          "pad": "1",
+          "direction": "north",
+          "length_mm": 1.5
+        },
+        {
+          "reference": "D29",
+          "pad": "2",
+          "direction": "north",
+          "length_mm": 1.5
+        },
+        {
+          "reference": "D30",
+          "pad": "1",
+          "direction": "north",
+          "length_mm": 1.5
+        },
+        {
+          "reference": "D30",
+          "pad": "2",
+          "direction": "north",
+          "length_mm": 1.5
+        },
+        {
+          "reference": "D31",
+          "pad": "1",
+          "direction": "north",
+          "length_mm": 1.5
+        },
+        {
+          "reference": "D31",
+          "pad": "2",
+          "direction": "north",
+          "length_mm": 1.5
+        },
+        {
+          "reference": "D32",
+          "pad": "1",
+          "direction": "north",
+          "length_mm": 1.5
+        },
+        {
+          "reference": "D32",
+          "pad": "2",
+          "direction": "north",
+          "length_mm": 1.5
+        },
+        {
+          "reference": "D33",
+          "pad": "1",
+          "direction": "north",
+          "length_mm": 1.5
+        },
+        {
+          "reference": "D33",
+          "pad": "2",
+          "direction": "south",
+          "length_mm": 1.5
+        },
+        {
+          "reference": "D34",
+          "pad": "1",
+          "direction": "north",
+          "length_mm": 1.5
+        },
+        {
+          "reference": "D34",
+          "pad": "2",
+          "direction": "north",
+          "length_mm": 1.5
+        },
+        {
+          "reference": "D35",
+          "pad": "1",
+          "direction": "north",
+          "length_mm": 1.5
+        },
+        {
+          "reference": "D35",
+          "pad": "2",
+          "direction": "north",
+          "length_mm": 1.5
+        },
+        {
+          "reference": "D36",
+          "pad": "1",
+          "direction": "north",
+          "length_mm": 1.5
+        },
+        {
+          "reference": "D36",
+          "pad": "2",
+          "direction": "north",
+          "length_mm": 1.5
+        },
+        {
+          "reference": "D37",
+          "pad": "1",
+          "direction": "north",
+          "length_mm": 1.5
+        },
+        {
+          "reference": "D37",
+          "pad": "2",
+          "direction": "north",
+          "length_mm": 1.5
+        },
+        {
+          "reference": "D38",
+          "pad": "1",
+          "direction": "north",
+          "length_mm": 1.5
+        },
+        {
+          "reference": "D38",
+          "pad": "2",
+          "direction": "north",
+          "length_mm": 1.5
+        },
+        {
+          "reference": "D39",
+          "pad": "1",
+          "direction": "north",
+          "length_mm": 1.5
+        },
+        {
+          "reference": "D39",
+          "pad": "2",
+          "direction": "north",
+          "length_mm": 1.5
+        }
+      ],
+      "diode_to_unrelated_route_errors": [],
+      "diode_edge_clearance_errors": [],
+      "diode_hand_solder_clearance_errors": [],
+      "board_text": [
+        "Down",
+        "[",
+        "\\",
+        "Enter",
+        "ANT KEEPOUT",
+        "Y",
+        "J",
+        "7",
+        "]",
+        "H",
+        "L",
+        "8",
+        "RCtrl",
+        "No top housing / selected M1.4 MH retention + independent underside supports",
+        "M",
+        "N",
+        "Up",
+        "K",
+        "RAlt",
+        "'",
+        "RShift",
+        "X3 V2: Choc V1+ring / V2 socket OR MX direct solder / receptacles+plate; contact qualification pending",
+        "I",
+        "USB_OUT_RIGHT",
+        ";",
+        "KC2 RIGHT X3-V2 - 70-key v5 no-stabilizer split layout",
+        "Left",
+        "0",
+        ".",
+        "Diode: Diodes Inc 1N4148W-13-F SOD-123; pad 1 = row cathode",
+        "ANTENNA_INWARD",
+        "=",
+        "9",
+        "KC2 X3 V2 R",
+        "BSPC",
+        "/",
+        "Del",
+        "Right",
+        "P",
+        "Fn",
+        "BAT STRAIN RELIEF",
+        "Space",
+        "-",
+        "ON< >OFF PWR",
+        ",",
+        "U",
+        "O",
+        "RST",
+        "B"
+      ],
+      "drc_violation_count": 0,
+      "drc_unconnected_count": 0,
+      "drc_ignored_checks": [
+        "footprint_filters_mismatch",
+        "footprint_type_mismatch",
+        "missing_courtyard",
+        "track_not_centered_on_via",
+        "tuning_profile_track_geometries"
+      ]
+    }
+  },
+  "connectivity_errors": {
+    "left": [],
+    "right": []
+  },
+  "drc_evidence": {
+    "left": {
+      "board_path": "hardware/kicad/kc2_left/kc2_left.kicad_pcb",
+      "board_sha256": "50c4416559f297cc9cda9d811d7e628e1dcba89335a2d80aacdadc4a73fc8dc7",
+      "drc_report_path": "hardware/kicad/kc2_left/kc2_left.drc.json",
+      "drc_report_sha256": "8ac2a436fbd1a349149b13d884da4bae3d6fd10594eef187bcf041f302532f82",
+      "project_path": "hardware/kicad/kc2_left/kc2_left.kicad_pro",
+      "project_sha256": "3c55ce78ec0a500e1ce045f2a255fa190359fb5a42e4d0b2fb2a53d5054cf2e7",
+      "default_clearance_mm": 0.3,
+      "schema": "https://schemas.kicad.org/drc.v1.json",
+      "source": "kc2_left.kicad_pcb",
+      "kicad_version": "10.0.3",
+      "date": "2026-09-06T21:22:53",
+      "included_severities": [
+        "error",
+        "warning"
+      ]
+    },
+    "right": {
+      "board_path": "hardware/kicad/kc2_right/kc2_right.kicad_pcb",
+      "board_sha256": "057df7a948f9c96414b8c77eb619cf8898ef3262a0090a6bbe7e485aeb65d39d",
+      "drc_report_path": "hardware/kicad/kc2_right/kc2_right.drc.json",
+      "drc_report_sha256": "4089f95117a983a15e64d7e3224dd3c03058ae3f618d1b00c7cd83cf7438d39b",
+      "project_path": "hardware/kicad/kc2_right/kc2_right.kicad_pro",
+      "project_sha256": "66379fefd990ee8cf2e881b06dcd63950df702cc820ad9152def0ad1b9f916be",
+      "default_clearance_mm": 0.3,
+      "schema": "https://schemas.kicad.org/drc.v1.json",
+      "source": "kc2_right.kicad_pcb",
+      "kicad_version": "10.0.3",
+      "date": "2026-09-06T21:22:53",
+      "included_severities": [
+        "error",
+        "warning"
+      ]
+    }
+  },
+  "canonical_route_evidence": {
+    "left": {
+      "dsn_sha256": "3842695d4cb7ec8721736f3cd3816a9322daa620203c461638614fef7c92740c",
+      "session_source_dsn_sha256": "3842695d4cb7ec8721736f3cd3816a9322daa620203c461638614fef7c92740c",
+      "ses_sha256": "2e03ccbc870e974b30fd2ea24fe243bf09bbbd6c6626330049bcc5835561c13d",
+      "dsn_mounting_hole_count": 8,
+      "dsn_default_clearance_internal_units": 300,
+      "dsn_clearances_internal_units": {
+        "global": 300,
+        "kicad_default": 300
+      },
+      "dsn_mounting_hole_positions_mm": {
+        "MH6": [
+          137.3625,
+          153.5
+        ],
+        "MH7": [
+          165.8625,
+          148.75
+        ],
+        "MH5": [
+          81.1125,
+          151.75
+        ],
+        "MH4": [
+          63.6125,
+          123.0
+        ],
+        "MH3": [
+          39.3625,
+          111.0
+        ],
+        "MH1": [
+          112.8625,
+          43.0
+        ],
+        "MH8": [
+          75.25,
+          134.0
+        ],
+        "MH2": [
+          144.1125,
+          66.25
+        ]
+      },
+      "ses_mounting_hole_positions_mm": {
+        "MH1": [
+          112.8625,
+          43.0
+        ],
+        "MH2": [
+          144.1125,
+          66.25
+        ],
+        "MH3": [
+          39.3625,
+          111.0
+        ],
+        "MH4": [
+          63.6125,
+          123.0
+        ],
+        "MH5": [
+          81.1125,
+          151.75
+        ],
+        "MH6": [
+          137.3625,
+          153.5
+        ],
+        "MH7": [
+          165.8625,
+          148.75
+        ],
+        "MH8": [
+          75.25,
+          134.0
+        ]
+      }
+    },
+    "right": {
+      "dsn_sha256": "b976a1b33975926ca53e4033c6449b50bda65494eb94fe94c7d2f498962cfa2a",
+      "session_source_dsn_sha256": "b976a1b33975926ca53e4033c6449b50bda65494eb94fe94c7d2f498962cfa2a",
+      "ses_sha256": "29329df075afac365ac870b2ab4d1fed689e371c45e6b199777709b177c112d9",
+      "dsn_mounting_hole_count": 9,
+      "dsn_default_clearance_internal_units": 300,
+      "dsn_clearances_internal_units": {
+        "global": 300,
+        "kicad_default": 300
+      },
+      "dsn_mounting_hole_positions_mm": {
+        "MH8": [
+          122.6875,
+          151.0
+        ],
+        "MH6": [
+          70.1875,
+          146.75
+        ],
+        "MH7": [
+          97.6875,
+          152.0
+        ],
+        "MH3": [
+          170.4375,
+          95.25
+        ],
+        "MH1": [
+          97.1875,
+          43.25
+        ],
+        "MH2": [
+          72.4375,
+          67.0
+        ],
+        "MH5": [
+          155.9375,
+          112.5
+        ],
+        "MH9": [
+          177.75,
+          117.25
+        ],
+        "MH4": [
+          194.4375,
+          98.75
+        ]
+      },
+      "ses_mounting_hole_positions_mm": {
+        "MH1": [
+          97.1875,
+          43.25
+        ],
+        "MH2": [
+          72.4375,
+          67.0
+        ],
+        "MH3": [
+          170.4375,
+          95.25
+        ],
+        "MH4": [
+          194.4375,
+          98.75
+        ],
+        "MH5": [
+          155.9375,
+          112.5
+        ],
+        "MH6": [
+          70.1875,
+          146.75
+        ],
+        "MH7": [
+          97.6875,
+          152.0
+        ],
+        "MH8": [
+          122.6875,
+          151.0
+        ],
+        "MH9": [
+          177.75,
+          117.25
+        ]
+      }
+    }
+  },
+  "physical_evidence": {
+    "schema": "kc2-x3-v2-physical-evidence-v1",
+    "requirement_ids": [
+      "CON-ARCH-004",
+      "CON-ARCH-006",
+      "CON-ARCH-007",
+      "REL-ARCH-001"
+    ],
+    "variant": "x3-v2",
+    "status": "pending_physical_evidence",
+    "order_ready": false,
+    "source_bindings": {},
+    "bundles": {
+      "controller_service": {
+        "status": "pending_exact_purchased_parts_stack_pull_and_service",
+        "artifacts": [],
+        "metrics": {}
+      },
+      "physical_scan": {
+        "status": "pending_populated_3v0_3v3_row_column_scan",
+        "artifacts": [],
+        "metrics": {}
+      },
+      "housing_fastener_deflection": {
+        "status": "pending_fastener_torque_cycles_registration_and_2n_deflection",
+        "artifacts": [],
+        "metrics": {}
+      },
+      "power_rf": {
+        "status": "pending_power_transition_scope_and_final_assembly_rf",
+        "artifacts": [],
+        "metrics": {}
+      }
+    },
+    "note": "Fail-closed placeholder. Do not change status/order_ready without repository-bound raw artifacts and verifier-recomputed metrics required by CON-ARCH-004, CON-ARCH-006, CON-ARCH-007 and REL-ARCH-001."
+  },
+  "order_readiness_blockers": [
+    "CON-ARCH-006 selected MX housing: lower.closed_floor: malformed object",
+    "CON-ARCH-006 selected MX housing: lower.generator_sha256: missing/stale artifact binding: tools/generate_kc2_x3_v2_housings.py",
+    "CON-ARCH-006 selected MX housing: lower.left.closed_floor: malformed object",
+    "CON-ARCH-006 selected MX housing: lower.left.closed_floor: missing printable part evidence",
+    "CON-ARCH-006 selected MX housing: lower.left.0.stl_sha256: missing/stale artifact binding: hardware/case/kc2_left_lower_housing.stl",
+    "CON-ARCH-006 selected MX housing: lower.right.closed_floor: malformed object",
+    "CON-ARCH-006 selected MX housing: lower.right.closed_floor: missing printable part evidence",
+    "CON-ARCH-006 selected MX housing: lower.right.0.closed_floor actual STL.desk_contact_z_mm: expected -2.2, got -1.0",
+    "CON-ARCH-006 selected MX housing: lower.right.1.closed_floor actual STL.desk_contact_z_mm: expected -2.2, got -1.0",
+    "CON-ARCH-006 selected MX housing: CON-ARCH-006: exact MX switch seating/clip datums, socket flange relief and pin engagement are unqualified",
+    "CON-ARCH-006 selected MX housing: CON-ARCH-006: socket tolerances, switch-pin/solder projection and post-print desk clearance are unqualified",
+    "CON-ARCH-006 selected MX housing: CON-ARCH-006: upper print material, printed clip/joint fit and full-travel head/driver/component clearances are unqualified",
+    "CON-ARCH-006 selected MX housing: CON-ARCH-006: long screw/receiver/driver identity, engagement/tip tolerance, torque and ten-cycle retention evidence are pending",
+    "CON-ARCH-006 selected MX housing: CON-ARCH-006: assembled 2 N / 0.30 mm deflection and full-pattern physical fit evidence are pending",
+    "CON-ARCH-006 selected MX housing: left_lower: Fusion result STEP SHA-256 does not match the source file",
+    "CON-ARCH-006 selected MX housing: left_mx_upper: Fusion result STEP SHA-256 does not match the source file",
+    "CON-ARCH-006 selected MX housing: right_mx_upper: Fusion result STEP SHA-256 does not match the source file",
+    "CON-ARCH-006 selected MX housing: upper/lower digital contract is not verified",
+    "CON-ARCH-007: controller service physical evidence bundle is missing or invalid: physical evidence status/order_ready is not passed/true",
+    "CON-ARCH-004: physical scan evidence bundle is missing or invalid: physical evidence status/order_ready is not passed/true",
+    "CON-ARCH-006: housing physical evidence bundle is missing or invalid: physical evidence status/order_ready is not passed/true",
+    "REL-ARCH-001: power/RF evidence bundle is missing or invalid: physical evidence status/order_ready is not passed/true"
+  ],
+  "reviewed_drc_exclusions": {
+    "checks": [
+      "footprint_filters_mismatch",
+      "footprint_type_mismatch",
+      "missing_courtyard",
+      "track_not_centered_on_via",
+      "tuning_profile_track_geometries"
+    ],
+    "rationale": "Inherited project exclusions are limited to non-electrical library, courtyard, track-centering, and tuning-pattern diagnostics; all actual V2 violations and unconnected items remain hard failures."
+  },
+  "errors": [],
+  "source_sha256": {
+    "hardware/kicad/kc2_left/kc2_left.kicad_pcb": "568e1427e4cfb9d667b6d5b3754da3a4e24c924abfa85a8dfe394dd050b5fe67",
+    "hardware/kicad/kc2_left/kc2_left.kicad_pro": "13b909741bde6823ca1adf1f86600afd1c6f7caf5c13130e16ba2a84aa301c92",
+    "hardware/kicad/kc2_left/kc2_left.drc.json": "2d585babf6b447a398b2403366bbd244ccb54443251c9bb5dc465308cb1cbcdb",
+    "hardware/kicad/kc2_right/kc2_right.kicad_pcb": "88290c3b0cf3951d56221d216549665c0576a816a6315012f7f12b027f402577",
+    "hardware/kicad/kc2_right/kc2_right.kicad_pro": "31371aebc73784336fb184c6e7b9bafc9edb1a10efeee1a880a18a6fc9fcaa95",
+    "hardware/kicad/kc2_right/kc2_right.drc.json": "8d7e1aa5420af4b1eb33803305115bd47d00828712268acddf629873de547ebf",
+    "hardware/kicad/kc2_drc_evidence.json": "42bc1b81d02e402213ef913c8ec65702d57d8703846e2f254c10e0ab850bae35",
+    "hardware/kicad/autoroute/kc2_mx_solder_support_routes.json": "f71b5e477babec519cc93fd2cda9c1990801538dccaed9ad6c2d63f7230c3a79",
+    "hardware/kicad/fabrication_review/v1-recess-20260906-r3/left/kc2_left-F_Cu.gtl": "cbf483699f6e57f8a0f1f24e84a93b16275e9673225ea251fb9fafac3c989924",
+    "hardware/kicad/fabrication_review/v1-recess-20260906-r3/left/kc2_left-B_Cu.gbl": "3a21958af5f0e25d76df803244236444f89e8a4c47315059019a66acbb1a0524",
+    "hardware/kicad/fabrication_review/v1-recess-20260906-r3/left/kc2_left-F_Mask.gts": "647202f90ae56c08133f791232245df99408d19631e057b69f09b8baa4d1274c",
+    "hardware/kicad/fabrication_review/v1-recess-20260906-r3/left/kc2_left-B_Mask.gbs": "6e5249787f502a4694cb378055b7418a0667e6b544df5d5bf68224db4133c9cb",
+    "hardware/kicad/fabrication_review/v1-recess-20260906-r3/left/kc2_left-F_Paste.gtp": "7dae467d2dfda571ef469f5a9de4467db7646ab9a7120fcb7dfc1a0c31124b80",
+    "hardware/kicad/fabrication_review/v1-recess-20260906-r3/left/kc2_left-B_Paste.gbp": "91f1179d2dfe293d85bff63f14a12ab9e7503f8981fa1425b26ea75fe8807d13",
+    "hardware/kicad/fabrication_review/v1-recess-20260906-r3/left/kc2_left-F_Silkscreen.gto": "a2d5f1c412fe7ed416518d08a3ecc6a868f94f6b1223d992e3ea5825d0cac265",
+    "hardware/kicad/fabrication_review/v1-recess-20260906-r3/left/kc2_left-B_Silkscreen.gbo": "625aeb13e513b798dab07eed18a315e01e44d8cc5a6b3bdbd7385c976f3e4b02",
+    "hardware/kicad/fabrication_review/v1-recess-20260906-r3/left/kc2_left-Edge_Cuts.gm1": "8c283cbdae382a9f184d62a3fd096fd00c65d6a09a8475be7334e0ee803551b7",
+    "hardware/kicad/fabrication_review/v1-recess-20260906-r3/left/kc2_left-job.gbrjob": "10f27fc1c13142fc951724d56960ea804b351383462713b1a9d84987d2c858ad",
+    "hardware/kicad/fabrication_review/v1-recess-20260906-r3/left/kc2_left-PTH.drl": "f5bae07a4943b536883e7fec099aaa0c4321045be90cdc3d0d2423031cb69717",
+    "hardware/kicad/fabrication_review/v1-recess-20260906-r3/left/kc2_left-NPTH.drl": "5196483ed7b8d447b889b5fb4deed8ee3906024d483207c703b4d28f0a0d38c0",
+    "hardware/kicad/fabrication_review/v1-recess-20260906-r3/left/kc2_left-PTH-drl_map.gbr": "bdef69a100301c7cb2e022f4669a00644a2d21f71b75b034146348c1da7cb639",
+    "hardware/kicad/fabrication_review/v1-recess-20260906-r3/left/kc2_left-NPTH-drl_map.gbr": "19e4511d9a69ff07b28fbd4575ba84f1ed1bef958f7fc195905c5d556ef59231",
+    "hardware/kicad/fabrication_review/v1-recess-20260906-r3/left/kc2_left-drill-report.txt": "0bb1c3e7b5e5c00032212a929c475026f0c43c723201a91e7aa75ca8eac2ce04",
+    "hardware/kicad/fabrication_review/v1-recess-20260906-r3/right/kc2_right-F_Cu.gtl": "d4623d023fbc55464a2774e04fee6130ab456cee58198174ac5412e8269ed630",
+    "hardware/kicad/fabrication_review/v1-recess-20260906-r3/right/kc2_right-B_Cu.gbl": "8c76fc327cb811ba73029889767239f73dc98f4f37924e61dd1eb83f23325f8e",
+    "hardware/kicad/fabrication_review/v1-recess-20260906-r3/right/kc2_right-F_Mask.gts": "b15b29cb2127ceeb5fcf21a793ea1a4f3c516e6862406818a469fe52c6c9135a",
+    "hardware/kicad/fabrication_review/v1-recess-20260906-r3/right/kc2_right-B_Mask.gbs": "f0b724a648c799abde6fa362a68f56d91575cfad4575ffe47a2b1506d799a724",
+    "hardware/kicad/fabrication_review/v1-recess-20260906-r3/right/kc2_right-F_Paste.gtp": "2fe0a45ae87659629318e63585fbe23293db40a94709050b87622f42d6d4f7e2",
+    "hardware/kicad/fabrication_review/v1-recess-20260906-r3/right/kc2_right-B_Paste.gbp": "ff90592f5384ad0691145e02f8c583d804d0c4803710a9577afed51e5036adc6",
+    "hardware/kicad/fabrication_review/v1-recess-20260906-r3/right/kc2_right-F_Silkscreen.gto": "9220fed2eaeaf923743037a22c21810103988749594c65442807a6a1da0e9152",
+    "hardware/kicad/fabrication_review/v1-recess-20260906-r3/right/kc2_right-B_Silkscreen.gbo": "103ebe41c65293ea92beacbe0dca2069a97f6c13b5a6c02a99d77639d363df6a",
+    "hardware/kicad/fabrication_review/v1-recess-20260906-r3/right/kc2_right-Edge_Cuts.gm1": "1f35879d156ee541f8fc7d7646db0913caef3265a7714829fc37d4f35f96819e",
+    "hardware/kicad/fabrication_review/v1-recess-20260906-r3/right/kc2_right-job.gbrjob": "7a803559597e61ffd5ff824fb74abafac66d9308efe87d7b18a3ae96f22fdaa6",
+    "hardware/kicad/fabrication_review/v1-recess-20260906-r3/right/kc2_right-PTH.drl": "453242b8a8c00f52d1550cad37bc0945711cb085df061947bfeed5a59a8245ca",
+    "hardware/kicad/fabrication_review/v1-recess-20260906-r3/right/kc2_right-NPTH.drl": "5b73e8549b8f65941a61175d48e27846d3832a732a93d8b1855925f50dde8e0f",
+    "hardware/kicad/fabrication_review/v1-recess-20260906-r3/right/kc2_right-PTH-drl_map.gbr": "b57689c96c72a8a93aef6658160f309f7bad2aeaa772f910ade15cf285b7d59d",
+    "hardware/kicad/fabrication_review/v1-recess-20260906-r3/right/kc2_right-NPTH-drl_map.gbr": "89fbeb8ebb1b83c6c0ed4080e8e205dacdfffe5c39650b37ba5c0ff4ff88fadb",
+    "hardware/kicad/fabrication_review/v1-recess-20260906-r3/right/kc2_right-drill-report.txt": "bc04da9fbab6ac76fc751ac18a8f217cfef039b6aa7684e18f839d58931a1cdf",
+    "tools/verify_kc2_x3_v2.py": "b863bede69ec1c3706c942501d268b5a4753b2be104ba93053e3f6060b2489aa"
+  },
+  "process_exit_code": 0
+}

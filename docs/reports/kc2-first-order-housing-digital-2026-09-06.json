@@ -1,0 +1,15 @@
+{
+  "requirement": "CON-ARCH-006",
+  "digital_valid": true,
+  "errors": [],
+  "qualification_blockers": [
+    "CON-ARCH-006: exact MX switch seating/clip datums, socket flange relief and pin engagement are unqualified",
+    "CON-ARCH-006: socket tolerances, switch-pin/solder projection and post-print desk clearance are unqualified",
+    "CON-ARCH-006: upper print material, printed clip/joint fit and full-travel head/driver/component clearances are unqualified",
+    "CON-ARCH-006: long screw/receiver/driver identity, engagement/tip tolerance, torque and ten-cycle retention evidence are pending",
+    "CON-ARCH-006: assembled 2 N / 0.30 mm deflection and full-pattern physical fit evidence are pending"
+  ],
+  "native_archive_blockers": [],
+  "order_ready": false,
+  "print_ready": false
+}

@@ -1,0 +1,464 @@
+{
+  "requirement": "CON-ARCH-004 AC-8",
+  "order_approval": false,
+  "orientation": "All views are board top-coordinate view; bottom is not physically mirrored.",
+  "versions": {
+    "gerbonara": "1.6.3",
+    "resvg-py": "0.5.0",
+    "Pillow": "12.3.0"
+  },
+  "sides": {
+    "left": {
+      "input_sha256": {
+        "F_Cu": "cbf483699f6e57f8a0f1f24e84a93b16275e9673225ea251fb9fafac3c989924",
+        "B_Cu": "3a21958af5f0e25d76df803244236444f89e8a4c47315059019a66acbb1a0524",
+        "F_Mask": "647202f90ae56c08133f791232245df99408d19631e057b69f09b8baa4d1274c",
+        "B_Mask": "6e5249787f502a4694cb378055b7418a0667e6b544df5d5bf68224db4133c9cb",
+        "F_Paste": "7dae467d2dfda571ef469f5a9de4467db7646ab9a7120fcb7dfc1a0c31124b80",
+        "B_Paste": "91f1179d2dfe293d85bff63f14a12ab9e7503f8981fa1425b26ea75fe8807d13",
+        "F_Silkscreen": "a2d5f1c412fe7ed416518d08a3ecc6a868f94f6b1223d992e3ea5825d0cac265",
+        "B_Silkscreen": "625aeb13e513b798dab07eed18a315e01e44d8cc5a6b3bdbd7385c976f3e4b02",
+        "Edge_Cuts": "8c283cbdae382a9f184d62a3fd096fd00c65d6a09a8475be7334e0ee803551b7",
+        "PTH": "f5bae07a4943b536883e7fec099aaa0c4321045be90cdc3d0d2423031cb69717",
+        "NPTH": "5196483ed7b8d447b889b5fb4deed8ee3906024d483207c703b4d28f0a0d38c0"
+      },
+      "bounds_mm": [
+        [
+          33.95,
+          -162.8
+        ],
+        [
+          171.16250000000002,
+          -38.2
+        ]
+      ],
+      "views": {
+        "F_Cu": {
+          "svg": "left-F_Cu.svg",
+          "png": "left-F_Cu.png",
+          "svg_sha256": "cce5be088086cc57605a0c4a13edb29f68257b6bf12908981f2adbd22731355d",
+          "png_sha256": "282cce6603a3cb12eb8c09fd79425427a6cca9db734d8eec0a11063eab265bc5"
+        },
+        "B_Cu": {
+          "svg": "left-B_Cu.svg",
+          "png": "left-B_Cu.png",
+          "svg_sha256": "f80aa68ab44687164569241da51dcf835ff34182096a307727ead77f69d2d784",
+          "png_sha256": "9d327bb9d61ea254cad3698cc9b43b84ca76b885f7812699930ea990f7989573"
+        },
+        "F_Mask": {
+          "svg": "left-F_Mask.svg",
+          "png": "left-F_Mask.png",
+          "svg_sha256": "57f5c38be2451c6101d3c8ce96c176f80fad06a1ea926a228ca8098d5bae879d",
+          "png_sha256": "18e7123501a6e67f7d3f5e423bb58340f2e575a79640533ef610c337e6fa320d"
+        },
+        "B_Mask": {
+          "svg": "left-B_Mask.svg",
+          "png": "left-B_Mask.png",
+          "svg_sha256": "8f9454c0407ac26f979fd6576ac17e90898efa746f425240f70aac63924d53ca",
+          "png_sha256": "8ec023f0fc1718194c0a9adc752e6e15cef1aa8983e74d0c350c8338a89dae3d"
+        },
+        "F_Paste": {
+          "svg": "left-F_Paste.svg",
+          "png": "left-F_Paste.png",
+          "svg_sha256": "9c50f168642483f04dc0654d42696b701ebacf86e256eff130fb23a571ababc7",
+          "png_sha256": "2fa9a312a3195e3fa46c5e89666c678177ec7a7e8d0136b0e25a100737e59d8e"
+        },
+        "B_Paste": {
+          "svg": "left-B_Paste.svg",
+          "png": "left-B_Paste.png",
+          "svg_sha256": "9007fe82fe2d07eb32aed7c74007d4ba3d8873ad0ad3801f45d4143a494c2b50",
+          "png_sha256": "265d22bf81317b79809fd279fd3dedcc6eaa5d564e93745692af0ebde68e6b90"
+        },
+        "F_Silkscreen": {
+          "svg": "left-F_Silkscreen.svg",
+          "png": "left-F_Silkscreen.png",
+          "svg_sha256": "17e7bbbb86cc263ce1e86f1f1fd56335bb0a6d47a3f2a08d7ac5849506043461",
+          "png_sha256": "05757a268f5fac4a6e77e892ae9e8b82595a5fb7bc66043a99402bdb644d75bc"
+        },
+        "B_Silkscreen": {
+          "svg": "left-B_Silkscreen.svg",
+          "png": "left-B_Silkscreen.png",
+          "svg_sha256": "fa720c838185ea11afb0136b370217c1f93b7422d83cc1badb019ee9c8796d4e",
+          "png_sha256": "85227e147728d4e1aa3e80eac144fbadfb2fcadb95b2a65a3699e933b6abb045"
+        },
+        "Edge_Cuts": {
+          "svg": "left-Edge_Cuts.svg",
+          "png": "left-Edge_Cuts.png",
+          "svg_sha256": "96999e91354b9d6ad0c33fd7e452491dc5d9fae9abc82fcbda51212db2f0bc7d",
+          "png_sha256": "e1d1e02a720b9560556a85048e2ea9569224c6937061850aff76559910bb211e"
+        },
+        "PTH": {
+          "svg": "left-PTH.svg",
+          "png": "left-PTH.png",
+          "svg_sha256": "cbbcdc30219871aaad54eec8d3e7250384c68ad9f0375b17f87b12b4935ce8a6",
+          "png_sha256": "ca5ae49c3e65fe9fd5197ad1651b7157606eff903c4e72b7cb6252de88474d21"
+        },
+        "NPTH": {
+          "svg": "left-NPTH.svg",
+          "png": "left-NPTH.png",
+          "svg_sha256": "05e498f3774ce4ba0c7ea765e7c2bd7b38f937d04e5aedf18c79f84cfee27751",
+          "png_sha256": "21808b00c48aa0133f769d2216f60dce8ea25f4dd6f18ba005d4d0c176133242"
+        },
+        "F_Cu-holes": {
+          "svg": "left-F_Cu-holes.svg",
+          "png": "left-F_Cu-holes.png",
+          "svg_sha256": "b65209c1d3b8caa601dee91539584bfac67af90ebc0cee8902980b6aeed30b2e",
+          "png_sha256": "e955dfca400c8188559bef1d7ea26606e2efc5195a62babacab74e9af0294d53"
+        },
+        "F_Cu-service": {
+          "svg": "left-F_Cu-service.svg",
+          "png": "left-F_Cu-service.png",
+          "svg_sha256": "98efdc73d06bc16f1ad672e00b2bc80a43209bba9f2582afa7bc4fb83cba4383",
+          "png_sha256": "4d03e18bdbc931dc906167ebe6eb03397befcfc694d32d1399d860451440f748"
+        },
+        "B_Cu-holes": {
+          "svg": "left-B_Cu-holes.svg",
+          "png": "left-B_Cu-holes.png",
+          "svg_sha256": "a4c267aba3f8296ee2b3138d279b74c7be1d3da663d58ae6254a16f2177c43ff",
+          "png_sha256": "3de518c2141e5ef7b802f7b5f2374847f5d804fc322a9cc0bfaca13dafc1e873"
+        },
+        "B_Cu-service": {
+          "svg": "left-B_Cu-service.svg",
+          "png": "left-B_Cu-service.png",
+          "svg_sha256": "7bb80495b1b49d6916cad4653055934e453fc83b6f25b2f035012fed01b01157",
+          "png_sha256": "66b23d5c22a5557b5cbbefcc0328b3182506daf4a4d43121fa1d2bbca6b33098"
+        },
+        "F_Mask-holes": {
+          "svg": "left-F_Mask-holes.svg",
+          "png": "left-F_Mask-holes.png",
+          "svg_sha256": "251db774eaf201baa4125f24a471b23b2f1af5f3906ce763aadf3505e2e01f3c",
+          "png_sha256": "3672498241b08b4bec86c1943345e060ca217f0c4559c743543ee9a67c76c336"
+        },
+        "F_Mask-service": {
+          "svg": "left-F_Mask-service.svg",
+          "png": "left-F_Mask-service.png",
+          "svg_sha256": "4dbb0d6ae6644687238ff90d22b15f33cf20637075605bc5d4c53a40106c6568",
+          "png_sha256": "f790fde0a18d72ee53562ae35520646c8ed35b2a71afc83e57d98559f96b867f"
+        },
+        "B_Mask-holes": {
+          "svg": "left-B_Mask-holes.svg",
+          "png": "left-B_Mask-holes.png",
+          "svg_sha256": "413cb55c64f7fb52edcc1abe65c06fe26cd989f14301237bd2cb54f5cd00079c",
+          "png_sha256": "d616ff86bc9bc311f4212acac918b7c36bbca3237674ba48c1113e92d757a0b2"
+        },
+        "B_Mask-service": {
+          "svg": "left-B_Mask-service.svg",
+          "png": "left-B_Mask-service.png",
+          "svg_sha256": "054f14ad0d3b27a2665cbaea920ec92b42af402a2ab24b4a876fd825775e39de",
+          "png_sha256": "221083c4ec34aaa6d77af01d80eb7ab7d084a1d5e5db5f956c77542f914200d8"
+        },
+        "F_Cu-tile-0-0": {
+          "svg": "left-F_Cu-tile-0-0.svg",
+          "png": "left-F_Cu-tile-0-0.png",
+          "svg_sha256": "0ced4e8699e011e6c3d73b918ca0db9b1aa5751410c708ac9b170908e1171bef",
+          "png_sha256": "dcfb7961d02658963f5051186a14196318710239a4d875a143b4069abce050c4"
+        },
+        "F_Cu-tile-0-1": {
+          "svg": "left-F_Cu-tile-0-1.svg",
+          "png": "left-F_Cu-tile-0-1.png",
+          "svg_sha256": "391c669e50801a424119a9fb5379259576c88823d45932ea6da602eab0c62365",
+          "png_sha256": "16deff02478b0f5eb859428f9dcddde86297977307f4e55b64693d80d082c8cb"
+        },
+        "F_Cu-tile-1-0": {
+          "svg": "left-F_Cu-tile-1-0.svg",
+          "png": "left-F_Cu-tile-1-0.png",
+          "svg_sha256": "656bd1dd5b879281b9290a57d94689c5e60eb1568f35ce4ab9dbd5d08f86b76b",
+          "png_sha256": "58970735475f05e9c2ca09d4089f4e3f35252233b88076581d815f6eaa4c6064"
+        },
+        "F_Cu-tile-1-1": {
+          "svg": "left-F_Cu-tile-1-1.svg",
+          "png": "left-F_Cu-tile-1-1.png",
+          "svg_sha256": "4c9428a49dd46eb941c3977433c0f52b7e19ce3b370910b960e7c5a1de58e44c",
+          "png_sha256": "0193cc34036e28f54a1fa3eb3ad21e499d4efdc6b3d3d3e4a9697004c2754721"
+        },
+        "F_Cu-tile-2-0": {
+          "svg": "left-F_Cu-tile-2-0.svg",
+          "png": "left-F_Cu-tile-2-0.png",
+          "svg_sha256": "1bb236f8e0a90161f5a67b698ea17a0034d71cf56dcce939e6dcfafac228c7ce",
+          "png_sha256": "b9f41f3579b98c4eb0444d8719d6b386f608ad3f66a2aed06ff56d5e8e6fc83a"
+        },
+        "F_Cu-tile-2-1": {
+          "svg": "left-F_Cu-tile-2-1.svg",
+          "png": "left-F_Cu-tile-2-1.png",
+          "svg_sha256": "f7051ce04e98b56c25d89ca7a94ed2c9f7c7c42eb1c6f2383a5b5ef5ef95bb0d",
+          "png_sha256": "d2e85be3c3697f4c37951b098e28a708d3d99a722922edf23e27f48d7d92694f"
+        },
+        "B_Cu-tile-0-0": {
+          "svg": "left-B_Cu-tile-0-0.svg",
+          "png": "left-B_Cu-tile-0-0.png",
+          "svg_sha256": "0c6b622fbd37318a036223abecb3adde1340b23a5f641b33c7cfd2796fa204d5",
+          "png_sha256": "8519112c7453bf020fc627af7f495c6f356c26da7eb44c26f43f3425b8394968"
+        },
+        "B_Cu-tile-0-1": {
+          "svg": "left-B_Cu-tile-0-1.svg",
+          "png": "left-B_Cu-tile-0-1.png",
+          "svg_sha256": "e9d8031253cb8e7c49c552862adf608aff431ef397fa73843f9cd384b8bcf19f",
+          "png_sha256": "eacdfbe3c9316bd1e338fcf82b9a8c7b5f8cddb801b5b4d5b03b5938064efdf0"
+        },
+        "B_Cu-tile-1-0": {
+          "svg": "left-B_Cu-tile-1-0.svg",
+          "png": "left-B_Cu-tile-1-0.png",
+          "svg_sha256": "c6e463b1baf9ef26f0f6cfc053a73a479183c7cd610c7eda779468e9897c2c4e",
+          "png_sha256": "ef7cc21d7e985e20552c18a4053960d017ea1e44962ea35ae13b5d688f6f6613"
+        },
+        "B_Cu-tile-1-1": {
+          "svg": "left-B_Cu-tile-1-1.svg",
+          "png": "left-B_Cu-tile-1-1.png",
+          "svg_sha256": "b89c18e8196e39c02927d70cc7c043e30e5f83f2b32068acd360fbcbf68fffe4",
+          "png_sha256": "abd5468303d7a12e975a2d037d8d130b2ceb7ddf27c1147b325943b8bdbc199f"
+        },
+        "B_Cu-tile-2-0": {
+          "svg": "left-B_Cu-tile-2-0.svg",
+          "png": "left-B_Cu-tile-2-0.png",
+          "svg_sha256": "fa419111a89d74cf9eb618df17043802584a4d9911f0967e23f909514ac43c07",
+          "png_sha256": "98b99e8cb087fab12a7ab0846123d18b5de17d2ab36ae8171e2368e3594f1124"
+        },
+        "B_Cu-tile-2-1": {
+          "svg": "left-B_Cu-tile-2-1.svg",
+          "png": "left-B_Cu-tile-2-1.png",
+          "svg_sha256": "e629f26584c64d2f7e35503e0a6be1dd15aaa1e1b47ee25db77abd2d649c3f98",
+          "png_sha256": "b67a9d95c16d8df177c6c71594fcbc815e92f170c3d2cc1c2723a1cdb51441a1"
+        }
+      },
+      "objects": {
+        "F_Cu": 335,
+        "B_Cu": 876,
+        "F_Mask": 288,
+        "B_Mask": 410,
+        "F_Paste": 2,
+        "B_Paste": 124,
+        "F_Silkscreen": 2026,
+        "B_Silkscreen": 93,
+        "Edge_Cuts": 114,
+        "PTH": 118,
+        "NPTH": 195
+      }
+    },
+    "right": {
+      "input_sha256": {
+        "F_Cu": "d4623d023fbc55464a2774e04fee6130ab456cee58198174ac5412e8269ed630",
+        "B_Cu": "8c76fc327cb811ba73029889767239f73dc98f4f37924e61dd1eb83f23325f8e",
+        "F_Mask": "b15b29cb2127ceeb5fcf21a793ea1a4f3c516e6862406818a469fe52c6c9135a",
+        "B_Mask": "f0b724a648c799abde6fa362a68f56d91575cfad4575ffe47a2b1506d799a724",
+        "F_Paste": "2fe0a45ae87659629318e63585fbe23293db40a94709050b87622f42d6d4f7e2",
+        "B_Paste": "ff90592f5384ad0691145e02f8c583d804d0c4803710a9577afed51e5036adc6",
+        "F_Silkscreen": "9220fed2eaeaf923743037a22c21810103988749594c65442807a6a1da0e9152",
+        "B_Silkscreen": "103ebe41c65293ea92beacbe0dca2069a97f6c13b5a6c02a99d77639d363df6a",
+        "Edge_Cuts": "1f35879d156ee541f8fc7d7646db0913caef3265a7714829fc37d4f35f96819e",
+        "PTH": "453242b8a8c00f52d1550cad37bc0945711cb085df061947bfeed5a59a8245ca",
+        "NPTH": "5b73e8549b8f65941a61175d48e27846d3832a732a93d8b1855925f50dde8e0f"
+      },
+      "bounds_mm": [
+        [
+          33.95,
+          -162.8
+        ],
+        [
+          199.7375,
+          -38.2
+        ]
+      ],
+      "views": {
+        "F_Cu": {
+          "svg": "right-F_Cu.svg",
+          "png": "right-F_Cu.png",
+          "svg_sha256": "bc4d3e6e123e863823c349f4d69c153ddb75a4ccef40242bc297a254ba79a96d",
+          "png_sha256": "d4897d78a15e3257b7211b4ea5ae4bf9a8cfc15576079daacae5250e2b74fe9e"
+        },
+        "B_Cu": {
+          "svg": "right-B_Cu.svg",
+          "png": "right-B_Cu.png",
+          "svg_sha256": "15ac95b9cbe155f6b3bd33a3fe27cb75888581cadd7c9df33d8e464dbe1687e8",
+          "png_sha256": "4f6f25d804eb7209b3a06ed4e701d1db634751d2c8b5d2a7b328d1adea132925"
+        },
+        "F_Mask": {
+          "svg": "right-F_Mask.svg",
+          "png": "right-F_Mask.png",
+          "svg_sha256": "c59e123e8b2b282758288b9d1bf39ef4a00ceeb87d63363a00f40937c23831bf",
+          "png_sha256": "c200da719503d7215890232055e6f888da41a61d59ce9d96d96e002d4cb8f85a"
+        },
+        "B_Mask": {
+          "svg": "right-B_Mask.svg",
+          "png": "right-B_Mask.png",
+          "svg_sha256": "2ffbd6e5c6fbd6df3eece00336b9e782b7bc508f0dade236a19f91a6f0713f16",
+          "png_sha256": "d2ba6fd7834bcc381f0416c30aa6d5d55d1c756d4fade2e09e2719f484692202"
+        },
+        "F_Paste": {
+          "svg": "right-F_Paste.svg",
+          "png": "right-F_Paste.png",
+          "svg_sha256": "85198c820767a270d68cffb31a4c3455add098edb6e668a6d5e7f419022f3c30",
+          "png_sha256": "ed89f0043508a8d64cb7ba201fbcda40b68de8368dd3e8e1978ddb96a5c4384f"
+        },
+        "B_Paste": {
+          "svg": "right-B_Paste.svg",
+          "png": "right-B_Paste.png",
+          "svg_sha256": "7f92d5f009f69db097f412e849e6c997e75b3649cc5a848fe7eaeacf1c4aa3a1",
+          "png_sha256": "beb54379d0981b64e1999b5ce4b62ae98332df1e22122ee62471289cca95b2ec"
+        },
+        "F_Silkscreen": {
+          "svg": "right-F_Silkscreen.svg",
+          "png": "right-F_Silkscreen.png",
+          "svg_sha256": "f3f8f44cf788a66478b929e13f00f39b711a336ebbd35244094f4fbd05dddc66",
+          "png_sha256": "4363fb735f4ebcd39c92b230d4b6adac1f4dc84d707b9610eb9849441a3582c4"
+        },
+        "B_Silkscreen": {
+          "svg": "right-B_Silkscreen.svg",
+          "png": "right-B_Silkscreen.png",
+          "svg_sha256": "12f659943e94b8ab6c55f4520a0633ef327c471ff170b13e152769ecee9aa553",
+          "png_sha256": "69ad86f8c2548e80a060d7937ab19137378e0c65adf36f24a6e52834843737c6"
+        },
+        "Edge_Cuts": {
+          "svg": "right-Edge_Cuts.svg",
+          "png": "right-Edge_Cuts.png",
+          "svg_sha256": "636a60b2dacc3af0c229705836bc404914bb3890fc2c7daa4eea9557488e3a6e",
+          "png_sha256": "ed8aabea7033e145e79338084a8507948692e101c1a81c5705ef19a15d37e684"
+        },
+        "PTH": {
+          "svg": "right-PTH.svg",
+          "png": "right-PTH.png",
+          "svg_sha256": "48f6dab35fbda480299ff570d095ae7420705f8a256a4ef1ff357c8ce4bd4c57",
+          "png_sha256": "d081cd9c915d85f45c2bd163b104c04a5f7e23f54f23130294d0032e318285d0"
+        },
+        "NPTH": {
+          "svg": "right-NPTH.svg",
+          "png": "right-NPTH.png",
+          "svg_sha256": "72d52ca8af8f66bedc9dfc0dbb8f13dffe1b294ce9eb3b805ee81dd5c4ca5eb2",
+          "png_sha256": "5bfaf55a43bbcaccb1452ba2633a21b2e747439c3f67af91743d3a7cb5b2caa0"
+        },
+        "F_Cu-holes": {
+          "svg": "right-F_Cu-holes.svg",
+          "png": "right-F_Cu-holes.png",
+          "svg_sha256": "e0212169eec48c991ac2543f309230d1dbfaea4a29c8185b5a9e06405a769f37",
+          "png_sha256": "59920b699f95c4b5c289ec2c5873653a22b844f5048dc20119a648217810098a"
+        },
+        "F_Cu-service": {
+          "svg": "right-F_Cu-service.svg",
+          "png": "right-F_Cu-service.png",
+          "svg_sha256": "f9828bc58d6bb5924ea48b4ed0232b7f227912010bd49064dad6d9e9e471365b",
+          "png_sha256": "1231f690d4b4e84518ce20f0ff213e041cac8220ccd56e5d711f9a9ab65dcf5b"
+        },
+        "B_Cu-holes": {
+          "svg": "right-B_Cu-holes.svg",
+          "png": "right-B_Cu-holes.png",
+          "svg_sha256": "ff1598bdba19b4a9a02632151697bde726418ea79669148c60b675f8677eeb19",
+          "png_sha256": "4a0e0f18c1a5c639172f4e6b667a442322dbe9c4a4babb5ad37adf902fdc4f73"
+        },
+        "B_Cu-service": {
+          "svg": "right-B_Cu-service.svg",
+          "png": "right-B_Cu-service.png",
+          "svg_sha256": "0a019ea21ae93db87a88a5f1a8ae9cacad5d0603bf7786437ad8cf50c0cc4925",
+          "png_sha256": "e69262e9823c97bfecdfd838a03e10a0fb96bee4253cb151de969f3eca4798ec"
+        },
+        "F_Mask-holes": {
+          "svg": "right-F_Mask-holes.svg",
+          "png": "right-F_Mask-holes.png",
+          "svg_sha256": "40cea25132cb91d5c53e43f97387570fbcbb831138fd2f3725147c5f05c99446",
+          "png_sha256": "cfe053ea83032041d7802323058ab029e008d91308cb44ab60d3139942d2e417"
+        },
+        "F_Mask-service": {
+          "svg": "right-F_Mask-service.svg",
+          "png": "right-F_Mask-service.png",
+          "svg_sha256": "d1a9ae420e7b2a3bd6afe2567f12281dfef93f2ffeee237809118bd12cb1a050",
+          "png_sha256": "88af4f2b22af1f81718660580adeff9a2718c9a8cdaa8d2b3c61e29b27959a84"
+        },
+        "B_Mask-holes": {
+          "svg": "right-B_Mask-holes.svg",
+          "png": "right-B_Mask-holes.png",
+          "svg_sha256": "643feca44fdbca0da4acafe1e7f4ff062a27ce639cda3a8a635acc7a14bcbad6",
+          "png_sha256": "a2a9e5e1d6533520cbe10f3d2f456740229b26fbda0a011513a6a8f3c59d9a34"
+        },
+        "B_Mask-service": {
+          "svg": "right-B_Mask-service.svg",
+          "png": "right-B_Mask-service.png",
+          "svg_sha256": "f14254dc985ec1cdfdb70da5e203a58d321a1977405afd3241062adbacf7af47",
+          "png_sha256": "af0c57f3ee9185ec529bc78528f16748f81f61592ad3dad54dad90a1ff2d16e2"
+        },
+        "F_Cu-tile-0-0": {
+          "svg": "right-F_Cu-tile-0-0.svg",
+          "png": "right-F_Cu-tile-0-0.png",
+          "svg_sha256": "1ab5a9bcfd776c965b8b10ecefe14d5089081f19f3aeb51eda4129203a5016c7",
+          "png_sha256": "4a03102a90cc7258875240fa0eca63bb98067cfa466050c2b33864ac44053c38"
+        },
+        "F_Cu-tile-0-1": {
+          "svg": "right-F_Cu-tile-0-1.svg",
+          "png": "right-F_Cu-tile-0-1.png",
+          "svg_sha256": "32316c7808be22ba92ff88c70cc675bd00f131a77634e674eccf7f1910941a9d",
+          "png_sha256": "cb5a8fa592637d3bc974413411aa286dae680f2ef378e42ee0a5b05afd3505eb"
+        },
+        "F_Cu-tile-1-0": {
+          "svg": "right-F_Cu-tile-1-0.svg",
+          "png": "right-F_Cu-tile-1-0.png",
+          "svg_sha256": "f9510e32e3dde01fc96d2c984be664e8aaf025f5cfb38bf948b5d16a1cad3d93",
+          "png_sha256": "199f077b729fece1b65e68c9cde17b5845fefce28663dddbf6f6980cd6398486"
+        },
+        "F_Cu-tile-1-1": {
+          "svg": "right-F_Cu-tile-1-1.svg",
+          "png": "right-F_Cu-tile-1-1.png",
+          "svg_sha256": "58e47dd8ecf23b4e6b17efdd173b45a4922c62324a6f2e0842084fef9e079153",
+          "png_sha256": "c39950516d8dea5e910664f76ba37e1841d1f2b8edcc5e5f654cfe4e9fe3ae2f"
+        },
+        "F_Cu-tile-2-0": {
+          "svg": "right-F_Cu-tile-2-0.svg",
+          "png": "right-F_Cu-tile-2-0.png",
+          "svg_sha256": "ee384a6e6cef1c2b5f6a9cb445ac9bd80c842772ef4f2745f2fcdb05b78c9a64",
+          "png_sha256": "c2b3d31a5233b0d574e4761803c5e060d432fca525098807598de2aaae8380ef"
+        },
+        "F_Cu-tile-2-1": {
+          "svg": "right-F_Cu-tile-2-1.svg",
+          "png": "right-F_Cu-tile-2-1.png",
+          "svg_sha256": "11faede7d312d8113063e759884fbb844291fc3e282ebd836d770a890d36625b",
+          "png_sha256": "c3437c2abe940b4da80327c314c8f1d514eb32199c464e4e4a37bf88aa961b6d"
+        },
+        "B_Cu-tile-0-0": {
+          "svg": "right-B_Cu-tile-0-0.svg",
+          "png": "right-B_Cu-tile-0-0.png",
+          "svg_sha256": "d56b1f96ca542ee4e0c1da3f2bef501a95e9263e3ff997a3023fed80acae736b",
+          "png_sha256": "14375e03371bdf1b048a2ed0fb6fc432d557a947c1c099647a653269cd57ab4a"
+        },
+        "B_Cu-tile-0-1": {
+          "svg": "right-B_Cu-tile-0-1.svg",
+          "png": "right-B_Cu-tile-0-1.png",
+          "svg_sha256": "be9cf4a972cede809d4c58e02621fbecddbe36021b7bf2ea0e9415f2f0f39c15",
+          "png_sha256": "bbd253040cd024b019e9c271e6d5eae638e9b909397cd26108eb98f1984dfb15"
+        },
+        "B_Cu-tile-1-0": {
+          "svg": "right-B_Cu-tile-1-0.svg",
+          "png": "right-B_Cu-tile-1-0.png",
+          "svg_sha256": "0e6c574e151766ee543e0d40a2c0aea531ced562406912588ffc5ef512825f94",
+          "png_sha256": "86ed2c8f8d0404af21e1d07b91a798e048ab6e134398a402ce22f55dc681c6de"
+        },
+        "B_Cu-tile-1-1": {
+          "svg": "right-B_Cu-tile-1-1.svg",
+          "png": "right-B_Cu-tile-1-1.png",
+          "svg_sha256": "9c28e1101d22715e22af69e6a02766f1d4a2a4aac0122d7f33f2c77cf7ca120d",
+          "png_sha256": "0ea7035fb7d41e78d0ada95514a0228293682c9b7438f0c8af8b09b88edbb043"
+        },
+        "B_Cu-tile-2-0": {
+          "svg": "right-B_Cu-tile-2-0.svg",
+          "png": "right-B_Cu-tile-2-0.png",
+          "svg_sha256": "169c17b151475537480789204b845f87f90701a85c897b74b88616095f007af3",
+          "png_sha256": "f899534f4b9ea06010ec5efdd7626c9ada373a5ba0449317787ded8c98b4d18e"
+        },
+        "B_Cu-tile-2-1": {
+          "svg": "right-B_Cu-tile-2-1.svg",
+          "png": "right-B_Cu-tile-2-1.png",
+          "svg_sha256": "9cd9682d9f83ecfdf98446bfd230ae89bba758d551df50363c75072404318c26",
+          "png_sha256": "02a203ac3c818332244d1b058f26888215dec29d62c7250248e93042e3bc7387"
+        }
+      },
+      "objects": {
+        "F_Cu": 367,
+        "B_Cu": 1153,
+        "F_Mask": 353,
+        "B_Mask": 507,
+        "F_Paste": 2,
+        "B_Paste": 156,
+        "F_Silkscreen": 2098,
+        "B_Silkscreen": 117,
+        "Edge_Cuts": 114,
+        "PTH": 166,
+        "NPTH": 244
+      }
+    }
+  }
+}

@@ -1,0 +1,22 @@
+........................warning: in the working copy of '.gitattributes', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'housing-snapshot.txt', CRLF will be replaced by LF the next time Git touches it
+............E
+======================================================================
+ERROR: test_kc2_mx_housing_release_integration (unittest.loader._FailedTest.test_kc2_mx_housing_release_integration)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_kc2_mx_housing_release_integration
+Traceback (most recent call last):
+  File "C:\Python312\Lib\unittest\loader.py", line 137, in loadTestsFromName
+    module = __import__(module_name)
+             ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Work\git\kc2\tools\test_kc2_mx_housing_release_integration.py", line 5, in <module>
+    from tools.verify_kc2_x3_v2 import selected_mx_housing_readiness_blockers
+  File "C:\Work\git\kc2\tools\verify_kc2_x3_v2.py", line 18, in <module>
+    import pcbnew
+ModuleNotFoundError: No module named 'pcbnew'
+
+
+----------------------------------------------------------------------
+Ran 37 tests in 158.772s
+
+FAILED (errors=1)

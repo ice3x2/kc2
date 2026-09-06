@@ -1,0 +1,5 @@
+{
+  "first_order_ready": true,
+  "physical_qualification_complete": false,
+  "errors": []
+}

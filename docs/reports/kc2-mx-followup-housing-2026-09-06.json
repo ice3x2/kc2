@@ -1,0 +1,40 @@
+{
+  "requirement": "CON-ARCH-006",
+  "digital_valid": true,
+  "errors": [],
+  "qualification_blockers": [
+    "CON-ARCH-006: exact MX switch seating/clip datums, socket flange relief and pin engagement are unqualified",
+    "CON-ARCH-006: socket tolerances, switch-pin/solder projection and post-print desk clearance are unqualified",
+    "CON-ARCH-006: upper print material, printed clip/joint fit and full-travel head/driver/component clearances are unqualified",
+    "CON-ARCH-006: long screw/receiver/driver identity, engagement/tip tolerance, torque and ten-cycle retention evidence are pending",
+    "CON-ARCH-006: assembled 2 N / 0.30 mm deflection and full-pattern physical fit evidence are pending"
+  ],
+  "native_archive_blockers": [],
+  "order_ready": false,
+  "print_ready": false,
+  "source_sha256": {
+    "hardware/case/kc2_housing_manifest.json": "9d2fbebb8dbab56c3356251646cc2bcbfa4fc7bd10308e69bf365f124f236fe3",
+    "hardware/case/kc2_mx_upper_housing_manifest.json": "1e8465cac455e763d2dcb4e4c66e3bc18f32cb45fce4e22fd43576c81949c5a3",
+    "hardware/case/kc2_fusion_export_result.json": "4e733a97a0a0a97c6b4bad9a7f4c8c827ecc744b02fe2e188d2a925e692c7632",
+    "tools/generate_kc2_x3_v2_housings.py": "fc6a590e65037a436a61ea87e2a5b03a1bf7c9fc895e83e298355a0b96cd5042",
+    "tools/generate_kc2_mx_upper_housings.py": "8e30893e14dd1ebdc8ce6ef4df6823fd86c6f1d05d63076c4070896344227cce",
+    "tools/verify_kc2_mx_housing_contract.py": "c6f6720e00be5c54101c9a15733bb25d6c17870d68ad9ffd07301d3a1110ace7",
+    "tools/verify_kc2_housing_f3d.py": "a9766f05002cdfd15d64edbd979b96aed486f99696d9af316bafa3d37a47788b",
+    "hardware/kicad/kc2_left/kc2_left.kicad_pcb": "557f25598c6c6c026d3404abaf37d5bb76caee5a0001fc97a18591b4d615235c",
+    "hardware/case/kc2_left_lower_housing.step": "c7b9f707e6f9ebe9eff4b4d5429a923e20b63a387b876846367e95eae9fa40ab",
+    "hardware/case/kc2_left_lower_housing.f3d": "0345f8519ed0bb106ec1f23781081d537a425cdead51ca9e928ecaed6f822843",
+    "hardware/case/kc2_left_lower_housing.stl": "21ce81c57a94a72b8fd613379b60a53330f4c5a9d912f208fe029f799fc03c35",
+    "hardware/case/kc2_left_mx_upper_housing.step": "24f434935acb233090433b1405f7bcc06f8c373b4187a0c283ee9ceef60c2a6e",
+    "hardware/case/kc2_left_mx_upper_housing.f3d": "5a44813aa0c15d0c8a9ba6648ce0d0dd769cb8993bd95795bf0e2218c540b4aa",
+    "hardware/case/kc2_left_mx_upper_housing.stl": "bd5ac3ef353c4133f51576e7d0936924cfa85c0a5fb969a87bc1c45f32245f6f",
+    "hardware/kicad/kc2_right/kc2_right.kicad_pcb": "ecbe969d980f7c70c96eff12a0bf207b88b6d5bfb8f49687811a65659d9de4d2",
+    "hardware/case/kc2_right_lower_housing.step": "1240b4ffa107fa7f9da03b4b6ba16ff337a6700111d05115114126c963cfde8e",
+    "hardware/case/kc2_right_lower_housing.f3d": "54376043b2762402487496672c58e0637c1e23a308b128ed4739529a1c635fe5",
+    "hardware/case/kc2_right_lower_housing_part_a.stl": "25e671b7a698aa0f511a3bcc0a2b21efb6b2e2f1944c25acd890a185c798575a",
+    "hardware/case/kc2_right_lower_housing_part_b.stl": "5f1e528448c7d70cf17b7e6c35f27cdfc3f2984ced3334925f0195a6d43b8e07",
+    "hardware/case/kc2_right_mx_upper_housing.step": "f9846c2751d50475f20c5c4218c46d122a3a5449a7290832d9ee122456c08678",
+    "hardware/case/kc2_right_mx_upper_housing.f3d": "515902ab81000788805f732ad75da5b0b148f020ef076d061679d6e335658bc4",
+    "hardware/case/kc2_right_mx_upper_housing_part_a.stl": "d5b49bce3a2bce8bf8550755d192930c368a625454535340ef9658f5b6da0863",
+    "hardware/case/kc2_right_mx_upper_housing_part_b.stl": "54ac751da668c432381fc6487770b087cad0f7ba27adfabeffe5af7a6b1e3ba3"
+  }
+}

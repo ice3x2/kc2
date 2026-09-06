@@ -1,26 +1,28 @@
-"""Verify native Fusion archive exports for the KC2 X3 lower housings."""
+"""CON-ARCH-006: verify four native Fusion housing archives and round-trip evidence."""
 
 from __future__ import annotations
 
 import json
 import hashlib
+import math
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 RESULT_PATH = ROOT / "hardware" / "case" / "kc2_fusion_export_result.json"
 F3D_OUTPUTS = {
-    "left": ROOT / "hardware" / "case" / "kc2_left_lower_housing.f3d",
-    "right": ROOT / "hardware" / "case" / "kc2_right_lower_housing.f3d",
+    f"{side}_{kind}": ROOT / "hardware" / "case" / f"kc2_{side}_{kind}_housing.f3d"
+    for kind in ("lower", "mx_upper") for side in ("left", "right")
 }
 MIN_ARCHIVE_SIZE_BYTES = 1024
-EXPECTED_MAX_Z_MM = 5.10
 BOUNDING_BOX_TOLERANCE_MM = 0.001
 PRINT_VOLUME_LIMIT_MM = 150.0
 STEP_OUTPUTS = {
-    "left": ROOT / "hardware" / "case" / "kc2_left_lower_housing.step",
-    "right": ROOT / "hardware" / "case" / "kc2_right_lower_housing.step",
+    key: path.with_suffix('.step') for key, path in F3D_OUTPUTS.items()
 }
-EXPECTED_BODY_COUNTS = {"left": 1, "right": 2}
+EXPECTED_BODY_COUNTS = {
+    "left_lower": 1, "right_lower": 2,
+    "left_mx_upper": 1, "right_mx_upper": 2,
+}
 
 
 def sha256(path: Path) -> str:
@@ -31,28 +33,81 @@ def sha256(path: Path) -> str:
     return digest.hexdigest()
 
 
-def verify_f3d_outputs() -> list[str]:
+def valid_bounds(box) -> bool:
+    return (isinstance(box, (list, tuple)) and len(box) == 6
+            and all(type(value) in (int, float) and math.isfinite(value) for value in box)
+            and all(box[axis + 3] > box[axis] for axis in range(3)))
+
+
+def bounds_equal(before, after) -> bool:
+    return (valid_bounds(before) and valid_bounds(after)
+            and all(abs(a-b) <= BOUNDING_BOX_TOLERANCE_MM for a,b in zip(before,after)))
+
+
+def body_bounds_equal(before, after) -> bool:
+    if not isinstance(before,list) or not isinstance(after,list) or len(before)!=len(after):
+        return False
+    unmatched=list(after)
+    for box in before:
+        index=next((i for i,candidate in enumerate(unmatched) if bounds_equal(box,candidate)),None)
+        if index is None:
+            return False
+        unmatched.pop(index)
+    return True
+
+
+def verify_f3d_outputs(root: Path = ROOT) -> list[str]:
+    result_path = root / RESULT_PATH.relative_to(ROOT)
+    f3d_outputs = {key: root / p.relative_to(ROOT) for key, p in F3D_OUTPUTS.items()}
+    step_outputs = {key: root / p.relative_to(ROOT) for key, p in STEP_OUTPUTS.items()}
     errors: list[str] = []
-    for side, path in F3D_OUTPUTS.items():
+    for side, path in f3d_outputs.items():
         if not path.exists():
-            errors.append(f"{side}: missing Fusion archive {path.relative_to(ROOT)}")
+            errors.append(f"{side}: missing Fusion archive {path.relative_to(root)}")
         elif path.stat().st_size < MIN_ARCHIVE_SIZE_BYTES:
             errors.append(f"{side}: Fusion archive is unexpectedly small")
 
-    if not RESULT_PATH.exists():
-        errors.append(f"missing Fusion export result {RESULT_PATH.relative_to(ROOT)}")
+    if not result_path.exists():
+        errors.append(f"missing Fusion export result {result_path.relative_to(root)}")
         return errors
 
-    result = json.loads(RESULT_PATH.read_text(encoding="utf-8"))
+    result = json.loads(result_path.read_text(encoding="utf-8"))
+    if result.get('requirement') != 'CON-ARCH-006' or result.get('assembly_mode') != 'mx_receptacle_with_plate':
+        errors.append('Fusion result is not the current MX plate-lid assembly')
+    if set(result.get('outputs', {})) != set(f3d_outputs):
+        errors.append('Fusion result must contain exactly the four lower and MX upper outputs')
     if result.get("status") != "pass":
         errors.append(f"Fusion export status is {result.get('status', 'missing')}")
-    for side in F3D_OUTPUTS:
+    for side in f3d_outputs:
         item = result.get("outputs", {}).get(side, {})
+        source_solids = item.get('source_solids', [])
+        reopened_solids = item.get('archive_reimport_solids', [])
         expected_body_count = EXPECTED_BODY_COUNTS[side]
-        step_path = STEP_OUTPUTS[side]
+        if expected_body_count <= 0 or not source_solids or item.get('solid_round_trip_verified') is not True:
+            errors.append(f'{side}: missing solid round-trip evidence')
+        unmatched = list(reopened_solids)
+        for solid in source_solids:
+            volume = solid.get('volume_mm3', float('nan'))
+            index = next((i for i, after in enumerate(unmatched)
+                          if len(solid.get('bounds_mm', [])) == 6
+                          and len(after.get('bounds_mm', [])) == 6
+                          and all(math.isfinite(a) and math.isfinite(b) and abs(a-b) <= 0.001
+                                  for a, b in zip(solid['bounds_mm'], after['bounds_mm']))
+                          and math.isfinite(volume) and volume > 0
+                          and math.isfinite(after.get('volume_mm3', float('nan')))
+                          and abs(volume-after['volume_mm3']) <= max(0.001, volume*1e-6)), None)
+            if index is None:
+                errors.append(f'{side}: round-trip solid bounds/volume mismatch')
+            else:
+                unmatched.pop(index)
+        if unmatched or len(source_solids) != expected_body_count:
+            errors.append(f'{side}: round-trip solid records have incorrect body counts')
+        step_path = step_outputs[side]
+        if not step_path.exists():
+            errors.append(f'{side}: missing source STEP')
         if step_path.exists() and item.get("source_step_sha256") != sha256(step_path):
             errors.append(f"{side}: Fusion result STEP SHA-256 does not match the source file")
-        if F3D_OUTPUTS[side].exists() and item.get("f3d_sha256") != sha256(F3D_OUTPUTS[side]):
+        if f3d_outputs[side].exists() and item.get("f3d_sha256") != sha256(f3d_outputs[side]):
             errors.append(f"{side}: Fusion result F3D SHA-256 does not match the archive file")
         if item.get("body_count") != expected_body_count:
             errors.append(f"{side}: Fusion imported body count is {item.get('body_count')}")
@@ -65,24 +120,19 @@ def verify_f3d_outputs() -> list[str]:
             )
         source_box = item.get("bounding_box_mm", [])
         reimport_box = item.get("archive_reimport_bounding_box_mm", [])
-        if len(source_box) != 6 or len(reimport_box) != 6:
+        if not valid_bounds(source_box) or not valid_bounds(reimport_box):
             errors.append(f"{side}: Fusion archive round-trip bounding box is incomplete")
-        elif any(abs(float(before) - float(after)) > 1e-6 for before, after in zip(source_box, reimport_box)):
+        elif not bounds_equal(source_box,reimport_box):
             errors.append(f"{side}: Fusion archive round-trip changed the bounding box")
-        elif abs(float(source_box[5]) - EXPECTED_MAX_Z_MM) > BOUNDING_BOX_TOLERANCE_MM:
-            errors.append(
-                f"{side}: Fusion archive max Z {float(source_box[5]):.3f} mm is not "
-                f"the flat-housing target {EXPECTED_MAX_Z_MM:.3f} mm"
-            )
         body_boxes = item.get("body_bounding_boxes_mm", [])
         reimport_body_boxes = item.get("archive_reimport_body_bounding_boxes_mm", [])
         if len(body_boxes) != expected_body_count:
             errors.append(f"{side}: Fusion body bounding boxes are incomplete")
-        elif body_boxes != reimport_body_boxes:
+        elif not body_bounds_equal(body_boxes,reimport_body_boxes):
             errors.append(f"{side}: Fusion body bounding boxes changed after archive re-import")
         else:
             for index, body_box in enumerate(body_boxes, start=1):
-                if len(body_box) != 6:
+                if not valid_bounds(body_box):
                     errors.append(f"{side}: Fusion body {index} bounding box is incomplete")
                     continue
                 dimensions = [
@@ -95,8 +145,7 @@ def verify_f3d_outputs() -> list[str]:
                             f"{side}: Fusion body {index} {axis} size {dimension:.3f} mm "
                             f"exceeds the {PRINT_VOLUME_LIMIT_MM:.1f} mm print limit"
                         )
-        if step_path.exists() and F3D_OUTPUTS[side].stat().st_mtime < step_path.stat().st_mtime:
-            errors.append(f"{side}: Fusion archive is older than its source STEP file")
+        # Content hashes, rather than checkout timestamps, bind the exact files.
     return errors
 
 
@@ -108,11 +157,11 @@ def main() -> int:
             print(f"- {error}")
         return 1
     print("PASS: KC2 native Fusion archive verification")
-    print("- left/right F3D archives were exported by the installed Fusion API")
-    print("- Fusion imported one left BRep body and two right BRep bodies")
+    print("- both lower housings and both MX plate-lids have native Fusion archives")
+    print("- solid body counts, bounds and volumes match after Fusion re-import")
     print("- every Fusion body fits the 150 mm cube print envelope")
     print("- STEP and F3D SHA-256 values match the Fusion round-trip result")
-    print("- round-trip max Z is 5.10 mm for the flat housing and registration pegs")
+    print("- native conversion evidence does not establish physical fit or order readiness")
     return 0
 
 

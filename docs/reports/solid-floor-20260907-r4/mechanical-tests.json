@@ -1,0 +1,230 @@
+{
+  "requirement_ids": [
+    "CON-ARCH-006",
+    "OPS-ARCH-007"
+  ],
+  "status": "passed",
+  "errors": [],
+  "date": "2026-09-07",
+  "hash_policy": "raw-sha256",
+  "scope": "Independent floor/typed housing verifier integration; no physical acceptance or order action",
+  "test_runs": [
+    {
+      "command": "C:/Python312/python.exe -B -m tools.verify_kc2_x3_v2_housing",
+      "native_exit_code": 0,
+      "result": "PASS",
+      "log": "docs/reports/solid-floor-20260907-r4/actual-housing-verifier.log",
+      "output": "hardware/case/kc2_housing_clearance.json"
+    },
+    {
+      "command": "C:/Python312/python.exe -B -m unittest tools.test_verify_kc2_x3_v2_housing -v",
+      "native_exit_code": null,
+      "powershell_wrapper_exit_code": 1,
+      "result": "OK",
+      "tests_run": 33,
+      "failures": 0,
+      "errors": 0,
+      "duration_seconds": 550.849,
+      "log": "docs/reports/solid-floor-20260907-r4/lower-housing-tests.log",
+      "exit_note": "PowerShell wraps unittest stderr as NativeCommandError and exits 1 despite unittest OK. Observer could not recover native exit code; no exit0 is invented. All33 outcomes and final OK are in the complete log."
+    },
+    {
+      "command": "C:/Python312/python.exe -B -m unittest tools.test_verify_kc2_mx_housing_contract -v; exit $LASTEXITCODE",
+      "native_exit_code": 0,
+      "result": "OK",
+      "tests_run": 8,
+      "failures": 0,
+      "errors": 0,
+      "duration_seconds": 10.003,
+      "log": "docs/reports/solid-floor-20260907-r4/mx-contract-tests.log"
+    }
+  ],
+  "tdd_red_logs": [
+    "docs/reports/solid-floor-20260907-r4/floor-verifier-tdd-red.log",
+    "docs/reports/solid-floor-20260907-r4/floor-contract-tdd-red.log",
+    "docs/reports/solid-floor-20260907-r4/typed-floor-summary-tdd-red.log"
+  ],
+  "mutation_coverage": [
+    "missing old floor",
+    "thin floor",
+    "through hole",
+    "0.09 mm shallow underside recess",
+    "holed expected mask matching a holed CAD",
+    "missing/collinear/edge-crossing bonding zones",
+    "missing part or false physical qualification summary",
+    "old actual lower STL Z=-1",
+    "missing typed floor summary"
+  ],
+  "physical_qualification_complete": false,
+  "pending": [
+    "printed strength/2N deflection",
+    "silicone thickness/adhesive/slip",
+    "received lead/post/solder projection <=2.90 mm",
+    "socket tolerances and switch contact fit"
+  ],
+  "source_sha256": {
+    "tools/verify_kc2_x3_v2_housing.py": "e689fd44e32bc8311e6f74e8ce10373b0fe9a56d7474fb8e2201eff5ee5e1cc3",
+    "tools/verify_kc2_mx_housing_contract.py": "ba11412a2be4e427d520239911b677e46f4eb08e09e60c03549a8491dbc9dc98",
+    "tools/test_verify_kc2_x3_v2_housing.py": "4e84897cb60ef01e15c15e24e4f17cad099b9eea94170e7c1a919c067dcffeb8",
+    "tools/test_verify_kc2_mx_housing_contract.py": "50a0e9690acd086eeb80ad00cc06aa5b66cce5236343d3133d91baed47b0dde3",
+    "tools/generate_kc2_x3_v2_housings.py": "7e6bb91384819e4d4afcac32f4ca2aa36351474dafb546bbfed4dca373a07c60",
+    "tools/generate_kc2_mx_upper_housings.py": "984b4e0217ed4febbe719b8529fb07701c085447457a142a0306168220b452bf",
+    "hardware/case/kc2_housing_manifest.json": "d10123a910e10123458819a7f6bbdb8ea16e122d6b9f0ab4cf0ea4569d8eda25",
+    "hardware/case/kc2_mx_upper_housing_manifest.json": "dae4d5884dfa14b4123af9323d9ee8632158a87c06d3991594f0d62607f56bfe",
+    "hardware/case/kc2_housing_clearance.json": "abee25fe6acb33b74c47e48a17c006cf9e7db64e842621c202e765acce8d66e2",
+    "hardware/kicad/kc2_left/kc2_left.kicad_pcb": "568e1427e4cfb9d667b6d5b3754da3a4e24c924abfa85a8dfe394dd050b5fe67",
+    "hardware/case/kc2_left_lower_housing.step": "e6df3db7f0237d535a0b59981f599747a8cc7ac3ba5016d1f8dff0856af44e02",
+    "hardware/case/kc2_left_lower_housing.stl": "f766312631b9ac6bc0d90cb8bba64259333600ee890ce1af94f5cdf0b259cc05",
+    "hardware/kicad/kc2_right/kc2_right.kicad_pcb": "88290c3b0cf3951d56221d216549665c0576a816a6315012f7f12b027f402577",
+    "hardware/case/kc2_right_lower_housing.step": "60f5de6a5d42716e203a39025597b9343baf55c35b698d5ace4fcb3d14928e50",
+    "hardware/case/kc2_right_lower_housing_part_a.stl": "b132222007b89bca1097dc86cde2adbb50b8abff66d91f5c3090721fc1d43821",
+    "hardware/case/kc2_right_lower_housing_part_b.stl": "57c5e7c04901779b3062020cbe4bc69f3faaf4ff2971ce26c7c2a96f995ca1a3",
+    "hardware/case/kc2_left_mx_upper_housing.step": "fecce02a234f49937a6973801303e65dd534b1c724e6e168a9752442a60dcca1",
+    "hardware/case/kc2_left_mx_upper_housing.stl": "afb8810f9c0190d5768a7fc9da253361ddaf7d327f7a33e6a4ab786e843a5201",
+    "hardware/case/kc2_right_mx_upper_housing.step": "4e0b0561b60a26298e6944b8526657a91afa9664812f0d569026c4cfca01d279",
+    "hardware/case/kc2_right_mx_upper_housing_part_a.stl": "294003112d76cb1c6c04c275efb84eeab2803646df6c2e0c6945ff90ae9489ac",
+    "hardware/case/kc2_right_mx_upper_housing_part_b.stl": "3e2e4e4211ab3cc850d3b727638ca4409febd998310f51046d6ff46ec911fdd9"
+  },
+  "actual_closed_floor": {
+    "digital_valid": true,
+    "errors": [],
+    "floor_thickness_mm": 1.2,
+    "floor_top_z_mm": -1,
+    "floor_bottom_z_mm": -2.2,
+    "bonding_pad_diameter_mm": 8,
+    "bonding_pad_count": 12,
+    "printable_part_count": 3,
+    "parts": {
+      "left_0": {
+        "digital_valid": true,
+        "errors": [],
+        "floor_thickness_mm": 1.2,
+        "floor_top_z_mm": -1,
+        "floor_bottom_z_mm": -2.2,
+        "bonding_pad_diameter_mm": 8,
+        "bonding_pad_count": 4,
+        "bonding_centers_mm": [
+          [
+            23.300000000000008,
+            4.8999999999999995
+          ],
+          [
+            130.2125,
+            35.15
+          ],
+          [
+            130.2125,
+            117.60000000000001
+          ],
+          [
+            4.8999999999999995,
+            117.60000000000001
+          ]
+        ],
+        "actual_floor_volume_mm3": 15773.093791,
+        "expected_floor_volume_mm3": 15773.093791,
+        "missing_floor_volume_mm3": 0,
+        "extra_floor_volume_mm3": 0,
+        "projected_centroid_inside_bonding_hull": true,
+        "actual_solid_centroid_xy_mm": [
+          66.925342,
+          70.797273
+        ]
+      },
+      "right_0": {
+        "digital_valid": true,
+        "errors": [],
+        "floor_thickness_mm": 1.2,
+        "floor_top_z_mm": -1,
+        "floor_bottom_z_mm": -2.2,
+        "bonding_pad_diameter_mm": 8,
+        "bonding_pad_count": 4,
+        "bonding_centers_mm": [
+          [
+            4.8999999999999995,
+            35.15
+          ],
+          [
+            76.94375000000001,
+            35.15
+          ],
+          [
+            76.94375000000001,
+            117.60000000000001
+          ],
+          [
+            4.8999999999999995,
+            117.60000000000001
+          ]
+        ],
+        "actual_floor_volume_mm3": 9059.413698,
+        "expected_floor_volume_mm3": 9059.413698,
+        "missing_floor_volume_mm3": 0,
+        "extra_floor_volume_mm3": 0,
+        "projected_centroid_inside_bonding_hull": true,
+        "actual_solid_centroid_xy_mm": [
+          40.72083,
+          75.5277
+        ]
+      },
+      "right_1": {
+        "digital_valid": true,
+        "errors": [],
+        "floor_thickness_mm": 1.2,
+        "floor_top_z_mm": -1,
+        "floor_bottom_z_mm": -2.2,
+        "bonding_pad_diameter_mm": 8,
+        "bonding_pad_count": 4,
+        "bonding_centers_mm": [
+          [
+            102.68749999999999,
+            4.8999999999999995
+          ],
+          [
+            135.3875,
+            4.8999999999999995
+          ],
+          [
+            144.5,
+            117.60000000000001
+          ],
+          [
+            86.74374999999999,
+            117.60000000000001
+          ]
+        ],
+        "actual_floor_volume_mm3": 9552.127969,
+        "expected_floor_volume_mm3": 9552.127969,
+        "missing_floor_volume_mm3": 0,
+        "extra_floor_volume_mm3": 0,
+        "projected_centroid_inside_bonding_hull": true,
+        "actual_solid_centroid_xy_mm": [
+          118.702517,
+          63.859374
+        ]
+      }
+    },
+    "maximum_permitted_projection_below_pcb_mm": 2.9,
+    "nominal_clearance_mm": 0.6,
+    "engineering_print_allowance_mm": 0.3,
+    "residual_clearance_mm": 0.3,
+    "nominal_clearance_by_component_mm": {
+      "choc_socket": 1.1,
+      "diode": 1.85,
+      "hat_socket": 2.3
+    },
+    "known_clearance_basis": "modeled depths; floor full-volume proof; not measured part tolerances",
+    "legacy_desk_fields_role": "internal_support_column_ends_and_inner_floor_clearance_not_external_desk",
+    "physical_qualification_complete": false
+  },
+  "volume_and_contact_errors": {
+    "left": {
+      "step_volume_error_mm3": 0.0021,
+      "top_contact_area_error_mm2": 0.0009
+    },
+    "right": {
+      "step_volume_error_mm3": 0.0024,
+      "top_contact_area_error_mm2": 0.001
+    }
+  }
+}

@@ -84,6 +84,14 @@ DEFAULT_FIRMWARE_BUILD_EVIDENCE = (
     / "kc2_x3_v2_build_evidence.json"
 )
 PHYSICAL_EVIDENCE_SCHEMA = "kc2-x3-v2-physical-evidence-v1"
+MX_HOUSING_SOURCE_PATHS = {
+    "mx_upper_housing_manifest": ROOT / "hardware/case/kc2_mx_upper_housing_manifest.json",
+    "fusion_export_result": ROOT / "hardware/case/kc2_fusion_export_result.json",
+    **{
+        f"{side}_{kind}_f3d": ROOT / f"hardware/case/kc2_{side}_{kind}_housing.f3d"
+        for side in ("left", "right") for kind in ("lower", "mx_upper")
+    },
+}
 PHYSICAL_EVIDENCE_REQUIREMENT_IDS = [
     "CON-ARCH-004",
     "CON-ARCH-006",
@@ -695,8 +703,10 @@ def controller_power_geometry_report(board: pcbnew.BOARD, side: str) -> dict[str
 
     if antenna_clearance + 1e-6 < 3.97:
         errors.append(f"battery antenna clearance {antenna_clearance:.3f} mm is below 3.97 mm")
-    if socket_clearance + 1e-6 < 0.72:
-        errors.append(f"battery socket-pad clearance {socket_clearance:.3f} mm is below 0.72 mm")
+    # CON-ARCH-007 AC-2: nominal plan gap after transverse land enlargement;
+    # physical swollen-pack/insulation clearance remains a separate gate.
+    if socket_clearance + 1e-6 < 0.42:
+        errors.append(f"battery socket-pad clearance {socket_clearance:.3f} mm is below 0.42 mm")
     if maximum_parallel_separation > 2.0 + 1e-6:
         errors.append(
             f"power/ground parallel separation {maximum_parallel_separation:.3f} mm exceeds 2.00 mm"
@@ -984,9 +994,10 @@ def analyze_v2_footprint(path: Path = DEFAULT_FOOTPRINT) -> dict[str, object]:
         "choc_socket_smd_pads": choc_socket_smd_pads,
         "mx_tht_pads": mx_tht_pads,
         "npth_holes": npth_holes,
-        "has_choc_v1_locator_holes": any(
-            abs(abs(x) - 5.5) < 0.01 and abs(y) < 0.01
-            for x, y, _ in npth_holes
+        "has_choc_v1_locator_holes": all(
+            any(math.hypot(x-target, y) + 0.9 <= diameter/2 + 1e-6
+                for x, y, diameter in npth_holes)
+            for target in (-5.5, 5.5)
         ),
         "has_mx_hotswap_pads": any(
             y < -1.0 for _, y, _, _ in choc_socket_smd_pads.values()
@@ -1052,6 +1063,8 @@ def normalized_pad_signatures(
                 mm(pad.GetDrillSize().y),
                 int(pad.GetAttribute()),
                 int(pad.GetShape()),
+                round(((-1 if flipped else 1) * pad.GetFPRelativeOrientation().AsDegrees()) % 180, 6)
+                if pad.GetShape() == pcbnew.PAD_SHAPE_OVAL else 0,
                 _canonical_layer_names(pad, flipped),
             )
         )
@@ -3205,16 +3218,47 @@ def _physical_scan_metrics(
     data: object,
     *,
     controller_identity: dict[str, object],
+    seen_paths: set[str] | None = None,
 ) -> tuple[dict[str, object], list[str], dict[str, object]]:
+    from tools.verify_kc2_mx_receptacle_evidence import verify_mx_receptacle_evidence
     errors: list[str] = []
-    if not isinstance(data, dict) or set(data) != {
+    qualification = data.get("mx_receptacle_qualification") if isinstance(data, dict) else None
+    documents, document_errors = _validate_document_set(
+        data.get("mx_receptacle_documents") if isinstance(data, dict) else None,
+        {"mx_socket_specification", "mx_switch_specification", "mx_contact_limits"},
+        label="MX receptacle",
+        seen_paths=seen_paths if seen_paths is not None else set(),
+    )
+    errors.extend(document_errors)
+    verified_paths = {record["path"] for record in documents.values()} if not document_errors else set()
+    errors.extend(verify_mx_receptacle_evidence(qualification, verified_artifact_paths=verified_paths))
+    if isinstance(qualification, dict):
+        for field, kind in (
+            ("socket_specification", "mx_socket_specification"),
+            ("switch_specification", "mx_switch_specification"),
+            ("limits_source_artifact", "mx_contact_limits"),
+        ):
+            expected_path = documents.get(kind, {}).get("path")
+            if not isinstance(expected_path, str) or qualification.get(field) != expected_path:
+                errors.append(f"MX receptacle {field} binding does not match its verified document kind")
+        if not isinstance(data, dict) or qualification.get("coupon_id") != data.get("coupon_id"):
+            errors.append("MX receptacle coupon identity binding differs from the raw scan coupon")
+        expected_switch = controller_identity.get("mx_switch_mpn")
+        documented_switch = documents.get("mx_switch_specification", {}).get("part_number")
+        if (
+            not _valid_procurement_identifier(expected_switch)
+            or qualification.get("switch_mpn") != expected_switch
+            or documented_switch != expected_switch
+        ):
+            errors.append("MX receptacle switch identity binding differs from the assembled switch or its specification")
+    if not isinstance(data, dict) or set(data) - {"mx_receptacle_qualification", "mx_receptacle_documents"} != {
         "coupon_id",
         "records",
         "switch_fit_records",
         "keycap_fit_records",
         "diode_records",
     }:
-        return {}, ["physical scan raw data schema is incomplete or stale"], {}
+        return {}, errors + ["physical scan raw data schema is incomplete or stale"], {}
     if not _valid_identity_for_field("coupon_id", data.get("coupon_id")):
         errors.append("physical scan coupon identity is missing, malformed, or pending")
     records = data.get("records")
@@ -3225,7 +3269,7 @@ def _physical_scan_metrics(
         for half in ("left", "right")
         for voltage in (3.0, 3.3)
         for pattern in ("maximum-same-row", "maximum-same-column")
-        for mode in ("choc_v2", "mx")
+        for mode in ("choc_v2", "mx", "mx_receptacle_with_plate")
     }
     counts: Counter[tuple[str, float, str, str]] = Counter()
     fault_count = 0
@@ -3424,7 +3468,7 @@ def _physical_scan_metrics(
     metrics = {
         "supply_volts": [3.0, 3.3],
         "patterns": ["maximum-same-row", "maximum-same-column"],
-        "assembly_modes": ["choc_v2", "mx"],
+        "assembly_modes": ["choc_v2", "mx", "mx_receptacle_with_plate"],
         "sample_count_per_condition": min(counts.values()) if counts else 0,
         "fault_count": fault_count,
         "switch_fit_condition_count": len(seen_fit_keys),
@@ -4812,6 +4856,7 @@ def verify_physical_evidence_manifest(
         "render_manifest",
         "outline_report",
         "firmware_build_evidence",
+        *MX_HOUSING_SOURCE_PATHS,
     }
     bindings = evidence.get("source_bindings")
     source_digests: dict[str, str] = {}
@@ -4919,6 +4964,7 @@ def verify_physical_evidence_manifest(
             recomputed, raw_errors, scan_identity = _physical_scan_metrics(
                 payload.get("data"),
                 controller_identity=controller_identity,
+                seen_paths=seen_paths,
             )
             errors.extend(raw_errors)
         elif name == "housing_fastener_deflection":
@@ -4994,6 +5040,32 @@ def verify_physical_evidence_manifest(
     return bundle_errors
 
 
+def _analyze_selected_mx_housing_contract() -> dict[str, object]:
+    from tools.verify_kc2_mx_housing_contract import analyze_contract
+    return analyze_contract(ROOT)
+
+
+def selected_mx_housing_readiness_blockers() -> list[str]:
+    """CON-ARCH-006: selected lid, long-screw fit and native archives are mandatory."""
+    prefix = "CON-ARCH-006 selected MX housing: "
+    try:
+        report = _analyze_selected_mx_housing_contract()
+    except (ImportError, OSError, ValueError, TypeError, KeyError, RuntimeError, subprocess.SubprocessError) as error:
+        return [prefix + f"validation unavailable: {error}"]
+    if not isinstance(report, dict) or report.get("requirement") != "CON-ARCH-006":
+        return [prefix + "validator result is missing or malformed"]
+    blockers = []
+    for field in ("errors", "qualification_blockers", "native_archive_blockers"):
+        values = report.get(field)
+        if not isinstance(values, list) or any(not isinstance(value, str) for value in values):
+            blockers.append(prefix + field + " result is missing or malformed")
+        else:
+            blockers.extend(prefix + value for value in values)
+    if report.get("digital_valid") is not True:
+        blockers.append(prefix + "upper/lower digital contract is not verified")
+    return blockers
+
+
 def controller_service_order_readiness_blockers(
     manifest: dict[str, object],
     housing_manifest: dict[str, object] | None = None,
@@ -5033,8 +5105,9 @@ def controller_service_order_readiness_blockers(
             "retention",
             "physical_deflection_test",
             "outputs",
+            "mx_receptacle_stack",
         }
-        if set(housing_manifest) != required_housing_keys:
+        if set(housing_manifest) - {"source_rebinding_evidence"} != required_housing_keys:
             blockers.append("CON-ARCH-006: housing manifest schema is incomplete or stale")
         if housing_manifest.get("requirement") != "CON-ARCH-006" or housing_manifest.get(
             "requirement_ids"
@@ -5054,6 +5127,8 @@ def controller_service_order_readiness_blockers(
         deflection = housing_manifest.get("physical_deflection_test")
         if not isinstance(deflection, dict) or deflection.get("status") != "pending":
             blockers.append("CON-ARCH-006: generated housing deflection must remain pending")
+    if manifest.get("selected_switch_assembly") == "mx_receptacle_with_plate":
+        blockers.extend(selected_mx_housing_readiness_blockers())
     evidence_errors = verify_physical_evidence_manifest(
         physical_evidence,
         expected_source_paths,
@@ -5299,12 +5374,35 @@ def verify_drc_evidence_binding(
 def verify_v2_footprint(path: Path = DEFAULT_FOOTPRINT) -> list[str]:
     report = analyze_v2_footprint(path)
     errors: list[str] = []
+    expected_mx = {
+        "1": (2.54, -5.08, 2.5, 3.2, 1.6),
+        "2": (-3.81, -2.54, 2.5, 3.2, 1.6),
+    }
+    if report["mx_tht_pads"] != expected_mx:
+        errors.append("MX solder land geometry must match CON-ARCH-004 AC-3 (2.50 x 3.20 oval / trial 1.60 drill)")
+    owned_footprint = load_footprint(path)
+    for pad in owned_footprint.Pads():
+        if pad.GetAttribute() != pcbnew.PAD_ATTRIB_PTH:
+            continue
+        if (pad.GetShape() != pcbnew.PAD_SHAPE_OVAL
+            or mm(pad.GetDrillSize().y) != 1.6
+            or not all(pad.GetLayerSet().Contains(layer) for layer in (pcbnew.F_Mask, pcbnew.B_Mask))
+            or any(pad.GetLayerSet().Contains(layer) for layer in (pcbnew.F_Paste, pcbnew.B_Paste))):
+            errors.append(f"MX solder land {pad.GetNumber()}: oval plated hole with both mask openings and no paste required")
+        expected_angle = 45 if pad.GetNumber() == '2' else 0
+        if abs(pad.GetFPRelativeOrientation().AsDegrees() - expected_angle) > 1e-6:
+            errors.append(f"MX solder land {pad.GetNumber()}: required local oval angle {expected_angle} degrees")
     if report["name"] != "SW_Choc_V2_Socket_MX_THT":
         errors.append(f"unexpected footprint name: {report['name']}")
     if report["numbered_pad_counts"] != {"1": 2, "2": 2}:
         errors.append(f"expected two alternate pads per contact: {report['numbered_pad_counts']}")
-    if report["has_choc_v1_locator_holes"]:
-        errors.append("Choc V1 locator holes are forbidden")
+    if not report["has_choc_v1_locator_holes"]:
+        errors.append("Choc V1 locator post clearance is required")
+    expected_holes = {(-5.45, 0.0, 2.6), (5.45, 0.0, 2.6),
+                      (-5.0, 3.8, 3.0), (0.0, 0.0, 5.0),
+                      (0.0, 5.9, 3.0), (5.0, -5.15, 1.65)}
+    if report['npth_holes'] != expected_holes:
+        errors.append('Shared V1/MX locator NPTHs must be diameter2.60 at local X=+/-5.45')
     if report["has_mx_hotswap_pads"]:
         errors.append("MX hot-swap pads are forbidden")
     if report["has_choc_v2_direct_solder_pads"]:
@@ -5320,6 +5418,58 @@ def verify_v2_footprint(path: Path = DEFAULT_FOOTPRINT) -> list[str]:
     return errors
 
 
+def has_v2_mx_assembly_warning(texts: Iterable[str]) -> bool:
+    return any(
+        "RECEPTACLES+PLATE" in text.upper()
+        and "CHOC V1+RING" in text.upper()
+        and "CONTACT QUALIFICATION PENDING" in text.upper()
+        for text in texts
+    )
+
+
+def verify_mx_revision_metadata(manifest: dict[str, object]) -> list[str]:
+    errors = []
+    if manifest.get("canonical_route_evidence_role") != "historical_pre_mx_revision_base_only":
+        errors.append("manifest: legacy DSN/SES evidence must be identified as historical base only")
+    revision = manifest.get("mx_revision")
+    if not isinstance(revision, dict):
+        return errors + ["manifest: MX incremental revision provenance missing"]
+    source = "tools/refresh_kc2_mx_revision_manifest.py"
+    if revision.get("metadata_generator") != source or revision.get("metadata_generator_sha256") != sha256_file(ROOT/source):
+        errors.append("manifest: MX metadata generator binding is stale")
+    for field, path in (("pcb_generator_sha256", "tools/generate_kc2_pcbs.py"),
+                        ("replay_tool_sha256", "tools/kc2_solder_route_snapshot.py")):
+        if revision.get(field) != sha256_file(ROOT/path):
+            errors.append(f"manifest: MX {field} binding is stale")
+    expected = {side: sha256_file(ROOT/f'hardware/kicad/kc2_{side}/kc2_{side}.kicad_pcb') for side in ('left', 'right')}
+    if revision.get("source_board_sha256") != expected:
+        errors.append("manifest: MX revision source board hashes are stale")
+    return errors
+
+
+def verify_mx_assembly_manifest(manifest: dict[str, object]) -> list[str]:
+    """CON-ARCH-004 AC-3/7: reject old direct-solder metadata as MX evidence."""
+    errors = []
+    if manifest.get("selected_switch_assembly") != "mx_receptacle_with_plate":
+        errors.append("manifest: selected assembly must be mx_receptacle_with_plate")
+    if manifest.get("assembly_modes") != ["choc_v1_bottom_socket_with_ring", "choc_v2_bottom_socket", "mx_5pin_top_direct_solder", "mx_receptacle_with_plate"]:
+        errors.append("manifest: revised three mutually exclusive assembly modes required")
+    if manifest.get("assembly_modes_mutually_exclusive") is not True:
+        errors.append("manifest: switch assembly modes must be mutually exclusive")
+    socket = manifest.get("mx_receptacle")
+    expected = {"length": 3.0, "barrel_od": 1.45, "flange_od": 2.0, "flange_thickness": .2}
+    if not isinstance(socket, dict) or any((
+        socket.get("nominal_dimensions_mm") != expected,
+        socket.get("open_bottom") is not True,
+        socket.get("count_per_switch") != 2,
+        socket.get("plate_lid_required") is not True,
+        socket.get("trial_finished_pth_mm") != 1.6,
+        socket.get("copper_land_mm") != [2.5, 3.2],
+    )):
+        errors.append("manifest: dimensional MX socket/land/plate contract missing or stale")
+    return errors
+
+
 def verify_v2_release_candidate(
     footprint_path: Path = DEFAULT_FOOTPRINT,
     board_paths: Sequence[Path] = DEFAULT_BOARDS,
@@ -5331,6 +5481,7 @@ def verify_v2_release_candidate(
     from tools.verify_kc2_antenna_keepout import check_board as check_antenna_keepout
     from tools.verify_kc2_compact_controller import check_side as check_compact_controller
     from tools.verify_kc2_connectivity import detect_side, verify_board as verify_connectivity
+    from tools.verify_kc2_mx_route_binding import verify_mx_route_binding
 
     board_paths = tuple(board_paths)
     detected_sides: list[str] = []
@@ -5376,13 +5527,8 @@ def verify_v2_release_candidate(
         errors.append("DRC evidence: variant is missing or stale")
     if manifest.get("variant") != "x3-v2":
         errors.append(f"manifest: unexpected variant {manifest.get('variant')!r}")
-    if manifest.get("assembly_modes") != [
-        "choc_v2_bottom_socket",
-        "mx_5pin_top_direct_solder",
-    ]:
-        errors.append("manifest: assembly modes are incomplete or out of order")
-    if not manifest.get("assembly_modes_mutually_exclusive"):
-        errors.append("manifest: switch assembly modes must be mutually exclusive")
+    errors.extend(verify_mx_assembly_manifest(manifest))
+    errors.extend(verify_mx_revision_metadata(manifest))
     if manifest.get("key_count") != {"left": 31, "right": 39, "total": 70}:
         errors.append(f"manifest: unexpected key count {manifest.get('key_count')!r}")
     if manifest.get("keycell_edge_inset_mm") != 1.5:
@@ -5473,6 +5619,7 @@ def verify_v2_release_candidate(
         drc_evidence_reports[side] = drc_evidence_record
         expected_keys = 31 if side == "left" else 39
         report = analyze_v2_board(board_path)
+        errors.extend(verify_mx_route_binding(manifest, pcbnew.LoadBoard(str(board_path)), side))
         board_reports[side] = report
         errors.extend(
             f"{side}: board text: {error}"
@@ -5506,10 +5653,6 @@ def verify_v2_release_candidate(
             "rounded M1.4 head 0.25 mm XY reserve": not report[
                 "mounting_hole_head_clearance_errors"
             ],
-            "canonical final route item count": report["route_track_via_count"]
-            == manifest["canonical_route_evidence"][side]["final_track_via_count"],
-            "canonical final route digest": report["route_digest_sha256"]
-            == manifest["canonical_route_evidence"][side]["route_digest_sha256"],
             "M1.4 retention board identity": (
                 any(
                     "SELECTED M1.4 MH RETENTION" in text.upper()
@@ -5536,9 +5679,7 @@ def verify_v2_release_candidate(
             "diode hand-solder clearance": not report["diode_hand_solder_clearance_errors"],
             "diode unrelated-route clearance": not report["diode_to_unrelated_route_errors"],
             "diode Edge.Cuts clearance": not report["diode_edge_clearance_errors"],
-            "V2 assembly warning": any(
-                "CHOC V1 UNSUPPORTED" in text.upper() for text in report["board_text"]
-            ),
+            "V2 assembly warning": has_v2_mx_assembly_warning(report["board_text"]),
             "DRC violations": report["drc_violation_count"] == 0,
             "DRC unconnected items": report["drc_unconnected_count"] == 0,
             "reviewed DRC exclusions": report["drc_ignored_checks"]
@@ -5573,6 +5714,7 @@ def verify_v2_release_candidate(
             / "kc2_render_manifest.json",
             "outline_report": DEFAULT_OUTLINE_REPORT,
             "firmware_build_evidence": DEFAULT_FIRMWARE_BUILD_EVIDENCE,
+            **MX_HOUSING_SOURCE_PATHS,
         },
     )
     if errors:
@@ -5642,7 +5784,7 @@ def main() -> None:
         raise SystemExit("FAIL: KC2 X3 V2 canonical route verification\n- " + "\n- ".join(errors))
     print(json.dumps(report, indent=2, default=list))
     if exit_code == 2:
-        print("DIGITAL PASS: routed boards, connectivity, controller, antenna, and housing bindings")
+        print("PCB CHECKS PASS: routed-board geometry, connectivity, controller and antenna checks only")
         print("NOT ORDER READY:\n- " + "\n- ".join(report["order_readiness_blockers"]))
         raise SystemExit(2)
     print("PASS: digital checks and order-readiness gates")

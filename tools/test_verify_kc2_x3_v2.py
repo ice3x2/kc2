@@ -32,6 +32,25 @@ POWER_SWITCH_MODEL = ROOT / "third_party" / "kc2.3dshapes" / "SW_IMMS_12V_BSI10_
 BATTERY_TERMINATION_FOOTPRINT = ROOT / "third_party" / "kc2.pretty" / "BAT_2Pin_PTH_DirectSolder.kicad_mod"
 BATTERY_BODY_FOOTPRINT = ROOT / "third_party" / "kc2.pretty" / "BAT_301230_30x12mm.kicad_mod"
 V2_ROOT = ROOT / "hardware" / "kicad"
+HISTORICAL_ROUTE_REVISION = "2c82b4eb8a2bcf091f7e594a5267c71d11d64572"
+
+
+def historical_route_fixture(side: str, target: Path) -> Path:
+    """CON-ARCH-004 / OPS-ARCH-006: pin old finalizer tests to Git history.
+
+    The old DSN/SES pipeline is not the current enlarged-land routing source.
+    Never use current canonical boards as if they carried the old 616/803 routes.
+    """
+    source = f"hardware/kicad/kc2_{side}/kc2_{side}.kicad_pcb"
+    result = subprocess.run(
+        ["git", "show", f"{HISTORICAL_ROUTE_REVISION}:{source}"],
+        cwd=ROOT, capture_output=True, check=True,
+    )
+    target.parent.mkdir(parents=True, exist_ok=True)
+    target.write_bytes(result.stdout)
+    return target
+
+
 LEFT_BOARD = V2_ROOT / "kc2_left" / "kc2_left.kicad_pcb"
 RIGHT_BOARD = V2_ROOT / "kc2_right" / "kc2_right.kicad_pcb"
 MANIFEST = V2_ROOT / "kc2_generation_manifest.json"
@@ -40,6 +59,20 @@ PRODUCT_SPEC = ROOT / "docs/spec.md"
 
 
 class V2FootprintTests(unittest.TestCase):
+    def test_footprint_mutation_keeps_native_loader_usable(self) -> None:
+        # CON-ARCH-004/007: a negative marking test must not corrupt the native
+        # loader and invalidate all subsequent release checks in this process.
+        code = (
+            "import pcbnew; "
+            "from tools.test_verify_kc2_x3_v2 import V2FootprintTests, MOUNT_FOOTPRINT; "
+            "V2FootprintTests('test_controller_power_footprints_match_con_arch_007').debug(); "
+            "fp = pcbnew.FootprintLoad(str(MOUNT_FOOTPRINT.parent), MOUNT_FOOTPRINT.stem); "
+            "assert isinstance(fp, pcbnew.FOOTPRINT)"
+        )
+        completed = subprocess.run([sys.executable, "-B", "-c", code], cwd=ROOT,
+                                   capture_output=True, text=True, timeout=30)
+        self.assertEqual(completed.returncode, 0, completed.stdout + completed.stderr)
+
     def test_generation_manifest_traces_all_active_digital_requirements(self) -> None:
         manifest = json.loads(MANIFEST.read_text(encoding="utf-8"))
         self.assertEqual(
@@ -165,13 +198,15 @@ class V2FootprintTests(unittest.TestCase):
             ),
             (
                 "missing",
-                lambda footprint: footprint.Remove(
-                    next(
+                # Removing PCB_TEXT through KiCad 10's ownership-transferring
+                # Remove wrapper corrupts subsequent SWIG plugin lookups after
+                # destruction. Blank the required legend instead: the same
+                # absence-of-B-/GND contract fails without unsafe native GC.
+                lambda footprint: next(
                         item
                         for item in footprint.GraphicalItems()
                         if isinstance(item, pcbnew.PCB_TEXT) and item.GetText() == "B-/GND"
-                    )
-                ),
+                    ).SetText(""),
             ),
         ):
             with self.subTest(battery_marking_mutation=label):
@@ -251,8 +286,8 @@ class V2FootprintTests(unittest.TestCase):
         self.assertEqual(
             report["mx_tht_pads"],
             {
-                "1": (2.54, -5.08, 2.5, 2.5, 1.5),
-                "2": (-3.81, -2.54, 2.5, 2.5, 1.5),
+                "1": (2.54, -5.08, 2.5, 3.2, 1.6),
+                "2": (-3.81, -2.54, 2.5, 3.2, 1.6),
             },
         )
         self.assertEqual(
@@ -262,11 +297,11 @@ class V2FootprintTests(unittest.TestCase):
                 (-5.0, 3.8, 3.0),
                 (0.0, 5.9, 3.0),
                 (5.0, -5.15, 1.65),
-                (-5.08, 0.0, 1.7),
-                (5.08, 0.0, 1.7),
+                (-5.45, 0.0, 2.6),
+                (5.45, 0.0, 2.6),
             },
         )
-        self.assertFalse(report["has_choc_v1_locator_holes"])
+        self.assertTrue(report["has_choc_v1_locator_holes"])
         self.assertFalse(report["has_mx_hotswap_pads"])
         self.assertFalse(report["has_choc_v2_direct_solder_pads"])
         self.assertEqual(report["silkscreen_item_count"], 0)
@@ -1094,8 +1129,8 @@ class V2GeneratorTests(unittest.TestCase):
             for side in ("left", "right"):
                 board_path = (
                     output_dir
-                    / f"kc2_{side}-x3-v2"
-                    / f"kc2_{side}-x3-v2.kicad_pcb"
+                    / f"kc2_{side}"
+                    / f"kc2_{side}.kicad_pcb"
                 )
                 import pcbnew
 
@@ -1284,7 +1319,7 @@ class V2GeneratorTests(unittest.TestCase):
                 )
                 self.assertGreaterEqual(
                     power_geometry["battery_to_socket_pad_copper_mm"],
-                    0.72,
+                    0.42,
                 )
                 self.assertGreater(
                     power_geometry["minimum_service_feature_to_antenna_keepout_mm"],
@@ -1356,8 +1391,8 @@ class V2GeneratorTests(unittest.TestCase):
                 project = json.loads(
                     (
                         output_dir
-                        / f"kc2_{side}-x3-v2"
-                        / f"kc2_{side}-x3-v2.kicad_pro"
+                        / f"kc2_{side}"
+                        / f"kc2_{side}.kicad_pro"
                     ).read_text(encoding="utf-8")
                 )
                 default_netclass = next(
@@ -1429,7 +1464,7 @@ class V2GeneratorTests(unittest.TestCase):
                         "nominal_size_mm": [30.0, 12.0, 3.0],
                         "placement": "between_carrier_and_socketed_controller",
                         "antenna_keepout_clearance_mm": 3.97,
-                        "socket_pad_clearance_mm": 0.72,
+                        "socket_pad_clearance_mm": 0.42,
                         "physical_stack_measurement": "pending",
                     },
                     "battery_termination": {
@@ -1483,9 +1518,9 @@ class V2GeneratorTests(unittest.TestCase):
                     "nominal_clearances_mm": {
                         "reset_keycap_envelope_mm": 18.05,
                         "reset_body_to_keycap_min": 3.2,
-                        "reset_courtyard_to_u1_socket_copper_min": 2.03,
+                        "reset_courtyard_to_u1_socket_copper_min": 1.73,
                         "controller_body_to_top_edge": 2.35,
-                        "battery_to_socket_pad": 0.72,
+                        "battery_to_socket_pad": 0.42,
                         "battery_to_antenna_keepout": 3.97,
                         "power_to_reset_body": 2.2,
                     },
@@ -1619,8 +1654,8 @@ class V2GeneratorTests(unittest.TestCase):
                 with self.subTest(side=side):
                     board_path = (
                         output_dir
-                        / f"kc2_{side}-x3-v2"
-                        / f"kc2_{side}-x3-v2.kicad_pcb"
+                        / f"kc2_{side}"
+                        / f"kc2_{side}.kicad_pcb"
                     )
                     board = pcbnew.LoadBoard(str(board_path))
                     reset = board.FindFootprintByReference("SW_RST1")
@@ -1727,7 +1762,7 @@ class V2GeneratorTests(unittest.TestCase):
                 output_dir = Path(temporary) / variant
                 generator.generate_variant(variant, output_dir=output_dir)
                 manifest_name = (
-                    "kc2_generation_manifest.json"
+                    "kc2_x3_generation_manifest.json"
                     if variant == "x3"
                     else "kc2_generation_manifest.json"
                 )
@@ -1908,8 +1943,8 @@ class V2GeneratorTests(unittest.TestCase):
                 target = pcbnew.LoadBoard(str(actual_path))
                 source_path = (
                     output_dir
-                    / f"kc2_{side}-x3-v2"
-                    / f"kc2_{side}-x3-v2.kicad_pcb"
+                    / f"kc2_{side}"
+                    / f"kc2_{side}.kicad_pcb"
                 )
                 source = pcbnew.LoadBoard(str(source_path))
                 route_before = sorted(_route_signature(item) for item in target.GetTracks())
@@ -2028,7 +2063,7 @@ class V2GeneratorTests(unittest.TestCase):
                     )
                 )
                 self.assertTrue(
-                    any("CHOC V1 UNSUPPORTED" in text.upper() for text in report["board_text"])
+                    any("CHOC V1+RING" in text.upper() for text in report["board_text"])
                 )
                 identity_text = " ".join(report["board_text"]).upper()
                 self.assertIn("70-KEY V5 NO-STABILIZER SPLIT LAYOUT", identity_text)
@@ -2184,12 +2219,12 @@ class V2GeneratorTests(unittest.TestCase):
                     report["mounting_hole_clearances"]["minimum_head_to_edge_cuts_mm"],
                     2.10,
                 )
-                route_record = analyze_v2_manifest(MANIFEST)[
-                    "canonical_route_evidence"
-                ][side]
+                replay = analyze_v2_manifest(MANIFEST)["mx_solder_route_replay"]
+                self.assertEqual(sha256_file(ROOT / replay["path"]), replay["sha256"])
+                route_record = json.loads((ROOT / replay["path"]).read_text(encoding="utf-8"))["sides"][side]
                 self.assertEqual(
                     report["route_track_via_count"],
-                    route_record["final_track_via_count"],
+                    route_record["route_track_via_count"],
                 )
                 self.assertEqual(
                     report["route_digest_sha256"],
@@ -2591,7 +2626,7 @@ class V2GeneratorTests(unittest.TestCase):
                 self.assertEqual(report["nearest_keycap_reference"], nearest_key)
                 self.assertEqual(
                     report["reset_courtyard_to_u1_socket_copper_mm"],
-                    2.03,
+                    1.73,
                 )
 
                 keycap_mutation = pcbnew.LoadBoard(str(board_path))
@@ -2627,7 +2662,7 @@ class V2GeneratorTests(unittest.TestCase):
                 copper_report = controller_service_clearance_report(copper_mutation)
                 self.assertEqual(
                     copper_report["reset_courtyard_to_u1_socket_copper_mm"],
-                    1.93,
+                    1.63,
                 )
                 self.assertTrue(
                     any("socket copper" in error for error in copper_report["errors"])
@@ -2640,7 +2675,7 @@ class V2GeneratorTests(unittest.TestCase):
         expected = {
             "reset_keycap_envelope_mm": 18.05,
             "reset_body_to_keycap_min": 3.2,
-            "reset_courtyard_to_u1_socket_copper_min": 2.03,
+            "reset_courtyard_to_u1_socket_copper_min": 1.73,
         }
         self.assertEqual(
             {
@@ -2986,11 +3021,11 @@ class V2GeneratorTests(unittest.TestCase):
                 },
             },
         )
-        self.assertEqual(report["assembly_modes"], ["choc_v2_bottom_socket", "mx_5pin_top_direct_solder"])
+        self.assertEqual(report["assembly_modes"], ["choc_v1_bottom_socket_with_ring", "choc_v2_bottom_socket", "mx_5pin_top_direct_solder", "mx_receptacle_with_plate"])
         self.assertTrue(report["assembly_modes_mutually_exclusive"])
         self.assertEqual(
             report["unsupported_switch_geometry"],
-            ["choc_v1", "choc_v2_direct_solder", "mx_hotswap"],
+            ["choc_v2_direct_solder", "one_piece_mx_smd_socket"],
         )
         self.assertEqual(
             report["canonical_route_evidence"],
@@ -3423,6 +3458,14 @@ class V2GeneratorTests(unittest.TestCase):
                 "firmware_build_evidence": ROOT
                 / "firmware/kc2_zmk/boards/shields/kc2_x3_v2/kc2_x3_v2_build_evidence.json",
             }
+            # These six files are deliberately synthetic source-hash fixtures,
+            # not Fusion archives or fabrication/print approval. The independent
+            # selected-housing analyzer remains active in the readiness check.
+            from tools.verify_kc2_x3_v2 import MX_HOUSING_SOURCE_PATHS
+            for name, canonical in MX_HOUSING_SOURCE_PATHS.items():
+                path = temp_root / f"synthetic-{name}{canonical.suffix}"
+                path.write_text(f"synthetic source-binding fixture {name}\n", encoding="utf-8")
+                source_paths[name] = path
             source_bindings = {
                 name: file_record(path, "release-source")
                 for name, path in source_paths.items()
@@ -3704,8 +3747,11 @@ class V2GeneratorTests(unittest.TestCase):
                 for half in ("left", "right")
                 for voltage in (3.0, 3.3)
                 for pattern in ("maximum-same-row", "maximum-same-column")
-                for mode in ("choc_v2", "mx")
+                for mode in ("choc_v2", "mx", "mx_receptacle_with_plate")
             ]
+            self.assertEqual(len(scan_records), 24)
+            self.assertEqual({record["assembly_mode"] for record in scan_records},
+                             {"choc_v2", "mx", "mx_receptacle_with_plate"})
             switch_fit_records = [
                 {
                     "half": half,
@@ -3773,10 +3819,52 @@ class V2GeneratorTests(unittest.TestCase):
                 "keycap_fit_records": keycap_fit_records,
                 "diode_records": diode_records,
             }
+            # Entirely synthetic qualification: these limits and observations
+            # exercise validation, NOT purchased-part or production evidence.
+            mx_documents = {
+                kind: write_document(f"{kind}.txt", kind)
+                for kind in ("mx_socket_specification", "mx_switch_specification", "mx_contact_limits")
+            }
+            mx_documents["mx_switch_specification"]["part_number"] = controller_data["parts"]["mx_switch"]["mpn"]
+            mx_limits = {
+                "finished_hole_min_mm": 1.55, "finished_hole_max_mm": 1.65,
+                "barrel_min_mm": 1.4, "barrel_max_mm": 1.5,
+                "insertion_force_min_n": 1., "insertion_force_max_n": 3.,
+                "extraction_force_min_n": 1., "extraction_force_max_n": 3.,
+                "contact_resistance_max_ohm": .1, "flange_lift_max_mm": .1,
+                "housing_clearance_min_mm": .2,
+            }
+            mx_keys = []
+            for half, key_id in (("left", "K1"), ("left", "K2"), ("right", "K3")):
+                contacts = []
+                for contact_id in ("1", "2"):
+                    contact = dict(contact_id=contact_id, tested_replacement_cycles=list(range(11)),
+                                   finished_hole_mm=1.6, barrel_mm=1.45)
+                    for stage in ("before", "after"):
+                        contact.update({f"{stage}_insertion_force_n": 2.,
+                                        f"{stage}_extraction_force_n": 2.,
+                                        f"{stage}_contact_resistance_ohm": .01})
+                    contacts.append(contact)
+                mx_keys.append(dict(half=half, key_id=key_id, replacement_cycles=10,
+                    flange_lift_mm=0., housing_clearance_mm=.5, contacts=contacts,
+                    center_locator_fully_seated=True, plate_retention_pass=True,
+                    no_socket_rotation_or_pullout=True, no_pad_damage=True,
+                    no_intermittent_or_open_contact=True))
+            scan_data["mx_receptacle_documents"] = mx_documents
+            scan_data["mx_receptacle_qualification"] = {
+                "socket_specification": mx_documents["mx_socket_specification"]["path"],
+                "switch_specification": mx_documents["mx_switch_specification"]["path"],
+                "limits_source_artifact": mx_documents["mx_contact_limits"]["path"],
+                "switch_mpn": controller_data["parts"]["mx_switch"]["mpn"],
+                "coupon_id": scan_data["coupon_id"], "plate_material": "PETG-SYNTHETIC-FIXTURE",
+                "nominal_socket": dict(open_bottom=True, length_mm=3., barrel_od_mm=1.45,
+                                       flange_od_mm=2., flange_thickness_mm=.2),
+                "limits": mx_limits, "records": mx_keys,
+            }
             scan_metrics = {
                 "supply_volts": [3.0, 3.3],
                 "patterns": ["maximum-same-row", "maximum-same-column"],
-                "assembly_modes": ["choc_v2", "mx"],
+                "assembly_modes": ["choc_v2", "mx", "mx_receptacle_with_plate"],
                 "sample_count_per_condition": 1,
                 "fault_count": 0,
                 "switch_fit_condition_count": 4,
@@ -4420,15 +4508,14 @@ class V2GeneratorTests(unittest.TestCase):
                 (ROOT / "hardware/case/kc2_housing_manifest.json")
                 .read_text(encoding="utf-8")
             )
-            self.assertEqual(
-                controller_service_order_readiness_blockers(
+            selected_assembly_blockers = controller_service_order_readiness_blockers(
                     conservative_manifest,
                     conservative_housing,
                     evidence,
                     source_paths,
-                ),
-                [],
-            )
+                )
+            self.assertTrue(any("selected MX housing" in error for error in selected_assembly_blockers))
+            self.assertFalse(any("physical evidence bundle" in error for error in selected_assembly_blockers))
 
             traversal = json.loads(json.dumps(evidence))
             traversal["bundles"]["controller_service"]["artifacts"][0]["path"] = "../escape.json"
@@ -4591,6 +4678,20 @@ class V2GeneratorTests(unittest.TestCase):
             scan_raw_path = ROOT / scan_artifact_template["path"]
             scan_raw_baseline = json.loads(scan_raw_path.read_text(encoding="utf-8"))
             scan_mutations = (
+                (
+                    "missing selected receptacle qualification",
+                    lambda payload: payload["data"].pop("mx_receptacle_qualification"),
+                ),
+                (
+                    "missing selected receptacle scan condition",
+                    lambda payload: payload["data"]["records"].pop(2),
+                ),
+                (
+                    "receptacle contact misses replacement cycles",
+                    lambda payload: payload["data"]["mx_receptacle_qualification"]["records"][0]["contacts"][0].update(
+                        tested_replacement_cycles=[0, 10]
+                    ),
+                ),
                 (
                     "missing 1U keycap physical fit",
                     lambda payload: payload["data"]["keycap_fit_records"].pop(0),
@@ -5336,9 +5437,11 @@ class V2GeneratorTests(unittest.TestCase):
                 with self.subTest(side=side):
                     board_path = (
                         output_dir
-                        / f"kc2_{side}-x3-v2"
-                        / f"kc2_{side}-x3-v2.kicad_pcb"
+                        / f"kc2_{side}"
+                        / f"kc2_{side}.kicad_pcb"
                     )
+                    historical_route_fixture(side, board_path)
+
                     board = pcbnew.LoadBoard(str(board_path))
                     for item in list(board.GetTracks()):
                         board.Delete(item)
@@ -5415,7 +5518,7 @@ class V2GeneratorTests(unittest.TestCase):
             for side, source in (("left", LEFT_BOARD), ("right", RIGHT_BOARD)):
                 with self.subTest(side=side):
                     board_path = Path(temporary) / source.name
-                    shutil.copy2(source, board_path)
+                    historical_route_fixture(side, board_path)
                     board = pcbnew.LoadBoard(str(board_path))
                     before = Counter(_route_signature(item) for item in board.GetTracks())
 
@@ -5446,7 +5549,7 @@ class V2GeneratorTests(unittest.TestCase):
                     pcbnew.SaveBoard(str(board_path), board)
                     self.assertEqual(verify_connectivity(board_path), [])
 
-                    stale = pcbnew.LoadBoard(str(source))
+                    stale = pcbnew.LoadBoard(str(board_path))
                     addition = KEY_LOAD_SUPPORT_ROUTE_ADDITIONS[side][0]
                     stale_item = next(
                         item
@@ -5481,9 +5584,11 @@ class V2GeneratorTests(unittest.TestCase):
                 with self.subTest(side=side):
                     board_path = (
                         output_dir
-                        / f"kc2_{side}-x3-v2"
-                        / f"kc2_{side}-x3-v2.kicad_pcb"
+                        / f"kc2_{side}"
+                        / f"kc2_{side}.kicad_pcb"
                     )
+                    historical_route_fixture(side, board_path)
+
                     board = pcbnew.LoadBoard(str(board_path))
                     for item in list(board.GetTracks()):
                         board.Delete(item)
@@ -5534,9 +5639,11 @@ class V2GeneratorTests(unittest.TestCase):
                 with self.subTest(side=side, stale_mounting_geometry=True):
                     board_path = (
                         output_dir
-                        / f"kc2_{side}-x3-v2"
-                        / f"kc2_{side}-x3-v2.kicad_pcb"
+                        / f"kc2_{side}"
+                        / f"kc2_{side}.kicad_pcb"
                     )
+                    historical_route_fixture(side, board_path)
+
                     board = pcbnew.LoadBoard(str(board_path))
                     for item in list(board.GetTracks()):
                         board.Delete(item)
@@ -5581,9 +5688,11 @@ class V2GeneratorTests(unittest.TestCase):
                 with self.subTest(side=side):
                     board_path = (
                         output_dir
-                        / f"kc2_{side}-x3-v2"
-                        / f"kc2_{side}-x3-v2.kicad_pcb"
+                        / f"kc2_{side}"
+                        / f"kc2_{side}.kicad_pcb"
                     )
+                    historical_route_fixture(side, board_path)
+
                     board = pcbnew.LoadBoard(str(board_path))
                     for item in list(board.GetTracks()):
                         board.Delete(item)
@@ -5660,9 +5769,11 @@ class V2GeneratorTests(unittest.TestCase):
             for side in ("left", "right"):
                 board_path = (
                     output_dir
-                    / f"kc2_{side}-x3-v2"
-                    / f"kc2_{side}-x3-v2.kicad_pcb"
+                    / f"kc2_{side}"
+                    / f"kc2_{side}.kicad_pcb"
                 )
+                historical_route_fixture(side, board_path)
+
                 board = pcbnew.LoadBoard(str(board_path))
                 for item in list(board.GetTracks()):
                     board.Delete(item)
@@ -6009,10 +6120,28 @@ class V2GeneratorTests(unittest.TestCase):
         product_spec = PRODUCT_SPEC.read_text(encoding="utf-8")
         spec_index = (ROOT / "docs/spec/00.index.md").read_text(encoding="utf-8")
 
-        self.assertIn(
-            "| Current routes | Left `616`, SHA-256 prefix `b37c88d783b`; right `803`, SHA-256 prefix `44a0c7fdd446` |",
-            spec_index,
+        # CON-ARCH-004 / OPS-ARCH-007: current claims follow the actual board
+        # and its pad-bound replay, never a historical SES route count.
+        import pcbnew
+        from tools.kc2_solder_route_snapshot import capture
+
+        snapshot = json.loads(
+            (V2_ROOT / "autoroute/kc2_mx_solder_support_routes.json").read_text(
+                encoding="utf-8"
+            )
         )
+        self.assertEqual(snapshot["schema"], 2)
+        counts = []
+        for side, board_path in (("left", LEFT_BOARD), ("right", RIGHT_BOARD)):
+            actual = capture(pcbnew.LoadBoard(str(board_path)))
+            self.assertEqual(actual, snapshot["sides"][side])
+            counts.append(actual["route_track_via_count"])
+        digital_row = next(
+            line for line in spec_index.splitlines()
+            if line.startswith("| Digital PCB evidence |")
+        )
+        self.assertIn(f"{counts[0]}/{counts[1]} route items", digital_row)
+        self.assertNotIn("| Current routes | Left `616`", spec_index)
         self.assertNotIn(
             "| Current routes | Left `580`, SHA-256 prefix `7eda6d670a2f`; right `739`, SHA-256 prefix `fc2a819d9ce8` |",
             spec_index,

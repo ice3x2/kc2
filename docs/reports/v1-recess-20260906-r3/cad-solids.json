@@ -1,0 +1,46 @@
+{
+  "requirements": [
+    "CON-ARCH-004",
+    "CON-ARCH-006"
+  ],
+  "source_sha256": {
+    "hardware/case/kc2_left_lower_housing.step": "e9b667ca99e166368ed6283d73287c6593d1ff51a55532822872700151e867cc",
+    "hardware/case/kc2_left_mx_upper_housing.step": "86585e0f263e354cb8d312578b9161a9c13e847bc4d630ec15ee61bf42e1609e",
+    "hardware/case/kc2_right_lower_housing.step": "23aaa8e60565e84cdaa58119a64219c205acd30dc8e240b37c9843e0965c70e6",
+    "hardware/case/kc2_right_mx_upper_housing.step": "ac757c24d9e90142a3a2d212c266edae20896d44a7217614620a51ebec4f19f6",
+    "hardware/kicad/kc2_left/kc2_left.kicad_pcb": "568e1427e4cfb9d667b6d5b3754da3a4e24c924abfa85a8dfe394dd050b5fe67",
+    "hardware/kicad/kc2_right/kc2_right.kicad_pcb": "88290c3b0cf3951d56221d216549665c0576a816a6315012f7f12b027f402577"
+  },
+  "cad": {
+    "left_lower": {
+      "valid": true,
+      "solids": 1,
+      "volume_mm3": 17495.106721199456
+    },
+    "left_mx_upper": {
+      "valid": true,
+      "solids": 1,
+      "volume_mm3": 9872.36150423756
+    },
+    "left_lower_upper_intersection_mm3": 0.0,
+    "right_lower": {
+      "valid": true,
+      "solids": 2,
+      "volume_mm3": 19677.371287763803
+    },
+    "right_mx_upper": {
+      "valid": true,
+      "solids": 2,
+      "volume_mm3": 11095.90095125474
+    },
+    "right_lower_upper_intersection_mm3": 0.0
+  },
+  "ring_intersection_mm3": {
+    "left_lower": 0.0,
+    "left_mx_upper": 0.0,
+    "right_lower": 0.0,
+    "right_mx_upper": 0.0
+  },
+  "errors": [],
+  "physical_qualification_complete": false
+}

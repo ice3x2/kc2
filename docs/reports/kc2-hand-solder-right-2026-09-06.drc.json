@@ -1,0 +1,1042 @@
+{
+    "$schema": "https://schemas.kicad.org/drc.v1.json",
+    "coordinate_units": "mm",
+    "date": "2026-09-06T10:01:49",
+    "ignored_checks": [
+        {
+            "description": "Footprint has no courtyard defined",
+            "key": "missing_courtyard"
+        },
+        {
+            "description": "Track endpoint not centered on via",
+            "key": "track_not_centered_on_via"
+        },
+        {
+            "description": "Tuning profile track geometries",
+            "key": "tuning_profile_track_geometries"
+        },
+        {
+            "description": "Footprint doesn't match symbol's footprint filters",
+            "key": "footprint_filters_mismatch"
+        },
+        {
+            "description": "Footprint component type doesn't match footprint pads",
+            "key": "footprint_type_mismatch"
+        }
+    ],
+    "included_severities": [
+        "error",
+        "warning",
+        "exclusion"
+    ],
+    "kicad_version": "10.0.3",
+    "schematic_parity": [],
+    "source": "kc2_right.kicad_pcb",
+    "unconnected_items": [],
+    "violations": [
+        {
+            "description": "공간거리 위반 (네트클래스 'Default' 공간거리 0.3000 mm; 실제값 0.0763 mm)",
+            "items": [
+                {
+                    "description": "2의 PTH 패드[RK04_D]SW4",
+                    "pos": {
+                        "x": 105.89,
+                        "y": 74.985
+                    },
+                    "uuid": "2050ee88-8a38-4f13-9f0e-34c4aaac49d7"
+                },
+                {
+                    "description": "배선 [R_ROW0] on B.Cu, 길이 1.5067 mm",
+                    "pos": {
+                        "x": 106.5,
+                        "y": 72.2787
+                    },
+                    "uuid": "2f94bbc3-2ddd-465d-878c-711e29a242c1"
+                }
+            ],
+            "severity": "error",
+            "type": "clearance"
+        },
+        {
+            "description": "공간거리 위반 (네트클래스 'Default' 공간거리 0.3000 mm; 실제값 0.0763 mm)",
+            "items": [
+                {
+                    "description": "배선 [R_ROW0] on B.Cu, 길이 2.9740 mm",
+                    "pos": {
+                        "x": 166.5313,
+                        "y": 73.7
+                    },
+                    "uuid": "44262c1d-d461-4ac9-85d1-6d7e10a12f18"
+                },
+                {
+                    "description": "2의 PTH 패드[RK07_D]SW7",
+                    "pos": {
+                        "x": 165.4213,
+                        "y": 74.985
+                    },
+                    "uuid": "6762a25c-f6a7-408e-8d25-02581df3cebe"
+                }
+            ],
+            "severity": "error",
+            "type": "clearance"
+        },
+        {
+            "description": "공간거리 위반 (네트클래스 'Default' 공간거리 0.3000 mm; 실제값 0.0763 mm)",
+            "items": [
+                {
+                    "description": "2의 PTH 패드[RK03_D]SW3",
+                    "pos": {
+                        "x": 86.84,
+                        "y": 74.985
+                    },
+                    "uuid": "077fc51f-feb5-41f2-a89f-7be749bbbf47"
+                },
+                {
+                    "description": "배선 [R_ROW0] on B.Cu, 길이 1.5126 mm",
+                    "pos": {
+                        "x": 87.45,
+                        "y": 72.2724
+                    },
+                    "uuid": "59b3066b-6a90-4eeb-b010-b29a023e9ec2"
+                }
+            ],
+            "severity": "error",
+            "type": "clearance"
+        },
+        {
+            "description": "공간거리 위반 (네트클래스 'Default' 공간거리 0.3000 mm; 실제값 0.0763 mm)",
+            "items": [
+                {
+                    "description": "2의 PTH 패드[RK04_D]SW4",
+                    "pos": {
+                        "x": 105.89,
+                        "y": 74.985
+                    },
+                    "uuid": "2050ee88-8a38-4f13-9f0e-34c4aaac49d7"
+                },
+                {
+                    "description": "배선 [R_ROW0] on B.Cu, 길이 3.4000 mm",
+                    "pos": {
+                        "x": 107.0,
+                        "y": 73.7
+                    },
+                    "uuid": "5d176191-f39b-4f74-a31e-5c5a76cf131a"
+                }
+            ],
+            "severity": "error",
+            "type": "clearance"
+        },
+        {
+            "description": "공간거리 위반 (네트클래스 'Default' 공간거리 0.3000 mm; 실제값 0.2981 mm)",
+            "items": [
+                {
+                    "description": "배선 [R_ROW0] on B.Cu, 길이 2.9460 mm",
+                    "pos": {
+                        "x": 170.2213,
+                        "y": 70.7683
+                    },
+                    "uuid": "5dd7557b-eb0b-4bd3-b697-ac073cb235c3"
+                },
+                {
+                    "description": "1의 PTH 패드[R_COL6]SW7",
+                    "pos": {
+                        "x": 171.7713,
+                        "y": 72.445
+                    },
+                    "uuid": "ea980bca-13af-4d94-bf84-ee1b1f73fe37"
+                }
+            ],
+            "severity": "error",
+            "type": "clearance"
+        },
+        {
+            "description": "공간거리 위반 (네트클래스 'Default' 공간거리 0.3000 mm; 실제값 0.1315 mm)",
+            "items": [
+                {
+                    "description": "배선 [R_COL6] on F.Cu, 길이 14.5696 mm",
+                    "pos": {
+                        "x": 85.0,
+                        "y": 65.0
+                    },
+                    "uuid": "2b7a7d7c-5795-4753-8ee7-27fc5027a4a6"
+                },
+                {
+                    "description": "1의 PTH 패드[R_COL2]SW3",
+                    "pos": {
+                        "x": 93.19,
+                        "y": 72.445
+                    },
+                    "uuid": "93de0465-81a6-49e2-8c5c-71ce7af95c24"
+                }
+            ],
+            "severity": "error",
+            "type": "clearance"
+        },
+        {
+            "description": "공간거리 위반 (네트클래스 'Default' 공간거리 0.3000 mm; 실제값 0.0763 mm)",
+            "items": [
+                {
+                    "description": "2의 PTH 패드[RK07_D]SW7",
+                    "pos": {
+                        "x": 165.4213,
+                        "y": 74.985
+                    },
+                    "uuid": "6762a25c-f6a7-408e-8d25-02581df3cebe"
+                },
+                {
+                    "description": "배선 [R_ROW0] on B.Cu, 길이 3.4000 mm",
+                    "pos": {
+                        "x": 169.9313,
+                        "y": 73.7
+                    },
+                    "uuid": "68d27deb-73cd-412f-a30a-2c0e3ac95ddf"
+                }
+            ],
+            "severity": "error",
+            "type": "clearance"
+        },
+        {
+            "description": "공간거리 위반 (네트클래스 'Default' 공간거리 0.3000 mm; 실제값 0.2554 mm)",
+            "items": [
+                {
+                    "description": "배선 [R_COL6] on F.Cu, 길이 11.0740 mm",
+                    "pos": {
+                        "x": 76.13,
+                        "y": 58.37
+                    },
+                    "uuid": "76fbd394-bd24-4d64-be8d-d9c10a999c6f"
+                },
+                {
+                    "description": "D20의 PTH 패드[R_COL8]U1",
+                    "pos": {
+                        "x": 78.67,
+                        "y": 58.37
+                    },
+                    "uuid": "f3d7b255-1bd7-4631-b727-3f724a7ba8ae"
+                }
+            ],
+            "severity": "error",
+            "type": "clearance"
+        },
+        {
+            "description": "공간거리 위반 (네트클래스 'Default' 공간거리 0.3000 mm; 실제값 0.0763 mm)",
+            "items": [
+                {
+                    "description": "배선 [R_ROW0] on B.Cu, 길이 3.4000 mm",
+                    "pos": {
+                        "x": 126.05,
+                        "y": 73.7
+                    },
+                    "uuid": "732d5faa-974f-4f5c-966e-94aea5024d61"
+                },
+                {
+                    "description": "2의 PTH 패드[RK05_D]SW5",
+                    "pos": {
+                        "x": 124.94,
+                        "y": 74.985
+                    },
+                    "uuid": "9cfb43f2-7539-45f5-b38e-3f52cb5cf013"
+                }
+            ],
+            "severity": "error",
+            "type": "clearance"
+        },
+        {
+            "description": "공간거리 위반 (네트클래스 'Default' 공간거리 0.3000 mm; 실제값 0.2083 mm)",
+            "items": [
+                {
+                    "description": "배선 [R_ROW0] on B.Cu, 길이 1.0994 mm",
+                    "pos": {
+                        "x": 112.7327,
+                        "y": 74.3783
+                    },
+                    "uuid": "803835e4-6fde-4947-90b8-4e65b30b3dd7"
+                },
+                {
+                    "description": "1의 PTH 패드[R_COL3]SW4",
+                    "pos": {
+                        "x": 112.24,
+                        "y": 72.445
+                    },
+                    "uuid": "f5c054c7-02a7-4991-ad2e-51d636e0ad79"
+                }
+            ],
+            "severity": "error",
+            "type": "clearance"
+        },
+        {
+            "description": "공간거리 위반 (네트클래스 'Default' 공간거리 0.3000 mm; 실제값 0.0955 mm)",
+            "items": [
+                {
+                    "description": "배선 [R_COL6] on B.Cu, 길이 3.3500 mm",
+                    "pos": {
+                        "x": 97.5,
+                        "y": 92.75
+                    },
+                    "uuid": "12143483-e668-4e61-a307-5ca25b50e8f4"
+                },
+                {
+                    "description": "2의 PTH 패드[RK12_D]SW12",
+                    "pos": {
+                        "x": 96.365,
+                        "y": 94.035
+                    },
+                    "uuid": "fdb3d979-4cc4-4ecb-8dc7-b997b6178f89"
+                }
+            ],
+            "severity": "error",
+            "type": "clearance"
+        },
+        {
+            "description": "두 개의 네트를 단락시키는 개체 (네트 R_COL1 와 R_ROW0)",
+            "items": [
+                {
+                    "description": "1의 PTH 패드[R_COL1]SW2",
+                    "pos": {
+                        "x": 74.14,
+                        "y": 72.445
+                    },
+                    "uuid": "3fe5f107-314d-4807-8d3e-d5f2b98f1a6f"
+                },
+                {
+                    "description": "배선 [R_ROW0] on B.Cu, 길이 7.8719 mm",
+                    "pos": {
+                        "x": 72.59,
+                        "y": 70.7369
+                    },
+                    "uuid": "914ccbdd-0428-4bab-8a6f-489dfdd6471f"
+                }
+            ],
+            "severity": "error",
+            "type": "shorting_items"
+        },
+        {
+            "description": "공간거리 위반 (네트클래스 'Default' 공간거리 0.3000 mm; 실제값 0.2182 mm)",
+            "items": [
+                {
+                    "description": "배선 [R_ROW3] on F.Cu, 길이 6.9353 mm",
+                    "pos": {
+                        "x": 71.4625,
+                        "y": 129.205
+                    },
+                    "uuid": "2b745473-9393-45fc-988d-572fea9f9506"
+                },
+                {
+                    "description": "1의 PTH 패드[R_COL1]SW26",
+                    "pos": {
+                        "x": 78.9025,
+                        "y": 129.595
+                    },
+                    "uuid": "7d2c7047-5b81-475d-b33c-0fa527baab02"
+                }
+            ],
+            "severity": "error",
+            "type": "clearance"
+        },
+        {
+            "description": "두 개의 네트를 단락시키는 개체 (네트 R_COL2 와 R_ROW0)",
+            "items": [
+                {
+                    "description": "1의 PTH 패드[R_COL2]SW3",
+                    "pos": {
+                        "x": 93.19,
+                        "y": 72.445
+                    },
+                    "uuid": "93de0465-81a6-49e2-8c5c-71ce7af95c24"
+                },
+                {
+                    "description": "배선 [R_ROW0] on B.Cu, 길이 6.9088 mm",
+                    "pos": {
+                        "x": 92.0806,
+                        "y": 74.1356
+                    },
+                    "uuid": "96311b5d-7dd1-434a-ae09-ae5738fd7597"
+                }
+            ],
+            "severity": "error",
+            "type": "shorting_items"
+        },
+        {
+            "description": "공간거리 위반 (네트클래스 'Default' 공간거리 0.3000 mm; 실제값 0.1112 mm)",
+            "items": [
+                {
+                    "description": "배선 [R_ROW3] on F.Cu, 길이 4.5697 mm",
+                    "pos": {
+                        "x": 103.6906,
+                        "y": 94.9224
+                    },
+                    "uuid": "37a69e4f-5a12-48fd-91a2-698de98d6f4e"
+                },
+                {
+                    "description": "1의 PTH 패드[R_COL3]SW12",
+                    "pos": {
+                        "x": 102.715,
+                        "y": 91.495
+                    },
+                    "uuid": "f56a39f9-4bf1-4cc7-b83f-2d536c230e63"
+                }
+            ],
+            "severity": "error",
+            "type": "clearance"
+        },
+        {
+            "description": "공간거리 위반 (네트클래스 'Default' 공간거리 0.3000 mm; 실제값 0.0763 mm)",
+            "items": [
+                {
+                    "description": "배선 [R_ROW0] on B.Cu, 길이 3.0055 mm",
+                    "pos": {
+                        "x": 125.55,
+                        "y": 70.7364
+                    },
+                    "uuid": "97d0ecd4-1863-4387-81d2-7a20f10b71f1"
+                },
+                {
+                    "description": "2의 PTH 패드[RK05_D]SW5",
+                    "pos": {
+                        "x": 124.94,
+                        "y": 74.985
+                    },
+                    "uuid": "9cfb43f2-7539-45f5-b38e-3f52cb5cf013"
+                }
+            ],
+            "severity": "error",
+            "type": "clearance"
+        },
+        {
+            "description": "두 개의 네트를 단락시키는 개체 (네트 R_ROW3 와 R_COL2)",
+            "items": [
+                {
+                    "description": "배선 [R_ROW3] on F.Cu, 길이 16.3024 mm",
+                    "pos": {
+                        "x": 90.7545,
+                        "y": 127.917
+                    },
+                    "uuid": "387853ac-0ad9-4c31-aecc-98b9ee4d1a38"
+                },
+                {
+                    "description": "1의 PTH 패드[R_COL2]SW27",
+                    "pos": {
+                        "x": 97.9525,
+                        "y": 129.595
+                    },
+                    "uuid": "6815a8b9-0935-43ef-88c0-84c278152bdf"
+                }
+            ],
+            "severity": "error",
+            "type": "shorting_items"
+        },
+        {
+            "description": "공간거리 위반 (네트클래스 'Default' 공간거리 0.3000 mm; 실제값 0.0763 mm)",
+            "items": [
+                {
+                    "description": "배선 [R_ROW0] on B.Cu, 길이 1.7852 mm",
+                    "pos": {
+                        "x": 68.4,
+                        "y": 71.9863
+                    },
+                    "uuid": "a543b64f-7b5b-4bfc-a37c-01a2aa0a230c"
+                },
+                {
+                    "description": "2의 PTH 패드[RK02_D]SW2",
+                    "pos": {
+                        "x": 67.79,
+                        "y": 74.985
+                    },
+                    "uuid": "e14dd67e-7a29-4b00-b1e4-67b7c745c078"
+                }
+            ],
+            "severity": "error",
+            "type": "clearance"
+        },
+        {
+            "description": "공간거리 위반 (네트클래스 'Default' 공간거리 0.3000 mm; 실제값 0.0955 mm)",
+            "items": [
+                {
+                    "description": "배선 [R_COL6] on B.Cu, 길이 3.3500 mm",
+                    "pos": {
+                        "x": 97.5,
+                        "y": 89.4
+                    },
+                    "uuid": "a329255d-4b2e-4183-8434-a1c9feff11bf"
+                },
+                {
+                    "description": "2의 PTH 패드[RK12_D]SW12",
+                    "pos": {
+                        "x": 96.365,
+                        "y": 94.035
+                    },
+                    "uuid": "fdb3d979-4cc4-4ecb-8dc7-b997b6178f89"
+                }
+            ],
+            "severity": "error",
+            "type": "clearance"
+        },
+        {
+            "description": "공간거리 위반 (네트클래스 'Default' 공간거리 0.3000 mm; 실제값 0.0763 mm)",
+            "items": [
+                {
+                    "description": "2의 PTH 패드[RK03_D]SW3",
+                    "pos": {
+                        "x": 86.84,
+                        "y": 74.985
+                    },
+                    "uuid": "077fc51f-feb5-41f2-a89f-7be749bbbf47"
+                },
+                {
+                    "description": "배선 [R_ROW0] on B.Cu, 길이 3.4000 mm",
+                    "pos": {
+                        "x": 87.95,
+                        "y": 73.7
+                    },
+                    "uuid": "b2511769-31fe-417a-ac4e-3a23cfb87b87"
+                }
+            ],
+            "severity": "error",
+            "type": "clearance"
+        },
+        {
+            "description": "공간거리 위반 (네트클래스 'Default' 공간거리 0.3000 mm; 실제값 0.0733 mm)",
+            "items": [
+                {
+                    "description": "배선 [R_COL0] on F.Cu, 길이 5.3297 mm",
+                    "pos": {
+                        "x": 56.2182,
+                        "y": 82.605
+                    },
+                    "uuid": "014ca94f-3462-4e22-8b16-4fd7a3f50951"
+                },
+                {
+                    "description": "2의 PTH 패드[RK01_D]SW1",
+                    "pos": {
+                        "x": 56.36,
+                        "y": 80.065
+                    },
+                    "uuid": "29ecae26-5dfc-4ec8-bb60-8364decfc44a"
+                }
+            ],
+            "severity": "error",
+            "type": "clearance"
+        },
+        {
+            "description": "두 개의 네트를 단락시키는 개체 (네트 R_COL5 와 R_ROW0)",
+            "items": [
+                {
+                    "description": "1의 PTH 패드[R_COL5]SW6",
+                    "pos": {
+                        "x": 150.34,
+                        "y": 72.445
+                    },
+                    "uuid": "5e19c659-db92-4673-8cd3-547c7e65c408"
+                },
+                {
+                    "description": "배선 [R_ROW0] on B.Cu, 길이 10.2846 mm",
+                    "pos": {
+                        "x": 159.0746,
+                        "y": 70.7683
+                    },
+                    "uuid": "b7ce29c3-ba40-419c-9e41-c236af41ebb3"
+                }
+            ],
+            "severity": "error",
+            "type": "shorting_items"
+        },
+        {
+            "description": "두 개의 네트를 단락시키는 개체 (네트 R_COL4 와 R_ROW0)",
+            "items": [
+                {
+                    "description": "1의 PTH 패드[R_COL4]SW5",
+                    "pos": {
+                        "x": 131.29,
+                        "y": 72.445
+                    },
+                    "uuid": "602d50fe-eeff-4dc9-b2e4-3d93e3b65fa2"
+                },
+                {
+                    "description": "배선 [R_ROW0] on B.Cu, 길이 7.8714 mm",
+                    "pos": {
+                        "x": 129.74,
+                        "y": 70.7364
+                    },
+                    "uuid": "cd3b2b19-6b3b-4f72-862d-ffc3bdf3db3e"
+                }
+            ],
+            "severity": "error",
+            "type": "shorting_items"
+        },
+        {
+            "description": "공간거리 위반 (네트클래스 'Default' 공간거리 0.3000 mm; 실제값 0.0763 mm)",
+            "items": [
+                {
+                    "description": "배선 [R_ROW0] on B.Cu, 길이 2.9740 mm",
+                    "pos": {
+                        "x": 145.1,
+                        "y": 73.7
+                    },
+                    "uuid": "d3d00bc6-40d8-488b-801a-5c7756862af1"
+                },
+                {
+                    "description": "2의 PTH 패드[RK06_D]SW6",
+                    "pos": {
+                        "x": 143.99,
+                        "y": 74.985
+                    },
+                    "uuid": "d4141dd7-62c0-4e6c-8148-98d08b54f8d3"
+                }
+            ],
+            "severity": "error",
+            "type": "clearance"
+        },
+        {
+            "description": "공간거리 위반 (네트클래스 'Default' 공간거리 0.3000 mm; 실제값 0.1736 mm)",
+            "items": [
+                {
+                    "description": "배선 [R_ROW0] on B.Cu, 길이 1.0370 mm",
+                    "pos": {
+                        "x": 110.9,
+                        "y": 73.645
+                    },
+                    "uuid": "e9b91b92-5058-4fe7-bcbf-9a493be51415"
+                },
+                {
+                    "description": "1의 PTH 패드[R_COL3]SW4",
+                    "pos": {
+                        "x": 112.24,
+                        "y": 72.445
+                    },
+                    "uuid": "f5c054c7-02a7-4991-ad2e-51d636e0ad79"
+                }
+            ],
+            "severity": "error",
+            "type": "clearance"
+        },
+        {
+            "description": "공간거리 위반 (네트클래스 'Default' 공간거리 0.3000 mm; 실제값 0.1533 mm)",
+            "items": [
+                {
+                    "description": "비아 [R_COL7] on F.Cu - B.Cu",
+                    "pos": {
+                        "x": 84.0,
+                        "y": 60.0
+                    },
+                    "uuid": "47f030d6-c6b4-4ab8-9da7-1b813897b797"
+                },
+                {
+                    "description": "VCC의 PTH 패드[<no net>]U1",
+                    "pos": {
+                        "x": 83.75,
+                        "y": 58.37
+                    },
+                    "uuid": "cd4e1cf2-c1e9-4c8e-ad70-dffd671b0832"
+                }
+            ],
+            "severity": "error",
+            "type": "clearance"
+        },
+        {
+            "description": "공간거리 위반 (네트클래스 'Default' 공간거리 0.3000 mm; 실제값 0.0763 mm)",
+            "items": [
+                {
+                    "description": "2의 PTH 패드[RK06_D]SW6",
+                    "pos": {
+                        "x": 143.99,
+                        "y": 74.985
+                    },
+                    "uuid": "d4141dd7-62c0-4e6c-8148-98d08b54f8d3"
+                },
+                {
+                    "description": "배선 [R_ROW0] on B.Cu, 길이 3.4000 mm",
+                    "pos": {
+                        "x": 148.5,
+                        "y": 73.7
+                    },
+                    "uuid": "f1d0dd5b-929e-488b-bbcc-0a55df86fc05"
+                }
+            ],
+            "severity": "error",
+            "type": "clearance"
+        },
+        {
+            "description": "공간거리 위반 (네트클래스 'Default' 공간거리 0.3000 mm; 실제값 0.0076 mm)",
+            "items": [
+                {
+                    "description": "배선 [R_ROW2] on B.Cu, 길이 16.5073 mm",
+                    "pos": {
+                        "x": 182.1099,
+                        "y": 112.2776
+                    },
+                    "uuid": "1c39b0a0-48e8-40ad-a931-c18c756d51f8"
+                },
+                {
+                    "description": "1의 PTH 패드[R_COL6]SW23",
+                    "pos": {
+                        "x": 169.39,
+                        "y": 110.545
+                    },
+                    "uuid": "3d57128d-88ee-4096-ae83-15744e7dd4ce"
+                }
+            ],
+            "severity": "error",
+            "type": "clearance"
+        },
+        {
+            "description": "공간거리 위반 (네트클래스 'Default' 공간거리 0.3000 mm; 실제값 0.0432 mm)",
+            "items": [
+                {
+                    "description": "1의 PTH 패드[R_COL1]SW26",
+                    "pos": {
+                        "x": 78.9025,
+                        "y": 129.595
+                    },
+                    "uuid": "7d2c7047-5b81-475d-b33c-0fa527baab02"
+                },
+                {
+                    "description": "비아 [R_ROW3] on F.Cu - B.Cu",
+                    "pos": {
+                        "x": 78.0723,
+                        "y": 131.3048
+                    },
+                    "uuid": "b2188cd7-22e9-4270-8ab3-1528c19872c4"
+                }
+            ],
+            "severity": "error",
+            "type": "clearance"
+        },
+        {
+            "description": "두 개의 네트를 단락시키는 개체 (네트 R_ROW1 와 R_COL2)",
+            "items": [
+                {
+                    "description": "배선 [R_ROW1] on B.Cu, 길이 3.6595 mm",
+                    "pos": {
+                        "x": 86.4943,
+                        "y": 93.2048
+                    },
+                    "uuid": "0fa01d6c-80b1-4c96-914f-85c3dbc97c16"
+                },
+                {
+                    "description": "1의 PTH 패드[R_COL2]SW11",
+                    "pos": {
+                        "x": 83.665,
+                        "y": 91.495
+                    },
+                    "uuid": "b949a16b-ed1a-4d45-8b12-3aae933b53be"
+                }
+            ],
+            "severity": "error",
+            "type": "shorting_items"
+        },
+        {
+            "description": "공간거리 위반 (네트클래스 'Default' 공간거리 0.3000 mm; 실제값 0.1736 mm)",
+            "items": [
+                {
+                    "description": "배선 [R_ROW1] on B.Cu, 길이 1.4620 mm",
+                    "pos": {
+                        "x": 81.801,
+                        "y": 92.171
+                    },
+                    "uuid": "2994a160-35c4-4bc5-a1b1-05eca98730ae"
+                },
+                {
+                    "description": "1의 PTH 패드[R_COL2]SW11",
+                    "pos": {
+                        "x": 83.665,
+                        "y": 91.495
+                    },
+                    "uuid": "b949a16b-ed1a-4d45-8b12-3aae933b53be"
+                }
+            ],
+            "severity": "error",
+            "type": "clearance"
+        },
+        {
+            "description": "공간거리 위반 (네트클래스 'Default' 공간거리 0.3000 mm; 실제값 0.2892 mm)",
+            "items": [
+                {
+                    "description": "배선 [R_COL7] on B.Cu, 길이 1.2298 mm",
+                    "pos": {
+                        "x": 82.7721,
+                        "y": 59.9321
+                    },
+                    "uuid": "3009f15c-86e7-4239-8b83-d9adb2906362"
+                },
+                {
+                    "description": "VCC의 PTH 패드[<no net>]U1",
+                    "pos": {
+                        "x": 83.75,
+                        "y": 58.37
+                    },
+                    "uuid": "cd4e1cf2-c1e9-4c8e-ad70-dffd671b0832"
+                }
+            ],
+            "severity": "error",
+            "type": "clearance"
+        },
+        {
+            "description": "두 개의 네트를 단락시키는 개체 (네트 R_ROW2 와 R_COL5)",
+            "items": [
+                {
+                    "description": "배선 [R_ROW2] on B.Cu, 길이 7.5635 mm",
+                    "pos": {
+                        "x": 149.3308,
+                        "y": 112.2548
+                    },
+                    "uuid": "4b60648a-7c43-48fc-bff8-d2c5ae48c829"
+                },
+                {
+                    "description": "1의 PTH 패드[R_COL5]SW22",
+                    "pos": {
+                        "x": 145.5775,
+                        "y": 110.545
+                    },
+                    "uuid": "da760692-e792-40e5-ac74-ca35f302dd6a"
+                }
+            ],
+            "severity": "error",
+            "type": "shorting_items"
+        },
+        {
+            "description": "두 개의 네트를 단락시키는 개체 (네트 R_COL1 와 R_ROW3)",
+            "items": [
+                {
+                    "description": "1의 PTH 패드[R_COL1]SW26",
+                    "pos": {
+                        "x": 78.9025,
+                        "y": 129.595
+                    },
+                    "uuid": "7d2c7047-5b81-475d-b33c-0fa527baab02"
+                },
+                {
+                    "description": "배선 [R_ROW3] on B.Cu, 길이 3.6559 mm",
+                    "pos": {
+                        "x": 81.7282,
+                        "y": 131.3048
+                    },
+                    "uuid": "e7cc2533-d1e3-4694-bc81-8d2720e60e24"
+                }
+            ],
+            "severity": "error",
+            "type": "shorting_items"
+        },
+        {
+            "description": "공간거리 위반 (네트클래스 'Default' 공간거리 0.3000 mm; 실제값 0.2832 mm)",
+            "items": [
+                {
+                    "description": "배선 [R_ROW0] on F.Cu, 길이 3.5090 mm",
+                    "pos": {
+                        "x": 116.2417,
+                        "y": 74.3783
+                    },
+                    "uuid": "567fe169-8309-494b-867c-3239a06468bf"
+                },
+                {
+                    "description": "1의 PTH 패드[R_COL3]SW4",
+                    "pos": {
+                        "x": 112.24,
+                        "y": 72.445
+                    },
+                    "uuid": "f5c054c7-02a7-4991-ad2e-51d636e0ad79"
+                }
+            ],
+            "severity": "error",
+            "type": "clearance"
+        },
+        {
+            "description": "공간거리 위반 (네트클래스 'Default' 공간거리 0.3000 mm; 실제값 0.1082 mm)",
+            "items": [
+                {
+                    "description": "비아 [R_ROW0] on F.Cu - B.Cu",
+                    "pos": {
+                        "x": 112.7327,
+                        "y": 74.3783
+                    },
+                    "uuid": "199aa44d-9310-4025-9034-4f208098dba4"
+                },
+                {
+                    "description": "1의 PTH 패드[R_COL3]SW4",
+                    "pos": {
+                        "x": 112.24,
+                        "y": 72.445
+                    },
+                    "uuid": "f5c054c7-02a7-4991-ad2e-51d636e0ad79"
+                }
+            ],
+            "severity": "error",
+            "type": "clearance"
+        },
+        {
+            "description": "두 개의 네트를 단락시키는 개체 (네트 R_ROW0 와 R_COL6)",
+            "items": [
+                {
+                    "description": "배선 [R_ROW0] on B.Cu, 길이 10.2845 mm",
+                    "pos": {
+                        "x": 180.5058,
+                        "y": 70.7683
+                    },
+                    "uuid": "04e4fbce-8387-4db8-bc9b-387e2cbab8cb"
+                },
+                {
+                    "description": "1의 PTH 패드[R_COL6]SW7",
+                    "pos": {
+                        "x": 171.7713,
+                        "y": 72.445
+                    },
+                    "uuid": "ea980bca-13af-4d94-bf84-ee1b1f73fe37"
+                }
+            ],
+            "severity": "error",
+            "type": "shorting_items"
+        },
+        {
+            "description": "두 개의 네트를 단락시키는 개체 (네트 R_ROW1 와 R_COL5)",
+            "items": [
+                {
+                    "description": "배선 [R_ROW1] on B.Cu, 길이 7.5635 mm",
+                    "pos": {
+                        "x": 137.0048,
+                        "y": 93.2048
+                    },
+                    "uuid": "86e931f8-9919-469d-a54e-7211d3c646a1"
+                },
+                {
+                    "description": "1의 PTH 패드[R_COL5]SW14",
+                    "pos": {
+                        "x": 140.815,
+                        "y": 91.495
+                    },
+                    "uuid": "8b396758-23db-4a31-bf6a-db84ad1bc1a0"
+                }
+            ],
+            "severity": "error",
+            "type": "shorting_items"
+        },
+        {
+            "description": "공간거리 위반 (네트클래스 'Default' 공간거리 0.3000 mm; 실제값 0.0666 mm)",
+            "items": [
+                {
+                    "description": "배선 [R_ROW0] on B.Cu, 길이 10.2532 mm",
+                    "pos": {
+                        "x": 61.1499,
+                        "y": 79.2364
+                    },
+                    "uuid": "0e31453e-de8d-4c3f-baad-63e89b715d2c"
+                },
+                {
+                    "description": "2의 PTH 패드[RK02_D]SW2",
+                    "pos": {
+                        "x": 67.79,
+                        "y": 74.985
+                    },
+                    "uuid": "e14dd67e-7a29-4b00-b1e4-67b7c745c078"
+                }
+            ],
+            "severity": "error",
+            "type": "clearance"
+        },
+        {
+            "description": "공간거리 위반 (네트클래스 'Default' 공간거리 0.3000 mm; 실제값 0.2119 mm)",
+            "items": [
+                {
+                    "description": "배선 [R_ROW0] on B.Cu, 길이 0.5030 mm",
+                    "pos": {
+                        "x": 110.4,
+                        "y": 73.7
+                    },
+                    "uuid": "122bdaa5-8475-4f7a-b453-a9b2b2db1854"
+                },
+                {
+                    "description": "1의 PTH 패드[R_COL3]SW4",
+                    "pos": {
+                        "x": 112.24,
+                        "y": 72.445
+                    },
+                    "uuid": "f5c054c7-02a7-4991-ad2e-51d636e0ad79"
+                }
+            ],
+            "severity": "error",
+            "type": "clearance"
+        },
+        {
+            "description": "공간거리 위반 (네트클래스 'Default' 공간거리 0.3000 mm; 실제값 0.2981 mm)",
+            "items": [
+                {
+                    "description": "배선 [R_ROW0] on B.Cu, 길이 2.9460 mm",
+                    "pos": {
+                        "x": 148.79,
+                        "y": 70.7683
+                    },
+                    "uuid": "2d218ad9-042c-477c-9d25-cf7c7b5868e2"
+                },
+                {
+                    "description": "1의 PTH 패드[R_COL5]SW6",
+                    "pos": {
+                        "x": 150.34,
+                        "y": 72.445
+                    },
+                    "uuid": "5e19c659-db92-4673-8cd3-547c7e65c408"
+                }
+            ],
+            "severity": "error",
+            "type": "clearance"
+        },
+        {
+            "description": "공간거리 위반 (네트클래스 'Default' 공간거리 0.3000 mm; 실제값 0.0763 mm)",
+            "items": [
+                {
+                    "description": "배선 [R_ROW0] on B.Cu, 길이 3.4000 mm",
+                    "pos": {
+                        "x": 68.9,
+                        "y": 73.7
+                    },
+                    "uuid": "2f0ded64-6ce8-45a1-9301-ee22cc8f6b18"
+                },
+                {
+                    "description": "2의 PTH 패드[RK02_D]SW2",
+                    "pos": {
+                        "x": 67.79,
+                        "y": 74.985
+                    },
+                    "uuid": "e14dd67e-7a29-4b00-b1e4-67b7c745c078"
+                }
+            ],
+            "severity": "error",
+            "type": "clearance"
+        },
+        {
+            "description": "홀 공간거리 위반 (기판의 홀 제약조건 설정 공간거리 0.2500 mm; 실제값 0.1932 mm)",
+            "items": [
+                {
+                    "description": "1의 PTH 패드[R_COL1]SW26",
+                    "pos": {
+                        "x": 78.9025,
+                        "y": 129.595
+                    },
+                    "uuid": "7d2c7047-5b81-475d-b33c-0fa527baab02"
+                },
+                {
+                    "description": "비아 [R_ROW3] on F.Cu - B.Cu",
+                    "pos": {
+                        "x": 78.0723,
+                        "y": 131.3048
+                    },
+                    "uuid": "b2188cd7-22e9-4270-8ab3-1528c19872c4"
+                }
+            ],
+            "severity": "error",
+            "type": "hole_clearance"
+        },
+        {
+            "description": "풋프린트 'NiceNanoV2_Socket_24Pin_USB_OUT_RIGHT'이(가) 라이브러리 'KC2'의 사본과 일치하지 않습니다",
+            "items": [
+                {
+                    "description": "풋프린트 U1",
+                    "pos": {
+                        "x": 77.4,
+                        "y": 50.75
+                    },
+                    "uuid": "744c3ed6-1ecd-45f2-8011-f66eec89cf6c"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_mismatch"
+        }
+    ]
+}

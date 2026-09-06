@@ -1,0 +1,186 @@
+{
+  "requirements": [
+    "CON-ARCH-004",
+    "CON-ARCH-006"
+  ],
+  "source_sha256": {
+    "hardware/case/kc2_housing_manifest.json": "d10123a910e10123458819a7f6bbdb8ea16e122d6b9f0ab4cf0ea4569d8eda25",
+    "hardware/case/kc2_mx_upper_housing_manifest.json": "dae4d5884dfa14b4123af9323d9ee8632158a87c06d3991594f0d62607f56bfe",
+    "hardware/case/adapters/manifest.json": "0735338fb9062cf61458b95e89a73c4301ba03dd5aeaed2d34c273c4c3963eea",
+    "tools/generate_kc2_x3_v2_housings.py": "7e6bb91384819e4d4afcac32f4ca2aa36351474dafb546bbfed4dca373a07c60",
+    "tools/generate_kc2_mx_upper_housings.py": "984b4e0217ed4febbe719b8529fb07701c085447457a142a0306168220b452bf",
+    "tools/verify_kc2_x3_v2_housing.py": "e689fd44e32bc8311e6f74e8ce10373b0fe9a56d7474fb8e2201eff5ee5e1cc3",
+    "hardware/kicad/kc2_left/kc2_left.kicad_pcb": "568e1427e4cfb9d667b6d5b3754da3a4e24c924abfa85a8dfe394dd050b5fe67",
+    "hardware/case/kc2_left_silicone_foot_layout.svg": "3235ae0f7b59fc36a9e6f0cdd5e59211141cbafda70c68f3e488075cf6bb6fd9",
+    "hardware/case/kc2_left_lower_housing.step": "e6df3db7f0237d535a0b59981f599747a8cc7ac3ba5016d1f8dff0856af44e02",
+    "hardware/case/kc2_left_mx_upper_housing.step": "fecce02a234f49937a6973801303e65dd534b1c724e6e168a9752442a60dcca1",
+    "hardware/kicad/kc2_right/kc2_right.kicad_pcb": "88290c3b0cf3951d56221d216549665c0576a816a6315012f7f12b027f402577",
+    "hardware/case/kc2_right_silicone_foot_layout.svg": "4b2dac4e58dea07a7a631d5ab495d23c6c353602b0a09a67e6e079e7e8d86437",
+    "hardware/case/kc2_right_lower_housing.step": "60f5de6a5d42716e203a39025597b9343baf55c35b698d5ace4fcb3d14928e50",
+    "hardware/case/kc2_right_mx_upper_housing.step": "4e0b0561b60a26298e6944b8526657a91afa9664812f0d569026c4cfca01d279",
+    "hardware/case/adapters/kc2_mx_ring_cap_020.stl": "e0e07fbb12e3f341636ee27c3f6b4343e56b10f3c090e5e029990b6a142022ea",
+    "hardware/case/adapters/kc2_v1_ring_cap_020.stl": "a6b7ddfa06f1880251a974d1f3bde65cb4ec585af4e2ebbd1e48a7b31d18e928"
+  },
+  "cad": {
+    "left_lower": {
+      "valid": true,
+      "solids": 1,
+      "volume_mm3": 33268.200511799194
+    },
+    "left_mx_upper": {
+      "valid": true,
+      "solids": 1,
+      "volume_mm3": 9872.36150423756
+    },
+    "left_lower_upper_intersection_mm3": 0.0,
+    "right_lower": {
+      "valid": true,
+      "solids": 2,
+      "volume_mm3": 38288.912955112195
+    },
+    "right_mx_upper": {
+      "valid": true,
+      "solids": 2,
+      "volume_mm3": 11095.90095125474
+    },
+    "right_lower_upper_intersection_mm3": 0.0
+  },
+  "closed_floor": {
+    "left_0": {
+      "digital_valid": true,
+      "errors": [],
+      "floor_thickness_mm": 1.2,
+      "floor_top_z_mm": -1.0,
+      "floor_bottom_z_mm": -2.2,
+      "bonding_pad_diameter_mm": 8.0,
+      "bonding_pad_count": 4,
+      "bonding_centers_mm": [
+        [
+          23.300000000000008,
+          4.8999999999999995
+        ],
+        [
+          130.2125,
+          35.15
+        ],
+        [
+          130.2125,
+          117.60000000000001
+        ],
+        [
+          4.8999999999999995,
+          117.60000000000001
+        ]
+      ],
+      "actual_floor_volume_mm3": 15773.093791,
+      "expected_floor_volume_mm3": 15773.093791,
+      "missing_floor_volume_mm3": 0,
+      "extra_floor_volume_mm3": 0,
+      "projected_centroid_inside_bonding_hull": true,
+      "actual_solid_centroid_xy_mm": [
+        66.925342,
+        70.797273
+      ]
+    },
+    "right_0": {
+      "digital_valid": true,
+      "errors": [],
+      "floor_thickness_mm": 1.2,
+      "floor_top_z_mm": -1.0,
+      "floor_bottom_z_mm": -2.2,
+      "bonding_pad_diameter_mm": 8.0,
+      "bonding_pad_count": 4,
+      "bonding_centers_mm": [
+        [
+          4.8999999999999995,
+          35.15
+        ],
+        [
+          76.94375000000001,
+          35.15
+        ],
+        [
+          76.94375000000001,
+          117.60000000000001
+        ],
+        [
+          4.8999999999999995,
+          117.60000000000001
+        ]
+      ],
+      "actual_floor_volume_mm3": 9059.413698,
+      "expected_floor_volume_mm3": 9059.413698,
+      "missing_floor_volume_mm3": 0,
+      "extra_floor_volume_mm3": 0,
+      "projected_centroid_inside_bonding_hull": true,
+      "actual_solid_centroid_xy_mm": [
+        40.72083,
+        75.5277
+      ]
+    },
+    "right_1": {
+      "digital_valid": true,
+      "errors": [],
+      "floor_thickness_mm": 1.2,
+      "floor_top_z_mm": -1.0,
+      "floor_bottom_z_mm": -2.2,
+      "bonding_pad_diameter_mm": 8.0,
+      "bonding_pad_count": 4,
+      "bonding_centers_mm": [
+        [
+          102.68749999999999,
+          4.8999999999999995
+        ],
+        [
+          135.3875,
+          4.8999999999999995
+        ],
+        [
+          144.5,
+          117.60000000000001
+        ],
+        [
+          86.74374999999999,
+          117.60000000000001
+        ]
+      ],
+      "actual_floor_volume_mm3": 9552.127969,
+      "expected_floor_volume_mm3": 9552.127969,
+      "missing_floor_volume_mm3": 0,
+      "extra_floor_volume_mm3": 0,
+      "projected_centroid_inside_bonding_hull": true,
+      "actual_solid_centroid_xy_mm": [
+        118.702517,
+        63.859374
+      ]
+    }
+  },
+  "ring_intersection_mm3": {
+    "left_lower": 0.0,
+    "left_mx_upper": 0.0,
+    "right_lower": 0.0,
+    "right_mx_upper": 0.0
+  },
+  "errors": [],
+  "physical_qualification_complete": false,
+  "ring_check_basis": "Conservative analytic envelope covers both existing adapter STLs; nominal PCB seating, not contact fit",
+  "source_sha256_after": {
+    "hardware/case/kc2_housing_manifest.json": "d10123a910e10123458819a7f6bbdb8ea16e122d6b9f0ab4cf0ea4569d8eda25",
+    "hardware/case/kc2_mx_upper_housing_manifest.json": "dae4d5884dfa14b4123af9323d9ee8632158a87c06d3991594f0d62607f56bfe",
+    "hardware/case/adapters/manifest.json": "0735338fb9062cf61458b95e89a73c4301ba03dd5aeaed2d34c273c4c3963eea",
+    "tools/generate_kc2_x3_v2_housings.py": "7e6bb91384819e4d4afcac32f4ca2aa36351474dafb546bbfed4dca373a07c60",
+    "tools/generate_kc2_mx_upper_housings.py": "984b4e0217ed4febbe719b8529fb07701c085447457a142a0306168220b452bf",
+    "tools/verify_kc2_x3_v2_housing.py": "e689fd44e32bc8311e6f74e8ce10373b0fe9a56d7474fb8e2201eff5ee5e1cc3",
+    "hardware/kicad/kc2_left/kc2_left.kicad_pcb": "568e1427e4cfb9d667b6d5b3754da3a4e24c924abfa85a8dfe394dd050b5fe67",
+    "hardware/case/kc2_left_silicone_foot_layout.svg": "3235ae0f7b59fc36a9e6f0cdd5e59211141cbafda70c68f3e488075cf6bb6fd9",
+    "hardware/case/kc2_left_lower_housing.step": "e6df3db7f0237d535a0b59981f599747a8cc7ac3ba5016d1f8dff0856af44e02",
+    "hardware/case/kc2_left_mx_upper_housing.step": "fecce02a234f49937a6973801303e65dd534b1c724e6e168a9752442a60dcca1",
+    "hardware/kicad/kc2_right/kc2_right.kicad_pcb": "88290c3b0cf3951d56221d216549665c0576a816a6315012f7f12b027f402577",
+    "hardware/case/kc2_right_silicone_foot_layout.svg": "4b2dac4e58dea07a7a631d5ab495d23c6c353602b0a09a67e6e079e7e8d86437",
+    "hardware/case/kc2_right_lower_housing.step": "60f5de6a5d42716e203a39025597b9343baf55c35b698d5ace4fcb3d14928e50",
+    "hardware/case/kc2_right_mx_upper_housing.step": "4e0b0561b60a26298e6944b8526657a91afa9664812f0d569026c4cfca01d279",
+    "hardware/case/adapters/kc2_mx_ring_cap_020.stl": "e0e07fbb12e3f341636ee27c3f6b4343e56b10f3c090e5e029990b6a142022ea",
+    "hardware/case/adapters/kc2_v1_ring_cap_020.stl": "a6b7ddfa06f1880251a974d1f3bde65cb4ec585af4e2ebbd1e48a7b31d18e928"
+  },
+  "sources_unchanged": true
+}

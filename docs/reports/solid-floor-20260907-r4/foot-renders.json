@@ -1,0 +1,11 @@
+{
+  "requirement": "CON-ARCH-006",
+  "source_sha256": {
+    "hardware/case/kc2_left_silicone_foot_layout.svg": "3235ae0f7b59fc36a9e6f0cdd5e59211141cbafda70c68f3e488075cf6bb6fd9",
+    "hardware/case/kc2_right_silicone_foot_layout.svg": "4b2dac4e58dea07a7a631d5ab495d23c6c353602b0a09a67e6e079e7e8d86437"
+  },
+  "renders": {
+    "docs/reports/solid-floor-20260907-r4/left-silicone-feet.png": "47c1e21f311ba13f1e3f010bd534a460c8eb02dcc53dc48bdebb5f5053f65b7c",
+    "docs/reports/solid-floor-20260907-r4/right-silicone-feet.png": "ba320264c4e15a93d0c09138fa49836e596112dff01e4692b48ee197fc0a6b71"
+  }
+}

@@ -1,0 +1,30 @@
+[
+  {
+    "name": "auxiliary",
+    "command": [
+      "C:/Python312/python.exe",
+      "-B",
+      "-m",
+      "unittest",
+      "tools.test_kc2_ring_adapters",
+      "tools.test_kc2_first_order_overlay",
+      "tools.test_kc2_fusion_export",
+      "tools.test_verify_kc2_mx_receptacle_evidence",
+      "tools.test_kc2_first_order_review_semantics",
+      "-v"
+    ],
+    "exit_code": 0
+  },
+  {
+    "name": "gerber-render",
+    "command": [
+      "C:/Work/git/kc2/.codex-tmp/gerber-render-venv/Scripts/python.exe",
+      "-B",
+      "-m",
+      "unittest",
+      "tools.test_kc2_gerber_visual",
+      "-v"
+    ],
+    "exit_code": 0
+  }
+]

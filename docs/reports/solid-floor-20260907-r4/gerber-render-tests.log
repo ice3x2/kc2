@@ -1,0 +1,9 @@
+
+test_explicit_input_mapping_excludes_drill_maps (tools.test_kc2_gerber_visual.GerberVisualTests.test_explicit_input_mapping_excludes_drill_maps) ... ok
+test_real_gerber_clear_polarity_survives_raster (tools.test_kc2_gerber_visual.GerberVisualTests.test_real_gerber_clear_polarity_survives_raster) ... ok
+test_unknown_side_rejected (tools.test_kc2_gerber_visual.GerberVisualTests.test_unknown_side_rejected) ... ok
+
+----------------------------------------------------------------------
+Ran 3 tests in 0.214s
+
+OK

@@ -1,0 +1,641 @@
+{
+  "requirement": "CON-ARCH-006",
+  "coordinate_system": "KiCad board mm",
+  "scope": "B.Cu trace/via relocation targets; not fabrication approval",
+  "sides": {
+    "left": [
+      {
+        "switch_ref": "SW1",
+        "x_mm": 44.025,
+        "y_mm": 82.525,
+        "support_radius_mm": 1.2,
+        "copper_clearance_mm": 0.3,
+        "copper_keepout_radius_mm": 1.5,
+        "maximum_load_span_mm": 3.899
+      },
+      {
+        "switch_ref": "SW2",
+        "x_mm": 61.075,
+        "y_mm": 72.525,
+        "support_radius_mm": 1.2,
+        "copper_clearance_mm": 0.3,
+        "copper_keepout_radius_mm": 1.5,
+        "maximum_load_span_mm": 3.899
+      },
+      {
+        "switch_ref": "SW3",
+        "x_mm": 80.125,
+        "y_mm": 72.525,
+        "support_radius_mm": 1.2,
+        "copper_clearance_mm": 0.3,
+        "copper_keepout_radius_mm": 1.5,
+        "maximum_load_span_mm": 3.899
+      },
+      {
+        "switch_ref": "SW4",
+        "x_mm": 99.175,
+        "y_mm": 72.525,
+        "support_radius_mm": 1.2,
+        "copper_clearance_mm": 0.3,
+        "copper_keepout_radius_mm": 1.5,
+        "maximum_load_span_mm": 3.899
+      },
+      {
+        "switch_ref": "SW5",
+        "x_mm": 118.225,
+        "y_mm": 72.525,
+        "support_radius_mm": 1.2,
+        "copper_clearance_mm": 0.3,
+        "copper_keepout_radius_mm": 1.5,
+        "maximum_load_span_mm": 3.899
+      },
+      {
+        "switch_ref": "SW6",
+        "x_mm": 137.275,
+        "y_mm": 72.525,
+        "support_radius_mm": 1.2,
+        "copper_clearance_mm": 0.3,
+        "copper_keepout_radius_mm": 1.5,
+        "maximum_load_span_mm": 3.899
+      },
+      {
+        "switch_ref": "SW7",
+        "x_mm": 156.325,
+        "y_mm": 72.525,
+        "support_radius_mm": 1.2,
+        "copper_clearance_mm": 0.3,
+        "copper_keepout_radius_mm": 1.5,
+        "maximum_load_span_mm": 3.899
+      },
+      {
+        "switch_ref": "SW8",
+        "x_mm": 48.7875,
+        "y_mm": 101.575,
+        "support_radius_mm": 1.2,
+        "copper_clearance_mm": 0.3,
+        "copper_keepout_radius_mm": 1.5,
+        "maximum_load_span_mm": 3.899
+      },
+      {
+        "switch_ref": "SW9",
+        "x_mm": 70.6,
+        "y_mm": 91.575,
+        "support_radius_mm": 1.2,
+        "copper_clearance_mm": 0.3,
+        "copper_keepout_radius_mm": 1.5,
+        "maximum_load_span_mm": 3.899
+      },
+      {
+        "switch_ref": "SW10",
+        "x_mm": 89.65,
+        "y_mm": 91.575,
+        "support_radius_mm": 1.2,
+        "copper_clearance_mm": 0.3,
+        "copper_keepout_radius_mm": 1.5,
+        "maximum_load_span_mm": 3.899
+      },
+      {
+        "switch_ref": "SW11",
+        "x_mm": 108.7,
+        "y_mm": 91.575,
+        "support_radius_mm": 1.2,
+        "copper_clearance_mm": 0.3,
+        "copper_keepout_radius_mm": 1.5,
+        "maximum_load_span_mm": 3.899
+      },
+      {
+        "switch_ref": "SW12",
+        "x_mm": 127.75,
+        "y_mm": 91.575,
+        "support_radius_mm": 1.2,
+        "copper_clearance_mm": 0.3,
+        "copper_keepout_radius_mm": 1.5,
+        "maximum_load_span_mm": 3.899
+      },
+      {
+        "switch_ref": "SW13",
+        "x_mm": 146.8,
+        "y_mm": 91.575,
+        "support_radius_mm": 1.2,
+        "copper_clearance_mm": 0.3,
+        "copper_keepout_radius_mm": 1.5,
+        "maximum_load_span_mm": 3.899
+      },
+      {
+        "switch_ref": "SW14",
+        "x_mm": 51.1687,
+        "y_mm": 120.625,
+        "support_radius_mm": 1.2,
+        "copper_clearance_mm": 0.3,
+        "copper_keepout_radius_mm": 1.5,
+        "maximum_load_span_mm": 3.899
+      },
+      {
+        "switch_ref": "SW15",
+        "x_mm": 75.3625,
+        "y_mm": 110.625,
+        "support_radius_mm": 1.2,
+        "copper_clearance_mm": 0.3,
+        "copper_keepout_radius_mm": 1.5,
+        "maximum_load_span_mm": 3.899
+      },
+      {
+        "switch_ref": "SW16",
+        "x_mm": 94.4125,
+        "y_mm": 110.625,
+        "support_radius_mm": 1.2,
+        "copper_clearance_mm": 0.3,
+        "copper_keepout_radius_mm": 1.5,
+        "maximum_load_span_mm": 3.899
+      },
+      {
+        "switch_ref": "SW17",
+        "x_mm": 113.4625,
+        "y_mm": 110.625,
+        "support_radius_mm": 1.2,
+        "copper_clearance_mm": 0.3,
+        "copper_keepout_radius_mm": 1.5,
+        "maximum_load_span_mm": 3.899
+      },
+      {
+        "switch_ref": "SW18",
+        "x_mm": 132.5125,
+        "y_mm": 110.625,
+        "support_radius_mm": 1.2,
+        "copper_clearance_mm": 0.3,
+        "copper_keepout_radius_mm": 1.5,
+        "maximum_load_span_mm": 3.899
+      },
+      {
+        "switch_ref": "SW19",
+        "x_mm": 151.5625,
+        "y_mm": 110.625,
+        "support_radius_mm": 1.2,
+        "copper_clearance_mm": 0.3,
+        "copper_keepout_radius_mm": 1.5,
+        "maximum_load_span_mm": 3.899
+      },
+      {
+        "switch_ref": "SW20",
+        "x_mm": 44.025,
+        "y_mm": 139.675,
+        "support_radius_mm": 1.2,
+        "copper_clearance_mm": 0.3,
+        "copper_keepout_radius_mm": 1.5,
+        "maximum_load_span_mm": 3.899
+      },
+      {
+        "switch_ref": "SW21",
+        "x_mm": 63.4563,
+        "y_mm": 129.675,
+        "support_radius_mm": 1.2,
+        "copper_clearance_mm": 0.3,
+        "copper_keepout_radius_mm": 1.5,
+        "maximum_load_span_mm": 3.899
+      },
+      {
+        "switch_ref": "SW22",
+        "x_mm": 84.8875,
+        "y_mm": 129.675,
+        "support_radius_mm": 1.2,
+        "copper_clearance_mm": 0.3,
+        "copper_keepout_radius_mm": 1.5,
+        "maximum_load_span_mm": 3.899
+      },
+      {
+        "switch_ref": "SW23",
+        "x_mm": 103.9375,
+        "y_mm": 129.675,
+        "support_radius_mm": 1.2,
+        "copper_clearance_mm": 0.3,
+        "copper_keepout_radius_mm": 1.5,
+        "maximum_load_span_mm": 3.899
+      },
+      {
+        "switch_ref": "SW24",
+        "x_mm": 122.9875,
+        "y_mm": 129.675,
+        "support_radius_mm": 1.2,
+        "copper_clearance_mm": 0.3,
+        "copper_keepout_radius_mm": 1.5,
+        "maximum_load_span_mm": 3.899
+      },
+      {
+        "switch_ref": "SW25",
+        "x_mm": 142.0375,
+        "y_mm": 129.675,
+        "support_radius_mm": 1.2,
+        "copper_clearance_mm": 0.3,
+        "copper_keepout_radius_mm": 1.5,
+        "maximum_load_span_mm": 3.899
+      },
+      {
+        "switch_ref": "SW26",
+        "x_mm": 161.0875,
+        "y_mm": 129.675,
+        "support_radius_mm": 1.2,
+        "copper_clearance_mm": 0.3,
+        "copper_keepout_radius_mm": 1.5,
+        "maximum_load_span_mm": 3.899
+      },
+      {
+        "switch_ref": "SW27",
+        "x_mm": 46.4063,
+        "y_mm": 158.725,
+        "support_radius_mm": 1.2,
+        "copper_clearance_mm": 0.3,
+        "copper_keepout_radius_mm": 1.5,
+        "maximum_load_span_mm": 3.899
+      },
+      {
+        "switch_ref": "SW28",
+        "x_mm": 68.2188,
+        "y_mm": 148.725,
+        "support_radius_mm": 1.2,
+        "copper_clearance_mm": 0.3,
+        "copper_keepout_radius_mm": 1.5,
+        "maximum_load_span_mm": 3.899
+      },
+      {
+        "switch_ref": "SW29",
+        "x_mm": 92.0313,
+        "y_mm": 148.725,
+        "support_radius_mm": 1.2,
+        "copper_clearance_mm": 0.3,
+        "copper_keepout_radius_mm": 1.5,
+        "maximum_load_span_mm": 3.899
+      },
+      {
+        "switch_ref": "SW30",
+        "x_mm": 120.6063,
+        "y_mm": 148.725,
+        "support_radius_mm": 1.2,
+        "copper_clearance_mm": 0.3,
+        "copper_keepout_radius_mm": 1.5,
+        "maximum_load_span_mm": 3.899
+      },
+      {
+        "switch_ref": "SW31",
+        "x_mm": 153.9438,
+        "y_mm": 148.725,
+        "support_radius_mm": 1.2,
+        "copper_clearance_mm": 0.3,
+        "copper_keepout_radius_mm": 1.5,
+        "maximum_load_span_mm": 3.899
+      }
+    ],
+    "right": [
+      {
+        "switch_ref": "SW1",
+        "x_mm": 53.55,
+        "y_mm": 82.525,
+        "support_radius_mm": 1.2,
+        "copper_clearance_mm": 0.3,
+        "copper_keepout_radius_mm": 1.5,
+        "maximum_load_span_mm": 3.899
+      },
+      {
+        "switch_ref": "SW2",
+        "x_mm": 70.6,
+        "y_mm": 72.525,
+        "support_radius_mm": 1.2,
+        "copper_clearance_mm": 0.3,
+        "copper_keepout_radius_mm": 1.5,
+        "maximum_load_span_mm": 3.899
+      },
+      {
+        "switch_ref": "SW3",
+        "x_mm": 89.65,
+        "y_mm": 72.525,
+        "support_radius_mm": 1.2,
+        "copper_clearance_mm": 0.3,
+        "copper_keepout_radius_mm": 1.5,
+        "maximum_load_span_mm": 3.899
+      },
+      {
+        "switch_ref": "SW4",
+        "x_mm": 108.7,
+        "y_mm": 72.525,
+        "support_radius_mm": 1.2,
+        "copper_clearance_mm": 0.3,
+        "copper_keepout_radius_mm": 1.5,
+        "maximum_load_span_mm": 3.899
+      },
+      {
+        "switch_ref": "SW5",
+        "x_mm": 127.75,
+        "y_mm": 72.525,
+        "support_radius_mm": 1.2,
+        "copper_clearance_mm": 0.3,
+        "copper_keepout_radius_mm": 1.5,
+        "maximum_load_span_mm": 3.899
+      },
+      {
+        "switch_ref": "SW6",
+        "x_mm": 146.8,
+        "y_mm": 72.525,
+        "support_radius_mm": 1.2,
+        "copper_clearance_mm": 0.3,
+        "copper_keepout_radius_mm": 1.5,
+        "maximum_load_span_mm": 3.899
+      },
+      {
+        "switch_ref": "SW7",
+        "x_mm": 168.2313,
+        "y_mm": 72.525,
+        "support_radius_mm": 1.2,
+        "copper_clearance_mm": 0.3,
+        "copper_keepout_radius_mm": 1.5,
+        "maximum_load_span_mm": 3.899
+      },
+      {
+        "switch_ref": "SW8",
+        "x_mm": 189.6625,
+        "y_mm": 72.525,
+        "support_radius_mm": 1.2,
+        "copper_clearance_mm": 0.3,
+        "copper_keepout_radius_mm": 1.5,
+        "maximum_load_span_mm": 3.899
+      },
+      {
+        "switch_ref": "SW9",
+        "x_mm": 44.025,
+        "y_mm": 101.575,
+        "support_radius_mm": 1.2,
+        "copper_clearance_mm": 0.3,
+        "copper_keepout_radius_mm": 1.5,
+        "maximum_load_span_mm": 3.899
+      },
+      {
+        "switch_ref": "SW10",
+        "x_mm": 61.075,
+        "y_mm": 91.575,
+        "support_radius_mm": 1.2,
+        "copper_clearance_mm": 0.3,
+        "copper_keepout_radius_mm": 1.5,
+        "maximum_load_span_mm": 3.899
+      },
+      {
+        "switch_ref": "SW11",
+        "x_mm": 80.125,
+        "y_mm": 91.575,
+        "support_radius_mm": 1.2,
+        "copper_clearance_mm": 0.3,
+        "copper_keepout_radius_mm": 1.5,
+        "maximum_load_span_mm": 3.899
+      },
+      {
+        "switch_ref": "SW12",
+        "x_mm": 99.175,
+        "y_mm": 91.575,
+        "support_radius_mm": 1.2,
+        "copper_clearance_mm": 0.3,
+        "copper_keepout_radius_mm": 1.5,
+        "maximum_load_span_mm": 3.899
+      },
+      {
+        "switch_ref": "SW13",
+        "x_mm": 118.225,
+        "y_mm": 91.575,
+        "support_radius_mm": 1.2,
+        "copper_clearance_mm": 0.3,
+        "copper_keepout_radius_mm": 1.5,
+        "maximum_load_span_mm": 3.899
+      },
+      {
+        "switch_ref": "SW14",
+        "x_mm": 137.275,
+        "y_mm": 91.575,
+        "support_radius_mm": 1.2,
+        "copper_clearance_mm": 0.3,
+        "copper_keepout_radius_mm": 1.5,
+        "maximum_load_span_mm": 3.899
+      },
+      {
+        "switch_ref": "SW15",
+        "x_mm": 156.325,
+        "y_mm": 91.575,
+        "support_radius_mm": 1.2,
+        "copper_clearance_mm": 0.3,
+        "copper_keepout_radius_mm": 1.5,
+        "maximum_load_span_mm": 3.899
+      },
+      {
+        "switch_ref": "SW16",
+        "x_mm": 182.5188,
+        "y_mm": 91.575,
+        "support_radius_mm": 1.2,
+        "copper_clearance_mm": 0.3,
+        "copper_keepout_radius_mm": 1.5,
+        "maximum_load_span_mm": 3.899
+      },
+      {
+        "switch_ref": "SW17",
+        "x_mm": 48.7875,
+        "y_mm": 120.625,
+        "support_radius_mm": 1.2,
+        "copper_clearance_mm": 0.3,
+        "copper_keepout_radius_mm": 1.5,
+        "maximum_load_span_mm": 3.899
+      },
+      {
+        "switch_ref": "SW18",
+        "x_mm": 65.8375,
+        "y_mm": 110.625,
+        "support_radius_mm": 1.2,
+        "copper_clearance_mm": 0.3,
+        "copper_keepout_radius_mm": 1.5,
+        "maximum_load_span_mm": 3.899
+      },
+      {
+        "switch_ref": "SW19",
+        "x_mm": 84.8875,
+        "y_mm": 110.625,
+        "support_radius_mm": 1.2,
+        "copper_clearance_mm": 0.3,
+        "copper_keepout_radius_mm": 1.5,
+        "maximum_load_span_mm": 3.899
+      },
+      {
+        "switch_ref": "SW20",
+        "x_mm": 103.9375,
+        "y_mm": 110.625,
+        "support_radius_mm": 1.2,
+        "copper_clearance_mm": 0.3,
+        "copper_keepout_radius_mm": 1.5,
+        "maximum_load_span_mm": 3.899
+      },
+      {
+        "switch_ref": "SW21",
+        "x_mm": 122.9875,
+        "y_mm": 110.625,
+        "support_radius_mm": 1.2,
+        "copper_clearance_mm": 0.3,
+        "copper_keepout_radius_mm": 1.5,
+        "maximum_load_span_mm": 3.899
+      },
+      {
+        "switch_ref": "SW22",
+        "x_mm": 142.0375,
+        "y_mm": 110.625,
+        "support_radius_mm": 1.2,
+        "copper_clearance_mm": 0.3,
+        "copper_keepout_radius_mm": 1.5,
+        "maximum_load_span_mm": 3.899
+      },
+      {
+        "switch_ref": "SW23",
+        "x_mm": 165.85,
+        "y_mm": 110.625,
+        "support_radius_mm": 1.2,
+        "copper_clearance_mm": 0.3,
+        "copper_keepout_radius_mm": 1.5,
+        "maximum_load_span_mm": 3.899
+      },
+      {
+        "switch_ref": "SW24",
+        "x_mm": 189.6625,
+        "y_mm": 110.625,
+        "support_radius_mm": 1.2,
+        "copper_clearance_mm": 0.3,
+        "copper_keepout_radius_mm": 1.5,
+        "maximum_load_span_mm": 3.899
+      },
+      {
+        "switch_ref": "SW25",
+        "x_mm": 58.3125,
+        "y_mm": 139.675,
+        "support_radius_mm": 1.2,
+        "copper_clearance_mm": 0.3,
+        "copper_keepout_radius_mm": 1.5,
+        "maximum_load_span_mm": 3.899
+      },
+      {
+        "switch_ref": "SW26",
+        "x_mm": 75.3625,
+        "y_mm": 129.675,
+        "support_radius_mm": 1.2,
+        "copper_clearance_mm": 0.3,
+        "copper_keepout_radius_mm": 1.5,
+        "maximum_load_span_mm": 3.899
+      },
+      {
+        "switch_ref": "SW27",
+        "x_mm": 94.4125,
+        "y_mm": 129.675,
+        "support_radius_mm": 1.2,
+        "copper_clearance_mm": 0.3,
+        "copper_keepout_radius_mm": 1.5,
+        "maximum_load_span_mm": 3.899
+      },
+      {
+        "switch_ref": "SW28",
+        "x_mm": 113.4625,
+        "y_mm": 129.675,
+        "support_radius_mm": 1.2,
+        "copper_clearance_mm": 0.3,
+        "copper_keepout_radius_mm": 1.5,
+        "maximum_load_span_mm": 3.899
+      },
+      {
+        "switch_ref": "SW29",
+        "x_mm": 132.5125,
+        "y_mm": 129.675,
+        "support_radius_mm": 1.2,
+        "copper_clearance_mm": 0.3,
+        "copper_keepout_radius_mm": 1.5,
+        "maximum_load_span_mm": 3.899
+      },
+      {
+        "switch_ref": "SW30",
+        "x_mm": 151.5625,
+        "y_mm": 129.675,
+        "support_radius_mm": 1.2,
+        "copper_clearance_mm": 0.3,
+        "copper_keepout_radius_mm": 1.5,
+        "maximum_load_span_mm": 3.899
+      },
+      {
+        "switch_ref": "SW31",
+        "x_mm": 170.6125,
+        "y_mm": 129.675,
+        "support_radius_mm": 1.2,
+        "copper_clearance_mm": 0.3,
+        "copper_keepout_radius_mm": 1.5,
+        "maximum_load_span_mm": 3.899
+      },
+      {
+        "switch_ref": "SW32",
+        "x_mm": 189.6625,
+        "y_mm": 129.675,
+        "support_radius_mm": 1.2,
+        "copper_clearance_mm": 0.3,
+        "copper_keepout_radius_mm": 1.5,
+        "maximum_load_span_mm": 3.899
+      },
+      {
+        "switch_ref": "SW33",
+        "x_mm": 58.3125,
+        "y_mm": 158.725,
+        "support_radius_mm": 1.2,
+        "copper_clearance_mm": 0.3,
+        "copper_keepout_radius_mm": 1.5,
+        "maximum_load_span_mm": 3.899
+      },
+      {
+        "switch_ref": "SW34",
+        "x_mm": 82.5063,
+        "y_mm": 148.725,
+        "support_radius_mm": 1.2,
+        "copper_clearance_mm": 0.3,
+        "copper_keepout_radius_mm": 1.5,
+        "maximum_load_span_mm": 3.899
+      },
+      {
+        "switch_ref": "SW35",
+        "x_mm": 111.0813,
+        "y_mm": 148.725,
+        "support_radius_mm": 1.2,
+        "copper_clearance_mm": 0.3,
+        "copper_keepout_radius_mm": 1.5,
+        "maximum_load_span_mm": 3.899
+      },
+      {
+        "switch_ref": "SW36",
+        "x_mm": 132.5125,
+        "y_mm": 148.725,
+        "support_radius_mm": 1.2,
+        "copper_clearance_mm": 0.3,
+        "copper_keepout_radius_mm": 1.5,
+        "maximum_load_span_mm": 3.899
+      },
+      {
+        "switch_ref": "SW37",
+        "x_mm": 151.5625,
+        "y_mm": 148.725,
+        "support_radius_mm": 1.2,
+        "copper_clearance_mm": 0.3,
+        "copper_keepout_radius_mm": 1.5,
+        "maximum_load_span_mm": 3.899
+      },
+      {
+        "switch_ref": "SW38",
+        "x_mm": 170.6125,
+        "y_mm": 148.725,
+        "support_radius_mm": 1.2,
+        "copper_clearance_mm": 0.3,
+        "copper_keepout_radius_mm": 1.5,
+        "maximum_load_span_mm": 3.899
+      },
+      {
+        "switch_ref": "SW39",
+        "x_mm": 189.6625,
+        "y_mm": 148.725,
+        "support_radius_mm": 1.2,
+        "copper_clearance_mm": 0.3,
+        "copper_keepout_radius_mm": 1.5,
+        "maximum_load_span_mm": 3.899
+      }
+    ]
+  }
+}

@@ -1,0 +1,50 @@
+{
+  "requirement": [
+    "CON-ARCH-004",
+    "CON-ARCH-006"
+  ],
+  "cad": {
+    "left_lower": {
+      "valid": true,
+      "solids": 1,
+      "volume_mm3": 18101.58137881066,
+      "zmin": -1.0,
+      "zmax": 2.5
+    },
+    "left_mx_upper": {
+      "valid": true,
+      "solids": 1,
+      "volume_mm3": 9766.338184529537,
+      "zmin": 4.1,
+      "zmax": 9.3
+    },
+    "left_lower_upper_intersection_mm3": 0.0,
+    "right_lower": {
+      "valid": true,
+      "solids": 2,
+      "volume_mm3": 20436.809090422423,
+      "zmin": -1.0,
+      "zmax": 2.5
+    },
+    "right_mx_upper": {
+      "valid": true,
+      "solids": 2,
+      "volume_mm3": 10976.817381899333,
+      "zmin": 4.1,
+      "zmax": 9.3
+    },
+    "right_lower_upper_intersection_mm3": 0.0
+  },
+  "ring_housing_intersection_mm3": {
+    "left_lower": 0.0,
+    "left_mx_upper": 0.0,
+    "right_lower": 0.0,
+    "right_mx_upper": 0.0
+  },
+  "source_sha256": {
+    "hardware/case/kc2_left_lower_housing.step": "c7b9f707e6f9ebe9eff4b4d5429a923e20b63a387b876846367e95eae9fa40ab",
+    "hardware/case/kc2_left_mx_upper_housing.step": "24f434935acb233090433b1405f7bcc06f8c373b4187a0c283ee9ceef60c2a6e",
+    "hardware/case/kc2_right_lower_housing.step": "1240b4ffa107fa7f9da03b4b6ba16ff337a6700111d05115114126c963cfde8e",
+    "hardware/case/kc2_right_mx_upper_housing.step": "f9846c2751d50475f20c5c4218c46d122a3a5449a7290832d9ee122456c08678"
+  }
+}

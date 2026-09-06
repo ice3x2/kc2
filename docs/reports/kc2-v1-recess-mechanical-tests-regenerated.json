@@ -1,0 +1,100 @@
+{
+  "requirement_ids": [
+    "CON-ARCH-006",
+    "OPS-ARCH-007"
+  ],
+  "runs": [
+    {
+      "command": [
+        "C:\\Python312\\python.exe",
+        "-B",
+        "-m",
+        "unittest",
+        "tools.test_verify_kc2_x3_v2_housing",
+        "tools.test_kc2_mx_housing",
+        "tools.test_kc2_recessed_lid",
+        "tools.test_verify_kc2_mx_housing_contract",
+        "tools.test_kc2_housing_rebind"
+      ],
+      "returncode": 0,
+      "log": "docs/reports/kc2-v1-recess-mechanical-tests-regenerated-geometry.log",
+      "log_sha256": "10485c4a93aebc26740f38dd822d116df9687a6fde455e579434110c48197196"
+    },
+    {
+      "command": [
+        "C:/Program Files/KiCad/10.0/bin/python.exe",
+        "-B",
+        "-m",
+        "unittest",
+        "tools.test_kc2_mx_housing_release_integration"
+      ],
+      "returncode": 0,
+      "log": "docs/reports/kc2-v1-recess-mechanical-tests-regenerated-kicad-integration.log",
+      "log_sha256": "ba9882e9ac323861c4e47fd88f712e12a56b4bd76a6d541faec02026dfe5f209"
+    }
+  ],
+  "source_sha256_before": {
+    "tools/test_verify_kc2_x3_v2_housing.py": "0a1a43d8c1487784ae05d164730e2f1ddd40b756b76f5217a878653e4fe64c03",
+    "tools/test_kc2_mx_housing.py": "c9441785ea69b29a036c456b3d4f35d97f6558804efb23247cda7f082e372050",
+    "tools/test_kc2_recessed_lid.py": "461d3103168aa46a43d5be800057150b778e924dd1c1b302eb967736bc218332",
+    "tools/test_verify_kc2_mx_housing_contract.py": "f1c4cc2d775294846c8dec975c6fa196b9ffc5ed9dfd7b7068b667a58a87a012",
+    "tools/test_kc2_housing_rebind.py": "20ac4dd998f75ca2f65e56c7eb20bf51677ce8a2138128259601c63fbaf08b04",
+    "tools/generate_kc2_x3_v2_housings.py": "5b582e3217a4aa3e1ca0c3942460486d89f0196328fc64e99f67ad1d83d810e6",
+    "tools/generate_kc2_mx_upper_housings.py": "984b4e0217ed4febbe719b8529fb07701c085447457a142a0306168220b452bf",
+    "tools/verify_kc2_mx_housing_contract.py": "306c0bf31cc7ec72480144b4c0cfd8358c41a513ad3735a542ab26b052990a14",
+    "tools/verify_kc2_x3_v2_housing.py": "8ac9f6d5059678f676b6166b25bed50ce7273b41f8e30ec8b24cfdef1e5cfb8d",
+    "tools/test_kc2_mx_housing_release_integration.py": "533ce8c43522e9fe3882d53a564fea593b35bc750ac22ba0efe17c04d55fd6ff",
+    "hardware/case/kc2_housing_clearance.json": "3fddbe1f98c1420e71be5d4d7e324dfd9b326d87a9d32d7d9d575657997dbdbc",
+    "hardware/case/kc2_housing_manifest.json": "b18cda42ccec4d4b998e31e4cb48d75681fdc795b4253deaff1ae682d17f3b3d",
+    "hardware/case/kc2_mx_upper_housing_manifest.json": "3cca35302c7a9916207a784c1bec5cda1c380fa64d2d70a58edb34d84b6df259",
+    "hardware/case/kc2_left_lower_housing.step": "e9b667ca99e166368ed6283d73287c6593d1ff51a55532822872700151e867cc",
+    "hardware/case/kc2_left_mx_upper_housing.step": "86585e0f263e354cb8d312578b9161a9c13e847bc4d630ec15ee61bf42e1609e",
+    "hardware/case/kc2_right_lower_housing.step": "23aaa8e60565e84cdaa58119a64219c205acd30dc8e240b37c9843e0965c70e6",
+    "hardware/case/kc2_right_mx_upper_housing.step": "ac757c24d9e90142a3a2d212c266edae20896d44a7217614620a51ebec4f19f6",
+    "hardware/case/kc2_left_lower_housing.stl": "8ec52f1a5d416891bba75eafb82987bae6d183a3f52f45bff33e7e0d8b4fdf09",
+    "hardware/case/kc2_left_mx_upper_housing.stl": "afb8810f9c0190d5768a7fc9da253361ddaf7d327f7a33e6a4ab786e843a5201",
+    "hardware/case/kc2_right_lower_housing_part_a.stl": "ba989362aabf8e70d9118a365d2c8236714c0a301cd77de661c6130c8b96d66c",
+    "hardware/case/kc2_right_lower_housing_part_b.stl": "fc41bfc02a157cf3376b4103d879fe9a5bc15f105e52249241edb9db0ed24351",
+    "hardware/case/kc2_right_mx_upper_housing_part_a.stl": "294003112d76cb1c6c04c275efb84eeab2803646df6c2e0c6945ff90ae9489ac",
+    "hardware/case/kc2_right_mx_upper_housing_part_b.stl": "3e2e4e4211ab3cc850d3b727638ca4409febd998310f51046d6ff46ec911fdd9",
+    "hardware/case/kc2_left_lower_housing.f3d": "0345f8519ed0bb106ec1f23781081d537a425cdead51ca9e928ecaed6f822843",
+    "hardware/case/kc2_left_mx_upper_housing.f3d": "5a44813aa0c15d0c8a9ba6648ce0d0dd769cb8993bd95795bf0e2218c540b4aa",
+    "hardware/case/kc2_right_lower_housing.f3d": "54376043b2762402487496672c58e0637c1e23a308b128ed4739529a1c635fe5",
+    "hardware/case/kc2_right_mx_upper_housing.f3d": "515902ab81000788805f732ad75da5b0b148f020ef076d061679d6e335658bc4",
+    "hardware/kicad/kc2_left/kc2_left.kicad_pcb": "568e1427e4cfb9d667b6d5b3754da3a4e24c924abfa85a8dfe394dd050b5fe67",
+    "hardware/kicad/kc2_right/kc2_right.kicad_pcb": "88290c3b0cf3951d56221d216549665c0576a816a6315012f7f12b027f402577"
+  },
+  "source_sha256_after": {
+    "tools/test_verify_kc2_x3_v2_housing.py": "0a1a43d8c1487784ae05d164730e2f1ddd40b756b76f5217a878653e4fe64c03",
+    "tools/test_kc2_mx_housing.py": "c9441785ea69b29a036c456b3d4f35d97f6558804efb23247cda7f082e372050",
+    "tools/test_kc2_recessed_lid.py": "461d3103168aa46a43d5be800057150b778e924dd1c1b302eb967736bc218332",
+    "tools/test_verify_kc2_mx_housing_contract.py": "f1c4cc2d775294846c8dec975c6fa196b9ffc5ed9dfd7b7068b667a58a87a012",
+    "tools/test_kc2_housing_rebind.py": "20ac4dd998f75ca2f65e56c7eb20bf51677ce8a2138128259601c63fbaf08b04",
+    "tools/generate_kc2_x3_v2_housings.py": "5b582e3217a4aa3e1ca0c3942460486d89f0196328fc64e99f67ad1d83d810e6",
+    "tools/generate_kc2_mx_upper_housings.py": "984b4e0217ed4febbe719b8529fb07701c085447457a142a0306168220b452bf",
+    "tools/verify_kc2_mx_housing_contract.py": "306c0bf31cc7ec72480144b4c0cfd8358c41a513ad3735a542ab26b052990a14",
+    "tools/verify_kc2_x3_v2_housing.py": "8ac9f6d5059678f676b6166b25bed50ce7273b41f8e30ec8b24cfdef1e5cfb8d",
+    "tools/test_kc2_mx_housing_release_integration.py": "533ce8c43522e9fe3882d53a564fea593b35bc750ac22ba0efe17c04d55fd6ff",
+    "hardware/case/kc2_housing_clearance.json": "13219003375673e3715b54fd0605b537618c5295c44441f574ec9640b862cc4c",
+    "hardware/case/kc2_housing_manifest.json": "b18cda42ccec4d4b998e31e4cb48d75681fdc795b4253deaff1ae682d17f3b3d",
+    "hardware/case/kc2_mx_upper_housing_manifest.json": "3cca35302c7a9916207a784c1bec5cda1c380fa64d2d70a58edb34d84b6df259",
+    "hardware/case/kc2_left_lower_housing.step": "e9b667ca99e166368ed6283d73287c6593d1ff51a55532822872700151e867cc",
+    "hardware/case/kc2_left_mx_upper_housing.step": "86585e0f263e354cb8d312578b9161a9c13e847bc4d630ec15ee61bf42e1609e",
+    "hardware/case/kc2_right_lower_housing.step": "23aaa8e60565e84cdaa58119a64219c205acd30dc8e240b37c9843e0965c70e6",
+    "hardware/case/kc2_right_mx_upper_housing.step": "ac757c24d9e90142a3a2d212c266edae20896d44a7217614620a51ebec4f19f6",
+    "hardware/case/kc2_left_lower_housing.stl": "8ec52f1a5d416891bba75eafb82987bae6d183a3f52f45bff33e7e0d8b4fdf09",
+    "hardware/case/kc2_left_mx_upper_housing.stl": "afb8810f9c0190d5768a7fc9da253361ddaf7d327f7a33e6a4ab786e843a5201",
+    "hardware/case/kc2_right_lower_housing_part_a.stl": "ba989362aabf8e70d9118a365d2c8236714c0a301cd77de661c6130c8b96d66c",
+    "hardware/case/kc2_right_lower_housing_part_b.stl": "fc41bfc02a157cf3376b4103d879fe9a5bc15f105e52249241edb9db0ed24351",
+    "hardware/case/kc2_right_mx_upper_housing_part_a.stl": "294003112d76cb1c6c04c275efb84eeab2803646df6c2e0c6945ff90ae9489ac",
+    "hardware/case/kc2_right_mx_upper_housing_part_b.stl": "3e2e4e4211ab3cc850d3b727638ca4409febd998310f51046d6ff46ec911fdd9",
+    "hardware/case/kc2_left_lower_housing.f3d": "dda212d9d8f991721b442aa036f3f72144294e0bf9bca881e7cbe23320edf9fa",
+    "hardware/case/kc2_left_mx_upper_housing.f3d": "51c1c32fc7cd7b840ba534da7b4abe344ea015e7558c96bb3537d18dba7e3550",
+    "hardware/case/kc2_right_lower_housing.f3d": "9719d3cb80d666a86fb3fc19f8162c372f5e16735863736ad5ad6988aa3b652e",
+    "hardware/case/kc2_right_mx_upper_housing.f3d": "ce0d49a3d5660f4b8b3b9b6e76c78f2d29950bcb70e274432bc453ab6c8cf3fd",
+    "hardware/kicad/kc2_left/kc2_left.kicad_pcb": "568e1427e4cfb9d667b6d5b3754da3a4e24c924abfa85a8dfe394dd050b5fe67",
+    "hardware/kicad/kc2_right/kc2_right.kicad_pcb": "88290c3b0cf3951d56221d216549665c0576a816a6315012f7f12b027f402577"
+  },
+  "sources_unchanged": false,
+  "canonical_and_native_approval": false
+}

@@ -1,0 +1,29 @@
+{
+  "requirement": "CON-ARCH-006",
+  "command": [
+    "C:\\Python312\\python.exe",
+    "-B",
+    "-m",
+    "unittest",
+    "tools.test_kc2_closed_floor",
+    "tools.test_kc2_mx_housing"
+  ],
+  "returncode": 0,
+  "source_sha256": {
+    "tools/generate_kc2_x3_v2_housings.py": "7e6bb91384819e4d4afcac32f4ca2aa36351474dafb546bbfed4dca373a07c60",
+    "tools/test_kc2_closed_floor.py": "ad419442aae61ab1a629b34f2e1d724e98a0fa1876f475f6caca3e5a50a5f1fe",
+    "tools/test_kc2_mx_housing.py": "c9441785ea69b29a036c456b3d4f35d97f6558804efb23247cda7f082e372050",
+    "hardware/kicad/kc2_left/kc2_left.kicad_pcb": "568e1427e4cfb9d667b6d5b3754da3a4e24c924abfa85a8dfe394dd050b5fe67",
+    "hardware/kicad/kc2_right/kc2_right.kicad_pcb": "88290c3b0cf3951d56221d216549665c0576a816a6315012f7f12b027f402577"
+  },
+  "source_sha256_after": {
+    "tools/generate_kc2_x3_v2_housings.py": "7e6bb91384819e4d4afcac32f4ca2aa36351474dafb546bbfed4dca373a07c60",
+    "tools/test_kc2_closed_floor.py": "ad419442aae61ab1a629b34f2e1d724e98a0fa1876f475f6caca3e5a50a5f1fe",
+    "tools/test_kc2_mx_housing.py": "c9441785ea69b29a036c456b3d4f35d97f6558804efb23247cda7f082e372050",
+    "hardware/kicad/kc2_left/kc2_left.kicad_pcb": "568e1427e4cfb9d667b6d5b3754da3a4e24c924abfa85a8dfe394dd050b5fe67",
+    "hardware/kicad/kc2_right/kc2_right.kicad_pcb": "88290c3b0cf3951d56221d216549665c0576a816a6315012f7f12b027f402577"
+  },
+  "sources_unchanged": true,
+  "log": "docs/reports/solid-floor-20260907-r4/floor-generator-tests.log",
+  "log_sha256": "578b1c28500c04389cf9850ca3b6821ce2b478de9a68deb945ce3d026368ae23"
+}

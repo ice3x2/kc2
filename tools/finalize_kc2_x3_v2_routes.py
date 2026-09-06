@@ -1092,6 +1092,8 @@ def _has_exact_reviewed_es1b_route(board: pcbnew.BOARD, side: str) -> bool:
 def _has_exact_reviewed_controller_compact_route(
     board: pcbnew.BOARD,
     side: str,
+    *,
+    include_support_detours: bool = False,
 ) -> bool:
     signatures = Counter(_route_signature(item) for item in board.GetTracks())
     expected_pad_nets = {
@@ -1117,9 +1119,17 @@ def _has_exact_reviewed_controller_compact_route(
         for item in board.GetTracks()
         if item.GetNetname() in {"RST", "GND", "BAT+", "NN_B+"}
     }
+    expected_count = (
+        KEY_LOAD_SUPPORT_ROUTE_FINAL_ITEM_COUNTS[side]
+        if include_support_detours else CONTROLLER_COMPACT_ROUTE_ITEM_COUNTS[side]
+    )
+    expected_digest = (
+        KEY_LOAD_SUPPORT_ROUTE_FINAL_SHA256[side]
+        if include_support_detours else CONTROLLER_COMPACT_ROUTE_SHA256[side]
+    )
     return (
-        sum(signatures.values()) == CONTROLLER_COMPACT_ROUTE_ITEM_COUNTS[side]
-        and _route_counter_digest(signatures) == CONTROLLER_COMPACT_ROUTE_SHA256[side]
+        sum(signatures.values()) == expected_count
+        and _route_counter_digest(signatures) == expected_digest
         and routed_service_nets == {"RST", "GND", "BAT+", "NN_B+"}
         and _has_exact_current_mounting_geometry(board, side)
         and _matrix_pads_are_fully_connected(board, side)
@@ -1241,6 +1251,9 @@ def import_reviewed_controller_compact_session(
             len(existing) == KEY_LOAD_SUPPORT_ROUTE_FINAL_ITEM_COUNTS[side]
             and _route_counter_digest(signatures)
             == KEY_LOAD_SUPPORT_ROUTE_FINAL_SHA256[side]
+            and _has_exact_reviewed_controller_compact_route(
+                board, side, include_support_detours=True
+            )
         ):
             support_route = {"removed": 0, "added": 0}
         elif _has_exact_reviewed_controller_compact_route(board, side):

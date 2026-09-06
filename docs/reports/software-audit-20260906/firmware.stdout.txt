@@ -1,0 +1,1 @@
+CON-ARCH-004 / CON-ARCH-007 V2 firmware verification passed: 70 keys (31 left, 39 right); carrier_power_path_verified=true; manifest_provenance_verified=true; local_artifacts=left=verified, right=verified.

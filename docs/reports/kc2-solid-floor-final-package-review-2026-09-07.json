@@ -1,0 +1,23 @@
+{
+  "requirement": "OPS-ARCH-007",
+  "method": "Independent Python standard-library SHA256/ZIP CRC/payload comparison; no production release checker imported",
+  "errors": [],
+  "checked_package_files": 8,
+  "source_bindings": 294,
+  "order_local_links": 16,
+  "archives": {
+    "left": {
+      "entries": 15,
+      "raw_and_r3_payloads_identical": true,
+      "sha256": "5f4d65a3f45e4efddb093bb8909eef03ea83c54483616d0d0d52935626806811"
+    },
+    "right": {
+      "entries": 15,
+      "raw_and_r3_payloads_identical": true,
+      "sha256": "bfeb90e32a9dc7dd73c8b3ace95cf3cd7601e220daa7eefbdd51e2e940cf397c"
+    }
+  },
+  "manifest_sha256": "2906bf329030840634a5cee1c53c74dd8efb1a70226d1fdc24b66156f693dc92",
+  "order_sha256": "63940fa7f2e6ce9eb01600abe19dea86807274faebbb09689394a7727d17dddb",
+  "physical_qualification_complete": false
+}

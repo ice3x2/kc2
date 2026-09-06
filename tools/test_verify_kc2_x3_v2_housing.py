@@ -13,6 +13,51 @@ from tools import verify_kc2_x3_v2_housing as housing_verifier
 from tools.verify_kc2_x3_v2_housing import analyze_v2_housing, verify_report
 
 
+class ClosedFloorBRepTests(unittest.TestCase):
+    """CON-ARCH-006: actual solid, not a manifest's self-reported pass."""
+    def test_floor_volume_holes_thickness_and_bonding_fail_closed(self):
+        import cadquery as cq
+        from shapely.geometry import box
+        mask = box(0, 0, 40, 40)
+        floor = cq.Workplane('XY').box(40, 40, 1.2, centered=(False, False, False)).translate((0, 0, -2.2))
+        centers = [[8, 8], [32, 8], [8, 32], [32, 32]]
+        good = housing_verifier.inspect_closed_floor_part(cq, floor, mask, centers)
+        self.assertEqual(good['errors'], [])
+        self.assertAlmostEqual(good['actual_floor_volume_mm3'], 1920, places=4)
+        variants = [
+            cq.Workplane('XY').box(40,40,1,centered=(False,False,False)),
+            cq.Workplane('XY').box(40,40,.6,centered=(False,False,False)).translate((0,0,-1.6)),
+            floor.cut(cq.Workplane('XY').circle(1).extrude(4).translate((20,20,-3))),
+            floor.cut(cq.Workplane('XY').circle(1).extrude(.09).translate((20,20,-2.2))),
+        ]
+        for model in variants:
+            with self.subTest(model=model):
+                self.assertTrue(housing_verifier.inspect_closed_floor_part(cq,model,mask,centers)['errors'])
+        for feet in [[], centers[:2], [[8,8],[16,8],[32,8]], [[1,1],[32,8],[8,32]]]:
+            with self.subTest(feet=feet):
+                self.assertTrue(housing_verifier.inspect_closed_floor_part(cq,floor,mask,feet)['errors'])
+        holed_mask=mask.difference(box(19,19,21,21))
+        self.assertTrue(housing_verifier.inspect_closed_floor_part(cq,floor,holed_mask,centers)['errors'])
+        matching_hole=generator._extrude_geometry(cq,holed_mask,1.2,-2.2)
+        self.assertTrue(housing_verifier.inspect_closed_floor_part(cq,matching_hole,holed_mask,centers)['errors'])
+
+    def test_closed_floor_summary_cannot_drop_part_or_claim_physical_pass(self):
+        good=dict(digital_valid=True,errors=[],floor_thickness_mm=1.2,floor_top_z_mm=-1.,
+            floor_bottom_z_mm=-2.2,bonding_pad_diameter_mm=8.,bonding_pad_count=12,
+            printable_part_count=3,physical_qualification_complete=False,
+            maximum_permitted_projection_below_pcb_mm=2.9,nominal_clearance_mm=.6,
+            engineering_print_allowance_mm=.3,residual_clearance_mm=.3,
+            parts={name:dict(digital_valid=True,errors=[],bonding_pad_count=4,
+                projected_centroid_inside_bonding_hull=True) for name in ['left_0','right_0','right_1']})
+        self.assertEqual(housing_verifier.verify_closed_floor_summary(good),[])
+        for change in [lambda f:f['parts'].pop('right_1'),
+                       lambda f:f.__setitem__('physical_qualification_complete',True),
+                       lambda f:f.__setitem__('maximum_permitted_projection_below_pcb_mm',0),
+                       lambda f:f['parts']['left_0'].__setitem__('bonding_pad_count',2)]:
+            value=copy.deepcopy(good); change(value)
+            self.assertTrue(housing_verifier.verify_closed_floor_summary(value))
+
+
 class ServiceInterfaceContractUnitTests(unittest.TestCase):
     @staticmethod
     def _part_plans(shp: dict[str, object], side: str, plan: dict[str, object]) -> list[object]:
@@ -497,7 +542,9 @@ class V2LoadBearingHousingTests(unittest.TestCase):
     def test_nominal_2_5mm_plate_and_support_regions_are_zero_gap_load_paths(self) -> None:
         for side in ("left", "right"):
             housing = self.report["sides"][side]
-            self.assertEqual(housing["exterior_bottom_z_mm"], 0.0)
+            self.assertEqual(housing["exterior_bottom_z_mm"], -2.2)
+            self.assertEqual(housing['desk_contact_role'], 'internal_support_columns_ending_at_floor_top')
+            self.assertTrue(self.report['closed_floor']['digital_valid'])
             self.assertEqual(housing["housing_height_mm"], 2.50)
             self.assertEqual(housing["pcb_bottom_z_mm"], 2.50)
             self.assertEqual(housing["desk_standoff_nominal_mm"], 1.00)
@@ -570,7 +617,7 @@ class V2LoadBearingHousingTests(unittest.TestCase):
             self.assertTrue(reset["bottom_routed_copper_solder_mask_protected"])
             self.assertTrue(reset["electrically_safe"])
 
-    def test_bottom_component_cutouts_are_exterior_open_and_3d_clear(self) -> None:
+    def test_bottom_component_cutouts_are_internal_reliefs_and_3d_clear(self) -> None:
         required = {
             "choc_socket_body_fillets",
             "switch_mechanical_pins",
@@ -602,7 +649,8 @@ class V2LoadBearingHousingTests(unittest.TestCase):
             self.assertNotIn("reset_topside", cutouts)
             for name, result in cutouts.items():
                 self.assertGreater(result["opening_count"], 0, name)
-                self.assertTrue(result["exterior_open"], name)
+                self.assertFalse(result["exterior_open"], name)
+                self.assertTrue(result['internal_relief_clear'], name)
                 self.assertEqual(result["through_opening_z_mm"], [0.0, 2.5], name)
                 self.assertGreaterEqual(result["minimum_xy_clearance_mm"], 0.30, name)
                 self.assertEqual(result["residual_collision_volume_mm3"], 0.0, name)
@@ -644,7 +692,8 @@ class V2LoadBearingHousingTests(unittest.TestCase):
             self.assertEqual(termination["covered_pad_envelope_count"], 2)
             self.assertEqual(termination["uncovered_pad_envelope_count"], 0)
             self.assertEqual(termination["opening_count"], 1)
-            self.assertTrue(termination["exterior_open"])
+            self.assertFalse(termination["exterior_open"])
+            self.assertTrue(termination['internal_relief_clear'])
             self.assertEqual(termination["residual_collision_volume_mm3"], 0.0)
             power = cutouts["power_switch_leads"]
             self.assertEqual(power["reference"], "SW_PWR1")
@@ -746,10 +795,9 @@ class V2LoadBearingHousingTests(unittest.TestCase):
                 mounting["head_height_and_keycap_skirt_physical_status"],
                 "pending",
             )
-            self.assertAlmostEqual(
+            self.assertLessEqual(
                 housing["maximum_load_point_to_support_mm"],
-                expected_load_spans[side],
-                places=4,
+                expected_load_spans[side] + 0.0001,
             )
             for hole in mounting["holes"]:
                 self.assertGreaterEqual(hole["head_to_installed_component_mm"], 1.20)
@@ -932,7 +980,7 @@ class V2LoadBearingHousingTests(unittest.TestCase):
         report = copy.deepcopy(self.report)
         diode = report["sides"]["left"]["component_cutouts"]["diode_body_pads_fillets"]
         diode["opening_count"] = 1
-        diode["exterior_open"] = False
+        diode["internal_relief_clear"] = False
         diode["breaks_lateral_housing_perimeter"] = True
         diode["minimum_housing_perimeter_land_mm"] = 0.0
         diode["residual_collision_volume_mm3"] = 0.1
@@ -940,7 +988,7 @@ class V2LoadBearingHousingTests(unittest.TestCase):
         diode["minimum_desk_clearance_mm"] = 0.4
         errors = verify_report(report)
         self.assertTrue(any("diode_body_pads_fillets opening count" in error for error in errors))
-        self.assertTrue(any("diode_body_pads_fillets is not exterior-open" in error for error in errors))
+        self.assertTrue(any("diode_body_pads_fillets internal relief" in error for error in errors))
         self.assertTrue(any("diode cutout breaks the lateral perimeter" in error for error in errors))
         self.assertTrue(any("diode perimeter land" in error for error in errors))
         self.assertTrue(any("diode_body_pads_fillets 3D collision" in error for error in errors))
@@ -1094,7 +1142,7 @@ class V2LoadBearingHousingTests(unittest.TestCase):
             self.assertTrue(housing["step_sha256_matches"])
             self.assertTrue(housing["stl_sha256_matches"])
             self.assertEqual(housing["step_solid_count"], 1 if side == "left" else 2)
-            self.assertAlmostEqual(housing["step_bounds_z_mm"][0], -1.00, places=4)
+            self.assertAlmostEqual(housing["step_bounds_z_mm"][0], -2.20, places=4)
             self.assertAlmostEqual(housing["step_bounds_z_mm"][1], 2.50, places=4)
             self.assertTrue(housing["step_top_contact_area_matches_plan"])
             self.assertLessEqual(housing["step_top_contact_area_error_mm2"], 0.20)

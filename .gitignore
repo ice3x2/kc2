@@ -15,3 +15,10 @@ tools/cache/freerouting-userdata/
 # Reproducible ZMK build outputs
 firmware/build/
 firmware/out/
+
+# Local agent/editor history and recovery copies (never release inputs)
+.codex-tmp/
+**/.history/
+*.bak-*
+*.kicad_prl
+/tmp*/

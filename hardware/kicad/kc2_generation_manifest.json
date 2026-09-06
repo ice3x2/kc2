@@ -39,14 +39,15 @@
     "order_ready": false
   },
   "assembly_modes": [
+    "choc_v1_bottom_socket_with_ring",
     "choc_v2_bottom_socket",
-    "mx_5pin_top_direct_solder"
+    "mx_5pin_top_direct_solder",
+    "mx_receptacle_with_plate"
   ],
   "assembly_modes_mutually_exclusive": true,
   "unsupported_switch_geometry": [
-    "choc_v1",
     "choc_v2_direct_solder",
-    "mx_hotswap"
+    "one_piece_mx_smd_socket"
   ],
   "switch_footprint_file_present": true,
   "switch_footprint_fallback_source": null,
@@ -256,7 +257,7 @@
       ],
       "placement": "between_carrier_and_socketed_controller",
       "antenna_keepout_clearance_mm": 3.97,
-      "socket_pad_clearance_mm": 0.72,
+      "socket_pad_clearance_mm": 0.42,
       "physical_stack_measurement": "pending"
     },
     "battery_termination": {
@@ -311,12 +312,12 @@
     },
     "nominal_clearances_mm": {
       "controller_body_to_top_edge": 2.35,
-      "battery_to_socket_pad": 0.72,
+      "battery_to_socket_pad": 0.42,
       "battery_to_antenna_keepout": 3.97,
       "power_to_reset_body": 2.2,
       "reset_keycap_envelope_mm": 18.05,
       "reset_body_to_keycap_min": 3.2,
-      "reset_courtyard_to_u1_socket_copper_min": 2.03
+      "reset_courtyard_to_u1_socket_copper_min": 1.73
     },
     "physical_validation": "pending_battery_power_reset_rf_first_article",
     "order_ready": false
@@ -581,6 +582,47 @@
     "X3 V2 places the 301230 battery beneath socketed U1 and mirrors POWER then RESET from each USB-facing edge. J_BAT1 direct-solders insulated leads, SW_PWR1 switches BAT+ into U1 RAW/NN_B+, and B- remains on local GND. Physical stack, service, and RF validation are pending.",
     "X3 V2 uses the exact Diodes Incorporated 1N4148W-13-F SOD-123 on B.Cu with a KC2 enlarged hand-solder land: 1.40 x 1.55 mm pads, 2.20 mm inner gap, pin 1 cathode to row and pin 2 anode to the per-key switch net.",
     "The 1N4148W placements and rotations preserve at least 1.30 mm to Edge.Cuts, 1.00 mm to switch copper/unused NPTH/unrelated exposed copper, and one unobstructed 1.50 mm cardinal hand-solder approach per pad.",
-    "X3 V2 uses the selected 8-left / 9-right M1.4 retention prototype: 1.60 mm copper-free NPTHs, keycaps removed and switches installed for PH0 service. Physical pilot, torque, full-pattern fit, and deflection evidence remain pending; the board is not order-ready."
-  ]
+    "X3 V2 uses the selected 8-left / 9-right M1.4 retention prototype: 1.60 mm copper-free NPTHs, keycaps removed and switches installed for PH0 service. Physical pilot, torque, full-pattern fit, and deflection evidence remain pending; the board is not order-ready.",
+    "2026-09-06 incremental MX revision: selected dimensional open-bottom receptacles + plate-lid; enlarged exposed U1/MX lands and support-aware replay. Previous notes, generated date and DSN/SES record describe the historical base only. Current final routes are bound by mx_solder_route_replay. No order approval."
+  ],
+  "selected_switch_assembly": "mx_receptacle_with_plate",
+  "mx_receptacle": {
+    "nominal_dimensions_mm": {
+      "length": 3.0,
+      "barrel_od": 1.45,
+      "flange_od": 2.0,
+      "flange_thickness": 0.2
+    },
+    "open_bottom": true,
+    "count_per_switch": 2,
+    "plate_lid_required": true,
+    "qualification_status": "pending",
+    "production_hole_fit_confirmed": false,
+    "trial_finished_pth_mm": 1.6,
+    "copper_land_mm": [
+      2.5,
+      3.2
+    ],
+    "source": "https://ae-pic-a1.aliexpress-media.com/kf/S4b47dab427cd4b539a50618bf16a62d9J.jpg"
+  },
+  "canonical_route_evidence_role": "historical_pre_mx_revision_base_only",
+  "mx_solder_route_replay": {
+    "path": "hardware/kicad/autoroute/kc2_mx_solder_support_routes.json",
+    "sha256": "201c53725922d2bbd42dce9d72046c97589cd95cef5b9cecea7aa5aec2808232"
+  },
+  "mx_revision": {
+    "date": "2026-09-06",
+    "method": "incremental_pad_mask_and_support_aware_routing_revision",
+    "metadata_generator": "tools/refresh_kc2_mx_revision_manifest.py",
+    "metadata_generator_sha256": "feb213e98af550c15bd67450114496f10ed6cbdcc5f7478961aa6094636bff8e",
+    "pcb_generator_sha256": "ae1277d95c81b34b2fe267f744cc00f1b8e39162130fec25da0a20e29e955f45",
+    "replay_tool_sha256": "b98e44485ae404087d74e61fbe2162eb8c78be7e3737d744e29ff402472e01ce",
+    "metadata_command": "python -B -m tools.refresh_kc2_mx_revision_manifest --apply",
+    "source_board_sha256": {
+      "left": "50c4416559f297cc9cda9d811d7e628e1dcba89335a2d80aacdadc4a73fc8dc7",
+      "right": "057df7a948f9c96414b8c77eb619cf8898ef3262a0090a6bbe7e485aeb65d39d"
+    },
+    "baseline_generated": "2026-09-01",
+    "fabrication_and_physical_qualification": "pending_not_regenerated_by_metadata_refresh"
+  }
 }

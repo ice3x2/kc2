@@ -1,13 +1,23 @@
 # KC2 X3 V2 canonical hardware
 
-Requirements: `CON-ARCH-004`, `CON-ARCH-006`, `CON-ARCH-007`,
-`REL-ARCH-001`, `OPS-ARCH-006`
+> Current PCB-only release: **solid-floor-20260907-r4**, with independently checked continuous lower floors and current native CAD.
+> Physical qualification remains pending; no order or payment was performed. Prior r3/r2 packages are historical.
+> Exact directory, PCB ZIP, STL, silicone-foot and assembly guide: [root order.md](../../order.md).
+> Use [current release instructions and residual-risk conditions](first_order/README.md).
 
-Status: **DIGITAL PASS - ORDER READY: NO**. Exact V2 service geometry and nets
-and fresh KiCad 10.0.3 DRC pass digitally. Ordering remains blocked by exact
-301230 pack/protection/lead and `J_BAT1` drill selection, controller-stack fit,
-solder/strain-relief/service tests, IMMS power-transition and BLE tests,
-populated coupon/first articles, and housing/fastener/2.0 N deflection tests.
+Requirements: `CON-ARCH-004`, `CON-ARCH-006`, `CON-ARCH-007`,
+`REL-ARCH-001`, `OPS-ARCH-006`, `OPS-ARCH-007`
+
+Status: **R4 DIGITAL DESIGN/OUTPUTS VERIFIED; PHYSICAL QUALIFICATION PENDING**.
+Follow the [first-order files and Korean instructions](first_order/README.md).
+The promoted PCB retains the V1 locator clearances and r3 routing. Unchanged r3 Gerber
+and fullboard/zoom evidence is combined with newly verified r4 closed-floor CAD/native evidence. OPS-ARCH-007 separates
+pre-order design review from post-receipt acceptance; no prerequisite sample is
+required. This is PCB-only preparation, not complete assembly compatibility.
+Socket contact tolerances and the high-risk keycap/top-screw-head interface are
+explicitly unproven; read the guide before spending money. Historical
+`fabrication/` ZIPs remain **DO NOT ORDER**. Later physical-gate wording in this
+document is interpreted under OPS-ARCH-007, not as a prerequisite sample demand.
 
 The active V2 source projects are the canonical
 `hardware/kicad/kc2_left/` and `hardware/kicad/kc2_right/` projects. The
@@ -16,32 +26,56 @@ active V2 tree under `hardware/kicad/draft/`.
 
 ## Assembly modes
 
-The two switch modes are mutually exclusive at every key position:
+The selected assembly is `mx_receptacle_with_plate`. Four switch modes are
+mutually exclusive at all 70 positions (31 left / 39 right):
 
-- Choc V2 / PG1353-class: install a Kailh `CPG135001S30`-class hot-swap socket
-  on the PCB bottom. Do not directly solder the switch.
-- Cherry MX-style 5-pin PCB-mount: install the switch from the PCB top and
-  directly solder its two electrical pins. No MX hot-swap socket is supported.
-- Choc V1 / PG1350, Choc V2 direct-solder, and MX hot-swap are unsupported.
-- Never install both a Choc socket and an MX switch at one key position.
+- Selected MX: solder two individual open-bottom hat-style receptacles per key
+  (62 left / 78 right, 140 total). The selected TTC Bluish White 3-pin switch
+  requires the 3D-printed MX plate-lid for retention. Existing 5-pin MX locator
+  support remains; the selected 3-pin switch leaves those holes unoccupied.
+- MX direct-solder fallback: leave receptacles unpopulated and solder the two
+  electrical switch pins directly. Qualify this fallback separately.
+- Choc V2 / PG1353-class alternative: install the bottom-side Kailh
+  `CPG135001S30` socket; do not directly solder the Choc switch. This is not the
+  selected assembly and must not be populated together with MX receptacles.
+- Choc V1 / PG1350 alternative: use the bottom Choc socket and V1 center ring
+  adapter, with the new copper-free PCB locator clearances. No cutting the switch
+  or hand-drilling the PCB is required by this design. Full assembly qualification
+  remains pending; the ring alone did not make the historical r2 PCB V1-compatible.
+- Choc V2 direct-solder and one-piece MX SMD sockets remain unsupported.
+  Never populate multiple switch assemblies at one position.
 
-The intended switch remains the Kailh Deep Sea low-profile / PG1353 family,
-but its exact manufacturer MPN and controlled drawing revision are still
-pending. `Deep Sea`, `Deep Sea Whale`, a reseller nickname, or a family name
-is not an orderable part identity. Do not order the switch until those two
-fields are bound to the purchased part and its controlled drawing.
+The socket contract is dimensional, not a required brand/MPN: total length
+`3.00 mm`, barrel OD `1.45 mm`, flange OD `2.00 mm`, flange thickness `0.20 mm`,
+and an open bottom. A flush flange on a nominal `1.60 mm` PCB projects `1.20 mm`
+below it before solder and switch-pin protrusion. Closed-bottom `4.00 mm` and
+hatless `3.50 mm` parts are not equivalent substitutes. See the
+[selected seller drawing](https://ae-pic-a1.aliexpress-media.com/kf/S4b47dab427cd4b539a50618bf16a62d9J.jpg).
+OD tolerances and flat-blade contact limits are unpublished and remain pending;
+a Mill-Max compatibility claim is not qualification evidence.
+
+MX electrical lands are `2.50 x 3.20 mm` ovals in footprint-local Y with a
+**trial `1.60 mm` PTH**, not a qualified production finished-hole fit. Both
+mask layers expose the full land at explicit nominal zero expansion, without
+paste apertures. Center/locator NPTHs remain copper-free. The exact purchased
+MX switch drawing, flange relief, blade engagement and replacement/contact
+tests remain required. The selected low-profile Choc V2 alternative is the user's
+Kailh Deep Sea brown seller option; its exact manufacturer MPN/drawing linkage is
+still pending. A marketing family name alone does not qualify the dimensional fit.
+See the [exact selected-component source review](../../docs/reports/kc2-selected-component-source-closure-2026-09-06.md).
 
 The owned hybrid footprint includes an explicit bottom courtyard from
 `(-10.25,1.20)` to `(5.25,8.50)` mm. It encloses the complete bottom socket
 body and both B.Cu lands with a `0.25 mm` manufacturing allowance.
 
 The left and right boards use their physical split-keyboard orientations. The
-bottom-side socket pattern must be read from the PCB bottom; the 1:1 bottom PDF
-is already mirrored for a physical bottom view.
+bottom-side socket pattern must be read from the PCB bottom. The historical 1:1
+bottom PDF is already mirrored for a physical bottom view, but is an orientation
+reference only, not evidence of the current MX geometry.
 
 ## Matrix diode and polarity
 
-The active V2 BOM contains exactly 70 Diodes Incorporated `1N4148W-13-F`
+The PCBs require exactly 70 Diodes Incorporated `1N4148W-13-F`
 matrix diodes in flat SOD-123 packages, controlled by `DS30086 Rev. 31-2`.
 All are assembled on `B.Cu`. Pin/pad 1 is the cathode connected to the row net; pin/pad
 2 is the anode connected to the per-key switch net. A physical bottom view is
@@ -54,6 +88,10 @@ extra delay before reading inputs and no delay between driven columns. Do not
 change those scan delays until a populated physical coupon has passed both
 3.0 V and 3.3 V maximum same-row and maximum same-column stress tests. Those
 tests remain pending, so these digitally verified boards are not orderable.
+The retained diode-plus-Choc BOM/CPL is an unselected, mutually exclusive
+hand-assembly reference, not an MX receptacle BOM or an authorized placement
+order. Selected MX procurement documentation must bind the dimensional socket
+contract, supplier trace and plate dependency; qualification remains open.
 
 ## Joined spacing
 
@@ -79,28 +117,25 @@ of `0.70 mm` at that limiting transition. This is digital nominal geometry;
 actual half-to-half housing registration and assembled cap/switch play still
 require a printed first article.
 
-After soldering an MX switch, trim both electrical terminals after inspection.
+Do not trim removable switch blades in the selected receptacle assembly.
+Any trimming applies only to separately qualified direct-solder fallback joints.
 The 2.50 mm lower plate has exterior-bottom-open cutouts through the full plate
 height for every MX terminal and solder joint, rather than a closed component
 cavity. The lateral solder-fillet model includes a 0.30 mm allowance.
 
 The Choc socket and 1N4148W SOD-123 solder-fillet models each include a 0.30 mm
-lateral allowance. The routed boards pass the current digital diode gates:
-the minima across both halves are 1.946 mm to unused switch NPTH, 1.125 mm to
-switch pads and unrelated exposed copper, 2.225 mm to socket bodies, 0.525 mm
-between diode and switch-assembly fillet envelopes, and 1.975 mm from the
-diode fillet envelope to Edge.Cuts. The diode-to-unrelated-route minima are
-0.737 mm left and 0.545 mm right, both above the 0.10 mm gate. Every diode
+lateral allowance. Current digital diode checks enforce at least `1.00 mm`
+to switch copper/unused NPTH/unrelated exposed copper, `1.30 mm` to Edge.Cuts,
+and the separate `0.10 mm` conservative fillet-to-route gate. Do not reuse
+pre-revision route minima as revised evidence. Every diode
 pad has an unobstructed cardinal solder-tool approach. The enlarged KC2 hand-
 solder land is deliberately not the manufacturer's recommended land: implemented
 pads are 1.40 x 1.55 mm at 3.60 mm centers, while the official suggested pads
-are 0.90 x 0.95 mm at 4.05 mm centers. Regenerated housing evidence provides
-0.35 mm cutout XY clearance, 1.525 mm minimum diode perimeter land, and 1.85 mm
-nominal / 1.55 mm post-tolerance diode-to-desk clearance. The Choc socket is the
-overall open-component limiter at 1.10 mm nominal / 0.80 mm post-tolerance.
-This remains digital
-evidence only; physical retention, deflection, and populated-coupon tests are
-still required before ordering.
+are 0.90 x 0.95 mm at 4.05 mm centers. The revised lower housing models
+`0.35 mm` component cutout XY clearance and `0.30 mm` support-to-routed-copper
+wear reserve. See `../case/kc2_housing_clearance.json` for the bound current
+geometry. Socket/flange/solder/full-blade protrusion, physical retention,
+deflection and populated-coupon fit remain qualification gates.
 
 ## M1.4 retention prototype
 
@@ -120,12 +155,26 @@ column at every hole, with a provisional `1.10 x 2.80 mm` blind pilot and a
 `0.70 mm` closed bottom at the common Z=-1.00 mm desk datum. A separate exact
 one-to-one network of 31-left/39-right `2.40 mm` key-load feet provides every
 switch center with a local desk load path whose worst center-to-support-edge
-distance is `4.3902 mm`, within the `4.40 mm` SOD-123/P3 bound; mounting columns are not credited as typing-load
-supports. The provisional 4.00 mm under-head screw
-length, exact screw and driver, full-pattern registration, installation and
-stripping torque, ten service cycles, keycap-skirt clearance, and 2.0 N
-deflection must be proven on physical coupons. These digital files are not a
-fastener purchase recommendation and remain not orderable.
+distance is `3.8990 mm`, within the `4.40 mm` bound; mounting columns are not
+credited as typing-load supports. The enlarged-pad routing maintains the
+required `0.30 mm` support-to-B.Cu/via copper clearance.
+
+The selected stack is lower housing, PCB, then the plate-integrated MX lid,
+clamped by long top-entry screws through the same 17 PCB holes. The former
+`4.00 mm` lower-only screw length is not a selected-stack recommendation.
+The revised upper design retains provisional `14.0 mm` apertures, `1.5 mm` clip
+thickness and `5.2 mm` plate-top height above PCB top. It recesses the screw head
+in a `3.4 mm` diameter / `1.5 mm` deep pocket, backed by a `4.6 mm` upper collar
+while retaining the `3.0 mm` PCB landing. The nominal maximum `1.2 mm` head sits
+`0.3 mm` below the plate top. This removes modeled head protrusion, not unknown
+keycap underside or printed-strength qualification. The new nominal under-head-
+to-receiver entry distance is `5.3 mm`, replacing the historical `6.8 mm`;
+the qualified screw length is still unset. Revised CAD/native export is under
+regeneration and must pass before release. Exact
+screw/driver, receiver engagement, print material/tolerance, registration,
+installation/stripping torque, ten service cycles, full keycap travel, split-joint
+retention and 2.0 N deflection require physical evidence. Digital clearance and
+the existing `1.10 x 2.80 mm` pilot do not qualify the new long-screw receiver.
 
 ## Battery service path
 
@@ -172,7 +221,14 @@ Top-view absolute order is left `PWR|RST` and right `RST|PWR`; from each
 USB-facing outer edge toward the antenna, the service order is POWER then
 RESET. The centers are 10.25 mm apart, giving 2.20 mm nominal controlled-body
 clearance, 3.20 mm reset-body clearance to the nearest keycap envelope, and
-at least 2.03 mm reset-courtyard clearance to U1 socket copper.
+`1.73 mm` nominal reset-courtyard clearance to the enlarged U1 socket copper.
+
+All 24 U1 lands per half are `1.80 x 2.40 mm` ovals, elongated perpendicular to
+the `2.54 mm` pin-row direction, with unchanged `0.95 mm` drills and `15.24 mm`
+row spacing. Both mask layers expose the whole land at nominal zero expansion;
+there are no paste apertures. The nominal battery-to-socket-copper gap is now
+`0.42 mm`, not the former circular-pad `0.72 mm`. Actual solder wetting, bridge
+avoidance and battery/controller-stack fit remain unverified physically.
 
 Each placed `SW_PWR1` retains the owned STEP model. That STEP is a nominal
 collision proxy only: the exact purchased manufacturer/MPN and controlled
@@ -186,46 +242,53 @@ physical first-article evidence. The digital package remains not orderable.
 
 ## Outputs
 
-- Routed boards: `kc2_left/` and `kc2_right/`
-- Physical fit coupon CAD: `coupon/`
-- Canonical Gerber/Excellon packages: `fabrication/`
-- JLCPCB upload-preview archives: `fabrication/kc2_left_jlcpcb.zip`,
-  `fabrication/kc2_right_jlcpcb.zip`, and
-  `fabrication/kc2_coupon_jlcpcb.zip`
-- 1:1 top/bottom assembly PDFs: `mechanical/`
-- KiCad 3D inspection renders: `renders/`
-- Housing clearance evidence: `../case/`
+- Current routed source boards: `kc2_left/` and `kc2_right/`; current DRC bindings
+  are in `kc2_drc_evidence.json`.
+- Current route replay: `autoroute/kc2_mx_solder_support_routes.json`.
+- Raw revised Gerber/drill review files: `fabrication_review/mx-receptacle-20260906/left/`
+  and `right/`, 15 files per half; not an order-approved fabrication package.
+- Historical coupon, BOM/quotes, fabrication, 1:1 PDFs and renders: `coupon/`,
+  `fabrication/`, `mechanical/`, `renders/`. Their pre-revision evidence must
+  not be treated as regenerated MX-receptacle evidence.
+- Current lower/MX upper CAD and evidence: `../case/`, including four STEP files,
+  six STL part meshes (one left/two right per housing type), and four
+  real native F3D archives.
 
-The fabrication, mechanical, and housing derivatives were regenerated from
-the current left/right board hashes
-`3a6f80a5bc1afe897056107be9522a26079766fd4963f2115a9237737470268d` and
-`a4361040d81b3189cce8cdfcedaf54e570248d2fd513835dfadf80bcc187ef6d`.
-Their dedicated V2 verifiers pass. The joined SVG/PNG set was regenerated from
-the same current boards and reports 1.1000 mm minimum Edge.Cuts clearance and
-1.8000 mm cross-seam keycap gap. All outputs remain digital evidence and
-do not change **ORDER READY: NO**.
+**DO NOT ORDER** `fabrication/kc2_left_jlcpcb.zip`,
+`fabrication/kc2_right_jlcpcb.zip` or `fabrication/kc2_coupon_jlcpcb.zip` for
+this revision. These retained direct-solder/lower-only packages do not contain
+reviewed current enlarged lands, routing and selected assembly evidence.
+The old `*-bom.csv/json` direct-solder references and `pcba_quote/` Choc socket
+BOM/CPL are likewise excluded from selected 140-contact MX procurement. They
+are not authorized placement files, even when their historical package checks pass.
 
-The JLCPCB upload-preview archives contain exactly 15 root-level manufacturing
-files each: copper, mask, paste, silkscreen, Edge.Cuts, plated/non-plated drill,
-drill maps/report, and the Gerber job. They intentionally exclude the BOM JSON
-and CSV carried by the broader traceability archives. The machine-readable
-profile in `fabrication/kc2_fabrication_manifest.json` records 2-layer
-FR-4, 1.6 mm, 1 oz, ENIG, green solder mask, white silkscreen, hand assembly,
-and both-side tented vias with a 0.50 mm maximum tented drill. The verifier
-checks the source-board tenting settings and confirms that neither mask Gerber
-opens at any via center. JLCPCB production-file confirmation must be enabled
-and the engineer-generated production Gerbers must be downloaded and reviewed
-before approval. These are prototype upload previews only while the physical
-coupon, housing/fastener, controller-service, and power/RF evidence remains
-pending.
+The raw revised files passed bounded actual-board geometry/drill checks,
+including the 17 mounting holes and battery legends. See
+[the Gerber inspection report](../../docs/reports/kc2-mx-gerber-inspection-2026-09-06.md).
+Complete polygon-visual and physical qualification remain pending. Exporting
+raw review files is not a fabrication release; no revised order-ready ZIP is
+claimed here. Before release, inspect the exact revised copper, full front/back mask openings,
+PTH/NPTH drills, plated-hole tolerances, polarity, mechanical fit and source/hash
+bindings component by component. The intended board profile remains two-layer
+FR-4, nominal 1.6 mm, 1 oz, ENIG, green mask, white silkscreen, hand assembly and
+tented vias. The historical manufacturing manifest does not prove that profile
+or via tenting in a new export. Any future JLCPCB engineer-generated production
+files must also be downloaded and reviewed before approval.
 
-The coupon contains conservative representative 0-degree and 180-degree
-bottom socket orientations plus a 5-pin MX direct-solder sample at 19.05 mm
-pitch. The 180-degree sample deliberately exercises the rotated/mirrored
-assembly risk required by `CON-ARCH-004` AC-9. Its CAD and fabrication package
-do not satisfy the physical evidence gate by themselves. A populated coupon
-must additionally verify 1N4148W polarity and solder access plus the pending 3.0 V
-and 3.3 V zero-wait same-row/same-column matrix stress cases.
+The retained coupon has historical rotated/mirrored Choc and direct-solder MX
+samples. It is not the required selected-assembly minimum three-key receptacle
+coupon with production-material plate-lid. Finished-hole and blade seating,
+socket retention/contact resistance after replacements, exact diode polarity,
+solder-tool access and 3.0/3.3 V zero-wait scan tests remain physical gates.
+
+The four F3D files were exported and reopened in real Fusion and independently
+compared with the six STEP solids. See
+[the native export report](../../docs/reports/kc2-fusion-native-export-2026-09-06.md)
+and `../case/kc2_fusion_export_result.json`. They are native archives of imported
+solids, not a reconstructed parametric feature history. Native delivery is
+complete; printed clip fit, long-screw/receiver qualification and physical
+assembly are not. The upper manifest still states `print_ready=false` and
+`order_ready=false`.
 
 ## Reproduction and verification
 
@@ -241,8 +304,9 @@ supports the historical `--variant x3` path only; an `ORDER READY` result from
 that historical X3 run is not evidence for `kc2-x3-v2`.
 
 `tools.verify_kc2_x3_v2` exits `0` only when every digital and physical gate
-passes, `1` on a digital error, and `2` when digital checks pass but required
-physical evidence is still pending. The current expected result is exit `2`.
+passes, `1` on a digital error, and `2` when PCB checks pass but required
+assembly/physical evidence is still pending. After native delivery, the current
+expected result is exit `2` with nine qualification/physical blockers, not approval.
 
 ```powershell
 $kpy = 'C:\Program Files\KiCad\10.0\bin\python.exe'
@@ -288,35 +352,31 @@ When only the generated outline policy changes, use
 The command rejects non-rigid switch geometry, replaces only Edge.Cuts, and is
 covered by route/footprint-preservation and idempotence tests.
 
-The current compact-controller, mounting-hole-aware trackless inputs are
-`autoroute/kc2_left.dsn` and
-`autoroute/kc2_right.dsn`; they contain exactly
-eight and nine visibly numbered M1.4 NPTHs. Their reviewed canonical SES files bind the
-moved controller/reset fanout and shortened outline. Against empty-track
-generated boards, the finalizer imports those sessions and applies only the
-exact, precondition-checked edge cleanup:
+The retained `autoroute/kc2_left.dsn`, `kc2_right.dsn` and matching SES files
+are historical pre-MX-revision inputs. They retain eight/nine M1.4 NPTHs and
+0.30 mm routing rules but reconstruct the old 616-left/803-right routing, not
+the selected enlarged-land boards. Their role in the generation manifest is
+historical base provenance. Do not run the old SES finalizer against the current
+canonical boards. Historical finalizer tests use immutable Git fixtures and
+verify exact routes, service-pad/matrix connectivity, mounting geometry and
+second-run idempotence without claiming current reconstruction.
+
+Current V1-inclusive routing contains 876 left / 1089 right track/via items, with
+digests `ccc6190a8f46e251261c6ef981fda11bd6524fc547ca358be1cde63a10ad2da3`
+and `aa78af58190800870654a15ce6f772aea41a806705bb645597ed93b9ef0ac533`.
+The schema-2 replay at `autoroute/kc2_mx_solder_support_routes.json` binds exact
+pad centers, nets, shape/drill dimensions and local/effective mask margins.
+`tools.kc2_solder_route_snapshot.restore` refuses a mismatched board before
+changing routes. The fresh-generator regression generates only into a unique
+temporary directory, applies this replay and verifies both reconstructed boards
+with fresh DRC:
 
 ```powershell
-& "C:\Program Files\KiCad\10.0\bin\python.exe" -B -m tools.finalize_kc2_x3_v2_routes `
-  hardware/kicad/kc2_left/kc2_left.kicad_pcb `
-  --import-controller-compact-session hardware/kicad/autoroute/kc2_left.ses
-& "C:\Program Files\KiCad\10.0\bin\python.exe" -B -m tools.finalize_kc2_x3_v2_routes `
-  hardware/kicad/kc2_right/kc2_right.kicad_pcb `
-  --import-controller-compact-session hardware/kicad/autoroute/kc2_right.ses
+& $kpy -B -m unittest tools.test_kc2_generator_route_replay
 ```
 
-The helper rejects wrong controller/reset/switch geometry, stale sessions, and
-partial or unexpected nonempty routes. Both importers verify complete matrix connectivity,
-reproduce the committed route exactly, and are covered by second-run
-idempotence tests. The retained deterministic route reconstruction has final track/via counts of
-616 left and 803 right, with route digests
-`b37c88d783baa27e6358d1c3baf33528d282934c41c507f2da5edc44e739ebbb`
-and `44a0c7fdd446f3153d2faf2506194947577b74147713c9a097c7ac83a9c1a964`.
-Running either command against its already exact committed board is a verified
-no-op. The generation manifest binds each current canonical DSN and reviewed
-canonical SES by SHA-256. It also verifies both
-current DSN global/default clearance rules remain at least `300` internal units
-(`0.30 mm` at the recorded DSN resolution).
+This test passed for both halves. Do not bypass the pad fingerprint or label the
+historical DSN/SES import as the current route source.
 
 The project explicitly ignores five KiCad diagnostic classes: missing
 courtyard, track-not-centered-on-via, tuning-profile track geometry,
@@ -345,21 +405,21 @@ Official geometry references:
 
 ## Component and terminal audit
 
-The 2026-08-31 procurement audit compares the placed footprints with the
-published part drawings rather than relying only on KiCad DRC. `PASS` below
-means the nominal PCB land pattern matches the cited drawing; it does not
-replace incoming inspection or the physical evidence gates.
+This table updates the historical procurement audit for the selected 2026-09-06
+assembly. Nominal geometry/pinout checks do not qualify unspecified tolerances,
+purchased parts, enlarged hand-solder lands or physical assembly. No `PASS`
+entry below is procurement or fabrication approval.
 
 | Placed item | Published body / terminal contract | Actual KC2 footprint | Result |
 |---|---|---|---|
-| nice!nano v2 `U1` | Published plan `34.1 x 18.3 mm`; official total thickness `3.2 mm` and official Pro Micro pinout. B+ and B- are not socketed; `RAW` and `GND` are their respective carrier equivalents. | Conservative collision envelope `34.1 x 18.3 mm`; 2 x 12 PTH, `2.54 mm` longitudinal pitch, `15.24 mm` row spacing, pad `1.80 mm`, drill `0.95 mm`; `RAW=NN_B+`, `GND_C=GND`, `RST=RST`. | Plan/pinout PASS; exact female socket and pin-leg MPN/tail height PENDING. |
+| nice!nano v2 `U1` | Published plan `34.1 x 18.3 mm`; official total thickness `3.2 mm` and official Pro Micro pinout. B+ and B- are not socketed; `RAW` and `GND` are their respective carrier equivalents. | Conservative collision envelope `34.1 x 18.3 mm`; 2 x 12 PTH, `2.54 mm` longitudinal pitch, `15.24 mm` row spacing; enlarged `1.80 x 2.40 mm` oval lands, `0.95 mm` drill, full F/B mask openings; `RAW=NN_B+`, `GND_C=GND`, `RST=RST`. | Nominal plan/pinout checked; exact female socket, pin tails, wetting and stack fit PENDING. |
 | Kailh Choc V2 socket | Kailh `CPG135001S30`, drawing `KH-PS-1702-35` Rev D; T=1.6 recommended pattern with `2.60 mm` contacts and specified NPTH locations. | Bottom socket body `9.55 x 6.80 mm`, B.Cu pads `2.60 mm`, exact official mechanical holes; duplicate pads 1 and 2 share the MX electrical nets. | Socket PASS; exact mating Kailh switch MPN/drawing PENDING. |
-| Cherry MX alternative | Official MX2A 5-pin PCB-fixation variants; nominal `15 x 15 mm` body and two electrical plus three fixation terminals. | F.Fab `15 x 15 mm`; electrical pads `2.50 mm` with `1.50 mm` drill plus `5.00/3.00/1.65 mm` fixation NPTHs. | Nominal 5-pin geometry PASS; exact optional MX MPN PENDING. |
+| Selected MX receptacles / direct-solder fallback | Two open-bottom hat contacts per key: length `3.00 mm`, barrel OD `1.45 mm`, flange `2.00 x 0.20 mm`; exact purchased MX drawing/contact tolerances pending. | F.Fab `15 x 15 mm`; electrical lands `2.50 x 3.20 mm` oval, trial `1.60 mm` PTH, full F/B mask openings, existing copper-free `5.00/3.00/1.65 mm` hybrid fixation features. Printed MX plate-lid required for receptacles. | 140 contacts modeled; finished-hole/barrel fit, blade engagement, flange relief, replacement/retention tests PENDING. |
 | `1N4148W-13-F` diode | Diodes Incorporated SOD-123, body max `2.85 x 1.70 x 1.35 mm`, terminal span max `3.85 mm`; suggested pads `0.90 x 0.95 mm` at `4.05 mm` centers; pin 1 cathode, pin 2 anode. | B.Fab `2.85 x 1.70 mm`; controlled hand-solder pads `1.40 x 1.55 mm` at `3.60 mm` centers, classified as a KC2 enlargement rather than the manufacturer land; pad 1 row/cathode, pad 2 per-key/anode. | Digital geometry/polarity PASS; populated solder/scan coupon PENDING. |
 | `SW_PWR1` | SM Switch `BSI-10`: `10 x 2.5 x 6.4 mm`, `1.6 mm` travel, three `0.6 mm` pins on `2.54 mm` pitch, recommended `0.8 mm` drills; terminal 1 common. | F.Fab `10 x 2.5 mm`, three `1.60 mm` pads / `0.80 mm` drills at `2.54 mm`; pad 1 `BAT+`, pad 2 `NN_B+`, pad 3 NC. | Geometry/net PASS; exact purchased MPN/drawing and former IMMS equivalence PENDING. |
 | `SW_RST1` | DeviceMart `NW3-A06-B3`, nominal body `6.1 x 3.7 mm`. | Controlled body `6.1 x 3.7 mm` inside an `8.0 x 3.7 mm` lead-span drawing; SMD pads `1.75 x 1.00 mm`; pad 1 RST, pad 2 GND. | Nominal PASS; purchased-lot drawing/actuation test PENDING. |
 | `BAT1` / `J_BAT1` | Nice Keyboards recommends a rechargeable 3.7 V 301230 cell; exact protected-pack maximum, swelling and lead drawing are supplier-specific. | Nominal body `30 x 12 x 3 mm`; direct-lead pads `2.20 x 1.80 mm`, drill `0.90 mm`, pitch `2.54 mm`; pad 1 BAT+, pad 2 GND/B-. | Nominal only; exact protected pack, lead diameter and maximum envelope BLOCK ORDER. |
-| `MH*` | Provisional M1.4 non-countersunk rounded head up to `3.00 x 1.20 mm`. | Copper-free unnetted `1.60 mm` NPTH with housing pilot `1.10 x 2.80 mm`. | Digital clearance PASS; exact screw/driver MPN and physical torque/deflection PENDING. |
+| `MH*` / long-screw stack | Provisional M1.4 non-countersunk rounded head up to `3.00 x 1.20 mm`; final long-screw length unset. | Copper-free unnetted `1.60 mm` NPTH with provisional lower pilot `1.10 x 2.80 mm`; upper lid, PCB and lower receiver share 17 centers. | Nominal geometry only; exact screw/driver, engagement, receiver torque and deflection PENDING. |
 
 Dimension and terminal sources additionally used by this audit:
 

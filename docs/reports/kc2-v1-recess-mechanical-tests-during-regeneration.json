@@ -1,0 +1,72 @@
+{
+  "requirement_ids": [
+    "CON-ARCH-006",
+    "OPS-ARCH-007"
+  ],
+  "runs": [
+    {
+      "command": [
+        "C:\\Python312\\python.exe",
+        "-B",
+        "-m",
+        "unittest",
+        "tools.test_verify_kc2_x3_v2_housing",
+        "tools.test_kc2_mx_housing",
+        "tools.test_kc2_recessed_lid",
+        "tools.test_verify_kc2_mx_housing_contract",
+        "tools.test_kc2_housing_rebind"
+      ],
+      "returncode": 1,
+      "log": "docs/reports/kc2-v1-recess-mechanical-tests-during-regeneration-geometry.log",
+      "log_sha256": "be7fb4b1ed9218c505114553c79e634084b5749e6f4225ccb86a3c48871a9b7b"
+    },
+    {
+      "command": [
+        "C:/Program Files/KiCad/10.0/bin/python.exe",
+        "-B",
+        "-m",
+        "unittest",
+        "tools.test_kc2_mx_housing_release_integration"
+      ],
+      "returncode": 0,
+      "log": "docs/reports/kc2-v1-recess-mechanical-tests-during-regeneration-kicad-integration.log",
+      "log_sha256": "fa59defc26fd5febca5ba4add6b3520374cf9d7bec67bd8928f4b0654c070fcb"
+    }
+  ],
+  "source_sha256_before": {
+    "tools/test_verify_kc2_x3_v2_housing.py": "0a1a43d8c1487784ae05d164730e2f1ddd40b756b76f5217a878653e4fe64c03",
+    "tools/test_kc2_mx_housing.py": "c9441785ea69b29a036c456b3d4f35d97f6558804efb23247cda7f082e372050",
+    "tools/test_kc2_recessed_lid.py": "461d3103168aa46a43d5be800057150b778e924dd1c1b302eb967736bc218332",
+    "tools/test_verify_kc2_mx_housing_contract.py": "f1c4cc2d775294846c8dec975c6fa196b9ffc5ed9dfd7b7068b667a58a87a012",
+    "tools/test_kc2_housing_rebind.py": "20ac4dd998f75ca2f65e56c7eb20bf51677ce8a2138128259601c63fbaf08b04",
+    "tools/generate_kc2_x3_v2_housings.py": "5b582e3217a4aa3e1ca0c3942460486d89f0196328fc64e99f67ad1d83d810e6",
+    "tools/generate_kc2_mx_upper_housings.py": "984b4e0217ed4febbe719b8529fb07701c085447457a142a0306168220b452bf",
+    "tools/verify_kc2_mx_housing_contract.py": "306c0bf31cc7ec72480144b4c0cfd8358c41a513ad3735a542ab26b052990a14",
+    "tools/verify_kc2_x3_v2_housing.py": "8ac9f6d5059678f676b6166b25bed50ce7273b41f8e30ec8b24cfdef1e5cfb8d",
+    "tools/test_kc2_mx_housing_release_integration.py": "533ce8c43522e9fe3882d53a564fea593b35bc750ac22ba0efe17c04d55fd6ff",
+    "hardware/case/kc2_housing_clearance.json": "3fddbe1f98c1420e71be5d4d7e324dfd9b326d87a9d32d7d9d575657997dbdbc",
+    "hardware/case/kc2_housing_manifest.json": "9d2fbebb8dbab56c3356251646cc2bcbfa4fc7bd10308e69bf365f124f236fe3",
+    "hardware/case/kc2_mx_upper_housing_manifest.json": "ebbc8d6a9f1bfdde219d843b33757ab98af85a90d6bf85df926bddbe4d4c76f5",
+    "hardware/kicad/kc2_left/kc2_left.kicad_pcb": "568e1427e4cfb9d667b6d5b3754da3a4e24c924abfa85a8dfe394dd050b5fe67",
+    "hardware/kicad/kc2_right/kc2_right.kicad_pcb": "88290c3b0cf3951d56221d216549665c0576a816a6315012f7f12b027f402577"
+  },
+  "source_sha256_after": {
+    "tools/test_verify_kc2_x3_v2_housing.py": "0a1a43d8c1487784ae05d164730e2f1ddd40b756b76f5217a878653e4fe64c03",
+    "tools/test_kc2_mx_housing.py": "c9441785ea69b29a036c456b3d4f35d97f6558804efb23247cda7f082e372050",
+    "tools/test_kc2_recessed_lid.py": "461d3103168aa46a43d5be800057150b778e924dd1c1b302eb967736bc218332",
+    "tools/test_verify_kc2_mx_housing_contract.py": "f1c4cc2d775294846c8dec975c6fa196b9ffc5ed9dfd7b7068b667a58a87a012",
+    "tools/test_kc2_housing_rebind.py": "20ac4dd998f75ca2f65e56c7eb20bf51677ce8a2138128259601c63fbaf08b04",
+    "tools/generate_kc2_x3_v2_housings.py": "5b582e3217a4aa3e1ca0c3942460486d89f0196328fc64e99f67ad1d83d810e6",
+    "tools/generate_kc2_mx_upper_housings.py": "984b4e0217ed4febbe719b8529fb07701c085447457a142a0306168220b452bf",
+    "tools/verify_kc2_mx_housing_contract.py": "306c0bf31cc7ec72480144b4c0cfd8358c41a513ad3735a542ab26b052990a14",
+    "tools/verify_kc2_x3_v2_housing.py": "8ac9f6d5059678f676b6166b25bed50ce7273b41f8e30ec8b24cfdef1e5cfb8d",
+    "tools/test_kc2_mx_housing_release_integration.py": "533ce8c43522e9fe3882d53a564fea593b35bc750ac22ba0efe17c04d55fd6ff",
+    "hardware/case/kc2_housing_clearance.json": "3fddbe1f98c1420e71be5d4d7e324dfd9b326d87a9d32d7d9d575657997dbdbc",
+    "hardware/case/kc2_housing_manifest.json": "9d2fbebb8dbab56c3356251646cc2bcbfa4fc7bd10308e69bf365f124f236fe3",
+    "hardware/case/kc2_mx_upper_housing_manifest.json": "3cca35302c7a9916207a784c1bec5cda1c380fa64d2d70a58edb34d84b6df259",
+    "hardware/kicad/kc2_left/kc2_left.kicad_pcb": "568e1427e4cfb9d667b6d5b3754da3a4e24c924abfa85a8dfe394dd050b5fe67",
+    "hardware/kicad/kc2_right/kc2_right.kicad_pcb": "88290c3b0cf3951d56221d216549665c0576a816a6315012f7f12b027f402577"
+  },
+  "sources_unchanged": false,
+  "canonical_and_native_approval": false
+}

@@ -1,0 +1,12 @@
+
+test_complete_independently_verified_contract_adds_no_blocker (tools.test_kc2_mx_housing_release_integration.MXHousingReleaseIntegrationTests.test_complete_independently_verified_contract_adds_no_blocker) ... ok
+test_legacy_physical_pass_cannot_waive_selected_upper (tools.test_kc2_mx_housing_release_integration.MXHousingReleaseIntegrationTests.test_legacy_physical_pass_cannot_waive_selected_upper) ... ok
+test_malformed_helper_result_fails_closed (tools.test_kc2_mx_housing_release_integration.MXHousingReleaseIntegrationTests.test_malformed_helper_result_fails_closed) ... ok
+test_missing_helper_dependency_fails_closed (tools.test_kc2_mx_housing_release_integration.MXHousingReleaseIntegrationTests.test_missing_helper_dependency_fails_closed) ... ok
+test_missing_upper_or_native_evidence_cannot_pass (tools.test_kc2_mx_housing_release_integration.MXHousingReleaseIntegrationTests.test_missing_upper_or_native_evidence_cannot_pass) ... ok
+test_physical_bindings_must_include_upper_and_all_native_outputs (tools.test_kc2_mx_housing_release_integration.MXHousingReleaseIntegrationTests.test_physical_bindings_must_include_upper_and_all_native_outputs) ... ok
+
+----------------------------------------------------------------------
+Ran 6 tests in 0.003s
+
+OK

@@ -3,7 +3,7 @@
   "type": "script",
   "author": "OpenAI Codex",
   "description": {
-    "": "Import the KC2 left/right housing STEP files and export native F3D archives."
+    "": "Import both KC2 lower housings and MX plate-lids, export four native F3D archives and verify their solid round trips."
   },
   "supportedOS": "windows",
   "editEnabled": true

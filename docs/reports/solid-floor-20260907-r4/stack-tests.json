@@ -1,0 +1,31 @@
+[
+  {
+    "name": "stack-geometry",
+    "command": [
+      "C:/Python312/python.exe",
+      "-B",
+      "-m",
+      "unittest",
+      "tools.test_kc2_mx_housing",
+      "tools.test_kc2_recessed_lid",
+      "-v"
+    ],
+    "exit_code": 0,
+    "log": "docs/reports/solid-floor-20260907-r4/stack-geometry-tests.log",
+    "log_sha256": "4b311873ceb27334a6d9884f14196d71c6c9ba749bb55ca840151716d9432229"
+  },
+  {
+    "name": "stack-integration",
+    "command": [
+      "C:/Program Files/KiCad/10.0/bin/python.exe",
+      "-B",
+      "-m",
+      "unittest",
+      "tools.test_kc2_mx_housing_release_integration",
+      "-v"
+    ],
+    "exit_code": 0,
+    "log": "docs/reports/solid-floor-20260907-r4/stack-integration-tests.log",
+    "log_sha256": "3195db5c6428e43742cf060f20a67283bec51810b65865b4f1a0a87580a696bc"
+  }
+]

@@ -1,0 +1,114 @@
+..............FFFF.FFF.F..................F.F.
+======================================================================
+FAIL: test_bottom_component_cutouts_are_exterior_open_and_3d_clear (tools.test_verify_kc2_x3_v2_housing.V2LoadBearingHousingTests.test_bottom_component_cutouts_are_exterior_open_and_3d_clear)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Work\git\kc2\tools\test_verify_kc2_x3_v2_housing.py", line 674, in test_bottom_component_cutouts_are_exterior_open_and_3d_clear
+    self.assertTrue(battery["fresh_extraction_manifest_binding"])
+AssertionError: False is not true
+
+======================================================================
+FAIL: test_every_printable_part_fits_150_mm_cube (tools.test_verify_kc2_x3_v2_housing.V2LoadBearingHousingTests.test_every_printable_part_fits_150_mm_cube)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Work\git\kc2\tools\test_verify_kc2_x3_v2_housing.py", line 878, in test_every_printable_part_fits_150_mm_cube
+    self.assertTrue(part["sha256_matches"])
+AssertionError: False is not true
+
+======================================================================
+FAIL: test_generated_artifacts_are_current_and_physical_gate_stays_pending (tools.test_verify_kc2_x3_v2_housing.V2LoadBearingHousingTests.test_generated_artifacts_are_current_and_physical_gate_stays_pending)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Work\git\kc2\tools\test_verify_kc2_x3_v2_housing.py", line 1093, in test_generated_artifacts_are_current_and_physical_gate_stays_pending
+    self.assertTrue(housing["step_sha256_matches"])
+AssertionError: False is not true
+
+======================================================================
+FAIL: test_hash_policy_is_explicit_newline_stable_and_content_sensitive (tools.test_verify_kc2_x3_v2_housing.V2LoadBearingHousingTests.test_hash_policy_is_explicit_newline_stable_and_content_sensitive)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Work\git\kc2\tools\test_verify_kc2_x3_v2_housing.py", line 436, in test_hash_policy_is_explicit_newline_stable_and_content_sensitive
+    self.assertEqual(verify_report(self.report), [])
+AssertionError: Lists differ: ['housing generator SHA is stale', 'left: [1015 chars]lan'] != []
+
+First list contains 22 additional elements.
+First extra element 0:
+'housing generator SHA is stale'
+
+Diff is 1133 characters long. Set self.maxDiff to None to see it.
+
+======================================================================
+FAIL: test_manifest_hashes_bind_canonical_files_and_reject_staged_snapshot_mutation (tools.test_verify_kc2_x3_v2_housing.V2LoadBearingHousingTests.test_manifest_hashes_bind_canonical_files_and_reject_staged_snapshot_mutation)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Work\git\kc2\tools\test_verify_kc2_x3_v2_housing.py", line 471, in test_manifest_hashes_bind_canonical_files_and_reject_staged_snapshot_mutation
+    self.assertEqual(sha256_file(artifact_path), expected_hash, relative_path)
+AssertionError: '50c4416559f297cc9cda9d811d7e628e1dcba89335a2d80aacdadc4a73fc8dc7' != 'e1a50fa657a2cc8ad10a60eed9e0fd5d326c6a138315f429414b9fc18d3b5583'
+- 50c4416559f297cc9cda9d811d7e628e1dcba89335a2d80aacdadc4a73fc8dc7
++ e1a50fa657a2cc8ad10a60eed9e0fd5d326c6a138315f429414b9fc18d3b5583
+ : hardware/kicad/kc2_left/kc2_left.kicad_pcb
+
+======================================================================
+FAIL: test_nominal_2_5mm_plate_and_support_regions_are_zero_gap_load_paths (tools.test_verify_kc2_x3_v2_housing.V2LoadBearingHousingTests.test_nominal_2_5mm_plate_and_support_regions_are_zero_gap_load_paths)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Work\git\kc2\tools\test_verify_kc2_x3_v2_housing.py", line 526, in test_nominal_2_5mm_plate_and_support_regions_are_zero_gap_load_paths
+    self.assertTrue(housing["support_plan_matches_generator"])
+AssertionError: False is not true
+
+======================================================================
+FAIL: test_right_split_has_full_depth_glueless_keyed_puzzle_joint (tools.test_verify_kc2_x3_v2_housing.V2LoadBearingHousingTests.test_right_split_has_full_depth_glueless_keyed_puzzle_joint)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Work\git\kc2\tools\test_verify_kc2_x3_v2_housing.py", line 906, in test_right_split_has_full_depth_glueless_keyed_puzzle_joint
+    self.assertTrue(joint["support_load_path_preserved"])
+AssertionError: False is not true
+
+======================================================================
+FAIL: test_uses_only_current_canonical_v2_boards (tools.test_verify_kc2_x3_v2_housing.V2LoadBearingHousingTests.test_uses_only_current_canonical_v2_boards)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Work\git\kc2\tools\test_verify_kc2_x3_v2_housing.py", line 420, in test_uses_only_current_canonical_v2_boards
+    self.assertTrue(self.report["generator_sha256_matches"])
+AssertionError: False is not true
+
+======================================================================
+FAIL: test_rebind_optional_but_if_present_requires_fresh_geometry (tools.test_verify_kc2_mx_housing_contract.MXHousingContractTests.test_rebind_optional_but_if_present_requires_fresh_geometry)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Work\git\kc2\tools\test_verify_kc2_mx_housing_contract.py", line 92, in test_rebind_optional_but_if_present_requires_fresh_geometry
+    self.assertEqual(self.report(lower=lower)['errors'],[])
+AssertionError: Lists differ: ['lower.left.source_board_sha256: missing/[176 chars]pcb'] != []
+
+First list contains 2 additional elements.
+First extra element 0:
+'lower.left.source_board_sha256: missing/stale artifact binding: hardware/kicad/kc2_left/kc2_left.kicad_pcb'
+
++ []
+- ['lower.left.source_board_sha256: missing/stale artifact binding: '
+-  'hardware/kicad/kc2_left/kc2_left.kicad_pcb',
+-  'lower.right.source_board_sha256: missing/stale artifact binding: '
+-  'hardware/kicad/kc2_right/kc2_right.kicad_pcb']
+
+======================================================================
+FAIL: test_revised_fixture_is_digital_only (tools.test_verify_kc2_mx_housing_contract.MXHousingContractTests.test_revised_fixture_is_digital_only)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Work\git\kc2\tools\test_verify_kc2_mx_housing_contract.py", line 44, in test_revised_fixture_is_digital_only
+    self.assertEqual(report['errors'],[])
+AssertionError: Lists differ: ['lower.left.source_board_sha256: missing/[176 chars]pcb'] != []
+
+First list contains 2 additional elements.
+First extra element 0:
+'lower.left.source_board_sha256: missing/stale artifact binding: hardware/kicad/kc2_left/kc2_left.kicad_pcb'
+
++ []
+- ['lower.left.source_board_sha256: missing/stale artifact binding: '
+-  'hardware/kicad/kc2_left/kc2_left.kicad_pcb',
+-  'lower.right.source_board_sha256: missing/stale artifact binding: '
+-  'hardware/kicad/kc2_right/kc2_right.kicad_pcb']
+
+----------------------------------------------------------------------
+Ran 46 tests in 226.012s
+
+FAILED (failures=10)

@@ -1,0 +1,14 @@
+
+test_nominal_socket_depth_is_not_qualification (tools.test_kc2_mx_housing.MXHousingTests.test_nominal_socket_depth_is_not_qualification) ... ok
+test_oriented_oval_preserves_major_axis_and_area (tools.test_kc2_mx_housing.MXHousingTests.test_oriented_oval_preserves_major_axis_and_area) ... ok
+test_revised_actual_boards_keep_all_key_supports_without_worsening_span (tools.test_kc2_mx_housing.MXHousingTests.test_revised_actual_boards_keep_all_key_supports_without_worsening_span) ... ok
+test_upper_stack_requires_explicit_switch_datums (tools.test_kc2_mx_housing.MXHousingTests.test_upper_stack_requires_explicit_switch_datums) ... ok
+test_verifier_accepts_improved_span_but_rejects_worse_span (tools.test_kc2_mx_housing.MXHousingTests.test_verifier_accepts_improved_span_but_rejects_worse_span) ... ok
+test_actual_brep_sections_detect_lost_collar (tools.test_kc2_recessed_lid.RecessedHeadTests.test_actual_brep_sections_detect_lost_collar) ... ok
+test_invalid_recess_stack_is_rejected (tools.test_kc2_recessed_lid.RecessedHeadTests.test_invalid_recess_stack_is_rejected) ... ok
+test_recess_has_supported_floor_and_head_reserve (tools.test_kc2_recessed_lid.RecessedHeadTests.test_recess_has_supported_floor_and_head_reserve) ... ok
+
+----------------------------------------------------------------------
+Ran 8 tests in 13.511s
+
+OK
