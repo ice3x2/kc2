@@ -1,0 +1,10 @@
+{
+  "requirements": [
+    "CON-ARCH-006",
+    "OPS-ARCH-006"
+  ],
+  "tests_run": 13,
+  "pass": true,
+  "output": "test_cad_audit_rejects_added_material_or_wrong_bore (tools.test_kc2_magnetic_housing.MagneticContract.test_cad_audit_rejects_added_material_or_wrong_bore) ... ok\ntest_clearance_rejects_thin_wall_and_support (tools.test_kc2_magnetic_housing.MagneticContract.test_clearance_rejects_thin_wall_and_support) ... ok\ntest_correct_axis_and_removed_volume (tools.test_kc2_magnetic_housing.MagneticContract.test_correct_axis_and_removed_volume) ... ok\ntest_dimensions_and_rims (tools.test_kc2_magnetic_housing.MagneticContract.test_dimensions_and_rims) ... ok\ntest_native_export_only_magnetic_lower (tools.test_kc2_magnetic_housing.MagneticContract.test_native_export_only_magnetic_lower) ... ok\ntest_pair_selection_and_fallback (tools.test_kc2_magnetic_housing.MagneticContract.test_pair_selection_and_fallback) ... ok\ntest_reject_invalid_axes (tools.test_kc2_magnetic_housing.MagneticContract.test_reject_invalid_axes) ... ok\ntest_variant_names_preserve_originals (tools.test_kc2_magnetic_housing.MagneticContract.test_variant_names_preserve_originals) ... ok\ntest_baseline_regression_evidence_is_complete (tools.test_verify_kc2_magnetic.EvidenceContract.test_baseline_regression_evidence_is_complete) ... ok\ntest_canonical_release_bytes_not_normalized_by_git (tools.test_verify_kc2_magnetic.EvidenceContract.test_canonical_release_bytes_not_normalized_by_git) ... ok\ntest_complete_fixture (tools.test_verify_kc2_magnetic.EvidenceContract.test_complete_fixture) ... ok\ntest_reject_added_plastic_missing_support_wrong_axis (tools.test_verify_kc2_magnetic.EvidenceContract.test_reject_added_plastic_missing_support_wrong_axis) ... ok\ntest_reject_contract_mutations (tools.test_verify_kc2_magnetic.EvidenceContract.test_reject_contract_mutations) ... ok\n\n----------------------------------------------------------------------\nRan 13 tests in 0.181s\n\nOK\n",
+  "initial_red": "Missing generator, missing magnetic-only Fusion exporter and missing evidence verifier were each executed and failed before implementation."
+}

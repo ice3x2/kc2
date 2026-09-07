@@ -30,6 +30,7 @@ SOCKET={
 }
 CLOSED_FLOOR={
     'top_z_mm':-1.,'bottom_z_mm':-2.2,'thickness_mm':1.2,'continuous_per_part':True,
+    'support_web_bottom_z_mm':-1.,'unsupported_web_gap_mm':0.,
     'maximum_component_projection_mm':2.9,'nominal_projection_clearance_mm':.6,
     'print_allowance_mm':.3,'residual_clearance_mm':.3,
     'nominal_clearance_by_component_mm':{'choc_socket':1.1,'diode':1.85,'hat_socket':2.3},
@@ -114,7 +115,12 @@ def validate_manifests(lower,upper,*,artifacts,rebinding_signatures=None):
             if key not in record: errors.append(f'{label}.{key}: missing')
             else: equal(record[key],value,f'{label}.{key}')
     def binding(record,path,hashkey,label,pathkey=None):
-        if pathkey: equal(record.get(pathkey),path,label+'.'+pathkey)
+        if pathkey:
+            recorded=record.get(pathkey)
+            # Explicit canonical relocation only; keep exact filenames/hashes.
+            if isinstance(recorded,str) and recorded.startswith('hardware/MODELS/'):
+                recorded='hardware/case/'+recorded[len('hardware/MODELS/'):]
+            equal(recorded,path,label+'.'+pathkey)
         actual=artifacts.get(path,{})
         digest=record.get(hashkey)
         if not isinstance(digest,str) or not re.fullmatch('[0-9a-f]{64}',digest) or actual.get('sha256')!=digest:

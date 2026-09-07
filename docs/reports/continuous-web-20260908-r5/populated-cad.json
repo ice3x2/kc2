@@ -1,0 +1,293 @@
+{
+  "requirements": [
+    "CON-ARCH-006",
+    "OPS-ARCH-007"
+  ],
+  "source_sha256": {
+    "tools/audit_kc2_continuous_web.py": "43fcc96b47abba8234b0b66395f49b6db8aab357bce9966ce8a1be24ece3fcd3",
+    "tools/generate_kc2_x3_v2_housings.py": "0f2ef9076cff70916f77b124495fc1a5ea46751d19155378d9224a30a9168b69",
+    "tools/generate_kc2_mx_upper_housings.py": "984b4e0217ed4febbe719b8529fb07701c085447457a142a0306168220b452bf",
+    "tools/verify_kc2_x3_v2_housing.py": "3110f9a0c5288cf34ce60bf34ee3b572c8545894e4e96679e83983b837f5d86a",
+    "hardware/MODELS/kc2_left_lower_housing.step": "277a734905e1d8705ba0bc56a7deee965fc65f4ada904aa5c9aeed524ff6c511",
+    "hardware/MODELS/kc2_left_mx_upper_housing.step": "6101f3858db718089e42cd15892c398de45f70865e0c3a33e3639bf8ca45a1b6",
+    "hardware/MODELS/kc2_right_lower_housing.step": "2c17a7eb9ac23de46861af250c95ade328d4f98d6e73216c78926459f76817e5",
+    "hardware/MODELS/kc2_right_mx_upper_housing.step": "89d16e0c4361ee8424ca6e013024a5c3ff5b74ea7a9550f56225522593984567",
+    "hardware/MODELS/kc2_left_lower_housing.stl": "25271538a1427a8153f28e066fcdb4af9583f8ccf435df8af35278e8282f65dd",
+    "hardware/MODELS/kc2_left_mx_upper_housing.stl": "afb8810f9c0190d5768a7fc9da253361ddaf7d327f7a33e6a4ab786e843a5201",
+    "hardware/MODELS/kc2_right_lower_housing_part_a.stl": "3f494eec7a98a2e83279464934782298470f004736c435cf48fd7c987eb4df4f",
+    "hardware/MODELS/kc2_right_lower_housing_part_b.stl": "5252db1ee95e5c3829974d0d59e7af9a3736911a7bc2ae8c68dba15693235dec",
+    "hardware/MODELS/kc2_right_mx_upper_housing_part_a.stl": "294003112d76cb1c6c04c275efb84eeab2803646df6c2e0c6945ff90ae9489ac",
+    "hardware/MODELS/kc2_right_mx_upper_housing_part_b.stl": "3e2e4e4211ab3cc850d3b727638ca4409febd998310f51046d6ff46ec911fdd9",
+    "hardware/GERBER/digital-validation.json": "13109c7dbb2b190df823dd52c3a4de0e5059613b07eabb78f47acc9fb9d19013",
+    "hardware/GERBER/fabrication-profile.json": "a8955afe47fd48d52bdcd62a0601282d5aa5ff3d4c657d2801cdfefaed254f4b",
+    "hardware/GERBER/kc2_left-manual-mx-bom.json": "148a008e1c98327bf617f5248b21967160b7e9260bb4f5fa63764427d13e587b",
+    "hardware/GERBER/kc2_left-pcb-fabrication-only.zip": "5f4d65a3f45e4efddb093bb8909eef03ea83c54483616d0d0d52935626806811",
+    "hardware/GERBER/kc2_right-manual-mx-bom.json": "553cf83b235cb798d661c6057845c33fda46d0de5f56a543f02f0de6c8a2e387",
+    "hardware/GERBER/kc2_right-pcb-fabrication-only.zip": "bfeb90e32a9dc7dd73c8b3ace95cf3cd7601e220daa7eefbdd51e2e940cf397c",
+    "hardware/GERBER/manifest.json": "2906bf329030840634a5cee1c53c74dd8efb1a70226d1fdc24b66156f693dc92",
+    "hardware/GERBER/review-evidence.json": "8fb871f17bb5ce284bdc2b507d0379a84175642d5d382ca5a7659b1cd15a0c5b",
+    "hardware/PCB/kc2_left/kc2_left.kicad_pcb": "568e1427e4cfb9d667b6d5b3754da3a4e24c924abfa85a8dfe394dd050b5fe67",
+    "hardware/PCB/kc2_right/kc2_right.kicad_pcb": "88290c3b0cf3951d56221d216549665c0576a816a6315012f7f12b027f402577"
+  },
+  "sides": {
+    "left": {
+      "solids": {
+        "lower": {
+          "valid": true,
+          "count": 1,
+          "volume_mm3": 39989.49462484363
+        },
+        "mx_upper": {
+          "valid": true,
+          "count": 1,
+          "volume_mm3": 9872.36150423756
+        }
+      },
+      "components": {
+        "choc_socket_body_fillets": {
+          "count": 31,
+          "tested_z_mm": [
+            -0.4,
+            2.5
+          ],
+          "intersection_mm3": 0,
+          "status": "nominal envelope only; actual projection must meet bound"
+        },
+        "switch_mechanical_pins": {
+          "count": 31,
+          "tested_z_mm": [
+            -0.4,
+            2.5
+          ],
+          "intersection_mm3": 0,
+          "status": "nominal envelope only; actual projection must meet bound"
+        },
+        "mx_pins_pads_fillets": {
+          "count": 31,
+          "tested_z_mm": [
+            -0.4,
+            2.5
+          ],
+          "intersection_mm3": 0,
+          "status": "nominal envelope only; actual projection must meet bound"
+        },
+        "diode_body_pads_fillets": {
+          "count": 31,
+          "tested_z_mm": [
+            -0.4,
+            2.5
+          ],
+          "intersection_mm3": 0,
+          "status": "nominal envelope only; actual projection must meet bound"
+        },
+        "controller_socket": {
+          "count": 1,
+          "tested_z_mm": [
+            -0.4,
+            2.5
+          ],
+          "intersection_mm3": 0,
+          "status": "nominal envelope only; actual projection must meet bound"
+        },
+        "battery_termination": {
+          "count": 1,
+          "tested_z_mm": [
+            -0.4,
+            2.5
+          ],
+          "intersection_mm3": 0,
+          "status": "nominal envelope only; actual projection must meet bound"
+        },
+        "power_switch_leads": {
+          "count": 1,
+          "tested_z_mm": [
+            -0.4,
+            2.5
+          ],
+          "intersection_mm3": 0,
+          "status": "nominal envelope only; actual projection must meet bound"
+        },
+        "battery_slot": {
+          "count": 1,
+          "tested_z_mm": [
+            -0.4,
+            2.5
+          ],
+          "intersection_mm3": 0,
+          "status": "nominal envelope only; actual projection must meet bound"
+        }
+      },
+      "support_sections": [
+        {
+          "z_mm": -0.65,
+          "missing_area_mm2": 0.0,
+          "extra_area_mm2": 0.0,
+          "curve_deflection_mm": 1e-05,
+          "comparison_tolerance_mm": 0.0001
+        },
+        {
+          "z_mm": 1.1,
+          "missing_area_mm2": 0.0,
+          "extra_area_mm2": 0.0,
+          "curve_deflection_mm": 1e-05,
+          "comparison_tolerance_mm": 0.0001
+        }
+      ],
+      "full_depth_evidence": "hardware/MODELS/kc2_housing_clearance.json: sides.left.web_continuity (required separately)",
+      "bottom_up_layer_containment": {
+        "web_outside_floor_area_mm2": 0.0,
+        "basis": "floor prism -2.2..-1; web prism -1..2.5; top-open pilot removal starts -.3; no layer adds material outside preceding layer"
+      },
+      "lower_upper_intersection_mm3": 0,
+      "top_service_intersection_mm3": {
+        "controller_socket": 0,
+        "battery_body": 0,
+        "power_switch_body": 0,
+        "power_switch_actuator_sweep": 0,
+        "reset_actuator": 0
+      },
+      "adapter_intersection_mm3": {
+        "lower": 0,
+        "mx_upper": 0
+      }
+    },
+    "right": {
+      "solids": {
+        "lower": {
+          "valid": true,
+          "count": 2,
+          "volume_mm3": 45823.692721403604
+        },
+        "mx_upper": {
+          "valid": true,
+          "count": 2,
+          "volume_mm3": 11095.900951255071
+        }
+      },
+      "components": {
+        "choc_socket_body_fillets": {
+          "count": 39,
+          "tested_z_mm": [
+            -0.4,
+            2.5
+          ],
+          "intersection_mm3": 0,
+          "status": "nominal envelope only; actual projection must meet bound"
+        },
+        "switch_mechanical_pins": {
+          "count": 39,
+          "tested_z_mm": [
+            -0.4,
+            2.5
+          ],
+          "intersection_mm3": 0,
+          "status": "nominal envelope only; actual projection must meet bound"
+        },
+        "mx_pins_pads_fillets": {
+          "count": 39,
+          "tested_z_mm": [
+            -0.4,
+            2.5
+          ],
+          "intersection_mm3": 0,
+          "status": "nominal envelope only; actual projection must meet bound"
+        },
+        "diode_body_pads_fillets": {
+          "count": 39,
+          "tested_z_mm": [
+            -0.4,
+            2.5
+          ],
+          "intersection_mm3": 0,
+          "status": "nominal envelope only; actual projection must meet bound"
+        },
+        "controller_socket": {
+          "count": 1,
+          "tested_z_mm": [
+            -0.4,
+            2.5
+          ],
+          "intersection_mm3": 0,
+          "status": "nominal envelope only; actual projection must meet bound"
+        },
+        "battery_termination": {
+          "count": 1,
+          "tested_z_mm": [
+            -0.4,
+            2.5
+          ],
+          "intersection_mm3": 0,
+          "status": "nominal envelope only; actual projection must meet bound"
+        },
+        "power_switch_leads": {
+          "count": 1,
+          "tested_z_mm": [
+            -0.4,
+            2.5
+          ],
+          "intersection_mm3": 0,
+          "status": "nominal envelope only; actual projection must meet bound"
+        },
+        "battery_slot": {
+          "count": 1,
+          "tested_z_mm": [
+            -0.4,
+            2.5
+          ],
+          "intersection_mm3": 0,
+          "status": "nominal envelope only; actual projection must meet bound"
+        }
+      },
+      "support_sections": [
+        {
+          "z_mm": -0.65,
+          "missing_area_mm2": 0.0,
+          "extra_area_mm2": 0.0,
+          "curve_deflection_mm": 1e-05,
+          "comparison_tolerance_mm": 0.0001
+        },
+        {
+          "z_mm": 1.1,
+          "missing_area_mm2": 0.0,
+          "extra_area_mm2": 0.0,
+          "curve_deflection_mm": 1e-05,
+          "comparison_tolerance_mm": 0.0001
+        }
+      ],
+      "full_depth_evidence": "hardware/MODELS/kc2_housing_clearance.json: sides.right.web_continuity (required separately)",
+      "bottom_up_layer_containment": {
+        "web_outside_floor_area_mm2": 1.294395091448654e-16,
+        "basis": "floor prism -2.2..-1; web prism -1..2.5; top-open pilot removal starts -.3; no layer adds material outside preceding layer"
+      },
+      "lower_upper_intersection_mm3": 0,
+      "top_service_intersection_mm3": {
+        "controller_socket": 0,
+        "battery_body": 0,
+        "power_switch_body": 0,
+        "power_switch_actuator_sweep": 0,
+        "reset_actuator": 0
+      },
+      "adapter_intersection_mm3": {
+        "lower": 0,
+        "mx_upper": 0
+      }
+    }
+  },
+  "errors": [],
+  "physical_qualification_complete": false,
+  "assumptions": {
+    "maximum_underside_projection_mm": 2.9,
+    "inner_floor_to_PCB_mm": 3.5,
+    "nominal_vertical_reserve_mm": 0.6,
+    "plan_clearance_mm": 0.3,
+    "assembly_modes": "MX receptacles OR Choc sockets, never both on one switch",
+    "unmeasured": [
+      "received pin/socket tolerances",
+      "header and solder projection",
+      "exact battery and wiring envelope",
+      "keycap skirt through full travel",
+      "print shrinkage, flatness and strength"
+    ]
+  },
+  "sources_unchanged": true
+}

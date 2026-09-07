@@ -1,3 +1,0 @@
-(fp_lib_table
-	(lib (name "KC2")(type "KiCad")(uri "${KIPRJMOD}/../../../third_party/kc2.pretty")(options "")(descr "KC2 local footprints"))
-)

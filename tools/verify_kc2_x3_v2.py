@@ -4703,7 +4703,9 @@ def _verify_positive_order_artifact_suite() -> list[str]:
                 env=housing_environment,
                 capture_output=True,
                 text=True,
-                timeout=300,
+                # CON-ARCH-006: complete support-volume inclusion plus floor
+                # and populated geometry exceeds the old five-minute budget.
+                timeout=1800,
                 check=False,
             )
         except (OSError, subprocess.SubprocessError) as error:

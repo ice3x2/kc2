@@ -1,0 +1,51 @@
+{
+  "requirements": [
+    "OPS-ARCH-006",
+    "OPS-ARCH-007"
+  ],
+  "tree": "87b6899a78bd2b1d12de7aeb18d86f8539792032",
+  "runs": [
+    {
+      "args": [
+        "-m",
+        "tools.kc2_current_layout",
+        "--apply"
+      ],
+      "exit_code": 0,
+      "stdout": "{\n  \"applied\": true,\n  \"created_or_planned\": [\n    [\n      \"hardware/kicad/kc2_left\",\n      \"00_CURRENT/PCB/kc2_left\"\n    ],\n    [\n      \"hardware/kicad/kc2_right\",\n      \"00_CURRENT/PCB/kc2_right\"\n    ],\n    [\n      \"hardware/case\",\n      \"00_CURRENT/MODELS\"\n    ],\n    [\n      \"hardware/kicad/first_order/solid-floor-20260907-r4\",\n      \"00_CURRENT/GERBER\"\n    ]\n  ]\n}\n",
+      "stderr": ""
+    },
+    {
+      "args": [
+        "-m",
+        "unittest",
+        "tools.test_kc2_current_layout",
+        "-v"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "test_current_files_match_ordered_release_and_are_not_aliases (tools.test_kc2_current_layout.CurrentLayoutTests.test_current_files_match_ordered_release_and_are_not_aliases) ... ok\ntest_missing_target_and_wrong_alias_are_rejected (tools.test_kc2_current_layout.CurrentLayoutTests.test_missing_target_and_wrong_alias_are_rejected) ... ok\ntest_setup_dry_run_idempotence_and_conflict (tools.test_kc2_current_layout.CurrentLayoutTests.test_setup_dry_run_idempotence_and_conflict) ... ok\n\n----------------------------------------------------------------------\nRan 3 tests in 5.658s\n\nOK\n"
+    },
+    {
+      "args": [
+        "-m",
+        "tools.prepare_kc2_first_order",
+        "--verify-package",
+        "00_CURRENT/GERBER"
+      ],
+      "exit_code": 0,
+      "stdout": "{\n  \"first_order_ready\": true,\n  \"physical_qualification_complete\": false,\n  \"errors\": []\n}\n",
+      "stderr": ""
+    },
+    {
+      "args": [
+        "-c",
+        "from tools.verify_kc2_housing_f3d import verify_f3d_outputs; e=verify_f3d_outputs(); print(e); raise SystemExit(bool(e))"
+      ],
+      "exit_code": 0,
+      "stdout": "[]\n",
+      "stderr": ""
+    }
+  ],
+  "errors": []
+}

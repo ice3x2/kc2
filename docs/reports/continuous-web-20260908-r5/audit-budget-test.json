@@ -1,0 +1,15 @@
+{
+  "requirements": [
+    "CON-ARCH-006",
+    "OPS-ARCH-007"
+  ],
+  "exit_code": 0,
+  "stdout": "",
+  "stderr": ".\n----------------------------------------------------------------------\nRan 1 test in 0.166s\n\nOK\n",
+  "source_sha256": {
+    "tools\\verify_kc2_x3_v2.py": "3cf557d629696a7d640b27f86140aa6ce80c015c4805aa0e2a20e5f8e0dc5a91",
+    "tools\\test_kc2_housing_audit_budget.py": "52afe2f02501ac4f9fa59adcf9e96204c27bee25dcbceba94a313427869234d7"
+  },
+  "sources_unchanged": true,
+  "scope": "AST regression for1800second housing timeout; not a rerun of the whole PCB artifact suite"
+}

@@ -21,9 +21,14 @@ class ClosedFloorTests(unittest.TestCase):
         shp=g.legacy_geometry.require_shapely()
         with tempfile.TemporaryDirectory(dir=g.ROOT/'.codex-tmp') as d:
             data,_=snapshot_board_geometry(Path(d),Path('C:/Program Files/KiCad/10.0/bin/python.exe'))
+        left=g.build_plan_geometry(shp,'left',data['boards']['left'])
+        self.assertLess(left['support_surface'].difference(left['housing_outline']).area,1e-6)
         plan=g.build_plan_geometry(shp,'right',data['boards']['right'])
         split=g.build_right_split_plan(shp,plan)
         masks=[split['floor_part_a_mask'],split['floor_part_b_mask']]
+        for web,mask in zip([split['part_a_plan'],split['part_b_plan']],masks):
+            self.assertLess(web.difference(mask).area,1e-6,
+                'Each separately printed web must be supported by its own floor')
         self.assertAlmostEqual(masks[0].intersection(masks[1]).area,0)
         for mask in masks:
             self.assertEqual(mask.geom_type,'Polygon')

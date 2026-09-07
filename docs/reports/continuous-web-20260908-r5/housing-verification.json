@@ -1,0 +1,169 @@
+{
+  "requirements": [
+    "CON-ARCH-006",
+    "OPS-ARCH-007"
+  ],
+  "errors": [],
+  "web_continuity": {
+    "left": {
+      "z_range_mm": [
+        -1.0,
+        2.5
+      ],
+      "missing_volume_mm3": 0,
+      "continuous": true
+    },
+    "right": {
+      "z_range_mm": [
+        -1.0,
+        2.5
+      ],
+      "missing_volume_mm3": 0,
+      "continuous": true
+    }
+  },
+  "closed_floor": {
+    "digital_valid": true,
+    "errors": [],
+    "floor_thickness_mm": 1.2,
+    "floor_top_z_mm": -1.0,
+    "floor_bottom_z_mm": -2.2,
+    "bonding_pad_diameter_mm": 8.0,
+    "bonding_pad_count": 12,
+    "printable_part_count": 3,
+    "parts": {
+      "left_0": {
+        "digital_valid": true,
+        "errors": [],
+        "floor_thickness_mm": 1.2,
+        "floor_top_z_mm": -1.0,
+        "floor_bottom_z_mm": -2.2,
+        "bonding_pad_diameter_mm": 8.0,
+        "bonding_pad_count": 4,
+        "bonding_centers_mm": [
+          [
+            23.300000000000008,
+            4.8999999999999995
+          ],
+          [
+            130.2125,
+            35.15
+          ],
+          [
+            130.2125,
+            117.60000000000001
+          ],
+          [
+            4.8999999999999995,
+            117.60000000000001
+          ]
+        ],
+        "actual_floor_volume_mm3": 15773.093791,
+        "expected_floor_volume_mm3": 15773.093791,
+        "missing_floor_volume_mm3": 0,
+        "extra_floor_volume_mm3": 0,
+        "projected_centroid_inside_bonding_hull": true,
+        "actual_solid_centroid_xy_mm": [
+          66.835705,
+          70.754556
+        ]
+      },
+      "right_0": {
+        "digital_valid": true,
+        "errors": [],
+        "floor_thickness_mm": 1.2,
+        "floor_top_z_mm": -1.0,
+        "floor_bottom_z_mm": -2.2,
+        "bonding_pad_diameter_mm": 8.0,
+        "bonding_pad_count": 4,
+        "bonding_centers_mm": [
+          [
+            4.8999999999999995,
+            35.15
+          ],
+          [
+            76.94375000000001,
+            35.15
+          ],
+          [
+            76.94375000000001,
+            117.60000000000001
+          ],
+          [
+            4.8999999999999995,
+            117.60000000000001
+          ]
+        ],
+        "actual_floor_volume_mm3": 9059.413698,
+        "expected_floor_volume_mm3": 9059.413698,
+        "missing_floor_volume_mm3": 0,
+        "extra_floor_volume_mm3": 0,
+        "projected_centroid_inside_bonding_hull": true,
+        "actual_solid_centroid_xy_mm": [
+          40.660024,
+          75.413056
+        ]
+      },
+      "right_1": {
+        "digital_valid": true,
+        "errors": [],
+        "floor_thickness_mm": 1.2,
+        "floor_top_z_mm": -1.0,
+        "floor_bottom_z_mm": -2.2,
+        "bonding_pad_diameter_mm": 8.0,
+        "bonding_pad_count": 4,
+        "bonding_centers_mm": [
+          [
+            102.68749999999999,
+            4.8999999999999995
+          ],
+          [
+            135.3875,
+            4.8999999999999995
+          ],
+          [
+            144.5,
+            117.60000000000001
+          ],
+          [
+            86.74374999999999,
+            117.60000000000001
+          ]
+        ],
+        "actual_floor_volume_mm3": 9552.127969,
+        "expected_floor_volume_mm3": 9552.127969,
+        "missing_floor_volume_mm3": 0,
+        "extra_floor_volume_mm3": 0,
+        "projected_centroid_inside_bonding_hull": true,
+        "actual_solid_centroid_xy_mm": [
+          118.675784,
+          63.566209
+        ]
+      }
+    },
+    "maximum_permitted_projection_below_pcb_mm": 2.9,
+    "nominal_clearance_mm": 0.6,
+    "engineering_print_allowance_mm": 0.3,
+    "residual_clearance_mm": 0.3,
+    "nominal_clearance_by_component_mm": {
+      "choc_socket": 1.1,
+      "diode": 1.85,
+      "hat_socket": 2.3
+    },
+    "known_clearance_basis": "modeled depths; floor full-volume proof; not measured part tolerances",
+    "legacy_desk_fields_role": "internal_support_column_ends_and_inner_floor_clearance_not_external_desk",
+    "physical_qualification_complete": false
+  },
+  "source_sha256": {
+    "hardware\\MODELS\\kc2_housing_clearance.json": "61eefbea900703e496a77a62fdb32103a983c7caf10884e47084a494bd495e62",
+    "tools\\verify_kc2_x3_v2_housing.py": "3110f9a0c5288cf34ce60bf34ee3b572c8545894e4e96679e83983b837f5d86a",
+    "tools\\generate_kc2_x3_v2_housings.py": "0f2ef9076cff70916f77b124495fc1a5ea46751d19155378d9224a30a9168b69",
+    "hardware\\MODELS\\kc2_housing_manifest.json": "9da8e2e9efc047d61d6b3a98082b8882caa904ff0637e17633bfd18371e69ffe",
+    "hardware\\MODELS\\kc2_left_lower_housing.step": "277a734905e1d8705ba0bc56a7deee965fc65f4ada904aa5c9aeed524ff6c511",
+    "hardware\\MODELS\\kc2_right_lower_housing.step": "2c17a7eb9ac23de46861af250c95ade328d4f98d6e73216c78926459f76817e5",
+    "hardware\\MODELS\\kc2_left_lower_housing.stl": "25271538a1427a8153f28e066fcdb4af9583f8ccf435df8af35278e8282f65dd",
+    "hardware\\MODELS\\kc2_right_lower_housing_part_a.stl": "3f494eec7a98a2e83279464934782298470f004736c435cf48fd7c987eb4df4f",
+    "hardware\\MODELS\\kc2_right_lower_housing_part_b.stl": "5252db1ee95e5c3829974d0d59e7af9a3736911a7bc2ae8c68dba15693235dec"
+  },
+  "physical_qualification_complete": false
+}

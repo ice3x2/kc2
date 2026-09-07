@@ -8,6 +8,19 @@ from tools import verify_kc2_mx_housing_contract as check
 
 
 class MXHousingContractTests(unittest.TestCase):
+    def test_canonical_hardware_model_paths_preserve_exact_binding(self):
+        lower,upper=copy.deepcopy(self.lower),copy.deepcopy(self.upper)
+        def relocate(value):
+            if isinstance(value,dict):
+                for key,item in value.items():
+                    if isinstance(item,str) and item.startswith('hardware/case/'):
+                        value[key]='hardware/MODELS/'+item[len('hardware/case/'):]
+                    else:relocate(item)
+            elif isinstance(value,list):
+                for item in value:relocate(item)
+        relocate(lower);relocate(upper)
+        self.assertEqual([],self.report(lower=lower,upper=upper)['errors'])
+
     def test_closed_floor_missing_thin_and_unknown_projection_fail_closed(self):
         lower=copy.deepcopy(self.lower)
         lower.pop('closed_floor',None)

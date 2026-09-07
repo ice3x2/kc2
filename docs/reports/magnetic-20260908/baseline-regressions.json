@@ -1,0 +1,47 @@
+[
+  {
+    "baseline_suite": "tests.json",
+    "command": [
+      "C:/Python312/python.exe",
+      "-B",
+      "-m",
+      "unittest",
+      "tools.test_kc2_continuous_web",
+      "tools.test_kc2_closed_floor",
+      "tools.test_verify_kc2_mx_housing_contract",
+      "tools.test_kc2_mx_housing",
+      "tools.test_kc2_recessed_lid",
+      "tools.test_kc2_current_layout",
+      "tools.test_verify_kc2_x3_v2_housing.ClosedFloorBRepTests",
+      "tools.test_verify_kc2_x3_v2_housing.ServiceInterfaceContractUnitTests"
+    ],
+    "exit_code": 0,
+    "stdout": "Building full-depth support inclusion envelope\nComparing full-depth support against actual STEP\nFull-depth missing volume: 280.000000000 mm3\nBuilding full-depth support inclusion envelope\nSubtracting top-open pilot envelopes\nComparing full-depth support against actual STEP\nFull-depth missing volume: 0.000000000 mm3\nBuilding full-depth support inclusion envelope\nComparing full-depth support against actual STEP\nFull-depth missing volume: 396.858407346 mm3\nBuilding full-depth support inclusion envelope\nComparing full-depth support against actual STEP\nFull-depth missing volume: 0.000000000 mm3\n",
+    "stderr": "............................................\n----------------------------------------------------------------------\nRan 44 tests in 107.063s\n\nOK\n"
+  },
+  {
+    "baseline_suite": "report-tests.json",
+    "command": [
+      "C:/Python312/python.exe",
+      "-B",
+      "-c",
+      "import json,unittest; from unittest.mock import patch; import tools.test_verify_kc2_x3_v2_housing as t; r=json.loads(t.housing_verifier.REPORT_PATH.read_text(encoding='utf8')); assert not t.verify_report(r); p=patch.object(t,'analyze_v2_housing',return_value=r); p.start(); result=unittest.TextTestRunner(verbosity=2).run(unittest.defaultTestLoader.loadTestsFromTestCase(t.V2LoadBearingHousingTests)); p.stop(); raise SystemExit(not result.wasSuccessful())"
+    ],
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": "test_all_required_collision_classes_are_clear (tools.test_verify_kc2_x3_v2_housing.V2LoadBearingHousingTests.test_all_required_collision_classes_are_clear) ... ok\ntest_bottom_component_cutouts_are_internal_reliefs_and_3d_clear (tools.test_verify_kc2_x3_v2_housing.V2LoadBearingHousingTests.test_bottom_component_cutouts_are_internal_reliefs_and_3d_clear) ... ok\ntest_every_printable_part_fits_150_mm_cube (tools.test_verify_kc2_x3_v2_housing.V2LoadBearingHousingTests.test_every_printable_part_fits_150_mm_cube) ... ok\ntest_generated_artifacts_are_current_and_physical_gate_stays_pending (tools.test_verify_kc2_x3_v2_housing.V2LoadBearingHousingTests.test_generated_artifacts_are_current_and_physical_gate_stays_pending) ... ok\ntest_hash_policy_is_explicit_newline_stable_and_content_sensitive (tools.test_verify_kc2_x3_v2_housing.V2LoadBearingHousingTests.test_hash_policy_is_explicit_newline_stable_and_content_sensitive) ... ok\ntest_m1_4_clamps_clear_components_and_every_key_has_a_local_load_path (tools.test_verify_kc2_x3_v2_housing.V2LoadBearingHousingTests.test_m1_4_clamps_clear_components_and_every_key_has_a_local_load_path) ... ok\ntest_manifest_hashes_bind_canonical_files_and_reject_staged_snapshot_mutation (tools.test_verify_kc2_x3_v2_housing.V2LoadBearingHousingTests.test_manifest_hashes_bind_canonical_files_and_reject_staged_snapshot_mutation) ... warning: in the working copy of '.gitattributes', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'housing-snapshot.txt', CRLF will be replaced by LF the next time Git touches it\nok\ntest_nominal_2_5mm_plate_and_support_regions_are_zero_gap_load_paths (tools.test_verify_kc2_x3_v2_housing.V2LoadBearingHousingTests.test_nominal_2_5mm_plate_and_support_regions_are_zero_gap_load_paths) ... ok\ntest_right_split_has_full_depth_glueless_keyed_puzzle_joint (tools.test_verify_kc2_x3_v2_housing.V2LoadBearingHousingTests.test_right_split_has_full_depth_glueless_keyed_puzzle_joint) ... ok\ntest_step_exports_have_no_trailing_whitespace (tools.test_verify_kc2_x3_v2_housing.V2LoadBearingHousingTests.test_step_exports_have_no_trailing_whitespace) ... ok\ntest_uses_only_current_canonical_v2_boards (tools.test_verify_kc2_x3_v2_housing.V2LoadBearingHousingTests.test_uses_only_current_canonical_v2_boards) ... ok\ntest_verifier_rejects_coupled_contact_count_and_manifest_binding_mutation (tools.test_verify_kc2_x3_v2_housing.V2LoadBearingHousingTests.test_verifier_rejects_coupled_contact_count_and_manifest_binding_mutation) ... ok\ntest_verifier_rejects_coupled_vertical_clearance_overstatement (tools.test_verify_kc2_x3_v2_housing.V2LoadBearingHousingTests.test_verifier_rejects_coupled_vertical_clearance_overstatement) ... ok\ntest_verifier_rejects_missing_diode_cutout_or_vertical_clearance (tools.test_verify_kc2_x3_v2_housing.V2LoadBearingHousingTests.test_verifier_rejects_missing_diode_cutout_or_vertical_clearance) ... ok\ntest_verifier_rejects_missing_or_unstable_desk_contacts (tools.test_verify_kc2_x3_v2_housing.V2LoadBearingHousingTests.test_verifier_rejects_missing_or_unstable_desk_contacts) ... ok\ntest_verifier_rejects_mounting_contract_mutations (tools.test_verify_kc2_x3_v2_housing.V2LoadBearingHousingTests.test_verifier_rejects_mounting_contract_mutations) ... ok\ntest_verifier_rejects_puzzle_capture_regression (tools.test_verify_kc2_x3_v2_housing.V2LoadBearingHousingTests.test_verifier_rejects_puzzle_capture_regression) ... ok\ntest_verifier_rejects_service_pad_opening_binding_and_land_mutations (tools.test_verify_kc2_x3_v2_housing.V2LoadBearingHousingTests.test_verifier_rejects_service_pad_opening_binding_and_land_mutations) ... ok\n\n----------------------------------------------------------------------\nRan 18 tests in 2.332s\n\nOK\n"
+  },
+  {
+    "baseline_suite": "audit-budget-test.json",
+    "command": [
+      "C:/Python312/python.exe",
+      "-B",
+      "-m",
+      "unittest",
+      "tools.test_kc2_housing_audit_budget"
+    ],
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": ".\n----------------------------------------------------------------------\nRan 1 test in 0.142s\n\nOK\n"
+  }
+]

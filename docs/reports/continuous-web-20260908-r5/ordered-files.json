@@ -1,0 +1,204 @@
+{
+  "requirements": [
+    "CON-ARCH-006",
+    "OPS-ARCH-007"
+  ],
+  "records": [
+    {
+      "path": "hardware\\GERBER\\digital-validation.json",
+      "expected_sha256": "13109c7dbb2b190df823dd52c3a4de0e5059613b07eabb78f47acc9fb9d19013",
+      "actual_sha256": "13109c7dbb2b190df823dd52c3a4de0e5059613b07eabb78f47acc9fb9d19013"
+    },
+    {
+      "path": "hardware\\GERBER\\fabrication-profile.json",
+      "expected_sha256": "a8955afe47fd48d52bdcd62a0601282d5aa5ff3d4c657d2801cdfefaed254f4b",
+      "actual_sha256": "a8955afe47fd48d52bdcd62a0601282d5aa5ff3d4c657d2801cdfefaed254f4b"
+    },
+    {
+      "path": "hardware\\GERBER\\kc2_left-manual-mx-bom.json",
+      "expected_sha256": "148a008e1c98327bf617f5248b21967160b7e9260bb4f5fa63764427d13e587b",
+      "actual_sha256": "148a008e1c98327bf617f5248b21967160b7e9260bb4f5fa63764427d13e587b"
+    },
+    {
+      "path": "hardware\\GERBER\\kc2_left-pcb-fabrication-only.zip",
+      "expected_sha256": "5f4d65a3f45e4efddb093bb8909eef03ea83c54483616d0d0d52935626806811",
+      "actual_sha256": "5f4d65a3f45e4efddb093bb8909eef03ea83c54483616d0d0d52935626806811"
+    },
+    {
+      "path": "hardware\\GERBER\\kc2_right-manual-mx-bom.json",
+      "expected_sha256": "553cf83b235cb798d661c6057845c33fda46d0de5f56a543f02f0de6c8a2e387",
+      "actual_sha256": "553cf83b235cb798d661c6057845c33fda46d0de5f56a543f02f0de6c8a2e387"
+    },
+    {
+      "path": "hardware\\GERBER\\kc2_right-pcb-fabrication-only.zip",
+      "expected_sha256": "bfeb90e32a9dc7dd73c8b3ace95cf3cd7601e220daa7eefbdd51e2e940cf397c",
+      "actual_sha256": "bfeb90e32a9dc7dd73c8b3ace95cf3cd7601e220daa7eefbdd51e2e940cf397c"
+    },
+    {
+      "path": "hardware\\GERBER\\review-evidence.json",
+      "expected_sha256": "8fb871f17bb5ce284bdc2b507d0379a84175642d5d382ca5a7659b1cd15a0c5b",
+      "actual_sha256": "8fb871f17bb5ce284bdc2b507d0379a84175642d5d382ca5a7659b1cd15a0c5b"
+    },
+    {
+      "path": "hardware\\kicad\\fabrication_review\\v1-recess-20260906-r3\\left\\kc2_left-B_Cu.gbl",
+      "expected_sha256": "3a21958af5f0e25d76df803244236444f89e8a4c47315059019a66acbb1a0524",
+      "actual_sha256": "3a21958af5f0e25d76df803244236444f89e8a4c47315059019a66acbb1a0524"
+    },
+    {
+      "path": "hardware\\kicad\\fabrication_review\\v1-recess-20260906-r3\\left\\kc2_left-B_Mask.gbs",
+      "expected_sha256": "6e5249787f502a4694cb378055b7418a0667e6b544df5d5bf68224db4133c9cb",
+      "actual_sha256": "6e5249787f502a4694cb378055b7418a0667e6b544df5d5bf68224db4133c9cb"
+    },
+    {
+      "path": "hardware\\kicad\\fabrication_review\\v1-recess-20260906-r3\\left\\kc2_left-B_Paste.gbp",
+      "expected_sha256": "91f1179d2dfe293d85bff63f14a12ab9e7503f8981fa1425b26ea75fe8807d13",
+      "actual_sha256": "91f1179d2dfe293d85bff63f14a12ab9e7503f8981fa1425b26ea75fe8807d13"
+    },
+    {
+      "path": "hardware\\kicad\\fabrication_review\\v1-recess-20260906-r3\\left\\kc2_left-B_Silkscreen.gbo",
+      "expected_sha256": "625aeb13e513b798dab07eed18a315e01e44d8cc5a6b3bdbd7385c976f3e4b02",
+      "actual_sha256": "625aeb13e513b798dab07eed18a315e01e44d8cc5a6b3bdbd7385c976f3e4b02"
+    },
+    {
+      "path": "hardware\\kicad\\fabrication_review\\v1-recess-20260906-r3\\left\\kc2_left-Edge_Cuts.gm1",
+      "expected_sha256": "8c283cbdae382a9f184d62a3fd096fd00c65d6a09a8475be7334e0ee803551b7",
+      "actual_sha256": "8c283cbdae382a9f184d62a3fd096fd00c65d6a09a8475be7334e0ee803551b7"
+    },
+    {
+      "path": "hardware\\kicad\\fabrication_review\\v1-recess-20260906-r3\\left\\kc2_left-F_Cu.gtl",
+      "expected_sha256": "cbf483699f6e57f8a0f1f24e84a93b16275e9673225ea251fb9fafac3c989924",
+      "actual_sha256": "cbf483699f6e57f8a0f1f24e84a93b16275e9673225ea251fb9fafac3c989924"
+    },
+    {
+      "path": "hardware\\kicad\\fabrication_review\\v1-recess-20260906-r3\\left\\kc2_left-F_Mask.gts",
+      "expected_sha256": "647202f90ae56c08133f791232245df99408d19631e057b69f09b8baa4d1274c",
+      "actual_sha256": "647202f90ae56c08133f791232245df99408d19631e057b69f09b8baa4d1274c"
+    },
+    {
+      "path": "hardware\\kicad\\fabrication_review\\v1-recess-20260906-r3\\left\\kc2_left-F_Paste.gtp",
+      "expected_sha256": "7dae467d2dfda571ef469f5a9de4467db7646ab9a7120fcb7dfc1a0c31124b80",
+      "actual_sha256": "7dae467d2dfda571ef469f5a9de4467db7646ab9a7120fcb7dfc1a0c31124b80"
+    },
+    {
+      "path": "hardware\\kicad\\fabrication_review\\v1-recess-20260906-r3\\left\\kc2_left-F_Silkscreen.gto",
+      "expected_sha256": "a2d5f1c412fe7ed416518d08a3ecc6a868f94f6b1223d992e3ea5825d0cac265",
+      "actual_sha256": "a2d5f1c412fe7ed416518d08a3ecc6a868f94f6b1223d992e3ea5825d0cac265"
+    },
+    {
+      "path": "hardware\\kicad\\fabrication_review\\v1-recess-20260906-r3\\left\\kc2_left-NPTH-drl_map.gbr",
+      "expected_sha256": "19e4511d9a69ff07b28fbd4575ba84f1ed1bef958f7fc195905c5d556ef59231",
+      "actual_sha256": "19e4511d9a69ff07b28fbd4575ba84f1ed1bef958f7fc195905c5d556ef59231"
+    },
+    {
+      "path": "hardware\\kicad\\fabrication_review\\v1-recess-20260906-r3\\left\\kc2_left-NPTH.drl",
+      "expected_sha256": "5196483ed7b8d447b889b5fb4deed8ee3906024d483207c703b4d28f0a0d38c0",
+      "actual_sha256": "5196483ed7b8d447b889b5fb4deed8ee3906024d483207c703b4d28f0a0d38c0"
+    },
+    {
+      "path": "hardware\\kicad\\fabrication_review\\v1-recess-20260906-r3\\left\\kc2_left-PTH-drl_map.gbr",
+      "expected_sha256": "bdef69a100301c7cb2e022f4669a00644a2d21f71b75b034146348c1da7cb639",
+      "actual_sha256": "bdef69a100301c7cb2e022f4669a00644a2d21f71b75b034146348c1da7cb639"
+    },
+    {
+      "path": "hardware\\kicad\\fabrication_review\\v1-recess-20260906-r3\\left\\kc2_left-PTH.drl",
+      "expected_sha256": "f5bae07a4943b536883e7fec099aaa0c4321045be90cdc3d0d2423031cb69717",
+      "actual_sha256": "f5bae07a4943b536883e7fec099aaa0c4321045be90cdc3d0d2423031cb69717"
+    },
+    {
+      "path": "hardware\\kicad\\fabrication_review\\v1-recess-20260906-r3\\left\\kc2_left-drill-report.txt",
+      "expected_sha256": "0bb1c3e7b5e5c00032212a929c475026f0c43c723201a91e7aa75ca8eac2ce04",
+      "actual_sha256": "0bb1c3e7b5e5c00032212a929c475026f0c43c723201a91e7aa75ca8eac2ce04"
+    },
+    {
+      "path": "hardware\\kicad\\fabrication_review\\v1-recess-20260906-r3\\left\\kc2_left-job.gbrjob",
+      "expected_sha256": "10f27fc1c13142fc951724d56960ea804b351383462713b1a9d84987d2c858ad",
+      "actual_sha256": "10f27fc1c13142fc951724d56960ea804b351383462713b1a9d84987d2c858ad"
+    },
+    {
+      "path": "hardware\\kicad\\fabrication_review\\v1-recess-20260906-r3\\right\\kc2_right-B_Cu.gbl",
+      "expected_sha256": "8c76fc327cb811ba73029889767239f73dc98f4f37924e61dd1eb83f23325f8e",
+      "actual_sha256": "8c76fc327cb811ba73029889767239f73dc98f4f37924e61dd1eb83f23325f8e"
+    },
+    {
+      "path": "hardware\\kicad\\fabrication_review\\v1-recess-20260906-r3\\right\\kc2_right-B_Mask.gbs",
+      "expected_sha256": "f0b724a648c799abde6fa362a68f56d91575cfad4575ffe47a2b1506d799a724",
+      "actual_sha256": "f0b724a648c799abde6fa362a68f56d91575cfad4575ffe47a2b1506d799a724"
+    },
+    {
+      "path": "hardware\\kicad\\fabrication_review\\v1-recess-20260906-r3\\right\\kc2_right-B_Paste.gbp",
+      "expected_sha256": "ff90592f5384ad0691145e02f8c583d804d0c4803710a9577afed51e5036adc6",
+      "actual_sha256": "ff90592f5384ad0691145e02f8c583d804d0c4803710a9577afed51e5036adc6"
+    },
+    {
+      "path": "hardware\\kicad\\fabrication_review\\v1-recess-20260906-r3\\right\\kc2_right-B_Silkscreen.gbo",
+      "expected_sha256": "103ebe41c65293ea92beacbe0dca2069a97f6c13b5a6c02a99d77639d363df6a",
+      "actual_sha256": "103ebe41c65293ea92beacbe0dca2069a97f6c13b5a6c02a99d77639d363df6a"
+    },
+    {
+      "path": "hardware\\kicad\\fabrication_review\\v1-recess-20260906-r3\\right\\kc2_right-Edge_Cuts.gm1",
+      "expected_sha256": "1f35879d156ee541f8fc7d7646db0913caef3265a7714829fc37d4f35f96819e",
+      "actual_sha256": "1f35879d156ee541f8fc7d7646db0913caef3265a7714829fc37d4f35f96819e"
+    },
+    {
+      "path": "hardware\\kicad\\fabrication_review\\v1-recess-20260906-r3\\right\\kc2_right-F_Cu.gtl",
+      "expected_sha256": "d4623d023fbc55464a2774e04fee6130ab456cee58198174ac5412e8269ed630",
+      "actual_sha256": "d4623d023fbc55464a2774e04fee6130ab456cee58198174ac5412e8269ed630"
+    },
+    {
+      "path": "hardware\\kicad\\fabrication_review\\v1-recess-20260906-r3\\right\\kc2_right-F_Mask.gts",
+      "expected_sha256": "b15b29cb2127ceeb5fcf21a793ea1a4f3c516e6862406818a469fe52c6c9135a",
+      "actual_sha256": "b15b29cb2127ceeb5fcf21a793ea1a4f3c516e6862406818a469fe52c6c9135a"
+    },
+    {
+      "path": "hardware\\kicad\\fabrication_review\\v1-recess-20260906-r3\\right\\kc2_right-F_Paste.gtp",
+      "expected_sha256": "2fe0a45ae87659629318e63585fbe23293db40a94709050b87622f42d6d4f7e2",
+      "actual_sha256": "2fe0a45ae87659629318e63585fbe23293db40a94709050b87622f42d6d4f7e2"
+    },
+    {
+      "path": "hardware\\kicad\\fabrication_review\\v1-recess-20260906-r3\\right\\kc2_right-F_Silkscreen.gto",
+      "expected_sha256": "9220fed2eaeaf923743037a22c21810103988749594c65442807a6a1da0e9152",
+      "actual_sha256": "9220fed2eaeaf923743037a22c21810103988749594c65442807a6a1da0e9152"
+    },
+    {
+      "path": "hardware\\kicad\\fabrication_review\\v1-recess-20260906-r3\\right\\kc2_right-NPTH-drl_map.gbr",
+      "expected_sha256": "89fbeb8ebb1b83c6c0ed4080e8e205dacdfffe5c39650b37ba5c0ff4ff88fadb",
+      "actual_sha256": "89fbeb8ebb1b83c6c0ed4080e8e205dacdfffe5c39650b37ba5c0ff4ff88fadb"
+    },
+    {
+      "path": "hardware\\kicad\\fabrication_review\\v1-recess-20260906-r3\\right\\kc2_right-NPTH.drl",
+      "expected_sha256": "5b73e8549b8f65941a61175d48e27846d3832a732a93d8b1855925f50dde8e0f",
+      "actual_sha256": "5b73e8549b8f65941a61175d48e27846d3832a732a93d8b1855925f50dde8e0f"
+    },
+    {
+      "path": "hardware\\kicad\\fabrication_review\\v1-recess-20260906-r3\\right\\kc2_right-PTH-drl_map.gbr",
+      "expected_sha256": "b57689c96c72a8a93aef6658160f309f7bad2aeaa772f910ade15cf285b7d59d",
+      "actual_sha256": "b57689c96c72a8a93aef6658160f309f7bad2aeaa772f910ade15cf285b7d59d"
+    },
+    {
+      "path": "hardware\\kicad\\fabrication_review\\v1-recess-20260906-r3\\right\\kc2_right-PTH.drl",
+      "expected_sha256": "453242b8a8c00f52d1550cad37bc0945711cb085df061947bfeed5a59a8245ca",
+      "actual_sha256": "453242b8a8c00f52d1550cad37bc0945711cb085df061947bfeed5a59a8245ca"
+    },
+    {
+      "path": "hardware\\kicad\\fabrication_review\\v1-recess-20260906-r3\\right\\kc2_right-drill-report.txt",
+      "expected_sha256": "bc04da9fbab6ac76fc751ac18a8f217cfef039b6aa7684e18f839d58931a1cdf",
+      "actual_sha256": "bc04da9fbab6ac76fc751ac18a8f217cfef039b6aa7684e18f839d58931a1cdf"
+    },
+    {
+      "path": "hardware\\kicad\\fabrication_review\\v1-recess-20260906-r3\\right\\kc2_right-job.gbrjob",
+      "expected_sha256": "7a803559597e61ffd5ff824fb74abafac66d9308efe87d7b18a3ae96f22fdaa6",
+      "actual_sha256": "7a803559597e61ffd5ff824fb74abafac66d9308efe87d7b18a3ae96f22fdaa6"
+    },
+    {
+      "path": "hardware\\kicad\\kc2_left\\kc2_left.kicad_pcb",
+      "expected_sha256": "568e1427e4cfb9d667b6d5b3754da3a4e24c924abfa85a8dfe394dd050b5fe67",
+      "actual_sha256": "568e1427e4cfb9d667b6d5b3754da3a4e24c924abfa85a8dfe394dd050b5fe67"
+    },
+    {
+      "path": "hardware\\kicad\\kc2_right\\kc2_right.kicad_pcb",
+      "expected_sha256": "88290c3b0cf3951d56221d216549665c0576a816a6315012f7f12b027f402577",
+      "actual_sha256": "88290c3b0cf3951d56221d216549665c0576a816a6315012f7f12b027f402577"
+    }
+  ],
+  "errors": []
+}

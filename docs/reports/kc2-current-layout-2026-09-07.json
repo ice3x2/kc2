@@ -1,0 +1,333 @@
+{
+  "requirements": [
+    "OPS-ARCH-006",
+    "OPS-ARCH-007"
+  ],
+  "aliases": {
+    "hardware/kicad/kc2_left": "00_CURRENT/PCB/kc2_left",
+    "hardware/kicad/kc2_right": "00_CURRENT/PCB/kc2_right",
+    "hardware/case": "00_CURRENT/MODELS",
+    "hardware/kicad/first_order/solid-floor-20260907-r4": "00_CURRENT/GERBER"
+  },
+  "files": [
+    {
+      "old": "hardware/case/README.md",
+      "new": "00_CURRENT/MODELS/README.md",
+      "sha256": "fd03b043f7fdcac700cf9e20e591eb3880fabcfb37986509ddd90be132f9df41",
+      "head_byte_identical": false
+    },
+    {
+      "old": "hardware/case/adapters/README.md",
+      "new": "00_CURRENT/MODELS/adapters/README.md",
+      "sha256": "225444f5cc641a12d7bdea87288f4a240051ebea67cf57244ad347c0830d4049",
+      "head_byte_identical": true
+    },
+    {
+      "old": "hardware/case/adapters/kc2_mx_ring_cap_020.stl",
+      "new": "00_CURRENT/MODELS/adapters/kc2_mx_ring_cap_020.stl",
+      "sha256": "e0e07fbb12e3f341636ee27c3f6b4343e56b10f3c090e5e029990b6a142022ea",
+      "head_byte_identical": true
+    },
+    {
+      "old": "hardware/case/adapters/kc2_v1_ring_cap_020.stl",
+      "new": "00_CURRENT/MODELS/adapters/kc2_v1_ring_cap_020.stl",
+      "sha256": "a6b7ddfa06f1880251a974d1f3bde65cb4ec585af4e2ebbd1e48a7b31d18e928",
+      "head_byte_identical": true
+    },
+    {
+      "old": "hardware/case/adapters/manifest.json",
+      "new": "00_CURRENT/MODELS/adapters/manifest.json",
+      "sha256": "0735338fb9062cf61458b95e89a73c4301ba03dd5aeaed2d34c273c4c3963eea",
+      "head_byte_identical": true
+    },
+    {
+      "old": "hardware/case/kc2_first_order_1to1_manifest.json",
+      "new": "00_CURRENT/MODELS/kc2_first_order_1to1_manifest.json",
+      "sha256": "36721f2f6bfe71af1e378acfd5e5f8eaeedf9a874ee3b7c961d667262b1586b2",
+      "head_byte_identical": true
+    },
+    {
+      "old": "hardware/case/kc2_fusion_export_result.json",
+      "new": "00_CURRENT/MODELS/kc2_fusion_export_result.json",
+      "sha256": "930aa96b2c5646d0c4a7490ea41b853f722926acfdbb1a4a5949b043e2eee822",
+      "head_byte_identical": true
+    },
+    {
+      "old": "hardware/case/kc2_housing_clearance.json",
+      "new": "00_CURRENT/MODELS/kc2_housing_clearance.json",
+      "sha256": "abee25fe6acb33b74c47e48a17c006cf9e7db64e842621c202e765acce8d66e2",
+      "head_byte_identical": true
+    },
+    {
+      "old": "hardware/case/kc2_housing_manifest.json",
+      "new": "00_CURRENT/MODELS/kc2_housing_manifest.json",
+      "sha256": "d10123a910e10123458819a7f6bbdb8ea16e122d6b9f0ab4cf0ea4569d8eda25",
+      "head_byte_identical": true
+    },
+    {
+      "old": "hardware/case/kc2_left_first_order_1to1.svg",
+      "new": "00_CURRENT/MODELS/kc2_left_first_order_1to1.svg",
+      "sha256": "97d730f041b351b34a8ed959fceabd87cd333234269b14051f6c0d6eecaafe33",
+      "head_byte_identical": true
+    },
+    {
+      "old": "hardware/case/kc2_left_lower_housing.f3d",
+      "new": "00_CURRENT/MODELS/kc2_left_lower_housing.f3d",
+      "sha256": "9ad68833aac235733d76d7bfd0795cf02c3cc996fbc6239cd77830f83ab6e4c2",
+      "head_byte_identical": true
+    },
+    {
+      "old": "hardware/case/kc2_left_lower_housing.step",
+      "new": "00_CURRENT/MODELS/kc2_left_lower_housing.step",
+      "sha256": "e6df3db7f0237d535a0b59981f599747a8cc7ac3ba5016d1f8dff0856af44e02",
+      "head_byte_identical": true
+    },
+    {
+      "old": "hardware/case/kc2_left_lower_housing.stl",
+      "new": "00_CURRENT/MODELS/kc2_left_lower_housing.stl",
+      "sha256": "f766312631b9ac6bc0d90cb8bba64259333600ee890ce1af94f5cdf0b259cc05",
+      "head_byte_identical": true
+    },
+    {
+      "old": "hardware/case/kc2_left_mx_upper_housing.f3d",
+      "new": "00_CURRENT/MODELS/kc2_left_mx_upper_housing.f3d",
+      "sha256": "0494cf50c653cc59dc0b52b6e16166a53ec61c2a428b625f5a8be518e815fcd2",
+      "head_byte_identical": true
+    },
+    {
+      "old": "hardware/case/kc2_left_mx_upper_housing.step",
+      "new": "00_CURRENT/MODELS/kc2_left_mx_upper_housing.step",
+      "sha256": "fecce02a234f49937a6973801303e65dd534b1c724e6e168a9752442a60dcca1",
+      "head_byte_identical": true
+    },
+    {
+      "old": "hardware/case/kc2_left_mx_upper_housing.stl",
+      "new": "00_CURRENT/MODELS/kc2_left_mx_upper_housing.stl",
+      "sha256": "afb8810f9c0190d5768a7fc9da253361ddaf7d327f7a33e6a4ab786e843a5201",
+      "head_byte_identical": true
+    },
+    {
+      "old": "hardware/case/kc2_left_mx_upper_plan.svg",
+      "new": "00_CURRENT/MODELS/kc2_left_mx_upper_plan.svg",
+      "sha256": "0eca29902c346fcad28735a15653b7801a6db9b5646377f01b669b0db60eb04b",
+      "head_byte_identical": true
+    },
+    {
+      "old": "hardware/case/kc2_left_silicone_foot_layout.svg",
+      "new": "00_CURRENT/MODELS/kc2_left_silicone_foot_layout.svg",
+      "sha256": "3235ae0f7b59fc36a9e6f0cdd5e59211141cbafda70c68f3e488075cf6bb6fd9",
+      "head_byte_identical": true
+    },
+    {
+      "old": "hardware/case/kc2_mx_mounting_section.svg",
+      "new": "00_CURRENT/MODELS/kc2_mx_mounting_section.svg",
+      "sha256": "a7e9863bfd4af5eb381914e2d05679eb8af19902c5bee93a9742590a31e408c3",
+      "head_byte_identical": true
+    },
+    {
+      "old": "hardware/case/kc2_mx_upper_housing_manifest.json",
+      "new": "00_CURRENT/MODELS/kc2_mx_upper_housing_manifest.json",
+      "sha256": "dae4d5884dfa14b4123af9323d9ee8632158a87c06d3991594f0d62607f56bfe",
+      "head_byte_identical": true
+    },
+    {
+      "old": "hardware/case/kc2_right_first_order_1to1.svg",
+      "new": "00_CURRENT/MODELS/kc2_right_first_order_1to1.svg",
+      "sha256": "382ddc15adf6f1398e349d52bb4ff74eccb3d7af16bc2ece4edd0fc8859049aa",
+      "head_byte_identical": true
+    },
+    {
+      "old": "hardware/case/kc2_right_lower_housing.f3d",
+      "new": "00_CURRENT/MODELS/kc2_right_lower_housing.f3d",
+      "sha256": "d46982388b7631f76d1e1d1166d9e6e86aed642738be076e23aa34ae9ceb253f",
+      "head_byte_identical": true
+    },
+    {
+      "old": "hardware/case/kc2_right_lower_housing.step",
+      "new": "00_CURRENT/MODELS/kc2_right_lower_housing.step",
+      "sha256": "60f5de6a5d42716e203a39025597b9343baf55c35b698d5ace4fcb3d14928e50",
+      "head_byte_identical": true
+    },
+    {
+      "old": "hardware/case/kc2_right_lower_housing_part_a.stl",
+      "new": "00_CURRENT/MODELS/kc2_right_lower_housing_part_a.stl",
+      "sha256": "b132222007b89bca1097dc86cde2adbb50b8abff66d91f5c3090721fc1d43821",
+      "head_byte_identical": true
+    },
+    {
+      "old": "hardware/case/kc2_right_lower_housing_part_b.stl",
+      "new": "00_CURRENT/MODELS/kc2_right_lower_housing_part_b.stl",
+      "sha256": "57c5e7c04901779b3062020cbe4bc69f3faaf4ff2971ce26c7c2a96f995ca1a3",
+      "head_byte_identical": true
+    },
+    {
+      "old": "hardware/case/kc2_right_mx_upper_housing.f3d",
+      "new": "00_CURRENT/MODELS/kc2_right_mx_upper_housing.f3d",
+      "sha256": "9f54ac37e369b6ebbd5d579f482c399fb61fb105ed633c9c63921d53719f0e0d",
+      "head_byte_identical": true
+    },
+    {
+      "old": "hardware/case/kc2_right_mx_upper_housing.step",
+      "new": "00_CURRENT/MODELS/kc2_right_mx_upper_housing.step",
+      "sha256": "4e0b0561b60a26298e6944b8526657a91afa9664812f0d569026c4cfca01d279",
+      "head_byte_identical": true
+    },
+    {
+      "old": "hardware/case/kc2_right_mx_upper_housing_part_a.stl",
+      "new": "00_CURRENT/MODELS/kc2_right_mx_upper_housing_part_a.stl",
+      "sha256": "294003112d76cb1c6c04c275efb84eeab2803646df6c2e0c6945ff90ae9489ac",
+      "head_byte_identical": true
+    },
+    {
+      "old": "hardware/case/kc2_right_mx_upper_housing_part_b.stl",
+      "new": "00_CURRENT/MODELS/kc2_right_mx_upper_housing_part_b.stl",
+      "sha256": "3e2e4e4211ab3cc850d3b727638ca4409febd998310f51046d6ff46ec911fdd9",
+      "head_byte_identical": true
+    },
+    {
+      "old": "hardware/case/kc2_right_mx_upper_plan.svg",
+      "new": "00_CURRENT/MODELS/kc2_right_mx_upper_plan.svg",
+      "sha256": "68a6487a80a834c13d452b7f8ea899e2c8a4718e9e2ad3a79e473bcfcaa0b4d0",
+      "head_byte_identical": true
+    },
+    {
+      "old": "hardware/case/kc2_right_silicone_foot_layout.svg",
+      "new": "00_CURRENT/MODELS/kc2_right_silicone_foot_layout.svg",
+      "sha256": "4b2dac4e58dea07a7a631d5ab495d23c6c353602b0a09a67e6e079e7e8d86437",
+      "head_byte_identical": true
+    },
+    {
+      "old": "hardware/case/\ubc31\uc5c5/README - \ubcf5\uc0ac\ubcf8.md",
+      "new": "00_CURRENT/MODELS/\ubc31\uc5c5/README - \ubcf5\uc0ac\ubcf8.md",
+      "sha256": "111b32bd0aa90be16fa9ab005f95848e540998bd07fec54315f9e6d59e056c88",
+      "head_byte_identical": true
+    },
+    {
+      "old": "hardware/case/\ubc31\uc5c5/kc2_housing_manifest - \ubcf5\uc0ac\ubcf8.json",
+      "new": "00_CURRENT/MODELS/\ubc31\uc5c5/kc2_housing_manifest - \ubcf5\uc0ac\ubcf8.json",
+      "sha256": "6d799c779fd13dcff0ebc951892199b65b35e9f82636d8af55ae2e888dec24b0",
+      "head_byte_identical": false
+    },
+    {
+      "old": "hardware/case/\ubc31\uc5c5/kc2_left_lower_housing - \ubcf5\uc0ac\ubcf8.stl",
+      "new": "00_CURRENT/MODELS/\ubc31\uc5c5/kc2_left_lower_housing - \ubcf5\uc0ac\ubcf8.stl",
+      "sha256": "079d10e8a37e61dab020bec85eb78e62c2753381386f4e88fdd701a1a6a767c4",
+      "head_byte_identical": true
+    },
+    {
+      "old": "hardware/case/\ubc31\uc5c5/kc2_right_lower_housing - \ubcf5\uc0ac\ubcf8.stl",
+      "new": "00_CURRENT/MODELS/\ubc31\uc5c5/kc2_right_lower_housing - \ubcf5\uc0ac\ubcf8.stl",
+      "sha256": "0ded542aebb77f1d4ef401e3a66993c8c00df1bbde3f6d67e6b16321d71bd31d",
+      "head_byte_identical": true
+    },
+    {
+      "old": "hardware/kicad/first_order/solid-floor-20260907-r4/digital-validation.json",
+      "new": "00_CURRENT/GERBER/digital-validation.json",
+      "sha256": "13109c7dbb2b190df823dd52c3a4de0e5059613b07eabb78f47acc9fb9d19013",
+      "head_byte_identical": true
+    },
+    {
+      "old": "hardware/kicad/first_order/solid-floor-20260907-r4/fabrication-profile.json",
+      "new": "00_CURRENT/GERBER/fabrication-profile.json",
+      "sha256": "a8955afe47fd48d52bdcd62a0601282d5aa5ff3d4c657d2801cdfefaed254f4b",
+      "head_byte_identical": true
+    },
+    {
+      "old": "hardware/kicad/first_order/solid-floor-20260907-r4/kc2_left-manual-mx-bom.json",
+      "new": "00_CURRENT/GERBER/kc2_left-manual-mx-bom.json",
+      "sha256": "148a008e1c98327bf617f5248b21967160b7e9260bb4f5fa63764427d13e587b",
+      "head_byte_identical": true
+    },
+    {
+      "old": "hardware/kicad/first_order/solid-floor-20260907-r4/kc2_left-pcb-fabrication-only.zip",
+      "new": "00_CURRENT/GERBER/kc2_left-pcb-fabrication-only.zip",
+      "sha256": "5f4d65a3f45e4efddb093bb8909eef03ea83c54483616d0d0d52935626806811",
+      "head_byte_identical": true
+    },
+    {
+      "old": "hardware/kicad/first_order/solid-floor-20260907-r4/kc2_right-manual-mx-bom.json",
+      "new": "00_CURRENT/GERBER/kc2_right-manual-mx-bom.json",
+      "sha256": "553cf83b235cb798d661c6057845c33fda46d0de5f56a543f02f0de6c8a2e387",
+      "head_byte_identical": true
+    },
+    {
+      "old": "hardware/kicad/first_order/solid-floor-20260907-r4/kc2_right-pcb-fabrication-only.zip",
+      "new": "00_CURRENT/GERBER/kc2_right-pcb-fabrication-only.zip",
+      "sha256": "bfeb90e32a9dc7dd73c8b3ace95cf3cd7601e220daa7eefbdd51e2e940cf397c",
+      "head_byte_identical": true
+    },
+    {
+      "old": "hardware/kicad/first_order/solid-floor-20260907-r4/manifest.json",
+      "new": "00_CURRENT/GERBER/manifest.json",
+      "sha256": "2906bf329030840634a5cee1c53c74dd8efb1a70226d1fdc24b66156f693dc92",
+      "head_byte_identical": true
+    },
+    {
+      "old": "hardware/kicad/first_order/solid-floor-20260907-r4/review-evidence.json",
+      "new": "00_CURRENT/GERBER/review-evidence.json",
+      "sha256": "8fb871f17bb5ce284bdc2b507d0379a84175642d5d382ca5a7659b1cd15a0c5b",
+      "head_byte_identical": true
+    },
+    {
+      "old": "hardware/kicad/kc2_left/fp-lib-table",
+      "new": "00_CURRENT/PCB/kc2_left/fp-lib-table",
+      "sha256": "e0814783a2bb96ee5b1e2567ba810e926c35aaf1725dd3cd4e71c93f426bf988",
+      "head_byte_identical": false
+    },
+    {
+      "old": "hardware/kicad/kc2_left/kc2_left.drc.json",
+      "new": "00_CURRENT/PCB/kc2_left/kc2_left.drc.json",
+      "sha256": "2d585babf6b447a398b2403366bbd244ccb54443251c9bb5dc465308cb1cbcdb",
+      "head_byte_identical": true
+    },
+    {
+      "old": "hardware/kicad/kc2_left/kc2_left.kicad_pcb",
+      "new": "00_CURRENT/PCB/kc2_left/kc2_left.kicad_pcb",
+      "sha256": "568e1427e4cfb9d667b6d5b3754da3a4e24c924abfa85a8dfe394dd050b5fe67",
+      "head_byte_identical": true
+    },
+    {
+      "old": "hardware/kicad/kc2_left/kc2_left.kicad_prl",
+      "new": "00_CURRENT/PCB/kc2_left/kc2_left.kicad_prl",
+      "sha256": "ce47aa48f7c374d6a96c376493fc8caa89f8f764d9c12492720832af2b821d39",
+      "head_byte_identical": false
+    },
+    {
+      "old": "hardware/kicad/kc2_left/kc2_left.kicad_pro",
+      "new": "00_CURRENT/PCB/kc2_left/kc2_left.kicad_pro",
+      "sha256": "13b909741bde6823ca1adf1f86600afd1c6f7caf5c13130e16ba2a84aa301c92",
+      "head_byte_identical": true
+    },
+    {
+      "old": "hardware/kicad/kc2_right/fp-lib-table",
+      "new": "00_CURRENT/PCB/kc2_right/fp-lib-table",
+      "sha256": "e0814783a2bb96ee5b1e2567ba810e926c35aaf1725dd3cd4e71c93f426bf988",
+      "head_byte_identical": false
+    },
+    {
+      "old": "hardware/kicad/kc2_right/kc2_right.drc.json",
+      "new": "00_CURRENT/PCB/kc2_right/kc2_right.drc.json",
+      "sha256": "8d7e1aa5420af4b1eb33803305115bd47d00828712268acddf629873de547ebf",
+      "head_byte_identical": true
+    },
+    {
+      "old": "hardware/kicad/kc2_right/kc2_right.kicad_pcb",
+      "new": "00_CURRENT/PCB/kc2_right/kc2_right.kicad_pcb",
+      "sha256": "88290c3b0cf3951d56221d216549665c0576a816a6315012f7f12b027f402577",
+      "head_byte_identical": true
+    },
+    {
+      "old": "hardware/kicad/kc2_right/kc2_right.kicad_prl",
+      "new": "00_CURRENT/PCB/kc2_right/kc2_right.kicad_prl",
+      "sha256": "1cecefa7a0d4057fd3d069fd985d3f0213879791977ddfc70a1d7d396a06f6ed",
+      "head_byte_identical": false
+    },
+    {
+      "old": "hardware/kicad/kc2_right/kc2_right.kicad_pro",
+      "new": "00_CURRENT/PCB/kc2_right/kc2_right.kicad_pro",
+      "sha256": "31371aebc73784336fb184c6e7b9bafc9edb1a10efeee1a880a18a6fc9fcaa95",
+      "head_byte_identical": true
+    }
+  ],
+  "physical_qualification_complete": false
+}

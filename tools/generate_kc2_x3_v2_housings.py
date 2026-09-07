@@ -1069,6 +1069,9 @@ def build_plan_geometry(shp: dict[str, Any], side: str, board_data: dict[str, An
         COMPONENT_CUTOUT_SIMPLIFY_MM,
         preserve_topology=True,
     )
+    # Simplification may chord across concave outline segments. Keep every
+    # printed support layer inside its continuous floor, including split parts.
+    support_surface = support_surface.intersection(housing_outline)
     # Edge-adjacent component apertures can leave tiny disconnected slivers of
     # the inset outline. They cannot carry load or form a printable one-piece
     # plate, so retain only the connected primary support body.
@@ -1471,10 +1474,20 @@ def choose_support_posts(
 
 
 def _polygon_workplane(cq: Any, polygon: Any) -> Any:
-    outer = [(float(x), float(y)) for x, y in list(polygon.exterior.coords)[:-1]]
+    def vertices(ring):
+        # GEOS clipping can retain consecutive vertices below OCC's1e-7 mm
+        # edge tolerance. Drop only these degenerate edges, not relief detail.
+        points=[]
+        for x,y in list(ring.coords)[:-1]:
+            point=(float(x),float(y))
+            if not points or math.dist(points[-1],point)>1e-7:points.append(point)
+        if len(points)>1 and math.dist(points[-1],points[0])<=1e-7:points.pop()
+        if len(points)<3:raise ValueError('Polygon collapsed below CAD edge tolerance')
+        return points
+    outer = vertices(polygon.exterior)
     workplane = cq.Workplane("XY").polyline(outer).close()
     for ring in polygon.interiors:
-        workplane = workplane.polyline([(float(x), float(y)) for x, y in list(ring.coords)[:-1]]).close()
+        workplane = workplane.polyline(vertices(ring)).close()
     return workplane
 
 
@@ -1502,7 +1515,11 @@ def build_cad(cq: Any, shp: dict[str, Any], plan: dict[str, Any]) -> Any:
     # Extrude the already-differenced support surface directly. This produces
     # the same exterior-open component apertures without an expensive sequence
     # of hundreds of 3D boolean cuts.
-    housing = _extrude_geometry(cq, plan["support_surface"], HOUSING_HEIGHT_MM)
+    # Extend the structural web to the floor; retain its component cutouts.
+    # The former isolated feet left a1mm horizontal print gap under the web.
+    housing = _extrude_geometry(cq, plan["support_surface"],
+                                HOUSING_HEIGHT_MM - CLOSED_FLOOR_TOP_Z_MM,
+                                CLOSED_FLOOR_TOP_Z_MM)
     if housing is None:
         raise RuntimeError("component cutouts removed the entire housing support surface")
     feet = _extrude_geometry(
@@ -1532,6 +1549,7 @@ def closed_floor_parameters() -> dict[str, Any]:
     """The old desk-foot datum is now an internal column/floor junction."""
     return dict(top_z_mm=CLOSED_FLOOR_TOP_Z_MM,bottom_z_mm=CLOSED_FLOOR_BOTTOM_Z_MM,
         thickness_mm=CLOSED_FLOOR_THICKNESS_MM,continuous_per_part=True,
+        support_web_bottom_z_mm=-1.0,unsupported_web_gap_mm=0.0,
         maximum_component_projection_mm=2.9,nominal_projection_clearance_mm=.6,
         print_allowance_mm=.3,residual_clearance_mm=.3,
         nominal_clearance_by_component_mm={'choc_socket':1.1,'diode':1.85,'hat_socket':2.3},

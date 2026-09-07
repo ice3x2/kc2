@@ -1,0 +1,248 @@
+{
+  "generated_by": "tools/generate_kc2_housings.py",
+  "kicad_python": "C:\\Program Files\\KiCad\\10.0\\bin\\python.exe",
+  "parameters": {
+    "design_style": "hollow_one_piece_tray",
+    "outline_inset_mm": 0.1,
+    "rail_inset_mm": 0.3,
+    "rail_width_mm": 2.0,
+    "outer_wall_width_mm": 2.4,
+    "floor_thickness_mm": 1.2,
+    "bottom_component_clearance_mm": 3.2,
+    "pcb_thickness_mm": 1.6,
+    "support_post_diameter_mm": 4.8,
+    "registration_peg_diameter_mm": 2.7,
+    "peg_top_below_pcb_top_mm": 0.3,
+    "battery_slot_clearance_mm": 0.7,
+    "battery_floor_cutout_enabled": false,
+    "bottom_corner_radius_mm": 0.8,
+    "bottom_edge_radius_mm": 0.8,
+    "front_height_mm": 4.4,
+    "rear_height_mm": 7.48,
+    "rear_height_ratio": 1.7,
+    "rear_rise_mm": 3.08
+  },
+  "assumptions": [
+    "FDM PLA+ screwless lower housing using a hollow one-piece tray shell.",
+    "Housing perimeter is kept inside the PCB outline to avoid joined-edge interference.",
+    "The outside wall is continuous from the bottom face to the PCB support height without an external stacked step.",
+    "PCB bottom is supported by a 2.4 mm continuous outer wall ledge and nine REG_NPTH posts.",
+    "2.70 mm registration pegs fit into 3.0 mm PCB NPTH holes with FDM clearance.",
+    "The lower housing floor stays closed below the PCB battery-lead slot; the PCB slot remains available inside the tray.",
+    "The controller/USB side height is 1.70x the front edge height.",
+    "Front height is 4.40 mm and controller-side height is 7.48 mm.",
+    "The bottom outline uses an explicit 0.80 mm rounded-corner smoothing pass.",
+    "The lower outside edge uses an explicit 0.80 mm rounded bevel from the bottom face to the side wall.",
+    "Bottom component cavity is 3.20 mm from floor top to PCB underside, covering Choc hot-swap sockets and SOD-123 diodes as a first-pass clearance."
+  ],
+  "outputs": {
+    "left": {
+      "stl": "hardware\\case\\kc2_left_lower_housing.stl",
+      "source_board": "hardware\\kicad\\kc2_left\\kc2_left.kicad_pcb",
+      "source_bounds_mm": [
+        35.0,
+        35.0,
+        180.7125,
+        167.25
+      ],
+      "stl_translation_mm": [
+        -35.0,
+        -35.0
+      ],
+      "output_bounds_xy_mm": [
+        0.09999999999999998,
+        0.09999999999999998,
+        145.6125,
+        132.15
+      ],
+      "registration_holes": [
+        {
+          "ref": "REG1",
+          "x": 28.03,
+          "y": 67.03,
+          "drill_mm": 3.0
+        },
+        {
+          "ref": "REG2",
+          "x": 89.71,
+          "y": 56.03,
+          "drill_mm": 3.0
+        },
+        {
+          "ref": "REG3",
+          "x": 110.4,
+          "y": 55.53,
+          "drill_mm": 3.0
+        },
+        {
+          "ref": "REG4",
+          "x": 31.53,
+          "y": 87.93,
+          "drill_mm": 3.0
+        },
+        {
+          "ref": "REG5",
+          "x": 74.21,
+          "y": 87.93,
+          "drill_mm": 3.0
+        },
+        {
+          "ref": "REG6",
+          "x": 111.9,
+          "y": 87.93,
+          "drill_mm": 3.0
+        },
+        {
+          "ref": "REG7",
+          "x": 26.520000000000003,
+          "y": 116.32,
+          "drill_mm": 3.0
+        },
+        {
+          "ref": "REG8",
+          "x": 74.21,
+          "y": 116.32,
+          "drill_mm": 3.0
+        },
+        {
+          "ref": "REG9",
+          "x": 102.4,
+          "y": 107.32,
+          "drill_mm": 3.0
+        }
+      ],
+      "battery_slot": {
+        "ref": "BAT_LEAD_SLOT1",
+        "x": 119.08250000000001,
+        "y": 14.0,
+        "size_x_mm": 3.6,
+        "size_y_mm": 2.2,
+        "angle_deg": 0.0,
+        "clearance_mm": 0.7,
+        "housing_floor_cutout": false
+      },
+      "height_profile": {
+        "front_edge_y_mm": 132.25,
+        "rear_controller_edge_y_mm": 0.0,
+        "front_height_mm": 4.4,
+        "rear_height_mm": 7.48,
+        "rear_height_ratio": 1.7,
+        "rear_rise_mm": 3.08
+      },
+      "interior_cavity": {
+        "open_above_floor": true,
+        "outer_wall_width_mm": 2.4,
+        "floor_top_front_mm": 1.2,
+        "outer_area_mm2": 15900.289759569925,
+        "open_area_mm2": 14565.409087628841,
+        "open_area_ratio": 0.916046770711354,
+        "external_step_mm": 0.0
+      },
+      "facet_count": 14030
+    },
+    "right": {
+      "stl": "hardware\\case\\kc2_right_lower_housing.stl",
+      "source_board": "hardware\\kicad\\kc2_right\\kc2_right.kicad_pcb",
+      "source_bounds_mm": [
+        35.0,
+        35.0,
+        228.3375,
+        167.25
+      ],
+      "stl_translation_mm": [
+        -35.0,
+        -35.0
+      ],
+      "output_bounds_xy_mm": [
+        0.09999999999999998,
+        0.09999999999999998,
+        193.2375,
+        132.15
+      ],
+      "registration_holes": [
+        {
+          "ref": "REG1",
+          "x": 68.12,
+          "y": 49.53,
+          "drill_mm": 3.0
+        },
+        {
+          "ref": "REG2",
+          "x": 106.69,
+          "y": 49.03,
+          "drill_mm": 3.0
+        },
+        {
+          "ref": "REG3",
+          "x": 165.75,
+          "y": 60.53,
+          "drill_mm": 3.0
+        },
+        {
+          "ref": "REG4",
+          "x": 19.380000000000003,
+          "y": 92.17,
+          "drill_mm": 3.0
+        },
+        {
+          "ref": "REG5",
+          "x": 96.69,
+          "y": 90.93,
+          "drill_mm": 3.0
+        },
+        {
+          "ref": "REG6",
+          "x": 165.25,
+          "y": 86.93,
+          "drill_mm": 3.0
+        },
+        {
+          "ref": "REG7",
+          "x": 19.880000000000003,
+          "y": 109.57,
+          "drill_mm": 3.0
+        },
+        {
+          "ref": "REG8",
+          "x": 111.19,
+          "y": 106.82,
+          "drill_mm": 3.0
+        },
+        {
+          "ref": "REG9",
+          "x": 170.75,
+          "y": 95.32,
+          "drill_mm": 3.0
+        }
+      ],
+      "battery_slot": {
+        "ref": "BAT_LEAD_SLOT1",
+        "x": 31.629998999999998,
+        "y": 14.0,
+        "size_x_mm": 3.6,
+        "size_y_mm": 2.2,
+        "angle_deg": 0.0,
+        "clearance_mm": 0.7,
+        "housing_floor_cutout": false
+      },
+      "height_profile": {
+        "front_edge_y_mm": 132.25,
+        "rear_controller_edge_y_mm": 0.0,
+        "front_height_mm": 4.4,
+        "rear_height_mm": 7.48,
+        "rear_height_ratio": 1.7,
+        "rear_rise_mm": 3.08
+      },
+      "interior_cavity": {
+        "open_above_floor": true,
+        "outer_wall_width_mm": 2.4,
+        "floor_top_front_mm": 1.2,
+        "outer_area_mm2": 20653.285768269354,
+        "open_area_mm2": 19135.12884678908,
+        "open_area_ratio": 0.9264932012022663,
+        "external_step_mm": 0.0
+      },
+      "facet_count": 14134
+    }
+  }
+}

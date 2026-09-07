@@ -22,3 +22,9 @@ firmware/out/
 *.bak-*
 *.kicad_prl
 /tmp*/
+
+# Recreated local compatibility links; real files live in hardware/PCB, GERBER, MODELS
+/hardware/kicad/kc2_left
+/hardware/kicad/kc2_right
+/hardware/case
+/hardware/kicad/first_order/solid-floor-20260907-r4

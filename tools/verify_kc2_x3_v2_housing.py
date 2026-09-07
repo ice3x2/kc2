@@ -298,6 +298,26 @@ def _collision_result(contact: Any, feature: Any) -> dict[str, Any]:
     }
 
 
+def inspect_web_continuity(cq, model, web_mask, pilot_mask=None):
+    # Full-depth inclusion, excluding only the deliberately top-open pilots.
+    print('Building full-depth support inclusion envelope', flush=True)
+    expected=generator._extrude_geometry(cq,web_mask,3.5,-1.0)
+    if pilot_mask is not None and not pilot_mask.is_empty:
+        print('Subtracting top-open pilot envelopes', flush=True)
+        masks=[pilot_mask] if pilot_mask.geom_type=='Polygon' else list(pilot_mask.geoms)
+        cutters=[]
+        for mask in masks:
+            center=mask.centroid
+            # SRS blind bore is analytic diameter1.10, not an inscribed polygon.
+            cutters.append(cq.Workplane('XY',origin=(center.x,center.y,-.3)).circle(.55).extrude(2.8).val())
+        expected=expected.cut(cq.Workplane(obj=cq.Compound.makeCompound(cutters)))
+    print('Comparing full-depth support against actual STEP', flush=True)
+    missing=sum(float(s.Volume()) for s in expected.cut(model).solids().vals())
+    print(f'Full-depth missing volume: {missing:.9f} mm3', flush=True)
+    return {'z_range_mm':[-1.0,2.5],'missing_volume_mm3':missing,
+            'continuous':missing<=.01}
+
+
 def inspect_closed_floor_part(cq, model, mask, bonding_centers):
     """Independent full-volume inclusion proves no hidden floor hole or thin patch.
 
@@ -446,6 +466,7 @@ def analyze_v2_housing() -> dict[str, Any]:
             centers = record.get('silicone_feet', {}).get('centers_xy_mm', [])
             floor_checks.append(inspect_closed_floor_part(cq, actual, mask, centers))
         expected_floor_volume = sum(mask.area * 1.2 for mask in floor_masks)
+        web_continuity = inspect_web_continuity(cq,step_model,expected_contact,plan['mounting_pilot_geometry'])
         expected_mounting = generator.mounting_system_manifest(
             shp,
             side,
@@ -457,9 +478,8 @@ def analyze_v2_housing() -> dict[str, Any]:
             expected_contact
         )
         expected_step_volume = (
-            float(expected_contact.area) * generator.HOUSING_HEIGHT_MM
+            float(expected_contact.area) * (generator.HOUSING_HEIGHT_MM-generator.CLOSED_FLOOR_TOP_Z_MM)
             + expected_floor_volume
-            + float(expected_desk_contact_geometry.area) * generator.DESK_STANDOFF_NOMINAL_MM
             - float(expected_pilot_geometry.area) * generator.MOUNTING_PILOT_DEPTH_MM
         )
         # Subtract the independently planned underside-contact volume before
@@ -471,12 +491,10 @@ def analyze_v2_housing() -> dict[str, Any]:
             else (
                 step_volume
                 - expected_floor_volume
-                - float(expected_desk_contact_geometry.area)
-                * generator.DESK_STANDOFF_NOMINAL_MM
                 + float(expected_pilot_geometry.area)
                 * generator.MOUNTING_PILOT_DEPTH_MM
             )
-            / generator.HOUSING_HEIGHT_MM
+            / (generator.HOUSING_HEIGHT_MM-generator.CLOSED_FLOOR_TOP_Z_MM)
         )
         actual_contact_area = actual_support_surface_area - float(
             expected_pilot_geometry.area
@@ -826,6 +844,7 @@ def analyze_v2_housing() -> dict[str, Any]:
             },
             "exterior_bottom_z_mm": -2.2,
             "closed_floor": floor_checks,
+            "web_continuity": web_continuity,
             "desk_contact_role": "internal_support_columns_ending_at_floor_top",
             "housing_height_mm": generator.HOUSING_HEIGHT_MM,
             "desk_standoff_nominal_mm": float(output["desk_standoff_nominal_mm"]),
@@ -988,6 +1007,8 @@ def verify_report(report: dict[str, Any]) -> list[str]:
         errors.append("order-readiness blocker does not enumerate the full AC-7 physical coupon gate")
     for side in ("left", "right"):
         data = report["sides"][side]
+        if not data.get('web_continuity',{}).get('continuous'):
+            errors.append(f'{side}: unsupported support-web air gap remains')
         if not data["source_board_sha256_matches"]:
             errors.append(f"{side}: stale source board SHA")
         if data["legacy_registration_refs"]:

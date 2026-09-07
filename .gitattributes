@@ -1,5 +1,16 @@
 # OPS-ARCH-007: sealed release inputs retain raw SHA-256 across platforms.
 # Do not renormalize these paths; regenerate review evidence if bytes change.
+/hardware/PCB/** -text
+/hardware/GERBER/** -text
+/hardware/MODELS/** -text
+/docs/reports/continuous-web-20260908-r5/** -text
+/docs/reports/magnetic-20260908/** -text
+/tools/*magnetic*.py -text
+/tools/fusion/KC2MagneticToF3D/** -text
+/tools/audit_kc2_continuous_web.py -text
+/tools/collect_kc2_continuous_web_evidence.py -text
+/tools/test_kc2_continuous_web.py -text
+/tools/test_kc2_housing_audit_budget.py -text
 /hardware/kicad/first_order/** -text
 /docs/reports/solid-floor-20260907-r4/** -text
 /docs/reports/kc2-solid-floor-* -text
@@ -10,6 +21,7 @@
 /tools/fusion/KC2StepToF3D/KC2StepToF3D.py -text
 /order.md -text
 /hardware/case/adapters/manifest.json -text
+/00_CURRENT/** -text
 /docs/reports/kc2-selected-component-source-closure-2026-09-06.md -text
 /docs/reports/kc2-v1-documentation-regression-2026-09-06.md -text
 /docs/reports/kc2-v1-locator-revision-2026-09-06.md -text

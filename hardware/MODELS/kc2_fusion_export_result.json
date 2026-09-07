@@ -1,0 +1,391 @@
+{
+  "status": "pass",
+  "fusion_version": "2603.1.52",
+  "requirement": "CON-ARCH-006",
+  "assembly_mode": "mx_receptacle_with_plate",
+  "order_ready": false,
+  "outputs": {
+    "left_lower": {
+      "source_step": "hardware\\case\\kc2_left_lower_housing.step",
+      "source_step_sha256": "277a734905e1d8705ba0bc56a7deee965fc65f4ada904aa5c9aeed524ff6c511",
+      "f3d": "hardware\\case\\kc2_left_lower_housing.f3d",
+      "f3d_sha256": "4846c41f04d3b0d78e59d37e2a03631000266389c8ff3598b8bf8c98c98537ba",
+      "body_count": 1,
+      "bounding_box_mm": [
+        0.10000000000000002,
+        0.10000000000000002,
+        -2.2,
+        135.0125,
+        122.40000000000002,
+        2.5
+      ],
+      "body_bounding_boxes_mm": [
+        [
+          0.10000000000000002,
+          0.10000000000000002,
+          -2.2,
+          135.0125,
+          122.40000000000002,
+          2.5
+        ]
+      ],
+      "export_ok": true,
+      "archive_size_bytes": 3331596,
+      "archive_reimport_body_count": 1,
+      "archive_reimport_bounding_box_mm": [
+        0.10000000000000002,
+        0.10000000000000002,
+        -2.2,
+        135.0125,
+        122.40000000000002,
+        2.5
+      ],
+      "archive_reimport_body_bounding_boxes_mm": [
+        [
+          0.10000000000000002,
+          0.10000000000000002,
+          -2.2,
+          135.0125,
+          122.40000000000002,
+          2.5
+        ]
+      ],
+      "archive_reimport_body_names": [
+        "KC2 Left Lower Housing"
+      ],
+      "source_solids": [
+        {
+          "bounds_mm": [
+            0.10000000000000002,
+            0.10000000000000002,
+            -2.2,
+            135.0125,
+            122.40000000000002,
+            2.5
+          ],
+          "volume_mm3": 39989.49462484402
+        }
+      ],
+      "archive_reimport_solids": [
+        {
+          "bounds_mm": [
+            0.10000000000000002,
+            0.10000000000000002,
+            -2.2,
+            135.0125,
+            122.40000000000002,
+            2.5
+          ],
+          "volume_mm3": 39989.49462484402
+        }
+      ],
+      "solid_round_trip_verified": true
+    },
+    "right_lower": {
+      "source_step": "hardware\\case\\kc2_right_lower_housing.step",
+      "source_step_sha256": "2c17a7eb9ac23de46861af250c95ade328d4f98d6e73216c78926459f76817e5",
+      "f3d": "hardware\\case\\kc2_right_lower_housing.f3d",
+      "f3d_sha256": "c3cb577a52f8ebf7068f3f32554139ee52af64aa16c37447c9d36275287c439d",
+      "body_count": 2,
+      "bounding_box_mm": [
+        0.10000000000000002,
+        0.10000000000000002,
+        -2.2,
+        163.5875,
+        122.40000000000002,
+        2.5
+      ],
+      "body_bounding_boxes_mm": [
+        [
+          0.10000000000000002,
+          30.35,
+          -2.2,
+          87.09375,
+          122.40000000000002,
+          2.5
+        ],
+        [
+          81.94375,
+          0.10000000000000002,
+          -2.2,
+          163.5875,
+          122.40000000000002,
+          2.5
+        ]
+      ],
+      "export_ok": true,
+      "archive_size_bytes": 4410334,
+      "archive_reimport_body_count": 2,
+      "archive_reimport_bounding_box_mm": [
+        0.10000000000000002,
+        0.10000000000000002,
+        -2.2,
+        163.5875,
+        122.40000000000002,
+        2.5
+      ],
+      "archive_reimport_body_bounding_boxes_mm": [
+        [
+          0.10000000000000002,
+          30.35,
+          -2.2,
+          87.09375,
+          122.40000000000002,
+          2.5
+        ],
+        [
+          81.94375,
+          0.10000000000000002,
+          -2.2,
+          163.5875,
+          122.40000000000002,
+          2.5
+        ]
+      ],
+      "archive_reimport_body_names": [
+        "KC2 Right Lower Housing Part 1",
+        "KC2 Right Lower Housing Part 2"
+      ],
+      "source_solids": [
+        {
+          "bounds_mm": [
+            0.10000000000000002,
+            30.35,
+            -2.2,
+            87.09375,
+            122.40000000000002,
+            2.5
+          ],
+          "volume_mm3": 22490.47740174192
+        },
+        {
+          "bounds_mm": [
+            81.94375,
+            0.10000000000000002,
+            -2.2,
+            163.5875,
+            122.40000000000002,
+            2.5
+          ],
+          "volume_mm3": 23333.21531966386
+        }
+      ],
+      "archive_reimport_solids": [
+        {
+          "bounds_mm": [
+            0.10000000000000002,
+            30.35,
+            -2.2,
+            87.09375,
+            122.40000000000002,
+            2.5
+          ],
+          "volume_mm3": 22490.47740174192
+        },
+        {
+          "bounds_mm": [
+            81.94375,
+            0.10000000000000002,
+            -2.2,
+            163.5875,
+            122.40000000000002,
+            2.5
+          ],
+          "volume_mm3": 23333.21531966386
+        }
+      ],
+      "solid_round_trip_verified": true
+    },
+    "left_mx_upper": {
+      "source_step": "hardware\\case\\kc2_left_mx_upper_housing.step",
+      "source_step_sha256": "6101f3858db718089e42cd15892c398de45f70865e0c3a33e3639bf8ca45a1b6",
+      "f3d": "hardware\\case\\kc2_left_mx_upper_housing.f3d",
+      "f3d_sha256": "35cc710b4727b174b94f3d406420922da3ab0e0807dc4a75c36d1c142a7964b1",
+      "body_count": 1,
+      "bounding_box_mm": [
+        0.10000000000000002,
+        0.10000000000000002,
+        4.1,
+        135.0125,
+        122.40000000000002,
+        9.3
+      ],
+      "body_bounding_boxes_mm": [
+        [
+          0.10000000000000002,
+          0.10000000000000002,
+          4.1,
+          135.0125,
+          122.40000000000002,
+          9.3
+        ]
+      ],
+      "export_ok": true,
+      "archive_size_bytes": 3163417,
+      "archive_reimport_body_count": 1,
+      "archive_reimport_bounding_box_mm": [
+        0.10000000000000002,
+        0.10000000000000002,
+        4.1,
+        135.0125,
+        122.40000000000002,
+        9.3
+      ],
+      "archive_reimport_body_bounding_boxes_mm": [
+        [
+          0.10000000000000002,
+          0.10000000000000002,
+          4.1,
+          135.0125,
+          122.40000000000002,
+          9.3
+        ]
+      ],
+      "archive_reimport_body_names": [
+        "KC2 Left Mx Upper Housing"
+      ],
+      "source_solids": [
+        {
+          "bounds_mm": [
+            0.10000000000000002,
+            0.10000000000000002,
+            4.1,
+            135.0125,
+            122.40000000000002,
+            9.3
+          ],
+          "volume_mm3": 9872.361504237537
+        }
+      ],
+      "archive_reimport_solids": [
+        {
+          "bounds_mm": [
+            0.10000000000000002,
+            0.10000000000000002,
+            4.1,
+            135.0125,
+            122.40000000000002,
+            9.3
+          ],
+          "volume_mm3": 9872.361504237537
+        }
+      ],
+      "solid_round_trip_verified": true
+    },
+    "right_mx_upper": {
+      "source_step": "hardware\\case\\kc2_right_mx_upper_housing.step",
+      "source_step_sha256": "89d16e0c4361ee8424ca6e013024a5c3ff5b74ea7a9550f56225522593984567",
+      "f3d": "hardware\\case\\kc2_right_mx_upper_housing.f3d",
+      "f3d_sha256": "fffa4be721a144231d3f86d09b07d9c1ec003d1f558d330c8ba1b079c52c4e45",
+      "body_count": 2,
+      "bounding_box_mm": [
+        0.10000000000000002,
+        0.10000000000000002,
+        4.1,
+        163.5875,
+        122.40000000000002,
+        9.3
+      ],
+      "body_bounding_boxes_mm": [
+        [
+          0.10000000000000002,
+          30.35,
+          4.1,
+          88.8875,
+          122.40000000000002,
+          9.3
+        ],
+        [
+          73.500053569934,
+          0.10000000000000002,
+          4.1,
+          163.5875,
+          122.40000000000002,
+          9.3
+        ]
+      ],
+      "export_ok": true,
+      "archive_size_bytes": 3807135,
+      "archive_reimport_body_count": 2,
+      "archive_reimport_bounding_box_mm": [
+        0.10000000000000002,
+        0.10000000000000002,
+        4.1,
+        163.5875,
+        122.40000000000002,
+        9.3
+      ],
+      "archive_reimport_body_bounding_boxes_mm": [
+        [
+          0.10000000000000002,
+          30.35,
+          4.1,
+          88.8875,
+          122.40000000000002,
+          9.3
+        ],
+        [
+          73.500053569934,
+          0.10000000000000002,
+          4.1,
+          163.5875,
+          122.40000000000002,
+          9.3
+        ]
+      ],
+      "archive_reimport_body_names": [
+        "KC2 Right Mx Upper Housing Part 1",
+        "KC2 Right Mx Upper Housing Part 2"
+      ],
+      "source_solids": [
+        {
+          "bounds_mm": [
+            0.10000000000000002,
+            30.35,
+            4.1,
+            88.8875,
+            122.40000000000002,
+            9.3
+          ],
+          "volume_mm3": 5377.763631512445
+        },
+        {
+          "bounds_mm": [
+            73.500053569934,
+            0.10000000000000002,
+            4.1,
+            163.5875,
+            122.40000000000002,
+            9.3
+          ],
+          "volume_mm3": 5718.137319742888
+        }
+      ],
+      "archive_reimport_solids": [
+        {
+          "bounds_mm": [
+            0.10000000000000002,
+            30.35,
+            4.1,
+            88.8875,
+            122.40000000000002,
+            9.3
+          ],
+          "volume_mm3": 5377.763631512445
+        },
+        {
+          "bounds_mm": [
+            73.500053569934,
+            0.10000000000000002,
+            4.1,
+            163.5875,
+            122.40000000000002,
+            9.3
+          ],
+          "volume_mm3": 5718.137319742888
+        }
+      ],
+      "solid_round_trip_verified": true
+    }
+  }
+}
