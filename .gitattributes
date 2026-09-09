@@ -3,6 +3,13 @@
 /hardware/PCB/** -text
 /hardware/GERBER/** -text
 /hardware/MODELS/** -text
+/docs/reports/enclosed-housing-20260909/** -text
+/tools/*enclos*.py -text
+/tools/historical_housing_test_fixture.py -text
+/tools/test_kc2_current_layout.py -text
+/README.md -text
+/hardware/README.md -text
+/tools/fusion/KC2EnclosedToF3D/** -text
 /docs/reports/continuous-web-20260908-r5/** -text
 /docs/reports/magnetic-20260908/** -text
 /tools/*magnetic*.py -text

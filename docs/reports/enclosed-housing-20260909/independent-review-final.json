@@ -1,0 +1,225 @@
+{
+  "requirements": [
+    "CON-ARCH-006",
+    "CON-ARCH-007",
+    "OPS-ARCH-006"
+  ],
+  "errors": [],
+  "findings": [
+    {
+      "status": "resolved_by_cad_revision",
+      "issue": "Initial USB approach blocked; final10.2mm clear corridor retains receiver collars. Conditional nominal cable width maximum9.6mm; supplied cable unqualified."
+    }
+  ],
+  "sides": {
+    "left": {
+      "meshes": {
+        "kc2_left_lower_housing.stl": {
+          "watertight": true,
+          "bodies": 1,
+          "within_150_mm": true,
+          "bounds": [
+            [
+              -1.1020907163619995,
+              -1.1020907163619995,
+              -2.200000047683716
+            ],
+            [
+              136.21458435058594,
+              123.87709045410156,
+              4.099999904632568
+            ]
+          ]
+        },
+        "kc2_left_lower_housing_magnetic.stl": {
+          "watertight": true,
+          "bodies": 1,
+          "within_150_mm": true,
+          "bounds": [
+            [
+              -1.1020907163619995,
+              -1.1020907163619995,
+              -2.200000047683716
+            ],
+            [
+              136.21458435058594,
+              123.87709045410156,
+              4.099999904632568
+            ]
+          ]
+        },
+        "kc2_left_mx_upper_housing.stl": {
+          "watertight": true,
+          "bodies": 1,
+          "within_150_mm": true,
+          "bounds": [
+            [
+              -1.1020907163619995,
+              -1.1020907163619995,
+              4.099999904632568
+            ],
+            [
+              136.21458435058594,
+              123.87709045410156,
+              9.300000190734863
+            ]
+          ]
+        }
+      },
+      "service_intersection_volumes_mm3": {
+        "usb_10_198mm_corridor_nominal_cable_max_9_6mm": 0.0,
+        "power_outward_3_998mm_nail_corridor": 0.0,
+        "power_full_sweep_vertical": 0.0,
+        "reset_3mm_vertical_probe": 0.0,
+        "driver_MH1": 0.0,
+        "driver_MH2": 0.0,
+        "driver_MH3": 0.0,
+        "driver_MH4": 0.0,
+        "driver_MH5": 0.0,
+        "driver_MH6": 0.0,
+        "driver_MH7": 0.0,
+        "driver_MH8": 0.0
+      }
+    },
+    "right": {
+      "meshes": {
+        "kc2_right_lower_housing_part_a.stl": {
+          "watertight": true,
+          "bodies": 1,
+          "within_150_mm": true,
+          "bounds": [
+            [
+              -1.1020907163619995,
+              29.14790916442871,
+              -2.200000047683716
+            ],
+            [
+              87.09375,
+              123.87709045410156,
+              4.099999904632568
+            ]
+          ]
+        },
+        "kc2_right_lower_housing_part_a_magnetic.stl": {
+          "watertight": true,
+          "bodies": 1,
+          "within_150_mm": true,
+          "bounds": [
+            [
+              -1.1020907163619995,
+              29.14790916442871,
+              -2.200000047683716
+            ],
+            [
+              87.09375,
+              123.87709045410156,
+              4.099999904632568
+            ]
+          ]
+        },
+        "kc2_right_lower_housing_part_b.stl": {
+          "watertight": true,
+          "bodies": 1,
+          "within_150_mm": true,
+          "bounds": [
+            [
+              81.9437484741211,
+              -1.1020907163619995,
+              -2.200000047683716
+            ],
+            [
+              164.7895965576172,
+              123.87709045410156,
+              4.099999904632568
+            ]
+          ]
+        },
+        "kc2_right_lower_housing_part_b_magnetic.stl": {
+          "watertight": true,
+          "bodies": 1,
+          "within_150_mm": true,
+          "bounds": [
+            [
+              81.9437484741211,
+              -1.1020907163619995,
+              -2.200000047683716
+            ],
+            [
+              164.7895965576172,
+              123.87709045410156,
+              4.099999904632568
+            ]
+          ]
+        },
+        "kc2_right_mx_upper_housing_part_a.stl": {
+          "watertight": true,
+          "bodies": 1,
+          "within_150_mm": true,
+          "bounds": [
+            [
+              -1.1020907163619995,
+              29.14790916442871,
+              4.099999904632568
+            ],
+            [
+              88.88749694824219,
+              123.87709045410156,
+              9.300000190734863
+            ]
+          ]
+        },
+        "kc2_right_mx_upper_housing_part_b.stl": {
+          "watertight": true,
+          "bodies": 1,
+          "within_150_mm": true,
+          "bounds": [
+            [
+              73.50005340576172,
+              -1.1020907163619995,
+              4.099999904632568
+            ],
+            [
+              164.7895965576172,
+              123.87709045410156,
+              9.300000190734863
+            ]
+          ]
+        }
+      },
+      "service_intersection_volumes_mm3": {
+        "usb_10_198mm_corridor_nominal_cable_max_9_6mm": 0.0,
+        "power_outward_3_998mm_nail_corridor": 0.0,
+        "power_full_sweep_vertical": 0.0,
+        "reset_3mm_vertical_probe": 0.0,
+        "driver_MH1": 0.0,
+        "driver_MH2": 0.0,
+        "driver_MH3": 0.0,
+        "driver_MH4": 0.0,
+        "driver_MH5": 0.0,
+        "driver_MH6": 0.0,
+        "driver_MH7": 0.0,
+        "driver_MH8": 0.0,
+        "driver_MH9": 0.0
+      }
+    }
+  },
+  "source_sha256": {
+    ".codex-tmp/enclosure-build/left-generation.json": "46a47365840975e5235739469035cc37d2f1e64f8a8cc8ce07c3b10c0f8afbf9",
+    ".codex-tmp/enclosure-build/kc2_left_lower_housing.stl": "88e599fc3a1b3be3be27d1887ead6424e4fee26e535bc74b5a4deea6148f200a",
+    ".codex-tmp/enclosure-build/kc2_left_lower_housing_magnetic.stl": "20d025782d63b3bbff7b5b0712f6043be5f785e2f915c9ced35e1f9ea7e7bc73",
+    ".codex-tmp/enclosure-build/kc2_left_mx_upper_housing.stl": "8affe0f4b0e5ea6e7082242de104fdb2c11474a535e10249896bb7f3db2e5660",
+    ".codex-tmp/enclosure-build/kc2_left_mx_upper_housing.step": "e526a152d5dd906ea6a41a39b2880e67757f617faf07825cc49501ce29e1def5",
+    ".codex-tmp/enclosure-build/right-generation.json": "2881c2466547502614d1a9b9363c8bdfa0920973cf56c5fd37e1645e158d956f",
+    ".codex-tmp/enclosure-build/kc2_right_lower_housing_part_a.stl": "490f36518c2451b98a25bb30707bca074aeac0f13ec5571210944663a32dc824",
+    ".codex-tmp/enclosure-build/kc2_right_lower_housing_part_a_magnetic.stl": "490f36518c2451b98a25bb30707bca074aeac0f13ec5571210944663a32dc824",
+    ".codex-tmp/enclosure-build/kc2_right_lower_housing_part_b.stl": "ff51903aadb0b017a4be8c4c2183665760487553476b804f39fa5e97ff7700ed",
+    ".codex-tmp/enclosure-build/kc2_right_lower_housing_part_b_magnetic.stl": "e10a61ed2c88f49fa4f7fc208baaad89a79b0e21bc08b462796c27dcd5c62c45",
+    ".codex-tmp/enclosure-build/kc2_right_mx_upper_housing_part_a.stl": "9ee5eeb8f5ab47043e33860026410f86a7801627c1af942690ec3de9bd453378",
+    ".codex-tmp/enclosure-build/kc2_right_mx_upper_housing_part_b.stl": "4fe7bb31865fc0c2ad2d0d47a8f5f371f5a0086eabf320e41b88925cb20ab491",
+    ".codex-tmp/enclosure-build/kc2_right_mx_upper_housing.step": "908d65d97c70638215a2b416bd6258e11a0ed30b51498bb450080beae45db9b7",
+    "tools/review_kc2_enclosure_independent.py": "0c08caf6d9d735a6378d48a510a5b9cc8b22df47708c81e7aa4b3e93b2ea2585"
+  },
+  "scope": "Independent imported STEP full-volume USB corridor, POWER travel vertical and outward4mm nail corridor, RESET diameter3 probe and screw-driver approach; actual STL topology/dimensions. Other component and seat/backing tests are separate main-audit evidence.",
+  "physical_status": "Pending actual header/cable/keycap, print/strength, probe handling and polarity/pull; no physical or order qualification.",
+  "status": "pass"
+}

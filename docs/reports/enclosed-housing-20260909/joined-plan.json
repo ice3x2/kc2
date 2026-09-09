@@ -1,0 +1,11 @@
+{
+  "right_dx_mm": 129.225,
+  "right_dy_mm": 0.0,
+  "extra_x_mm": 4.6,
+  "nominal_cross_half_keycap_gap_mm": 6.3999999999999995,
+  "case_clearance": {
+    "overlap_area_mm2": 0.0,
+    "clearance_mm": 0.3009126076239629,
+    "passes": true
+  }
+}

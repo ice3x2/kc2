@@ -1,0 +1,273 @@
+{
+  "requirement": "CON-ARCH-006",
+  "status": "pass",
+  "fusion_version": "2705.1.11",
+  "physical_qualified": false,
+  "outputs": {
+    "left_lower": {
+      "source_step": "kc2_left_lower_housing.step",
+      "source_sha256": "af367dd574d8805cd85478a57b01d6c5f6d6f453e84fc60274bea2647553b1b2",
+      "f3d": "kc2_left_lower_housing.f3d",
+      "f3d_sha256": "fb384b54f6121d19e2e90c01b85524eb2f32aa4c5e20b4ab402ae66300818d1e",
+      "source_solids": [
+        {
+          "bounds_mm": [
+            -1.102090682884,
+            -1.102090682884,
+            -2.2,
+            136.21459068288,
+            123.87709068288001,
+            4.1
+          ],
+          "volume_mm3": 42935.56837094964
+        }
+      ],
+      "reopened_solids": [
+        {
+          "bounds_mm": [
+            -1.102090682884,
+            -1.102090682884,
+            -2.2,
+            136.21459068288,
+            123.87709068288001,
+            4.1
+          ],
+          "volume_mm3": 42935.56837094964
+        }
+      ],
+      "round_trip_verified": true
+    },
+    "left_lower_magnetic": {
+      "source_step": "kc2_left_lower_housing_magnetic.step",
+      "source_sha256": "3e572df1741b484347a8ecd347b84e4ea9b21ee0450d959bda300778230a8786",
+      "f3d": "kc2_left_lower_housing_magnetic.f3d",
+      "f3d_sha256": "3945c5c64c6dfea66758b5d486164a5a69a237017033aea724aac79688b8494c",
+      "source_solids": [
+        {
+          "bounds_mm": [
+            -1.102090682884,
+            -1.102090682884,
+            -2.2,
+            136.21459068288,
+            123.87709068288001,
+            4.1
+          ],
+          "volume_mm3": 42924.711026738834
+        }
+      ],
+      "reopened_solids": [
+        {
+          "bounds_mm": [
+            -1.102090682884,
+            -1.102090682884,
+            -2.2,
+            136.21459068288,
+            123.87709068288001,
+            4.1
+          ],
+          "volume_mm3": 42924.711026738834
+        }
+      ],
+      "round_trip_verified": true
+    },
+    "left_mx_upper": {
+      "source_step": "kc2_left_mx_upper_housing.step",
+      "source_sha256": "e526a152d5dd906ea6a41a39b2880e67757f617faf07825cc49501ce29e1def5",
+      "f3d": "kc2_left_mx_upper_housing.f3d",
+      "f3d_sha256": "aa5432720a6a4a67bcdd77cbda992a879501d65116b2347afd28b3c0df465f15",
+      "source_solids": [
+        {
+          "bounds_mm": [
+            -1.102090682884,
+            -1.102090682884,
+            4.1,
+            136.21459068288,
+            123.87709068288001,
+            9.3
+          ],
+          "volume_mm3": 12219.368827284696
+        }
+      ],
+      "reopened_solids": [
+        {
+          "bounds_mm": [
+            -1.102090682884,
+            -1.102090682884,
+            4.1,
+            136.21459068288,
+            123.87709068288001,
+            9.3
+          ],
+          "volume_mm3": 12219.368827284696
+        }
+      ],
+      "round_trip_verified": true
+    },
+    "right_lower": {
+      "source_step": "kc2_right_lower_housing.step",
+      "source_sha256": "a990b6a12618ac90eefdf8fe75ab9bafbb98f03aec3281c968073349c3462125",
+      "f3d": "kc2_right_lower_housing.f3d",
+      "f3d_sha256": "c65ea1a9206fdd1c5ee194edc159fc400002a380c21989c6180f2b8e3d3d381c",
+      "source_solids": [
+        {
+          "bounds_mm": [
+            -1.102090682884,
+            29.147909317116003,
+            -2.2,
+            87.09375,
+            123.87709068288001,
+            4.1
+          ],
+          "volume_mm3": 23928.849318915985
+        },
+        {
+          "bounds_mm": [
+            81.94375,
+            -1.102090682884,
+            -2.2,
+            164.78959068288003,
+            123.87709068288001,
+            4.1
+          ],
+          "volume_mm3": 25054.01267565392
+        }
+      ],
+      "reopened_solids": [
+        {
+          "bounds_mm": [
+            -1.102090682884,
+            29.147909317116003,
+            -2.2,
+            87.09375,
+            123.87709068288001,
+            4.1
+          ],
+          "volume_mm3": 23928.849318915985
+        },
+        {
+          "bounds_mm": [
+            81.94375,
+            -1.102090682884,
+            -2.2,
+            164.78959068288003,
+            123.87709068288001,
+            4.1
+          ],
+          "volume_mm3": 25054.01267565392
+        }
+      ],
+      "round_trip_verified": true
+    },
+    "right_lower_magnetic": {
+      "source_step": "kc2_right_lower_housing_magnetic.step",
+      "source_sha256": "8dca7e275d367b9d2ee80b3071d28417d6b084d07b9911af4bdb90ab5a4fcfed",
+      "f3d": "kc2_right_lower_housing_magnetic.f3d",
+      "f3d_sha256": "370d7feca4279b6c03303c3072d3f297f3e0d22338601d8a30173c59ce8111c1",
+      "source_solids": [
+        {
+          "bounds_mm": [
+            -1.102090682884,
+            29.147909317116003,
+            -2.2,
+            87.09375,
+            123.87709068288001,
+            4.1
+          ],
+          "volume_mm3": 23928.849318915985
+        },
+        {
+          "bounds_mm": [
+            81.94375,
+            -1.102090682884,
+            -2.2,
+            164.78959068288003,
+            123.87709068288001,
+            4.1
+          ],
+          "volume_mm3": 25043.15533144312
+        }
+      ],
+      "reopened_solids": [
+        {
+          "bounds_mm": [
+            -1.102090682884,
+            29.147909317116003,
+            -2.2,
+            87.09375,
+            123.87709068288001,
+            4.1
+          ],
+          "volume_mm3": 23928.849318915985
+        },
+        {
+          "bounds_mm": [
+            81.94375,
+            -1.102090682884,
+            -2.2,
+            164.78959068288003,
+            123.87709068288001,
+            4.1
+          ],
+          "volume_mm3": 25043.15533144312
+        }
+      ],
+      "round_trip_verified": true
+    },
+    "right_mx_upper": {
+      "source_step": "kc2_right_mx_upper_housing.step",
+      "source_sha256": "908d65d97c70638215a2b416bd6258e11a0ed30b51498bb450080beae45db9b7",
+      "f3d": "kc2_right_mx_upper_housing.f3d",
+      "f3d_sha256": "84024cc7e8b5c37c2c5a0ef3b998fc91b8300c6aad4d50fb425b54de865fe3ca",
+      "source_solids": [
+        {
+          "bounds_mm": [
+            -1.102090682884,
+            29.147909317116003,
+            4.1,
+            88.8875,
+            123.87709068288001,
+            9.3
+          ],
+          "volume_mm3": 6585.264153369988
+        },
+        {
+          "bounds_mm": [
+            73.500053569934,
+            -1.102090682884,
+            4.1,
+            164.78959068288003,
+            123.87709068288001,
+            9.3
+          ],
+          "volume_mm3": 7043.172869984923
+        }
+      ],
+      "reopened_solids": [
+        {
+          "bounds_mm": [
+            -1.102090682884,
+            29.147909317116003,
+            4.1,
+            88.8875,
+            123.87709068288001,
+            9.3
+          ],
+          "volume_mm3": 6585.264153369988
+        },
+        {
+          "bounds_mm": [
+            73.500053569934,
+            -1.102090682884,
+            4.1,
+            164.78959068288003,
+            123.87709068288001,
+            9.3
+          ],
+          "volume_mm3": 7043.172869984923
+        }
+      ],
+      "round_trip_verified": true
+    }
+  },
+  "script_sha256": "3bd96724411afaab76edbead3c374d3a9ac46f20c813b09151f153844dc98f18"
+}

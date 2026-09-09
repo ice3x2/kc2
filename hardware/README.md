@@ -1,9 +1,9 @@
 # 최신 PCB · 주문한 거버 · 인쇄 모델
 
-요구사항: `CON-ARCH-006`, `OPS-ARCH-006/007`.
-2026-09-08 하판 r5는 바닥과 지지부 사이의 공중 틈을 제거한 모델입니다.
-[최신 하판 인쇄·실장 안내](MODELS/PRINT-r5.md)를 먼저 확인하세요.
-자석을 사용할 경우 [자석 홈 옵션 인쇄 안내](MODELS/PRINT_magnetic.md)에서 `_magnetic` 하판 세트를 선택하세요. 기존 무자석 파일도 그대로 유지합니다.
+요구사항: `CON-ARCH-006`, `CON-ARCH-007`, `OPS-ARCH-006/007`.
+2026-09-09 개정은 상판 벽이 하판 벽에 직접 닿고, 하판 소켓 공간도 외벽으로 가리는 연속 벽 구조입니다.
+[현재 인쇄·조립 안내](MODELS/PRINT-enclosed.md)의 게시 검증을 먼저 확인하세요.
+자석을 사용할 경우 [자석 홈 옵션 인쇄 안내](MODELS/PRINT_magnetic.md)에서 `_magnetic` 하판 세트를 선택하세요. 무자석 옵션도 새 벽 구조로 함께 제공합니다.
 PCB 설계와 주문된 거버 ZIP은 변경하지 않았습니다. 정확한 주문번호와 업체는 제공되지 않았습니다.
 
 ```text
@@ -36,7 +36,7 @@ PCB 폴더와 `third_party`의 상대 깊이는 이전과 같아 라이브러리
 
 ## 인쇄할 하우징 — 선택한 MX 조립
 
-아래 6개를 각각 1개, mm 단위·100% 축척으로 인쇄합니다.
+게시 manifest 검증 통과 후 아래 무자석 세트 6개를 각각 1개, mm 단위·100% 축척으로 인쇄합니다. 자석을 선택하면 하판 3개만 `_magnetic` 세트로 교체하고 상판은 공통입니다.
 
 | 부품 | STL |
 |---|---|
@@ -49,9 +49,10 @@ PCB 폴더와 `third_party`의 상대 깊이는 이전과 같아 라이브러리
 
 하판은 평평한 바닥 외면을 베드에 놓습니다. 바닥 1.20 mm는 첫 층·후속 층 모두 0.20 mm일 때 6층입니다.
 상판은 보강판 윗면을 베드에 놓고 기둥이 위로 향하게 합니다. 각 부품은 150 mm 인쇄 공간 이내입니다.
-재료·프린터 강도는 실물 확인이 필요합니다. 같은 이름의 STEP/F3D는 편집·확인용이며 STL 대신 인쇄하지 않습니다.
+최소 0.40 mm 벽은 노즐·선폭·재료로 출력 가능 여부와 강도를 확인해야 합니다. 같은 이름의 STEP/F3D는 편집·확인용입니다.
+중앙 키캡 간격은 6.40 mm로 확장되었습니다. USB 통로는 10.20 mm이며 명목 케이블 폭 가정은 최대 9.60 mm입니다. 실제 몰딩·헤더 높이는 별도 확인하세요.
 
-- 실리콘 발 위치: [왼쪽](MODELS/kc2_left_silicone_foot_layout.svg) / [오른쪽](MODELS/kc2_right_silicone_foot_layout.svg)
+- 기존 실리콘 발 위치 참고: [왼쪽](MODELS/kc2_left_silicone_foot_layout.svg) / [오른쪽](MODELS/kc2_right_silicone_foot_layout.svg). 이전 도면의 외곽을 새 하우징 외곽 검증에 사용하지 마세요.
 - 하판 조각당 Ø8 mm 접착면 4곳, 총 12곳입니다. 뒤집어 볼 때 CAD XY 좌우 반전에 주의하세요.
 - 선택용 링: [MX](MODELS/adapters/kc2_mx_ring_cap_020.stl) / [Choc V1](MODELS/adapters/kc2_v1_ring_cap_020.stl)
 - 링은 필요한 키마다 하나입니다. 테두리가 베드 쪽, 첫 층과 이후 층 모두 0.20 mm입니다. 테두리만 한 층이고 전체 높이 1.40 mm는 7층입니다.
@@ -74,6 +75,7 @@ Choc 소켓과 MX hat 소켓은 같은 키에 동시에 실장하지 않습니�
 python -B -m tools.kc2_current_layout          # 변경 없는 사전 확인
 python -B -m tools.kc2_current_layout --apply  # 호환 연결 복원
 python -B -m unittest tools.test_kc2_current_layout -v
+python -B -m tools.publish_kc2_enclosure --verify
 python -B -m tools.prepare_kc2_first_order --verify-package hardware/GERBER
 ```
 

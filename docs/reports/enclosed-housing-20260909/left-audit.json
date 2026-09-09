@@ -1,0 +1,208 @@
+{
+  "requirements": [
+    "CON-ARCH-006",
+    "OPS-ARCH-006"
+  ],
+  "side": "left",
+  "errors": [],
+  "physical_qualified": false,
+  "sections": {
+    "lower": {
+      "-1.6": {
+        "missing_area_mm2": 0.0,
+        "extra_area_mm2": 0.0,
+        "section_curve_deflection_mm": 0.0001,
+        "comparison_allowance_mm": 0.002,
+        "outside_declared_enclosure_mm2": 0.0
+      },
+      "-0.6": {
+        "missing_area_mm2": 0.0,
+        "extra_area_mm2": 6927.847425083491,
+        "section_curve_deflection_mm": 0.0001,
+        "comparison_allowance_mm": 0.002,
+        "outside_declared_enclosure_mm2": 0.0
+      },
+      "2.0": {
+        "missing_area_mm2": 0.0,
+        "extra_area_mm2": 6920.246608137578,
+        "section_curve_deflection_mm": 0.0001,
+        "comparison_allowance_mm": 0.002,
+        "outside_declared_enclosure_mm2": 0.0,
+        "bottom_component_intersections_mm2": {
+          "choc_socket_body_fillets": 0.0,
+          "switch_mechanical_pins": 0.0,
+          "mx_pins_pads_fillets": 0.0,
+          "diode_body_pads_fillets": 0.0,
+          "controller_socket": 0.0,
+          "battery_termination": 0.0,
+          "power_switch_leads": 0.0,
+          "battery_slot": 0.0
+        }
+      },
+      "3.3": {
+        "missing_area_mm2": 0.0,
+        "extra_area_mm2": 0.0,
+        "section_curve_deflection_mm": 0.0001,
+        "comparison_allowance_mm": 0.002,
+        "outside_declared_enclosure_mm2": 0.0,
+        "pcb_clearance_collision_mm2": 0.0
+      },
+      "4.05": {
+        "missing_area_mm2": 0.0,
+        "extra_area_mm2": 0.0,
+        "section_curve_deflection_mm": 0.0001,
+        "comparison_allowance_mm": 0.002,
+        "outside_declared_enclosure_mm2": 0.0,
+        "pcb_clearance_collision_mm2": 0.0
+      }
+    },
+    "mx_upper": {
+      "4.15": {
+        "missing_area_mm2": 0.0,
+        "extra_area_mm2": 40.46951747718664,
+        "section_curve_deflection_mm": 0.0001,
+        "comparison_allowance_mm": 0.002,
+        "outside_declared_enclosure_mm2": 0.0,
+        "top_component_intersections_mm2": {
+          "switch_body": 0.0,
+          "controller_socket": 0.0,
+          "battery_body": 0.0,
+          "power_switch_body": 0.0,
+          "power_switch_actuator_sweep": 0.0,
+          "reset": 0.0
+        }
+      },
+      "5.0": {
+        "missing_area_mm2": 0.0,
+        "extra_area_mm2": 40.46951747718664,
+        "section_curve_deflection_mm": 0.0001,
+        "comparison_allowance_mm": 0.002,
+        "outside_declared_enclosure_mm2": 0.0,
+        "top_component_intersections_mm2": {
+          "switch_body": 0.0,
+          "controller_socket": 0.0,
+          "battery_body": 0.0,
+          "power_switch_body": 0.0,
+          "power_switch_actuator_sweep": 0.0,
+          "reset": 0.0
+        }
+      },
+      "7.7": {
+        "missing_area_mm2": 0.0,
+        "extra_area_mm2": 116.78382755330837,
+        "section_curve_deflection_mm": 0.0001,
+        "comparison_allowance_mm": 0.002,
+        "outside_declared_enclosure_mm2": 0.0,
+        "top_component_intersections_mm2": {
+          "switch_body": 0.0,
+          "controller_socket": 0.0,
+          "battery_body": 0.0,
+          "power_switch_body": 0.0,
+          "power_switch_actuator_sweep": 0.0,
+          "reset": 0.0
+        }
+      },
+      "8.5": {
+        "missing_area_mm2": 0.0,
+        "extra_area_mm2": 6490.321624235155,
+        "section_curve_deflection_mm": 0.0001,
+        "comparison_allowance_mm": 0.002,
+        "outside_declared_enclosure_mm2": 0.0
+      }
+    },
+    "lower_magnetic": {
+      "-1.6": {
+        "missing_area_mm2": 0.0,
+        "extra_area_mm2": 0.0,
+        "section_curve_deflection_mm": 0.0001,
+        "comparison_allowance_mm": 0.002,
+        "outside_declared_enclosure_mm2": 0.0
+      },
+      "-0.6": {
+        "missing_area_mm2": 0.0,
+        "extra_area_mm2": 6927.847425083491,
+        "section_curve_deflection_mm": 0.0001,
+        "comparison_allowance_mm": 0.002,
+        "outside_declared_enclosure_mm2": 0.0
+      },
+      "2.0": {
+        "missing_area_mm2": 0.0,
+        "extra_area_mm2": 6920.246608137578,
+        "section_curve_deflection_mm": 0.0001,
+        "comparison_allowance_mm": 0.002,
+        "outside_declared_enclosure_mm2": 0.0,
+        "bottom_component_intersections_mm2": {
+          "choc_socket_body_fillets": 0.0,
+          "switch_mechanical_pins": 0.0,
+          "mx_pins_pads_fillets": 0.0,
+          "diode_body_pads_fillets": 0.0,
+          "controller_socket": 0.0,
+          "battery_termination": 0.0,
+          "power_switch_leads": 0.0,
+          "battery_slot": 0.0
+        }
+      },
+      "3.3": {
+        "missing_area_mm2": 0.0,
+        "extra_area_mm2": 0.0,
+        "section_curve_deflection_mm": 0.0001,
+        "comparison_allowance_mm": 0.002,
+        "outside_declared_enclosure_mm2": 0.0,
+        "pcb_clearance_collision_mm2": 0.0
+      },
+      "4.05": {
+        "missing_area_mm2": 0.0,
+        "extra_area_mm2": 0.0,
+        "section_curve_deflection_mm": 0.0001,
+        "comparison_allowance_mm": 0.002,
+        "outside_declared_enclosure_mm2": 0.0,
+        "pcb_clearance_collision_mm2": 0.0
+      }
+    }
+  },
+  "magnetic": {
+    "removed_mm3": 10.857344210839074,
+    "103.0": {
+      "obstruction_mm3": 0.0,
+      "full_disk_0_6_mm_backing_missing_mm3": 0.0
+    },
+    "111.0": {
+      "obstruction_mm3": 0.0,
+      "full_disk_0_6_mm_backing_missing_mm3": 0.0
+    }
+  },
+  "source_sha256": {
+    "tools/generate_kc2_enclosed_housings.py": "b0b003b1cd671226c6d937abc153efd9432891365a1308c1e71079e6316fd050",
+    "tools/kc2_enclosure_plan.py": "419810af7d86194de7789eea37ac341cc9d1de08382cb0a4c1d292ed10eb7cb6",
+    "tools/generate_kc2_x3_v2_housings.py": "0f2ef9076cff70916f77b124495fc1a5ea46751d19155378d9224a30a9168b69",
+    "tools/generate_kc2_mx_upper_housings.py": "984b4e0217ed4febbe719b8529fb07701c085447457a142a0306168220b452bf",
+    "tools/generate_kc2_magnetic_housings.py": "f8d20b5a84a5b953aa5a8bd7ca2e6474203347869423612f360829f516c284ec",
+    "hardware/kicad/kc2_left/kc2_left.kicad_pcb": "568e1427e4cfb9d667b6d5b3754da3a4e24c924abfa85a8dfe394dd050b5fe67",
+    "tools/audit_kc2_enclosure.py": "80f4bc9f8003ce732fae279b63c45f8739d7c3799b2ca4a67432b1ee001e1e37",
+    ".codex-tmp/enclosure-build/left-generation.json": "46a47365840975e5235739469035cc37d2f1e64f8a8cc8ce07c3b10c0f8afbf9",
+    ".codex-tmp/enclosure-build/kc2_left_lower_housing.step": "af367dd574d8805cd85478a57b01d6c5f6d6f453e84fc60274bea2647553b1b2",
+    ".codex-tmp/enclosure-build/kc2_left_lower_housing_magnetic.step": "3e572df1741b484347a8ecd347b84e4ea9b21ee0450d959bda300778230a8786",
+    ".codex-tmp/enclosure-build/kc2_left_mx_upper_housing.step": "e526a152d5dd906ea6a41a39b2880e67757f617faf07825cc49501ce29e1def5"
+  },
+  "usb_corridor_intersection_mm3": 0.0,
+  "explicit_service_access_mm3": {
+    "usb": 0.0,
+    "power": 0.0,
+    "reset": 0.0
+  },
+  "vertical_service_access_mm3": {
+    "battery_body": 0.0,
+    "power_switch_body": 0.0,
+    "power_switch_actuator_sweep": 0.0,
+    "reset": 0.0
+  },
+  "actual_wall_seats": [
+    {
+      "part": 0,
+      "contact_area_mm2": 411.8890570033697,
+      "missing_expected_contact_mm2": 0.0
+    }
+  ],
+  "status": "pass",
+  "scope": "Actual STEP validity and section coverage, nominal component/PCB slices, pocket volume/access; native and full interface/reviewer audit separate."
+}

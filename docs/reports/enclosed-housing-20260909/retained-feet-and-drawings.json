@@ -1,0 +1,204 @@
+{
+  "requirements": [
+    "CON-ARCH-006",
+    "OPS-ARCH-006"
+  ],
+  "status": "pass",
+  "errors": [],
+  "physical_qualified": false,
+  "scope": "Retained D8 bonding disks vs verified new floor masks, actual normal/magnetic STL mass centroids; housing-only static contact hull.",
+  "baseline": {
+    "revision": "cc854a3",
+    "path": "hardware/MODELS/kc2_housing_manifest.json",
+    "raw_sha256": "9da8e2e9efc047d61d6b3a98082b8882caa904ff0637e17633bfd18371e69ffe"
+  },
+  "parts": {
+    "kc2_left_lower_housing.stl": {
+      "errors": [],
+      "centers_xy_mm": [
+        [
+          23.300000000000008,
+          4.8999999999999995
+        ],
+        [
+          130.2125,
+          35.15
+        ],
+        [
+          130.2125,
+          117.60000000000001
+        ],
+        [
+          4.8999999999999995,
+          117.60000000000001
+        ]
+      ],
+      "centroid_xy_mm": [
+        66.64006257548463,
+        70.53830956566306
+      ],
+      "minimum_disk_to_edge_or_seam_mm": 2.0020906828844005,
+      "centroid_inside_contact_hull": true,
+      "centroid_to_contact_hull_boundary_mm": 51.06169043433695
+    },
+    "kc2_left_lower_housing_magnetic.stl": {
+      "errors": [],
+      "centers_xy_mm": [
+        [
+          23.300000000000008,
+          4.8999999999999995
+        ],
+        [
+          130.2125,
+          35.15
+        ],
+        [
+          130.2125,
+          117.60000000000001
+        ],
+        [
+          4.8999999999999995,
+          117.60000000000001
+        ]
+      ],
+      "centroid_xy_mm": [
+        66.65704097406197,
+        70.52908940987726
+      ],
+      "minimum_disk_to_edge_or_seam_mm": 2.0020906828844005,
+      "centroid_inside_contact_hull": true,
+      "centroid_to_contact_hull_boundary_mm": 51.07091059012275
+    },
+    "kc2_right_lower_housing_part_a.stl": {
+      "errors": [],
+      "centers_xy_mm": [
+        [
+          4.8999999999999995,
+          35.15
+        ],
+        [
+          76.94375000000001,
+          35.15
+        ],
+        [
+          76.94375000000001,
+          117.60000000000001
+        ],
+        [
+          4.8999999999999995,
+          117.60000000000001
+        ]
+      ],
+      "centroid_xy_mm": [
+        39.77434860249286,
+        75.50727130600063
+      ],
+      "minimum_disk_to_edge_or_seam_mm": 0.8000499999999987,
+      "centroid_inside_contact_hull": true,
+      "centroid_to_contact_hull_boundary_mm": 38.87434860249286
+    },
+    "kc2_right_lower_housing_part_a_magnetic.stl": {
+      "errors": [],
+      "centers_xy_mm": [
+        [
+          4.8999999999999995,
+          35.15
+        ],
+        [
+          76.94375000000001,
+          35.15
+        ],
+        [
+          76.94375000000001,
+          117.60000000000001
+        ],
+        [
+          4.8999999999999995,
+          117.60000000000001
+        ]
+      ],
+      "centroid_xy_mm": [
+        39.77434860249286,
+        75.50727130600063
+      ],
+      "minimum_disk_to_edge_or_seam_mm": 0.8000499999999987,
+      "centroid_inside_contact_hull": true,
+      "centroid_to_contact_hull_boundary_mm": 38.87434860249286
+    },
+    "kc2_right_lower_housing_part_b.stl": {
+      "errors": [],
+      "centers_xy_mm": [
+        [
+          102.68749999999999,
+          4.8999999999999995
+        ],
+        [
+          135.3875,
+          4.8999999999999995
+        ],
+        [
+          144.5,
+          117.60000000000001
+        ],
+        [
+          86.74374999999999,
+          117.60000000000001
+        ]
+      ],
+      "centroid_xy_mm": [
+        119.54512245586045,
+        63.313766853753734
+      ],
+      "minimum_disk_to_edge_or_seam_mm": 0.7999499999999955,
+      "centroid_inside_contact_hull": true,
+      "centroid_to_contact_hull_boundary_mm": 24.49849858040949
+    },
+    "kc2_right_lower_housing_part_b_magnetic.stl": {
+      "errors": [],
+      "centers_xy_mm": [
+        [
+          102.68749999999999,
+          4.8999999999999995
+        ],
+        [
+          135.3875,
+          4.8999999999999995
+        ],
+        [
+          144.5,
+          117.60000000000001
+        ],
+        [
+          86.74374999999999,
+          117.60000000000001
+        ]
+      ],
+      "centroid_xy_mm": [
+        119.53196484437298,
+        63.29483194384361
+      ],
+      "minimum_disk_to_edge_or_seam_mm": 0.7999499999999955,
+      "centroid_inside_contact_hull": true,
+      "centroid_to_contact_hull_boundary_mm": 24.51008736549939
+    }
+  },
+  "source_sha256": {
+    "hardware/MODELS/kc2_left_lower_housing.stl": "88e599fc3a1b3be3be27d1887ead6424e4fee26e535bc74b5a4deea6148f200a",
+    "hardware/MODELS/kc2_left_lower_housing_magnetic.stl": "20d025782d63b3bbff7b5b0712f6043be5f785e2f915c9ced35e1f9ea7e7bc73",
+    "docs/reports/enclosed-housing-20260909/left-generation.json": "46a47365840975e5235739469035cc37d2f1e64f8a8cc8ce07c3b10c0f8afbf9",
+    "hardware/MODELS/kc2_right_lower_housing_part_a.stl": "490f36518c2451b98a25bb30707bca074aeac0f13ec5571210944663a32dc824",
+    "hardware/MODELS/kc2_right_lower_housing_part_a_magnetic.stl": "490f36518c2451b98a25bb30707bca074aeac0f13ec5571210944663a32dc824",
+    "hardware/MODELS/kc2_right_lower_housing_part_b.stl": "ff51903aadb0b017a4be8c4c2183665760487553476b804f39fa5e97ff7700ed",
+    "hardware/MODELS/kc2_right_lower_housing_part_b_magnetic.stl": "e10a61ed2c88f49fa4f7fc208baaad89a79b0e21bc08b462796c27dcd5c62c45",
+    "docs/reports/enclosed-housing-20260909/right-generation.json": "2881c2466547502614d1a9b9363c8bdfa0920973cf56c5fd37e1645e158d956f",
+    "tools/review_kc2_enclosure_feet.py": "e418ebb4845b7bcf4cc55621295a99435d12debe67e776bea467bd1a0d1fcc89",
+    "tools/test_kc2_enclosure_feet.py": "924b3a7fb12fc27336fd25cc1d780131e2e64c00fb48903ba84268b3739294b5"
+  },
+  "drawings": {
+    "hardware/MODELS/kc2_left_silicone_foot_layout.svg": "8d5ca605fd467d245ccdb643b4c08c1c07251d8286f00199551aad6a084e2e88",
+    "hardware/MODELS/kc2_left_mx_upper_plan.svg": "437f68268ad17987c2cc81697aa4fb409f1e9f63662e68559ca994197fa106a2",
+    "hardware/MODELS/kc2_right_silicone_foot_layout.svg": "c1e7561117a7d21f1f83dc15effa193b87be7706b243a7317d3b784fbdd290f0",
+    "hardware/MODELS/kc2_right_mx_upper_plan.svg": "d4c759053d62ee4a818ac1a21702636d24df758e371c7a566342ca0d3b4bc035",
+    "hardware/MODELS/kc2_mx_mounting_section.svg": "6659a13a2291003f8a5f1ad0e79a9842abb764a21d15bd819de4e9738d2aa66c"
+  }
+}

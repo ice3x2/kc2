@@ -1,0 +1,131 @@
+{
+  "requirements": [
+    "CON-ARCH-006",
+    "OPS-ARCH-006"
+  ],
+  "baseline_commit": "cc854a3",
+  "cad_changed": false,
+  "pcb_gerber_changed": false,
+  "joined_transform": {
+    "dx": 124.62499999999999,
+    "dy": 0.0
+  },
+  "pcb_component_clearance_mm": 0.3,
+  "required_case_gap_mm": 0.3,
+  "cases": [
+    {
+      "wall_mm": 0.8,
+      "original_join": {
+        "overlap_area_mm2": 12.274019642380111,
+        "clearance_mm": 0.0,
+        "passes": false
+      },
+      "minimum_extra_x_on_0_05mm_grid": 6.1000000000000005,
+      "resulting_nominal_keycap_gap_mm": 7.9,
+      "sides": {
+        "left": {
+          "bounds_mm": [
+            -1.1010906828844318,
+            -1.1010906828844318,
+            136.21359068288444,
+            123.87609068288444
+          ],
+          "wall_area_mm2": 423.8805137926356
+        },
+        "right": {
+          "bounds_mm": [
+            -1.101090682884432,
+            -1.1010906828844318,
+            164.78859068288443,
+            123.87609068288444
+          ],
+          "wall_area_mm2": 455.0402732851544
+        }
+      }
+    },
+    {
+      "wall_mm": 0.6,
+      "original_join": {
+        "overlap_area_mm2": 6.447364600716312,
+        "clearance_mm": 0.0,
+        "passes": false
+      },
+      "minimum_extra_x_on_0_05mm_grid": 5.5,
+      "resulting_nominal_keycap_gap_mm": 7.3,
+      "sides": {
+        "left": {
+          "bounds_mm": [
+            -0.9010906828844318,
+            -0.9010906828844318,
+            136.01359068288443,
+            123.67609068288444
+          ],
+          "wall_area_mm2": 317.63954275692595
+        },
+        "right": {
+          "bounds_mm": [
+            -0.9010906828844318,
+            -0.9010906828844318,
+            164.58859068288442,
+            123.67609068288444
+          ],
+          "wall_area_mm2": 341.00197733778805
+        }
+      }
+    },
+    {
+      "wall_mm": 0.4,
+      "original_join": {
+        "overlap_area_mm2": 2.162667715997905,
+        "clearance_mm": 0.0,
+        "passes": false
+      },
+      "minimum_extra_x_on_0_05mm_grid": 4.55,
+      "resulting_nominal_keycap_gap_mm": 6.35,
+      "sides": {
+        "left": {
+          "bounds_mm": [
+            -0.7010906828844319,
+            -0.7010906828844319,
+            135.81359068288444,
+            123.47609068288445
+          ],
+          "wall_area_mm2": 211.62737656440004
+        },
+        "right": {
+          "bounds_mm": [
+            -0.7010906828844319,
+            -0.7010906828844319,
+            164.38859068288443,
+            123.47609068288445
+          ],
+          "wall_area_mm2": 227.18428765920726
+        }
+      }
+    }
+  ],
+  "qualification": "plan feasibility only, not actual-solid/component/print approval",
+  "source_sha256": {
+    "tools/kc2_enclosure_plan.py": "cc06b55ccf6f01f25d10cac84804917cebfa7e4269fa7b2ad14e2d4ce9128220",
+    "tools/test_kc2_enclosed_housing.py": "25e516f0ebc2d33d2fdc0d504d75e21ad0e68497c48d72965dd23172a9ed1901",
+    "tools/generate_kc2_x3_v2_housings.py": "0f2ef9076cff70916f77b124495fc1a5ea46751d19155378d9224a30a9168b69",
+    "tools/generate_kc2_magnetic_housings.py": "f8d20b5a84a5b953aa5a8bd7ca2e6474203347869423612f360829f516c284ec",
+    "hardware/kicad/kc2_left/kc2_left.kicad_pcb": "568e1427e4cfb9d667b6d5b3754da3a4e24c924abfa85a8dfe394dd050b5fe67",
+    "hardware/kicad/kc2_right/kc2_right.kicad_pcb": "88290c3b0cf3951d56221d216549665c0576a816a6315012f7f12b027f402577"
+  },
+  "pcb_only_bottleneck": {
+    "gap_mm": 1.0999999999999943,
+    "closest_points_global_mm": [
+      [
+        161.625,
+        86.5
+      ],
+      [
+        161.625,
+        87.6
+      ]
+    ],
+    "maximum_symmetric_wall_mm_at_original_position": 0.09999999999999717,
+    "basis": "PCB edge gap minus two0.30mm PCB allowances and0.30mm case gap, divided between walls"
+  }
+}

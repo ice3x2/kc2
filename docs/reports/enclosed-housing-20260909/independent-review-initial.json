@@ -1,0 +1,281 @@
+{
+  "requirements": [
+    "CON-ARCH-006",
+    "OPS-ARCH-006"
+  ],
+  "meshes": {
+    "kc2_left_lower_housing.stl": {
+      "sha256": "88e599fc3a1b3be3be27d1887ead6424e4fee26e535bc74b5a4deea6148f200a",
+      "watertight": true,
+      "body_count": 1,
+      "bounds": [
+        [
+          -1.1020907163619995,
+          -1.1020907163619995,
+          -2.200000047683716
+        ],
+        [
+          136.21458435058594,
+          123.87709045410156,
+          4.099999904632568
+        ]
+      ],
+      "within_150_mm": true
+    },
+    "kc2_left_lower_housing_magnetic.stl": {
+      "sha256": "20d025782d63b3bbff7b5b0712f6043be5f785e2f915c9ced35e1f9ea7e7bc73",
+      "watertight": true,
+      "body_count": 1,
+      "bounds": [
+        [
+          -1.1020907163619995,
+          -1.1020907163619995,
+          -2.200000047683716
+        ],
+        [
+          136.21458435058594,
+          123.87709045410156,
+          4.099999904632568
+        ]
+      ],
+      "within_150_mm": true
+    },
+    "kc2_left_mx_upper_housing.stl": {
+      "sha256": "d6b39203a379d1f24fb4555334a577fd449de4409b745263bc4914c11281de0d",
+      "watertight": true,
+      "body_count": 1,
+      "bounds": [
+        [
+          -1.1020907163619995,
+          -1.1020907163619995,
+          4.099999904632568
+        ],
+        [
+          136.21458435058594,
+          123.87709045410156,
+          9.300000190734863
+        ]
+      ],
+      "within_150_mm": true
+    },
+    "kc2_right_lower_housing_part_a.stl": {
+      "sha256": "490f36518c2451b98a25bb30707bca074aeac0f13ec5571210944663a32dc824",
+      "watertight": true,
+      "body_count": 1,
+      "bounds": [
+        [
+          -1.1020907163619995,
+          29.14790916442871,
+          -2.200000047683716
+        ],
+        [
+          87.09375,
+          123.87709045410156,
+          4.099999904632568
+        ]
+      ],
+      "within_150_mm": true
+    },
+    "kc2_right_lower_housing_part_a_magnetic.stl": {
+      "sha256": "490f36518c2451b98a25bb30707bca074aeac0f13ec5571210944663a32dc824",
+      "watertight": true,
+      "body_count": 1,
+      "bounds": [
+        [
+          -1.1020907163619995,
+          29.14790916442871,
+          -2.200000047683716
+        ],
+        [
+          87.09375,
+          123.87709045410156,
+          4.099999904632568
+        ]
+      ],
+      "within_150_mm": true
+    },
+    "kc2_right_lower_housing_part_b.stl": {
+      "sha256": "ff51903aadb0b017a4be8c4c2183665760487553476b804f39fa5e97ff7700ed",
+      "watertight": true,
+      "body_count": 1,
+      "bounds": [
+        [
+          81.9437484741211,
+          -1.1020907163619995,
+          -2.200000047683716
+        ],
+        [
+          164.7895965576172,
+          123.87709045410156,
+          4.099999904632568
+        ]
+      ],
+      "within_150_mm": true
+    },
+    "kc2_right_lower_housing_part_b_magnetic.stl": {
+      "sha256": "e10a61ed2c88f49fa4f7fc208baaad89a79b0e21bc08b462796c27dcd5c62c45",
+      "watertight": true,
+      "body_count": 1,
+      "bounds": [
+        [
+          81.9437484741211,
+          -1.1020907163619995,
+          -2.200000047683716
+        ],
+        [
+          164.7895965576172,
+          123.87709045410156,
+          4.099999904632568
+        ]
+      ],
+      "within_150_mm": true
+    },
+    "kc2_right_mx_upper_housing_part_a.stl": {
+      "sha256": "f355132cf978af7b2d7de743da22b86fda7eb9d3b4ac140c6d47812781457e24",
+      "watertight": true,
+      "body_count": 1,
+      "bounds": [
+        [
+          -1.1020907163619995,
+          29.14790916442871,
+          4.099999904632568
+        ],
+        [
+          88.88749694824219,
+          123.87709045410156,
+          9.300000190734863
+        ]
+      ],
+      "within_150_mm": true
+    },
+    "kc2_right_mx_upper_housing_part_b.stl": {
+      "sha256": "8d04bffa02dcf4c76d31fe21befdff583796c504e3297a78985bceedff81dd87",
+      "watertight": true,
+      "body_count": 1,
+      "bounds": [
+        [
+          73.50005340576172,
+          -1.1020907163619995,
+          4.099999904632568
+        ],
+        [
+          164.7895965576172,
+          123.87709045410156,
+          9.300000190734863
+        ]
+      ],
+      "within_150_mm": true
+    }
+  },
+  "usb_horizontal_paths": {
+    "left": {
+      "4.5": {
+        "intersection": "MULTIPOINT ((62.00209045410156 11.5), (61.20109176635742 11.5))",
+        "blocked": true
+      },
+      "6.0": {
+        "intersection": "MULTIPOINT ((62.00209045410156 11.5), (61.20109176635742 11.5))",
+        "blocked": true
+      },
+      "7.5": {
+        "intersection": "MULTIPOINT ((62.00209045410156 11.5), (61.20109176635742 11.5))",
+        "blocked": true
+      },
+      "9.0": {
+        "intersection": "MULTIPOINT ((62.00209045410156 11.5), (53.70000076293945 11.5))",
+        "blocked": true
+      }
+    },
+    "right": {
+      "4.5": {
+        "intersection": "MULTIPOINT ((97.48641204833984 11.5), (96.68540954589844 11.5))",
+        "blocked": true
+      },
+      "6.0": {
+        "intersection": "MULTIPOINT ((96.68540954589844 11.5), (97.48641204833984 11.5))",
+        "blocked": true
+      },
+      "7.5": {
+        "intersection": "MULTIPOINT ((97.48641204833984 11.5), (96.68540954589844 11.5))",
+        "blocked": true
+      },
+      "9.0": {
+        "intersection": "MULTIPOINT ((96.68540954589844 11.5), (104.98750305175781 11.5))",
+        "blocked": true
+      }
+    }
+  },
+  "scope": "Independent actual STL topology/bounds and service-axis sectional intersections; not exact USB/header qualification.",
+  "findings": [
+    {
+      "severity": "high",
+      "status": "requires_fix_or_dimensional_exclusion",
+      "issue": "The actual upper shell blocks the outward USB-axis ray at local Y11.50 and sampled Z4.50/6.00/7.50/9.00 on both halves.",
+      "qualification": "Exact controller socket height and USB cable overmold are unspecified; this is demonstrated blocked geometric approach space, not proof the particular purchased cable collides.",
+      "recommendation": "Add a top-open outward service notch above the PCB plane Z4.10, spanning a declared cable/probe corridor; preserve the lower socket-concealing wall. Independently test full cable insertion corridor and POWER/RESET approach, not connector-body intersections only."
+    }
+  ],
+  "magnetic_backing_samples": {
+    "left": [
+      {
+        "pocket": {
+          "x": -1.102090682884409,
+          "y": 103.0,
+          "sign": 1,
+          "z": 0.75,
+          "diameter_mm": 2.4,
+          "depth_mm": 1.2
+        },
+        "material_boundary_depths_mm": [
+          1.1999999993049641,
+          3.602843124144722
+        ],
+        "note": "Centerline only; full back-wall volume is a separate main audit gate."
+      },
+      {
+        "pocket": {
+          "x": -1.102090682884409,
+          "y": 111.0,
+          "sign": 1,
+          "z": 0.75,
+          "diameter_mm": 2.4,
+          "depth_mm": 1.2
+        },
+        "material_boundary_depths_mm": [
+          1.1999999993049641
+        ],
+        "note": "Centerline only; full back-wall volume is a separate main audit gate."
+      }
+    ],
+    "right": [
+      {
+        "pocket": {
+          "x": 150.50209068288441,
+          "y": 103.0,
+          "sign": -1,
+          "z": 0.75,
+          "diameter_mm": 2.4,
+          "depth_mm": 1.2
+        },
+        "material_boundary_depths_mm": [
+          1.1999971770250397
+        ],
+        "note": "Centerline only; full back-wall volume is a separate main audit gate."
+      },
+      {
+        "pocket": {
+          "x": 150.50209068288441,
+          "y": 111.0,
+          "sign": -1,
+          "z": 0.75,
+          "diameter_mm": 2.4,
+          "depth_mm": 1.2
+        },
+        "material_boundary_depths_mm": [
+          1.1999971770250397
+        ],
+        "note": "Centerline only; full back-wall volume is a separate main audit gate."
+      }
+    ]
+  }
+}
