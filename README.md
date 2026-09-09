@@ -2,7 +2,7 @@
 
 - **[최신 PCB · 주문한 거버 · 인쇄 모델 — hardware](hardware/README.md)**
 - [PCB 프로젝트](hardware/PCB/) · [주문한 거버 ZIP](hardware/GERBER/) · [하우징·링 모델](hardware/MODELS/)
-- [최신 하판 r5 인쇄 안내](hardware/MODELS/PRINT-r5.md) · [검증 결과](docs/reports/continuous-web-20260908-r5/README.md)
+- [국소 가림벽 인쇄 안내](hardware/MODELS/PRINT-local-covers.md) · [검증 기록](docs/reports/local-covers-20260910/README.md)
 - [자석 홈 옵션 / 무자석 옵션 선택 안내](hardware/MODELS/PRINT_magnetic.md)
 - [주문 당시 안내 원본](order.md) — 봉인 해시 보존용입니다. 현재 위치는 위 `hardware` 안내를 보세요.
 - [요구사항 원본(SRS)](docs/spec/00.index.md)

@@ -1,0 +1,96 @@
+{
+  "requirements": [
+    "CON-ARCH-006",
+    "OPS-ARCH-006"
+  ],
+  "status": "pass",
+  "errors": [],
+  "source_sha256": {
+    "tools/kc2_local_upper_covers.py": "3b507b98b571cc29bfe32cfe994db311165be61faefee3129ebd1a2f3302ce23",
+    "tools/test_kc2_local_upper_covers.py": "5a57111534cd569a7d2eb608bc3216585e27b864c9f0d7a4275452b9756106a9",
+    "tools/generate_kc2_magnetic_housings.py": "f8d20b5a84a5b953aa5a8bd7ca2e6474203347869423612f360829f516c284ec",
+    "tools/generate_kc2_mx_upper_housings.py": "984b4e0217ed4febbe719b8529fb07701c085447457a142a0306168220b452bf",
+    "tools/generate_kc2_x3_v2_housings.py": "0f2ef9076cff70916f77b124495fc1a5ea46751d19155378d9224a30a9168b69",
+    "tools/generate_kc2_housings.py": "cbf34705101526043bf4a43daed6e50dee2c67dc61ae0832debd70e62f5e5e16",
+    "tools/render_kc2_x3_joined.py": "903c3e2353aabfe7ff8a804f0bd0653ab0a90c3f881f8819ab239ca9aa1666b1",
+    "hardware/kicad/kc2_left/kc2_left.kicad_pcb": "568e1427e4cfb9d667b6d5b3754da3a4e24c924abfa85a8dfe394dd050b5fe67",
+    "hardware/kicad/kc2_right/kc2_right.kicad_pcb": "88290c3b0cf3951d56221d216549665c0576a816a6315012f7f12b027f402577",
+    ".codex-tmp/local-cover-build/left-upper.json": "033ea62166e9c54d585f3ae69aeab139380fae20aa135e3b5487595358dfd66e",
+    "tools/review_kc2_local_upper_covers.py": "6b7577a48a362a1fbe48106c2c505153f83eb9f7ed2235eed1da6af8eabfb43b",
+    "tools/test_review_kc2_local_upper_covers.py": "4ee7e76a7bda93d54d2f92381ce4cad2db287ea2bc95d59983a94cbc568ed11d",
+    "tools/review_kc2_local_covers.py": "5bf57c213cdf83e741235e9d291264fc16637fe08d948cb9f3973b1ae6e4bf1a",
+    ".codex-tmp/local-cover-build/kc2_left_mx_upper_housing.step": "7ea10fb069bdc925a0d219126520c41daaf86054382f600ed2ecb35e67c452a6",
+    ".codex-tmp/local-cover-build/kc2_left_mx_upper_housing.stl": "01f763753cda54176dd3cd3756eb4647d6fd9be171dc3b48eda6453ba518bc11"
+  },
+  "git_source_sha256": {
+    "cc854a3e0e0f25ab3d63e2916cb4b99a487b6536:hardware/MODELS/kc2_left_mx_upper_housing.step": "6101f3858db718089e42cd15892c398de45f70865e0c3a33e3639bf8ca45a1b6"
+  },
+  "physical_qualified": false,
+  "transform": {
+    "dx": 124.62499999999999,
+    "dy": 0.0
+  },
+  "coverage": {
+    "skirt": {
+      "missing_mm2": 2.4163627058940954e-17,
+      "retained_old_gap_mm2": 0.0,
+      "unexplained_mm2": 2.4062287709844912e-17
+    },
+    "roof": {
+      "missing_mm2": 2.5322590316803367e-16,
+      "retained_old_gap_mm2": 0.0,
+      "unexplained_mm2": 2.5283365179709076e-16
+    }
+  },
+  "split_clearance": {
+    "errors": [],
+    "scope": "Unsplit left upper"
+  },
+  "parts": [
+    {
+      "errors": [],
+      "removed_mm3": 0.0,
+      "added_mm3": 679.847106094193,
+      "missing_mm3": 0.0,
+      "outside_local_allowance_mm3": 0.0,
+      "component_service_collision_mm3": 0.0,
+      "new_service_approach_obstruction_mm3": {
+        "usb_nominal_9_6mm_cable": 0.0,
+        "power_4mm_outward_nail": 0.0,
+        "power_full_sweep_vertical": 0.0,
+        "reset_3mm_probe": 0.0,
+        "driver_MH1": 0.0,
+        "driver_MH2": 0.0,
+        "driver_MH3": 0.0,
+        "driver_MH4": 0.0,
+        "driver_MH5": 0.0,
+        "driver_MH6": 0.0,
+        "driver_MH7": 0.0,
+        "driver_MH8": 0.0
+      },
+      "baseline_service_approach_overlap_mm3": {
+        "usb_nominal_9_6mm_cable": 108.62999999999995,
+        "power_4mm_outward_nail": 8.774999999999972,
+        "power_full_sweep_vertical": 0.0,
+        "reset_3mm_probe": 2.662639294187508,
+        "driver_MH1": 0.0,
+        "driver_MH2": 0.0,
+        "driver_MH3": 0.0,
+        "driver_MH4": 0.0,
+        "driver_MH5": 0.0,
+        "driver_MH6": 0.0,
+        "driver_MH7": 0.0,
+        "driver_MH8": 0.0
+      },
+      "added_min_z_mm": 4.4,
+      "unsupported_skirt_plan_mm2": 3.5166445545617367e-16,
+      "mesh": {
+        "path": "kc2_left_mx_upper_housing.stl",
+        "passes": true,
+        "bounds_error_mm": 7.202148424312327e-06,
+        "volume_error_mm3": 0.0022393332656065468
+      }
+    }
+  ],
+  "scope": "Independent actual STEP additive-only delta, local key-field coverage, original plate/support preservation, body/service clearance, no lower-seat transfer, no worsening of actual nominal-0.2 mm original split distances, STL topology and dimensions. Exact cap/print/strength physical qualification pending."
+}

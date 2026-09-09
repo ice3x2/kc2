@@ -3,6 +3,20 @@
 /hardware/PCB/** -text
 /hardware/GERBER/** -text
 /hardware/MODELS/** -text
+/docs/reports/local-covers-20260910/** -text
+# Preserve Fusion's exact diagnostic STEP bytes, including its vendor-comment
+# trailing space. This is evidence, not hand-maintained source formatting.
+/docs/reports/local-covers-20260910/native-check-*.step whitespace=-blank-at-eol,cr-at-eol
+/tools/*local*cover*.py -text
+/tools/*local_assembly.py -text
+/tools/*local_native.py -text
+/tools/fusion/KC2LocalNativeReview/** -text
+/tools/fusion/KC2LocalCoversToF3D/** -text
+/tools/historical_housing_test_fixture.py -text
+/tools/test_historical_housing_fixture.py -text
+/tools/test_kc2_current_layout.py -text
+/README.md -text
+/hardware/README.md -text
 /docs/reports/continuous-web-20260908-r5/** -text
 /docs/reports/magnetic-20260908/** -text
 /tools/*magnetic*.py -text

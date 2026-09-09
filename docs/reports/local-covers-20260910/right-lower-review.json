@@ -1,0 +1,162 @@
+{
+  "requirements": [
+    "CON-ARCH-006",
+    "OPS-ARCH-006"
+  ],
+  "baseline_commit": "cc854a3e0e0f25ab3d63e2916cb4b99a487b6536",
+  "side": "right",
+  "errors": [],
+  "physical_qualified": false,
+  "source_sha256": {
+    "tools/generate_kc2_local_covers.py": "6ff9e2642de19e40457640911ed37a0e177c5db65641b76c31bf3111168276a4",
+    "tools/kc2_local_covers.py": "7414affa6c05bafa1e69a0616b491fa0bd65fdf5330a07a75bc37b897df4a35d",
+    "tools/generate_kc2_x3_v2_housings.py": "0f2ef9076cff70916f77b124495fc1a5ea46751d19155378d9224a30a9168b69",
+    "tools/generate_kc2_magnetic_housings.py": "f8d20b5a84a5b953aa5a8bd7ca2e6474203347869423612f360829f516c284ec",
+    "hardware/PCB/kc2_right/kc2_right.kicad_pcb": "88290c3b0cf3951d56221d216549665c0576a816a6315012f7f12b027f402577",
+    ".codex-tmp/local-cover-build/right-lower.json": "4295872426dbb3c6cbdda62b90c10f22497a91a91ea02aa23b35c5957370b537",
+    "tools/review_kc2_local_covers.py": "5bf57c213cdf83e741235e9d291264fc16637fe08d948cb9f3973b1ae6e4bf1a",
+    "tools/test_review_kc2_local_covers.py": "ff736f75f71b13fb0fb17329eaa369efc1c6ae2b63c62960825d3f16a497b223",
+    ".codex-tmp/local-cover-build/kc2_right_lower_housing.step": "8aa5e311ac0ce5465cd993f701a8b797d60d14c51a8bf7ea1f7e2cecdea0d6d0",
+    ".codex-tmp/local-cover-build/kc2_right_lower_housing_part_a.stl": "d093029bb8028e03baa23b5d3e11c1afe021bf7bc92c42c1e013b5230554c599",
+    ".codex-tmp/local-cover-build/kc2_right_lower_housing_part_b.stl": "42060501f6d8ca33d0c7d1d3146c8a45fe3a5abe3c74c06490f53c47e1df1c69",
+    ".codex-tmp/local-cover-build/kc2_right_lower_housing_magnetic.step": "56667f7eaf9893b43d5e813930c4b4ebbc1aa5189c83f1c0d3303a689d80ef29",
+    ".codex-tmp/local-cover-build/kc2_right_lower_housing_part_a_magnetic.stl": "c7f64b2a14768173f3da06d711506367dd7c47a5dc925679ef94b27fe5d67781",
+    ".codex-tmp/local-cover-build/kc2_right_lower_housing_part_b_magnetic.stl": "838d9017e09e81aba3d8d1db142a37e165dba6a8e51ea9c32952955f081680b8"
+  },
+  "git_source_sha256": {
+    "tools/generate_kc2_x3_v2_housings.py": "0f2ef9076cff70916f77b124495fc1a5ea46751d19155378d9224a30a9168b69",
+    "hardware/MODELS/kc2_housing_manifest.json": "9da8e2e9efc047d61d6b3a98082b8882caa904ff0637e17633bfd18371e69ffe",
+    "hardware/MODELS/kc2_right_lower_housing.step": "2c17a7eb9ac23de46861af250c95ade328d4f98d6e73216c78926459f76817e5",
+    "hardware/MODELS/kc2_right_lower_housing_magnetic.step": "c600e3fd6a32d2e79ccb5c31efa0e8d244c5ddfb137c28d596126ce403a57209"
+  },
+  "variants": {
+    "normal": {
+      "errors": [],
+      "removed_mm3": 0.0,
+      "added_mm3": 241.1913785930715,
+      "off_allowance_added_mm3": 0.0,
+      "missing_requested_mm3": 0.0,
+      "new_material_in_protected_void_mm3": 0.0,
+      "volume_tolerance_mm3": 0.002,
+      "baseline_z_mm": [
+        -2.2,
+        2.5
+      ],
+      "revised_z_mm": [
+        -2.2,
+        2.5
+      ],
+      "new_material_in_pilots_mm3": 0.0,
+      "meshes": {
+        "kc2_right_lower_housing_part_a.stl": {
+          "passes": true,
+          "bounds_mm": [
+            0.10000000149011612,
+            30.350000381469727,
+            -2.200000047683716,
+            87.09375,
+            123.5260009765625,
+            2.5
+          ],
+          "bounds_error_mm": 9.765625037516656e-07,
+          "volume_error_mm3": 0.004956876131473109,
+          "center_mass_mm": [
+            40.64753791567131,
+            75.71419113177015,
+            -0.19738420091101652
+          ]
+        },
+        "kc2_right_lower_housing_part_b.stl": {
+          "passes": true,
+          "bounds_mm": [
+            81.9437484741211,
+            0.10000000149011612,
+            -2.200000047683716,
+            163.58749389648438,
+            123.5260009765625,
+            2.5
+          ],
+          "bounds_error_mm": 6.103515630684342e-06,
+          "volume_error_mm3": 0.003583752371923765,
+          "center_mass_mm": [
+            118.66074356578706,
+            63.7042954282581,
+            -0.21250601734049562
+          ]
+        }
+      }
+    },
+    "magnetic": {
+      "errors": [],
+      "removed_mm3": 0.0,
+      "added_mm3": 241.19137859307145,
+      "off_allowance_added_mm3": 0.0,
+      "missing_requested_mm3": 0.0,
+      "new_material_in_protected_void_mm3": 0.0,
+      "volume_tolerance_mm3": 0.002,
+      "baseline_z_mm": [
+        -2.2,
+        2.5
+      ],
+      "revised_z_mm": [
+        -2.2,
+        2.5
+      ],
+      "new_material_in_pilots_mm3": 0.0,
+      "meshes": {
+        "kc2_right_lower_housing_part_a_magnetic.stl": {
+          "passes": true,
+          "bounds_mm": [
+            0.10000000149011612,
+            30.350000381469727,
+            -2.200000047683716,
+            87.09375,
+            123.5260009765625,
+            2.5
+          ],
+          "bounds_error_mm": 9.765625037516656e-07,
+          "volume_error_mm3": 0.004956876091455342,
+          "center_mass_mm": [
+            40.64753791567131,
+            75.71419113177015,
+            -0.19738420091101652
+          ]
+        },
+        "kc2_right_lower_housing_part_b_magnetic.stl": {
+          "passes": true,
+          "bounds_mm": [
+            81.9437484741211,
+            0.10000000149011612,
+            -2.200000047683716,
+            163.58749389648438,
+            123.5260009765625,
+            2.5
+          ],
+          "bounds_error_mm": 6.103515630684342e-06,
+          "volume_error_mm3": 0.006479422085249098,
+          "center_mass_mm": [
+            118.6468215828334,
+            63.684229619689226,
+            -0.2129520999650549
+          ]
+        }
+      }
+    }
+  },
+  "scope": "Actual additive-only lower STEP delta, local cover/floor inclusion, declared component clearance, original magnet/pilot void protection and per-part STL topology/envelope. Upper cover and physical qualifications separate.",
+  "retained_seam": {
+    "width_mm": 0.2,
+    "x_center_mm": 81.84375,
+    "omitted_local_patch_area_mm2": 0.12519999999999099,
+    "normal_baseline_floor_gap_obstruction_mm3": 0.0,
+    "magnetic_baseline_floor_gap_obstruction_mm3": 0.0
+  },
+  "magnet_void": {
+    "original_mm3": 10.857344210806472,
+    "revised_mm3": 10.857344210806481,
+    "missing_mm3": 0.0,
+    "extra_mm3": 0.0
+  },
+  "inputs_unchanged_at_finish": true,
+  "status": "pass"
+}

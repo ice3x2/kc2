@@ -5,9 +5,11 @@ import unittest
 from pathlib import Path
 
 from tools import verify_kc2_mx_housing_contract as check
+from tools.historical_housing_test_fixture import historical_json, historical_artifact_root
 
 
 class MXHousingContractTests(unittest.TestCase):
+    """Historical r5 contract mutations, not current local-cover CAD approval."""
     def test_canonical_hardware_model_paths_preserve_exact_binding(self):
         lower,upper=copy.deepcopy(self.lower),copy.deepcopy(self.upper)
         def relocate(value):
@@ -40,9 +42,10 @@ class MXHousingContractTests(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        cls.lower=json.loads((check.ROOT/'hardware/case/kc2_housing_manifest.json').read_text(encoding='utf-8'))
-        cls.upper=json.loads((check.ROOT/'hardware/case/kc2_mx_upper_housing_manifest.json').read_text(encoding='utf-8'))
-        cls.artifacts=check.collect_artifacts(check.ROOT)
+        cls.lower=historical_json('kc2_housing_manifest.json')
+        cls.upper=historical_json('kc2_mx_upper_housing_manifest.json')
+        with historical_artifact_root(check._paths()) as fixture_root:
+            cls.artifacts=check.collect_artifacts(fixture_root)
         # Rebinding is optional in regenerated canonical manifests. Keep its
         # validation exercised through an explicit synthetic fixture either way.
         cls.lower.setdefault('source_rebinding_evidence',{

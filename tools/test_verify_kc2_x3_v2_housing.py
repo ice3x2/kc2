@@ -11,6 +11,7 @@ from tools.canonical_hash import HASH_POLICY, sha256_bytes, sha256_file
 from tools import generate_kc2_x3_v2_housings as generator
 from tools import verify_kc2_x3_v2_housing as housing_verifier
 from tools.verify_kc2_x3_v2_housing import analyze_v2_housing, verify_report
+from tools.historical_housing_test_fixture import historical_json
 
 
 class ClosedFloorBRepTests(unittest.TestCase):
@@ -59,6 +60,7 @@ class ClosedFloorBRepTests(unittest.TestCase):
 
 
 class ServiceInterfaceContractUnitTests(unittest.TestCase):
+    """Legacy service-validator units; serialized inputs are pinned r5 fixtures."""
     @staticmethod
     def _part_plans(shp: dict[str, object], side: str, plan: dict[str, object]) -> list[object]:
         if side == "left":
@@ -67,7 +69,7 @@ class ServiceInterfaceContractUnitTests(unittest.TestCase):
         return [split["part_a_plan"], split["part_b_plan"]]
 
     def test_housing_manifest_traces_all_active_mechanical_requirements(self) -> None:
-        manifest = json.loads(generator.MANIFEST_PATH.read_text(encoding="utf-8"))
+        manifest = historical_json('kc2_housing_manifest.json')
         self.assertEqual(
             manifest["requirement_ids"],
             ["CON-ARCH-006", "CON-ARCH-007", "REL-ARCH-001", "OPS-ARCH-006"],
@@ -255,7 +257,7 @@ class ServiceInterfaceContractUnitTests(unittest.TestCase):
                 ):
                     self.assertGreaterEqual(hole[field] + 1e-6, 0.25, field)
 
-        report = json.loads(housing_verifier.REPORT_PATH.read_text(encoding="utf-8"))
+        report = historical_json('kc2_housing_clearance.json')
         report["sides"]["right"]["mounting_system"]["holes"][0][
             "head_to_installed_component_mm"
         ] = 0.249
@@ -332,14 +334,14 @@ class ServiceInterfaceContractUnitTests(unittest.TestCase):
             )
 
     def test_reset_projection_metadata_follows_actual_board_rotation(self) -> None:
-        manifest = json.loads(generator.MANIFEST_PATH.read_text(encoding="utf-8"))
+        manifest = historical_json('kc2_housing_manifest.json')
         expected_rotations = {"left": 0.0, "right": 180.0}
         for side, rotation in expected_rotations.items():
             reset = manifest["outputs"][side]["reset_local_support"]
             self.assertEqual(reset["footprint_rotation_deg"], rotation)
             self.assertEqual(reset["actuator_projection_size_mm"], [2.7, 1.3])
 
-        report = json.loads(housing_verifier.REPORT_PATH.read_text(encoding="utf-8"))
+        report = historical_json('kc2_housing_clearance.json')
         report["sides"]["left"]["reset_local_support"][
             "actuator_projection_size_mm"
         ] = [1.3, 2.7]
@@ -349,7 +351,7 @@ class ServiceInterfaceContractUnitTests(unittest.TestCase):
         )
 
     def test_reset_support_derives_bottom_mask_protection_and_rejects_exposure(self) -> None:
-        manifest = json.loads(generator.MANIFEST_PATH.read_text(encoding="utf-8"))
+        manifest = historical_json('kc2_housing_manifest.json')
         for side in ("left", "right"):
             reset = manifest["outputs"][side]["reset_local_support"]
             self.assertEqual(reset["bottom_routed_copper_overlap_count"], 0)
@@ -436,7 +438,7 @@ class ServiceInterfaceContractUnitTests(unittest.TestCase):
         )
 
     def test_verifier_requires_geometry_derived_bottom_copper_wear_clearance(self) -> None:
-        report = json.loads(housing_verifier.REPORT_PATH.read_text(encoding="utf-8"))
+        report = historical_json('kc2_housing_clearance.json')
         for side in ("left", "right"):
             for feature_class in ("bottom_copper_tracks", "vias"):
                 result = report["sides"][side]["collision_checks"][feature_class]

@@ -1,0 +1,116 @@
+{
+  "requirements": [
+    "CON-ARCH-006",
+    "OPS-ARCH-006"
+  ],
+  "baseline_commit": "cc854a3e0e0f25ab3d63e2916cb4b99a487b6536",
+  "side": "left",
+  "errors": [],
+  "physical_qualified": false,
+  "source_sha256": {
+    "tools/generate_kc2_local_covers.py": "6ff9e2642de19e40457640911ed37a0e177c5db65641b76c31bf3111168276a4",
+    "tools/kc2_local_covers.py": "7414affa6c05bafa1e69a0616b491fa0bd65fdf5330a07a75bc37b897df4a35d",
+    "tools/generate_kc2_x3_v2_housings.py": "0f2ef9076cff70916f77b124495fc1a5ea46751d19155378d9224a30a9168b69",
+    "tools/generate_kc2_magnetic_housings.py": "f8d20b5a84a5b953aa5a8bd7ca2e6474203347869423612f360829f516c284ec",
+    "hardware/PCB/kc2_left/kc2_left.kicad_pcb": "568e1427e4cfb9d667b6d5b3754da3a4e24c924abfa85a8dfe394dd050b5fe67",
+    ".codex-tmp/local-cover-build/left-lower.json": "f819397488341ba3c6f84ed9f465a57dc5d86dd4e852d1c2ce0e907f6efbb7ea",
+    "tools/review_kc2_local_covers.py": "5bf57c213cdf83e741235e9d291264fc16637fe08d948cb9f3973b1ae6e4bf1a",
+    "tools/test_review_kc2_local_covers.py": "ff736f75f71b13fb0fb17329eaa369efc1c6ae2b63c62960825d3f16a497b223",
+    ".codex-tmp/local-cover-build/kc2_left_lower_housing.step": "f65ac75cd7037b1b85d5ef6bc6a2fa06e91dbd060a211f6155ab116136ed03f6",
+    ".codex-tmp/local-cover-build/kc2_left_lower_housing.stl": "576ef445138c13cbb003108fa66b6d2ca33b0ddd485e0698c8ea6ca59ce2d5a1",
+    ".codex-tmp/local-cover-build/kc2_left_lower_housing_magnetic.step": "092a96feb5531e9cd416953ed1c1fda7c93e4acb4896884968a1bbb671d3433a",
+    ".codex-tmp/local-cover-build/kc2_left_lower_housing_magnetic.stl": "3512ef42e6313cf6491cadb9c3da57d25e1742614b783607c85d5d908b1a91c4"
+  },
+  "git_source_sha256": {
+    "hardware/MODELS/kc2_housing_manifest.json": "9da8e2e9efc047d61d6b3a98082b8882caa904ff0637e17633bfd18371e69ffe",
+    "hardware/MODELS/kc2_left_lower_housing.step": "277a734905e1d8705ba0bc56a7deee965fc65f4ada904aa5c9aeed524ff6c511",
+    "hardware/MODELS/kc2_left_lower_housing_magnetic.step": "d8e48c2f3fdace2f39192ddc88c831d5f0d73b541a653edda31dca026215f47d"
+  },
+  "variants": {
+    "normal": {
+      "errors": [],
+      "removed_mm3": 0.0,
+      "added_mm3": 177.5890774301097,
+      "off_allowance_added_mm3": 0.0,
+      "missing_requested_mm3": 0.0,
+      "new_material_in_protected_void_mm3": 0.0,
+      "volume_tolerance_mm3": 0.002,
+      "baseline_z_mm": [
+        -2.2,
+        2.5
+      ],
+      "revised_z_mm": [
+        -2.2,
+        2.5
+      ],
+      "new_material_in_pilots_mm3": 0.0,
+      "meshes": {
+        "kc2_left_lower_housing.stl": {
+          "passes": true,
+          "bounds_mm": [
+            0.10000000149011612,
+            0.10000000149011612,
+            -2.200000047683716,
+            135.0124969482422,
+            123.5260009765625,
+            2.5
+          ],
+          "bounds_error_mm": 3.0517578011313162e-06,
+          "volume_error_mm3": 0.005205371278862003,
+          "center_mass_mm": [
+            66.87099537400125,
+            70.90324067076452,
+            -0.1775992020251905
+          ]
+        }
+      }
+    },
+    "magnetic": {
+      "errors": [],
+      "removed_mm3": 0.0,
+      "added_mm3": 177.5890774301097,
+      "off_allowance_added_mm3": 0.0,
+      "missing_requested_mm3": 0.0,
+      "new_material_in_protected_void_mm3": 0.0,
+      "volume_tolerance_mm3": 0.002,
+      "baseline_z_mm": [
+        -2.2,
+        2.5
+      ],
+      "revised_z_mm": [
+        -2.2,
+        2.5
+      ],
+      "new_material_in_pilots_mm3": 0.0,
+      "meshes": {
+        "kc2_left_lower_housing_magnetic.stl": {
+          "passes": true,
+          "bounds_mm": [
+            0.10000000149011612,
+            0.10000000149011612,
+            -2.200000047683716,
+            135.0124969482422,
+            123.5260009765625,
+            2.5
+          ],
+          "bounds_error_mm": 3.0517578011313162e-06,
+          "volume_error_mm3": 0.008073881246673409,
+          "center_mass_mm": [
+            66.88888179865698,
+            70.89348349600557,
+            -0.17784993776176689
+          ]
+        }
+      }
+    }
+  },
+  "scope": "Actual additive-only lower STEP delta, local cover/floor inclusion, declared component clearance, original magnet/pilot void protection and per-part STL topology/envelope. Upper cover and physical qualifications separate.",
+  "magnet_void": {
+    "original_mm3": 10.85734421080632,
+    "revised_mm3": 10.857344210806328,
+    "missing_mm3": 0.0,
+    "extra_mm3": 0.0
+  },
+  "inputs_unchanged_at_finish": true,
+  "status": "pass"
+}

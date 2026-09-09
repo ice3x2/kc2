@@ -1,0 +1,19 @@
+{
+  "requirements": ["CON-ARCH-006", "OPS-ARCH-006"],
+  "status": "pass",
+  "errors": [],
+  "verified_input_tree": "63c5d29c516c35759e7ac7ffd511914df496196b",
+  "manifest": "hardware/MODELS/kc2_local_cover_manifest.json",
+  "manifest_sha256": "99e64ccd96b8ce9feb1af9c6ddf3a75230be309586913c95e9671f59f9476072",
+  "exported_files": 109,
+  "source_bindings": 108,
+  "cad_outputs": 21,
+  "temporary_inputs_required": false,
+  "compatibility_junctions_required": false,
+  "verification_exit_code": 0,
+  "exporter_format_note": "Six diagnostic STEP files retain the original STEP Tools vendor-comment trailing space at line4. A path-scoped Git whitespace attribute permits that machine-generated formatting without rewriting verified evidence bytes.",
+  "physical_qualified": false,
+  "new_fabrication_approval": false,
+  "method": "git write-tree; git archive exact manifest and source bindings into a fresh TemporaryDirectory; compare every raw SHA-256; run tools/publish_kc2_local_covers.py --verify with Python standard library only",
+  "scope": "The tree was checked before adding this evidence record and its SRS reference. Those additions do not change any of the 109 verified publication inputs. Final Git commit/push identity is reported separately."
+}

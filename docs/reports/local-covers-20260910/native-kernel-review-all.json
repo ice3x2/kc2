@@ -1,0 +1,523 @@
+{
+  "requirements": [
+    "CON-ARCH-006",
+    "OPS-ARCH-006"
+  ],
+  "status": "pass",
+  "errors": [],
+  "physical_qualified": false,
+  "source_sha256": {
+    "tools/fusion/KC2LocalNativeReview/KC2LocalNativeReview.py": "92f292665c44ae5fdd1c87d4d2f62a70e162c4a7eaa0db25d148151d50650d08",
+    "tools/fusion/KC2StepToF3D/KC2StepToF3D.py": "d5a0bc1d376c04e5797eb3fb20a4c1fb3bb31a4f01a20aa42e834eab6e1d6cc5",
+    ".codex-tmp/local-cover-build/kc2_left_lower_housing.f3d": "46876f3acd9face2783b4e55d44d3f50fa3b241de7bd8254bea1d1cb6f855268",
+    ".codex-tmp/local-cover-build/kc2_left_lower_housing.step": "f65ac75cd7037b1b85d5ef6bc6a2fa06e91dbd060a211f6155ab116136ed03f6",
+    ".codex-tmp/local-cover-build/kc2_left_lower_housing_magnetic.f3d": "5f197d1094d01eaa1a18d1cb961ef6591bbb76385a1eeb05ce680f5bf44fd81f",
+    ".codex-tmp/local-cover-build/kc2_left_lower_housing_magnetic.step": "092a96feb5531e9cd416953ed1c1fda7c93e4acb4896884968a1bbb671d3433a",
+    ".codex-tmp/local-cover-build/kc2_left_mx_upper_housing.f3d": "0bfec02dc6fabb7e2ca90994afaa3569d795de961749db33de3716c9551428d6",
+    ".codex-tmp/local-cover-build/kc2_left_mx_upper_housing.step": "7ea10fb069bdc925a0d219126520c41daaf86054382f600ed2ecb35e67c452a6",
+    ".codex-tmp/local-cover-build/kc2_right_lower_housing.f3d": "daac82da63631622e4794b21f65b6dece6abdc66edd6fcc0cf4ba7cebc736607",
+    ".codex-tmp/local-cover-build/kc2_right_lower_housing.step": "8aa5e311ac0ce5465cd993f701a8b797d60d14c51a8bf7ea1f7e2cecdea0d6d0",
+    ".codex-tmp/local-cover-build/kc2_right_lower_housing_magnetic.f3d": "8be028d4cd25b1af452d134a3d0908ed73ed536d94a79e9da393d1acb38052e6",
+    ".codex-tmp/local-cover-build/kc2_right_lower_housing_magnetic.step": "56667f7eaf9893b43d5e813930c4b4ebbc1aa5189c83f1c0d3303a689d80ef29",
+    ".codex-tmp/local-cover-build/kc2_right_mx_upper_housing.f3d": "7585a80bc586a2b86c91314d4160e62af2cc45f64647b4fda743ca109461658a",
+    ".codex-tmp/local-cover-build/kc2_right_mx_upper_housing.step": "0b28b24941dd21f6b12377c9ce035cdc985339a0715e532a09541d5e51f44e70",
+    "tools/review_kc2_local_native.py": "ddce64e60daea17d211501e44602247e65c956e8feb9680d0473795bda19415f",
+    "tools/test_review_kc2_local_native.py": "9f0c9be908688f9568165d166e9aad5109add8a831c9a7d8ff172346db280228",
+    ".codex-tmp/local-cover-build/native-review-export-all.json": "bad87da2401681d43a4c103e05d07413bb481eeed69846732eb04cb292485c02",
+    ".codex-tmp/local-cover-build/native-check-left_lower.step": "6f29655fdd32758af160cf7db997361998d52fcbdebcef99906d76541e961de4",
+    ".codex-tmp/local-cover-build/native-check-left_lower_magnetic.step": "3bc37fc392097d8e4db728a4d59b27107cbe52f9f1b6199fecb0dfcac060b810",
+    ".codex-tmp/local-cover-build/native-check-left_mx_upper.step": "2314c9caabf7b11b3ce2f359b1e64ae74ae7797158894235946beb4cbb655df0",
+    ".codex-tmp/local-cover-build/native-check-right_lower.step": "218b68593ec4ef5612ea799219346a70134754ff7ba4c7faf395943c7fbea583",
+    ".codex-tmp/local-cover-build/native-check-right_lower_magnetic.step": "4c8dba6010bc9a6373f129d9a55d97b8dc5be34fd77775b5bbd4cd7e04a92327",
+    ".codex-tmp/local-cover-build/native-check-right_mx_upper.step": "7e634d75f50ccfdab82fffbcee5c4653edec0692848862a5022a3d2e9e9173c6"
+  },
+  "sources_unchanged": true,
+  "outputs": {
+    "left_lower": {
+      "source_solids": [
+        {
+          "bounds_mm": [
+            0.1,
+            0.1,
+            -2.2,
+            135.0125,
+            123.526,
+            2.5
+          ],
+          "volume_mm3": 40167.08370227225
+        }
+      ],
+      "reopened_solids": [
+        {
+          "bounds_mm": [
+            0.1,
+            0.1,
+            -2.2,
+            135.0125,
+            123.526,
+            2.5
+          ],
+          "volume_mm3": 40167.083702264514
+        }
+      ],
+      "errors": [],
+      "default_source_solids": [
+        {
+          "bounds_mm": [
+            0.1,
+            0.1,
+            -2.2,
+            135.0125,
+            123.526,
+            2.5
+          ],
+          "volume_mm3": 40167.08370227225
+        }
+      ],
+      "default_reopened_solids": [
+        {
+          "bounds_mm": [
+            0.1,
+            0.1,
+            -2.2,
+            135.0125,
+            123.526,
+            2.5
+          ],
+          "volume_mm3": 40167.08370227219
+        }
+      ],
+      "source_step_sha256": "f65ac75cd7037b1b85d5ef6bc6a2fa06e91dbd060a211f6155ab116136ed03f6",
+      "source_f3d_sha256": "46876f3acd9face2783b4e55d44d3f50fa3b241de7bd8254bea1d1cb6f855268",
+      "verification_step_sha256": "6f29655fdd32758af160cf7db997361998d52fcbdebcef99906d76541e961de4"
+    },
+    "left_lower_magnetic": {
+      "source_solids": [
+        {
+          "bounds_mm": [
+            0.1,
+            0.1,
+            -2.2,
+            135.0125,
+            123.526,
+            2.5
+          ],
+          "volume_mm3": 40156.22635806147
+        }
+      ],
+      "reopened_solids": [
+        {
+          "bounds_mm": [
+            0.1,
+            0.1,
+            -2.2,
+            135.0125,
+            123.526,
+            2.5
+          ],
+          "volume_mm3": 40156.22635803699
+        }
+      ],
+      "errors": [],
+      "default_source_solids": [
+        {
+          "bounds_mm": [
+            0.1,
+            0.1,
+            -2.2,
+            135.0125,
+            123.526,
+            2.5
+          ],
+          "volume_mm3": 40156.22635806163
+        }
+      ],
+      "default_reopened_solids": [
+        {
+          "bounds_mm": [
+            0.1,
+            0.1,
+            -2.2,
+            135.0125,
+            123.526,
+            2.5
+          ],
+          "volume_mm3": 40156.22635806135
+        }
+      ],
+      "source_step_sha256": "092a96feb5531e9cd416953ed1c1fda7c93e4acb4896884968a1bbb671d3433a",
+      "source_f3d_sha256": "5f197d1094d01eaa1a18d1cb961ef6591bbb76385a1eeb05ce680f5bf44fd81f",
+      "verification_step_sha256": "3bc37fc392097d8e4db728a4d59b27107cbe52f9f1b6199fecb0dfcac060b810"
+    },
+    "left_mx_upper": {
+      "source_solids": [
+        {
+          "bounds_mm": [
+            -0.477,
+            0.1,
+            4.1,
+            135.5895,
+            122.977,
+            9.3
+          ],
+          "volume_mm3": 10552.208610331369
+        }
+      ],
+      "reopened_solids": [
+        {
+          "bounds_mm": [
+            -0.477,
+            0.0999999,
+            4.1,
+            135.5895,
+            122.977,
+            9.3000001
+          ],
+          "volume_mm3": 10552.208610331274
+        }
+      ],
+      "errors": [],
+      "default_source_solids": [
+        {
+          "bounds_mm": [
+            -0.477,
+            0.1,
+            4.1,
+            135.5895,
+            122.977,
+            9.3
+          ],
+          "volume_mm3": 10552.208610331347
+        }
+      ],
+      "default_reopened_solids": [
+        {
+          "bounds_mm": [
+            -0.477,
+            0.0999999,
+            4.1,
+            135.5895,
+            122.977,
+            9.3000001
+          ],
+          "volume_mm3": 10552.194730073696
+        }
+      ],
+      "source_step_sha256": "7ea10fb069bdc925a0d219126520c41daaf86054382f600ed2ecb35e67c452a6",
+      "source_f3d_sha256": "0bfec02dc6fabb7e2ca90994afaa3569d795de961749db33de3716c9551428d6",
+      "verification_step_sha256": "2314c9caabf7b11b3ce2f359b1e64ae74ae7797158894235946beb4cbb655df0"
+    },
+    "right_lower": {
+      "source_solids": [
+        {
+          "bounds_mm": [
+            0.1,
+            30.35,
+            -2.2,
+            87.0937500000004,
+            123.526,
+            2.5
+          ],
+          "volume_mm3": 22633.546803704685
+        },
+        {
+          "bounds_mm": [
+            81.94374999999998,
+            0.09999999999959135,
+            -2.2,
+            163.5875,
+            123.526,
+            2.5
+          ],
+          "volume_mm3": 23431.33729629169
+        }
+      ],
+      "reopened_solids": [
+        {
+          "bounds_mm": [
+            0.1,
+            30.35,
+            -2.2,
+            87.0937500000004,
+            123.526,
+            2.5
+          ],
+          "volume_mm3": 22633.54680371709
+        },
+        {
+          "bounds_mm": [
+            81.94374999999998,
+            0.09999999999959158,
+            -2.2,
+            163.5875,
+            123.526,
+            2.5
+          ],
+          "volume_mm3": 23431.33729629808
+        }
+      ],
+      "errors": [],
+      "default_source_solids": [
+        {
+          "bounds_mm": [
+            0.1,
+            30.35,
+            -2.2,
+            87.0937500000004,
+            123.526,
+            2.5
+          ],
+          "volume_mm3": 22633.546803704685
+        },
+        {
+          "bounds_mm": [
+            81.94374999999998,
+            0.09999999999959135,
+            -2.2,
+            163.5875,
+            123.526,
+            2.5
+          ],
+          "volume_mm3": 23431.337296291695
+        }
+      ],
+      "default_reopened_solids": [
+        {
+          "bounds_mm": [
+            0.1,
+            30.35,
+            -2.2,
+            87.0937500000004,
+            123.526,
+            2.5
+          ],
+          "volume_mm3": 22633.54680370471
+        },
+        {
+          "bounds_mm": [
+            81.94374999999998,
+            0.09999999999959158,
+            -2.2,
+            163.5875,
+            123.526,
+            2.5
+          ],
+          "volume_mm3": 23431.337296291793
+        }
+      ],
+      "source_step_sha256": "8aa5e311ac0ce5465cd993f701a8b797d60d14c51a8bf7ea1f7e2cecdea0d6d0",
+      "source_f3d_sha256": "daac82da63631622e4794b21f65b6dece6abdc66edd6fcc0cf4ba7cebc736607",
+      "verification_step_sha256": "218b68593ec4ef5612ea799219346a70134754ff7ba4c7faf395943c7fbea583"
+    },
+    "right_lower_magnetic": {
+      "source_solids": [
+        {
+          "bounds_mm": [
+            0.1,
+            30.35,
+            -2.2,
+            87.09375000000044,
+            123.526,
+            2.5
+          ],
+          "volume_mm3": 22633.546803704692
+        },
+        {
+          "bounds_mm": [
+            81.94374999999998,
+            0.09999999999959135,
+            -2.2,
+            163.5875,
+            123.526,
+            2.5
+          ],
+          "volume_mm3": 23420.479952080892
+        }
+      ],
+      "reopened_solids": [
+        {
+          "bounds_mm": [
+            0.1,
+            30.35,
+            -2.2,
+            87.09375000000044,
+            123.526,
+            2.5
+          ],
+          "volume_mm3": 22633.546803717094
+        },
+        {
+          "bounds_mm": [
+            81.94374999999998,
+            0.09999999999959158,
+            -2.2,
+            163.5875,
+            123.526,
+            2.5
+          ],
+          "volume_mm3": 23420.47995206829
+        }
+      ],
+      "errors": [],
+      "default_source_solids": [
+        {
+          "bounds_mm": [
+            0.1,
+            30.35,
+            -2.2,
+            87.09375000000044,
+            123.526,
+            2.5
+          ],
+          "volume_mm3": 22633.546803704725
+        },
+        {
+          "bounds_mm": [
+            81.94374999999998,
+            0.09999999999959135,
+            -2.2,
+            163.5875,
+            123.526,
+            2.5
+          ],
+          "volume_mm3": 23420.47995208088
+        }
+      ],
+      "default_reopened_solids": [
+        {
+          "bounds_mm": [
+            0.1,
+            30.35,
+            -2.2,
+            87.09375000000044,
+            123.526,
+            2.5
+          ],
+          "volume_mm3": 22633.54680370471
+        },
+        {
+          "bounds_mm": [
+            81.94374999999998,
+            0.09999999999959158,
+            -2.2,
+            163.5875,
+            123.526,
+            2.5
+          ],
+          "volume_mm3": 23420.479952081
+        }
+      ],
+      "source_step_sha256": "56667f7eaf9893b43d5e813930c4b4ebbc1aa5189c83f1c0d3303a689d80ef29",
+      "source_f3d_sha256": "8be028d4cd25b1af452d134a3d0908ed73ed536d94a79e9da393d1acb38052e6",
+      "verification_step_sha256": "4c8dba6010bc9a6373f129d9a55d97b8dc5be34fd77775b5bbd4cd7e04a92327"
+    },
+    "right_mx_upper": {
+      "source_solids": [
+        {
+          "bounds_mm": [
+            -0.4770000000000219,
+            29.773,
+            4.1,
+            88.8875,
+            122.977,
+            9.3
+          ],
+          "volume_mm3": 5867.706631001749
+        },
+        {
+          "bounds_mm": [
+            73.500053569934,
+            0.09999999999959135,
+            4.1,
+            164.1645,
+            122.977,
+            9.3
+          ],
+          "volume_mm3": 6145.989041391296
+        }
+      ],
+      "reopened_solids": [
+        {
+          "bounds_mm": [
+            -0.4770000000000219,
+            29.773,
+            4.1,
+            88.8875,
+            122.977,
+            9.3
+          ],
+          "volume_mm3": 5867.706631001747
+        },
+        {
+          "bounds_mm": [
+            73.500053469934,
+            0.09999989999959158,
+            4.1,
+            164.1645,
+            122.977,
+            9.3000001
+          ],
+          "volume_mm3": 6145.98904139126
+        }
+      ],
+      "errors": [],
+      "default_source_solids": [
+        {
+          "bounds_mm": [
+            -0.4770000000000219,
+            29.773,
+            4.1,
+            88.8875,
+            122.977,
+            9.3
+          ],
+          "volume_mm3": 5867.706631001751
+        },
+        {
+          "bounds_mm": [
+            73.500053569934,
+            0.09999999999959135,
+            4.1,
+            164.1645,
+            122.977,
+            9.3
+          ],
+          "volume_mm3": 6145.9890413912435
+        }
+      ],
+      "default_reopened_solids": [
+        {
+          "bounds_mm": [
+            -0.4770000000000219,
+            29.773,
+            4.1,
+            88.8875,
+            122.977,
+            9.3
+          ],
+          "volume_mm3": 5867.706631001749
+        },
+        {
+          "bounds_mm": [
+            73.500053469934,
+            0.09999989999959158,
+            4.1,
+            164.1645,
+            122.977,
+            9.3000001
+          ],
+          "volume_mm3": 6146.071971166215
+        }
+      ],
+      "source_step_sha256": "0b28b24941dd21f6b12377c9ce035cdc985339a0715e532a09541d5e51f44e70",
+      "source_f3d_sha256": "7585a80bc586a2b86c91314d4160e62af2cc45f64647b4fda743ca109461658a",
+      "verification_step_sha256": "7e634d75f50ccfdab82fffbcee5c4653edec0692848862a5022a3d2e9e9173c6"
+    }
+  },
+  "method": "F3D reopened in Fusion, exported diagnostic STEP, both STEP files imported by same CadQuery/OpenCascade process",
+  "cadquery_version": "2.8.0",
+  "bounds_tolerance_mm": 0.001,
+  "mass_integration_relative_epsilon": 1e-09,
+  "volume_tolerance": "max(0.002 mm3, original volume * 1e-6)",
+  "scope": "Native geometry bounds/volume round trip; no physical qualification"
+}

@@ -6,12 +6,14 @@ import tempfile
 from pathlib import Path
 
 from tools import generate_kc2_x3_v2_housings as housing
+from tools.historical_housing_test_fixture import historical_json
 
 
 class MXHousingTests(unittest.TestCase):
     def test_verifier_accepts_improved_span_but_rejects_worse_span(self):
         from tools.verify_kc2_x3_v2_housing import verify_report
-        report = json.loads((housing.OUTPUT_DIR/'kc2_housing_clearance.json').read_text(encoding='utf-8'))
+        # Historical validator mutation fixture, not current local-cover CAD evidence.
+        report = historical_json('kc2_housing_clearance.json')
         for value, rejected in ((3.899, False), (4.41, True), (-1, True), (math.nan, True)):
             report['sides']['left']['maximum_load_point_to_support_mm'] = value
             errors = verify_report(report)

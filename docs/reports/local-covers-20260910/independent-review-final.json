@@ -1,0 +1,266 @@
+{
+  "requirements": [
+    "CON-ARCH-006",
+    "CON-ARCH-007",
+    "OPS-ARCH-006"
+  ],
+  "status": "pass",
+  "errors": [],
+  "physical_qualified": false,
+  "new_fabrication_approval": false,
+  "source_sha256": {
+    ".codex-tmp/local-cover-build/left-lower.json": "f819397488341ba3c6f84ed9f465a57dc5d86dd4e852d1c2ce0e907f6efbb7ea",
+    ".codex-tmp/local-cover-build/left-upper.json": "033ea62166e9c54d585f3ae69aeab139380fae20aa135e3b5487595358dfd66e",
+    ".codex-tmp/local-cover-build/left-lower-review.json": "9b29cfd7f0c3584a3572d2f5698372525e2a661c35883bb14d02d52fbc9e25c3",
+    "tools/generate_kc2_local_covers.py": "6ff9e2642de19e40457640911ed37a0e177c5db65641b76c31bf3111168276a4",
+    "tools/kc2_local_covers.py": "7414affa6c05bafa1e69a0616b491fa0bd65fdf5330a07a75bc37b897df4a35d",
+    "tools/generate_kc2_x3_v2_housings.py": "0f2ef9076cff70916f77b124495fc1a5ea46751d19155378d9224a30a9168b69",
+    "tools/generate_kc2_magnetic_housings.py": "f8d20b5a84a5b953aa5a8bd7ca2e6474203347869423612f360829f516c284ec",
+    "hardware/PCB/kc2_left/kc2_left.kicad_pcb": "568e1427e4cfb9d667b6d5b3754da3a4e24c924abfa85a8dfe394dd050b5fe67",
+    "tools/review_kc2_local_covers.py": "5bf57c213cdf83e741235e9d291264fc16637fe08d948cb9f3973b1ae6e4bf1a",
+    "tools/test_review_kc2_local_covers.py": "ff736f75f71b13fb0fb17329eaa369efc1c6ae2b63c62960825d3f16a497b223",
+    ".codex-tmp/local-cover-build/kc2_left_lower_housing.step": "f65ac75cd7037b1b85d5ef6bc6a2fa06e91dbd060a211f6155ab116136ed03f6",
+    ".codex-tmp/local-cover-build/kc2_left_lower_housing.stl": "576ef445138c13cbb003108fa66b6d2ca33b0ddd485e0698c8ea6ca59ce2d5a1",
+    ".codex-tmp/local-cover-build/kc2_left_lower_housing_magnetic.step": "092a96feb5531e9cd416953ed1c1fda7c93e4acb4896884968a1bbb671d3433a",
+    ".codex-tmp/local-cover-build/kc2_left_lower_housing_magnetic.stl": "3512ef42e6313cf6491cadb9c3da57d25e1742614b783607c85d5d908b1a91c4",
+    ".codex-tmp/local-cover-build/left-upper-review.json": "9c2e54c886b81265028fd03a7803de69275efd4860fe252d7758bf97ac1a3b3e",
+    "tools/kc2_local_upper_covers.py": "3b507b98b571cc29bfe32cfe994db311165be61faefee3129ebd1a2f3302ce23",
+    "tools/test_kc2_local_upper_covers.py": "5a57111534cd569a7d2eb608bc3216585e27b864c9f0d7a4275452b9756106a9",
+    "tools/generate_kc2_mx_upper_housings.py": "984b4e0217ed4febbe719b8529fb07701c085447457a142a0306168220b452bf",
+    "tools/generate_kc2_housings.py": "cbf34705101526043bf4a43daed6e50dee2c67dc61ae0832debd70e62f5e5e16",
+    "tools/render_kc2_x3_joined.py": "903c3e2353aabfe7ff8a804f0bd0653ab0a90c3f881f8819ab239ca9aa1666b1",
+    "hardware/kicad/kc2_left/kc2_left.kicad_pcb": "568e1427e4cfb9d667b6d5b3754da3a4e24c924abfa85a8dfe394dd050b5fe67",
+    "hardware/kicad/kc2_right/kc2_right.kicad_pcb": "88290c3b0cf3951d56221d216549665c0576a816a6315012f7f12b027f402577",
+    "tools/review_kc2_local_upper_covers.py": "6b7577a48a362a1fbe48106c2c505153f83eb9f7ed2235eed1da6af8eabfb43b",
+    "tools/test_review_kc2_local_upper_covers.py": "4ee7e76a7bda93d54d2f92381ce4cad2db287ea2bc95d59983a94cbc568ed11d",
+    ".codex-tmp/local-cover-build/kc2_left_mx_upper_housing.step": "7ea10fb069bdc925a0d219126520c41daaf86054382f600ed2ecb35e67c452a6",
+    ".codex-tmp/local-cover-build/kc2_left_mx_upper_housing.stl": "01f763753cda54176dd3cd3756eb4647d6fd9be171dc3b48eda6453ba518bc11",
+    ".codex-tmp/local-cover-build/right-lower.json": "4295872426dbb3c6cbdda62b90c10f22497a91a91ea02aa23b35c5957370b537",
+    ".codex-tmp/local-cover-build/right-upper.json": "5226b27086cfc74f6a081ed07d5cfedfe0fa493c41c4c1177faf9ae1af3aae87",
+    ".codex-tmp/local-cover-build/right-lower-review.json": "1309200933e30fea8634d6669109b187ecf44a78c5260982aa8bb83fe59ac394",
+    "hardware/PCB/kc2_right/kc2_right.kicad_pcb": "88290c3b0cf3951d56221d216549665c0576a816a6315012f7f12b027f402577",
+    ".codex-tmp/local-cover-build/kc2_right_lower_housing.step": "8aa5e311ac0ce5465cd993f701a8b797d60d14c51a8bf7ea1f7e2cecdea0d6d0",
+    ".codex-tmp/local-cover-build/kc2_right_lower_housing_part_a.stl": "d093029bb8028e03baa23b5d3e11c1afe021bf7bc92c42c1e013b5230554c599",
+    ".codex-tmp/local-cover-build/kc2_right_lower_housing_part_b.stl": "42060501f6d8ca33d0c7d1d3146c8a45fe3a5abe3c74c06490f53c47e1df1c69",
+    ".codex-tmp/local-cover-build/kc2_right_lower_housing_magnetic.step": "56667f7eaf9893b43d5e813930c4b4ebbc1aa5189c83f1c0d3303a689d80ef29",
+    ".codex-tmp/local-cover-build/kc2_right_lower_housing_part_a_magnetic.stl": "c7f64b2a14768173f3da06d711506367dd7c47a5dc925679ef94b27fe5d67781",
+    ".codex-tmp/local-cover-build/kc2_right_lower_housing_part_b_magnetic.stl": "838d9017e09e81aba3d8d1db142a37e165dba6a8e51ea9c32952955f081680b8",
+    ".codex-tmp/local-cover-build/right-upper-review.json": "f2320d1a330ec14f7b12221e7ad2bcfda74c6a9b1113639569433e442bdab824",
+    ".codex-tmp/local-cover-build/kc2_right_mx_upper_housing.step": "0b28b24941dd21f6b12377c9ce035cdc985339a0715e532a09541d5e51f44e70",
+    ".codex-tmp/local-cover-build/kc2_right_mx_upper_housing_part_a.stl": "e07a8166b98b3e37fa525e1c2f898bff5756aa25c50393a7fb86a0431228601a",
+    ".codex-tmp/local-cover-build/kc2_right_mx_upper_housing_part_b.stl": "e5ab490e0bb30edbde4bdc73e918e9fa1749a8d4626728b261392b906e60100c",
+    "tools/review_kc2_local_assembly.py": "e0221a627b032c23bbfaeb04d83c2b93d4c9528898a256383f5a6047c878355c",
+    "tools/test_review_kc2_local_assembly.py": "f1e49ae18b285431073a945398f78a87b8162b3731bf2bdadaacaf18be42bb24"
+  },
+  "git_source_sha256": {
+    "cc854a3e0e0f25ab3d63e2916cb4b99a487b6536:hardware/MODELS/kc2_housing_manifest.json": "9da8e2e9efc047d61d6b3a98082b8882caa904ff0637e17633bfd18371e69ffe"
+  },
+  "joined": {
+    "minimum_gap_mm": 1.299999999999983,
+    "overlap_mm2": 0.0,
+    "errors": []
+  },
+  "original_right_transform_mm": {
+    "dx": 124.625,
+    "dy": 0
+  },
+  "intent": [
+    {
+      "side": "left",
+      "local_lower_openings": 5,
+      "lower_max_z_mm": 2.5,
+      "upper_skirt_min_z_mm": 4.4,
+      "pcb_bottom_top_mm": [
+        2.5,
+        4.1
+      ],
+      "upper_skirt_clearance_above_pcb_mm": 0.3,
+      "new_wall_to_wall_load_path": false,
+      "lower_local_outline_added_mm2": 65.51036443899513,
+      "upper_local_outline_added_mm2": 152.3517672753033
+    },
+    {
+      "side": "right",
+      "local_lower_openings": 7,
+      "lower_max_z_mm": 2.5,
+      "upper_skirt_min_z_mm": 4.4,
+      "pcb_bottom_top_mm": [
+        2.5,
+        4.1
+      ],
+      "upper_skirt_clearance_above_pcb_mm": 0.3,
+      "new_wall_to_wall_load_path": false,
+      "lower_local_outline_added_mm2": 88.70705190520812,
+      "upper_local_outline_added_mm2": 210.21638458993215
+    }
+  ],
+  "feet": [
+    {
+      "stl": "kc2_left_lower_housing.stl",
+      "centroid_mm": [
+        66.87099537400125,
+        70.90324067076452,
+        -0.1775992020251905
+      ],
+      "centers_xy_mm": [
+        [
+          23.300000000000008,
+          4.8999999999999995
+        ],
+        [
+          130.2125,
+          35.15
+        ],
+        [
+          130.2125,
+          117.60000000000001
+        ],
+        [
+          4.8999999999999995,
+          117.60000000000001
+        ]
+      ],
+      "inside_foot_hull": true
+    },
+    {
+      "stl": "kc2_left_lower_housing_magnetic.stl",
+      "centroid_mm": [
+        66.88888179865698,
+        70.89348349600557,
+        -0.17784993776176689
+      ],
+      "centers_xy_mm": [
+        [
+          23.300000000000008,
+          4.8999999999999995
+        ],
+        [
+          130.2125,
+          35.15
+        ],
+        [
+          130.2125,
+          117.60000000000001
+        ],
+        [
+          4.8999999999999995,
+          117.60000000000001
+        ]
+      ],
+      "inside_foot_hull": true
+    },
+    {
+      "stl": "kc2_right_lower_housing_part_a.stl",
+      "centroid_mm": [
+        40.64753791567131,
+        75.71419113177015,
+        -0.19738420091101652
+      ],
+      "centers_xy_mm": [
+        [
+          4.8999999999999995,
+          35.15
+        ],
+        [
+          76.94375000000001,
+          35.15
+        ],
+        [
+          76.94375000000001,
+          117.60000000000001
+        ],
+        [
+          4.8999999999999995,
+          117.60000000000001
+        ]
+      ],
+      "inside_foot_hull": true
+    },
+    {
+      "stl": "kc2_right_lower_housing_part_b.stl",
+      "centroid_mm": [
+        118.66074356578706,
+        63.7042954282581,
+        -0.21250601734049562
+      ],
+      "centers_xy_mm": [
+        [
+          102.68749999999999,
+          4.8999999999999995
+        ],
+        [
+          135.3875,
+          4.8999999999999995
+        ],
+        [
+          144.5,
+          117.60000000000001
+        ],
+        [
+          86.74374999999999,
+          117.60000000000001
+        ]
+      ],
+      "inside_foot_hull": true
+    },
+    {
+      "stl": "kc2_right_lower_housing_part_a_magnetic.stl",
+      "centroid_mm": [
+        40.64753791567131,
+        75.71419113177015,
+        -0.19738420091101652
+      ],
+      "centers_xy_mm": [
+        [
+          4.8999999999999995,
+          35.15
+        ],
+        [
+          76.94375000000001,
+          35.15
+        ],
+        [
+          76.94375000000001,
+          117.60000000000001
+        ],
+        [
+          4.8999999999999995,
+          117.60000000000001
+        ]
+      ],
+      "inside_foot_hull": true
+    },
+    {
+      "stl": "kc2_right_lower_housing_part_b_magnetic.stl",
+      "centroid_mm": [
+        118.6468215828334,
+        63.684229619689226,
+        -0.2129520999650549
+      ],
+      "centers_xy_mm": [
+        [
+          102.68749999999999,
+          4.8999999999999995
+        ],
+        [
+          135.3875,
+          4.8999999999999995
+        ],
+        [
+          144.5,
+          117.60000000000001
+        ],
+        [
+          86.74374999999999,
+          117.60000000000001
+        ]
+      ],
+      "inside_foot_hull": true
+    }
+  ],
+  "drawings": {
+    "docs/reports/local-covers-20260910/left-local-cover-plan.svg": "34ac94db68841e0a9d3757f57bf496dfdf5761243cc645212f77bb5866d22ead",
+    "docs/reports/local-covers-20260910/right-local-cover-plan.svg": "e12aa570e19cf7ff09767957d6843c03694fad9c86a45424bc41ef81a747deea"
+  },
+  "scope": "Combined independently audited local masks, original joined transform, bare-housing mesh centroid/retained feet. Exact cap/part, populated stability, print/strength/magnet and RF remain physical."
+}
