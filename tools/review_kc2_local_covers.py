@@ -18,7 +18,7 @@ from shapely.geometry import box
 from shapely.ops import unary_union
 
 ROOT=Path(__file__).resolve().parents[1]
-STAGE=ROOT/'.codex-tmp/local-cover-build'
+STAGE=ROOT/'.codex-tmp/reinforced-cover-build'
 BASELINE='cc854a3e0e0f25ab3d63e2916cb4b99a487b6536'
 VOLUME_TOLERANCE=.002
 
@@ -82,8 +82,13 @@ def locality_errors(outline,clearance,wall,patch,part_patches,retained_gap=None)
     # Independently bound the local zones; never accept a global perimeter band
     # simply because the generator declared it as its expected wall.
     local=unary_union(exposed)
-    zone=local.buffer(.401+.30+.002,quad_segs=64)
-    outer_allowance=local.buffer(.401+.002,quad_segs=64).union(outline)
+    wrapped=local.buffer(1.201,quad_segs=64)
+    expected_patch=outline.union(wrapped).difference(outline.buffer(-.80)).intersection(wrapped.buffer(.80,quad_segs=64))
+    if (patch.symmetric_difference(expected_patch).area>.001
+        or wall.symmetric_difference(expected_patch.difference(clearance)).area>.001):
+        errors.append('reinforced wall/root coverage differs from independent requirement')
+    zone=local.buffer(1.201+.80+.002,quad_segs=64)
+    outer_allowance=local.buffer(1.201+.002,quad_segs=64).union(outline)
     for name,shape in [('wall',wall),('floor patch',patch)]:
         if shape.difference(zone).area>.001:errors.append(name+' is not local to exposed openings')
         if shape.difference(outer_allowance).area>.001:errors.append(name+' expands beyond local allowance')

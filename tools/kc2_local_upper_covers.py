@@ -15,16 +15,18 @@ from shapely.ops import unary_union
 
 ROOT = Path(__file__).resolve().parents[1]
 BASELINE = 'cc854a3e0e0f25ab3d63e2916cb4b99a487b6536'
-STAGE = ROOT / '.codex-tmp/local-cover-build'
+STAGE = ROOT / '.codex-tmp/reinforced-cover-build'
 SKIRT_BOTTOM, PLATE_BOTTOM, PLATE_TOP = 4.4, 7.8, 9.3
+WALL_MM=1.201
+ROOF_ATTACHMENT_MM=.80
 
 
 def cover_geometry(outline, body, service, locality=None):
     """Raw body at roof level; body + .301 clearance strictly below plate."""
-    outer = outline.union(body.buffer(.702, quad_segs=32))
-    inner = outline.buffer(-.401).union(body.buffer(.301, quad_segs=32))
+    outer = outline.union(body.buffer(.301+WALL_MM, quad_segs=32))
+    inner = outline.buffer(-WALL_MM).union(body.buffer(.301, quad_segs=32))
     skirt = outer.difference(inner).difference(service)
-    roof = outer.difference(outline.buffer(-.005)).intersection(body.buffer(.702, quad_segs=32)).difference(body).difference(service)
+    roof = outer.difference(outline.buffer(-ROOF_ATTACHMENT_MM)).intersection(body.buffer(.301+WALL_MM, quad_segs=32)).difference(body).difference(service)
     if locality is not None:
         skirt, roof = skirt.intersection(locality), roof.intersection(locality)
     if skirt.distance(body) < .3 - 1e-7:
@@ -204,6 +206,7 @@ def generate(side):
     outputs = {'normal':dict(step=step.name, step_sha256=digest(step), meshes=meshes,
                solids=[dict(bounds_mm=magnetic.bounds(s), volume_mm3=s.Volume()) for s in solids])}
     report = dict(requirements=['CON-ARCH-006','OPS-ARCH-006'],
+                  reinforcement={'wall_nominal_mm':1.2,'attachment_mm':.8,'physical_strength':'pending_reprint'},
                   status='generated_not_independently_verified', baseline_commit=BASELINE,
                   physical_qualified=False, canonical_promotion_approved=False,
                   transform=transform, checks=checks, outputs=outputs,

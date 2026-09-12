@@ -12,7 +12,7 @@ from tools import generate_kc2_magnetic_housings as magnetic
 from tools import kc2_local_covers as covers
 
 ROOT=Path(__file__).resolve().parents[1]
-STAGE=ROOT/'.codex-tmp/local-cover-build'
+STAGE=ROOT/'.codex-tmp/reinforced-cover-build'
 BASELINE='cc854a3e0e0f25ab3d63e2916cb4b99a487b6536'
 
 
@@ -72,6 +72,7 @@ def generate_lower(side):
         patches=covers.assign_local_patches(list(getattr(local['floor_patch'],'geoms',[local['floor_patch']])),masks)
     walls=[patch.intersection(local['wall']) for patch in patches]
     report={'requirements':['CON-ARCH-006','OPS-ARCH-006'],'status':'generating',
+            'reinforcement':{'wall_nominal_mm':1.2,'attachment_mm':.8,'physical_strength':'pending_reprint'},
             'baseline_commit':BASELINE,'source_sha256':bound,'physical_qualified':False,
             'opening_count':local['opening_count'],'wall_wkt':local['wall'].wkt,
             'floor_patch_wkt':local['floor_patch'].wkt,'clearance_wkt':clearance.wkt,

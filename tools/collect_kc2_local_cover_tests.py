@@ -38,7 +38,7 @@ def main():
         'exit_code':run.returncode,'sources_unchanged':unchanged,'source_sha256':before,
         'stdout':run.stdout,'stderr':run.stderr,'physical_qualified':False,
         'scope':'Local geometry/publication mutation tests plus baseline r5 legacy unit regressions; actual new STEP/mesh/native evidence is separate.'}
-    folder=ROOT/'docs/reports/local-covers-20260910';folder.mkdir(parents=True,exist_ok=True)
+    folder=ROOT/'docs/reports/reinforced-covers-20260913';folder.mkdir(parents=True,exist_ok=True)
     (folder/'regressions.json').write_text(json.dumps(report,indent=2)+'\n',encoding='utf8')
     print(json.dumps({'status':report['status'],'result':run.stderr[-1300:]}))
     return report['status']!='pass'

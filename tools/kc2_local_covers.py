@@ -3,8 +3,8 @@ import math
 from shapely.geometry import Polygon
 from shapely.ops import unary_union
 
-WALL_MM=.401  # 0.40 nominal plus polygon/numeric reserve; printing unqualified.
-ATTACHMENT_MM=.30
+WALL_MM=1.201  # 1.20 nominal after reported 0.40 mm print fracture.
+ATTACHMENT_MM=.80
 
 
 def clip_patches_to_split(patch,extended_part_masks):
@@ -26,8 +26,8 @@ def assign_local_patches(patches,part_masks):
 
 
 def lower_cover_plan(outline,clearance_cutouts,thickness=WALL_MM):
-    if not math.isfinite(thickness) or thickness < .4:
-        raise ValueError('Local wall must have a finite >=0.40 mm design thickness')
+    if not math.isfinite(thickness) or thickness < 1.2:
+        raise ValueError('Reinforced local wall requires finite >=1.20 mm thickness')
     exposed=[part for part in getattr(clearance_cutouts,'geoms',[clearance_cutouts])
              if part.intersects(outline.boundary)]
     if not exposed:
@@ -36,7 +36,7 @@ def lower_cover_plan(outline,clearance_cutouts,thickness=WALL_MM):
     wrapped=local.buffer(thickness,quad_segs=64)
     outer=outline.union(wrapped)
     # Work only beside exposed cavities. Overlap the existing solid/floor by
-    # 0.30 mm, rather than adding a strip around the entire old perimeter.
+    # 0.80 mm, rather than adding a strip around the entire old perimeter.
     locality=wrapped.buffer(ATTACHMENT_MM,quad_segs=64)
     patch=outer.difference(outline.buffer(-ATTACHMENT_MM)).intersection(locality)
     wall=patch.difference(clearance_cutouts)

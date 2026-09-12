@@ -13,7 +13,7 @@ def export_jobs(folder):
 
 def run(context='all'):
     root=Path(__file__).resolve().parents[3]
-    folder=root/'.codex-tmp/local-cover-build'
+    folder=root/'.codex-tmp/reinforced-cover-build'
     helpers=runpy.run_path(str(root/'tools/fusion/KC2StepToF3D/KC2StepToF3D.py'))
     app=adsk.core.Application.get()
     report={'requirement':'CON-ARCH-006','status':'failed','fusion_version':app.version,

@@ -10,8 +10,8 @@ from shapely.geometry import Point,MultiPoint
 from shapely.ops import unary_union
 
 ROOT=Path(__file__).resolve().parents[1]
-STAGE=ROOT/'.codex-tmp/local-cover-build'
-REPORT=ROOT/'docs/reports/local-covers-20260910'
+STAGE=ROOT/'.codex-tmp/reinforced-cover-build'
+REPORT=ROOT/'docs/reports/reinforced-covers-20260913'
 BASELINE='cc854a3e0e0f25ab3d63e2916cb4b99a487b6536'
 
 

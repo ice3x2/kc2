@@ -6,7 +6,7 @@ import math
 from pathlib import Path
 
 ROOT=Path(__file__).resolve().parents[1]
-STAGE=ROOT/'.codex-tmp/local-cover-build'
+STAGE=ROOT/'.codex-tmp/reinforced-cover-build'
 
 
 def digest(path):return hashlib.sha256(Path(path).read_bytes()).hexdigest()

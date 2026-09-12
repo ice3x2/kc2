@@ -11,6 +11,13 @@ from tools import review_kc2_local_covers as review
 def block(x,y,z,dx,dy,dz):return cq.Solid.makeBox(dx,dy,dz,cq.Vector(x,y,z))
 
 class LocalDeltaTests(unittest.TestCase):
+    def test_old_point_four_wall_cannot_be_relabelled_reinforced(self):
+        outline=box(0,0,10,10);clearance=box(4.5,9,5.5,11)
+        wrapped=clearance.buffer(.401,quad_segs=64)
+        patch=outline.union(wrapped).difference(outline.buffer(-.3)).intersection(wrapped.buffer(.3,quad_segs=64))
+        errors=locality_errors(outline,clearance,patch.difference(clearance),patch,[patch])
+        self.assertIn('reinforced wall/root coverage differs from independent requirement',errors)
+
     def test_changed_input_during_audit_fails(self):
         with tempfile.TemporaryDirectory() as directory:
             root=Path(directory);source=root/'input.step';source.write_text('original')
@@ -59,8 +66,8 @@ class LocalDeltaTests(unittest.TestCase):
         self.assertIn('solid count changed',audit_delta(self.before,after,self.allowed)['errors'])
     def test_only_existing_point_two_seam_may_omit_patch(self):
         outline=box(0,0,10,10);clearance=box(4.5,9,5.5,11)
-        wrapped=clearance.buffer(.401,quad_segs=64)
-        patch=outline.union(wrapped).difference(outline.buffer(-.3)).intersection(wrapped.buffer(.3,quad_segs=64))
+        wrapped=clearance.buffer(1.201,quad_segs=64)
+        patch=outline.union(wrapped).difference(outline.buffer(-.8)).intersection(wrapped.buffer(.8,quad_segs=64))
         wall=patch.difference(clearance);gap=box(4.9,-2,5.1,13)
         parts=[patch.intersection(box(-2,-2,4.9,13)),patch.intersection(box(5.1,-2,12,13))]
         self.assertFalse(locality_errors(outline,clearance,wall,patch,parts,gap))

@@ -135,10 +135,10 @@ class PublicationTests(unittest.TestCase):
         expected,native=self.fixture();native['outputs']['left_lower']['source_sha256']='stale'
         self.assertTrue(p.native_errors(native,expected))
     def test_portable_paths_no_unresolved_temp_or_alias(self):
-        self.assertEqual(p.portable('.codex-tmp/local-cover-build/kc2_left_lower_housing.stl'),
+        self.assertEqual(p.portable('.codex-tmp/reinforced-cover-build/kc2_left_lower_housing.stl'),
                          'hardware/MODELS/kc2_left_lower_housing.stl')
-        self.assertEqual(p.portable('.codex-tmp/local-cover-build/left-lower.json'),
-                         'docs/reports/local-covers-20260910/left-lower.json')
+        self.assertEqual(p.portable('.codex-tmp/reinforced-cover-build/left-lower.json'),
+                         'docs/reports/reinforced-covers-20260913/left-lower.json')
         self.assertEqual(p.portable('hardware/kicad/kc2_left/kc2_left.kicad_pcb'),
                          'hardware/PCB/kc2_left/kc2_left.kicad_pcb')
         with self.assertRaises(ValueError):p.portable('.codex-tmp/unknown.json')

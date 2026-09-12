@@ -12,8 +12,8 @@ import subprocess
 from pathlib import Path
 
 ROOT=Path(__file__).resolve().parents[1]
-REPORT='docs/reports/local-covers-20260910'
-STAGE='.codex-tmp/local-cover-build'
+REPORT='docs/reports/reinforced-covers-20260913'
+STAGE='.codex-tmp/reinforced-cover-build'
 BASELINE='cc854a3e0e0f25ab3d63e2916cb4b99a487b6536'
 MANIFEST='hardware/MODELS/kc2_local_cover_manifest.json'
 REPORT_NAMES={f'{side}-{group}{suffix}.json' for side in ['left','right'] for group in ['lower','upper'] for suffix in ['','-review']}|{'native-all.json','native-kernel-review-all.json','native-review-export-all.json'}

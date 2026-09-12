@@ -5,6 +5,15 @@ from tools import kc2_local_covers as covers
 
 
 class LocalCoverPlanTests(unittest.TestCase):
+    def test_fractured_single_line_wall_is_replaced_by_1_2mm_wall(self):
+        from shapely.geometry import LineString
+        outline=box(0,0,20,20);cuts=box(7,-1,13,4)
+        plan=covers.lower_cover_plan(outline,cuts)
+        section=plan['wall'].intersection(LineString([(10,-4),(10,-1)]))
+        self.assertGreaterEqual(section.length,1.2)
+        self.assertGreaterEqual(covers.ATTACHMENT_MM,.8)
+        self.assertLess(plan['wall'].intersection(cuts).area,1e-9)
+
     def test_only_exterior_open_cutout_gets_a_cover(self):
         outline=box(0,0,20,20)
         cuts=box(7,-1,13,4).union(box(4,8,8,12))
@@ -26,7 +35,7 @@ class LocalCoverPlanTests(unittest.TestCase):
         self.assertTrue(plan['floor_patch'].is_empty)
 
     def test_zero_or_unprintably_thin_wall_is_rejected(self):
-        for thickness in [0,-1,.1,float('nan')]:
+        for thickness in [0,-1,.1,.401,.801,float('nan')]:
             with self.assertRaises(ValueError):
                 covers.lower_cover_plan(box(0,0,20,20),box(7,-1,13,4),thickness)
 

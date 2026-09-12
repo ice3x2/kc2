@@ -4,6 +4,13 @@
 /hardware/GERBER/** -text
 /hardware/MODELS/** -text
 /docs/reports/local-covers-20260910/** -text
+/docs/reports/reinforced-covers-20260913/** -text
+/docs/reports/solid-filled-plates-20260913/** -text
+/docs/reports/solid-filled-plates-20260913/*.native-readback.step whitespace=-blank-at-eol,cr-at-eol
+/tools/*filled*.py -text
+/tools/*solid_plate.py -text
+/tools/fusion/KC2FilledPlatesToF3D/** -text
+/docs/reports/reinforced-covers-20260913/native-check-*.step whitespace=-blank-at-eol,cr-at-eol
 # Preserve Fusion's exact diagnostic STEP bytes, including its vendor-comment
 # trailing space. This is evidence, not hand-maintained source formatting.
 /docs/reports/local-covers-20260910/native-check-*.step whitespace=-blank-at-eol,cr-at-eol

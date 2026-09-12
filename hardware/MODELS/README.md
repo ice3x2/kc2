@@ -7,7 +7,7 @@
 - 하판은 무자석 또는 `_magnetic` 중 한 세트를 선택합니다.
 - 두 옵션 모두 공통 MX 상판을 사용합니다.
 - [게시 manifest](kc2_local_cover_manifest.json)와 실제 파일이 일치해야 합니다.
-- [검증 기록](../../docs/reports/local-covers-20260910/README.md).
+- [보강 가림벽 검증 기록](../../docs/reports/reinforced-covers-20260913/README.md).
 
 저장소 루트에서 `python -B -m tools.publish_kc2_local_covers --verify`가 실패하면 인쇄를 보류하세요. STL은 인쇄용, STEP/F3D는 편집·확인용입니다.
 

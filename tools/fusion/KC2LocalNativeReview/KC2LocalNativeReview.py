@@ -16,7 +16,7 @@ def digest(path):return hashlib.sha256(Path(path).read_bytes()).hexdigest()
 
 def run(context='left_mx_upper'):
     root=Path(__file__).resolve().parents[3]
-    folder=root/'.codex-tmp/local-cover-build'
+    folder=root/'.codex-tmp/reinforced-cover-build'
     helper=root/'tools/fusion/KC2StepToF3D/KC2StepToF3D.py'
     helpers=runpy.run_path(str(helper))
     app=adsk.core.Application.get()

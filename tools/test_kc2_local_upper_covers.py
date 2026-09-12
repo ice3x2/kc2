@@ -8,6 +8,15 @@ from tools import kc2_local_upper_covers as c
 
 
 class LocalUpperTests(unittest.TestCase):
+    def test_fracture_revision_thickens_wall_and_plate_root(self):
+        from shapely.geometry import LineString
+        outline,body,service=self.fixture()
+        result=c.cover_geometry(outline,body,service)
+        width=result['skirt'].intersection(LineString([(-4,15),(0,15)])).length
+        self.assertGreaterEqual(width,1.2)
+        self.assertGreaterEqual(c.ROOF_ATTACHMENT_MM,.8)
+        self.assertLess(result['skirt'].intersection(body.buffer(.299)).area,1e-9)
+
     def test_partition_clearance_rejects_new_contact_or_worse_gap(self):
         parts=[box(0,0,9.9,10),box(10.1,0,20,10)]
         good=[(box(0,0,9.9,1),box(0,0,9.9,1)),(box(10.1,0,20,1),box(10.1,0,20,1))]
@@ -82,7 +91,7 @@ class LocalUpperTests(unittest.TestCase):
     def test_no_global_growth_away_from_switch_bulge(self):
         outline, body, service = self.fixture()
         r = c.cover_geometry(outline, body, service)
-        self.assertLess(r['roof'].difference(body.buffer(.703)).area, 1e-8)
+        self.assertLess(r['roof'].difference(body.buffer(1.503,quad_segs=64)).area, 1e-8)
         self.assertLess(r['roof'].intersection(box(29, 0, 35, 30)).area, 1e-9)
 
 

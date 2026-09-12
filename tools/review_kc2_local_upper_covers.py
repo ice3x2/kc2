@@ -14,7 +14,7 @@ from shapely.ops import unary_union
 from tools.review_kc2_local_covers import prism
 
 ROOT=Path(__file__).resolve().parents[1]
-STAGE=ROOT/'.codex-tmp/local-cover-build'
+STAGE=ROOT/'.codex-tmp/reinforced-cover-build'
 BASELINE='cc854a3e0e0f25ab3d63e2916cb4b99a487b6536'
 TOL=.002
 
@@ -97,10 +97,10 @@ def audit(side):
     body=plan['switch_service_body_geometry'];outline=plan['housing_outline']
     service=up['service'].union(up['pilots']).union(up['pockets'])
     locality=body.buffer(2.,quad_segs=32)
-    outside=outline.union(body.buffer(.702,quad_segs=32))
+    outside=outline.union(body.buffer(1.502,quad_segs=32))
     # Independently constructed geometric allowance, not producer cover_plan.
-    skirt=outside.difference(outline.buffer(-.401).union(body.buffer(.301,quad_segs=32))).difference(service).intersection(locality)
-    roof=outside.difference(outline.buffer(-.005)).intersection(body.buffer(.702,quad_segs=32)).difference(body).difference(service).intersection(locality)
+    skirt=outside.difference(outline.buffer(-1.201).union(body.buffer(.301,quad_segs=32))).difference(service).intersection(locality)
+    roof=outside.difference(outline.buffer(-.80)).intersection(body.buffer(1.502,quad_segs=32)).difference(body).difference(service).intersection(locality)
     declared_skirts=[wkt.loads(r['skirt_plan_wkt']) for r in record['checks']]
     declared_roofs=[wkt.loads(r['roof_plan_wkt']) for r in record['checks']]
     errors=[];coverage={}

@@ -1,0 +1,32 @@
+{
+  "requirements": [
+    "CON-ARCH-006"
+  ],
+  "status": "pass",
+  "source_sha256": {
+    "tools/kc2_solid_plate.py": "9ec724e7f84c049b2e0ee78001c98081fd8812463d280dfe941419938e76a19a",
+    "tools/kc2_filled_plate_profiles.py": "3faee645c0413661ce45f9bee96773546ac4479f21ea663257f4c7f0a79d6291",
+    "tools/generate_kc2_filled_plates.py": "67e38e9ee8ddabef10a5456463be6ab07a4914e55463900d9bfb0f746a9a9628",
+    "tools/review_kc2_filled_plates.py": "9dd90e3bd055a2531295065a483c0827865e98687098e65595b2d69816042418",
+    "tools/test_kc2_solid_plate.py": "34e921fd7f619c5b4705491534493759aa77c451ffb55ab0e8f5a7619d725bb1",
+    "tools/test_kc2_filled_plate_profiles.py": "4cd1fad2b5d467f9ddc2e0e1d766f0e53688cd16884da7acebdc01fa01747c8e",
+    "tools/test_kc2_filled_plate_plan.py": "5d4d9728d5e5b5f6a0d4762c15ffd653a32773c21a1bf4b799173cbef4f6061f",
+    "tools/test_review_kc2_filled_plates.py": "7bd25733eb6b9e60f19146d354a4844b8e6a7cb4f064ed2313ecca3468b0273e"
+  },
+  "command": [
+    "C:\\Python312\\python.exe",
+    "-B",
+    "-m",
+    "unittest",
+    "tools.test_kc2_solid_plate",
+    "tools.test_kc2_filled_plate_profiles",
+    "tools.test_kc2_filled_plate_plan",
+    "tools.test_review_kc2_filled_plates",
+    "-v"
+  ],
+  "stdout": "",
+  "stderr": "test_actual_brep_is_full_solid_with_open_counterbore (tools.test_kc2_solid_plate.SolidPlateContractTests.test_actual_brep_is_full_solid_with_open_counterbore) ... ok\ntest_audit_rejects_wall_only_and_screw_fill_mutations (tools.test_kc2_solid_plate.SolidPlateContractTests.test_audit_rejects_wall_only_and_screw_fill_mutations) ... ok\ntest_body_clip_and_service_voids_are_unioned_not_filled (tools.test_kc2_solid_plate.SolidPlateContractTests.test_body_clip_and_service_voids_are_unioned_not_filled) ... ok\ntest_fills_entire_structural_interior_not_only_perimeter (tools.test_kc2_solid_plate.SolidPlateContractTests.test_fills_entire_structural_interior_not_only_perimeter) ... ok\ntest_head_pocket_removed_only_above_bearing_without_filling_bore (tools.test_kc2_solid_plate.SolidPlateContractTests.test_head_pocket_removed_only_above_bearing_without_filling_bore) ... ok\ntest_invalid_or_nonfinite_height_rejected (tools.test_kc2_solid_plate.SolidPlateContractTests.test_invalid_or_nonfinite_height_rejected) ... ok\ntest_part_mask_does_not_bridge_retained_split (tools.test_kc2_solid_plate.SolidPlateContractTests.test_part_mask_does_not_bridge_retained_split) ... ok\ntest_screw_through_hole_stays_open_at_every_height (tools.test_kc2_solid_plate.SolidPlateContractTests.test_screw_through_hole_stays_open_at_every_height) ... ok\ntest_voids_outside_height_do_not_remove_material (tools.test_kc2_solid_plate.SolidPlateContractTests.test_voids_outside_height_do_not_remove_material) ... ok\ntest_all_requested_variants_exist (tools.test_kc2_filled_plate_profiles.ProfileContractTests.test_all_requested_variants_exist) ... ok\ntest_complete_fill_and_open_screws_for_every_variant (tools.test_kc2_filled_plate_profiles.ProfileContractTests.test_complete_fill_and_open_screws_for_every_variant) ... ok\ntest_deep_sea_has_own_no_ring_family_datum (tools.test_kc2_filled_plate_profiles.ProfileContractTests.test_deep_sea_has_own_no_ring_family_datum) ... ok\ntest_each_low_plate_retains_bearing_floor_and_screw_tip_reserve (tools.test_kc2_filled_plate_profiles.ProfileContractTests.test_each_low_plate_retains_bearing_floor_and_screw_tip_reserve) ... ok\ntest_mx_original_datums_remain (tools.test_kc2_filled_plate_profiles.ProfileContractTests.test_mx_original_datums_remain) ... ok\ntest_v1_includes_existing_ring_flange_without_using_mx_height (tools.test_kc2_filled_plate_profiles.ProfileContractTests.test_v1_includes_existing_ring_flange_without_using_mx_height) ... ok\ntest_all_three_modes_keep_all_screws_and_do_not_bridge_right_split (tools.test_kc2_filled_plate_plan.ActualFilledPlanTests.test_all_three_modes_keep_all_screws_and_do_not_bridge_right_split) ... ok\ntest_complete_solid_passes (tools.test_review_kc2_filled_plates.ActualSolidAuditTests.test_complete_solid_passes) ... ok\ntest_filled_screw_hole_fails (tools.test_review_kc2_filled_plates.ActualSolidAuditTests.test_filled_screw_hole_fails) ... ok\ntest_hidden_internal_pocket_between_sample_planes_fails (tools.test_review_kc2_filled_plates.ActualSolidAuditTests.test_hidden_internal_pocket_between_sample_planes_fails) ... ok\ntest_sloped_surface_is_not_assumed_prismatic (tools.test_review_kc2_filled_plates.ActualSolidAuditTests.test_sloped_surface_is_not_assumed_prismatic) ... ok\ntest_wall_only_fails (tools.test_review_kc2_filled_plates.ActualSolidAuditTests.test_wall_only_fails) ... ok\n\n----------------------------------------------------------------------\nRan 21 tests in 36.811s\n\nOK\n",
+  "sources_unchanged": true,
+  "scope": "Core/profile/actual-board-plan and synthetic BRep mutation tests only; NOT final three-variant CAD/native publication evidence",
+  "physical_qualified": false
+}

@@ -1,22 +1,22 @@
 {
   "schemaVersion": "1.0.0",
-  "generatedAt": "2026-09-09T23:11:19.071Z",
+  "generatedAt": "2026-09-12T23:33:22.443Z",
   "source": "speckiwi",
   "specFingerprint": {
     "algorithm": "sha256",
-    "value": "d4c7686e568d94f2b36a8a6131cfcfe0e14ea5d361ccedbe50e82f338a35f2d0",
+    "value": "2829874f634e523b6c8a7ab3f586ee5b586af322466f16b85083e0efd736bbd2",
     "files": [
       {
         "path": "docs/spec/00.index.md",
-        "sha256": "63067f8de30fdcf58eb669b55e8cadc8a0926867b81fa7a59b00e4c8ea60efce",
-        "size": 8179,
-        "mtimeMs": 1788995375532.2373
+        "sha256": "80c2a0d5cd8915848713976f1e694ce3ebf280fd296d9261b90d575d4f9010eb",
+        "size": 8212,
+        "mtimeMs": 1789253097706.3228
       },
       {
         "path": "docs/spec/10.product-architecture.srs.md",
-        "sha256": "1fa2a037d926851f12deb6d04695138e33b385d771a1d94948880215c02d6959",
-        "size": 284429,
-        "mtimeMs": 1788995479059.5562
+        "sha256": "c204bc90a69316117070702a62edc51f936d951e9553dcd0047c031e75786eba",
+        "size": 293470,
+        "mtimeMs": 1789256002422.0027
       },
       {
         "path": "docs/spec/90.appendix.md",
