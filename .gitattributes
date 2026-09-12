@@ -12,6 +12,8 @@
 /hardware/MODELS/kc2_filled_plate_manifest.json whitespace=cr-at-eol
 /tools/*filled*.py -text
 /tools/*solid_plate.py -text
+/tools/generate_kc2_housings.py -text
+/tools/render_kc2_x3_joined.py -text
 /tools/fusion/KC2FilledPlatesToF3D/** -text
 /docs/reports/reinforced-covers-20260913/native-check-*.step whitespace=-blank-at-eol,cr-at-eol
 # Preserve Fusion's exact diagnostic STEP bytes, including its vendor-comment
