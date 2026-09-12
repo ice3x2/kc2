@@ -6,7 +6,10 @@
 /docs/reports/local-covers-20260910/** -text
 /docs/reports/reinforced-covers-20260913/** -text
 /docs/reports/solid-filled-plates-20260913/** -text
+/docs/reports/solid-filled-plates-20260913/*.json whitespace=cr-at-eol
 /docs/reports/solid-filled-plates-20260913/*.native-readback.step whitespace=-blank-at-eol,cr-at-eol
+/hardware/MODELS/kc2_*_upper_housing.step whitespace=cr-at-eol
+/hardware/MODELS/kc2_filled_plate_manifest.json whitespace=cr-at-eol
 /tools/*filled*.py -text
 /tools/*solid_plate.py -text
 /tools/fusion/KC2FilledPlatesToF3D/** -text
