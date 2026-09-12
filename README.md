@@ -2,7 +2,7 @@
 
 - **[최신 PCB · 주문한 거버 · 인쇄 모델 — hardware](hardware/README.md)**
 - [PCB 프로젝트](hardware/PCB/) · [주문한 거버 ZIP](hardware/GERBER/) · [하우징·링 모델](hardware/MODELS/)
-- [보강 가림벽 인쇄 안내](hardware/MODELS/PRINT-local-covers.md) · [검증 기록](docs/reports/reinforced-covers-20260913/README.md)
+- [MX · Choc V1 · Deep Sea 내부 충전형 인쇄 안내](hardware/MODELS/PRINT-filled-plates.md) · [검증 기록](docs/reports/solid-filled-plates-20260913/README.md)
 - [자석 홈 옵션 / 무자석 옵션 선택 안내](hardware/MODELS/PRINT_magnetic.md)
 - [주문 당시 안내 원본](order.md) — 봉인 해시 보존용입니다. 현재 위치는 위 `hardware` 안내를 보세요.
 - [요구사항 원본(SRS)](docs/spec/00.index.md)

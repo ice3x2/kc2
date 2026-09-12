@@ -2,6 +2,6 @@
   "status": "superseded",
   "historical_commit": "cc854a3e0e0f25ab3d63e2916cb4b99a487b6536",
   "historical_path": "hardware/MODELS/kc2_fusion_export_result_magnetic.json",
-  "current_manifest": "kc2_local_cover_manifest.json",
-  "note": "Old open-r5 evidence is in Git; not qualification of current local-cover CAD."
+  "current_manifest": "kc2_filled_plate_manifest.json",
+  "note": "Old open-r5 evidence is in Git; current filled-plate publication is separate and does not establish physical qualification."
 }

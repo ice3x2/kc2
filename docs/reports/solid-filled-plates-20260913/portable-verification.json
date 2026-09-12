@@ -1,0 +1,48 @@
+{
+  "requirements": [
+    "CON-ARCH-006",
+    "OPS-ARCH-006"
+  ],
+  "status": "pass",
+  "physical_qualified": false,
+  "manifest_sha256": "33c30d74eb22b8343790cbc569bac0f48afeeae65c054369b345af6562d1543b",
+  "verifier_sha256": "389e35a44f2c4954a20f7ccbb1b7f3c63df098acaafc8f7fdc83bb1cc34f5657",
+  "script_sha256": "91a9a92a5f5ee6f390a9dd2cdce0c274e44ce7ae7e1ed566f031784d226894b6",
+  "isolated_root": "C:\\Work\\git\\kc2\\.codex-tmp\\filled-portable-v13o10se",
+  "command": [
+    "C:\\Python312\\python.exe",
+    "-S",
+    "-B",
+    "-m",
+    "tools.publish_kc2_filled_plates",
+    "--verify"
+  ],
+  "initial": {
+    "returncode": 0,
+    "stdout": "{\"status\": \"pass\", \"outputs\": 21, \"preserved_files\": 30, \"bindings\": 124, \"physical_qualified\": false}\n",
+    "stderr": ""
+  },
+  "mutations": {
+    "changed_print_stl": {
+      "returncode": 1,
+      "stdout": "",
+      "stderr": "Traceback (most recent call last):\n  File \"<frozen runpy>\", line 198, in _run_module_as_main\n  File \"<frozen runpy>\", line 88, in _run_code\n  File \"C:\\Work\\git\\kc2\\.codex-tmp\\filled-portable-v13o10se\\tools\\publish_kc2_filled_plates.py\", line 186, in <module>\n    if args.verify:result=verify()\n                          ^^^^^^^^\n  File \"C:\\Work\\git\\kc2\\.codex-tmp\\filled-portable-v13o10se\\tools\\publish_kc2_filled_plates.py\", line 150, in verify\n    wanted,copies,preserved=collect(root,False)\n                            ^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Work\\git\\kc2\\.codex-tmp\\filled-portable-v13o10se\\tools\\publish_kc2_filled_plates.py\", line 130, in collect\n    for source,wanted in records[name].get('source_sha256',{}).items():bind(source,wanted)\n                                                                       ^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Work\\git\\kc2\\.codex-tmp\\filled-portable-v13o10se\\tools\\publish_kc2_filled_plates.py\", line 123, in bind\n    if sha(name)!=wanted:raise ValueError('Changed input: '+name)\n                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nValueError: Changed input: .codex-tmp/solid-filled-plates/kc2_left_deep_sea_upper_housing.stl\n"
+    },
+    "missing_output_inventory": {
+      "returncode": 1,
+      "stdout": "",
+      "stderr": "Traceback (most recent call last):\n  File \"<frozen runpy>\", line 198, in _run_module_as_main\n  File \"<frozen runpy>\", line 88, in _run_code\n  File \"C:\\Work\\git\\kc2\\.codex-tmp\\filled-portable-v13o10se\\tools\\publish_kc2_filled_plates.py\", line 186, in <module>\n    if args.verify:result=verify()\n                          ^^^^^^^^\n  File \"C:\\Work\\git\\kc2\\.codex-tmp\\filled-portable-v13o10se\\tools\\publish_kc2_filled_plates.py\", line 152, in verify\n    if manifest['outputs']!=sorted('hardware/MODELS/'+n for n in output_names()):raise ValueError('Wrong final output inventory')\n                                                                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nValueError: Wrong final output inventory\n"
+    },
+    "missing_native_evidence": {
+      "returncode": 1,
+      "stdout": "",
+      "stderr": "Traceback (most recent call last):\n  File \"<frozen runpy>\", line 198, in _run_module_as_main\n  File \"<frozen runpy>\", line 88, in _run_code\n  File \"C:\\Work\\git\\kc2\\.codex-tmp\\filled-portable-v13o10se\\tools\\publish_kc2_filled_plates.py\", line 186, in <module>\n    if args.verify:result=verify()\n                          ^^^^^^^^\n  File \"C:\\Work\\git\\kc2\\.codex-tmp\\filled-portable-v13o10se\\tools\\publish_kc2_filled_plates.py\", line 150, in verify\n    wanted,copies,preserved=collect(root,False)\n                            ^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Work\\git\\kc2\\.codex-tmp\\filled-portable-v13o10se\\tools\\publish_kc2_filled_plates.py\", line 128, in collect\n    path=STAGE+'/'+name;bind(path,sha(path))\n                                  ^^^^^^^^^\n  File \"C:\\Work\\git\\kc2\\.codex-tmp\\filled-portable-v13o10se\\tools\\publish_kc2_filled_plates.py\", line 120, in sha\n    def sha(name):return digest(location(name))\n                         ^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Work\\git\\kc2\\.codex-tmp\\filled-portable-v13o10se\\tools\\publish_kc2_filled_plates.py\", line 46, in digest\n    def digest(path):return hashlib.sha256(Path(path).read_bytes()).hexdigest()\n                                           ^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Python312\\Lib\\pathlib.py\", line 1019, in read_bytes\n    with self.open(mode='rb') as f:\n         ^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Python312\\Lib\\pathlib.py\", line 1013, in open\n    return io.open(self, mode, buffering, encoding, errors, newline)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nFileNotFoundError: [Errno 2] No such file or directory: 'C:\\\\Work\\\\git\\\\kc2\\\\.codex-tmp\\\\filled-portable-v13o10se\\\\docs\\\\reports\\\\solid-filled-plates-20260913\\\\right-deep_sea-native-review.json'\n"
+    }
+  },
+  "restored": {
+    "returncode": 0,
+    "stdout": "{\"status\": \"pass\", \"outputs\": 21, \"preserved_files\": 30, \"bindings\": 124, \"physical_qualified\": false}\n",
+    "stderr": ""
+  },
+  "scope": "Actual isolated raw-byte publication, without site packages, Git, temporary source tree or CAD/Fusion runtimes"
+}

@@ -1,0 +1,95 @@
+{
+  "status": "pass",
+  "source_sha256": {
+    "tools/generate_kc2_filled_plates.py": "67e38e9ee8ddabef10a5456463be6ab07a4914e55463900d9bfb0f746a9a9628",
+    "tools/kc2_filled_plate_profiles.py": "3faee645c0413661ce45f9bee96773546ac4479f21ea663257f4c7f0a79d6291",
+    "tools/kc2_solid_plate.py": "9ec724e7f84c049b2e0ee78001c98081fd8812463d280dfe941419938e76a19a",
+    "tools/test_kc2_solid_plate.py": "34e921fd7f619c5b4705491534493759aa77c451ffb55ab0e8f5a7619d725bb1",
+    "tools/test_kc2_filled_plate_profiles.py": "4cd1fad2b5d467f9ddc2e0e1d766f0e53688cd16884da7acebdc01fa01747c8e",
+    "tools/test_kc2_filled_plate_plan.py": "5d4d9728d5e5b5f6a0d4762c15ffd653a32773c21a1bf4b799173cbef4f6061f",
+    "tools/generate_kc2_magnetic_housings.py": "f8d20b5a84a5b953aa5a8bd7ca2e6474203347869423612f360829f516c284ec",
+    "tools/generate_kc2_mx_upper_housings.py": "984b4e0217ed4febbe719b8529fb07701c085447457a142a0306168220b452bf",
+    "tools/generate_kc2_x3_v2_housings.py": "0f2ef9076cff70916f77b124495fc1a5ea46751d19155378d9224a30a9168b69",
+    "tools/generate_kc2_housings.py": "cbf34705101526043bf4a43daed6e50dee2c67dc61ae0832debd70e62f5e5e16",
+    "tools/render_kc2_x3_joined.py": "903c3e2353aabfe7ff8a804f0bd0653ab0a90c3f881f8819ab239ca9aa1666b1",
+    "tools/kc2_local_upper_covers.py": "ab56bf8cbd4ba0feff8f401b8cdb2c4791e8f4c6ab87a71d5dbdff78a2cb4e85",
+    "tools/review_kc2_local_upper_covers.py": "16a8264c266dbc1edbd5d5dc4698d9b62fed01f08d3117572f8d758bbf2148c6",
+    "tools/review_kc2_local_covers.py": "f5b1f0cf717fab55fbf1c84890d249fdb7e765e1ea53153a9ce7803ac7374332",
+    "hardware/PCB/kc2_left/kc2_left.kicad_pcb": "568e1427e4cfb9d667b6d5b3754da3a4e24c924abfa85a8dfe394dd050b5fe67",
+    "hardware/PCB/kc2_right/kc2_right.kicad_pcb": "88290c3b0cf3951d56221d216549665c0576a816a6315012f7f12b027f402577",
+    ".codex-tmp/solid-filled-plates/right-mx.json": "efd3a04be41f07dff47b101ba112616ce506b76cf0d682148c945f589749c8db",
+    ".codex-tmp/solid-filled-plates/kc2_right_mx_upper_housing.step": "faf10790b1586c109f3308760126618ecb451b4d7065a78fb60f97a157a4800b",
+    ".codex-tmp/solid-filled-plates/kc2_right_mx_upper_housing_part_a.stl": "2c66194004b6d3e705c7fe84153459b25e25b0148e25971bc46b87b3804b79e7",
+    ".codex-tmp/solid-filled-plates/kc2_right_mx_upper_housing_part_b.stl": "b227cd96c72ca8dc65c6faeb861d25bdc97b51a8a1bac98886822cdfe82c4d79",
+    "tools/review_kc2_filled_plates.py": "9dd90e3bd055a2531295065a483c0827865e98687098e65595b2d69816042418",
+    "tools/test_review_kc2_filled_plates.py": "7bd25733eb6b9e60f19146d354a4844b8e6a7cb4f064ed2313ecca3468b0273e"
+  },
+  "parts": [
+    {
+      "status": "pass",
+      "errors": [],
+      "levels_mm": [
+        4.1,
+        4.4,
+        7.8,
+        9.3
+      ],
+      "sections": [
+        {
+          "z_mm": 4.25,
+          "missing_mm2": 4.5587890609447355e-08,
+          "extra_mm2": 7.585837983703533e-08,
+          "actual_area_mm2": 20.22982552627756
+        },
+        {
+          "z_mm": 6.1,
+          "missing_mm2": 9.494616519125137e-08,
+          "extra_mm2": 1.839513413044306e-07,
+          "actual_area_mm2": 2465.0488976841125
+        },
+        {
+          "z_mm": 8.55,
+          "missing_mm2": 1.1893290453294489e-07,
+          "extra_mm2": 1.337337560864435e-07,
+          "actual_area_mm2": 3765.898798381374
+        }
+      ],
+      "volume_error_mm3": 8.440110832452774e-10,
+      "physical_qualified": false
+    },
+    {
+      "status": "pass",
+      "errors": [],
+      "levels_mm": [
+        4.1,
+        4.4,
+        7.8,
+        9.3
+      ],
+      "sections": [
+        {
+          "z_mm": 4.25,
+          "missing_mm2": 5.698485632518186e-08,
+          "extra_mm2": 9.482293339404953e-08,
+          "actual_area_mm2": 25.287281907846932
+        },
+        {
+          "z_mm": 6.1,
+          "missing_mm2": 1.8875867335845644e-07,
+          "extra_mm2": 2.093890039808448e-07,
+          "actual_area_mm2": 2614.4939515766537
+        },
+        {
+          "z_mm": 8.55,
+          "missing_mm2": 2.172949622637254e-07,
+          "extra_mm2": 1.7668332133697704e-07,
+          "actual_area_mm2": 3839.582091705468
+        }
+      ],
+      "volume_error_mm3": 1.4770193956792355e-09,
+      "physical_qualified": false
+    }
+  ],
+  "scope": "Actual STEP versus declared source-bound full sections; independent envelope reconstruction, mesh/native and publication gates still pending",
+  "physical_qualified": false
+}

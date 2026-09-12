@@ -1,0 +1,306 @@
+{
+  "requirements": [
+    "CON-ARCH-006",
+    "OPS-ARCH-006"
+  ],
+  "status": "pass",
+  "fusion_version": "2705.1.11",
+  "physical_qualified": false,
+  "outputs": {
+    "left_mx": {
+      "source_step": "kc2_left_mx_upper_housing.step",
+      "source_sha256": "c76955c97b6237fc0ff71afeda50e246bc3bd5d442ff80acb74f6530cc936b99",
+      "generation_record": "left-mx.json",
+      "generation_sha256": "3965411eb2d455cb006c03d4fc016f21b2ed851a52e5160c86a910226d26cd50",
+      "f3d": "kc2_left_mx_upper_housing.f3d",
+      "f3d_sha256": "1ce2acbcc62fd9b1fe5f9310993144a47e6e5e68db534b25a974e974a705d2b1",
+      "source_solids": [
+        {
+          "bounds_mm": [
+            -1.2770000000000001,
+            0.10000000000000002,
+            4.1,
+            136.3895,
+            123.77700000000002,
+            9.3
+          ],
+          "volume_mm3": 25894.67695484932
+        }
+      ],
+      "reopened_solids": [
+        {
+          "bounds_mm": [
+            -1.2770000000000001,
+            0.10000000000000002,
+            4.1,
+            136.3895,
+            123.77700000000002,
+            9.3
+          ],
+          "volume_mm3": 25894.67695484932
+        }
+      ],
+      "readback_step": "kc2_left_mx_upper_housing.native-readback.step",
+      "readback_sha256": "fcb5eeafab644b86ecd1529b37b8a1c3630b5c6ce09f273e29b7bd45b5a341b0",
+      "round_trip_verified": true
+    },
+    "left_choc_v1": {
+      "source_step": "kc2_left_choc_v1_upper_housing.step",
+      "source_sha256": "9fc7741f1964db56db83000c7d3732c8a9a869cd70f07cd578d7ab1c0dc3d7ed",
+      "generation_record": "left-choc_v1.json",
+      "generation_sha256": "fd08b2d864e13885355268200d5f1611dd76a325fa73617f77eab7c51f71a3d4",
+      "f3d": "kc2_left_choc_v1_upper_housing.f3d",
+      "f3d_sha256": "74968dafbd7edec1ca367c88253931fd5cc43f08a77f384f67f305872998204a",
+      "source_solids": [
+        {
+          "bounds_mm": [
+            -0.8260000000000001,
+            0.10000000000000002,
+            4.1,
+            135.9385,
+            123.326,
+            6.6000000000000005
+          ],
+          "volume_mm3": 12480.844964091239
+        }
+      ],
+      "reopened_solids": [
+        {
+          "bounds_mm": [
+            -0.8260000000000001,
+            0.10000000000000002,
+            4.1,
+            135.9385,
+            123.326,
+            6.6000000000000005
+          ],
+          "volume_mm3": 12480.844964091239
+        }
+      ],
+      "readback_step": "kc2_left_choc_v1_upper_housing.native-readback.step",
+      "readback_sha256": "8508cbe8411e0d47a9b74a43108c726961cc9c04e40393bf243ac0995e976acc",
+      "round_trip_verified": true
+    },
+    "left_deep_sea": {
+      "source_step": "kc2_left_deep_sea_upper_housing.step",
+      "source_sha256": "3e13a533d96de9bf19ef602acf75e9709d86bf76da144b620fd8be75cfb84d64",
+      "generation_record": "left-deep_sea.json",
+      "generation_sha256": "9952ca3664387ebde9975e5b1be91d114a6da1cc544a1523e6c6daef4db0cdf1",
+      "f3d": "kc2_left_deep_sea_upper_housing.f3d",
+      "f3d_sha256": "a3301f0819ea7eb4bd2d20f5110f1ba67676266764922f514c68c30e6aacbf49",
+      "source_solids": [
+        {
+          "bounds_mm": [
+            -0.8260000000000001,
+            0.10000000000000002,
+            4.1,
+            135.9385,
+            123.326,
+            6.6000000000000005
+          ],
+          "volume_mm3": 11160.347631277215
+        }
+      ],
+      "reopened_solids": [
+        {
+          "bounds_mm": [
+            -0.8260000000000001,
+            0.10000000000000002,
+            4.1,
+            135.9385,
+            123.326,
+            6.6000000000000005
+          ],
+          "volume_mm3": 11160.347631277215
+        }
+      ],
+      "readback_step": "kc2_left_deep_sea_upper_housing.native-readback.step",
+      "readback_sha256": "0cb1722b70ae7296ab2450ecec600d0b694c0e1c0d9a2f53c64e185d2794f3dc",
+      "round_trip_verified": true
+    },
+    "right_mx": {
+      "source_step": "kc2_right_mx_upper_housing.step",
+      "source_sha256": "faf10790b1586c109f3308760126618ecb451b4d7065a78fb60f97a157a4800b",
+      "generation_record": "right-mx.json",
+      "generation_sha256": "efd3a04be41f07dff47b101ba112616ce506b76cf0d682148c945f589749c8db",
+      "f3d": "kc2_right_mx_upper_housing.f3d",
+      "f3d_sha256": "7147283b96828dd8e8c353e59ae4e1621e445d59fb49f8f4d84c00d06ab14c9c",
+      "source_solids": [
+        {
+          "bounds_mm": [
+            -1.2770000000000001,
+            28.973,
+            4.1,
+            88.8875,
+            123.77700000000002,
+            9.3
+          ],
+          "volume_mm3": 14036.083397022685
+        },
+        {
+          "bounds_mm": [
+            73.500053569934,
+            0.10000000000000002,
+            4.1,
+            164.9645,
+            123.77700000000002,
+            9.3
+          ],
+          "volume_mm3": 14656.238757468487
+        }
+      ],
+      "reopened_solids": [
+        {
+          "bounds_mm": [
+            -1.2770000000000001,
+            28.973,
+            4.1,
+            88.8875,
+            123.77700000000002,
+            9.3
+          ],
+          "volume_mm3": 14036.083397022685
+        },
+        {
+          "bounds_mm": [
+            73.500053569934,
+            0.10000000000000002,
+            4.1,
+            164.9645,
+            123.77700000000002,
+            9.3
+          ],
+          "volume_mm3": 14656.238757468487
+        }
+      ],
+      "readback_step": "kc2_right_mx_upper_housing.native-readback.step",
+      "readback_sha256": "007ec6699fd787bbeec78a68e8d99814ee3eba8c50f0619847c1b9f17b129368",
+      "round_trip_verified": true
+    },
+    "right_choc_v1": {
+      "source_step": "kc2_right_choc_v1_upper_housing.step",
+      "source_sha256": "9643a8847034591d12ee48ca635648cb447586482d245fb10a0f3322dd7a2eb7",
+      "generation_record": "right-choc_v1.json",
+      "generation_sha256": "97b969b56465d10dffd6df10482801874be2db8c06289483d6f716bbaba2f58f",
+      "f3d": "kc2_right_choc_v1_upper_housing.f3d",
+      "f3d_sha256": "e4e65b4f608046bbf526c78c17f99c36663d2fa392db78e17c353b6a0a6bdb39",
+      "source_solids": [
+        {
+          "bounds_mm": [
+            -0.8260000000000001,
+            29.424,
+            4.1,
+            88.8875,
+            123.326,
+            6.6000000000000005
+          ],
+          "volume_mm3": 6890.483005807809
+        },
+        {
+          "bounds_mm": [
+            73.500053569934,
+            0.10000000000000002,
+            4.1,
+            164.51350000000002,
+            123.326,
+            6.6000000000000005
+          ],
+          "volume_mm3": 7119.16197491976
+        }
+      ],
+      "reopened_solids": [
+        {
+          "bounds_mm": [
+            -0.8260000000000001,
+            29.424,
+            4.1,
+            88.8875,
+            123.326,
+            6.6000000000000005
+          ],
+          "volume_mm3": 6890.483005807809
+        },
+        {
+          "bounds_mm": [
+            73.500053569934,
+            0.10000000000000002,
+            4.1,
+            164.51350000000002,
+            123.326,
+            6.6000000000000005
+          ],
+          "volume_mm3": 7119.16197491976
+        }
+      ],
+      "readback_step": "kc2_right_choc_v1_upper_housing.native-readback.step",
+      "readback_sha256": "1d684944d4e01bda8e8825b2eadfeb507d03efa6a0747fbd6c73984208fffc7f",
+      "round_trip_verified": true
+    },
+    "right_deep_sea": {
+      "source_step": "kc2_right_deep_sea_upper_housing.step",
+      "source_sha256": "9c979fdedbf2cf921dbab974bda16d27c431eb8bd497c8d553724d0a9ea8e1f6",
+      "generation_record": "right-deep_sea.json",
+      "generation_sha256": "9a51a4d3899ce0b8196c1347236b1cfd74fc2a8d473e71e03b989e6f8a812ac9",
+      "f3d": "kc2_right_deep_sea_upper_housing.f3d",
+      "f3d_sha256": "3d40735f489920c7e4605e5096e74d889b7a67bbfdd5f21951055c2b51da7747",
+      "source_solids": [
+        {
+          "bounds_mm": [
+            -0.8260000000000001,
+            29.424,
+            4.1,
+            88.8875,
+            123.326,
+            6.6000000000000005
+          ],
+          "volume_mm3": 6173.657158112472
+        },
+        {
+          "bounds_mm": [
+            73.500053569934,
+            0.10000000000000002,
+            4.1,
+            164.51350000000002,
+            123.326,
+            6.6000000000000005
+          ],
+          "volume_mm3": 6373.230312349692
+        }
+      ],
+      "reopened_solids": [
+        {
+          "bounds_mm": [
+            -0.8260000000000001,
+            29.424,
+            4.1,
+            88.8875,
+            123.326,
+            6.6000000000000005
+          ],
+          "volume_mm3": 6173.657158112472
+        },
+        {
+          "bounds_mm": [
+            73.500053569934,
+            0.10000000000000002,
+            4.1,
+            164.51350000000002,
+            123.326,
+            6.6000000000000005
+          ],
+          "volume_mm3": 6373.230312349692
+        }
+      ],
+      "readback_step": "kc2_right_deep_sea_upper_housing.native-readback.step",
+      "readback_sha256": "c2a3ae2391f9cd418d576363149bf21c5e0d190d7aa653929c4a95c6a123f43c",
+      "round_trip_verified": true
+    }
+  },
+  "source_sha256": {
+    "tools/fusion/KC2FilledPlatesToF3D/KC2FilledPlatesToF3D.py": "66b875f845b154bb566ff90ee58161a0eb985fd60bb4ec05f6f603bf0402f148",
+    "tools/fusion/KC2StepToF3D/KC2StepToF3D.py": "d5a0bc1d376c04e5797eb3fb20a4c1fb3bb31a4f01a20aa42e834eab6e1d6cc5",
+    "tools/kc2_filled_native.py": "1e772ca81cf23f2392870a2bdb59aff0a06e000a905f6802be8d423081b570fd",
+    "tools/test_kc2_filled_native.py": "0ed1df2905c56c46b29a5c5a1a6bdb2467fba1a34a160f8f12b5da0ad2bb2bef"
+  },
+  "phase": "complete"
+}
