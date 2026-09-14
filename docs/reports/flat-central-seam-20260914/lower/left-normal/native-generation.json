@@ -1,0 +1,45 @@
+{
+  "status": "pass",
+  "errors": [],
+  "selected_job": "left:normal",
+  "requirements": [
+    "CON-ARCH-006",
+    "OPS-ARCH-006"
+  ],
+  "fusion_version": "2705.1.11",
+  "source_step": "kc2_left_lower_housing.step",
+  "source_sha256": "f48bf886811ab82b3de1a0b62a344c295d16f59a586693a80884bde37a866e68",
+  "generation_sha256": "da5d24828134883f630627d843803f074f533e9a51137be682f050f12331c695",
+  "source_bodies": [
+    {
+      "volume_mm3": 43993.359626090794,
+      "bounds_mm": [
+        -1.5000000000000002,
+        -1.5000000000000002,
+        -2.2,
+        136.6125,
+        124.32600000000001,
+        4.999999999999999
+      ]
+    }
+  ],
+  "reopened_bodies": [
+    {
+      "volume_mm3": 43993.359626090794,
+      "bounds_mm": [
+        -1.5000000000000002,
+        -1.5000000000000002,
+        -2.2,
+        136.6125,
+        124.32600000000001,
+        4.999999999999999
+      ]
+    }
+  ],
+  "f3d": "kc2_left_lower_housing.f3d",
+  "f3d_sha256": "628fbc85b2a76a5209ac4f0789d9fdf4954a6ad3e33bd89761663f28fb3c23f1",
+  "readback_step": "kc2_left_lower_housing.native-readback.step",
+  "readback_sha256": "58cfc5e7f456a09242c0924467747ca79472393d50393c670d16ffd7fce79c50",
+  "round_trip_verified": true,
+  "physical_qualified": false
+}

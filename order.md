@@ -1,5 +1,7 @@
 # KC2 디렉토리·PCB 주문·3D 인쇄 안내
 
+> 2026-09-14 현재 하우징: 인쇄 파일은 `hardware/MODELS` 바로 아래에 있습니다. 중앙 좌우 요철을 모두 제거한 최신 하판은 [hardware/MODELS/README.md](hardware/MODELS/README.md)와 [PRINT-flat-central-housings.md](hardware/MODELS/PRINT-flat-central-housings.md)를 따르십시오. 자석형은 기존 두 쌍만 유지하며, 컨트롤러 쪽 세 번째 홈은 안전 여유가 없어 추가하지 않았습니다. 현재 검증 manifest는 `hardware/MODELS/kc2_flat_central_housing_manifest.json`입니다. 아래의 과거 `hardware/case` 경로 설명은 이력으로만 보십시오.
+
 기준일: 2026-09-07. 요구사항 원본은 [SRS](docs/spec/00.index.md)입니다.
 이 문서는 `OPS-ARCH-006/007`, `CON-ARCH-004/006`의 파일 위치와 절차를 설명하며 요구사항을 대체하지 않습니다.
 

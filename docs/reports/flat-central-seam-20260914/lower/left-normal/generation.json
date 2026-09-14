@@ -1,0 +1,107 @@
+{
+  "status": "generated_pending_independent_review",
+  "errors": [],
+  "requirements": [
+    "CON-ARCH-006",
+    "CON-ARCH-007",
+    "OPS-ARCH-006"
+  ],
+  "side": "left",
+  "magnetic": false,
+  "baseline_revision": "5b99bcb4567ea1c6bb4f17e54887d4de7614cd03",
+  "input_publication_revision": "03b9135b42c0de5730d1c67228ec858b08f3facb",
+  "source_sha256": {
+    "tools/stage_kc2_flat_central_revision.py": "f9739918bea2aea946da8c43fae941e8ba4ec3305e3eb7d79bb516cd84d5560f",
+    "tools/test_stage_kc2_flat_central_revision.py": "b9df22292047d5b06cc4b9de8c7800df0451de7bdeb52afc8caa5d730a61d50a",
+    "tools/kc2_flat_central_revision.py": "562773219fd7c3708c6259fbde26742f93c133cec48a435510d5586e7cd357ed",
+    "tools/test_kc2_flat_central_revision.py": "dd7236f57a3e45baef0a53af7274a4669e6ca11b1a3ebb23acb87cd36b238207",
+    "tools/kc2_stl_zero_area_filter.py": "4b5486493026ff8d04db3c3240ee3b0936d9ca4d7f4390e5927db9436b031ff0",
+    "tools/test_kc2_stl_zero_area_filter.py": "d4098ee675f5bad3babb98fd72e123ac645d3e8ed27a94af3306f8d64225f24c",
+    "tools/review_kc2_controller_magnet_feasibility.py": "e22950ab837c34bdb6fea4f89388bffabd2f927a870ecfc84ace6f9c2699facd",
+    "tools/test_review_kc2_controller_magnet_feasibility.py": "960476da98af9488c025fd263f2c68fe181c025aa8790c81ad8a21d4788712a6",
+    ".codex-tmp/flat-central-revision/controller-magnet-feasibility.json": "6822aa3c13835ce26452b875a7f3606c22a3037fd21c2c39ef67e5ef0bd02436",
+    "hardware/MODELS/kc2_registered_housing_manifest.json": "a3cdc7d361d9bfab6a80b5547ae6be3034444b42efaeb86020a9084432517aa9",
+    "hardware/MODELS/kc2_left_lower_housing.step": "fc3e425075ba94941f272134f70ec4fe6d62dfe0379d6b0147298d7d5f37a24b",
+    "docs/reports/registered-housing-fit-20260913/evidence/central/left-central-y95.step": "6691fb11aec5c5fcf5a3a8d023922c725e40d9ae2b1631d384b85f29b897355f",
+    "docs/reports/registered-housing-fit-20260913/evidence/central/left-central-y117.step": "032d436d666bd2df6c692ede584e610f789119358cfa7aa4d8092ba491146614"
+  },
+  "git_baseline_sha256": "ce99534d33e6c765ea0272c4747b3c0ea69281de51423d570419d21ad74f19ad",
+  "controller_magnet_pair_added": false,
+  "controller_magnet_fallback": "no pair added: safe reserve and attraction gap cannot both be met without geometry expansion",
+  "guide_locations_removed_y_mm": [
+    95.0,
+    117.0
+  ],
+  "flat_face_x_mm": -1.5,
+  "preservation": {
+    "errors": [],
+    "removed_mm3": 20.128000000000014,
+    "added_mm3": 0.0,
+    "off_guide_removed_mm3": 0.0,
+    "baseline_removed_mm3": 0.0,
+    "remaining_protrusion_mm3": 0.0
+  },
+  "body_count": 1,
+  "bounds_mm": [
+    -1.5000001000148386,
+    -1.5000001000056715,
+    -2.2000001000072853,
+    136.61250010001484,
+    124.32600010000567,
+    5.000000100000007
+  ],
+  "volume_mm3": 43993.35962608202,
+  "outputs": {
+    "kc2_left_lower_housing.step": "f48bf886811ab82b3de1a0b62a344c295d16f59a586693a80884bde37a866e68",
+    "kc2_left_lower_housing.stl": "6f9f15d2713e2e73b0f80fa86f43a18952f44c1c5b59f93e97d879805adc6d4f"
+  },
+  "meshes": [
+    {
+      "watertight": true,
+      "winding_consistent": true,
+      "shells": 1,
+      "bounds_mm": [
+        -1.5,
+        -1.5,
+        -2.200000047683716,
+        136.6125030517578,
+        124.32599639892578,
+        5.0
+      ],
+      "volume_mm3": 43993.362193748144,
+      "brep_volume_mm3": 43993.35962608202,
+      "volume_error_mm3": 0.0025676661243778653,
+      "sha256": "6f9f15d2713e2e73b0f80fa86f43a18952f44c1c5b59f93e97d879805adc6d4f"
+    }
+  ],
+  "mesh_normalization": [
+    {
+      "requirements": [
+        "CON-ARCH-006"
+      ],
+      "schema": "binary-stl-exact-zero-area-filter-v1",
+      "status": "pass",
+      "errors": [],
+      "input_sha256": "6f9f15d2713e2e73b0f80fa86f43a18952f44c1c5b59f93e97d879805adc6d4f",
+      "output_sha256": "6f9f15d2713e2e73b0f80fa86f43a18952f44c1c5b59f93e97d879805adc6d4f",
+      "input_facets": 29180,
+      "output_facets": 29180,
+      "removed_count": 0,
+      "removed_facets": [],
+      "surviving_oriented_records_sha256": "ea357e47cb2c4a9f234641f89861afc64b647d54d902cfbe7796c75addb62ff0",
+      "output_oriented_records_sha256": "ea357e47cb2c4a9f234641f89861afc64b647d54d902cfbe7796c75addb62ff0",
+      "surviving_oriented_record_sequence_unchanged": true,
+      "serialized_bounds_unchanged": true,
+      "before_volume_mm3": 43993.362193748144,
+      "after_volume_mm3": 43993.362193748144,
+      "volume_delta_mm3": 0.0,
+      "volume_summation_epsilon_mm3": 6.251832785686154e-10,
+      "output_watertight": true,
+      "output_winding_consistent": true,
+      "output_components": 1,
+      "physical_qualified": false,
+      "method": "remove only exactly zero cross-product serialized facets; all retained facet bytes unchanged"
+    }
+  ],
+  "physical_qualified": false
+}

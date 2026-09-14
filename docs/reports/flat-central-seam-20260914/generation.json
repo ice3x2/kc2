@@ -1,0 +1,60 @@
+{
+  "status": "generated_pending_independent_review",
+  "errors": [],
+  "requirements": [
+    "CON-ARCH-006",
+    "CON-ARCH-007",
+    "OPS-ARCH-006"
+  ],
+  "jobs": {
+    "left:normal": {
+      "report": "lower/left-normal/generation.json",
+      "outputs": {
+        "kc2_left_lower_housing.step": "f48bf886811ab82b3de1a0b62a344c295d16f59a586693a80884bde37a866e68",
+        "kc2_left_lower_housing.stl": "6f9f15d2713e2e73b0f80fa86f43a18952f44c1c5b59f93e97d879805adc6d4f"
+      }
+    },
+    "left:magnetic": {
+      "report": "lower/left-magnetic/generation.json",
+      "outputs": {
+        "kc2_left_lower_housing_magnetic.step": "565c1e4d052e507904ed8089ec46e109239fe9f2e76d52b4555e405b60ecea13",
+        "kc2_left_lower_housing_magnetic.stl": "20333fa8b8896a28469465e3ecd6d06c522b5c1ea3e800e5bb431861196a02b3"
+      }
+    },
+    "right:normal": {
+      "report": "lower/right-normal/generation.json",
+      "outputs": {
+        "kc2_right_lower_housing.step": "753a6cd0fba1ae737ebedd124f17cfd334e7dc766b35187258b2d2f7f14efa76",
+        "kc2_right_lower_housing_part_a.stl": "9620bc2ec51d72dcafe66ce0ae58b53c0441a97b573484cfdf777186a054ffc1",
+        "kc2_right_lower_housing_part_b.stl": "666378c544b9fe8a3fa7b648b9e253e7ccb90f86fe07c617cc8c80cdb9b4af86"
+      }
+    },
+    "right:magnetic": {
+      "report": "lower/right-magnetic/generation.json",
+      "outputs": {
+        "kc2_right_lower_housing_magnetic.step": "270e480d9a422f141a5facca6c7fea086ac446362c9eb81735c6ccb4bc11b5d7",
+        "kc2_right_lower_housing_part_a_magnetic.stl": "f12a3bfb299e107f6eb175e0616d92d0fb5dbe1ffeba864b2af66f33617b88ba",
+        "kc2_right_lower_housing_part_b_magnetic.stl": "d8ea19279517ffdf49c33874c4ae1e35e9d3d957b2581ffe5efc0f39ad93f5b1"
+      }
+    }
+  },
+  "controller_magnet_feasibility": "6822aa3c13835ce26452b875a7f3606c22a3037fd21c2c39ef67e5ef0bd02436",
+  "controller_magnet_pair_added": false,
+  "magnetic_preservation": {
+    "left": {
+      "errors": [],
+      "old_removed_mm3": 21.71468842161266,
+      "new_removed_mm3": 21.71468842161266,
+      "old_missing_mm3": 0.0,
+      "unexpected_new_mm3": 0.0
+    },
+    "right": {
+      "errors": [],
+      "old_removed_mm3": 21.714688421612962,
+      "new_removed_mm3": 21.714688421612962,
+      "old_missing_mm3": 0.0,
+      "unexpected_new_mm3": 0.0
+    }
+  },
+  "physical_qualified": false
+}

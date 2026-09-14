@@ -1,0 +1,279 @@
+{
+  "status": "generated_pending_independent_review",
+  "errors": [],
+  "requirements": [
+    "CON-ARCH-006",
+    "CON-ARCH-007",
+    "OPS-ARCH-006"
+  ],
+  "side": "right",
+  "magnetic": false,
+  "baseline_revision": "5b99bcb4567ea1c6bb4f17e54887d4de7614cd03",
+  "input_publication_revision": "03b9135b42c0de5730d1c67228ec858b08f3facb",
+  "source_sha256": {
+    "tools/stage_kc2_flat_central_revision.py": "f9739918bea2aea946da8c43fae941e8ba4ec3305e3eb7d79bb516cd84d5560f",
+    "tools/test_stage_kc2_flat_central_revision.py": "b9df22292047d5b06cc4b9de8c7800df0451de7bdeb52afc8caa5d730a61d50a",
+    "tools/kc2_flat_central_revision.py": "562773219fd7c3708c6259fbde26742f93c133cec48a435510d5586e7cd357ed",
+    "tools/test_kc2_flat_central_revision.py": "dd7236f57a3e45baef0a53af7274a4669e6ca11b1a3ebb23acb87cd36b238207",
+    "tools/kc2_stl_zero_area_filter.py": "4b5486493026ff8d04db3c3240ee3b0936d9ca4d7f4390e5927db9436b031ff0",
+    "tools/test_kc2_stl_zero_area_filter.py": "d4098ee675f5bad3babb98fd72e123ac645d3e8ed27a94af3306f8d64225f24c",
+    "tools/review_kc2_controller_magnet_feasibility.py": "e22950ab837c34bdb6fea4f89388bffabd2f927a870ecfc84ace6f9c2699facd",
+    "tools/test_review_kc2_controller_magnet_feasibility.py": "960476da98af9488c025fd263f2c68fe181c025aa8790c81ad8a21d4788712a6",
+    ".codex-tmp/flat-central-revision/controller-magnet-feasibility.json": "6822aa3c13835ce26452b875a7f3606c22a3037fd21c2c39ef67e5ef0bd02436",
+    "hardware/MODELS/kc2_registered_housing_manifest.json": "a3cdc7d361d9bfab6a80b5547ae6be3034444b42efaeb86020a9084432517aa9",
+    "hardware/MODELS/kc2_right_lower_housing.step": "1d0919bb101e069d06fb6fbed408f2886f8432c0e875d365bd990836b074cb51",
+    "docs/reports/registered-housing-fit-20260913/evidence/central/right-central-y95.step": "2163fbe8b7654ebf6c8fda4242b76b84302d98e75f3a3045f0fd76a96f8c0c1b",
+    "docs/reports/registered-housing-fit-20260913/evidence/central/right-central-y117.step": "e9f382a4336c9c945144059f9aa471c30724118a9ec166a80b2804e9a6d741c5"
+  },
+  "git_baseline_sha256": "1a4b127837317b217b01ec8cf4455e977e217bb1e9a7257234fe7094a60db24a",
+  "controller_magnet_pair_added": false,
+  "controller_magnet_fallback": "no pair added: safe reserve and attraction gap cannot both be met without geometry expansion",
+  "guide_locations_removed_y_mm": [
+    95.0,
+    117.0
+  ],
+  "flat_face_x_mm": 150.9,
+  "preservation": {
+    "errors": [],
+    "removed_mm3": 21.583999999993253,
+    "added_mm3": 0.0,
+    "off_guide_removed_mm3": 0.0,
+    "baseline_removed_mm3": 0.0,
+    "remaining_protrusion_mm3": 0.0
+  },
+  "body_count": 2,
+  "bounds_mm": [
+    -1.5000001000034702,
+    -1.5000001000084744,
+    -2.2000001000084746,
+    165.18750010000846,
+    124.32600010000847,
+    5.000000100000029
+  ],
+  "volume_mm3": 50077.01211624712,
+  "outputs": {
+    "kc2_right_lower_housing.step": "753a6cd0fba1ae737ebedd124f17cfd334e7dc766b35187258b2d2f7f14efa76",
+    "kc2_right_lower_housing_part_a.stl": "9620bc2ec51d72dcafe66ce0ae58b53c0441a97b573484cfdf777186a054ffc1",
+    "kc2_right_lower_housing_part_b.stl": "666378c544b9fe8a3fa7b648b9e253e7ccb90f86fe07c617cc8c80cdb9b4af86"
+  },
+  "meshes": [
+    {
+      "watertight": true,
+      "winding_consistent": true,
+      "shells": 1,
+      "bounds_mm": [
+        -1.5,
+        28.75,
+        -2.200000047683716,
+        87.09375,
+        124.32599639892578,
+        4.099999904632568
+      ],
+      "volume_mm3": 24615.871281449417,
+      "brep_volume_mm3": 24615.867370313754,
+      "volume_error_mm3": 0.003911135663656751,
+      "sha256": "9620bc2ec51d72dcafe66ce0ae58b53c0441a97b573484cfdf777186a054ffc1"
+    },
+    {
+      "watertight": true,
+      "winding_consistent": true,
+      "shells": 1,
+      "bounds_mm": [
+        82.14379119873047,
+        -1.5,
+        -2.200000047683716,
+        165.1875,
+        124.32599639892578,
+        5.0
+      ],
+      "volume_mm3": 25461.148913614077,
+      "brep_volume_mm3": 25461.144745932368,
+      "volume_error_mm3": 0.004167681709077442,
+      "sha256": "666378c544b9fe8a3fa7b648b9e253e7ccb90f86fe07c617cc8c80cdb9b4af86"
+    }
+  ],
+  "mesh_normalization": [
+    {
+      "requirements": [
+        "CON-ARCH-006"
+      ],
+      "schema": "binary-stl-exact-zero-area-filter-v1",
+      "status": "pass",
+      "errors": [],
+      "input_sha256": "9620bc2ec51d72dcafe66ce0ae58b53c0441a97b573484cfdf777186a054ffc1",
+      "output_sha256": "9620bc2ec51d72dcafe66ce0ae58b53c0441a97b573484cfdf777186a054ffc1",
+      "input_facets": 17988,
+      "output_facets": 17988,
+      "removed_count": 0,
+      "removed_facets": [],
+      "surviving_oriented_records_sha256": "53b37d1cc114b8c48c9e8a73c92a3a2736360817d884169ae1094924331a5d1f",
+      "output_oriented_records_sha256": "53b37d1cc114b8c48c9e8a73c92a3a2736360817d884169ae1094924331a5d1f",
+      "surviving_oriented_record_sequence_unchanged": true,
+      "serialized_bounds_unchanged": true,
+      "before_volume_mm3": 24615.871281449417,
+      "after_volume_mm3": 24615.871281449417,
+      "volume_delta_mm3": 0.0,
+      "volume_summation_epsilon_mm3": 3.4981257046879104e-10,
+      "output_watertight": true,
+      "output_winding_consistent": true,
+      "output_components": 1,
+      "physical_qualified": false,
+      "method": "remove only exactly zero cross-product serialized facets; all retained facet bytes unchanged"
+    },
+    {
+      "requirements": [
+        "CON-ARCH-006"
+      ],
+      "schema": "binary-stl-exact-zero-area-filter-v1",
+      "status": "pass",
+      "errors": [],
+      "input_sha256": "1386a79bf7bca5b491b05ed02b7fc32dc3468d2df6711d03ff4b455e931b209a",
+      "output_sha256": "666378c544b9fe8a3fa7b648b9e253e7ccb90f86fe07c617cc8c80cdb9b4af86",
+      "input_facets": 24728,
+      "output_facets": 24722,
+      "removed_count": 6,
+      "removed_facets": [
+        {
+          "index": 2939,
+          "xyz_mm": [
+            [
+              84.31395721435547,
+              88.84635925292969,
+              -1.0
+            ],
+            [
+              84.31439971923828,
+              88.8464584350586,
+              -1.0
+            ],
+            [
+              84.31439971923828,
+              88.8464584350586,
+              -1.0
+            ]
+          ],
+          "area_mm2": 0.0
+        },
+        {
+          "index": 2948,
+          "xyz_mm": [
+            [
+              84.31200408935547,
+              88.84795379638672,
+              -1.0
+            ],
+            [
+              84.31395721435547,
+              88.84635925292969,
+              -1.0
+            ],
+            [
+              84.31200408935547,
+              88.84795379638672,
+              -1.0
+            ]
+          ],
+          "area_mm2": 0.0
+        },
+        {
+          "index": 3222,
+          "xyz_mm": [
+            [
+              84.31200408935547,
+              88.84795379638672,
+              -1.0
+            ],
+            [
+              84.31200408935547,
+              88.84795379638672,
+              2.5
+            ],
+            [
+              84.31200408935547,
+              88.84795379638672,
+              -1.0
+            ]
+          ],
+          "area_mm2": 0.0
+        },
+        {
+          "index": 3223,
+          "xyz_mm": [
+            [
+              84.31200408935547,
+              88.84795379638672,
+              -1.0
+            ],
+            [
+              84.31200408935547,
+              88.84795379638672,
+              2.5
+            ],
+            [
+              84.31200408935547,
+              88.84795379638672,
+              2.5
+            ]
+          ],
+          "area_mm2": 0.0
+        },
+        {
+          "index": 3588,
+          "xyz_mm": [
+            [
+              84.31439971923828,
+              88.8464584350586,
+              -1.0
+            ],
+            [
+              84.31439971923828,
+              88.8464584350586,
+              2.5
+            ],
+            [
+              84.31439971923828,
+              88.8464584350586,
+              -1.0
+            ]
+          ],
+          "area_mm2": 0.0
+        },
+        {
+          "index": 3589,
+          "xyz_mm": [
+            [
+              84.31439971923828,
+              88.8464584350586,
+              -1.0
+            ],
+            [
+              84.31439971923828,
+              88.8464584350586,
+              2.5
+            ],
+            [
+              84.31439971923828,
+              88.8464584350586,
+              2.5
+            ]
+          ],
+          "area_mm2": 0.0
+        }
+      ],
+      "surviving_oriented_records_sha256": "97d3ecd56fe9d22c9612014fe984d16fab6df5820709682d6151af3aa5eb40cd",
+      "output_oriented_records_sha256": "97d3ecd56fe9d22c9612014fe984d16fab6df5820709682d6151af3aa5eb40cd",
+      "surviving_oriented_record_sequence_unchanged": true,
+      "serialized_bounds_unchanged": true,
+      "before_volume_mm3": 25461.148913614084,
+      "after_volume_mm3": 25461.148913614077,
+      "volume_delta_mm3": -7.275957614183426e-12,
+      "volume_summation_epsilon_mm3": 3.618246880934931e-10,
+      "output_watertight": true,
+      "output_winding_consistent": true,
+      "output_components": 1,
+      "physical_qualified": false,
+      "method": "remove only exactly zero cross-product serialized facets; all retained facet bytes unchanged"
+    }
+  ],
+  "physical_qualified": false
+}

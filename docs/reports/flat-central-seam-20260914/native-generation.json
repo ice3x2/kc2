@@ -1,0 +1,236 @@
+{
+  "status": "pass",
+  "errors": [],
+  "requirements": [
+    "CON-ARCH-006",
+    "OPS-ARCH-006"
+  ],
+  "fusion_version": "2705.1.11",
+  "outputs": {
+    "left:normal": {
+      "status": "pass",
+      "errors": [],
+      "selected_job": "left:normal",
+      "requirements": [
+        "CON-ARCH-006",
+        "OPS-ARCH-006"
+      ],
+      "fusion_version": "2705.1.11",
+      "source_step": "kc2_left_lower_housing.step",
+      "source_sha256": "f48bf886811ab82b3de1a0b62a344c295d16f59a586693a80884bde37a866e68",
+      "generation_sha256": "da5d24828134883f630627d843803f074f533e9a51137be682f050f12331c695",
+      "source_bodies": [
+        {
+          "volume_mm3": 43993.359626090794,
+          "bounds_mm": [
+            -1.5000000000000002,
+            -1.5000000000000002,
+            -2.2,
+            136.6125,
+            124.32600000000001,
+            4.999999999999999
+          ]
+        }
+      ],
+      "reopened_bodies": [
+        {
+          "volume_mm3": 43993.359626090794,
+          "bounds_mm": [
+            -1.5000000000000002,
+            -1.5000000000000002,
+            -2.2,
+            136.6125,
+            124.32600000000001,
+            4.999999999999999
+          ]
+        }
+      ],
+      "f3d": "kc2_left_lower_housing.f3d",
+      "f3d_sha256": "628fbc85b2a76a5209ac4f0789d9fdf4954a6ad3e33bd89761663f28fb3c23f1",
+      "readback_step": "kc2_left_lower_housing.native-readback.step",
+      "readback_sha256": "58cfc5e7f456a09242c0924467747ca79472393d50393c670d16ffd7fce79c50",
+      "round_trip_verified": true,
+      "physical_qualified": false
+    },
+    "left:magnetic": {
+      "status": "pass",
+      "errors": [],
+      "selected_job": "left:magnetic",
+      "requirements": [
+        "CON-ARCH-006",
+        "OPS-ARCH-006"
+      ],
+      "fusion_version": "2705.1.11",
+      "source_step": "kc2_left_lower_housing_magnetic.step",
+      "source_sha256": "565c1e4d052e507904ed8089ec46e109239fe9f2e76d52b4555e405b60ecea13",
+      "generation_sha256": "2e5598f460b602c4eb73c7ef521f87575032a934de1074693a92343da421bb92",
+      "source_bodies": [
+        {
+          "volume_mm3": 43971.64493766915,
+          "bounds_mm": [
+            -1.5000000000000002,
+            -1.5000000000000002,
+            -2.2,
+            136.6125,
+            124.32600000000001,
+            4.999999999999999
+          ]
+        }
+      ],
+      "reopened_bodies": [
+        {
+          "volume_mm3": 43971.64493766915,
+          "bounds_mm": [
+            -1.5000000000000002,
+            -1.5000000000000002,
+            -2.2,
+            136.6125,
+            124.32600000000001,
+            4.999999999999999
+          ]
+        }
+      ],
+      "f3d": "kc2_left_lower_housing_magnetic.f3d",
+      "f3d_sha256": "5588d4be42b38c015cb3e4649304d66532b5d70e1a2d946a8ca7b66f497811d1",
+      "readback_step": "kc2_left_lower_housing_magnetic.native-readback.step",
+      "readback_sha256": "f78fc36a58cc14da1efc979be3d08d82bac4b71c18fc876c1db8e15d0d799ecd",
+      "round_trip_verified": true,
+      "physical_qualified": false
+    },
+    "right:normal": {
+      "status": "pass",
+      "errors": [],
+      "selected_job": "right:normal",
+      "requirements": [
+        "CON-ARCH-006",
+        "OPS-ARCH-006"
+      ],
+      "fusion_version": "2705.1.11",
+      "source_step": "kc2_right_lower_housing.step",
+      "source_sha256": "753a6cd0fba1ae737ebedd124f17cfd334e7dc766b35187258b2d2f7f14efa76",
+      "generation_sha256": "3396c33164601e59e5aa4fa5855f2fca4e828bc89b178f911c54972aed9e7647",
+      "source_bodies": [
+        {
+          "volume_mm3": 24615.867370318952,
+          "bounds_mm": [
+            -1.5000000000000002,
+            28.75,
+            -2.2,
+            87.09375,
+            124.32600000000001,
+            4.1
+          ]
+        },
+        {
+          "volume_mm3": 25461.144753759378,
+          "bounds_mm": [
+            82.14379,
+            -1.5000000000000002,
+            -2.2,
+            165.1875,
+            124.32600000000001,
+            4.999999999999999
+          ]
+        }
+      ],
+      "reopened_bodies": [
+        {
+          "volume_mm3": 24615.867370318952,
+          "bounds_mm": [
+            -1.5000000000000002,
+            28.75,
+            -2.2,
+            87.09375,
+            124.32600000000001,
+            4.1
+          ]
+        },
+        {
+          "volume_mm3": 25461.144753759378,
+          "bounds_mm": [
+            82.14379,
+            -1.5000000000000002,
+            -2.2,
+            165.1875,
+            124.32600000000001,
+            4.999999999999999
+          ]
+        }
+      ],
+      "f3d": "kc2_right_lower_housing.f3d",
+      "f3d_sha256": "8f6e16ce6b94bddf5397ff31057787512710429ee2ba837d01ee328aec08f699",
+      "readback_step": "kc2_right_lower_housing.native-readback.step",
+      "readback_sha256": "583bb3c7fa55e222cd361a90881e023f354da9ffb426976d4c436f5671b1b372",
+      "round_trip_verified": true,
+      "physical_qualified": false
+    },
+    "right:magnetic": {
+      "status": "pass",
+      "errors": [],
+      "selected_job": "right:magnetic",
+      "requirements": [
+        "CON-ARCH-006",
+        "OPS-ARCH-006"
+      ],
+      "fusion_version": "2705.1.11",
+      "source_step": "kc2_right_lower_housing_magnetic.step",
+      "source_sha256": "270e480d9a422f141a5facca6c7fea086ac446362c9eb81735c6ccb4bc11b5d7",
+      "generation_sha256": "e951fc6d05e49be64b6f622d4007803ff7408fa6111c864d4f0a9d8b4a512655",
+      "source_bodies": [
+        {
+          "volume_mm3": 24615.86737031893,
+          "bounds_mm": [
+            -1.5000000000000002,
+            28.75,
+            -2.2,
+            87.09375,
+            124.32600000000001,
+            4.1
+          ]
+        },
+        {
+          "volume_mm3": 25439.430065337743,
+          "bounds_mm": [
+            82.14379,
+            -1.5000000000000002,
+            -2.2,
+            165.1875,
+            124.32600000000001,
+            4.999999999999999
+          ]
+        }
+      ],
+      "reopened_bodies": [
+        {
+          "volume_mm3": 24615.86737031893,
+          "bounds_mm": [
+            -1.5000000000000002,
+            28.75,
+            -2.2,
+            87.09375,
+            124.32600000000001,
+            4.1
+          ]
+        },
+        {
+          "volume_mm3": 25439.430065337743,
+          "bounds_mm": [
+            82.14379,
+            -1.5000000000000002,
+            -2.2,
+            165.1875,
+            124.32600000000001,
+            4.999999999999999
+          ]
+        }
+      ],
+      "f3d": "kc2_right_lower_housing_magnetic.f3d",
+      "f3d_sha256": "a1d76f53f4508c993dc68b8dae56133b32c461226c9bf10b1a29c2c70badbeb0",
+      "readback_step": "kc2_right_lower_housing_magnetic.native-readback.step",
+      "readback_sha256": "964b533900a6fc3d4a3e655cc4a085b68087a838833c9e4afe7d7bc47cd76d72",
+      "round_trip_verified": true,
+      "physical_qualified": false
+    }
+  },
+  "physical_qualified": false
+}

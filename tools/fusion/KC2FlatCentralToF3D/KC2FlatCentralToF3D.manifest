@@ -1,0 +1,10 @@
+{
+  "autodeskProduct": "Fusion",
+  "type": "addin",
+  "author": "KC2",
+  "description": {"": "CON-ARCH-006 flat central seam native export"},
+  "version": "1.0.0",
+  "runOnStartup": true,
+  "supportedOS": "windows",
+  "editEnabled": true
+}

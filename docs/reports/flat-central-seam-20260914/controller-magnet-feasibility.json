@@ -1,0 +1,154 @@
+{
+  "status": "pass_no_safe_candidate",
+  "errors": [],
+  "requirements": [
+    "CON-ARCH-006",
+    "CON-ARCH-007"
+  ],
+  "selected": null,
+  "controller_y_range_mm": [
+    31.0,
+    97.0
+  ],
+  "search_step_mm": 0.1,
+  "safely_aligned_candidates": [],
+  "rejected_aligned_candidates": [],
+  "remote_candidates": [
+    {
+      "y": 4.0,
+      "face_gap_mm": 31.912499999999994
+    },
+    {
+      "y": 5.0,
+      "face_gap_mm": 31.912499999999994
+    },
+    {
+      "y": 6.0,
+      "face_gap_mm": 31.912499999999994
+    },
+    {
+      "y": 7.0,
+      "face_gap_mm": 31.912499999999994
+    },
+    {
+      "y": 8.0,
+      "face_gap_mm": 31.912499999999994
+    },
+    {
+      "y": 9.0,
+      "face_gap_mm": 31.912499999999994
+    },
+    {
+      "y": 10.0,
+      "face_gap_mm": 31.912499999999994
+    },
+    {
+      "y": 11.0,
+      "face_gap_mm": 31.912499999999994
+    },
+    {
+      "y": 12.0,
+      "face_gap_mm": 31.912499999999994
+    },
+    {
+      "y": 13.0,
+      "face_gap_mm": 31.912499999999994
+    },
+    {
+      "y": 14.0,
+      "face_gap_mm": 31.912499999999994
+    },
+    {
+      "y": 15.0,
+      "face_gap_mm": 31.912499999999994
+    },
+    {
+      "y": 16.0,
+      "face_gap_mm": 31.912499999999994
+    },
+    {
+      "y": 17.0,
+      "face_gap_mm": 31.912499999999994
+    },
+    {
+      "y": 18.0,
+      "face_gap_mm": 31.912499999999994
+    },
+    {
+      "y": 19.0,
+      "face_gap_mm": 31.912499999999994
+    },
+    {
+      "y": 20.0,
+      "face_gap_mm": 31.912499999999994
+    },
+    {
+      "y": 21.0,
+      "face_gap_mm": 31.912499999999994
+    },
+    {
+      "y": 22.0,
+      "face_gap_mm": 31.912499999999994
+    },
+    {
+      "y": 23.0,
+      "face_gap_mm": 31.912499999999994
+    },
+    {
+      "y": 24.0,
+      "face_gap_mm": 31.912499999999994
+    },
+    {
+      "y": 25.0,
+      "face_gap_mm": 31.912499999999994
+    },
+    {
+      "y": 26.0,
+      "face_gap_mm": 31.912499999999994
+    },
+    {
+      "y": 27.0,
+      "face_gap_mm": 31.912499999999994
+    },
+    {
+      "y": 28.0,
+      "face_gap_mm": 31.912499999999994
+    }
+  ],
+  "actual_near_misses": [
+    {
+      "y": 92.0,
+      "reserve_missing_left_mm3": 0.09721565181923429,
+      "reserve_missing_right_mm3": 0.0,
+      "reserve_volume_left_mm3": 16.34256498397411,
+      "reserve_volume_right_mm3": 16.342564983974142
+    },
+    {
+      "y": 97.0,
+      "reserve_missing_left_mm3": 4.5770181304922515,
+      "reserve_missing_right_mm3": 4.577018130470002,
+      "reserve_volume_left_mm3": 16.34256498397411,
+      "reserve_volume_right_mm3": 16.342564983974142
+    }
+  ],
+  "wall_expansion_required": true,
+  "added_pair": false,
+  "diameter_mm": 2.4,
+  "depth_mm": 1.2,
+  "radial_web_reserve_mm": 0.5,
+  "back_wall_reserve_mm": 0.6,
+  "center_z_mm": 0.75,
+  "source_sha256": {
+    "tools/review_kc2_controller_magnet_feasibility.py": "e22950ab837c34bdb6fea4f89388bffabd2f927a870ecfc84ace6f9c2699facd",
+    "tools/test_review_kc2_controller_magnet_feasibility.py": "960476da98af9488c025fd263f2c68fe181c025aa8790c81ad8a21d4788712a6",
+    "tools/kc2_flat_central_revision.py": "562773219fd7c3708c6259fbde26742f93c133cec48a435510d5586e7cd357ed",
+    "tools/test_kc2_flat_central_revision.py": "dd7236f57a3e45baef0a53af7274a4669e6ca11b1a3ebb23acb87cd36b238207",
+    "tools/generate_kc2_magnetic_housings.py": "f8d20b5a84a5b953aa5a8bd7ca2e6474203347869423612f360829f516c284ec",
+    "hardware/MODELS/kc2_left_lower_housing.step": "fc3e425075ba94941f272134f70ec4fe6d62dfe0379d6b0147298d7d5f37a24b",
+    "hardware/MODELS/kc2_right_lower_housing.step": "1d0919bb101e069d06fb6fbed408f2886f8432c0e875d365bd990836b074cb51",
+    "hardware/PCB/kc2_left/kc2_left.kicad_pcb": "568e1427e4cfb9d667b6d5b3754da3a4e24c924abfa85a8dfe394dd050b5fe67",
+    "hardware/PCB/kc2_right/kc2_right.kicad_pcb": "88290c3b0cf3951d56221d216549665c0576a816a6315012f7f12b027f402577"
+  },
+  "physical_qualified": false,
+  "conclusion": "no pair added: safe reserve and attraction gap cannot both be met without geometry expansion"
+}

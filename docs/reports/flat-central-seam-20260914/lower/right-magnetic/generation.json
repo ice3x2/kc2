@@ -1,0 +1,279 @@
+{
+  "status": "generated_pending_independent_review",
+  "errors": [],
+  "requirements": [
+    "CON-ARCH-006",
+    "CON-ARCH-007",
+    "OPS-ARCH-006"
+  ],
+  "side": "right",
+  "magnetic": true,
+  "baseline_revision": "5b99bcb4567ea1c6bb4f17e54887d4de7614cd03",
+  "input_publication_revision": "03b9135b42c0de5730d1c67228ec858b08f3facb",
+  "source_sha256": {
+    "tools/stage_kc2_flat_central_revision.py": "f9739918bea2aea946da8c43fae941e8ba4ec3305e3eb7d79bb516cd84d5560f",
+    "tools/test_stage_kc2_flat_central_revision.py": "b9df22292047d5b06cc4b9de8c7800df0451de7bdeb52afc8caa5d730a61d50a",
+    "tools/kc2_flat_central_revision.py": "562773219fd7c3708c6259fbde26742f93c133cec48a435510d5586e7cd357ed",
+    "tools/test_kc2_flat_central_revision.py": "dd7236f57a3e45baef0a53af7274a4669e6ca11b1a3ebb23acb87cd36b238207",
+    "tools/kc2_stl_zero_area_filter.py": "4b5486493026ff8d04db3c3240ee3b0936d9ca4d7f4390e5927db9436b031ff0",
+    "tools/test_kc2_stl_zero_area_filter.py": "d4098ee675f5bad3babb98fd72e123ac645d3e8ed27a94af3306f8d64225f24c",
+    "tools/review_kc2_controller_magnet_feasibility.py": "e22950ab837c34bdb6fea4f89388bffabd2f927a870ecfc84ace6f9c2699facd",
+    "tools/test_review_kc2_controller_magnet_feasibility.py": "960476da98af9488c025fd263f2c68fe181c025aa8790c81ad8a21d4788712a6",
+    ".codex-tmp/flat-central-revision/controller-magnet-feasibility.json": "6822aa3c13835ce26452b875a7f3606c22a3037fd21c2c39ef67e5ef0bd02436",
+    "hardware/MODELS/kc2_registered_housing_manifest.json": "a3cdc7d361d9bfab6a80b5547ae6be3034444b42efaeb86020a9084432517aa9",
+    "hardware/MODELS/kc2_right_lower_housing_magnetic.step": "b82b4e274837b921f85a550c01a09b78e99ae84006d0d9e8b95c94cc7e0684fd",
+    "docs/reports/registered-housing-fit-20260913/evidence/central/right-central-y95.step": "2163fbe8b7654ebf6c8fda4242b76b84302d98e75f3a3045f0fd76a96f8c0c1b",
+    "docs/reports/registered-housing-fit-20260913/evidence/central/right-central-y117.step": "e9f382a4336c9c945144059f9aa471c30724118a9ec166a80b2804e9a6d741c5"
+  },
+  "git_baseline_sha256": "67d3afb0234876b35242a74a786f333b62514ac49ca3bce589af52398e18cce4",
+  "controller_magnet_pair_added": false,
+  "controller_magnet_fallback": "no pair added: safe reserve and attraction gap cannot both be met without geometry expansion",
+  "guide_locations_removed_y_mm": [
+    95.0,
+    117.0
+  ],
+  "flat_face_x_mm": 150.9,
+  "preservation": {
+    "errors": [],
+    "removed_mm3": 21.583999999993253,
+    "added_mm3": 0.0,
+    "off_guide_removed_mm3": 0.0,
+    "baseline_removed_mm3": 0.0,
+    "remaining_protrusion_mm3": 0.0
+  },
+  "body_count": 2,
+  "bounds_mm": [
+    -1.5000001000034702,
+    -1.5000001000084744,
+    -2.2000001000084746,
+    165.18750010000846,
+    124.32600010000847,
+    5.000000100000029
+  ],
+  "volume_mm3": 50055.29742782594,
+  "outputs": {
+    "kc2_right_lower_housing_magnetic.step": "270e480d9a422f141a5facca6c7fea086ac446362c9eb81735c6ccb4bc11b5d7",
+    "kc2_right_lower_housing_part_a_magnetic.stl": "f12a3bfb299e107f6eb175e0616d92d0fb5dbe1ffeba864b2af66f33617b88ba",
+    "kc2_right_lower_housing_part_b_magnetic.stl": "d8ea19279517ffdf49c33874c4ae1e35e9d3d957b2581ffe5efc0f39ad93f5b1"
+  },
+  "meshes": [
+    {
+      "watertight": true,
+      "winding_consistent": true,
+      "shells": 1,
+      "bounds_mm": [
+        -1.5,
+        28.75,
+        -2.200000047683716,
+        87.09375,
+        124.32599639892578,
+        4.099999904632568
+      ],
+      "volume_mm3": 24615.871281449417,
+      "brep_volume_mm3": 24615.86737031379,
+      "volume_error_mm3": 0.003911135627276963,
+      "sha256": "f12a3bfb299e107f6eb175e0616d92d0fb5dbe1ffeba864b2af66f33617b88ba"
+    },
+    {
+      "watertight": true,
+      "winding_consistent": true,
+      "shells": 1,
+      "bounds_mm": [
+        82.14379119873047,
+        -1.5,
+        -2.200000047683716,
+        165.1875,
+        124.32599639892578,
+        5.0
+      ],
+      "volume_mm3": 25439.44001653187,
+      "brep_volume_mm3": 25439.430057510464,
+      "volume_error_mm3": 0.00995902140493854,
+      "sha256": "d8ea19279517ffdf49c33874c4ae1e35e9d3d957b2581ffe5efc0f39ad93f5b1"
+    }
+  ],
+  "mesh_normalization": [
+    {
+      "requirements": [
+        "CON-ARCH-006"
+      ],
+      "schema": "binary-stl-exact-zero-area-filter-v1",
+      "status": "pass",
+      "errors": [],
+      "input_sha256": "f12a3bfb299e107f6eb175e0616d92d0fb5dbe1ffeba864b2af66f33617b88ba",
+      "output_sha256": "f12a3bfb299e107f6eb175e0616d92d0fb5dbe1ffeba864b2af66f33617b88ba",
+      "input_facets": 17988,
+      "output_facets": 17988,
+      "removed_count": 0,
+      "removed_facets": [],
+      "surviving_oriented_records_sha256": "befc7f00453123eec5d990c9179e0fc92d8b16f0976fc3416a7174e9a64b10b3",
+      "output_oriented_records_sha256": "befc7f00453123eec5d990c9179e0fc92d8b16f0976fc3416a7174e9a64b10b3",
+      "surviving_oriented_record_sequence_unchanged": true,
+      "serialized_bounds_unchanged": true,
+      "before_volume_mm3": 24615.871281449417,
+      "after_volume_mm3": 24615.871281449417,
+      "volume_delta_mm3": 0.0,
+      "volume_summation_epsilon_mm3": 3.4981257046879104e-10,
+      "output_watertight": true,
+      "output_winding_consistent": true,
+      "output_components": 1,
+      "physical_qualified": false,
+      "method": "remove only exactly zero cross-product serialized facets; all retained facet bytes unchanged"
+    },
+    {
+      "requirements": [
+        "CON-ARCH-006"
+      ],
+      "schema": "binary-stl-exact-zero-area-filter-v1",
+      "status": "pass",
+      "errors": [],
+      "input_sha256": "e2290a59bea0229322091ae0835c93b50854c221d1a2e663ee32cf2e73824fdd",
+      "output_sha256": "d8ea19279517ffdf49c33874c4ae1e35e9d3d957b2581ffe5efc0f39ad93f5b1",
+      "input_facets": 27264,
+      "output_facets": 27258,
+      "removed_count": 6,
+      "removed_facets": [
+        {
+          "index": 5475,
+          "xyz_mm": [
+            [
+              84.31395721435547,
+              88.84635925292969,
+              -1.0
+            ],
+            [
+              84.31439971923828,
+              88.8464584350586,
+              -1.0
+            ],
+            [
+              84.31439971923828,
+              88.8464584350586,
+              -1.0
+            ]
+          ],
+          "area_mm2": 0.0
+        },
+        {
+          "index": 5484,
+          "xyz_mm": [
+            [
+              84.31200408935547,
+              88.84795379638672,
+              -1.0
+            ],
+            [
+              84.31395721435547,
+              88.84635925292969,
+              -1.0
+            ],
+            [
+              84.31200408935547,
+              88.84795379638672,
+              -1.0
+            ]
+          ],
+          "area_mm2": 0.0
+        },
+        {
+          "index": 5758,
+          "xyz_mm": [
+            [
+              84.31200408935547,
+              88.84795379638672,
+              -1.0
+            ],
+            [
+              84.31200408935547,
+              88.84795379638672,
+              2.5
+            ],
+            [
+              84.31200408935547,
+              88.84795379638672,
+              -1.0
+            ]
+          ],
+          "area_mm2": 0.0
+        },
+        {
+          "index": 5759,
+          "xyz_mm": [
+            [
+              84.31200408935547,
+              88.84795379638672,
+              -1.0
+            ],
+            [
+              84.31200408935547,
+              88.84795379638672,
+              2.5
+            ],
+            [
+              84.31200408935547,
+              88.84795379638672,
+              2.5
+            ]
+          ],
+          "area_mm2": 0.0
+        },
+        {
+          "index": 6124,
+          "xyz_mm": [
+            [
+              84.31439971923828,
+              88.8464584350586,
+              -1.0
+            ],
+            [
+              84.31439971923828,
+              88.8464584350586,
+              2.5
+            ],
+            [
+              84.31439971923828,
+              88.8464584350586,
+              -1.0
+            ]
+          ],
+          "area_mm2": 0.0
+        },
+        {
+          "index": 6125,
+          "xyz_mm": [
+            [
+              84.31439971923828,
+              88.8464584350586,
+              -1.0
+            ],
+            [
+              84.31439971923828,
+              88.8464584350586,
+              2.5
+            ],
+            [
+              84.31439971923828,
+              88.8464584350586,
+              2.5
+            ]
+          ],
+          "area_mm2": 0.0
+        }
+      ],
+      "surviving_oriented_records_sha256": "11f23b235049fa8222d8799528015fdb07e4eb6051d55093c715b5be1a67828c",
+      "output_oriented_records_sha256": "11f23b235049fa8222d8799528015fdb07e4eb6051d55093c715b5be1a67828c",
+      "surviving_oriented_record_sequence_unchanged": true,
+      "serialized_bounds_unchanged": true,
+      "before_volume_mm3": 25439.44001653188,
+      "after_volume_mm3": 25439.44001653187,
+      "volume_delta_mm3": -1.0913936421275139e-11,
+      "volume_summation_epsilon_mm3": 3.615161861110306e-10,
+      "output_watertight": true,
+      "output_winding_consistent": true,
+      "output_components": 1,
+      "physical_qualified": false,
+      "method": "remove only exactly zero cross-product serialized facets; all retained facet bytes unchanged"
+    }
+  ],
+  "physical_qualified": false
+}

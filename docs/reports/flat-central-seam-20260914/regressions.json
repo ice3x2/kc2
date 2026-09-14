@@ -1,0 +1,20 @@
+{
+  "status": "pass",
+  "errors": [],
+  "requirements": [
+    "CON-ARCH-006",
+    "CON-ARCH-007",
+    "OPS-ARCH-006"
+  ],
+  "tests_run": 377,
+  "elapsed_seconds": 237.844,
+  "test_modules": 76,
+  "composition": {
+    "registered_housing_regressions": 356,
+    "flat_central_revision_regressions": 21
+  },
+  "parent_test_evidence": "docs/reports/registered-housing-fit-20260913/evidence/test-execution.json",
+  "parent_test_evidence_sha256": "7b85442002be023f4dd9e9f2be680a11bf0fb4ab09ebc3cbc1a3e7e041d9ddb1",
+  "command": "python -B -m unittest -v <70 registered modules plus 6 flat-central modules>",
+  "physical_qualified": false
+}
