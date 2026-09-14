@@ -1,0 +1,32 @@
+{
+  "status": "digitally_verified_physical_pending",
+  "requirements": ["CON-ARCH-006", "CON-ARCH-007", "OPS-ARCH-006"],
+  "date": "2026-09-14",
+  "canonical_publication_confirmed": true,
+  "manifest": "hardware/MODELS/kc2_registered_housing_manifest.json",
+  "manifest_sha256": "a3cdc7d361d9bfab6a80b5547ae6be3034444b42efaeb86020a9084432517aa9",
+  "baseline_revision": "5b99bcb4567ea1c6bb4f17e54887d4de7614cd03",
+  "preflight": {"exit_code": 0, "status": "pass", "errors": []},
+  "publication": {"exit_code": 0, "status": "pass", "outputs": 35, "preserved_pcb_gerber": 16, "post_publication_verification": "pass"},
+  "report_count": 71,
+  "source_bindings": 329,
+  "tests": {"modules": 70, "tests_run": 356, "exit_code": 0, "errors": [], "report": "evidence/test-execution.json", "sha256": "7b85442002be023f4dd9e9f2be680a11bf0fb4ab09ebc3cbc1a3e7e041d9ddb1"},
+  "isolated_verification": {
+    "report": "isolated-verification.json",
+    "sha256": "9cbb9bc2c614f43c87b629e2b7eb9c877c81292a1bf6dabc7947fcd2e8996fb3",
+    "runner": "isolated-verification-runner.py.txt",
+    "runner_sha256": "6eb8b8f19d4d7ba36ed149d4499876e284faca9283b48d94d5d078a133536dde",
+    "copied_files": 516,
+    "exit_code": 0,
+    "status": "pass",
+    "errors": [],
+    "codex_tmp_absent_before_and_after": true,
+    "candidate_matches_successful_publication": true,
+    "note": "Original independent report retains its candidate label. This root confirmation joins its unchanged manifest SHA to the actual successful publication transaction; original evidence is not rewritten."
+  },
+  "git_index_release_byte_review": {"files": 350, "bytes": 1691226461, "mismatches": [], "files_over_100_MiB": []},
+  "whitespace_review": "CRLF-aware staged diff check reports only the frozen hardware/README.md extra blank line at EOF. Raw exporter STEP evidence retains authenticated whitespace; canonical editable STEP normalization is separately recomputed and verified.",
+  "physical_qualified": false,
+  "new_fabrication_approval": false,
+  "silicone_feet": "deferred_by_user"
+}

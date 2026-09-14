@@ -1,0 +1,34 @@
+{
+  "requirements": ["CON-ARCH-006"],
+  "status": "failed_not_accepted",
+  "phase": "part_b_stl_watertight_gate",
+  "sessions": {"normal": 28815, "magnetic": 3471},
+  "exit_codes": {"normal": 1, "magnetic": 1},
+  "generation_records_updated": false,
+  "current_partial_outputs_usable": false,
+  "canonical_changed": false,
+  "physical_qualified": false,
+  "observed": {
+    "normal": {"watertight": false, "volume_error_mm3": 0.0044651997231994756},
+    "magnetic": {"watertight": false, "volume_error_mm3": 0.010256539171678014}
+  },
+  "producer_audit_metrics": null,
+  "note": "Both runs advanced past producer delta/floor, gap and STEP roundtrip guards to STL inspection, but numeric producer locals were never emitted. Do not invent their values. Partial STEP/STL bytes differ from the preserved original generation JSON. All eight copied artifact/record bytes were hash-checked. First failed PowerShell copy attempt created only a directory and copied no files; corrected exact-path copy succeeded.",
+  "artifact_sha256": {
+    "normal/kc2_right_lower_housing.step": "f1f3ec38021307937a875db8c0ce526f1e489bd2f3cb6720bc91ee6441cffb80",
+    "normal/kc2_right_lower_housing_part_a.stl": "855a8f2f9c44d29bdd848539b76b0ada1f96c63a39eaed063e977d536dd19aac",
+    "normal/kc2_right_lower_housing_part_b.stl": "5d111db80e11dc6f4a1ffd16ea634bbc108da475cfddf6cd552e41eb6272b9bd",
+    "normal/generation.json": "848d8f3e9e381f3cfc434fa5d04f5f68253ee9d83e5327c0b82e7d681fbfa017",
+    "magnetic/kc2_right_lower_housing_magnetic.step": "7afb9dba8a3f83d0a902e0c802aa7ea7b8e559557f90dff820528d1d1c4868cf",
+    "magnetic/kc2_right_lower_housing_part_a_magnetic.stl": "9620bc2ec51d72dcafe66ce0ae58b53c0441a97b573484cfdf777186a054ffc1",
+    "magnetic/kc2_right_lower_housing_part_b_magnetic.stl": "b1bf879d388e2b2b8d23e2bbb95c3208f50e2498be887f81c678ecedbd4d0ab0",
+    "magnetic/generation.json": "fc3d6b6d75d4bc61700ff05e4a1ca316541acea8225bc6c843fbeb1dbda4ebc3"
+  },
+  "executed_code_sha256": {
+    "code/stage_kc2_receiver_cleanup.py": "2acf5e60b3eb1bdaad9a6b2491a3f342bced87e2c1f1855f87dd7f6013c203b1",
+    "code/kc2_receiver_cleanup.py": "e45847de4d2f33a4ab7cac131c96c9675b67ed26b66889c0d9d3235350fc0140",
+    "code/test_kc2_receiver_cleanup.py": "9f2e5d9cc345968eb37e52620df8da52c673b309c1c265b56b78693a87bd745a",
+    "code/test_kc2_receiver_snapshot.py": "c32fff9c1b3c4c801e2755f57ad59879e3f169b028578be1c2fbfcb3f402f731",
+    "code/generate_kc2_magnetic_housings.py": "f8d20b5a84a5b953aa5a8bd7ca2e6474203347869423612f360829f516c284ec"
+  }
+}

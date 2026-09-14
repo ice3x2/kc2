@@ -1,0 +1,1245 @@
+{
+  "status": "pass",
+  "errors": [],
+  "profiles": {
+    "mx": [
+      {
+        "left": "pcb",
+        "right": "pcb",
+        "z": [
+          2.5,
+          4.1
+        ],
+        "minimum_xy_gap_mm": 1.0999999999999943,
+        "outside_exception_clearance_violation_mm2": 0.0,
+        "central_exception_applied": false
+      },
+      {
+        "left": "pcb",
+        "right": "perimeter_wall",
+        "z": [
+          2.5,
+          4.1
+        ],
+        "minimum_xy_gap_mm": 2.299999999999983,
+        "outside_exception_clearance_violation_mm2": 0.0,
+        "central_exception_applied": false
+      },
+      {
+        "left": "pcb",
+        "right": "registrar_wall",
+        "z": [
+          2.5,
+          4.1
+        ],
+        "minimum_xy_gap_mm": 22.275231940206616,
+        "outside_exception_clearance_violation_mm2": 0.0,
+        "central_exception_applied": false
+      },
+      {
+        "left": "old_lower",
+        "right": "old_lower",
+        "z": [
+          -2.2,
+          2.5
+        ],
+        "minimum_xy_gap_mm": 1.299999999999983,
+        "outside_exception_clearance_violation_mm2": 0.0,
+        "central_exception_applied": false
+      },
+      {
+        "left": "old_lower",
+        "right": "perimeter_floor",
+        "z": [
+          -2.2,
+          -1.0
+        ],
+        "minimum_xy_gap_mm": 0.9019538174024433,
+        "outside_exception_clearance_violation_mm2": 0.0,
+        "central_exception_applied": false
+      },
+      {
+        "left": "old_lower",
+        "right": "perimeter_wall",
+        "z": [
+          -1.0,
+          2.5
+        ],
+        "minimum_xy_gap_mm": 2.399999999999977,
+        "outside_exception_clearance_violation_mm2": 0.0,
+        "central_exception_applied": false
+      },
+      {
+        "left": "old_lower",
+        "right": "registrar_floor",
+        "z": [
+          -2.2,
+          -1.0
+        ],
+        "minimum_xy_gap_mm": 21.42922338432165,
+        "outside_exception_clearance_violation_mm2": 0.0,
+        "central_exception_applied": false
+      },
+      {
+        "left": "old_lower",
+        "right": "registrar_wall",
+        "z": [
+          -1.0,
+          2.5
+        ],
+        "minimum_xy_gap_mm": 22.37605158814954,
+        "outside_exception_clearance_violation_mm2": 0.0,
+        "central_exception_applied": false
+      },
+      {
+        "left": "old_lower",
+        "right": "central",
+        "z": [
+          -2.2,
+          1.5
+        ],
+        "minimum_xy_gap_mm": 1.199999899999938,
+        "outside_exception_clearance_violation_mm2": 0.0,
+        "central_exception_applied": false
+      },
+      {
+        "left": "perimeter_floor",
+        "right": "old_lower",
+        "z": [
+          -2.2,
+          -1.0
+        ],
+        "minimum_xy_gap_mm": 0.9019538174024432,
+        "outside_exception_clearance_violation_mm2": 0.0,
+        "central_exception_applied": false
+      },
+      {
+        "left": "perimeter_floor",
+        "right": "perimeter_floor",
+        "z": [
+          -2.2,
+          -1.0
+        ],
+        "minimum_xy_gap_mm": 0.5039076348048893,
+        "outside_exception_clearance_violation_mm2": 0.0,
+        "central_exception_applied": false
+      },
+      {
+        "left": "perimeter_floor",
+        "right": "registrar_floor",
+        "z": [
+          -2.2,
+          -1.0
+        ],
+        "minimum_xy_gap_mm": 19.44187897001289,
+        "outside_exception_clearance_violation_mm2": 0.0,
+        "central_exception_applied": false
+      },
+      {
+        "left": "perimeter_floor",
+        "right": "central",
+        "z": [
+          -2.2,
+          -1.0
+        ],
+        "minimum_xy_gap_mm": 0.0,
+        "outside_exception_clearance_violation_mm2": 0.0,
+        "central_exception_applied": true
+      },
+      {
+        "left": "perimeter_wall",
+        "right": "pcb",
+        "z": [
+          2.5,
+          4.1
+        ],
+        "minimum_xy_gap_mm": 2.299999999999983,
+        "outside_exception_clearance_violation_mm2": 0.0,
+        "central_exception_applied": false
+      },
+      {
+        "left": "perimeter_wall",
+        "right": "old_lower",
+        "z": [
+          -1.0,
+          2.5
+        ],
+        "minimum_xy_gap_mm": 2.3999999999999773,
+        "outside_exception_clearance_violation_mm2": 0.0,
+        "central_exception_applied": false
+      },
+      {
+        "left": "perimeter_wall",
+        "right": "perimeter_wall",
+        "z": [
+          -1.0,
+          4.1
+        ],
+        "minimum_xy_gap_mm": 0.799999999999983,
+        "outside_exception_clearance_violation_mm2": 0.0,
+        "central_exception_applied": false
+      },
+      {
+        "left": "perimeter_wall",
+        "right": "registrar_wall",
+        "z": [
+          -1.0,
+          4.1
+        ],
+        "minimum_xy_gap_mm": 20.373092762518,
+        "outside_exception_clearance_violation_mm2": 0.0,
+        "central_exception_applied": false
+      },
+      {
+        "left": "perimeter_wall",
+        "right": "central",
+        "z": [
+          -1.0,
+          1.5
+        ],
+        "minimum_xy_gap_mm": 0.0,
+        "outside_exception_clearance_violation_mm2": 0.0,
+        "central_exception_applied": true
+      },
+      {
+        "left": "registrar_floor",
+        "right": "old_lower",
+        "z": [
+          -2.2,
+          -1.0
+        ],
+        "minimum_xy_gap_mm": 21.24600687428801,
+        "outside_exception_clearance_violation_mm2": 0.0,
+        "central_exception_applied": false
+      },
+      {
+        "left": "registrar_floor",
+        "right": "perimeter_floor",
+        "z": [
+          -2.2,
+          -1.0
+        ],
+        "minimum_xy_gap_mm": 19.256280378304726,
+        "outside_exception_clearance_violation_mm2": 0.0,
+        "central_exception_applied": false
+      },
+      {
+        "left": "registrar_floor",
+        "right": "registrar_floor",
+        "z": [
+          -2.2,
+          -1.0
+        ],
+        "minimum_xy_gap_mm": 28.3125,
+        "outside_exception_clearance_violation_mm2": 0.0,
+        "central_exception_applied": false
+      },
+      {
+        "left": "registrar_floor",
+        "right": "central",
+        "z": [
+          -2.2,
+          -1.0
+        ],
+        "minimum_xy_gap_mm": 77.12976067251857,
+        "outside_exception_clearance_violation_mm2": 0.0,
+        "central_exception_applied": false
+      },
+      {
+        "left": "registrar_wall",
+        "right": "pcb",
+        "z": [
+          2.5,
+          4.1
+        ],
+        "minimum_xy_gap_mm": 22.09993679289603,
+        "outside_exception_clearance_violation_mm2": 0.0,
+        "central_exception_applied": false
+      },
+      {
+        "left": "registrar_wall",
+        "right": "old_lower",
+        "z": [
+          -1.0,
+          2.5
+        ],
+        "minimum_xy_gap_mm": 22.20065039441463,
+        "outside_exception_clearance_violation_mm2": 0.0,
+        "central_exception_applied": false
+      },
+      {
+        "left": "registrar_wall",
+        "right": "perimeter_wall",
+        "z": [
+          -1.0,
+          4.1
+        ],
+        "minimum_xy_gap_mm": 20.19548766008493,
+        "outside_exception_clearance_violation_mm2": 0.0,
+        "central_exception_applied": false
+      },
+      {
+        "left": "registrar_wall",
+        "right": "registrar_wall",
+        "z": [
+          -1.0,
+          5.0
+        ],
+        "minimum_xy_gap_mm": 28.3125,
+        "outside_exception_clearance_violation_mm2": 0.0,
+        "central_exception_applied": false
+      },
+      {
+        "left": "registrar_wall",
+        "right": "central",
+        "z": [
+          -1.0,
+          1.5
+        ],
+        "minimum_xy_gap_mm": 78.54045124080962,
+        "outside_exception_clearance_violation_mm2": 0.0,
+        "central_exception_applied": false
+      },
+      {
+        "left": "registrar_wall",
+        "right": "upper",
+        "z": [
+          4.1,
+          5.0
+        ],
+        "minimum_xy_gap_mm": 20.19504443440276,
+        "outside_exception_clearance_violation_mm2": 0.0,
+        "central_exception_applied": false
+      },
+      {
+        "left": "central",
+        "right": "old_lower",
+        "z": [
+          -2.2,
+          1.5
+        ],
+        "minimum_xy_gap_mm": 1.1999998999999664,
+        "outside_exception_clearance_violation_mm2": 0.0,
+        "central_exception_applied": false
+      },
+      {
+        "left": "central",
+        "right": "perimeter_floor",
+        "z": [
+          -2.2,
+          -1.0
+        ],
+        "minimum_xy_gap_mm": 0.0,
+        "outside_exception_clearance_violation_mm2": 0.0,
+        "central_exception_applied": true
+      },
+      {
+        "left": "central",
+        "right": "perimeter_wall",
+        "z": [
+          -1.0,
+          1.5
+        ],
+        "minimum_xy_gap_mm": 0.0,
+        "outside_exception_clearance_violation_mm2": 0.0,
+        "central_exception_applied": true
+      },
+      {
+        "left": "central",
+        "right": "registrar_floor",
+        "z": [
+          -2.2,
+          -1.0
+        ],
+        "minimum_xy_gap_mm": 76.84549524362178,
+        "outside_exception_clearance_violation_mm2": 0.0,
+        "central_exception_applied": false
+      },
+      {
+        "left": "central",
+        "right": "registrar_wall",
+        "z": [
+          -1.0,
+          1.5
+        ],
+        "minimum_xy_gap_mm": 78.28631833818409,
+        "outside_exception_clearance_violation_mm2": 0.0,
+        "central_exception_applied": false
+      },
+      {
+        "left": "central",
+        "right": "central",
+        "z": [
+          -2.2,
+          1.5
+        ],
+        "minimum_xy_gap_mm": 0.0,
+        "outside_exception_clearance_violation_mm2": 0.0,
+        "central_exception_applied": true
+      },
+      {
+        "left": "upper",
+        "right": "registrar_wall",
+        "z": [
+          4.1,
+          5.0
+        ],
+        "minimum_xy_gap_mm": 20.372420260088,
+        "outside_exception_clearance_violation_mm2": 0.0,
+        "central_exception_applied": false
+      },
+      {
+        "left": "upper",
+        "right": "upper",
+        "z": [
+          4.1,
+          9.3
+        ],
+        "minimum_xy_gap_mm": 0.44599999999999795,
+        "outside_exception_clearance_violation_mm2": 0.0,
+        "central_exception_applied": false
+      }
+    ],
+    "choc_v1": [
+      {
+        "left": "pcb",
+        "right": "pcb",
+        "z": [
+          2.5,
+          4.1
+        ],
+        "minimum_xy_gap_mm": 1.0999999999999943,
+        "outside_exception_clearance_violation_mm2": 0.0,
+        "central_exception_applied": false
+      },
+      {
+        "left": "pcb",
+        "right": "perimeter_wall",
+        "z": [
+          2.5,
+          4.1
+        ],
+        "minimum_xy_gap_mm": 2.299999999999983,
+        "outside_exception_clearance_violation_mm2": 0.0,
+        "central_exception_applied": false
+      },
+      {
+        "left": "pcb",
+        "right": "registrar_wall",
+        "z": [
+          2.5,
+          4.1
+        ],
+        "minimum_xy_gap_mm": 22.275231940206616,
+        "outside_exception_clearance_violation_mm2": 0.0,
+        "central_exception_applied": false
+      },
+      {
+        "left": "old_lower",
+        "right": "old_lower",
+        "z": [
+          -2.2,
+          2.5
+        ],
+        "minimum_xy_gap_mm": 1.299999999999983,
+        "outside_exception_clearance_violation_mm2": 0.0,
+        "central_exception_applied": false
+      },
+      {
+        "left": "old_lower",
+        "right": "perimeter_floor",
+        "z": [
+          -2.2,
+          -1.0
+        ],
+        "minimum_xy_gap_mm": 0.9019538174024433,
+        "outside_exception_clearance_violation_mm2": 0.0,
+        "central_exception_applied": false
+      },
+      {
+        "left": "old_lower",
+        "right": "perimeter_wall",
+        "z": [
+          -1.0,
+          2.5
+        ],
+        "minimum_xy_gap_mm": 2.399999999999977,
+        "outside_exception_clearance_violation_mm2": 0.0,
+        "central_exception_applied": false
+      },
+      {
+        "left": "old_lower",
+        "right": "registrar_floor",
+        "z": [
+          -2.2,
+          -1.0
+        ],
+        "minimum_xy_gap_mm": 21.42922338432165,
+        "outside_exception_clearance_violation_mm2": 0.0,
+        "central_exception_applied": false
+      },
+      {
+        "left": "old_lower",
+        "right": "registrar_wall",
+        "z": [
+          -1.0,
+          2.5
+        ],
+        "minimum_xy_gap_mm": 22.37605158814954,
+        "outside_exception_clearance_violation_mm2": 0.0,
+        "central_exception_applied": false
+      },
+      {
+        "left": "old_lower",
+        "right": "central",
+        "z": [
+          -2.2,
+          1.5
+        ],
+        "minimum_xy_gap_mm": 1.199999899999938,
+        "outside_exception_clearance_violation_mm2": 0.0,
+        "central_exception_applied": false
+      },
+      {
+        "left": "perimeter_floor",
+        "right": "old_lower",
+        "z": [
+          -2.2,
+          -1.0
+        ],
+        "minimum_xy_gap_mm": 0.9019538174024432,
+        "outside_exception_clearance_violation_mm2": 0.0,
+        "central_exception_applied": false
+      },
+      {
+        "left": "perimeter_floor",
+        "right": "perimeter_floor",
+        "z": [
+          -2.2,
+          -1.0
+        ],
+        "minimum_xy_gap_mm": 0.5039076348048893,
+        "outside_exception_clearance_violation_mm2": 0.0,
+        "central_exception_applied": false
+      },
+      {
+        "left": "perimeter_floor",
+        "right": "registrar_floor",
+        "z": [
+          -2.2,
+          -1.0
+        ],
+        "minimum_xy_gap_mm": 19.44187897001289,
+        "outside_exception_clearance_violation_mm2": 0.0,
+        "central_exception_applied": false
+      },
+      {
+        "left": "perimeter_floor",
+        "right": "central",
+        "z": [
+          -2.2,
+          -1.0
+        ],
+        "minimum_xy_gap_mm": 0.0,
+        "outside_exception_clearance_violation_mm2": 0.0,
+        "central_exception_applied": true
+      },
+      {
+        "left": "perimeter_wall",
+        "right": "pcb",
+        "z": [
+          2.5,
+          4.1
+        ],
+        "minimum_xy_gap_mm": 2.299999999999983,
+        "outside_exception_clearance_violation_mm2": 0.0,
+        "central_exception_applied": false
+      },
+      {
+        "left": "perimeter_wall",
+        "right": "old_lower",
+        "z": [
+          -1.0,
+          2.5
+        ],
+        "minimum_xy_gap_mm": 2.3999999999999773,
+        "outside_exception_clearance_violation_mm2": 0.0,
+        "central_exception_applied": false
+      },
+      {
+        "left": "perimeter_wall",
+        "right": "perimeter_wall",
+        "z": [
+          -1.0,
+          4.1
+        ],
+        "minimum_xy_gap_mm": 0.799999999999983,
+        "outside_exception_clearance_violation_mm2": 0.0,
+        "central_exception_applied": false
+      },
+      {
+        "left": "perimeter_wall",
+        "right": "registrar_wall",
+        "z": [
+          -1.0,
+          4.1
+        ],
+        "minimum_xy_gap_mm": 20.373092762518,
+        "outside_exception_clearance_violation_mm2": 0.0,
+        "central_exception_applied": false
+      },
+      {
+        "left": "perimeter_wall",
+        "right": "central",
+        "z": [
+          -1.0,
+          1.5
+        ],
+        "minimum_xy_gap_mm": 0.0,
+        "outside_exception_clearance_violation_mm2": 0.0,
+        "central_exception_applied": true
+      },
+      {
+        "left": "registrar_floor",
+        "right": "old_lower",
+        "z": [
+          -2.2,
+          -1.0
+        ],
+        "minimum_xy_gap_mm": 21.24600687428801,
+        "outside_exception_clearance_violation_mm2": 0.0,
+        "central_exception_applied": false
+      },
+      {
+        "left": "registrar_floor",
+        "right": "perimeter_floor",
+        "z": [
+          -2.2,
+          -1.0
+        ],
+        "minimum_xy_gap_mm": 19.256280378304726,
+        "outside_exception_clearance_violation_mm2": 0.0,
+        "central_exception_applied": false
+      },
+      {
+        "left": "registrar_floor",
+        "right": "registrar_floor",
+        "z": [
+          -2.2,
+          -1.0
+        ],
+        "minimum_xy_gap_mm": 28.3125,
+        "outside_exception_clearance_violation_mm2": 0.0,
+        "central_exception_applied": false
+      },
+      {
+        "left": "registrar_floor",
+        "right": "central",
+        "z": [
+          -2.2,
+          -1.0
+        ],
+        "minimum_xy_gap_mm": 77.12976067251857,
+        "outside_exception_clearance_violation_mm2": 0.0,
+        "central_exception_applied": false
+      },
+      {
+        "left": "registrar_wall",
+        "right": "pcb",
+        "z": [
+          2.5,
+          4.1
+        ],
+        "minimum_xy_gap_mm": 22.09993679289603,
+        "outside_exception_clearance_violation_mm2": 0.0,
+        "central_exception_applied": false
+      },
+      {
+        "left": "registrar_wall",
+        "right": "old_lower",
+        "z": [
+          -1.0,
+          2.5
+        ],
+        "minimum_xy_gap_mm": 22.20065039441463,
+        "outside_exception_clearance_violation_mm2": 0.0,
+        "central_exception_applied": false
+      },
+      {
+        "left": "registrar_wall",
+        "right": "perimeter_wall",
+        "z": [
+          -1.0,
+          4.1
+        ],
+        "minimum_xy_gap_mm": 20.19548766008493,
+        "outside_exception_clearance_violation_mm2": 0.0,
+        "central_exception_applied": false
+      },
+      {
+        "left": "registrar_wall",
+        "right": "registrar_wall",
+        "z": [
+          -1.0,
+          5.0
+        ],
+        "minimum_xy_gap_mm": 28.3125,
+        "outside_exception_clearance_violation_mm2": 0.0,
+        "central_exception_applied": false
+      },
+      {
+        "left": "registrar_wall",
+        "right": "central",
+        "z": [
+          -1.0,
+          1.5
+        ],
+        "minimum_xy_gap_mm": 78.54045124080962,
+        "outside_exception_clearance_violation_mm2": 0.0,
+        "central_exception_applied": false
+      },
+      {
+        "left": "registrar_wall",
+        "right": "upper",
+        "z": [
+          4.1,
+          5.0
+        ],
+        "minimum_xy_gap_mm": 20.831541014001274,
+        "outside_exception_clearance_violation_mm2": 0.0,
+        "central_exception_applied": false
+      },
+      {
+        "left": "central",
+        "right": "old_lower",
+        "z": [
+          -2.2,
+          1.5
+        ],
+        "minimum_xy_gap_mm": 1.1999998999999664,
+        "outside_exception_clearance_violation_mm2": 0.0,
+        "central_exception_applied": false
+      },
+      {
+        "left": "central",
+        "right": "perimeter_floor",
+        "z": [
+          -2.2,
+          -1.0
+        ],
+        "minimum_xy_gap_mm": 0.0,
+        "outside_exception_clearance_violation_mm2": 0.0,
+        "central_exception_applied": true
+      },
+      {
+        "left": "central",
+        "right": "perimeter_wall",
+        "z": [
+          -1.0,
+          1.5
+        ],
+        "minimum_xy_gap_mm": 0.0,
+        "outside_exception_clearance_violation_mm2": 0.0,
+        "central_exception_applied": true
+      },
+      {
+        "left": "central",
+        "right": "registrar_floor",
+        "z": [
+          -2.2,
+          -1.0
+        ],
+        "minimum_xy_gap_mm": 76.84549524362178,
+        "outside_exception_clearance_violation_mm2": 0.0,
+        "central_exception_applied": false
+      },
+      {
+        "left": "central",
+        "right": "registrar_wall",
+        "z": [
+          -1.0,
+          1.5
+        ],
+        "minimum_xy_gap_mm": 78.28631833818409,
+        "outside_exception_clearance_violation_mm2": 0.0,
+        "central_exception_applied": false
+      },
+      {
+        "left": "central",
+        "right": "central",
+        "z": [
+          -2.2,
+          1.5
+        ],
+        "minimum_xy_gap_mm": 0.0,
+        "outside_exception_clearance_violation_mm2": 0.0,
+        "central_exception_applied": true
+      },
+      {
+        "left": "upper",
+        "right": "registrar_wall",
+        "z": [
+          4.1,
+          5.0
+        ],
+        "minimum_xy_gap_mm": 21.0086384736361,
+        "outside_exception_clearance_violation_mm2": 0.0,
+        "central_exception_applied": false
+      },
+      {
+        "left": "upper",
+        "right": "upper",
+        "z": [
+          4.1,
+          6.6
+        ],
+        "minimum_xy_gap_mm": 1.299999999999983,
+        "outside_exception_clearance_violation_mm2": 0.0,
+        "central_exception_applied": false
+      }
+    ],
+    "deep_sea": [
+      {
+        "left": "pcb",
+        "right": "pcb",
+        "z": [
+          2.5,
+          4.1
+        ],
+        "minimum_xy_gap_mm": 1.0999999999999943,
+        "outside_exception_clearance_violation_mm2": 0.0,
+        "central_exception_applied": false
+      },
+      {
+        "left": "pcb",
+        "right": "perimeter_wall",
+        "z": [
+          2.5,
+          4.1
+        ],
+        "minimum_xy_gap_mm": 2.299999999999983,
+        "outside_exception_clearance_violation_mm2": 0.0,
+        "central_exception_applied": false
+      },
+      {
+        "left": "pcb",
+        "right": "registrar_wall",
+        "z": [
+          2.5,
+          4.1
+        ],
+        "minimum_xy_gap_mm": 22.275231940206616,
+        "outside_exception_clearance_violation_mm2": 0.0,
+        "central_exception_applied": false
+      },
+      {
+        "left": "old_lower",
+        "right": "old_lower",
+        "z": [
+          -2.2,
+          2.5
+        ],
+        "minimum_xy_gap_mm": 1.299999999999983,
+        "outside_exception_clearance_violation_mm2": 0.0,
+        "central_exception_applied": false
+      },
+      {
+        "left": "old_lower",
+        "right": "perimeter_floor",
+        "z": [
+          -2.2,
+          -1.0
+        ],
+        "minimum_xy_gap_mm": 0.9019538174024433,
+        "outside_exception_clearance_violation_mm2": 0.0,
+        "central_exception_applied": false
+      },
+      {
+        "left": "old_lower",
+        "right": "perimeter_wall",
+        "z": [
+          -1.0,
+          2.5
+        ],
+        "minimum_xy_gap_mm": 2.399999999999977,
+        "outside_exception_clearance_violation_mm2": 0.0,
+        "central_exception_applied": false
+      },
+      {
+        "left": "old_lower",
+        "right": "registrar_floor",
+        "z": [
+          -2.2,
+          -1.0
+        ],
+        "minimum_xy_gap_mm": 21.42922338432165,
+        "outside_exception_clearance_violation_mm2": 0.0,
+        "central_exception_applied": false
+      },
+      {
+        "left": "old_lower",
+        "right": "registrar_wall",
+        "z": [
+          -1.0,
+          2.5
+        ],
+        "minimum_xy_gap_mm": 22.37605158814954,
+        "outside_exception_clearance_violation_mm2": 0.0,
+        "central_exception_applied": false
+      },
+      {
+        "left": "old_lower",
+        "right": "central",
+        "z": [
+          -2.2,
+          1.5
+        ],
+        "minimum_xy_gap_mm": 1.199999899999938,
+        "outside_exception_clearance_violation_mm2": 0.0,
+        "central_exception_applied": false
+      },
+      {
+        "left": "perimeter_floor",
+        "right": "old_lower",
+        "z": [
+          -2.2,
+          -1.0
+        ],
+        "minimum_xy_gap_mm": 0.9019538174024432,
+        "outside_exception_clearance_violation_mm2": 0.0,
+        "central_exception_applied": false
+      },
+      {
+        "left": "perimeter_floor",
+        "right": "perimeter_floor",
+        "z": [
+          -2.2,
+          -1.0
+        ],
+        "minimum_xy_gap_mm": 0.5039076348048893,
+        "outside_exception_clearance_violation_mm2": 0.0,
+        "central_exception_applied": false
+      },
+      {
+        "left": "perimeter_floor",
+        "right": "registrar_floor",
+        "z": [
+          -2.2,
+          -1.0
+        ],
+        "minimum_xy_gap_mm": 19.44187897001289,
+        "outside_exception_clearance_violation_mm2": 0.0,
+        "central_exception_applied": false
+      },
+      {
+        "left": "perimeter_floor",
+        "right": "central",
+        "z": [
+          -2.2,
+          -1.0
+        ],
+        "minimum_xy_gap_mm": 0.0,
+        "outside_exception_clearance_violation_mm2": 0.0,
+        "central_exception_applied": true
+      },
+      {
+        "left": "perimeter_wall",
+        "right": "pcb",
+        "z": [
+          2.5,
+          4.1
+        ],
+        "minimum_xy_gap_mm": 2.299999999999983,
+        "outside_exception_clearance_violation_mm2": 0.0,
+        "central_exception_applied": false
+      },
+      {
+        "left": "perimeter_wall",
+        "right": "old_lower",
+        "z": [
+          -1.0,
+          2.5
+        ],
+        "minimum_xy_gap_mm": 2.3999999999999773,
+        "outside_exception_clearance_violation_mm2": 0.0,
+        "central_exception_applied": false
+      },
+      {
+        "left": "perimeter_wall",
+        "right": "perimeter_wall",
+        "z": [
+          -1.0,
+          4.1
+        ],
+        "minimum_xy_gap_mm": 0.799999999999983,
+        "outside_exception_clearance_violation_mm2": 0.0,
+        "central_exception_applied": false
+      },
+      {
+        "left": "perimeter_wall",
+        "right": "registrar_wall",
+        "z": [
+          -1.0,
+          4.1
+        ],
+        "minimum_xy_gap_mm": 20.373092762518,
+        "outside_exception_clearance_violation_mm2": 0.0,
+        "central_exception_applied": false
+      },
+      {
+        "left": "perimeter_wall",
+        "right": "central",
+        "z": [
+          -1.0,
+          1.5
+        ],
+        "minimum_xy_gap_mm": 0.0,
+        "outside_exception_clearance_violation_mm2": 0.0,
+        "central_exception_applied": true
+      },
+      {
+        "left": "registrar_floor",
+        "right": "old_lower",
+        "z": [
+          -2.2,
+          -1.0
+        ],
+        "minimum_xy_gap_mm": 21.24600687428801,
+        "outside_exception_clearance_violation_mm2": 0.0,
+        "central_exception_applied": false
+      },
+      {
+        "left": "registrar_floor",
+        "right": "perimeter_floor",
+        "z": [
+          -2.2,
+          -1.0
+        ],
+        "minimum_xy_gap_mm": 19.256280378304726,
+        "outside_exception_clearance_violation_mm2": 0.0,
+        "central_exception_applied": false
+      },
+      {
+        "left": "registrar_floor",
+        "right": "registrar_floor",
+        "z": [
+          -2.2,
+          -1.0
+        ],
+        "minimum_xy_gap_mm": 28.3125,
+        "outside_exception_clearance_violation_mm2": 0.0,
+        "central_exception_applied": false
+      },
+      {
+        "left": "registrar_floor",
+        "right": "central",
+        "z": [
+          -2.2,
+          -1.0
+        ],
+        "minimum_xy_gap_mm": 77.12976067251857,
+        "outside_exception_clearance_violation_mm2": 0.0,
+        "central_exception_applied": false
+      },
+      {
+        "left": "registrar_wall",
+        "right": "pcb",
+        "z": [
+          2.5,
+          4.1
+        ],
+        "minimum_xy_gap_mm": 22.09993679289603,
+        "outside_exception_clearance_violation_mm2": 0.0,
+        "central_exception_applied": false
+      },
+      {
+        "left": "registrar_wall",
+        "right": "old_lower",
+        "z": [
+          -1.0,
+          2.5
+        ],
+        "minimum_xy_gap_mm": 22.20065039441463,
+        "outside_exception_clearance_violation_mm2": 0.0,
+        "central_exception_applied": false
+      },
+      {
+        "left": "registrar_wall",
+        "right": "perimeter_wall",
+        "z": [
+          -1.0,
+          4.1
+        ],
+        "minimum_xy_gap_mm": 20.19548766008493,
+        "outside_exception_clearance_violation_mm2": 0.0,
+        "central_exception_applied": false
+      },
+      {
+        "left": "registrar_wall",
+        "right": "registrar_wall",
+        "z": [
+          -1.0,
+          5.0
+        ],
+        "minimum_xy_gap_mm": 28.3125,
+        "outside_exception_clearance_violation_mm2": 0.0,
+        "central_exception_applied": false
+      },
+      {
+        "left": "registrar_wall",
+        "right": "central",
+        "z": [
+          -1.0,
+          1.5
+        ],
+        "minimum_xy_gap_mm": 78.54045124080962,
+        "outside_exception_clearance_violation_mm2": 0.0,
+        "central_exception_applied": false
+      },
+      {
+        "left": "registrar_wall",
+        "right": "upper",
+        "z": [
+          4.1,
+          5.0
+        ],
+        "minimum_xy_gap_mm": 20.831541014001274,
+        "outside_exception_clearance_violation_mm2": 0.0,
+        "central_exception_applied": false
+      },
+      {
+        "left": "central",
+        "right": "old_lower",
+        "z": [
+          -2.2,
+          1.5
+        ],
+        "minimum_xy_gap_mm": 1.1999998999999664,
+        "outside_exception_clearance_violation_mm2": 0.0,
+        "central_exception_applied": false
+      },
+      {
+        "left": "central",
+        "right": "perimeter_floor",
+        "z": [
+          -2.2,
+          -1.0
+        ],
+        "minimum_xy_gap_mm": 0.0,
+        "outside_exception_clearance_violation_mm2": 0.0,
+        "central_exception_applied": true
+      },
+      {
+        "left": "central",
+        "right": "perimeter_wall",
+        "z": [
+          -1.0,
+          1.5
+        ],
+        "minimum_xy_gap_mm": 0.0,
+        "outside_exception_clearance_violation_mm2": 0.0,
+        "central_exception_applied": true
+      },
+      {
+        "left": "central",
+        "right": "registrar_floor",
+        "z": [
+          -2.2,
+          -1.0
+        ],
+        "minimum_xy_gap_mm": 76.84549524362178,
+        "outside_exception_clearance_violation_mm2": 0.0,
+        "central_exception_applied": false
+      },
+      {
+        "left": "central",
+        "right": "registrar_wall",
+        "z": [
+          -1.0,
+          1.5
+        ],
+        "minimum_xy_gap_mm": 78.28631833818409,
+        "outside_exception_clearance_violation_mm2": 0.0,
+        "central_exception_applied": false
+      },
+      {
+        "left": "central",
+        "right": "central",
+        "z": [
+          -2.2,
+          1.5
+        ],
+        "minimum_xy_gap_mm": 0.0,
+        "outside_exception_clearance_violation_mm2": 0.0,
+        "central_exception_applied": true
+      },
+      {
+        "left": "upper",
+        "right": "registrar_wall",
+        "z": [
+          4.1,
+          5.0
+        ],
+        "minimum_xy_gap_mm": 21.0086384736361,
+        "outside_exception_clearance_violation_mm2": 0.0,
+        "central_exception_applied": false
+      },
+      {
+        "left": "upper",
+        "right": "upper",
+        "z": [
+          4.1,
+          6.6
+        ],
+        "minimum_xy_gap_mm": 1.299999999999983,
+        "outside_exception_clearance_violation_mm2": 0.0,
+        "central_exception_applied": false
+      }
+    ]
+  },
+  "approach_world_x_mm": [
+    -7.8,
+    0.0
+  ],
+  "minimum_clearance_mm": 0.3,
+  "physical_qualified": false,
+  "keycap_envelopes_verified": false,
+  "actual_CAD_verified": false,
+  "central_actual_audit_required": true,
+  "scope": "Exact horizontal polygon sweep of conservative source geometry envelopes, not measured keycap/print fit",
+  "source_sha256": {
+    ".codex-tmp/perimeter-wall-plans.json": "25df0d616c4de1d928dfa132a5e964dd9471fcc4b8bd624fc71f2db262bd8cde",
+    "tools/kc2_perimeter_wall.py": "dc288109fad3d755d87bdad74da07f9376ee6dc919c3f74917cd0c5cf9958981",
+    "tools/test_kc2_perimeter_wall.py": "f5e8cad96a3c781f4ccdc4ab67cfd0421e32bdbaeb1bd9b93e974c9b3f26931a",
+    "docs/reports/reinforced-covers-20260913/left-lower.json": "d5cda73b186052c18740c718bb73ca40e339d5ec7e28d680292a23b647e22739",
+    "docs/reports/solid-filled-plates-20260913/left-mx.json": "3965411eb2d455cb006c03d4fc016f21b2ed851a52e5160c86a910226d26cd50",
+    "hardware/PCB/kc2_left/kc2_left.kicad_pcb": "568e1427e4cfb9d667b6d5b3754da3a4e24c924abfa85a8dfe394dd050b5fe67",
+    "docs/reports/reinforced-covers-20260913/right-lower.json": "4cd18ca758b1064bfb963607c54b76577dc1fa637a603b5acd470b6fafff5cf5",
+    "docs/reports/solid-filled-plates-20260913/right-mx.json": "efd3a04be41f07dff47b101ba112616ce506b76cf0d682148c945f589749c8db",
+    "hardware/PCB/kc2_right/kc2_right.kicad_pcb": "88290c3b0cf3951d56221d216549665c0576a816a6315012f7f12b027f402577",
+    ".codex-tmp/registered-housing-fit/central/central-features.json": "82eb8da18271880674d751394b4e4463faad6d7602022db257068539c5d2c187",
+    "tools/stage_kc2_central_features.py": "d69e24267e9d58770469eaf5d1c45bdec06f7ec83a49ecab387be7adbf4ed690",
+    "tools/kc2_central_flexure.py": "34dbc9be59a2674d317bc29c9d0d21af1089912a9cef24995de98e73979c96e0",
+    "tools/kc2_central_fit.py": "138ffd199cfe5cdc5c265d80f17a5bea048f1b526dcb3bdc47fcbd24ff3a9735",
+    "tools/test_kc2_central_flexure.py": "851598e03e070efa5e70b553b8882582887457e1aa358b2904c0e9a8b9cfc808",
+    "tools/test_stage_kc2_central_features.py": "89b399801244945f610f10c2b98b11d817b6b7f4b5b636e9a84dc841c34b4f44",
+    "tools/kc2_joined_sweep.py": "330666226368bb2d3eea7b581129274f45a5cb029a6d51b2e065ceadfcd11f8d",
+    "tools/test_kc2_joined_sweep.py": "ffd49c2880f1de5a94c9e0eebdd6fc72219f5c74aece89aad728bca41eaf96a9",
+    "tools/generate_kc2_magnetic_housings.py": "f8d20b5a84a5b953aa5a8bd7ca2e6474203347869423612f360829f516c284ec",
+    "tools/generate_kc2_x3_v2_housings.py": "0f2ef9076cff70916f77b124495fc1a5ea46751d19155378d9224a30a9168b69",
+    "tools/generate_kc2_housings.py": "cbf34705101526043bf4a43daed6e50dee2c67dc61ae0832debd70e62f5e5e16",
+    "tools/render_kc2_x3_joined.py": "903c3e2353aabfe7ff8a804f0bd0653ab0a90c3f881f8819ab239ca9aa1666b1",
+    "tools/kc2_registered_wall_plan.py": "d84529b585893f3ffa31c2ef1002add665c85c4b79da0d5a6f81d8ec86f10ea5",
+    "docs/reports/solid-filled-plates-20260913/left-choc_v1.json": "fd08b2d864e13885355268200d5f1611dd76a325fa73617f77eab7c51f71a3d4",
+    "docs/reports/solid-filled-plates-20260913/left-deep_sea.json": "9952ca3664387ebde9975e5b1be91d114a6da1cc544a1523e6c6daef4db0cdf1",
+    "docs/reports/solid-filled-plates-20260913/right-choc_v1.json": "97b969b56465d10dffd6df10482801874be2db8c06289483d6f716bbaba2f58f",
+    "docs/reports/solid-filled-plates-20260913/right-deep_sea.json": "9a51a4d3899ce0b8196c1347236b1cfd74fc2a8d473e71e03b989e6f8a812ac9"
+  },
+  "normal_and_magnetic_scope": "Common conservative outer envelopes; magnet void removal cannot enlarge occupied material",
+  "limitations": [
+    "Source-plan envelopes, not final actual STL proof",
+    "Central contact/elastic geometry excluded only within independently audited lower ROI",
+    "Selected physical keycap underside and full travel unknown",
+    "Does not validate occupied parts outside supplied PCB/component envelopes"
+  ]
+}

@@ -1,0 +1,101 @@
+{
+  "status": "feature_geometry_pass_integration_pending",
+  "requirements": [
+    "CON-ARCH-006",
+    "CON-ARCH-007"
+  ],
+  "physical_qualified": false,
+  "native_verified": false,
+  "canonical_changed": false,
+  "source_sha256": {
+    "tools/stage_kc2_central_features.py": "d69e24267e9d58770469eaf5d1c45bdec06f7ec83a49ecab387be7adbf4ed690",
+    "tools/kc2_central_flexure.py": "34dbc9be59a2674d317bc29c9d0d21af1089912a9cef24995de98e73979c96e0",
+    "tools/kc2_central_fit.py": "138ffd199cfe5cdc5c265d80f17a5bea048f1b526dcb3bdc47fcbd24ff3a9735",
+    "tools/test_kc2_central_flexure.py": "851598e03e070efa5e70b553b8882582887457e1aa358b2904c0e9a8b9cfc808",
+    "tools/test_stage_kc2_central_features.py": "89b399801244945f610f10c2b98b11d817b6b7f4b5b636e9a84dc841c34b4f44",
+    "docs/reports/reinforced-covers-20260913/left-lower.json": "d5cda73b186052c18740c718bb73ca40e339d5ec7e28d680292a23b647e22739",
+    "docs/reports/reinforced-covers-20260913/right-lower.json": "4cd18ca758b1064bfb963607c54b76577dc1fa637a603b5acd470b6fafff5cf5"
+  },
+  "outputs": {
+    "left-central-y95.step": "6691fb11aec5c5fcf5a3a8d023922c725e40d9ae2b1631d384b85f29b897355f",
+    "left-central-y95.stl": "0471dad283913bfbfc47336948b87274cd97bf545924223a5d2da1467c82fddd",
+    "left-central-y117.step": "032d436d666bd2df6c692ede584e610f789119358cfa7aa4d8092ba491146614",
+    "left-central-y117.stl": "0b0a127c7ccd46242f28ec75dc976818d3857f9dc4d9b59a14301d1d9592821e",
+    "right-central-y95.step": "2163fbe8b7654ebf6c8fda4242b76b84302d98e75f3a3045f0fd76a96f8c0c1b",
+    "right-central-y95.stl": "19d6e60a08c30449385549efecac2fc04e5c2263e943414f6f8d8074ba5db6be",
+    "right-central-y117.step": "e9f382a4336c9c945144059f9aa471c30724118a9ec166a80b2804e9a6d741c5",
+    "right-central-y117.stl": "ace7f74b389c495c48150424656b8398e8d0ded11a7cc96a188e7a80618ad18e"
+  },
+  "features": [
+    {
+      "name": "left-central-y95",
+      "volume_mm3": 32.15431531128991,
+      "bounds_mm": [
+        -2.7000001000000142,
+        93.79999989999999,
+        -2.2000001000000142,
+        1.1000001000000144,
+        96.20000010000001,
+        1.5000001000000143
+      ],
+      "component_intersection_mm3": 0.0,
+      "step_round_trip": true,
+      "stl_watertight": true
+    },
+    {
+      "name": "left-central-y117",
+      "volume_mm3": 33.15200000000005,
+      "bounds_mm": [
+        -2.700000100000014,
+        115.79999989999999,
+        -2.2000001000000142,
+        1.1000001000000144,
+        118.20000010000001,
+        1.5000001000000143
+      ],
+      "component_intersection_mm3": 0,
+      "step_round_trip": true,
+      "stl_watertight": true
+    },
+    {
+      "name": "right-central-y95",
+      "volume_mm3": 37.86155562257986,
+      "bounds_mm": [
+        148.2999999,
+        92.44999989999997,
+        -2.2000001000000142,
+        152.10000010000005,
+        97.55000010000003,
+        1.5000001000000318
+      ],
+      "component_intersection_mm3": 0.0,
+      "step_round_trip": true,
+      "stl_watertight": true,
+      "existing_outline_in_free_space_mm2": 0.0
+    },
+    {
+      "name": "right-central-y117",
+      "volume_mm3": 38.509240311289915,
+      "bounds_mm": [
+        148.2999999,
+        114.44999989999997,
+        -2.2000001000000142,
+        152.10000010000005,
+        119.55000010000003,
+        1.5000001000000318
+      ],
+      "component_intersection_mm3": 0.0,
+      "step_round_trip": true,
+      "stl_watertight": true,
+      "existing_outline_in_free_space_mm2": 0.0
+    }
+  ],
+  "pending": [
+    "complete lower fusion",
+    "exact integrated insertion sweep",
+    "PCB/support/magnet/root checks",
+    "printed force/strength/coupon",
+    "actual Fusion native",
+    "canonical publication"
+  ]
+}

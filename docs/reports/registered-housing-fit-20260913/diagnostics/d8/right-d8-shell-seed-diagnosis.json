@@ -1,0 +1,489 @@
+{
+  "requirements": [
+    "CON-ARCH-006"
+  ],
+  "status": "diagnosed_not_accepted",
+  "errors": [],
+  "source_sha256": {
+    "tools/diagnose_kc2_d8_shell_seed.py": "71fdfe34e8939bbbaae2a11d94a39d6f05699ca8fe970ce78d7ee07c3a29e397",
+    ".codex-tmp/registered-housing-fit/lower/right-void-review.json": "ef8d4e0c1a2a0095aef368998f181eeb6b1afcf66b1d705dbde11b4f56faf72e",
+    ".codex-tmp/registered-housing-fit/lower/right-d8-boundary-diagnosis.json": "2b865f0ecec3eb8690ad4a8f7e1990e4a898badec5cde62d6e32799ffa8d008f",
+    ".codex-tmp/registered-housing-fit/lower/right-normal/kc2_right_lower_housing.step": "f946902971b3b108104fbd13483f345b075fdd24303e53e386e901ae58bb684b",
+    "tools/review_kc2_local_covers.py": "f5b1f0cf717fab55fbf1c84890d249fdb7e765e1ea53153a9ce7803ac7374332",
+    "tools/kc2_actual_sections.py": "1a522d7043c5483e1d1aba54667f3db5a776c95abcbc8ddee57b57344ef5797d",
+    "tools/diagnose_kc2_d8_boundary.py": "b87c678076eccc97e5f1e539f8f5c333e07a0f7c06445e43bd933bdda8e97c6c"
+  },
+  "a_shell_count": 1,
+  "tool_shell_count": 1,
+  "all_shells_closed": true,
+  "shell_pairs": [
+    {
+      "a_shell": 0,
+      "tool_shell": 0,
+      "distance_mm": 0.02476814629533268,
+      "inner_solution": false,
+      "is_done": true
+    }
+  ],
+  "seed_xyz": [
+    16.775000000000006,
+    35.025000000000006,
+    1.0499999999999998
+  ],
+  "seed_solid_classifier_inside": false,
+  "seed_actual_section_inside": false,
+  "seed_section_distance_mm": 1.1999999999999957,
+  "a_extents_exclude_containment_in_tool": true,
+  "roi_vertex_z_mm": [
+    -0.5,
+    2.5
+  ],
+  "roi_faces": [
+    {
+      "face": 0,
+      "normal_xyz": [
+        -0.0,
+        -0.0,
+        1.0
+      ],
+      "vertical": false,
+      "horizontal": true
+    },
+    {
+      "face": 1,
+      "normal_xyz": [
+        -1.0,
+        -0.0,
+        -0.0
+      ],
+      "vertical": true,
+      "horizontal": false
+    },
+    {
+      "face": 2,
+      "normal_xyz": [
+        0.0,
+        -1.0,
+        -0.0
+      ],
+      "vertical": true,
+      "horizontal": false
+    },
+    {
+      "face": 3,
+      "normal_xyz": [
+        1.0,
+        -0.0,
+        -0.0
+      ],
+      "vertical": true,
+      "horizontal": false
+    },
+    {
+      "face": 4,
+      "normal_xyz": [
+        -0.0,
+        1.0,
+        -0.0
+      ],
+      "vertical": true,
+      "horizontal": false
+    },
+    {
+      "face": 5,
+      "normal_xyz": [
+        -1.0,
+        0.0,
+        0.0
+      ],
+      "vertical": true,
+      "horizontal": false
+    },
+    {
+      "face": 6,
+      "normal_xyz": [
+        -0.9807852804032463,
+        0.19509032201604898,
+        0.0
+      ],
+      "vertical": true,
+      "horizontal": false
+    },
+    {
+      "face": 7,
+      "normal_xyz": [
+        -0.8314696123025019,
+        0.5555702330196672,
+        0.0
+      ],
+      "vertical": true,
+      "horizontal": false
+    },
+    {
+      "face": 8,
+      "normal_xyz": [
+        -0.5555702330196672,
+        0.8314696123025019,
+        0.0
+      ],
+      "vertical": true,
+      "horizontal": false
+    },
+    {
+      "face": 9,
+      "normal_xyz": [
+        -0.19509032201604898,
+        0.9807852804032463,
+        0.0
+      ],
+      "vertical": true,
+      "horizontal": false
+    },
+    {
+      "face": 10,
+      "normal_xyz": [
+        -0.0,
+        1.0,
+        0.0
+      ],
+      "vertical": true,
+      "horizontal": false
+    },
+    {
+      "face": 11,
+      "normal_xyz": [
+        0.9547136632553896,
+        0.2975261689221214,
+        0.0
+      ],
+      "vertical": true,
+      "horizontal": false
+    },
+    {
+      "face": 12,
+      "normal_xyz": [
+        0.9999895106484326,
+        0.004580239416062981,
+        0.0
+      ],
+      "vertical": true,
+      "horizontal": false
+    },
+    {
+      "face": 13,
+      "normal_xyz": [
+        0.7748025806240878,
+        0.6322032592910716,
+        0.0
+      ],
+      "vertical": true,
+      "horizontal": false
+    },
+    {
+      "face": 14,
+      "normal_xyz": [
+        0.9872146705993075,
+        -0.15939634297404962,
+        0.0
+      ],
+      "vertical": true,
+      "horizontal": false
+    },
+    {
+      "face": 15,
+      "normal_xyz": [
+        1.0,
+        0.0,
+        0.0
+      ],
+      "vertical": true,
+      "horizontal": false
+    },
+    {
+      "face": 16,
+      "normal_xyz": [
+        0.8854672770040968,
+        -0.4647017337550508,
+        0.0
+      ],
+      "vertical": true,
+      "horizontal": false
+    },
+    {
+      "face": 17,
+      "normal_xyz": [
+        0.7748025806240878,
+        -0.6322032592910716,
+        0.0
+      ],
+      "vertical": true,
+      "horizontal": false
+    },
+    {
+      "face": 18,
+      "normal_xyz": [
+        0.6402314394340138,
+        -0.7681820773490168,
+        0.0
+      ],
+      "vertical": true,
+      "horizontal": false
+    },
+    {
+      "face": 19,
+      "normal_xyz": [
+        0.9667359505845056,
+        -0.2557764685178692,
+        0.0
+      ],
+      "vertical": true,
+      "horizontal": false
+    },
+    {
+      "face": 20,
+      "normal_xyz": [
+        0.2975261689221214,
+        -0.9547136632553896,
+        0.0
+      ],
+      "vertical": true,
+      "horizontal": false
+    },
+    {
+      "face": 21,
+      "normal_xyz": [
+        1.0,
+        0.0,
+        0.0
+      ],
+      "vertical": true,
+      "horizontal": false
+    },
+    {
+      "face": 22,
+      "normal_xyz": [
+        0.0,
+        -1.0,
+        0.0
+      ],
+      "vertical": true,
+      "horizontal": false
+    },
+    {
+      "face": 23,
+      "normal_xyz": [
+        0.9667359505845056,
+        0.2557764685178692,
+        0.0
+      ],
+      "vertical": true,
+      "horizontal": false
+    },
+    {
+      "face": 24,
+      "normal_xyz": [
+        -0.19509032201604898,
+        -0.9807852804032463,
+        -0.0
+      ],
+      "vertical": true,
+      "horizontal": false
+    },
+    {
+      "face": 25,
+      "normal_xyz": [
+        0.7681820773490168,
+        0.6402314394340138,
+        0.0
+      ],
+      "vertical": true,
+      "horizontal": false
+    },
+    {
+      "face": 26,
+      "normal_xyz": [
+        -0.4647017337550508,
+        -0.8854672770040968,
+        -0.0
+      ],
+      "vertical": true,
+      "horizontal": false
+    },
+    {
+      "face": 27,
+      "normal_xyz": [
+        0.5555702330196672,
+        0.8314696123025019,
+        0.0
+      ],
+      "vertical": true,
+      "horizontal": false
+    },
+    {
+      "face": 28,
+      "normal_xyz": [
+        -0.7681820773490168,
+        -0.6402314394340138,
+        -0.0
+      ],
+      "vertical": true,
+      "horizontal": false
+    },
+    {
+      "face": 29,
+      "normal_xyz": [
+        0.2975261689221214,
+        0.9547136632553896,
+        0.0
+      ],
+      "vertical": true,
+      "horizontal": false
+    },
+    {
+      "face": 30,
+      "normal_xyz": [
+        -0.9667359505845056,
+        -0.2557764685178692,
+        -0.0
+      ],
+      "vertical": true,
+      "horizontal": false
+    },
+    {
+      "face": 31,
+      "normal_xyz": [
+        0.0041557005496757875,
+        0.9999913650391895,
+        0.0
+      ],
+      "vertical": true,
+      "horizontal": false
+    },
+    {
+      "face": 32,
+      "normal_xyz": [
+        -1.0,
+        0.0,
+        0.0
+      ],
+      "vertical": true,
+      "horizontal": false
+    },
+    {
+      "face": 33,
+      "normal_xyz": [
+        -0.2557764685178692,
+        0.9667359505845056,
+        0.0
+      ],
+      "vertical": true,
+      "horizontal": false
+    },
+    {
+      "face": 34,
+      "normal_xyz": [
+        -0.9667359505845056,
+        0.2557764685178692,
+        0.0
+      ],
+      "vertical": true,
+      "horizontal": false
+    },
+    {
+      "face": 35,
+      "normal_xyz": [
+        -0.6402314394340138,
+        0.7681820773490168,
+        0.0
+      ],
+      "vertical": true,
+      "horizontal": false
+    },
+    {
+      "face": 36,
+      "normal_xyz": [
+        -0.7748025806240878,
+        0.6322032592910716,
+        0.0
+      ],
+      "vertical": true,
+      "horizontal": false
+    },
+    {
+      "face": 37,
+      "normal_xyz": [
+        -0.8314696123025019,
+        0.5555702330196672,
+        0.0
+      ],
+      "vertical": true,
+      "horizontal": false
+    },
+    {
+      "face": 38,
+      "normal_xyz": [
+        -1.0,
+        0.0,
+        0.0
+      ],
+      "vertical": true,
+      "horizontal": false
+    },
+    {
+      "face": 39,
+      "normal_xyz": [
+        -0.9667359505845056,
+        0.2557764685178692,
+        0.0
+      ],
+      "vertical": true,
+      "horizontal": false
+    },
+    {
+      "face": 40,
+      "normal_xyz": [
+        -0.7748025806240878,
+        -0.6322032592910716,
+        -0.0
+      ],
+      "vertical": true,
+      "horizontal": false
+    },
+    {
+      "face": 41,
+      "normal_xyz": [
+        -0.9999895106484326,
+        -0.004580239416063981,
+        -0.0
+      ],
+      "vertical": true,
+      "horizontal": false
+    },
+    {
+      "face": 42,
+      "normal_xyz": [
+        -0.9547136632553896,
+        -0.2975261689221214,
+        -0.0
+      ],
+      "vertical": true,
+      "horizontal": false
+    },
+    {
+      "face": 43,
+      "normal_xyz": [
+        -0.0,
+        -0.0,
+        -1.0
+      ],
+      "vertical": false,
+      "horizontal": true
+    }
+  ],
+  "roi_section_wkt": "POLYGON ((14.775 36.625, 14.9089392 36.65164216, 15.02248737 36.72751263, 15.09835784 36.8410608, 15.125 36.975, 15.125 39.13189694, 19.15689694 39.13189694, 19.15689694 30.91810306, 14.39310306 30.91810306, 14.39310306 36.625, 14.775 36.625), (15.575 35.64027199, 15.575 34.40972801, 15.43182178 34.23425461, 15.35 33.925, 15.35 32.525, 15.43182178 32.21574539, 15.59341838 32.0218536, 15.69074539 31.95682178, 15.93171839 31.88172515, 17.55 31.875, 17.85925461 31.95682178, 18.0531464 32.11841838, 18.11817822 32.21574539, 18.2 32.525, 18.19327485 33.99328161, 18.11817822 34.23425461, 17.975 34.40972801, 17.975 35.64027199, 18.11817822 35.81574539, 18.2 36.125, 18.2 37.525, 18.11817822 37.83425461, 17.95658162 38.0281464, 17.73308664 38.14543871, 17.61828161 38.16827485, 15.93171839 38.16827485, 15.69074539 38.09317822, 15.4968536 37.93158162, 15.37956129 37.70808664, 15.35 37.525, 15.35672515 36.05671839, 15.43182178 35.81574539, 15.575 35.64027199))",
+  "roi_tool_overlap_mm2": 0.0,
+  "tool_outside_roi_mm2": 0.0,
+  "roi_prism_volume_error_mm3": 9.438743120426807e-08,
+  "scope": "D8 local diagnosis only; not complete component or housing approval",
+  "physical_qualified": false
+}

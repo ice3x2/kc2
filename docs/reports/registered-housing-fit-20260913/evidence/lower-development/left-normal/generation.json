@@ -1,0 +1,75 @@
+{
+  "requirements": [
+    "CON-ARCH-006"
+  ],
+  "side": "left",
+  "magnetic": false,
+  "status": "generated_pending_independent_review",
+  "physical_qualified": false,
+  "canonical_changed": false,
+  "source_sha256": {
+    "tools/stage_kc2_registered_lower.py": "fc2ff26e0d227653a8929c569a9db9b61827bdab691da66912e5f8d1277fa140",
+    "tools/test_stage_kc2_registered_lower.py": "fde57b708a0301c7cf3d845fa99b6944f4bc0a87e1b9a357c342b70bcf8db650",
+    "hardware/MODELS/kc2_left_lower_housing.step": "ce99534d33e6c765ea0272c4747b3c0ea69281de51423d570419d21ad74f19ad",
+    ".codex-tmp/perimeter-wall-plans.json": "425c5bae2929a0bdc436e92559bd4bb4eaeeb97750a0138f2bb98844b31bf331",
+    ".codex-tmp/registered-housing-fit/lower/left-normal/registrar-snapshot.json": "8f46f4835163e9209233a9e98a97ed6b6dc75fb265307094cfe06878eb423924",
+    "docs/reports/reinforced-covers-20260913/left-lower.json": "d5cda73b186052c18740c718bb73ca40e339d5ec7e28d680292a23b647e22739",
+    "tools/stage_kc2_registered_upper.py": "a0e29989a2aa8eb41d334e0e6dda197d2e85f8505f40dc6e82b5994f4dc257f9",
+    "docs/reports/solid-filled-plates-20260913/left-deep_sea.json": "9952ca3664387ebde9975e5b1be91d114a6da1cc544a1523e6c6daef4db0cdf1",
+    "tools/kc2_registered_upper.py": "0f67b3f7b3afb8768d0e3fa8235cd00144408d85e67fb57e6c7cd3c4cb7510e0",
+    "tools/kc2_registered_wall_plan.py": "d84529b585893f3ffa31c2ef1002add665c85c4b79da0d5a6f81d8ec86f10ea5",
+    "tools/kc2_solid_plate.py": "9ec724e7f84c049b2e0ee78001c98081fd8812463d280dfe941419938e76a19a",
+    "tools/kc2_filled_plate_profiles.py": "3faee645c0413661ce45f9bee96773546ac4479f21ea663257f4c7f0a79d6291",
+    "tools/test_kc2_registered_upper.py": "6865884c7c6edab68f7cea9ee51a809424090ef08fde2cf4cff4153cf43ba287",
+    "tools/test_stage_kc2_registered_upper.py": "d00c5a853ee0fcc382c57b42bf48d543ef0aaa5eb56dc3d5bf58a36904ca9055",
+    "tools/generate_kc2_magnetic_housings.py": "f8d20b5a84a5b953aa5a8bd7ca2e6474203347869423612f360829f516c284ec",
+    "tools/generate_kc2_x3_v2_housings.py": "0f2ef9076cff70916f77b124495fc1a5ea46751d19155378d9224a30a9168b69",
+    "tools/generate_kc2_housings.py": "cbf34705101526043bf4a43daed6e50dee2c67dc61ae0832debd70e62f5e5e16",
+    "tools/render_kc2_x3_joined.py": "903c3e2353aabfe7ff8a804f0bd0653ab0a90c3f881f8819ab239ca9aa1666b1",
+    "hardware/PCB/kc2_left/kc2_left.kicad_pcb": "568e1427e4cfb9d667b6d5b3754da3a4e24c924abfa85a8dfe394dd050b5fe67",
+    "hardware/PCB/kc2_right/kc2_right.kicad_pcb": "88290c3b0cf3951d56221d216549665c0576a816a6315012f7f12b027f402577",
+    "tools/kc2_central_flexure.py": "34dbc9be59a2674d317bc29c9d0d21af1089912a9cef24995de98e73979c96e0",
+    "tools/kc2_central_fit.py": "138ffd199cfe5cdc5c265d80f17a5bea048f1b526dcb3bdc47fcbd24ff3a9735",
+    "tools/kc2_perimeter_wall.py": "36b9523d9e33dc91d055be1bf3d1862ed2cd25734076fb1838032e3296f27f18",
+    "tools/test_kc2_perimeter_wall.py": "3e40130b3097a00532bb14cc8b29c29daf3ac6b1a6598088fdc582ab696ee5cf",
+    "docs/reports/solid-filled-plates-20260913/left-mx.json": "3965411eb2d455cb006c03d4fc016f21b2ed851a52e5160c86a910226d26cd50",
+    "docs/reports/reinforced-covers-20260913/right-lower.json": "4cd18ca758b1064bfb963607c54b76577dc1fa637a603b5acd470b6fafff5cf5",
+    "docs/reports/solid-filled-plates-20260913/right-mx.json": "efd3a04be41f07dff47b101ba112616ce506b76cf0d682148c945f589749c8db"
+  },
+  "preservation": {
+    "errors": [],
+    "removed_baseline_mm3": 0.0,
+    "unplanned_added_mm3": 0.0
+  },
+  "body_count": 1,
+  "bounds_mm": [
+    -2.6999999999999997,
+    -1.5,
+    -2.2000000000000006,
+    136.6125,
+    124.326,
+    5.0
+  ],
+  "volume_mm3": 44184.668183449794,
+  "outputs": {
+    "kc2_left_lower_housing.step": "5a8773bf30290731c31e6c11751e4118a1dd9da3ed7b8cdb359ae16b8d63d36d",
+    "kc2_left_lower_housing.stl": "418924e0342b86b6eb7f8dba06e6788bb6caaaa006e04d7cbbe2e981a5fdc1dd"
+  },
+  "mesh": {
+    "watertight": true,
+    "winding_consistent": true,
+    "shells": 1,
+    "bounds_mm": [
+      -2.700000047683716,
+      -1.5,
+      -2.200000047683716,
+      136.6125030517578,
+      124.32599639892578,
+      5.0
+    ],
+    "volume_mm3": 44184.6705884865,
+    "brep_volume_mm3": 44184.668183449794,
+    "volume_error_mm3": 0.0024050367064774036,
+    "sha256": "418924e0342b86b6eb7f8dba06e6788bb6caaaa006e04d7cbbe2e981a5fdc1dd"
+  }
+}

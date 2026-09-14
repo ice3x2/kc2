@@ -1,0 +1,99 @@
+{
+  "requirements": [
+    "CON-ARCH-006",
+    "OPS-ARCH-006"
+  ],
+  "status": "pass",
+  "selected_job": "upper:right:choc_v1",
+  "fusion_version": "2705.1.11",
+  "physical_qualified": false,
+  "independent_geometry_verified": false,
+  "source_sha256": {
+    "tools/stage_kc2_registered_upper.py": "a0e29989a2aa8eb41d334e0e6dda197d2e85f8505f40dc6e82b5994f4dc257f9",
+    "docs/reports/solid-filled-plates-20260913/right-choc_v1.json": "97b969b56465d10dffd6df10482801874be2db8c06289483d6f716bbaba2f58f",
+    "tools/kc2_registered_upper.py": "0f67b3f7b3afb8768d0e3fa8235cd00144408d85e67fb57e6c7cd3c4cb7510e0",
+    "tools/kc2_registered_wall_plan.py": "d84529b585893f3ffa31c2ef1002add665c85c4b79da0d5a6f81d8ec86f10ea5",
+    "tools/kc2_solid_plate.py": "9ec724e7f84c049b2e0ee78001c98081fd8812463d280dfe941419938e76a19a",
+    "tools/kc2_filled_plate_profiles.py": "3faee645c0413661ce45f9bee96773546ac4479f21ea663257f4c7f0a79d6291",
+    "tools/test_kc2_registered_upper.py": "6865884c7c6edab68f7cea9ee51a809424090ef08fde2cf4cff4153cf43ba287",
+    "tools/test_stage_kc2_registered_upper.py": "d00c5a853ee0fcc382c57b42bf48d543ef0aaa5eb56dc3d5bf58a36904ca9055",
+    "tools/generate_kc2_magnetic_housings.py": "f8d20b5a84a5b953aa5a8bd7ca2e6474203347869423612f360829f516c284ec",
+    "tools/generate_kc2_x3_v2_housings.py": "0f2ef9076cff70916f77b124495fc1a5ea46751d19155378d9224a30a9168b69",
+    "tools/generate_kc2_housings.py": "cbf34705101526043bf4a43daed6e50dee2c67dc61ae0832debd70e62f5e5e16",
+    "tools/render_kc2_x3_joined.py": "903c3e2353aabfe7ff8a804f0bd0653ab0a90c3f881f8819ab239ca9aa1666b1",
+    "hardware/PCB/kc2_left/kc2_left.kicad_pcb": "568e1427e4cfb9d667b6d5b3754da3a4e24c924abfa85a8dfe394dd050b5fe67",
+    "hardware/PCB/kc2_right/kc2_right.kicad_pcb": "88290c3b0cf3951d56221d216549665c0576a816a6315012f7f12b027f402577",
+    "tools/kc2_profile_split.py": "e0dae24cf099f19b7c40eed2e995c7352d07f25fc7fa85ca4de1da3600c04d68",
+    ".codex-tmp/registered-housing-fit/upper/right-choc_v1/kc2_right_choc_v1_upper_housing_part_a.stl": "f6a3f03aa51077d4ad9b1c06d8cbda3f95bec1939aab611be77d6efccb4bca24",
+    ".codex-tmp/registered-housing-fit/upper/right-choc_v1/kc2_right_choc_v1_upper_housing_part_b.stl": "b7b4b00e78d56f38a79ba3bfe2a757a9f350a641fb78b4f2ed0e53dfbab61ef0",
+    ".codex-tmp/registered-housing-fit/upper/right-choc_v1/kc2_right_choc_v1_upper_housing.step": "98ade56b36f606f6653465785fc3915d0008acadfa772dc0a4a8673d8304f025",
+    ".codex-tmp/registered-housing-fit/upper/right-choc_v1/generation.json": "1cfb2a999bc70e37ccd378c9d585397c509226de9fb0e93222e357ed80b3f239",
+    "tools/fusion/KC2RegisteredHousingToF3D/KC2RegisteredHousingToF3D.py": "6748afb7c9394bd6902d992ee24d388e4abd748862fbe4e7129ecfd82824e19a",
+    "tools/fusion/KC2StepToF3D/KC2StepToF3D.py": "d5a0bc1d376c04e5797eb3fb20a4c1fb3bb31a4f01a20aa42e834eab6e1d6cc5",
+    "tools/kc2_registered_native.py": "51a63d24eff4b6fb0b1faf3c6e4892713e16c7920a5f8933980586b60167719d",
+    "tools/test_kc2_registered_native.py": "d3abfa87f980780b92ce06df7d9b99b8d5fdbd366076ff57e7135ba8189608db"
+  },
+  "outputs": {
+    "upper:right:choc_v1": {
+      "source_step": "kc2_right_choc_v1_upper_housing.step",
+      "source_sha256": "98ade56b36f606f6653465785fc3915d0008acadfa772dc0a4a8673d8304f025",
+      "generation_record": "generation.json",
+      "generation_sha256": "1cfb2a999bc70e37ccd378c9d585397c509226de9fb0e93222e357ed80b3f239",
+      "expected_body_count": 2,
+      "source_solids": [
+        {
+          "bounds_mm": [
+            -0.8260000000000001,
+            29.424,
+            4.1,
+            97.08756000000001,
+            123.326,
+            6.6000000000000005
+          ],
+          "volume_mm3": 6853.762182384573
+        },
+        {
+          "bounds_mm": [
+            73.0,
+            -1.5000000000000002,
+            4.1,
+            164.51350000000002,
+            123.326,
+            6.6000000000000005
+          ],
+          "volume_mm3": 7109.218443650783
+        }
+      ],
+      "reopened_solids": [
+        {
+          "bounds_mm": [
+            -0.8260000000000001,
+            29.424,
+            4.1,
+            97.08756000000001,
+            123.326,
+            6.6000000000000005
+          ],
+          "volume_mm3": 6853.762182384573
+        },
+        {
+          "bounds_mm": [
+            73.0,
+            -1.5000000000000002,
+            4.1,
+            164.51350000000002,
+            123.326,
+            6.6000000000000005
+          ],
+          "volume_mm3": 7109.218443650783
+        }
+      ],
+      "f3d": "kc2_right_choc_v1_upper_housing.f3d",
+      "f3d_sha256": "e90e9429185b83972e6fb09452d59b0ddff2e0d7c20c8bbdd9b23af511a1ff46",
+      "readback_step": "kc2_right_choc_v1_upper_housing.native-readback.step",
+      "readback_sha256": "abed3c71ebb214816d70fc47ecbaa3190fc082c359a2ef35d46f5de14761dc72",
+      "round_trip_verified": true
+    }
+  },
+  "phase": "complete"
+}

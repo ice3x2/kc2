@@ -1,0 +1,70 @@
+"""Read-only publication candidate copy and isolated verification evidence."""
+import hashlib,json,os,shutil,subprocess,time
+from pathlib import Path
+
+SOURCE=Path('C:/Work/git/kc2').resolve()
+PARENT=Path(__file__).resolve().parent
+ISOLATED=(PARENT/'repo').resolve()
+MANIFEST='hardware/MODELS/kc2_registered_housing_manifest.json'
+OUTPUT=PARENT/'isolated-candidate-review.json'
+
+def sha(data):return hashlib.sha256(data).hexdigest()
+def safe(root,name):
+    p=(root/name).resolve()
+    if not p.is_relative_to(root) or name.startswith('.codex-tmp/'):
+        raise ValueError('Unsafe or forbidden temporary alias '+name)
+    return p
+
+result=dict(status='candidate_pending',canonical_publication_confirmed=False,
+    source=str(SOURCE),isolated_root=str(ISOLATED),physical_qualified=False,
+    codex_tmp_absent_before=not (ISOLATED/'.codex-tmp').exists(),errors=[])
+try:
+    if not result['codex_tmp_absent_before']:raise ValueError('Isolation already contains .codex-tmp')
+    raw=safe(SOURCE,MANIFEST).read_bytes();manifest=json.loads(raw)
+    result['manifest_sha256']=sha(raw)
+    names={MANIFEST,'hardware/MODELS/kc2_filled_plate_manifest.json'}
+    for field in ('outputs','documents','preserved_pcb_gerber_sha256'):
+        names.update(manifest[field])
+    for descriptor in manifest['bindings'].values():
+        if descriptor['kind']=='workspace':names.add(descriptor['destination'])
+        elif descriptor['kind']!='git_blob':raise ValueError('Unknown source descriptor')
+    names.update(p.relative_to(SOURCE).as_posix() for p in (SOURCE/'tools').rglob('*')
+                 if p.is_file() and '__pycache__' not in p.parts and p.suffix!='.pyc')
+    copied={}
+    for name in sorted(names):
+        source=safe(SOURCE,name);target=safe(ISOLATED,name)
+        data=source.read_bytes();target.parent.mkdir(parents=True,exist_ok=True)
+        shutil.copyfile(source,target)
+        if target.read_bytes()!=data or source.read_bytes()!=data:raise ValueError('Changed copy '+name)
+        copied[name]=sha(data)
+    result['copied_sha256']=copied
+    if safe(ISOLATED,MANIFEST).read_bytes()!=raw:raise ValueError('Manifest changed while copying')
+    result['baseline_object_type']=subprocess.check_output(
+        ['git','cat-file','-t',manifest['baseline_revision']],cwd=ISOLATED,text=True).strip()
+    if result['baseline_object_type']!='commit':raise ValueError('Missing pinned commit')
+    command=['C:/Python312/python.exe','-B','-m','tools.publish_kc2_registered_housings',
+             '--root',str(ISOLATED),'--verify',str(ISOLATED/MANIFEST)]
+    env=dict(os.environ);env.pop('PYTHONPATH',None);env.pop('PYTHONHOME',None)
+    result['command']=command;start=time.monotonic()
+    print('Isolated candidate copy complete',len(copied),'files',result['manifest_sha256'],flush=True)
+    run=subprocess.run(command,cwd=ISOLATED,env=env,capture_output=True,text=True,encoding='utf8',errors='replace')
+    result.update(exit_code=run.returncode,stdout=run.stdout,stderr=run.stderr,elapsed_seconds=time.monotonic()-start)
+    parsed=json.loads(run.stdout);result['verification']=parsed
+    if run.returncode!=0 or parsed.get('status')!='pass' or parsed.get('errors'):
+        raise ValueError('Isolated semantic verification failed')
+    result['changed_isolated_copies']=[n for n,h in copied.items() if sha(safe(ISOLATED,n).read_bytes())!=h]
+    result['current_source_manifest_sha256']=sha(safe(SOURCE,MANIFEST).read_bytes())
+    if result['changed_isolated_copies']:raise ValueError('Isolated files changed during verification')
+    if result['current_source_manifest_sha256']!=result['manifest_sha256']:
+        raise ValueError('Canonical candidate manifest changed during verification')
+    result['status']='candidate_pass_requires_root_publication_confirmation'
+except Exception as error:
+    result['status']='fail';result['errors'].append(str(error))
+finally:
+    result['codex_tmp_absent_after']=not (ISOLATED/'.codex-tmp').exists()
+    if not result['codex_tmp_absent_after']:
+        result['status']='fail';result['errors'].append('Isolation created forbidden temporary aliases')
+    result['runner_sha256']=sha(Path(__file__).read_bytes())
+    OUTPUT.write_text(json.dumps(result,indent=2)+'\n',encoding='utf8')
+    print(json.dumps({k:v for k,v in result.items() if k not in ('copied_sha256','stdout','stderr')}),flush=True)
+    print('Evidence:',OUTPUT,flush=True)

@@ -1,0 +1,49 @@
+{
+  "requirements": [
+    "CON-ARCH-006"
+  ],
+  "status": "interrupted_not_accepted",
+  "session_id": 76514,
+  "process_id": 29104,
+  "verified_process_command": "\"C:\\Python312\\python.exe\" -B -m tools.review_kc2_lower_component_distance",
+  "original_source_sha256": {
+    "tools/review_kc2_lower_component_distance.py": "fd990b87472dccf10446f15d44ee816b5ddeed4c858d9c3e9ef8e07da3b57693",
+    "tools/kc2_solid_clearance.py": "6864e70ede80be3c0cc4b2e9392320a294fe36a0768b321faa6291d1e86971b8",
+    "tools/test_kc2_solid_clearance.py": "5e814a7f25f45550f3626cc02cf140173bdfc88cc0cf5f216812c78ad68477d8"
+  },
+  "archived_source_sha256": {
+    ".codex-tmp/registered-housing-fit/lower-development/component-distance-attempt-1/review_kc2_lower_component_distance.py": "fd990b87472dccf10446f15d44ee816b5ddeed4c858d9c3e9ef8e07da3b57693",
+    ".codex-tmp/registered-housing-fit/lower-development/component-distance-attempt-1/kc2_solid_clearance.py": "6864e70ede80be3c0cc4b2e9392320a294fe36a0768b321faa6291d1e86971b8",
+    ".codex-tmp/registered-housing-fit/lower-development/component-distance-attempt-1/test_kc2_solid_clearance.py": "5e814a7f25f45550f3626cc02cf140173bdfc88cc0cf5f216812c78ad68477d8"
+  },
+  "failed_boolean_report": ".codex-tmp/registered-housing-fit/lower/right-void-review.json",
+  "failed_boolean_sha256": "ef8d4e0c1a2a0095aef368998f181eeb6b1afcf66b1d705dbde11b4f56faf72e",
+  "observed_output": [
+    "construct exact required tool; no Boolean intersections",
+    "fresh actual solid-solid distance normal",
+    "normal 0 0 solid_solid_extrema 0.0251747721199914",
+    "normal 0 2 solid_solid_extrema 0.0"
+  ],
+  "observed_completed_pairs": [
+    {
+      "variant": "normal",
+      "part": 0,
+      "tool": 0,
+      "distance_mm": 0.0251747721199914
+    },
+    {
+      "variant": "normal",
+      "part": 0,
+      "tool": 2,
+      "distance_mm": 0.0
+    }
+  ],
+  "note": "Only emitted progress is known; full612pair inventory never completed or approved. Exact owned PID stopped before performance-only solver-call correction.",
+  "physical_qualified": false,
+  "source_sha256": {
+    "tools/archive_kc2_distance_attempt.py": "c2c7c7a792859c1911adeea95b27b7421f7a3ef44f6928d8697dd565adfe3144",
+    ".codex-tmp/registered-housing-fit/lower-development/component-distance-attempt-1/review_kc2_lower_component_distance.py": "fd990b87472dccf10446f15d44ee816b5ddeed4c858d9c3e9ef8e07da3b57693",
+    ".codex-tmp/registered-housing-fit/lower-development/component-distance-attempt-1/kc2_solid_clearance.py": "6864e70ede80be3c0cc4b2e9392320a294fe36a0768b321faa6291d1e86971b8",
+    ".codex-tmp/registered-housing-fit/lower-development/component-distance-attempt-1/test_kc2_solid_clearance.py": "5e814a7f25f45550f3626cc02cf140173bdfc88cc0cf5f216812c78ad68477d8"
+  }
+}

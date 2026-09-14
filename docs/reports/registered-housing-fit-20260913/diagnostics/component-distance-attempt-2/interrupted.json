@@ -1,0 +1,61 @@
+{
+  "requirements": ["CON-ARCH-006"],
+  "status": "interrupted_not_accepted",
+  "session_id": 38710,
+  "process_id": 16728,
+  "verified_process_command": "\"C:\\Python312\\python.exe\" -B -m tools.review_kc2_lower_component_distance",
+  "process_exit_code": 1,
+  "cpu_seconds_before_stop": 39131.703125,
+  "working_set_bytes_before_stop": 780009472,
+  "priority_before_stop": "BelowNormal",
+  "original_source_sha256": {
+    "tools/review_kc2_lower_component_distance.py": "fd990b87472dccf10446f15d44ee816b5ddeed4c858d9c3e9ef8e07da3b57693",
+    "tools/kc2_solid_clearance.py": "60c21043b1b1528e8e9700dd7113099fbbc37a11caa0e3f8ca8c5f8a403b567d",
+    "tools/test_kc2_solid_clearance.py": "6f48c8802041a5002a40af8ce8154ce6eb0110b5ef459b685f1bf8650393aebe"
+  },
+  "archived_files_sha256": {
+    "review_kc2_lower_component_distance.py": "fd990b87472dccf10446f15d44ee816b5ddeed4c858d9c3e9ef8e07da3b57693",
+    "kc2_solid_clearance.py": "60c21043b1b1528e8e9700dd7113099fbbc37a11caa0e3f8ca8c5f8a403b567d",
+    "test_kc2_solid_clearance.py": "6f48c8802041a5002a40af8ce8154ce6eb0110b5ef459b685f1bf8650393aebe",
+    "right-void-review.json": "ef8d4e0c1a2a0095aef368998f181eeb6b1afcf66b1d705dbde11b4f56faf72e",
+    "right-normal-generation.json": "848d8f3e9e381f3cfc434fa5d04f5f68253ee9d83e5327c0b82e7d681fbfa017",
+    "right-magnetic-generation.json": "fc3d6b6d75d4bc61700ff05e4a1ca316541acea8225bc6c843fbeb1dbda4ebc3",
+    "component-distance-attempt-2-priority.json": "d1df296cae115e49ce46d55173420b3447058212448e767999ad96420a1d56a8"
+  },
+  "historical_input_identities": {
+    ".codex-tmp/registered-housing-fit/lower/right-void-review.json": "ef8d4e0c1a2a0095aef368998f181eeb6b1afcf66b1d705dbde11b4f56faf72e",
+    ".codex-tmp/registered-housing-fit/lower/right-normal/generation.json": "848d8f3e9e381f3cfc434fa5d04f5f68253ee9d83e5327c0b82e7d681fbfa017",
+    ".codex-tmp/registered-housing-fit/lower/right-normal/kc2_right_lower_housing.step": "f946902971b3b108104fbd13483f345b075fdd24303e53e386e901ae58bb684b",
+    ".codex-tmp/registered-housing-fit/lower/right-magnetic/generation.json": "fc3d6b6d75d4bc61700ff05e4a1ca316541acea8225bc6c843fbeb1dbda4ebc3",
+    ".codex-tmp/registered-housing-fit/lower/right-magnetic/kc2_right_lower_housing_magnetic.step": "3b8e075e2ab89d58d9450cfdde4f81c2299b3da76d41acbfebc58f2edaec47fd"
+  },
+  "full_original_source_closure": "The byte-identical archived right-void-review.json and two generation JSON files retain their complete source_sha256 maps. Historical input paths are identities, not assertions that later canonical files remain unchanged.",
+  "step_archive_location": ".codex-tmp/registered-housing-fit/lower-development/receiver-cleanup-inputs",
+  "step_archive_alias_manifest": ".codex-tmp/registered-housing-fit/lower-development/receiver-cleanup-inputs/snapshot-map.json",
+  "observed_output": [
+    "construct exact required tool; no Boolean intersections",
+    "fresh actual solid-solid distance normal",
+    "normal 0 0 solid_solid_extrema 0.0251747721199914",
+    "normal 0 2 solid_solid_extrema 0.0",
+    "normal 0 20 solid_solid_extrema 0.02476814628664893",
+    "normal 0 40 solid_solid_extrema 0.02476814628664984",
+    "normal 0 60 solid_solid_extrema 0.02476814629533611",
+    "normal 0 80 outward_padded_aabb 0.5243330613788402",
+    "normal 0 100 outward_padded_aabb 5.286833061378843",
+    "normal 0 120 outward_padded_aabb 28.31183306137885",
+    "normal 0 140 outward_padded_aabb 62.88683306137885",
+    "normal 1 0 outward_padded_aabb 74.80187306137921",
+    "normal 1 20 outward_padded_aabb 64.01187306137922",
+    "normal 1 40 outward_padded_aabb 44.46187306137923",
+    "normal 1 60 outward_padded_aabb 15.886873061379205",
+    "normal 1 80 solid_solid_extrema 0.02356707290345332",
+    "normal 1 100 solid_solid_extrema 0.02517477212048604"
+  ],
+  "last_observed_pair": {"variant": "normal", "part": 1, "tool": 100},
+  "observed_failed_pairs": [{"variant": "normal", "part": 0, "tool": 2, "distance_mm": 0.0}],
+  "complete_612_pair_inventory": false,
+  "accepted": false,
+  "d8_certificate_executed": false,
+  "reason": "Parent explicitly approved stopping the exact owned process after separate complete normal Z-strata plus actual magnetic-subset evidence passed. This unfinished distance attempt is not the replacement proof and is never marked pass.",
+  "physical_qualified": false
+}

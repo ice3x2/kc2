@@ -1,0 +1,40 @@
+{
+  "side": "left",
+  "registrars": {
+    "top_a": {
+      "wall": "POLYGON ((36 -1.5, 36 -0.3, 30 -0.3, 30 -1.5, 36 -1.5))",
+      "addition": "POLYGON ((37.45 -1.5, 37.45 1.15, 28.55 1.15, 28.55 -1.5, 37.45 -1.5))",
+      "groove": "POLYGON ((36.25 -1.75, 29.75 -1.75, 29.75 -0.05, 36.25 -0.05, 36.25 -1.75))",
+      "floor_addition": "POLYGON ((37.45 -1.5, 37.45 1.15, 28.55 1.15, 28.55 -1.5, 37.45 -1.5))"
+    },
+    "top_b": {
+      "wall": "POLYGON ((54 -1.5, 54 -0.3, 48 -0.3, 48 -1.5, 54 -1.5))",
+      "addition": "POLYGON ((55.45 -1.5, 55.45 1.15, 46.55 1.15, 46.55 -1.5, 55.45 -1.5))",
+      "groove": "POLYGON ((54.25 -1.75, 47.75 -1.75, 47.75 -0.05, 54.25 -0.05, 54.25 -1.75))",
+      "floor_addition": "POLYGON ((55.45 -1.5, 55.45 1.15, 46.55 1.15, 46.55 -1.5, 55.45 -1.5))"
+    },
+    "outer": {
+      "wall": "POLYGON ((18.1 10, 18.1 16, 16.9 16, 16.9 10, 18.1 10))",
+      "addition": "POLYGON ((19.55 8.55, 19.55 17.45, 16.9 17.45, 16.9 8.55, 19.55 8.55))",
+      "groove": "POLYGON ((18.35 9.75, 16.65 9.75, 16.65 16.25, 18.35 16.25, 18.35 9.75))",
+      "floor_addition": "POLYGON ((19.55 8.55, 19.55 17.45, 16.9 17.45, 16.9 8.55, 19.55 8.55))"
+    }
+  },
+  "source_sha256": {
+    "tools/stage_kc2_registered_upper.py": "a0e29989a2aa8eb41d334e0e6dda197d2e85f8505f40dc6e82b5994f4dc257f9",
+    "docs/reports/solid-filled-plates-20260913/left-deep_sea.json": "9952ca3664387ebde9975e5b1be91d114a6da1cc544a1523e6c6daef4db0cdf1",
+    "tools/kc2_registered_upper.py": "0f67b3f7b3afb8768d0e3fa8235cd00144408d85e67fb57e6c7cd3c4cb7510e0",
+    "tools/kc2_registered_wall_plan.py": "d84529b585893f3ffa31c2ef1002add665c85c4b79da0d5a6f81d8ec86f10ea5",
+    "tools/kc2_solid_plate.py": "9ec724e7f84c049b2e0ee78001c98081fd8812463d280dfe941419938e76a19a",
+    "tools/kc2_filled_plate_profiles.py": "3faee645c0413661ce45f9bee96773546ac4479f21ea663257f4c7f0a79d6291",
+    "tools/test_kc2_registered_upper.py": "6865884c7c6edab68f7cea9ee51a809424090ef08fde2cf4cff4153cf43ba287",
+    "tools/test_stage_kc2_registered_upper.py": "d00c5a853ee0fcc382c57b42bf48d543ef0aaa5eb56dc3d5bf58a36904ca9055",
+    "tools/generate_kc2_magnetic_housings.py": "f8d20b5a84a5b953aa5a8bd7ca2e6474203347869423612f360829f516c284ec",
+    "tools/generate_kc2_x3_v2_housings.py": "0f2ef9076cff70916f77b124495fc1a5ea46751d19155378d9224a30a9168b69",
+    "tools/generate_kc2_housings.py": "cbf34705101526043bf4a43daed6e50dee2c67dc61ae0832debd70e62f5e5e16",
+    "tools/render_kc2_x3_joined.py": "903c3e2353aabfe7ff8a804f0bd0653ab0a90c3f881f8819ab239ca9aa1666b1",
+    "hardware/PCB/kc2_left/kc2_left.kicad_pcb": "568e1427e4cfb9d667b6d5b3754da3a4e24c924abfa85a8dfe394dd050b5fe67",
+    "hardware/PCB/kc2_right/kc2_right.kicad_pcb": "88290c3b0cf3951d56221d216549665c0576a816a6315012f7f12b027f402577"
+  },
+  "scope": "Registrar plan snapshot; no upper completion claim"
+}

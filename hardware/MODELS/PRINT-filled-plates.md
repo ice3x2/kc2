@@ -1,56 +1,5 @@
-# 내부 충전형 보강판 인쇄·조립 안내
+# Superseded housing guide
 
-요구사항: `CON-ARCH-006`, `CON-ARCH-007`, `OPS-ARCH-006`.
+Use [the current registered-housing guide](PRINT-registered-housings.md).
 
-하판 위의 기존 받침에 PCB를 올리고, 선택한 스위치용 보강판을 그 위에 장착합니다. PCB를 새 외벽에 끼워 넣는 구조가 아닙니다. 스위치·클립·나사·부품·서비스 보호 공간을 제외한 보강판 내부는 CAD에서 솔리드로 채웠습니다.
-
-인쇄 전 저장소 루트에서 다음 검증이 통과해야 합니다. manifest가 없거나 검증이 실패하면 아직 게시 전이거나 파일이 바뀐 것이므로 인쇄를 보류하세요.
-
-```powershell
-python -B -m tools.publish_kc2_filled_plates --verify
-```
-
-## 상판: 사용할 스위치에 맞는 한 행만 선택
-
-각 행의 STL 3개를 각각 1개씩 인쇄합니다. 서로 다른 종류의 좌우 부품을 섞지 마세요.
-
-| 스위치 | 왼쪽 | 오른쪽 A | 오른쪽 B | 명목 나사 |
-|---|---|---|---|---|
-| MX | [STL](kc2_left_mx_upper_housing.stl) | [STL](kc2_right_mx_upper_housing_part_a.stl) | [STL](kc2_right_mx_upper_housing_part_b.stl) | M1.4×7.50 mm |
-| Choc V1 + 기존 링 | [STL](kc2_left_choc_v1_upper_housing.stl) | [STL](kc2_right_choc_v1_upper_housing_part_a.stl) | [STL](kc2_right_choc_v1_upper_housing_part_b.stl) | M1.4×5.00 mm |
-| Kailh Deep Sea Mini 저상형 갈축 가족 기준 | [STL](kc2_left_deep_sea_upper_housing.stl) | [STL](kc2_right_deep_sea_upper_housing_part_a.stl) | [STL](kc2_right_deep_sea_upper_housing_part_b.stl) | M1.4×5.00 mm |
-
-`deep_sea`는 일반 높이 Deep Sea Box용이 아닙니다. 공개 저상형 정음 가족 도면에 근거한 설계이며, 구매한 갈축 로트와 도면의 동일성은 확정되지 않았습니다. V1은 기존 0.20 mm 테두리 링을 반영합니다. [링 어댑터 안내](adapters/README.md)를 함께 확인하세요. 실제 스위치가 완전히 안착하지 않으면 강제로 누르거나 핀을 가공하지 마세요.
-
-같은 이름의 `.step`과 `.f3d`는 CAD 편집·확인용입니다. 오른쪽 전체 STEP/F3D에는 A/B 두 솔리드가 있으므로 150 mm 프린터에는 분할 STL을 사용합니다.
-
-## 하판: 무자석 또는 자석 홈 중 한 열 선택
-
-기존 보강 하판은 변경하지 않았으며 세 종류 상판에 공통으로 사용합니다. 선택한 열의 STL 3개를 각각 1개씩 인쇄합니다.
-
-| 부품 | 무자석 | 자석 홈 |
-|---|---|---|
-| 왼쪽 | [STL](kc2_left_lower_housing.stl) | [STL](kc2_left_lower_housing_magnetic.stl) |
-| 오른쪽 A | [STL](kc2_right_lower_housing_part_a.stl) | [STL](kc2_right_lower_housing_part_a_magnetic.stl) |
-| 오른쪽 B | [STL](kc2_right_lower_housing_part_b.stl) | [STL](kc2_right_lower_housing_part_b_magnetic.stl) |
-
-총 하판 3개 + 상판 3개입니다. 자석은 Ø2×1 mm, 기존 홈은 Ø2.4×깊이 1.2 mm입니다. 극성·접착·흡착력은 출력 후 확인합니다. 실리콘 발은 기존 평평한 바닥 접착 위치를 사용합니다.
-
-## 출력 방향과 설정
-
-- 단위 mm, 배율 100%. 부풀음 보정을 위해 전체 모델 크기를 줄이지 마세요. 70개 스위치와 17개 나사 위치가 PCB와 달라집니다.
-- 하판은 평평한 바닥을 아래로 둡니다. 상판은 넓은 보강판 윗면이 아래로 향하도록 뒤집어 배치하면 몸체 보호 벽이 판 위에서 자랍니다.
-- 저상형 상판의 나사 보스는 판보다 V1 0.10 mm, Deep Sea 0.35 mm 높습니다. 뒤집으면 보스가 먼저 바닥에 닿으므로 넓은 판 아래의 얕은 공중 시작 부분에 빌드플레이트 연결 서포트가 필요합니다. 슬라이서 미리보기에서 첫 층부터 모든 영역의 지지를 확인하세요. 자동 바닥 배치만 하고 바로 출력하지 마세요.
-- 내부 충전 CAD라도 슬라이서가 인필을 만들 수 있습니다. 내부까지 꽉 찬 출력물이 목적이라면 100% 인필을 사용하고, 실제 경로 미리보기에서 확인하세요. 0.4 mm 노즐이라면 명목 1.20 mm 외곽 가림벽에 적어도 3줄이 생성되는지도 확인합니다.
-- 레이어 높이·선폭·재료별 수축과 첫 층 눌림은 프린터에 맞게 시험합니다. 기존 어댑터의 한 층 테두리 0.20 mm 조건을 보강판 전체에 적용하는 것은 아닙니다.
-- 오른쪽 A/B는 기존 맞물림과 약 0.20 mm 최소 설계 여유를 유지합니다. 새로운 잠금 구조를 추가하지 않았습니다. 코끼리발이나 실뭉침을 정리한 뒤 가볍게 시험 조립하고, 억지로 끼우지 마세요.
-
-## 나사와 조립 확인
-
-나사 통과 홀 Ø1.60 mm와 머리 포켓 Ø3.40 mm는 비워 두었습니다. 설계상 머리 최대 범위는 Ø3.00×높이 1.20 mm입니다. 나사 길이는 머리 아래부터 측정합니다.
-
-MX의 7.50 mm 나사를 저상형에 사용하면 안 됩니다. 저상형 5.00 mm는 명목 체결 2.40 mm, 파일럿 바닥까지 0.40 mm 여유이며, 실제 길이·PCB·출력 공차는 별도 확인해야 합니다. 나사 힘으로 맞지 않는 높이나 휨을 눌러 맞추지 마세요.
-
-PCB가 기존 받침에 닿는지, 스위치가 완전히 안착하고 클립이 걸리는지, 모든 키캡을 끝까지 눌렀을 때 나사 보스와 닿지 않는지 확인합니다. 저상형 보스가 판보다 높으므로 특히 확인이 필요합니다. 전원·리셋·USB 및 배선 접근 공간은 보호했지만 실제 케이블·헤더·배터리·납땜 모양의 모든 편차를 보증하지 않습니다.
-
-검증 기록은 [내부 충전형 보강판 보고서](../../docs/reports/solid-filled-plates-20260913/README.md)에 있습니다. 디지털 단면·솔리드·메시·Fusion 일치 검증은 실제 출력 강도, 체결 토크, 접점 공차, 키캡 전체 이동 및 RF 시험을 대신하지 않습니다. PCB와 주문된 거버는 변경하지 않았으며 새 PCB 제작 승인이 아닙니다.
+This guide is not current verification evidence. Historical content: Git 5b99bcb4567ea1c6bb4f17e54887d4de7614cd03:hardware/MODELS/PRINT-filled-plates.md.

@@ -1,5 +1,30 @@
 # OPS-ARCH-007: sealed release inputs retain raw SHA-256 across platforms.
 # Do not renormalize these paths; regenerate review evidence if bytes change.
+# CON-ARCH-006 / OPS-ARCH-006: registered housing source/evidence byte chain.
+/docs/reports/registered-housing-fit-20260913/** -text
+/docs/reports/registered-housing-fit-20260913/**/*.step whitespace=-blank-at-eol,cr-at-eol
+/docs/reports/registered-housing-fit-20260913/evidence/raw-step/*.step.raw whitespace=-blank-at-eol,cr-at-eol
+/tools/*registered*.py -text
+/tools/*actual_sections.py -text
+/tools/*actual_envelopes.py -text
+/tools/*central*.py -text
+/tools/*perimeter_wall.py -text
+/tools/*profile_split*.py -text
+/tools/*lower*.py -text
+/tools/*kc2_receiver*.py -text
+/tools/*kc2_floor_capture.py -text
+/tools/diagnose_kc2_*.py -text
+/tools/*kc2_solid_clearance.py -text
+/tools/archive_kc2_distance_attempt.py -text
+/tools/*kc2_component_local_certificate.py -text
+/tools/review_kc2_d8_local_certificate.py -text
+/tools/*review_kc2_floor_receiver.py -text
+/tools/review_kc2_lower_component_distance.py -text
+/tools/*joined*.py -text
+/tools/*ab_*.py -text
+/tools/*wall_registration.py -text
+/tools/*split_fit*.py -text
+/tools/fusion/KC2RegisteredHousingToF3D/** -text
 /hardware/PCB/** -text
 /hardware/GERBER/** -text
 /hardware/MODELS/** -text
@@ -309,6 +334,11 @@
 /tools/test_kc2_solder_route_clearance.py -text
 /tools/test_kc2_solder_route_snapshot.py -text
 /tools/test_kc2_v1_first_order_contract.py -text
+/tools/test_kc2_floor_capture_gate.py -text
+/tools/kc2_stl_zero_area_filter.py -text
+/tools/test_kc2_stl_zero_area_filter.py -text
+/tools/kc2_step_whitespace.py -text
+/tools/test_kc2_step_whitespace.py -text
 /tools/test_kc2_v1_locator_slots.py -text
 /tools/test_prepare_kc2_first_order.py -text
 /tools/test_verify_kc2_canonical_paths.py -text

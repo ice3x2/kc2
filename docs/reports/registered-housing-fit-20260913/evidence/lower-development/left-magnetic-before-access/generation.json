@@ -1,0 +1,69 @@
+{
+  "requirements": [
+    "CON-ARCH-006"
+  ],
+  "side": "left",
+  "magnetic": true,
+  "status": "generated_pending_independent_review",
+  "body_count": 1,
+  "physical_qualified": false,
+  "canonical_changed": false,
+  "source_sha256": {
+    "tools/stage_kc2_lower_top_clearance.py": "233584c614af635e55885f0cc9271faa2d3dbf87746d8d67b0585861e10b26e6",
+    "tools/test_stage_kc2_lower_top_clearance.py": "5dbbfae03611406d9a4baa845b7235c119653153c8f2288783a1e503ae4f9251",
+    ".codex-tmp/registered-housing-fit/lower-development/left-magnetic/kc2_left_lower_housing_magnetic.step": "d0c0ea2e03debe90edb76a1e6c279c1fa5ee7dfb182a8c4989d9161c79038dc2",
+    ".codex-tmp/registered-housing-fit/lower-development/left-magnetic/generation.json": "8240e3d65187cc20b6d6c03c2770b008567e641ea3650875177755eb3c59e9bf",
+    ".codex-tmp/registered-housing-fit/lower-development/left-magnetic/registrar-snapshot.json": "8f46f4835163e9209233a9e98a97ed6b6dc75fb265307094cfe06878eb423924",
+    ".codex-tmp/perimeter-wall-plans.json": "25df0d616c4de1d928dfa132a5e964dd9471fcc4b8bd624fc71f2db262bd8cde",
+    "tools/kc2_central_flexure.py": "34dbc9be59a2674d317bc29c9d0d21af1089912a9cef24995de98e73979c96e0",
+    "tools/generate_kc2_magnetic_housings.py": "f8d20b5a84a5b953aa5a8bd7ca2e6474203347869423612f360829f516c284ec",
+    "hardware/MODELS/kc2_left_lower_housing_magnetic.step": "823e37c6d6fc0933e40a60c303eb964271f4002fb9dd9702f72bad7270efd4b9",
+    "tools/kc2_perimeter_wall.py": "dc288109fad3d755d87bdad74da07f9376ee6dc919c3f74917cd0c5cf9958981",
+    "tools/test_kc2_perimeter_wall.py": "f5e8cad96a3c781f4ccdc4ab67cfd0421e32bdbaeb1bd9b93e974c9b3f26931a",
+    "docs/reports/reinforced-covers-20260913/left-lower.json": "d5cda73b186052c18740c718bb73ca40e339d5ec7e28d680292a23b647e22739",
+    "docs/reports/solid-filled-plates-20260913/left-mx.json": "3965411eb2d455cb006c03d4fc016f21b2ed851a52e5160c86a910226d26cd50",
+    "hardware/PCB/kc2_left/kc2_left.kicad_pcb": "568e1427e4cfb9d667b6d5b3754da3a4e24c924abfa85a8dfe394dd050b5fe67",
+    "docs/reports/reinforced-covers-20260913/right-lower.json": "4cd18ca758b1064bfb963607c54b76577dc1fa637a603b5acd470b6fafff5cf5",
+    "docs/reports/solid-filled-plates-20260913/right-mx.json": "efd3a04be41f07dff47b101ba112616ce506b76cf0d682148c945f589749c8db",
+    "hardware/PCB/kc2_right/kc2_right.kicad_pcb": "88290c3b0cf3951d56221d216549665c0576a816a6315012f7f12b027f402577"
+  },
+  "development_provenance": ".codex-tmp/registered-housing-fit/lower-development/left-magnetic/generation.json",
+  "ordinary_wall_top_mm": 4.1,
+  "registrar_top_mm": 5.0,
+  "top_delta": {
+    "removed_mm3": 141.73255736793627,
+    "added_mm3": 0.0,
+    "off_allowance_removed_mm3": 0.0,
+    "remaining_strip_mm3": 0.0
+  },
+  "outputs": {
+    "kc2_left_lower_housing_magnetic.step": "0f761c41e2fe7c12a5f5cf6f9a93eef3e8396d2f4f77fa7d9d518481155a7c0f",
+    "kc2_left_lower_housing_magnetic.stl": "8328ecacbd268409176a822f696462d64d34e9eae9ce9f7be34b3ddb389b9615"
+  },
+  "mesh": {
+    "watertight": true,
+    "winding_consistent": true,
+    "shells": 1,
+    "bounds_mm": [
+      -2.700000047683716,
+      -1.5,
+      -2.200000047683716,
+      136.6125030517578,
+      124.32599639892578,
+      5.0
+    ],
+    "volume_mm3": 44032.08370321498,
+    "brep_volume_mm3": 44032.078281871676,
+    "volume_error_mm3": 0.005421343303169124,
+    "sha256": "8328ecacbd268409176a822f696462d64d34e9eae9ce9f7be34b3ddb389b9615"
+  },
+  "bounds_mm": [
+    -2.700000100005672,
+    -1.5000001000056715,
+    -2.2000001000072853,
+    136.61250010000762,
+    124.32600010000567,
+    5.000000100000007
+  ],
+  "volume_mm3": 44032.078281871676
+}

@@ -1,0 +1,18 @@
+{
+  "requirements": ["CON-ARCH-006"],
+  "schema": "execution-priority-event-v1",
+  "date_local": "2026-09-14",
+  "timezone": "Asia/Seoul",
+  "session": 38710,
+  "pid": 16728,
+  "verified_executable": "C:\\Python312\\python.exe",
+  "verified_command_line": "\"C:\\Python312\\python.exe\" -B -m tools.review_kc2_lower_component_distance",
+  "new_priority_class": "BelowNormal",
+  "cpu_seconds_at_change": 21539.765625,
+  "working_set_bytes_at_change": 814952448,
+  "reason": "Parent authorized lower scheduler priority to retain original 612-pair execution while improving UI and bounded parallel diagnostic responsiveness.",
+  "process_terminated": false,
+  "code_inputs_or_existing_reports_modified": false,
+  "geometry_or_numeric_scope_changed": false,
+  "acceptance_evidence": false
+}

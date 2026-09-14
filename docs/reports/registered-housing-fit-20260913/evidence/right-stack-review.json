@@ -1,0 +1,319 @@
+{
+  "status": "pass",
+  "errors": [],
+  "side": "right",
+  "requirements": [
+    "CON-ARCH-006",
+    "CON-ARCH-007"
+  ],
+  "physical_qualified": false,
+  "source_sha256": {
+    ".codex-tmp/registered-housing-fit/upper/right-mx/generation.json": "4e8edfb7b77f707c1bfc8466f1c5546ea44f26d49fc3fbdf86973feb07df21c9",
+    "tools/stage_kc2_registered_upper.py": "a0e29989a2aa8eb41d334e0e6dda197d2e85f8505f40dc6e82b5994f4dc257f9",
+    "docs/reports/solid-filled-plates-20260913/right-mx.json": "efd3a04be41f07dff47b101ba112616ce506b76cf0d682148c945f589749c8db",
+    "tools/kc2_registered_upper.py": "0f67b3f7b3afb8768d0e3fa8235cd00144408d85e67fb57e6c7cd3c4cb7510e0",
+    "tools/kc2_registered_wall_plan.py": "d84529b585893f3ffa31c2ef1002add665c85c4b79da0d5a6f81d8ec86f10ea5",
+    "tools/kc2_solid_plate.py": "9ec724e7f84c049b2e0ee78001c98081fd8812463d280dfe941419938e76a19a",
+    "tools/kc2_filled_plate_profiles.py": "3faee645c0413661ce45f9bee96773546ac4479f21ea663257f4c7f0a79d6291",
+    "tools/test_kc2_registered_upper.py": "6865884c7c6edab68f7cea9ee51a809424090ef08fde2cf4cff4153cf43ba287",
+    "tools/test_stage_kc2_registered_upper.py": "d00c5a853ee0fcc382c57b42bf48d543ef0aaa5eb56dc3d5bf58a36904ca9055",
+    "tools/generate_kc2_magnetic_housings.py": "f8d20b5a84a5b953aa5a8bd7ca2e6474203347869423612f360829f516c284ec",
+    "tools/generate_kc2_x3_v2_housings.py": "0f2ef9076cff70916f77b124495fc1a5ea46751d19155378d9224a30a9168b69",
+    "tools/generate_kc2_housings.py": "cbf34705101526043bf4a43daed6e50dee2c67dc61ae0832debd70e62f5e5e16",
+    "tools/render_kc2_x3_joined.py": "903c3e2353aabfe7ff8a804f0bd0653ab0a90c3f881f8819ab239ca9aa1666b1",
+    "hardware/PCB/kc2_left/kc2_left.kicad_pcb": "568e1427e4cfb9d667b6d5b3754da3a4e24c924abfa85a8dfe394dd050b5fe67",
+    "hardware/PCB/kc2_right/kc2_right.kicad_pcb": "88290c3b0cf3951d56221d216549665c0576a816a6315012f7f12b027f402577",
+    "tools/kc2_profile_split.py": "e0dae24cf099f19b7c40eed2e995c7352d07f25fc7fa85ca4de1da3600c04d68",
+    ".codex-tmp/registered-housing-fit/upper/right-mx/brep-review.json": "3f1ccb7f375c7b69c1cbd62c270acf994f1b019061543913b9727341175524fd",
+    "tools/review_kc2_registered_upper.py": "a46bf24338eb03bfc78e03ce54f0e25abf74aa67e11cb5a29bf7f0a3d3d956fb",
+    "tools/test_review_kc2_registered_upper.py": "ad3f305b06a3f2e90996cc8773585b09914f97a06788bdbd1813e7e9a78ebcab",
+    "tools/review_kc2_filled_plates.py": "9dd90e3bd055a2531295065a483c0827865e98687098e65595b2d69816042418",
+    ".codex-tmp/registered-housing-fit/upper/right-mx/kc2_right_mx_upper_housing.step": "d226a1555ee1e13605023bc86bc4b290d96d8ecaaaf60eebc47ce2c74969452a",
+    ".codex-tmp/registered-housing-fit/upper/right-mx/kc2_right_mx_upper_housing_part_a.stl": "59328f23b3c0ae54aa9440a5c1f0ec7e2d62a1dcddab6cdd51a029235b96fb9a",
+    ".codex-tmp/registered-housing-fit/upper/right-mx/kc2_right_mx_upper_housing_part_b.stl": "57deccce147a4006ae4ad88b7f59be4519e8b402bb5054cf427a7e328990beea",
+    "tools/review_kc2_registered_upper_faces.py": "4ad8f1bd805946d7c17df3d3e6d43852acde507fd7f9e40949ea47b33fce9e4b",
+    "tools/test_review_kc2_registered_upper_faces.py": "f5bebcfbeb5c2aff4b67f64dc260a0506abfe7046ba23f8a4dd8517386021168",
+    "tools/kc2_actual_sections.py": "1a522d7043c5483e1d1aba54667f3db5a776c95abcbc8ddee57b57344ef5797d",
+    "tools/test_kc2_actual_sections.py": "e951e30dd7bb3d749268adab04a926da6e0a0ef3b0ffd63944ed35ddb6b13f62",
+    ".codex-tmp/registered-housing-fit/ab/profiles/mx-split-plan.json": "e5a52936802d4b5469e7aed6724ce5a81c5b36cdb01a1811866c09d457577e41",
+    "tools/review_kc2_profile_split_cad.py": "08c59ff87c91ece7ead7c1cfd32854eda3feb324fd2432382ac07f1407b99684",
+    "tools/test_review_kc2_profile_split_cad.py": "2bf3207410ef7d72300df7ba991c0414ce60590e8d46297b30d4d2e007f214ee",
+    ".codex-tmp/registered-housing-fit/upper/right-mx/brep-review-seam-diagnostic.json": "7eaf87fd5eb2a74b19afa5773d807bf75450aadc0a66a2df3fc1b11d1fc242bc",
+    ".codex-tmp/registered-housing-fit/upper/right-mx/split-review.json": "db347ebcb42526027c9c7e058af3acfd240f5bf90e4e488fd983910f14400fd7",
+    "tools/review_kc2_registered_upper_mask_contract.py": "6239199c7dc933e057e59bed706ef57be164f4ef42e31629d90b2f3a1b849d71",
+    "tools/test_review_kc2_registered_upper_mask_contract.py": "c9cec1dedf1487761174ec61f7c9b4ac0128b536dc6ecc6d33aa071d00340134",
+    "tools/kc2_registered_release_gate.py": "47aeaadad39388ff7666f117eea1c31c10300b28b8749e211ba89dd8572a45b7",
+    ".codex-tmp/registered-housing-fit/upper/right-choc_v1/generation.json": "1cfb2a999bc70e37ccd378c9d585397c509226de9fb0e93222e357ed80b3f239",
+    "docs/reports/solid-filled-plates-20260913/right-choc_v1.json": "97b969b56465d10dffd6df10482801874be2db8c06289483d6f716bbaba2f58f",
+    ".codex-tmp/registered-housing-fit/upper/right-choc_v1/brep-review.json": "0f7e7c013c3838084d00bbe39ed0207868136833a714884f2123baaccfc47547",
+    ".codex-tmp/registered-housing-fit/upper/right-choc_v1/kc2_right_choc_v1_upper_housing.step": "98ade56b36f606f6653465785fc3915d0008acadfa772dc0a4a8673d8304f025",
+    ".codex-tmp/registered-housing-fit/ab/profiles/choc_v1-split-plan.json": "d920a7484d162f17fac6c9a51adda8ef95b3542782b61ef4701758ffdf3817c1",
+    ".codex-tmp/registered-housing-fit/upper/right-choc_v1/kc2_right_choc_v1_upper_housing_part_a.stl": "f6a3f03aa51077d4ad9b1c06d8cbda3f95bec1939aab611be77d6efccb4bca24",
+    ".codex-tmp/registered-housing-fit/upper/right-choc_v1/kc2_right_choc_v1_upper_housing_part_b.stl": "b7b4b00e78d56f38a79ba3bfe2a757a9f350a641fb78b4f2ed0e53dfbab61ef0",
+    ".codex-tmp/registered-housing-fit/upper/right-choc_v1/split-review.json": "d7eba2f5458db92defd8dea9bcbb9944ad5c48acb7d9c11ca46e2ce7ce3d67f8",
+    "tools/review_kc2_registered_upper_direct.py": "c0ac5cb3b6202e685a602839271989c9c54f81493e5e567cbaf5badc2b1e131d",
+    "tools/test_review_kc2_registered_upper_direct.py": "cc8fa59abd148bd273f700d604186489bd2f3236ae4d549003cbdf37db52316e",
+    ".codex-tmp/registered-housing-fit/upper/right-deep_sea/generation.json": "b5e7bf70bb18d078f1a52f93c4de4cc485fa68298bb334a948abbcb5637d5a25",
+    "docs/reports/solid-filled-plates-20260913/right-deep_sea.json": "9a51a4d3899ce0b8196c1347236b1cfd74fc2a8d473e71e03b989e6f8a812ac9",
+    ".codex-tmp/registered-housing-fit/upper/right-deep_sea/brep-review.json": "f4edae82842e3a82b621be32e20a5e84cc56b2306482a52fcd32514c5a4a1a3e",
+    ".codex-tmp/registered-housing-fit/upper/right-deep_sea/kc2_right_deep_sea_upper_housing.step": "887bacf01964a0b3c85067fdd646da991c38b4586f9cf04b182599c0c0537148",
+    ".codex-tmp/registered-housing-fit/ab/profiles/deep_sea-split-plan.json": "864396e61a3c5b329cd1cc09da730b91f3e55182c00b6e167455210c419049b9",
+    ".codex-tmp/registered-housing-fit/upper/right-deep_sea/kc2_right_deep_sea_upper_housing_part_a.stl": "395246476c2bab081df63d195b68f5ac14e2193462ca78900be71e38bc633e4a",
+    ".codex-tmp/registered-housing-fit/upper/right-deep_sea/kc2_right_deep_sea_upper_housing_part_b.stl": "98f306fba49634b01f3cea063597e2cf9656ea18ae4e5b2c0b20e4fa9dd853b2",
+    ".codex-tmp/registered-housing-fit/upper/right-deep_sea/split-review.json": "4bddd1b117e7d4419af0e3d2bfe9f0c6afa3bfd74cca3aee01f00209e6085693",
+    ".codex-tmp/registered-housing-fit/lower/right-receiver-strata-transfer.json": "3a364a09cb6ca8d64c86d570877ce51147ab04523c1b8c3e4711e791a4380923",
+    ".codex-tmp/registered-housing-fit/lower-development/receiver-cleanup-inputs/snapshot-map.json": "114cfb8f34cbda88d6258a9946e68b7098076b1381791f448c7293f98022ec2f",
+    ".codex-tmp/registered-housing-fit/lower-development/receiver-cleanup-inputs/right-normal/generation.json": "848d8f3e9e381f3cfc434fa5d04f5f68253ee9d83e5327c0b82e7d681fbfa017",
+    "tools/stage_kc2_registered_right_lower.py": "9618c0d9e5f5fae83d7640e430e7a8118604bbbce45d01b992f4b77c2c5fe786",
+    "hardware/MODELS/kc2_right_lower_housing.step": "1a4b127837317b217b01ec8cf4455e977e217bb1e9a7257234fe7094a60db24a",
+    "docs/reports/reinforced-covers-20260913/right-lower.json": "4cd18ca758b1064bfb963607c54b76577dc1fa637a603b5acd470b6fafff5cf5",
+    ".codex-tmp/perimeter-wall-plans.json": "25df0d616c4de1d928dfa132a5e964dd9471fcc4b8bd624fc71f2db262bd8cde",
+    "tools/kc2_lower_split_extension.py": "63ab481b0a2e891cc799bd3e62589e35d86ff708f3572d0265554737625f5481",
+    "tools/test_kc2_lower_split_extension.py": "306432effe2a57d28caeed75c02d45be609f6f6923eac607ddff8cca978568c7",
+    "tools/kc2_split_fit_relief.py": "b48d8871dd24cf673fa462e37e93a4c9c35dbd45f058152f7ca24bf99cf67937",
+    "tools/kc2_central_flexure.py": "34dbc9be59a2674d317bc29c9d0d21af1089912a9cef24995de98e73979c96e0",
+    "tools/kc2_central_fit.py": "138ffd199cfe5cdc5c265d80f17a5bea048f1b526dcb3bdc47fcbd24ff3a9735",
+    "tools/stage_kc2_registered_lower.py": "fc2ff26e0d227653a8929c569a9db9b61827bdab691da66912e5f8d1277fa140",
+    "tools/test_stage_kc2_registered_lower.py": "fde57b708a0301c7cf3d845fa99b6944f4bc0a87e1b9a357c342b70bcf8db650",
+    "tools/kc2_perimeter_wall.py": "dc288109fad3d755d87bdad74da07f9376ee6dc919c3f74917cd0c5cf9958981",
+    "tools/kc2_lower_central_relief.py": "8388c5e60a36da7e2bda0c8dba7ef8cb159e59d8064291dfe077684d90754653",
+    "tools/test_kc2_lower_central_relief.py": "e6d81bf9bf3efef176576862febac4fa097e9c38702036859eba1655692ac168",
+    "tools/kc2_magnetic_entry.py": "f4c3b4be24a92ec8fd6543ff93475511fbc14419384afe63d1aff7cdf008f039",
+    "tools/test_kc2_magnetic_entry.py": "692c182ac936c8dbe281b4459bf1e6f1f8781176322be674923171f1b8125708",
+    "tools/test_kc2_perimeter_wall.py": "f5e8cad96a3c781f4ccdc4ab67cfd0421e32bdbaeb1bd9b93e974c9b3f26931a",
+    "docs/reports/reinforced-covers-20260913/left-lower.json": "d5cda73b186052c18740c718bb73ca40e339d5ec7e28d680292a23b647e22739",
+    "docs/reports/solid-filled-plates-20260913/left-mx.json": "3965411eb2d455cb006c03d4fc016f21b2ed851a52e5160c86a910226d26cd50",
+    ".codex-tmp/registered-housing-fit/lower-development/receiver-cleanup-inputs/right-normal/kc2_right_lower_housing.step": "f946902971b3b108104fbd13483f345b075fdd24303e53e386e901ae58bb684b",
+    ".codex-tmp/registered-housing-fit/lower-development/receiver-cleanup-inputs/right-normal/receiver-cleanup-plan.json": "44ecadf26522b067da275acb91553eb086456f876806adbf17241d24ac94e9a6",
+    "tools/plan_kc2_receiver_cleanup.py": "896a66ed0e3fbb40a13a715f74713260a97857d751b5c76eef22a0be8a82802f",
+    ".codex-tmp/registered-housing-fit/lower-development/receiver-cleanup-inputs/right-normal/receiver-cleanup-candidate.json": "e171ae63c8f203b09558cc54b77968ed0d723f014b28116515cd2b3ee9348bae",
+    ".codex-tmp/registered-housing-fit/lower-development/receiver-cleanup-inputs/right-normal/receiver-supports-plan.json": "200ac02abe6172e99d0fac71d57254907eaf940b0cd8d4a68f05eb16df74de70",
+    "tools/kc2_receiver_cleanup.py": "e45847de4d2f33a4ab7cac131c96c9675b67ed26b66889c0d9d3235350fc0140",
+    "tools/test_kc2_receiver_cleanup.py": "9f2e5d9cc345968eb37e52620df8da52c673b309c1c265b56b78693a87bd745a",
+    ".codex-tmp/registered-housing-fit/lower-development/receiver-cleanup-inputs/right-normal/throat-diagnosis.json": "a77032ee024eb893758376092853d351972f7937a86200db1f4c6583d2a60eff",
+    ".codex-tmp/registered-housing-fit/lower-development/receiver-cleanup-inputs/provenance/receiver_cleanup_candidate.py": "c2f3136b85219bd56397d6e6e0d05a817f36ccbc00e86e065ee06f068d72225e",
+    "tools/plan_kc2_lower_receiver_supports.py": "348975a38efe227f2dd9ca41ba4da7addcd63722a847e23a52390182874f2e7e",
+    "tools/plan_kc2_lower_receiver_repair.py": "cbccb04ce58e21c9b60a364b13c1e4d61e5a42046af6414ef9a9582837911ed9",
+    ".codex-tmp/registered-housing-fit/lower-development/receiver-cleanup-inputs/right-normal/receiver-floor-prism-diagnosis.json": "55dbe5b47ded9234b73d28700c4325378a56c987f80840eaee6d547da30954c4",
+    "tools/diagnose_kc2_receiver_floor_prism.py": "3595552a4458b777d73de38cf7e90ca11743345cadc083523a2c39f5744ec219",
+    "tools/test_diagnose_kc2_receiver_floor_prism.py": "586deeba5868223e13ac66ac79f224c54bd2cc7645219a9299b2028a675da110",
+    "tools/review_kc2_local_covers.py": "f5b1f0cf717fab55fbf1c84890d249fdb7e765e1ea53153a9ce7803ac7374332",
+    "tools/diagnose_kc2_lower_throat.py": "0ce566fae7cf3370d824b3a324fad1c82877744f903d3e27d695cd7307fd244c",
+    ".codex-tmp/registered-housing-fit/lower-development/receiver-cleanup-inputs/right-normal/split-review.json": "14b86db40584b6d9e8a1234cb179500401b7e30fd688bbc2cc732cf8fa03214f",
+    "tools/review_kc2_lower_split.py": "34b18701f371744649bdfc214baa1f632166dbcb8e7cfe10c15b1107ef828442",
+    "tools/test_review_kc2_lower_split.py": "e273e133c7a56a21ef4fbe92575cfe9a98ae85d959375abd5d9576edf694ac12",
+    "tools/kc2_lower_native_identity.py": "15966af37108584773b1504eac56227fc8d1b7c38dd621a1180a4fd823cafdfe",
+    ".codex-tmp/registered-housing-fit/lower-development/receiver-cleanup-inputs/right-magnetic/generation.json": "fc3d6b6d75d4bc61700ff05e4a1ca316541acea8225bc6c843fbeb1dbda4ebc3",
+    "tools/stage_kc2_right_magnetic_from_normal.py": "e82fe018dcddca3fa0dc68a2a3f36989a4d9356d50cb3e9236289bd5594224e2",
+    "tools/test_stage_kc2_right_magnetic_from_normal.py": "864e00e1c4656db8d24f75a3ba5a8b2bb67c9f2454b1b0c9f13d1cb0ae1f32e1",
+    "hardware/MODELS/kc2_right_lower_housing_magnetic.step": "67d3afb0234876b35242a74a786f333b62514ac49ca3bce589af52398e18cce4",
+    ".codex-tmp/registered-housing-fit/lower-development/receiver-cleanup-inputs/right-magnetic/kc2_right_lower_housing_magnetic.step": "3b8e075e2ab89d58d9450cfdde4f81c2299b3da76d41acbfebc58f2edaec47fd",
+    ".codex-tmp/registered-housing-fit/lower-development/receiver-cleanup-inputs/right-strata-predicate-bundle.json": "16e7572cb5a0571c9027a217347d2233b80904f347e49d0aac2dbe63f691e924",
+    "tools/review_kc2_lower_voids_v2.py": "4d2138457df74e8d33424ee8ee44e1493a8c58429ca92de551389e75e7da0427",
+    "tools/test_review_kc2_lower_voids_v2.py": "b40ea54f89498b2ef358d71324bb4d4e61e3fe06c883ccd50c38df4e78f37bfa",
+    "tools/kc2_required_lower_clearance.py": "d5306dfd70538f8ff11d9afd9518092a6cb146022872557492c31209b4ae11db",
+    "tools/test_kc2_required_lower_clearance.py": "e3438bc68ada9453aa795e8a75e8da81f1f6127962cf5b7f2eb598c8491becc5",
+    ".codex-tmp/registered-housing-fit/lower-development/receiver-cleanup-inputs/right-void-review.json": "ef8d4e0c1a2a0095aef368998f181eeb6b1afcf66b1d705dbde11b4f56faf72e",
+    "tools/review_kc2_lower_strata.py": "aa68cb70aadf10eb22862fbd68de9965c4b7581203bb81edfed23d906f76ebd2",
+    "tools/kc2_lower_strata.py": "35c7d9881fb393b6ddd93c3dd56373802ea837b9f7842a09b7b07cf42567151f",
+    "tools/test_kc2_lower_strata.py": "53a1bb32a0f1b9222b37c1849d625fbf0cb4b1cb1e181b53513227abd0c5472b",
+    "tools/kc2_lower_predicate_bundle.py": "bfaaf2d788161dd0ddad9c76f090fd1faab4af110269e48a7ca35ee46a260e65",
+    "tools/test_kc2_lower_predicate_bundle.py": "9ee13a889584ea77f47e9dba2eca7b878a62dbd1bcfcf2a3c16dbc5a7ae179f9",
+    "tools/kc2_component_local_certificate.py": "19c48b5437378948eda5a36a328c9c962b34764d1055d5fca8f7642d2b3277fb",
+    "tools/kc2_magnetic_subset.py": "ac49df73cd2343a83e9f4ae2b9d29bc7ddfd9da2ccae7552b8e68da713014915",
+    "tools/test_kc2_magnetic_subset.py": "351244654d058faa70e4d6905a06fbc90c387788ae150d1c39d073f85bbbc61c",
+    "tools/review_kc2_magnetic_subset.py": "47d724d77dcab6fa03f7eb8a0ae3c15ea349bcd54424bde595e5a94b070203df",
+    ".codex-tmp/registered-housing-fit/lower-development/receiver-cleanup-inputs/right-normal-strata-review.json": "c69a3692213282e157e273d427b25708172e64d74bd04f9e807c41277bf3867b",
+    ".codex-tmp/registered-housing-fit/lower-development/receiver-cleanup-inputs/right-magnetic-subset-review.json": "150a3a5c0940a2c7cbbc336b54ac03d8c171728560111b6404fb37a7bfbbfdd8",
+    "tools/kc2_lower_strata_bundle.py": "6487021e2045f0b1cb1877b643f59214889283eea918bd7ef4bb4abac1233a06",
+    "tools/test_kc2_lower_strata_bundle.py": "56924b3b944c0001ce0e51625d8e2f37df5366f6b14b0321869c18ac1dd0f938",
+    ".codex-tmp/registered-housing-fit/lower/right-receiver-cleanup-review.json": "574b0852c3cfbf286e94c888f0807b9c06663f5c9854d4706fc1eac183229f7f",
+    ".codex-tmp/registered-housing-fit/lower/right-normal/generation.json": "5cb639f42c8b34f9595177294da569fdf78f631084eb1ad6f49c1426e8d630aa",
+    ".codex-tmp/registered-housing-fit/lower/right-normal/kc2_right_lower_housing.step": "330ee2c4f75b8f2e89bee8bf1086664aed2b0d14a8e73bb322f6be8080ab88b7",
+    "tools/stage_kc2_receiver_cleanup.py": "74cffabb712f5b21e0d947a9e9d447b2b439975b8d3128f912de5a41ac0e78d8",
+    "tools/test_kc2_receiver_snapshot.py": "2b9964fee1d6ccfe39135110321989a4a7be3ecd78c364c0a6ad068acc8e6e09",
+    "tools/kc2_stl_zero_area_filter.py": "4b5486493026ff8d04db3c3240ee3b0936d9ca4d7f4390e5927db9436b031ff0",
+    "tools/test_kc2_stl_zero_area_filter.py": "d4098ee675f5bad3babb98fd72e123ac645d3e8ed27a94af3306f8d64225f24c",
+    ".codex-tmp/registered-housing-fit/lower/right-magnetic/generation.json": "7ea8a0967111eb3c629f7ceb1244a5d781475082290637590733a3903d83d0b3",
+    ".codex-tmp/registered-housing-fit/lower/right-magnetic/kc2_right_lower_housing_magnetic.step": "c76f2543ef299035202932af0066a07f01ab0747c80b5f21006a071b45598a50",
+    "tools/review_kc2_receiver_cleanup.py": "59fe4f41e13e3c7ac511845edc70342e8ffffd8b9cd0a38ae8356016d804e1c4",
+    "tools/test_review_kc2_receiver_cleanup.py": "69bad035b86dc9ece5edae51749ce063d735e43c51e50b526888288ef5696555",
+    "tools/kc2_receiver_bundle_transfer.py": "27406cab3c903553a32d244ac36c0bb51e58b58117c9cd8b004918b5e7150674",
+    "tools/test_kc2_receiver_bundle_transfer.py": "e2b8bb5302c3980d47fc830274ea3b78eb4cdece525df5187725d2a724cb93cc",
+    "tools/publish_kc2_registered_housings.py": "ce29a0761d53b61634c958f054d4eb3e2de5ce7873179a0930d6588152efcebe",
+    "tools/test_publish_kc2_registered_housings.py": "24e700873317a67e43aa7d0a43498490bfc4b6313fc8b5460daebd7adb5ddb2e",
+    "tools/review_kc2_registered_assembly.py": "b261260c815ec33e49e4a074122b2a415ade7e88c7103dc0f37b6e251d093093",
+    "tools/test_review_kc2_registered_assembly.py": "d624bbd60794c181fbe47e22d834ee10251b0c439e9d68eba154922ec1322a90"
+  },
+  "variants": {
+    "normal": {
+      "checks": [
+        {
+          "kind": "mx",
+          "z_mm": 4.225,
+          "overlap_mm2": 0.0,
+          "gap_mm": 8.025758167735301
+        },
+        {
+          "kind": "choc_v1",
+          "z_mm": 4.225,
+          "overlap_mm2": 0.0,
+          "gap_mm": 8.025758167735301
+        },
+        {
+          "kind": "deep_sea",
+          "z_mm": 4.225,
+          "overlap_mm2": 0.0,
+          "gap_mm": 8.025758167735301
+        },
+        {
+          "kind": "mx",
+          "z_mm": 4.375,
+          "overlap_mm2": 0.0,
+          "gap_mm": 8.025758167735301
+        },
+        {
+          "kind": "choc_v1",
+          "z_mm": 4.375,
+          "overlap_mm2": 0.0,
+          "gap_mm": 8.025758167735301
+        },
+        {
+          "kind": "deep_sea",
+          "z_mm": 4.375,
+          "overlap_mm2": 0.0,
+          "gap_mm": 8.025758167735301
+        },
+        {
+          "kind": "mx",
+          "z_mm": 4.7,
+          "overlap_mm2": 0.0,
+          "gap_mm": 0.24999999999999997
+        },
+        {
+          "kind": "choc_v1",
+          "z_mm": 4.7,
+          "overlap_mm2": 0.0,
+          "gap_mm": 0.24999999999999997
+        },
+        {
+          "kind": "deep_sea",
+          "z_mm": 4.7,
+          "overlap_mm2": 0.0,
+          "gap_mm": 0.24999999999999997
+        },
+        {
+          "kind": "mx",
+          "z_mm": 5.1,
+          "overlap_mm2": 0.0,
+          "gap_mm": null
+        },
+        {
+          "kind": "choc_v1",
+          "z_mm": 5.1,
+          "overlap_mm2": 0.0,
+          "gap_mm": null
+        },
+        {
+          "kind": "deep_sea",
+          "z_mm": 5.1,
+          "overlap_mm2": 0.0,
+          "gap_mm": null
+        }
+      ],
+      "levels_mm": [
+        2.5,
+        4.1,
+        4.35,
+        4.4,
+        5.0,
+        5.2
+      ]
+    },
+    "magnetic": {
+      "checks": [
+        {
+          "kind": "mx",
+          "z_mm": 4.225,
+          "overlap_mm2": 0.0,
+          "gap_mm": 8.025758167735301
+        },
+        {
+          "kind": "choc_v1",
+          "z_mm": 4.225,
+          "overlap_mm2": 0.0,
+          "gap_mm": 8.025758167735301
+        },
+        {
+          "kind": "deep_sea",
+          "z_mm": 4.225,
+          "overlap_mm2": 0.0,
+          "gap_mm": 8.025758167735301
+        },
+        {
+          "kind": "mx",
+          "z_mm": 4.375,
+          "overlap_mm2": 0.0,
+          "gap_mm": 8.025758167735301
+        },
+        {
+          "kind": "choc_v1",
+          "z_mm": 4.375,
+          "overlap_mm2": 0.0,
+          "gap_mm": 8.025758167735301
+        },
+        {
+          "kind": "deep_sea",
+          "z_mm": 4.375,
+          "overlap_mm2": 0.0,
+          "gap_mm": 8.025758167735301
+        },
+        {
+          "kind": "mx",
+          "z_mm": 4.7,
+          "overlap_mm2": 0.0,
+          "gap_mm": 0.24999999999999997
+        },
+        {
+          "kind": "choc_v1",
+          "z_mm": 4.7,
+          "overlap_mm2": 0.0,
+          "gap_mm": 0.24999999999999997
+        },
+        {
+          "kind": "deep_sea",
+          "z_mm": 4.7,
+          "overlap_mm2": 0.0,
+          "gap_mm": 0.24999999999999997
+        },
+        {
+          "kind": "mx",
+          "z_mm": 5.1,
+          "overlap_mm2": 0.0,
+          "gap_mm": null
+        },
+        {
+          "kind": "choc_v1",
+          "z_mm": 5.1,
+          "overlap_mm2": 0.0,
+          "gap_mm": null
+        },
+        {
+          "kind": "deep_sea",
+          "z_mm": 5.1,
+          "overlap_mm2": 0.0,
+          "gap_mm": null
+        }
+      ],
+      "levels_mm": [
+        2.5,
+        4.1,
+        4.35,
+        4.4,
+        5.0,
+        5.2
+      ]
+    }
+  },
+  "scope": "Actual prismatic lower Z>=2.5 sections against independently actual-audited upper layers; central contact and under-PCB voids separate"
+}

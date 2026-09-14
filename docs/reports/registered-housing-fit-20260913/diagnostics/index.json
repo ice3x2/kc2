@@ -1,0 +1,347 @@
+{
+  "requirements": [
+    "CON-ARCH-006"
+  ],
+  "schema": "historical-diagnostic-preservation-v1",
+  "status": "historical_validation_records_preserved",
+  "publisher_pass_input": false,
+  "files": [
+    {
+      "source": ".codex-tmp/registered-housing-fit/lower-development/component-distance-attempt-1/interrupted.json",
+      "destination": "docs/reports/registered-housing-fit-20260913/diagnostics/component-distance-attempt-1/interrupted.json",
+      "sha256": "90fbe0c719927ba2307e4c78e921e17aa1ea4f325b42c39aa7485c7e1d669bfb",
+      "classification": "interrupted_not_accepted"
+    },
+    {
+      "source": ".codex-tmp/registered-housing-fit/lower-development/component-distance-attempt-1/review_kc2_lower_component_distance.py",
+      "destination": "docs/reports/registered-housing-fit-20260913/diagnostics/component-distance-attempt-1/review_kc2_lower_component_distance.py",
+      "sha256": "fd990b87472dccf10446f15d44ee816b5ddeed4c858d9c3e9ef8e07da3b57693",
+      "classification": "interrupted_not_accepted"
+    },
+    {
+      "source": ".codex-tmp/registered-housing-fit/lower-development/component-distance-attempt-1/kc2_solid_clearance.py",
+      "destination": "docs/reports/registered-housing-fit-20260913/diagnostics/component-distance-attempt-1/kc2_solid_clearance.py",
+      "sha256": "6864e70ede80be3c0cc4b2e9392320a294fe36a0768b321faa6291d1e86971b8",
+      "classification": "interrupted_not_accepted"
+    },
+    {
+      "source": ".codex-tmp/registered-housing-fit/lower-development/component-distance-attempt-1/test_kc2_solid_clearance.py",
+      "destination": "docs/reports/registered-housing-fit-20260913/diagnostics/component-distance-attempt-1/test_kc2_solid_clearance.py",
+      "sha256": "5e814a7f25f45550f3626cc02cf140173bdfc88cc0cf5f216812c78ad68477d8",
+      "classification": "interrupted_not_accepted"
+    },
+    {
+      "source": ".codex-tmp/registered-housing-fit/lower-development/component-distance-attempt-2/interrupted.json",
+      "destination": "docs/reports/registered-housing-fit-20260913/diagnostics/component-distance-attempt-2/interrupted.json",
+      "sha256": "a1ae72034f85e1f3f169f5592bf50a6df5b5ba040bff43ea09ab11c1ca1eb695",
+      "classification": "interrupted_not_accepted"
+    },
+    {
+      "source": ".codex-tmp/registered-housing-fit/lower-development/component-distance-attempt-2/review_kc2_lower_component_distance.py",
+      "destination": "docs/reports/registered-housing-fit-20260913/diagnostics/component-distance-attempt-2/review_kc2_lower_component_distance.py",
+      "sha256": "fd990b87472dccf10446f15d44ee816b5ddeed4c858d9c3e9ef8e07da3b57693",
+      "classification": "interrupted_not_accepted"
+    },
+    {
+      "source": ".codex-tmp/registered-housing-fit/lower-development/component-distance-attempt-2/kc2_solid_clearance.py",
+      "destination": "docs/reports/registered-housing-fit-20260913/diagnostics/component-distance-attempt-2/kc2_solid_clearance.py",
+      "sha256": "60c21043b1b1528e8e9700dd7113099fbbc37a11caa0e3f8ca8c5f8a403b567d",
+      "classification": "interrupted_not_accepted"
+    },
+    {
+      "source": ".codex-tmp/registered-housing-fit/lower-development/component-distance-attempt-2/test_kc2_solid_clearance.py",
+      "destination": "docs/reports/registered-housing-fit-20260913/diagnostics/component-distance-attempt-2/test_kc2_solid_clearance.py",
+      "sha256": "6f48c8802041a5002a40af8ce8154ce6eb0110b5ef459b685f1bf8650393aebe",
+      "classification": "interrupted_not_accepted"
+    },
+    {
+      "source": ".codex-tmp/registered-housing-fit/lower-development/component-distance-attempt-2/component-distance-attempt-2-priority.json",
+      "destination": "docs/reports/registered-housing-fit-20260913/diagnostics/component-distance-attempt-2/component-distance-attempt-2-priority.json",
+      "sha256": "d1df296cae115e49ce46d55173420b3447058212448e767999ad96420a1d56a8",
+      "classification": "interrupted_not_accepted"
+    },
+    {
+      "source": ".codex-tmp/registered-housing-fit/lower/right-diode-failure-diagnosis.json",
+      "destination": "docs/reports/registered-housing-fit-20260913/diagnostics/d8/right-diode-failure-diagnosis.json",
+      "sha256": "17b7938d56794974c924f084a5e8f3aac2611c272d7e8ad6f1343c1b9f0c11b6",
+      "classification": "diagnosed_not_accepted"
+    },
+    {
+      "source": "tools/diagnose_kc2_right_diode_failure.py",
+      "destination": "docs/reports/registered-housing-fit-20260913/diagnostics/d8/diagnose_kc2_right_diode_failure.py",
+      "sha256": "d5f7bb0e06082e3456ae2d3cef52b3e1d653432e8a535b72d6e7d0cd94d6cf19",
+      "classification": "diagnosed_not_accepted"
+    },
+    {
+      "source": ".codex-tmp/registered-housing-fit/lower/right-exact-aggregate-diode-diagnosis.json",
+      "destination": "docs/reports/registered-housing-fit-20260913/diagnostics/d8/right-exact-aggregate-diode-diagnosis.json",
+      "sha256": "653b69ba63bb8363ca29fa45b9176034bfc1f4eb6789cfa6de4348a1d5d65877",
+      "classification": "diagnosed_not_accepted"
+    },
+    {
+      "source": "tools/diagnose_kc2_exact_aggregate_diodes.py",
+      "destination": "docs/reports/registered-housing-fit-20260913/diagnostics/d8/diagnose_kc2_exact_aggregate_diodes.py",
+      "sha256": "fe3d716b3e4b099fb49dde0e8ed1c14a23f74cfcec326d72923db1b6f466df81",
+      "classification": "diagnosed_not_accepted"
+    },
+    {
+      "source": ".codex-tmp/registered-housing-fit/lower/right-d8-nondestructive-diagnosis.json",
+      "destination": "docs/reports/registered-housing-fit-20260913/diagnostics/d8/right-d8-nondestructive-diagnosis.json",
+      "sha256": "c91edeb37b025172ce27028c5cf94bf9f3b2b60b9859d1c37a89ee71a6e76599",
+      "classification": "diagnosed_not_accepted"
+    },
+    {
+      "source": "tools/diagnose_kc2_d8_nondestructive.py",
+      "destination": "docs/reports/registered-housing-fit-20260913/diagnostics/d8/diagnose_kc2_d8_nondestructive.py",
+      "sha256": "4ff6329007337bcac76de86d4373682778537c90fd420b371868e6d38d0ddfff",
+      "classification": "diagnosed_not_accepted"
+    },
+    {
+      "source": ".codex-tmp/registered-housing-fit/lower/right-d8-boundary-diagnosis.json",
+      "destination": "docs/reports/registered-housing-fit-20260913/diagnostics/d8/right-d8-boundary-diagnosis.json",
+      "sha256": "2b865f0ecec3eb8690ad4a8f7e1990e4a898badec5cde62d6e32799ffa8d008f",
+      "classification": "diagnosed_not_accepted"
+    },
+    {
+      "source": "tools/diagnose_kc2_d8_boundary.py",
+      "destination": "docs/reports/registered-housing-fit-20260913/diagnostics/d8/diagnose_kc2_d8_boundary.py",
+      "sha256": "b87c678076eccc97e5f1e539f8f5c333e07a0f7c06445e43bd933bdda8e97c6c",
+      "classification": "diagnosed_not_accepted"
+    },
+    {
+      "source": ".codex-tmp/registered-housing-fit/lower/right-d8-shell-seed-diagnosis.json",
+      "destination": "docs/reports/registered-housing-fit-20260913/diagnostics/d8/right-d8-shell-seed-diagnosis.json",
+      "sha256": "931846faac52d9a96dd7f0eace9b6739189f3f2019d3884518382509b43c01b1",
+      "classification": "diagnosed_not_accepted"
+    },
+    {
+      "source": "tools/diagnose_kc2_d8_shell_seed.py",
+      "destination": "docs/reports/registered-housing-fit-20260913/diagnostics/d8/diagnose_kc2_d8_shell_seed.py",
+      "sha256": "71fdfe34e8939bbbaae2a11d94a39d6f05699ca8fe970ce78d7ee07c3a29e397",
+      "classification": "diagnosed_not_accepted"
+    },
+    {
+      "source": ".codex-tmp/registered-housing-fit/lower-development/receiver-cleanup-attempt-1/failure.json",
+      "destination": "docs/reports/registered-housing-fit-20260913/diagnostics/receiver-stl-attempt-1/failure.json",
+      "sha256": "917cc2bcb006c2d1fe6b84142f9449899d1682def24aae11d0e041ef1e86d636",
+      "classification": "failed_not_accepted"
+    },
+    {
+      "source": ".codex-tmp/registered-housing-fit/lower-development/receiver-cleanup-attempt-1/code/stage_kc2_receiver_cleanup.py",
+      "destination": "docs/reports/registered-housing-fit-20260913/diagnostics/receiver-stl-attempt-1/code/stage_kc2_receiver_cleanup.py",
+      "sha256": "2acf5e60b3eb1bdaad9a6b2491a3f342bced87e2c1f1855f87dd7f6013c203b1",
+      "classification": "failed_not_accepted"
+    },
+    {
+      "source": ".codex-tmp/registered-housing-fit/lower-development/receiver-cleanup-attempt-1/code/kc2_receiver_cleanup.py",
+      "destination": "docs/reports/registered-housing-fit-20260913/diagnostics/receiver-stl-attempt-1/code/kc2_receiver_cleanup.py",
+      "sha256": "e45847de4d2f33a4ab7cac131c96c9675b67ed26b66889c0d9d3235350fc0140",
+      "classification": "failed_not_accepted"
+    },
+    {
+      "source": ".codex-tmp/registered-housing-fit/lower-development/receiver-cleanup-attempt-1/code/test_kc2_receiver_cleanup.py",
+      "destination": "docs/reports/registered-housing-fit-20260913/diagnostics/receiver-stl-attempt-1/code/test_kc2_receiver_cleanup.py",
+      "sha256": "9f2e5d9cc345968eb37e52620df8da52c673b309c1c265b56b78693a87bd745a",
+      "classification": "failed_not_accepted"
+    },
+    {
+      "source": ".codex-tmp/registered-housing-fit/lower-development/receiver-cleanup-attempt-1/code/test_kc2_receiver_snapshot.py",
+      "destination": "docs/reports/registered-housing-fit-20260913/diagnostics/receiver-stl-attempt-1/code/test_kc2_receiver_snapshot.py",
+      "sha256": "c32fff9c1b3c4c801e2755f57ad59879e3f169b028578be1c2fbfcb3f402f731",
+      "classification": "failed_not_accepted"
+    },
+    {
+      "source": ".codex-tmp/registered-housing-fit/lower-development/receiver-cleanup-attempt-1/code/generate_kc2_magnetic_housings.py",
+      "destination": "docs/reports/registered-housing-fit-20260913/diagnostics/receiver-stl-attempt-1/code/generate_kc2_magnetic_housings.py",
+      "sha256": "f8d20b5a84a5b953aa5a8bd7ca2e6474203347869423612f360829f516c284ec",
+      "classification": "failed_not_accepted"
+    },
+    {
+      "source": ".codex-tmp/registered-housing-fit/central/integrated-review.json",
+      "destination": "docs/reports/registered-housing-fit-20260913/diagnostics/central-overlap-attempt-1/integrated-review.json",
+      "sha256": "5d5cb315a90dd18caa30ccc721554891ca3fb8567d5b26a8412d1d6ef8015950",
+      "classification": "failed_not_accepted"
+    },
+    {
+      "source": ".codex-tmp/registered-housing-fit/central/overlap-localization.json",
+      "destination": "docs/reports/registered-housing-fit-20260913/diagnostics/central-overlap-attempt-1/overlap-localization.json",
+      "sha256": "20996cdccb8366d944ac3a4ad741bd92a0129e5b9fd2a6a2bea6f24caaf8fc57",
+      "classification": "diagnosed_not_accepted"
+    },
+    {
+      "source": "tools/diagnose_kc2_central_overlap.py",
+      "destination": "docs/reports/registered-housing-fit-20260913/diagnostics/central-overlap-attempt-1/diagnose_kc2_central_overlap.py",
+      "sha256": "eb4885d53bae6a95c2237426e1c997a7cf4c6dd474d435e640007aef6d75679d",
+      "classification": "diagnosed_not_accepted"
+    },
+    {
+      "source": ".codex-tmp/registered-housing-fit/lower-development/left-central-attempt-1/failure.json",
+      "destination": "docs/reports/registered-housing-fit-20260913/diagnostics/left-central-attempt-1/failure.json",
+      "sha256": "e1ff19d56bda5bcd24e3a557a7f8f614ea8220af507825c739a9cba97964861f",
+      "classification": "failed_not_accepted"
+    },
+    {
+      "source": ".codex-tmp/registered-housing-fit/lower-development/left-central-attempt-1/code/stage_kc2_left_central_relief.py",
+      "destination": "docs/reports/registered-housing-fit-20260913/diagnostics/left-central-attempt-1/code/stage_kc2_left_central_relief.py",
+      "sha256": "c0f803e82572a82558d244c56a6e0a143d0899b6777f316d033de80f65933bc6",
+      "classification": "failed_not_accepted"
+    },
+    {
+      "source": ".codex-tmp/registered-housing-fit/lower-development/left-central-attempt-1/code/test_stage_kc2_left_central_relief.py",
+      "destination": "docs/reports/registered-housing-fit-20260913/diagnostics/left-central-attempt-1/code/test_stage_kc2_left_central_relief.py",
+      "sha256": "25b98071549b54ac89f82531579f58c0839f33abe2eeec28b12a8b94b544288c",
+      "classification": "failed_not_accepted"
+    },
+    {
+      "source": ".codex-tmp/registered-housing-fit/lower-development/left-central-attempt-1/code/kc2_left_central_relief.py",
+      "destination": "docs/reports/registered-housing-fit-20260913/diagnostics/left-central-attempt-1/code/kc2_left_central_relief.py",
+      "sha256": "26fe1ad3fa27bb76e1abab7244ddd2c70234853463470935ba5a30a8caa5b552",
+      "classification": "failed_not_accepted"
+    },
+    {
+      "source": ".codex-tmp/registered-housing-fit/lower-development/left-central-attempt-1/code/test_kc2_left_central_relief.py",
+      "destination": "docs/reports/registered-housing-fit-20260913/diagnostics/left-central-attempt-1/code/test_kc2_left_central_relief.py",
+      "sha256": "806fdfb726ff41881b37dddd92c3f91e4dd1eeb516699ccef7b9ccc1db3d12c5",
+      "classification": "failed_not_accepted"
+    },
+    {
+      "destination": "docs/reports/registered-housing-fit-20260913/diagnostics/left-central-attempt-1/pre-correction-unexecuted/review_kc2_left_central_voids.py",
+      "sha256": "97de2a90bc144e3b3a1613cf3ded6b2c76cb6a655ef63a0c17c70d07583d003f",
+      "source": ".codex-tmp/registered-housing-fit/lower-development/left-central-attempt-1/pre-correction-unexecuted/review_kc2_left_central_voids.py",
+      "classification": "unexecuted_pre_correction_source"
+    },
+    {
+      "destination": "docs/reports/registered-housing-fit-20260913/diagnostics/left-central-attempt-1/pre-correction-unexecuted/test_review_kc2_left_central_voids.py",
+      "sha256": "2d990762620b801e5f3663caa631981d549e5fac96f0681c5dce1eb34a10119f",
+      "source": ".codex-tmp/registered-housing-fit/lower-development/left-central-attempt-1/pre-correction-unexecuted/test_review_kc2_left_central_voids.py",
+      "classification": "unexecuted_pre_correction_source"
+    },
+    {
+      "destination": "docs/reports/registered-housing-fit-20260913/diagnostics/pre-step-normalization-validation/code/publish_kc2_registered_housings.py",
+      "archive": ".codex-tmp/registered-housing-fit/lower-development/pre-step-normalization-validation/code/publish_kc2_registered_housings.py",
+      "source": "tools/publish_kc2_registered_housings.py",
+      "classification": "PASSED_BEFORE_PUBLISHER_FORMAT_REVISION",
+      "sha256": "2548af0277b52f49bc4368ab07ce8b0c82336ebc13d557fd594f0d943dd734be"
+    },
+    {
+      "destination": "docs/reports/registered-housing-fit-20260913/diagnostics/pre-step-normalization-validation/code/test_kc2_registered_transaction.py",
+      "archive": ".codex-tmp/registered-housing-fit/lower-development/pre-step-normalization-validation/code/test_kc2_registered_transaction.py",
+      "source": "tools/test_kc2_registered_transaction.py",
+      "classification": "PASSED_BEFORE_PUBLISHER_FORMAT_REVISION",
+      "sha256": "be7e188a802860ab248234af97a05b908c197eab92e1a2ecb9b3f60231d4bded"
+    },
+    {
+      "destination": "docs/reports/registered-housing-fit-20260913/diagnostics/pre-step-normalization-validation/code/test_publish_kc2_registered_housings.py",
+      "archive": ".codex-tmp/registered-housing-fit/lower-development/pre-step-normalization-validation/code/test_publish_kc2_registered_housings.py",
+      "source": "tools/test_publish_kc2_registered_housings.py",
+      "classification": "PASSED_BEFORE_PUBLISHER_FORMAT_REVISION",
+      "sha256": "24e700873317a67e43aa7d0a43498490bfc4b6313fc8b5460daebd7adb5ddb2e"
+    },
+    {
+      "destination": "docs/reports/registered-housing-fit-20260913/diagnostics/pre-step-normalization-validation/actual-envelope-review.json",
+      "archive": ".codex-tmp/registered-housing-fit/lower-development/pre-step-normalization-validation/actual-envelope-review.json",
+      "source": ".codex-tmp/registered-housing-fit/actual-envelope-review.json",
+      "classification": "PASSED_BEFORE_PUBLISHER_FORMAT_REVISION",
+      "sha256": "ecc67b1a0d491fcecb8622acd0cd5d605cfc53aedf0885ab3e43153811def432"
+    },
+    {
+      "destination": "docs/reports/registered-housing-fit-20260913/diagnostics/pre-step-normalization-validation/left-stack-review.json",
+      "archive": ".codex-tmp/registered-housing-fit/lower-development/pre-step-normalization-validation/left-stack-review.json",
+      "source": ".codex-tmp/registered-housing-fit/left-stack-review.json",
+      "classification": "PASSED_BEFORE_PUBLISHER_FORMAT_REVISION",
+      "sha256": "5f4a5c1734ea47f9ec42b6a5e3dfad63b81b230d852d69a5c65ae6a07253a422"
+    },
+    {
+      "destination": "docs/reports/registered-housing-fit-20260913/diagnostics/pre-step-normalization-validation/right-stack-review.json",
+      "archive": ".codex-tmp/registered-housing-fit/lower-development/pre-step-normalization-validation/right-stack-review.json",
+      "source": ".codex-tmp/registered-housing-fit/right-stack-review.json",
+      "classification": "PASSED_BEFORE_PUBLISHER_FORMAT_REVISION",
+      "sha256": "fb81672c87b6655c6c60eaa28b7800561a7cee35a2df8db7bee6b72936686d0b"
+    },
+    {
+      "destination": "docs/reports/registered-housing-fit-20260913/diagnostics/pre-step-normalization-validation/lower/left-native-void-review.json",
+      "archive": ".codex-tmp/registered-housing-fit/lower-development/pre-step-normalization-validation/lower/left-native-void-review.json",
+      "source": ".codex-tmp/registered-housing-fit/lower/left-native-void-review.json",
+      "classification": "PASSED_BEFORE_PUBLISHER_FORMAT_REVISION",
+      "sha256": "61f812bcb6091fceb8fbb0b9180e6cae059dc4d25b5cec4636ec308f7c8e842c"
+    },
+    {
+      "destination": "docs/reports/registered-housing-fit-20260913/diagnostics/pre-step-normalization-validation/lower/left-magnetic-entry-native-review.json",
+      "archive": ".codex-tmp/registered-housing-fit/lower-development/pre-step-normalization-validation/lower/left-magnetic-entry-native-review.json",
+      "source": ".codex-tmp/registered-housing-fit/lower/left-magnetic-entry-native-review.json",
+      "classification": "PASSED_BEFORE_PUBLISHER_FORMAT_REVISION",
+      "sha256": "2fb200d631bc43a297f6a0881cf9be92745bd4dccd02995feaf49b01b85fac25"
+    },
+    {
+      "destination": "docs/reports/registered-housing-fit-20260913/diagnostics/pre-step-normalization-validation/lower/left-normal/floor-native-review.json",
+      "archive": ".codex-tmp/registered-housing-fit/lower-development/pre-step-normalization-validation/lower/left-normal/floor-native-review.json",
+      "source": ".codex-tmp/registered-housing-fit/lower/left-normal/floor-native-review.json",
+      "classification": "PASSED_BEFORE_PUBLISHER_FORMAT_REVISION",
+      "sha256": "d18ef134c7f1aed20d69b5e58017370b14a50c881c61c0b1e06b82f66c31c3a5"
+    },
+    {
+      "destination": "docs/reports/registered-housing-fit-20260913/diagnostics/pre-step-normalization-validation/lower/left-magnetic/floor-native-review.json",
+      "archive": ".codex-tmp/registered-housing-fit/lower-development/pre-step-normalization-validation/lower/left-magnetic/floor-native-review.json",
+      "source": ".codex-tmp/registered-housing-fit/lower/left-magnetic/floor-native-review.json",
+      "classification": "PASSED_BEFORE_PUBLISHER_FORMAT_REVISION",
+      "sha256": "8fc4e59e2caffdbd7f0f8d9cd441ae805b201b0c23f96c7ba9f07d147cd1e75b"
+    },
+    {
+      "destination": "docs/reports/registered-housing-fit-20260913/diagnostics/pre-step-normalization-validation/lower/right-native-void-review.json",
+      "archive": ".codex-tmp/registered-housing-fit/lower-development/pre-step-normalization-validation/lower/right-native-void-review.json",
+      "source": ".codex-tmp/registered-housing-fit/lower/right-native-void-review.json",
+      "classification": "PASSED_BEFORE_PUBLISHER_FORMAT_REVISION",
+      "sha256": "04e4c859e6c40eb6bad1ad9f74c808df46233e6de18e6363c70eab45c258414a"
+    },
+    {
+      "destination": "docs/reports/registered-housing-fit-20260913/diagnostics/pre-step-normalization-validation/lower/right-magnetic-entry-native-review.json",
+      "archive": ".codex-tmp/registered-housing-fit/lower-development/pre-step-normalization-validation/lower/right-magnetic-entry-native-review.json",
+      "source": ".codex-tmp/registered-housing-fit/lower/right-magnetic-entry-native-review.json",
+      "classification": "PASSED_BEFORE_PUBLISHER_FORMAT_REVISION",
+      "sha256": "723ceef8059b779e84b7d38caae1df6c9775305321bc3b990a85d212dbaf77e1"
+    },
+    {
+      "destination": "docs/reports/registered-housing-fit-20260913/diagnostics/pre-step-normalization-validation/lower/right-normal/floor-native-review.json",
+      "archive": ".codex-tmp/registered-housing-fit/lower-development/pre-step-normalization-validation/lower/right-normal/floor-native-review.json",
+      "source": ".codex-tmp/registered-housing-fit/lower/right-normal/floor-native-review.json",
+      "classification": "PASSED_BEFORE_PUBLISHER_FORMAT_REVISION",
+      "sha256": "9b0f6fed9b2b2f6ab20883f4e8164ab423dfb358e54b2d5224da9b4ebdcc3bb8"
+    },
+    {
+      "destination": "docs/reports/registered-housing-fit-20260913/diagnostics/pre-step-normalization-validation/lower/right-magnetic/floor-native-review.json",
+      "archive": ".codex-tmp/registered-housing-fit/lower-development/pre-step-normalization-validation/lower/right-magnetic/floor-native-review.json",
+      "source": ".codex-tmp/registered-housing-fit/lower/right-magnetic/floor-native-review.json",
+      "classification": "PASSED_BEFORE_PUBLISHER_FORMAT_REVISION",
+      "sha256": "1c2e6ad905293aa1b3809e51f3e4091a9a7efae3d9f0915b930979b97da4053a"
+    },
+    {
+      "destination": "docs/reports/registered-housing-fit-20260913/diagnostics/pre-step-normalization-validation/lower/right-normal/floor-capture-native-review.json",
+      "archive": ".codex-tmp/registered-housing-fit/lower-development/pre-step-normalization-validation/lower/right-normal/floor-capture-native-review.json",
+      "source": ".codex-tmp/registered-housing-fit/lower/right-normal/floor-capture-native-review.json",
+      "classification": "PASSED_BEFORE_PUBLISHER_FORMAT_REVISION",
+      "sha256": "7a6665b95dff7cf8f14feef6eb2721130c5d3f7cb0e1ee775605ebccccee691f"
+    },
+    {
+      "destination": "docs/reports/registered-housing-fit-20260913/diagnostics/pre-step-normalization-validation/lower/right-magnetic/floor-capture-native-review.json",
+      "archive": ".codex-tmp/registered-housing-fit/lower-development/pre-step-normalization-validation/lower/right-magnetic/floor-capture-native-review.json",
+      "source": ".codex-tmp/registered-housing-fit/lower/right-magnetic/floor-capture-native-review.json",
+      "classification": "PASSED_BEFORE_PUBLISHER_FORMAT_REVISION",
+      "sha256": "488714934652129881b1e729e48b28300d74d67480c9db7d263e64c9a36ea6c0"
+    }
+  ],
+  "large_geometry_copied": false,
+  "snapshot": {
+    "logical": ".codex-tmp/registered-housing-fit/lower-development/receiver-cleanup-inputs/snapshot-map.json",
+    "future_published": "docs/reports/registered-housing-fit-20260913/evidence/lower-development/receiver-cleanup-inputs/snapshot-map.json",
+    "note": "Resolve historical STEP/generation/V2 paths through this unchanged snapshot and the final release manifest; publication is a separate pending operation."
+  },
+  "limitations": [
+    "Neither interrupted attempt completed all 612 pairs.",
+    "The five D8 diagnostic reports are diagnosed_not_accepted, not fabrication or full-housing approval.",
+    "Original metadata is byte-identical; embedded relative archive filenames are resolved in their original logical directories, not assumed to be relative to these smaller diagnostic copies.",
+    "Attempt 2 generation/V2 files are not duplicated here: use the receiver snapshot originals with their recorded hashes.",
+    "Preserved Python files are historical executed code, not alternate active tool modules; do not execute in this report directory.",
+    "Receiver STL attempt 1 failed both part-B watertight gates. Partial geometry outputs are unusable and not copied here; failure.json retains their hashes. Exact-zero-facet filtering and complete regenerated output approval require new source-bound evidence.",
+    "Central integration actual failure has four failed normal/magnetic contact rows. Localization inspected normal only and attributed unintended stock to the new left perimeter/floor, not the original left stock or nominal tongue. This diagnosis does not approve a repair."
+  ]
+}

@@ -1,85 +1,17 @@
-# 최신 PCB · 주문한 거버 · 인쇄 모델
+# PCB · 주문한 거버 · 하우징 인쇄 파일
 
-요구사항: `CON-ARCH-006`, `OPS-ARCH-006/007`.
-2026-09-13 내부 충전형 개정은 기존 보강 하판 위에 PCB를 올리는 구조를 유지하며 MX, Choc V1, Deep Sea Mini용 상판을 각각 제공합니다. 기능상 비워야 하는 공간을 제외한 상판 내부를 솔리드로 채웠습니다.
-[현재 인쇄·실장 안내](MODELS/PRINT-filled-plates.md)의 게시 검증을 먼저 실행하세요.
-자석을 사용할 경우 [자석 홈 옵션 인쇄 안내](MODELS/PRINT_magnetic.md)에서 `_magnetic` 하판 세트를 선택하세요. 두 하판 옵션에 같은 국소 가림부를 적용하며 자석 홈은 그대로 유지합니다.
-PCB 설계와 주문된 거버 ZIP은 변경하지 않았습니다. 정확한 주문번호와 업체는 제공되지 않았습니다.
+요구사항: `CON-ARCH-006`, `CON-ARCH-007`, `OPS-ARCH-006/007`.
 
-```text
-hardware/
-├─ PCB/
-│  ├─ kc2_left/       왼쪽 KiCad 프로젝트
-│  └─ kc2_right/      오른쪽 KiCad 프로젝트
-├─ GERBER/            주문한 r4 봉인 패키지(8파일)
-└─ MODELS/            현재 하우징 STL·STEP·Fusion F3D
-   └─ adapters/       MX/V1 링 STL
-```
+하우징을 인쇄하기 전에 [현재 인쇄·조립 안내](MODELS/PRINT-registered-housings.md)의 검증 명령을 실행하세요. 검증이 실패하거나 manifest가 없으면 인쇄를 보류합니다. 실제 끼움·강도·키캡 간섭·나사 토크는 출력·조립 후 확인해야 합니다.
 
-## PCB 편집·확인
+- `PCB/`: 기존 주문 설계. [왼쪽 PCB](PCB/kc2_left/kc2_left.kicad_pcb), [오른쪽 PCB](PCB/kc2_right/kc2_right.kicad_pcb). 각 KiCad 프로젝트 폴더 전체와 저장소 `third_party` 라이브러리를 유지하세요.
+- `GERBER/`: 변경하지 않은 주문 r4 PCB-only 패키지. [왼쪽 제조 ZIP](GERBER/kc2_left-pcb-fabrication-only.zip), [오른쪽 제조 ZIP](GERBER/kc2_right-pcb-fabrication-only.zip), [주문 manifest](GERBER/manifest.json). 이번 기구 개정으로 재주문할 필요는 없습니다.
+- `MODELS/`: MX / Choc V1 / Deep Sea Mini 상판과 무자석 / magnetic 하판. 각 종류의 왼쪽 한 개와 오른쪽 A/B 두 STL을 사용합니다. 오른쪽 STEP/F3D는 두 부품을 포함하는 편집·확인용입니다.
+- `MODELS/adapters/`: 이번에 변경하지 않은 [기존 링 어댑터](MODELS/adapters/README.md).
 
-- 왼쪽: [KiCad 프로젝트](PCB/kc2_left/kc2_left.kicad_pro) / [PCB](PCB/kc2_left/kc2_left.kicad_pcb)
-- 오른쪽: [KiCad 프로젝트](PCB/kc2_right/kc2_right.kicad_pro) / [PCB](PCB/kc2_right/kc2_right.kicad_pcb)
+PCB는 이전처럼 하판 받침 위에 놓습니다. 새 외벽·상판 위치맞춤 홈, 중앙 접촉부, 오른쪽 A/B 결합부는 서로 다른 구조입니다. 이전 상판·하판과 새 파일을 섞지 말고 현재 안내의 정확한 15개 STL 링크 중 필요한 종류를 선택하세요.
 
-각 프로젝트 폴더를 통째로 유지하세요. 풋프린트 라이브러리는 저장소 `third_party`를 참조합니다.
-PCB 폴더와 `third_party`의 상대 깊이는 이전과 같아 라이브러리 경로 변경이 필요 없습니다.
+실리콘 발 배치·접착 검토는 사용자 요청으로 보류했습니다. 예전 발 배치 그림은 이번 하우징의 검증 증거가 아닙니다. 기존 `PRINT-filled-plates.md` 등 과거 안내는 현재 게시 검증을 대체하지 않습니다. 현재 인쇄 안내가 이전 지침보다 우선합니다.
 
-## 주문한 거버
+이 기구 개정은 이미 주문한 PCB/Gerber 16개 파일을 변경하지 않으며 새로운 제작·구매·결제 승인을 의미하지 않습니다.
 
-- [왼쪽 제조 ZIP](GERBER/kc2_left-pcb-fabrication-only.zip)
-- [오른쪽 제조 ZIP](GERBER/kc2_right-pcb-fabrication-only.zip)
-- [제조 설정](GERBER/fabrication-profile.json) / [검증 manifest](GERBER/manifest.json)
-- [왼쪽 수동 BOM](GERBER/kc2_left-manual-mx-bom.json) / [오른쪽 수동 BOM](GERBER/kc2_right-manual-mx-bom.json)
-
-두 ZIP은 주문 당시 `solid-floor-20260907-r4`와 동일합니다. 위치 정리를 이유로 재주문할 필요는 없습니다.
-이 디렉토리에 새 파일을 추가하거나 봉인 파일을 수정하지 마세요. 이전 개정은 `hardware/kicad/first_order`에 남아 있습니다.
-
-## 인쇄할 하우징 — 선택한 MX 조립
-
-아래는 MX 조립 예시입니다. Choc V1 및 Deep Sea Mini는 [전용 상판·5 mm 나사 선택표](MODELS/PRINT-filled-plates.md)를 사용하세요.
-
-아래 6개를 각각 1개, mm 단위·100% 축척으로 인쇄합니다.
-
-| 부품 | STL |
-|---|---|
-| 왼쪽 바닥 일체형 하판 | [왼쪽 하판](MODELS/kc2_left_lower_housing.stl) |
-| 오른쪽 하판 A | [오른쪽 하판 A](MODELS/kc2_right_lower_housing_part_a.stl) |
-| 오른쪽 하판 B | [오른쪽 하판 B](MODELS/kc2_right_lower_housing_part_b.stl) |
-| 왼쪽 MX 보강판 뚜껑 | [왼쪽 상판](MODELS/kc2_left_mx_upper_housing.stl) |
-| 오른쪽 MX 뚜껑 A | [오른쪽 상판 A](MODELS/kc2_right_mx_upper_housing_part_a.stl) |
-| 오른쪽 MX 뚜껑 B | [오른쪽 상판 B](MODELS/kc2_right_mx_upper_housing_part_b.stl) |
-
-하판은 평평한 바닥 외면을 베드에 놓습니다. 바닥 1.20 mm는 첫 층·후속 층 모두 0.20 mm일 때 6층입니다.
-상판은 보강판 윗면을 베드에 놓고 기둥이 위로 향하게 합니다. 각 부품은 150 mm 인쇄 공간 이내입니다.
-재료·프린터 강도는 실물 확인이 필요합니다. 같은 이름의 STEP/F3D는 편집·확인용이며 STL 대신 인쇄하지 않습니다.
-
-- 실리콘 발 위치: [왼쪽](MODELS/kc2_left_silicone_foot_layout.svg) / [오른쪽](MODELS/kc2_right_silicone_foot_layout.svg)
-- 하판 조각당 Ø8 mm 접착면 4곳, 총 12곳입니다. 뒤집어 볼 때 CAD XY 좌우 반전에 주의하세요.
-- 선택용 링: [MX](MODELS/adapters/kc2_mx_ring_cap_020.stl) / [Choc V1](MODELS/adapters/kc2_v1_ring_cap_020.stl)
-- 링은 필요한 키마다 하나입니다. 테두리가 베드 쪽, 첫 층과 이후 층 모두 0.20 mm입니다. 테두리만 한 층이고 전체 높이 1.40 mm는 7층입니다.
-
-## 조립 주의사항
-
-PCB는 하판 밖에서 납땜합니다. 하부 실제 핀·납땜 돌출은 PCB 아랫면에서 최대 2.90 mm 이내인지 확인하세요.
-명목 나사는 M1.4×7.50 mm, 왼쪽 8개·오른쪽 9개입니다. 바닥이 추가됐다고 긴 나사로 바꾸지 않습니다.
-스위치 핀을 억지로 밀거나 깎지 말고, 소켓 접점에 납이 들어가지 않게 하세요.
-Choc 소켓과 MX hat 소켓은 같은 키에 동시에 실장하지 않습니다. MX 상판은 Choc용 유지 보강판이 아닙니다.
-전원 전 극성·단락·POWER/RESET을 확인하세요. 접점 공차·인쇄 강도·접착·충전 온도·무선 검증은 수령 후 별도입니다.
-
-## 기존 도구와 검증
-
-기존 경로는 로컬 디렉토리 연결입니다. Windows는 junction, 다른 OS는 symlink를 사용합니다.
-파일을 복제하지 않으며 기존 도구의 입출력도 `hardware/PCB`, `hardware/GERBER`, `hardware/MODELS`의 같은 원본에 도달합니다.
-새 clone/다른 PC에서는 저장소 루트에서 다음을 실행하세요. 충돌하는 실제 폴더가 있으면 덮어쓰지 않고 중단합니다.
-
-```powershell
-python -B -m tools.kc2_current_layout          # 변경 없는 사전 확인
-python -B -m tools.kc2_current_layout --apply  # 호환 연결 복원
-python -B -m unittest tools.test_kc2_current_layout -v
-python -B -m tools.prepare_kc2_first_order --verify-package hardware/GERBER
-```
-
-마지막 검증은 기존 도구의 의존성이 설치된 Python 환경에서 실행합니다.
-주문 당시 [order.md](../order.md)와 r4 manifest 내부의 이전 논리 경로는 감사용으로 그대로 보존했습니다.
-그 문서의 오래된 경로도 연결 복원 후 같은 원본을 가리킵니다. 현재 탐색의 시작점은 이 문서입니다.
-모델 폴더 내 기존 `백업`, PCB의 로컬 백업·에디터 기록은 현재 사용 파일이 아니며 이름을 바꾸거나 삭제하지 않았습니다.

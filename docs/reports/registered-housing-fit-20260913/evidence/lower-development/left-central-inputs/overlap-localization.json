@@ -1,0 +1,617 @@
+{
+  "requirements": [
+    "CON-ARCH-006"
+  ],
+  "status": "diagnosed_not_accepted",
+  "source_sha256": {
+    "docs/reports/registered-housing-fit-20260913/diagnostics/central-overlap-attempt-1/integrated-review.json": "5d5cb315a90dd18caa30ccc721554891ca3fb8567d5b26a8412d1d6ef8015950",
+    ".codex-tmp/registered-housing-fit/central/central-features.json": "82eb8da18271880674d751394b4e4463faad6d7602022db257068539c5d2c187",
+    "tools/stage_kc2_central_features.py": "d69e24267e9d58770469eaf5d1c45bdec06f7ec83a49ecab387be7adbf4ed690",
+    "tools/kc2_central_flexure.py": "34dbc9be59a2674d317bc29c9d0d21af1089912a9cef24995de98e73979c96e0",
+    "tools/kc2_central_fit.py": "138ffd199cfe5cdc5c265d80f17a5bea048f1b526dcb3bdc47fcbd24ff3a9735",
+    "tools/test_kc2_central_flexure.py": "851598e03e070efa5e70b553b8882582887457e1aa358b2904c0e9a8b9cfc808",
+    "tools/test_stage_kc2_central_features.py": "89b399801244945f610f10c2b98b11d817b6b7f4b5b636e9a84dc841c34b4f44",
+    "docs/reports/reinforced-covers-20260913/left-lower.json": "d5cda73b186052c18740c718bb73ca40e339d5ec7e28d680292a23b647e22739",
+    "docs/reports/reinforced-covers-20260913/right-lower.json": "4cd18ca758b1064bfb963607c54b76577dc1fa637a603b5acd470b6fafff5cf5",
+    "tools/stage_kc2_lower_top_clearance.py": "233584c614af635e55885f0cc9271faa2d3dbf87746d8d67b0585861e10b26e6",
+    "tools/test_stage_kc2_lower_top_clearance.py": "5dbbfae03611406d9a4baa845b7235c119653153c8f2288783a1e503ae4f9251",
+    ".codex-tmp/registered-housing-fit/lower-development/left-normal/kc2_left_lower_housing.step": "5a8773bf30290731c31e6c11751e4118a1dd9da3ed7b8cdb359ae16b8d63d36d",
+    ".codex-tmp/registered-housing-fit/lower-development/left-normal/generation.json": "c069c50bd94a795e4244c89dc6177162dbe88906c7a37ed41a55f34302e6a854",
+    ".codex-tmp/registered-housing-fit/lower-development/left-normal/registrar-snapshot.json": "8f46f4835163e9209233a9e98a97ed6b6dc75fb265307094cfe06878eb423924",
+    ".codex-tmp/perimeter-wall-plans.json": "25df0d616c4de1d928dfa132a5e964dd9471fcc4b8bd624fc71f2db262bd8cde",
+    "tools/generate_kc2_magnetic_housings.py": "f8d20b5a84a5b953aa5a8bd7ca2e6474203347869423612f360829f516c284ec",
+    "hardware/MODELS/kc2_left_lower_housing.step": "ce99534d33e6c765ea0272c4747b3c0ea69281de51423d570419d21ad74f19ad",
+    "tools/kc2_perimeter_wall.py": "dc288109fad3d755d87bdad74da07f9376ee6dc919c3f74917cd0c5cf9958981",
+    "tools/test_kc2_perimeter_wall.py": "f5e8cad96a3c781f4ccdc4ab67cfd0421e32bdbaeb1bd9b93e974c9b3f26931a",
+    "docs/reports/solid-filled-plates-20260913/left-mx.json": "3965411eb2d455cb006c03d4fc016f21b2ed851a52e5160c86a910226d26cd50",
+    "hardware/PCB/kc2_left/kc2_left.kicad_pcb": "568e1427e4cfb9d667b6d5b3754da3a4e24c924abfa85a8dfe394dd050b5fe67",
+    "docs/reports/solid-filled-plates-20260913/right-mx.json": "efd3a04be41f07dff47b101ba112616ce506b76cf0d682148c945f589749c8db",
+    "hardware/PCB/kc2_right/kc2_right.kicad_pcb": "88290c3b0cf3951d56221d216549665c0576a816a6315012f7f12b027f402577",
+    ".codex-tmp/registered-housing-fit/lower/left-normal/kc2_left_lower_housing.step": "3e00a2195334e925e0ff24321b9a5e82b57951acdf181d6b5d360348a3acd344",
+    ".codex-tmp/registered-housing-fit/lower/left-normal/kc2_left_lower_housing.stl": "8d7fef3bf48bd40710bd5bd51ef5108d836f37f7da012d540b1f28d6a817ba8f",
+    ".codex-tmp/registered-housing-fit/lower/left-normal/generation.json": "6f3370bd96d2faa4cd4b09a0681e531dd9240044db4a146c940d2b2ba0a5aec6",
+    "tools/stage_kc2_magnetic_access.py": "f631426ae94374cc2f3602e0d8bc9d69efd3136e745a2b350621db10a5b388f1",
+    "tools/kc2_magnetic_entry.py": "f4c3b4be24a92ec8fd6543ff93475511fbc14419384afe63d1aff7cdf008f039",
+    "tools/test_kc2_magnetic_entry.py": "692c182ac936c8dbe281b4459bf1e6f1f8781176322be674923171f1b8125708",
+    ".codex-tmp/registered-housing-fit/lower-development/left-magnetic-before-access/generation.json": "1bcc9ce00ddf5da50447d70b800927bcfc67f314a59fa5453ff6ba2339d568fa",
+    ".codex-tmp/registered-housing-fit/lower-development/left-magnetic-before-access/kc2_left_lower_housing_magnetic.step": "0f761c41e2fe7c12a5f5cf6f9a93eef3e8396d2f4f77fa7d9d518481155a7c0f",
+    "hardware/MODELS/kc2_left_lower_housing_magnetic.step": "823e37c6d6fc0933e40a60c303eb964271f4002fb9dd9702f72bad7270efd4b9",
+    ".codex-tmp/registered-housing-fit/lower-development/left-magnetic/kc2_left_lower_housing_magnetic.step": "d0c0ea2e03debe90edb76a1e6c279c1fa5ee7dfb182a8c4989d9161c79038dc2",
+    ".codex-tmp/registered-housing-fit/lower-development/left-magnetic/generation.json": "8240e3d65187cc20b6d6c03c2770b008567e641ea3650875177755eb3c59e9bf",
+    ".codex-tmp/registered-housing-fit/lower-development/left-magnetic/registrar-snapshot.json": "8f46f4835163e9209233a9e98a97ed6b6dc75fb265307094cfe06878eb423924",
+    ".codex-tmp/registered-housing-fit/lower/left-magnetic/kc2_left_lower_housing_magnetic.step": "88219800597a6fbde877574cb1c720be38b813c344c519f173e1efd4fcf4ee4b",
+    ".codex-tmp/registered-housing-fit/lower/left-magnetic/kc2_left_lower_housing_magnetic.stl": "189769e7878f564b2f6ffc17335e0aea88118e9f0479c9d66afb383cf95ce6af",
+    ".codex-tmp/registered-housing-fit/lower/left-magnetic/generation.json": "d21c06b039ee727f2d34599c3d10c6766e3a5c719a7afa2263c5028b90faac0b",
+    ".codex-tmp/registered-housing-fit/central/left-central-y95.step": "6691fb11aec5c5fcf5a3a8d023922c725e40d9ae2b1631d384b85f29b897355f",
+    ".codex-tmp/registered-housing-fit/central/left-central-y117.step": "032d436d666bd2df6c692ede584e610f789119358cfa7aa4d8092ba491146614",
+    ".codex-tmp/registered-housing-fit/lower-development/receiver-cleanup-inputs/right-normal/generation.json": "848d8f3e9e381f3cfc434fa5d04f5f68253ee9d83e5327c0b82e7d681fbfa017",
+    "tools/stage_kc2_registered_right_lower.py": "9618c0d9e5f5fae83d7640e430e7a8118604bbbce45d01b992f4b77c2c5fe786",
+    "hardware/MODELS/kc2_right_lower_housing.step": "1a4b127837317b217b01ec8cf4455e977e217bb1e9a7257234fe7094a60db24a",
+    "docs/reports/solid-filled-plates-20260913/right-deep_sea.json": "9a51a4d3899ce0b8196c1347236b1cfd74fc2a8d473e71e03b989e6f8a812ac9",
+    "tools/kc2_lower_split_extension.py": "63ab481b0a2e891cc799bd3e62589e35d86ff708f3572d0265554737625f5481",
+    "tools/test_kc2_lower_split_extension.py": "306432effe2a57d28caeed75c02d45be609f6f6923eac607ddff8cca978568c7",
+    "tools/kc2_split_fit_relief.py": "b48d8871dd24cf673fa462e37e93a4c9c35dbd45f058152f7ca24bf99cf67937",
+    "tools/kc2_registered_wall_plan.py": "d84529b585893f3ffa31c2ef1002add665c85c4b79da0d5a6f81d8ec86f10ea5",
+    "tools/stage_kc2_registered_lower.py": "fc2ff26e0d227653a8929c569a9db9b61827bdab691da66912e5f8d1277fa140",
+    "tools/test_stage_kc2_registered_lower.py": "fde57b708a0301c7cf3d845fa99b6944f4bc0a87e1b9a357c342b70bcf8db650",
+    "tools/kc2_lower_central_relief.py": "8388c5e60a36da7e2bda0c8dba7ef8cb159e59d8064291dfe077684d90754653",
+    "tools/test_kc2_lower_central_relief.py": "e6d81bf9bf3efef176576862febac4fa097e9c38702036859eba1655692ac168",
+    "tools/generate_kc2_x3_v2_housings.py": "0f2ef9076cff70916f77b124495fc1a5ea46751d19155378d9224a30a9168b69",
+    "tools/generate_kc2_housings.py": "cbf34705101526043bf4a43daed6e50dee2c67dc61ae0832debd70e62f5e5e16",
+    "tools/render_kc2_x3_joined.py": "903c3e2353aabfe7ff8a804f0bd0653ab0a90c3f881f8819ab239ca9aa1666b1",
+    ".codex-tmp/registered-housing-fit/lower-development/receiver-cleanup-inputs/right-normal/kc2_right_lower_housing.step": "f946902971b3b108104fbd13483f345b075fdd24303e53e386e901ae58bb684b",
+    ".codex-tmp/registered-housing-fit/lower-development/receiver-cleanup-inputs/right-normal/receiver-cleanup-plan.json": "44ecadf26522b067da275acb91553eb086456f876806adbf17241d24ac94e9a6",
+    "tools/plan_kc2_receiver_cleanup.py": "896a66ed0e3fbb40a13a715f74713260a97857d751b5c76eef22a0be8a82802f",
+    ".codex-tmp/registered-housing-fit/lower-development/receiver-cleanup-inputs/right-normal/receiver-cleanup-candidate.json": "e171ae63c8f203b09558cc54b77968ed0d723f014b28116515cd2b3ee9348bae",
+    ".codex-tmp/registered-housing-fit/lower-development/receiver-cleanup-inputs/right-normal/receiver-supports-plan.json": "200ac02abe6172e99d0fac71d57254907eaf940b0cd8d4a68f05eb16df74de70",
+    "tools/kc2_receiver_cleanup.py": "e45847de4d2f33a4ab7cac131c96c9675b67ed26b66889c0d9d3235350fc0140",
+    "tools/test_kc2_receiver_cleanup.py": "9f2e5d9cc345968eb37e52620df8da52c673b309c1c265b56b78693a87bd745a",
+    ".codex-tmp/registered-housing-fit/lower-development/receiver-cleanup-inputs/right-normal/throat-diagnosis.json": "a77032ee024eb893758376092853d351972f7937a86200db1f4c6583d2a60eff",
+    ".codex-tmp/registered-housing-fit/lower-development/receiver-cleanup-inputs/provenance/receiver_cleanup_candidate.py": "c2f3136b85219bd56397d6e6e0d05a817f36ccbc00e86e065ee06f068d72225e",
+    "tools/plan_kc2_lower_receiver_supports.py": "348975a38efe227f2dd9ca41ba4da7addcd63722a847e23a52390182874f2e7e",
+    "tools/plan_kc2_lower_receiver_repair.py": "cbccb04ce58e21c9b60a364b13c1e4d61e5a42046af6414ef9a9582837911ed9",
+    ".codex-tmp/registered-housing-fit/lower-development/receiver-cleanup-inputs/right-normal/receiver-floor-prism-diagnosis.json": "55dbe5b47ded9234b73d28700c4325378a56c987f80840eaee6d547da30954c4",
+    "tools/diagnose_kc2_receiver_floor_prism.py": "3595552a4458b777d73de38cf7e90ca11743345cadc083523a2c39f5744ec219",
+    "tools/test_diagnose_kc2_receiver_floor_prism.py": "586deeba5868223e13ac66ac79f224c54bd2cc7645219a9299b2028a675da110",
+    "tools/kc2_actual_sections.py": "1a522d7043c5483e1d1aba54667f3db5a776c95abcbc8ddee57b57344ef5797d",
+    "tools/review_kc2_local_covers.py": "f5b1f0cf717fab55fbf1c84890d249fdb7e765e1ea53153a9ce7803ac7374332",
+    "tools/diagnose_kc2_lower_throat.py": "0ce566fae7cf3370d824b3a324fad1c82877744f903d3e27d695cd7307fd244c",
+    "tools/review_kc2_filled_plates.py": "9dd90e3bd055a2531295065a483c0827865e98687098e65595b2d69816042418",
+    ".codex-tmp/registered-housing-fit/lower-development/receiver-cleanup-inputs/right-normal/split-review.json": "14b86db40584b6d9e8a1234cb179500401b7e30fd688bbc2cc732cf8fa03214f",
+    "tools/review_kc2_lower_split.py": "34b18701f371744649bdfc214baa1f632166dbcb8e7cfe10c15b1107ef828442",
+    "tools/test_review_kc2_lower_split.py": "e273e133c7a56a21ef4fbe92575cfe9a98ae85d959375abd5d9576edf694ac12",
+    "tools/kc2_lower_native_identity.py": "15966af37108584773b1504eac56227fc8d1b7c38dd621a1180a4fd823cafdfe",
+    ".codex-tmp/registered-housing-fit/lower-development/receiver-cleanup-inputs/right-magnetic/generation.json": "fc3d6b6d75d4bc61700ff05e4a1ca316541acea8225bc6c843fbeb1dbda4ebc3",
+    "tools/stage_kc2_right_magnetic_from_normal.py": "e82fe018dcddca3fa0dc68a2a3f36989a4d9356d50cb3e9236289bd5594224e2",
+    "tools/test_stage_kc2_right_magnetic_from_normal.py": "864e00e1c4656db8d24f75a3ba5a8b2bb67c9f2454b1b0c9f13d1cb0ae1f32e1",
+    "hardware/MODELS/kc2_right_lower_housing_magnetic.step": "67d3afb0234876b35242a74a786f333b62514ac49ca3bce589af52398e18cce4",
+    ".codex-tmp/registered-housing-fit/lower-development/receiver-cleanup-inputs/right-magnetic/kc2_right_lower_housing_magnetic.step": "3b8e075e2ab89d58d9450cfdde4f81c2299b3da76d41acbfebc58f2edaec47fd",
+    ".codex-tmp/registered-housing-fit/lower-development/receiver-cleanup-inputs/right-strata-predicate-bundle.json": "16e7572cb5a0571c9027a217347d2233b80904f347e49d0aac2dbe63f691e924",
+    "tools/review_kc2_lower_voids_v2.py": "4d2138457df74e8d33424ee8ee44e1493a8c58429ca92de551389e75e7da0427",
+    "tools/test_review_kc2_lower_voids_v2.py": "b40ea54f89498b2ef358d71324bb4d4e61e3fe06c883ccd50c38df4e78f37bfa",
+    "tools/kc2_required_lower_clearance.py": "d5306dfd70538f8ff11d9afd9518092a6cb146022872557492c31209b4ae11db",
+    "tools/test_kc2_required_lower_clearance.py": "e3438bc68ada9453aa795e8a75e8da81f1f6127962cf5b7f2eb598c8491becc5",
+    ".codex-tmp/registered-housing-fit/lower-development/receiver-cleanup-inputs/right-void-review.json": "ef8d4e0c1a2a0095aef368998f181eeb6b1afcf66b1d705dbde11b4f56faf72e",
+    "tools/review_kc2_lower_strata.py": "aa68cb70aadf10eb22862fbd68de9965c4b7581203bb81edfed23d906f76ebd2",
+    "tools/kc2_lower_strata.py": "35c7d9881fb393b6ddd93c3dd56373802ea837b9f7842a09b7b07cf42567151f",
+    "tools/test_kc2_lower_strata.py": "53a1bb32a0f1b9222b37c1849d625fbf0cb4b1cb1e181b53513227abd0c5472b",
+    "tools/kc2_lower_predicate_bundle.py": "bfaaf2d788161dd0ddad9c76f090fd1faab4af110269e48a7ca35ee46a260e65",
+    "tools/test_kc2_lower_predicate_bundle.py": "9ee13a889584ea77f47e9dba2eca7b878a62dbd1bcfcf2a3c16dbc5a7ae179f9",
+    "tools/kc2_registered_release_gate.py": "47aeaadad39388ff7666f117eea1c31c10300b28b8749e211ba89dd8572a45b7",
+    "tools/kc2_component_local_certificate.py": "19c48b5437378948eda5a36a328c9c962b34764d1055d5fca8f7642d2b3277fb",
+    "tools/kc2_magnetic_subset.py": "ac49df73cd2343a83e9f4ae2b9d29bc7ddfd9da2ccae7552b8e68da713014915",
+    "tools/test_kc2_magnetic_subset.py": "351244654d058faa70e4d6905a06fbc90c387788ae150d1c39d073f85bbbc61c",
+    "tools/review_kc2_magnetic_subset.py": "47d724d77dcab6fa03f7eb8a0ae3c15ea349bcd54424bde595e5a94b070203df",
+    ".codex-tmp/registered-housing-fit/lower-development/receiver-cleanup-inputs/right-normal-strata-review.json": "c69a3692213282e157e273d427b25708172e64d74bd04f9e807c41277bf3867b",
+    ".codex-tmp/registered-housing-fit/lower-development/receiver-cleanup-inputs/right-magnetic-subset-review.json": "150a3a5c0940a2c7cbbc336b54ac03d8c171728560111b6404fb37a7bfbbfdd8",
+    "tools/kc2_lower_strata_bundle.py": "6487021e2045f0b1cb1877b643f59214889283eea918bd7ef4bb4abac1233a06",
+    "tools/test_kc2_lower_strata_bundle.py": "56924b3b944c0001ce0e51625d8e2f37df5366f6b14b0321869c18ac1dd0f938",
+    "tools/stage_kc2_receiver_cleanup.py": "74cffabb712f5b21e0d947a9e9d447b2b439975b8d3128f912de5a41ac0e78d8",
+    "tools/test_kc2_receiver_snapshot.py": "2b9964fee1d6ccfe39135110321989a4a7be3ecd78c364c0a6ad068acc8e6e09",
+    "tools/kc2_stl_zero_area_filter.py": "4b5486493026ff8d04db3c3240ee3b0936d9ca4d7f4390e5927db9436b031ff0",
+    "tools/test_kc2_stl_zero_area_filter.py": "d4098ee675f5bad3babb98fd72e123ac645d3e8ed27a94af3306f8d64225f24c",
+    ".codex-tmp/registered-housing-fit/lower-development/receiver-cleanup-inputs/snapshot-map.json": "114cfb8f34cbda88d6258a9946e68b7098076b1381791f448c7293f98022ec2f",
+    ".codex-tmp/registered-housing-fit/lower/right-normal/kc2_right_lower_housing.step": "330ee2c4f75b8f2e89bee8bf1086664aed2b0d14a8e73bb322f6be8080ab88b7",
+    ".codex-tmp/registered-housing-fit/lower/right-normal/kc2_right_lower_housing_part_a.stl": "855a8f2f9c44d29bdd848539b76b0ada1f96c63a39eaed063e977d536dd19aac",
+    ".codex-tmp/registered-housing-fit/lower/right-normal/kc2_right_lower_housing_part_b.stl": "b72abf270e50eb5719c9426b1b2070cf3adff6184f6be159476510205e224164",
+    ".codex-tmp/registered-housing-fit/lower/right-normal/generation.json": "5cb639f42c8b34f9595177294da569fdf78f631084eb1ad6f49c1426e8d630aa",
+    ".codex-tmp/registered-housing-fit/lower/right-magnetic/kc2_right_lower_housing_magnetic.step": "c76f2543ef299035202932af0066a07f01ab0747c80b5f21006a071b45598a50",
+    ".codex-tmp/registered-housing-fit/lower/right-magnetic/kc2_right_lower_housing_part_a_magnetic.stl": "9620bc2ec51d72dcafe66ce0ae58b53c0441a97b573484cfdf777186a054ffc1",
+    ".codex-tmp/registered-housing-fit/lower/right-magnetic/kc2_right_lower_housing_part_b_magnetic.stl": "cfd81d6c7cc3a06bf45786c33aacb27659d33d40a43620d260d458c5a2666a85",
+    ".codex-tmp/registered-housing-fit/lower/right-magnetic/generation.json": "7ea8a0967111eb3c629f7ceb1244a5d781475082290637590733a3903d83d0b3",
+    ".codex-tmp/registered-housing-fit/central/right-central-y95.step": "2163fbe8b7654ebf6c8fda4242b76b84302d98e75f3a3045f0fd76a96f8c0c1b",
+    ".codex-tmp/registered-housing-fit/central/right-central-y117.step": "e9f382a4336c9c945144059f9aa471c30724118a9ec166a80b2804e9a6d741c5",
+    "tools/review_kc2_integrated_central.py": "e8c0b4a963186a842eed58546c03d50cc2265356975198f40b32c3d0b1183d0f",
+    "tools/test_review_kc2_integrated_central.py": "8a59f06e030733b83f3b438990fbf5170cfec75c4eaf373ac6c5fda88805658e",
+    "tools/kc2_registered_native.py": "51a63d24eff4b6fb0b1faf3c6e4892713e16c7920a5f8933980586b60167719d",
+    "tools/diagnose_kc2_central_overlap.py": "eb4885d53bae6a95c2237426e1c997a7cf4c6dd474d435e640007aef6d75679d"
+  },
+  "rows": [
+    {
+      "y": 95,
+      "actual_overlap": {
+        "valid": true,
+        "volume_mm3": 3.5824399999997794,
+        "solid_count": 2,
+        "pieces": [
+          {
+            "volume_mm3": 1.7912199999999134,
+            "bounds_mm": [
+              1.1999999999999273,
+              1.1800000000000066,
+              -2.2,
+              2.419999999999991,
+              2.549999999999997,
+              1.5
+            ]
+          },
+          {
+            "volume_mm3": 1.7912199999998601,
+            "bounds_mm": [
+              1.200000000000017,
+              -2.549999999999997,
+              -2.2,
+              2.420000000000137,
+              -1.1799999999998654,
+              1.5
+            ]
+          }
+        ]
+      },
+      "non_destructive_overlap": {
+        "valid": true,
+        "volume_mm3": 3.5824399999997794,
+        "solid_count": 2,
+        "pieces": [
+          {
+            "volume_mm3": 1.7912199999999134,
+            "bounds_mm": [
+              1.1999999999999273,
+              1.1800000000000066,
+              -2.2,
+              2.419999999999991,
+              2.549999999999997,
+              1.5
+            ]
+          },
+          {
+            "volume_mm3": 1.7912199999998601,
+            "bounds_mm": [
+              1.200000000000017,
+              -2.549999999999997,
+              -2.2,
+              2.420000000000137,
+              -1.1799999999998654,
+              1.5
+            ]
+          }
+        ]
+      },
+      "unexpected": {
+        "valid": true,
+        "volume_mm3": 3.5791058823527373,
+        "solid_count": 2,
+        "pieces": [
+          {
+            "volume_mm3": 1.7895529411763824,
+            "bounds_mm": [
+              1.1999999999999273,
+              1.2,
+              -2.2,
+              1.6000000000000227,
+              2.549999999999997,
+              1.5
+            ]
+          },
+          {
+            "volume_mm3": 1.7895529411763484,
+            "bounds_mm": [
+              1.200000000000017,
+              -2.549999999999997,
+              -2.2,
+              1.6000000000001124,
+              -1.1999999999998876,
+              1.5
+            ]
+          }
+        ]
+      },
+      "unexpected_in_isolated_left_mm3": 0.0,
+      "unexpected_in_isolated_right_mm3": 3.5791058823527373,
+      "unexpected_in_old_left_mm3": 0.0,
+      "sections": [
+        {
+          "z_band_mm": [
+            -2.2,
+            0.8
+          ],
+          "z_mm": -0.7000000000000001,
+          "area_mm2": 0.9600000000000001,
+          "wkt": "MULTIPOLYGON (((1.2 -1.35, 1.6 -1.35, 1.6 -2.55, 1.2 -2.55, 1.2 -1.35)), ((1.2 1.35, 1.2 2.55, 1.6 2.55, 1.6 1.35, 1.2 1.35)))",
+          "bounds_mm": [
+            1.2,
+            -2.55,
+            1.6,
+            2.55
+          ],
+          "planned_left_wall_overlap_mm2": 0.9600000000000001,
+          "planned_left_floor_addition_overlap_mm2": 0.9600000000000001
+        },
+        {
+          "z_band_mm": [
+            0.8,
+            0.9
+          ],
+          "z_mm": 0.8500000000000001,
+          "area_mm2": 0.9697142840000001,
+          "wkt": "MULTIPOLYGON (((1.2 -1.35, 1.6 -1.32571429, 1.6 -2.55, 1.2 -2.55, 1.2 -1.35)), ((1.2 1.35, 1.2 2.55, 1.6 2.55, 1.6 1.32571429, 1.2 1.35)))",
+          "bounds_mm": [
+            1.2,
+            -2.55,
+            1.6,
+            2.55
+          ],
+          "planned_left_wall_overlap_mm2": 0.9697142840000001,
+          "planned_left_floor_addition_overlap_mm2": 0.9697142840000001
+        },
+        {
+          "z_band_mm": [
+            0.9,
+            1.0
+          ],
+          "z_mm": 0.95,
+          "area_mm2": 0.9794285720000002,
+          "wkt": "MULTIPOLYGON (((1.2 -1.35, 1.6 -1.30142857, 1.6 -2.55, 1.2 -2.55, 1.2 -1.35)), ((1.2 1.35, 1.2 2.55, 1.6 2.55, 1.6 1.30142857, 1.2 1.35)))",
+          "bounds_mm": [
+            1.2,
+            -2.55,
+            1.6,
+            2.55
+          ],
+          "planned_left_wall_overlap_mm2": 0.9794285720000002,
+          "planned_left_floor_addition_overlap_mm2": 0.9794285720000002
+        },
+        {
+          "z_band_mm": [
+            1.0,
+            1.1
+          ],
+          "z_mm": 1.05,
+          "area_mm2": 0.9891428560000002,
+          "wkt": "MULTIPOLYGON (((1.2 -1.35, 1.6 -1.27714286, 1.6 -2.55, 1.2 -2.55, 1.2 -1.35)), ((1.2 1.35, 1.2 2.55, 1.6 2.55, 1.6 1.27714286, 1.2 1.35)))",
+          "bounds_mm": [
+            1.2,
+            -2.55,
+            1.6,
+            2.55
+          ],
+          "planned_left_wall_overlap_mm2": 0.9891428560000002,
+          "planned_left_floor_addition_overlap_mm2": 0.9891428560000002
+        },
+        {
+          "z_band_mm": [
+            1.1,
+            1.2
+          ],
+          "z_mm": 1.15,
+          "area_mm2": 0.9988571440000003,
+          "wkt": "MULTIPOLYGON (((1.2 -1.35, 1.6 -1.25285714, 1.6 -2.55, 1.2 -2.55, 1.2 -1.35)), ((1.2 1.35, 1.2 2.55, 1.6 2.55, 1.6 1.25285714, 1.2 1.35)))",
+          "bounds_mm": [
+            1.2,
+            -2.55,
+            1.6,
+            2.55
+          ],
+          "planned_left_wall_overlap_mm2": 0.9988571440000003,
+          "planned_left_floor_addition_overlap_mm2": 0.9988571440000003
+        },
+        {
+          "z_band_mm": [
+            1.2,
+            1.3
+          ],
+          "z_mm": 1.25,
+          "area_mm2": 1.0085714280000002,
+          "wkt": "MULTIPOLYGON (((1.2 -1.35, 1.6 -1.22857143, 1.6 -2.55, 1.2 -2.55, 1.2 -1.35)), ((1.2 1.35, 1.2 2.55, 1.6 2.55, 1.6 1.22857143, 1.2 1.35)))",
+          "bounds_mm": [
+            1.2,
+            -2.55,
+            1.6,
+            2.55
+          ],
+          "planned_left_wall_overlap_mm2": 1.0085714280000002,
+          "planned_left_floor_addition_overlap_mm2": 1.0085714280000002
+        },
+        {
+          "z_band_mm": [
+            1.3,
+            1.4
+          ],
+          "z_mm": 1.35,
+          "area_mm2": 1.018285716,
+          "wkt": "MULTIPOLYGON (((1.2 -1.35, 1.6 -1.20428571, 1.6 -2.55, 1.2 -2.55, 1.2 -1.35)), ((1.2 1.35, 1.2 2.55, 1.6 2.55, 1.6 1.20428571, 1.2 1.35)))",
+          "bounds_mm": [
+            1.2,
+            -2.55,
+            1.6,
+            2.55
+          ],
+          "planned_left_wall_overlap_mm2": 1.018285716,
+          "planned_left_floor_addition_overlap_mm2": 1.018285716
+        },
+        {
+          "z_band_mm": [
+            1.4,
+            1.5
+          ],
+          "z_mm": 1.45,
+          "area_mm2": 1.0270588230000002,
+          "wkt": "MULTIPOLYGON (((1.2 -1.35, 1.55294118 -1.2, 1.6 -1.2, 1.6 -2.55, 1.2 -2.55, 1.2 -1.35)), ((1.55294118 1.2, 1.2 1.35, 1.2 2.55, 1.6 2.55, 1.6 1.2, 1.55294118 1.2)))",
+          "bounds_mm": [
+            1.2,
+            -2.55,
+            1.6,
+            2.55
+          ],
+          "planned_left_wall_overlap_mm2": 1.0270588230000002,
+          "planned_left_floor_addition_overlap_mm2": 1.0270588230000002
+        }
+      ],
+      "unexpected_vertex_z_mm": [
+        -2.2,
+        0.8,
+        0.9,
+        1.0,
+        1.1,
+        1.2,
+        1.3,
+        1.4,
+        1.5
+      ]
+    },
+    {
+      "y": 117,
+      "actual_overlap": {
+        "valid": true,
+        "volume_mm3": 3.5824399999994663,
+        "solid_count": 2,
+        "pieces": [
+          {
+            "volume_mm3": 1.7912200000007954,
+            "bounds_mm": [
+              1.1999999999982458,
+              1.1800000000000066,
+              -2.2,
+              2.419999999999991,
+              2.549999999999997,
+              1.5
+            ]
+          },
+          {
+            "volume_mm3": 1.7912199999986418,
+            "bounds_mm": [
+              1.200000000000017,
+              -2.549999999999997,
+              -2.2,
+              2.4200000000001376,
+              -1.1799999999998654,
+              1.5
+            ]
+          }
+        ]
+      },
+      "non_destructive_overlap": {
+        "valid": true,
+        "volume_mm3": 3.5824399999994663,
+        "solid_count": 2,
+        "pieces": [
+          {
+            "volume_mm3": 1.7912200000007954,
+            "bounds_mm": [
+              1.1999999999982458,
+              1.1800000000000066,
+              -2.2,
+              2.419999999999991,
+              2.549999999999997,
+              1.5
+            ]
+          },
+          {
+            "volume_mm3": 1.7912199999986418,
+            "bounds_mm": [
+              1.200000000000017,
+              -2.549999999999997,
+              -2.2,
+              2.4200000000001376,
+              -1.1799999999998654,
+              1.5
+            ]
+          }
+        ]
+      },
+      "unexpected": {
+        "valid": true,
+        "volume_mm3": 3.5791058823521142,
+        "solid_count": 2,
+        "pieces": [
+          {
+            "volume_mm3": 1.7895529411773732,
+            "bounds_mm": [
+              1.1999999999982458,
+              1.2,
+              -2.2,
+              1.6000000000000227,
+              2.549999999999997,
+              1.5
+            ]
+          },
+          {
+            "volume_mm3": 1.7895529411747106,
+            "bounds_mm": [
+              1.200000000000017,
+              -2.549999999999997,
+              -2.2,
+              1.6000000000000227,
+              -1.1999999999998876,
+              1.5
+            ]
+          }
+        ]
+      },
+      "unexpected_in_isolated_left_mm3": 0.0,
+      "unexpected_in_isolated_right_mm3": 3.5791058823521142,
+      "unexpected_in_old_left_mm3": 0.0,
+      "sections": [
+        {
+          "z_band_mm": [
+            -2.2,
+            0.8
+          ],
+          "z_mm": -0.7000000000000001,
+          "area_mm2": 0.9600000000000001,
+          "wkt": "MULTIPOLYGON (((1.2 -1.35, 1.6 -1.35, 1.6 -2.55, 1.2 -2.55, 1.2 -1.35)), ((1.2 1.35, 1.2 2.55, 1.6 2.55, 1.6 1.35, 1.2 1.35)))",
+          "bounds_mm": [
+            1.2,
+            -2.55,
+            1.6,
+            2.55
+          ],
+          "planned_left_wall_overlap_mm2": 0.9600000000000001,
+          "planned_left_floor_addition_overlap_mm2": 0.9600000000000001
+        },
+        {
+          "z_band_mm": [
+            0.8,
+            0.9
+          ],
+          "z_mm": 0.8500000000000001,
+          "area_mm2": 0.9697142840000001,
+          "wkt": "MULTIPOLYGON (((1.2 -1.35, 1.6 -1.32571429, 1.6 -2.55, 1.2 -2.55, 1.2 -1.35)), ((1.2 1.35, 1.2 2.55, 1.6 2.55, 1.6 1.32571429, 1.2 1.35)))",
+          "bounds_mm": [
+            1.2,
+            -2.55,
+            1.6,
+            2.55
+          ],
+          "planned_left_wall_overlap_mm2": 0.9697142840000001,
+          "planned_left_floor_addition_overlap_mm2": 0.9697142840000001
+        },
+        {
+          "z_band_mm": [
+            0.9,
+            1.0
+          ],
+          "z_mm": 0.95,
+          "area_mm2": 0.9794285720000002,
+          "wkt": "MULTIPOLYGON (((1.2 -1.35, 1.6 -1.30142857, 1.6 -2.55, 1.2 -2.55, 1.2 -1.35)), ((1.2 1.35, 1.2 2.55, 1.6 2.55, 1.6 1.30142857, 1.2 1.35)))",
+          "bounds_mm": [
+            1.2,
+            -2.55,
+            1.6,
+            2.55
+          ],
+          "planned_left_wall_overlap_mm2": 0.9794285720000002,
+          "planned_left_floor_addition_overlap_mm2": 0.9794285720000002
+        },
+        {
+          "z_band_mm": [
+            1.0,
+            1.1
+          ],
+          "z_mm": 1.05,
+          "area_mm2": 0.9891428560000002,
+          "wkt": "MULTIPOLYGON (((1.2 -1.35, 1.6 -1.27714286, 1.6 -2.55, 1.2 -2.55, 1.2 -1.35)), ((1.2 1.35, 1.2 2.55, 1.6 2.55, 1.6 1.27714286, 1.2 1.35)))",
+          "bounds_mm": [
+            1.2,
+            -2.55,
+            1.6,
+            2.55
+          ],
+          "planned_left_wall_overlap_mm2": 0.9891428560000002,
+          "planned_left_floor_addition_overlap_mm2": 0.9891428560000002
+        },
+        {
+          "z_band_mm": [
+            1.1,
+            1.2
+          ],
+          "z_mm": 1.15,
+          "area_mm2": 0.9988571440000003,
+          "wkt": "MULTIPOLYGON (((1.2 -1.35, 1.6 -1.25285714, 1.6 -2.55, 1.2 -2.55, 1.2 -1.35)), ((1.2 1.35, 1.2 2.55, 1.6 2.55, 1.6 1.25285714, 1.2 1.35)))",
+          "bounds_mm": [
+            1.2,
+            -2.55,
+            1.6,
+            2.55
+          ],
+          "planned_left_wall_overlap_mm2": 0.9988571440000003,
+          "planned_left_floor_addition_overlap_mm2": 0.9988571440000003
+        },
+        {
+          "z_band_mm": [
+            1.2,
+            1.3
+          ],
+          "z_mm": 1.25,
+          "area_mm2": 1.0085714280000002,
+          "wkt": "MULTIPOLYGON (((1.2 -1.35, 1.6 -1.22857143, 1.6 -2.55, 1.2 -2.55, 1.2 -1.35)), ((1.2 1.35, 1.2 2.55, 1.6 2.55, 1.6 1.22857143, 1.2 1.35)))",
+          "bounds_mm": [
+            1.2,
+            -2.55,
+            1.6,
+            2.55
+          ],
+          "planned_left_wall_overlap_mm2": 1.0085714280000002,
+          "planned_left_floor_addition_overlap_mm2": 1.0085714280000002
+        },
+        {
+          "z_band_mm": [
+            1.3,
+            1.4
+          ],
+          "z_mm": 1.35,
+          "area_mm2": 1.018285716,
+          "wkt": "MULTIPOLYGON (((1.2 -1.35, 1.6 -1.20428571, 1.6 -2.55, 1.2 -2.55, 1.2 -1.35)), ((1.2 1.35, 1.2 2.55, 1.6 2.55, 1.6 1.20428571, 1.2 1.35)))",
+          "bounds_mm": [
+            1.2,
+            -2.55,
+            1.6,
+            2.55
+          ],
+          "planned_left_wall_overlap_mm2": 1.018285716,
+          "planned_left_floor_addition_overlap_mm2": 1.018285716
+        },
+        {
+          "z_band_mm": [
+            1.4,
+            1.5
+          ],
+          "z_mm": 1.45,
+          "area_mm2": 1.0270588230000002,
+          "wkt": "MULTIPOLYGON (((1.2 -1.35, 1.55294118 -1.2, 1.6 -1.2, 1.6 -2.55, 1.2 -2.55, 1.2 -1.35)), ((1.55294118 1.2, 1.2 1.35, 1.2 2.55, 1.6 2.55, 1.6 1.2, 1.55294118 1.2)))",
+          "bounds_mm": [
+            1.2,
+            -2.55,
+            1.6,
+            2.55
+          ],
+          "planned_left_wall_overlap_mm2": 1.0270588230000002,
+          "planned_left_floor_addition_overlap_mm2": 1.0270588230000002
+        }
+      ],
+      "unexpected_vertex_z_mm": [
+        -2.2,
+        0.8,
+        0.9,
+        1.0,
+        1.1,
+        1.2,
+        1.3,
+        1.4,
+        1.5
+      ]
+    }
+  ],
+  "scope": "Normal variants only; actual local overlap positions and original/isolated stock attribution, not correction approval",
+  "physical_qualified": false
+}
