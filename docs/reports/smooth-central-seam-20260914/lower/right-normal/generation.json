@@ -1,0 +1,271 @@
+{
+  "status": "generated_pending_independent_review",
+  "errors": [],
+  "body_count": 2,
+  "side": "right",
+  "magnetic": false,
+  "preservation": {
+    "errors": [],
+    "added_mm3": 25.452997400381083,
+    "removed_material": 0.0,
+    "off_patch_addition": 0.0,
+    "unfilled_patch": 0.0
+  },
+  "outputs": {
+    "kc2_right_lower_housing.step": "5b94c9278b9d654e4082a9c628e51e0dd18dc1b0658e3275459301b9e2162775",
+    "kc2_right_lower_housing_part_a.stl": "0d14b8a52bdd861be77917dd004a375478824a1225b5956fc175fbcaf06ff17f",
+    "kc2_right_lower_housing_part_b.stl": "a6c3ee3be2d6110982d88a1de9108cb25cbe48a2b6ac022b3e35c5a55e328a0f"
+  },
+  "meshes": [
+    {
+      "mesh": {
+        "watertight": true,
+        "winding_consistent": true,
+        "shells": 1,
+        "bounds_mm": [
+          -1.5,
+          28.75,
+          -2.200000047683716,
+          87.09375,
+          124.32599639892578,
+          4.099999904632568
+        ],
+        "volume_mm3": 24615.871281449417,
+        "brep_volume_mm3": 24615.86737031377,
+        "volume_error_mm3": 0.0039111356491048355,
+        "sha256": "0d14b8a52bdd861be77917dd004a375478824a1225b5956fc175fbcaf06ff17f"
+      },
+      "filter": {
+        "requirements": [
+          "CON-ARCH-006"
+        ],
+        "schema": "binary-stl-exact-zero-area-filter-v1",
+        "status": "pass",
+        "errors": [],
+        "input_sha256": "0d14b8a52bdd861be77917dd004a375478824a1225b5956fc175fbcaf06ff17f",
+        "output_sha256": "0d14b8a52bdd861be77917dd004a375478824a1225b5956fc175fbcaf06ff17f",
+        "input_facets": 17988,
+        "output_facets": 17988,
+        "removed_count": 0,
+        "removed_facets": [],
+        "surviving_oriented_records_sha256": "71e20018f843b25a67e413b3070832ac8d735f192e6c2b261572543b5e6a703c",
+        "output_oriented_records_sha256": "71e20018f843b25a67e413b3070832ac8d735f192e6c2b261572543b5e6a703c",
+        "surviving_oriented_record_sequence_unchanged": true,
+        "serialized_bounds_unchanged": true,
+        "before_volume_mm3": 24615.871281449417,
+        "after_volume_mm3": 24615.871281449417,
+        "volume_delta_mm3": 0.0,
+        "volume_summation_epsilon_mm3": 3.4981257046879104e-10,
+        "output_watertight": true,
+        "output_winding_consistent": true,
+        "output_components": 1,
+        "physical_qualified": false,
+        "method": "remove only exactly zero cross-product serialized facets; all retained facet bytes unchanged"
+      }
+    },
+    {
+      "mesh": {
+        "watertight": true,
+        "winding_consistent": true,
+        "shells": 1,
+        "bounds_mm": [
+          82.14379119873047,
+          -1.5,
+          -2.200000047683716,
+          165.1875,
+          124.32599639892578,
+          5.0
+        ],
+        "volume_mm3": 25486.601763632178,
+        "brep_volume_mm3": 25486.597743332703,
+        "volume_error_mm3": 0.004020299475087086,
+        "sha256": "a6c3ee3be2d6110982d88a1de9108cb25cbe48a2b6ac022b3e35c5a55e328a0f"
+      },
+      "filter": {
+        "requirements": [
+          "CON-ARCH-006"
+        ],
+        "schema": "binary-stl-exact-zero-area-filter-v1",
+        "status": "pass",
+        "errors": [],
+        "input_sha256": "a7efbff57f770dd86cf57cef5f6d2f1bf87425322bee8e6fc6c86a1c0bb05b63",
+        "output_sha256": "a6c3ee3be2d6110982d88a1de9108cb25cbe48a2b6ac022b3e35c5a55e328a0f",
+        "input_facets": 24344,
+        "output_facets": 24338,
+        "removed_count": 6,
+        "removed_facets": [
+          {
+            "index": 2553,
+            "xyz_mm": [
+              [
+                84.31395721435547,
+                88.84635925292969,
+                -1.0
+              ],
+              [
+                84.31439971923828,
+                88.8464584350586,
+                -1.0
+              ],
+              [
+                84.31439971923828,
+                88.8464584350586,
+                -1.0
+              ]
+            ],
+            "area_mm2": 0.0
+          },
+          {
+            "index": 2562,
+            "xyz_mm": [
+              [
+                84.31200408935547,
+                88.84795379638672,
+                -1.0
+              ],
+              [
+                84.31395721435547,
+                88.84635925292969,
+                -1.0
+              ],
+              [
+                84.31200408935547,
+                88.84795379638672,
+                -1.0
+              ]
+            ],
+            "area_mm2": 0.0
+          },
+          {
+            "index": 2836,
+            "xyz_mm": [
+              [
+                84.31200408935547,
+                88.84795379638672,
+                -1.0
+              ],
+              [
+                84.31200408935547,
+                88.84795379638672,
+                2.5
+              ],
+              [
+                84.31200408935547,
+                88.84795379638672,
+                -1.0
+              ]
+            ],
+            "area_mm2": 0.0
+          },
+          {
+            "index": 2837,
+            "xyz_mm": [
+              [
+                84.31200408935547,
+                88.84795379638672,
+                -1.0
+              ],
+              [
+                84.31200408935547,
+                88.84795379638672,
+                2.5
+              ],
+              [
+                84.31200408935547,
+                88.84795379638672,
+                2.5
+              ]
+            ],
+            "area_mm2": 0.0
+          },
+          {
+            "index": 3202,
+            "xyz_mm": [
+              [
+                84.31439971923828,
+                88.8464584350586,
+                -1.0
+              ],
+              [
+                84.31439971923828,
+                88.8464584350586,
+                2.5
+              ],
+              [
+                84.31439971923828,
+                88.8464584350586,
+                -1.0
+              ]
+            ],
+            "area_mm2": 0.0
+          },
+          {
+            "index": 3203,
+            "xyz_mm": [
+              [
+                84.31439971923828,
+                88.8464584350586,
+                -1.0
+              ],
+              [
+                84.31439971923828,
+                88.8464584350586,
+                2.5
+              ],
+              [
+                84.31439971923828,
+                88.8464584350586,
+                2.5
+              ]
+            ],
+            "area_mm2": 0.0
+          }
+        ],
+        "surviving_oriented_records_sha256": "3b5884c9beb8930991782bebe72c82160c0484e6970bdac97aa5b683a3b472d3",
+        "output_oriented_records_sha256": "3b5884c9beb8930991782bebe72c82160c0484e6970bdac97aa5b683a3b472d3",
+        "surviving_oriented_record_sequence_unchanged": true,
+        "serialized_bounds_unchanged": true,
+        "before_volume_mm3": 25486.601763632196,
+        "after_volume_mm3": 25486.601763632178,
+        "volume_delta_mm3": -1.8189894035458565e-11,
+        "volume_summation_epsilon_mm3": 3.621863948471883e-10,
+        "output_watertight": true,
+        "output_winding_consistent": true,
+        "output_components": 1,
+        "physical_qualified": false,
+        "method": "remove only exactly zero cross-product serialized facets; all retained facet bytes unchanged"
+      }
+    }
+  ],
+  "reopened_wall_missing_mm3": 0.0,
+  "actual_ab_gap_mm": 0.40003143179389444,
+  "source_sha256": {
+    "hardware/MODELS/kc2_right_lower_housing.step": "753a6cd0fba1ae737ebedd124f17cfd334e7dc766b35187258b2d2f7f14efa76",
+    "hardware/MODELS/kc2_flat_central_housing_manifest.json": "916759ed1ea45d3706386f1ac66f810c94a7baf979398cc414b660e33cf0fbd7",
+    "docs/reports/registered-housing-fit-20260913/evidence/perimeter-wall-plans.json": "25df0d616c4de1d928dfa132a5e964dd9471fcc4b8bd624fc71f2db262bd8cde",
+    "docs/reports/reinforced-covers-20260913/right-lower.json": "4cd18ca758b1064bfb963607c54b76577dc1fa637a603b5acd470b6fafff5cf5",
+    "tools/kc2_smooth_central_seam.py": "e96d608425fadf901a1705e9bc5c2d94dd94e754eb9cab07a531d47840fb9112",
+    "tools/test_kc2_smooth_central_seam.py": "e70856031de9bd6c7d5c1cba69e2bdc93e119e11749277fbde537fb4bc7189e8"
+  },
+  "signature": {
+    "volume_mm3": 50102.46511364804,
+    "area_mm2": 55451.57983991365,
+    "center_mm": [
+      80.31538419284328,
+      69.34478747178214,
+      -0.1180219992623637
+    ],
+    "bounds_mm": [
+      -1.5000001000034702,
+      -1.5000001000084744,
+      -2.2000001000084746,
+      165.18750010000846,
+      124.32600010000847,
+      5.000000100000029
+    ],
+    "faces": 9274,
+    "edges": 27508,
+    "vertices": 18345
+  },
+  "physical_qualified": false
+}

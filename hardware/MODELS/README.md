@@ -2,12 +2,12 @@
 
 요구사항: `CON-ARCH-006`, `CON-ARCH-007`, `OPS-ARCH-006`.
 
-현재 인쇄·편집 파일은 이 디렉터리에 바로 있습니다. 중앙 좌우 결합부의 요철은 모두 제거되었으며, 좌우 하우징의 맞닿는 면은 평평한 비접촉 이음입니다. PCB, Gerber, 상판, 우측 A/B 결합부와 상·하판 위치맞춤 구조는 이번 개정에서 바뀌지 않았습니다.
+현재 인쇄·편집 파일은 이 디렉터리에 바로 있습니다. 중앙 좌우 결합부의 요철과 그 뒤에 남았던 파임을 모두 없애고, 기존 1.20 mm 외벽 및 바닥이 연속되도록 메웠습니다. PCB, Gerber, 상판, 우측 A/B 결합부와 상·하판 위치맞춤 구조는 이번 개정에서 바뀌지 않았습니다.
 
-인쇄 전에 [현재 인쇄 안내](PRINT-flat-central-housings.md)를 읽고 다음 검증을 실행하십시오.
+인쇄 전에 [현재 인쇄 안내](PRINT-smooth-central-housings.md)를 읽고 다음 검증을 실행하십시오.
 
 ```powershell
-python -B -m tools.publish_kc2_flat_central_housings --verify hardware/MODELS/kc2_flat_central_housing_manifest.json
+python -B -m tools.publish_kc2_smooth_central_seam --verify
 ```
 
 ## 하판 선택
@@ -29,6 +29,6 @@ MX, Choc V1, Deep Sea Mini 중 실제 스위치와 맞는 한 종류만 선택�
 - Choc V1: `kc2_left_choc_v1_upper_housing.stl`, `kc2_right_choc_v1_upper_housing_part_a.stl`, `kc2_right_choc_v1_upper_housing_part_b.stl`
 - Deep Sea Mini: `kc2_left_deep_sea_upper_housing.stl`, `kc2_right_deep_sea_upper_housing_part_a.stl`, `kc2_right_deep_sea_upper_housing_part_b.stl`
 
-STL은 인쇄용, STEP과 F3D는 편집·검토용입니다. 오른쪽 전체 STEP/F3D에는 두 몸체가 들어 있으므로 150 mm 프린터에서는 반드시 A/B STL을 사용하십시오. 이전 [registered manifest](kc2_registered_housing_manifest.json)는 요철이 있던 직전 판의 이력이며, 현재 manifest는 [flat central manifest](kc2_flat_central_housing_manifest.json)입니다.
+STL은 인쇄용, STEP과 F3D는 편집·검토용입니다. 오른쪽 전체 STEP/F3D에는 두 몸체가 들어 있으므로 150 mm 프린터에서는 반드시 A/B STL을 사용하십시오. 이전 registered/flat-central manifest는 이력이며, 현재 manifest는 [smooth central manifest](kc2_smooth_central_housing_manifest.json)입니다.
 
 디지털 검증은 실제 출력물의 수축·팽창, 자석 접착력, 장기 강도와 조립 감각을 확정하지 않습니다. 먼저 시험 출력 후 좌우 간격과 자석 극성을 확인하십시오.

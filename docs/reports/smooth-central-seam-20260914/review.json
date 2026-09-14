@@ -1,0 +1,319 @@
+{
+  "status": "pass",
+  "errors": [],
+  "rows": {
+    "left:normal": {
+      "errors": [],
+      "sections": [
+        {
+          "y_mm": 95.0,
+          "wall_missing_mm2": 5.435943583265146e-07,
+          "floor_missing_mm2": 0.0
+        },
+        {
+          "y_mm": 117.0,
+          "wall_missing_mm2": 5.435943583265146e-07,
+          "floor_missing_mm2": 0.0
+        }
+      ],
+      "meshes": [
+        {
+          "watertight": true,
+          "winding_consistent": true,
+          "shells": 1,
+          "bounds_mm": [
+            -1.5,
+            -1.5,
+            -2.200000047683716,
+            136.6125030517578,
+            124.32599639892578,
+            5.0
+          ],
+          "volume_mm3": 44022.810214224475,
+          "brep_volume_mm3": 44022.80762608244,
+          "volume_error_mm3": 0.002588142036984209,
+          "sha256": "4e680642d5115a641d451ae9ebba54cd979a480c3e5fa062afd629467ef4e5f5"
+        }
+      ]
+    },
+    "left:magnetic": {
+      "errors": [],
+      "sections": [
+        {
+          "y_mm": 95.0,
+          "wall_missing_mm2": 5.435943583265146e-07,
+          "floor_missing_mm2": 0.0
+        },
+        {
+          "y_mm": 117.0,
+          "wall_missing_mm2": 5.435943583265146e-07,
+          "floor_missing_mm2": 0.0
+        }
+      ],
+      "meshes": [
+        {
+          "watertight": true,
+          "winding_consistent": true,
+          "shells": 1,
+          "bounds_mm": [
+            -1.5,
+            -1.5,
+            -2.200000047683716,
+            136.6125030517578,
+            124.32599639892578,
+            5.0
+          ],
+          "volume_mm3": 44001.10126248617,
+          "brep_volume_mm3": 44001.092937660724,
+          "volume_error_mm3": 0.008324825445015449,
+          "sha256": "8fa4a7fd903f7a40e81d570b5f40345c5a5965cf7ef1ecc9bfb8012275055500"
+        }
+      ]
+    },
+    "right:normal": {
+      "errors": [],
+      "sections": [
+        {
+          "y_mm": 95.0,
+          "wall_missing_mm2": 5.435943583265146e-07,
+          "floor_missing_mm2": 0.0
+        },
+        {
+          "y_mm": 117.0,
+          "wall_missing_mm2": 5.435943583265146e-07,
+          "floor_missing_mm2": 0.0
+        }
+      ],
+      "meshes": [
+        {
+          "watertight": true,
+          "winding_consistent": true,
+          "shells": 1,
+          "bounds_mm": [
+            -1.5,
+            28.75,
+            -2.200000047683716,
+            87.09375,
+            124.32599639892578,
+            4.099999904632568
+          ],
+          "volume_mm3": 24615.871281449417,
+          "brep_volume_mm3": 24615.86737031377,
+          "volume_error_mm3": 0.0039111356491048355,
+          "sha256": "0d14b8a52bdd861be77917dd004a375478824a1225b5956fc175fbcaf06ff17f"
+        },
+        {
+          "watertight": true,
+          "winding_consistent": true,
+          "shells": 1,
+          "bounds_mm": [
+            82.14379119873047,
+            -1.5,
+            -2.200000047683716,
+            165.1875,
+            124.32599639892578,
+            5.0
+          ],
+          "volume_mm3": 25486.601763632178,
+          "brep_volume_mm3": 25486.597743332703,
+          "volume_error_mm3": 0.004020299475087086,
+          "sha256": "a6c3ee3be2d6110982d88a1de9108cb25cbe48a2b6ac022b3e35c5a55e328a0f"
+        }
+      ]
+    },
+    "right:magnetic": {
+      "errors": [],
+      "sections": [
+        {
+          "y_mm": 95.0,
+          "wall_missing_mm2": 5.435943583265146e-07,
+          "floor_missing_mm2": 0.0
+        },
+        {
+          "y_mm": 117.0,
+          "wall_missing_mm2": 5.435943583265146e-07,
+          "floor_missing_mm2": 0.0
+        }
+      ],
+      "meshes": [
+        {
+          "watertight": true,
+          "winding_consistent": true,
+          "shells": 1,
+          "bounds_mm": [
+            -1.5,
+            28.75,
+            -2.200000047683716,
+            87.09375,
+            124.32599639892578,
+            4.099999904632568
+          ],
+          "volume_mm3": 24615.871281449417,
+          "brep_volume_mm3": 24615.867370313812,
+          "volume_error_mm3": 0.00391113560544909,
+          "sha256": "4841e77403778bb07d0026f3e45a459bb6fc1966779232f77f7cac935e4a28a5"
+        },
+        {
+          "watertight": true,
+          "winding_consistent": true,
+          "shells": 1,
+          "bounds_mm": [
+            82.14379119873047,
+            -1.5,
+            -2.200000047683716,
+            165.1875,
+            124.32599639892578,
+            5.0
+          ],
+          "volume_mm3": 25464.892866549966,
+          "brep_volume_mm3": 25464.883054910933,
+          "volume_error_mm3": 0.009811639032704988,
+          "sha256": "973df197ac08505d7d5bea2d0e14486938adc66f893be3e75e4982d744058777"
+        }
+      ]
+    }
+  },
+  "joins": [
+    {
+      "kind": "normal",
+      "side": "left",
+      "patch": 0,
+      "overlap_mm3": 0.0,
+      "gap_mm": 0.799999999999983
+    },
+    {
+      "kind": "normal",
+      "side": "left",
+      "patch": 1,
+      "overlap_mm3": 0.0,
+      "gap_mm": 0.799999999999983
+    },
+    {
+      "kind": "normal",
+      "side": "left",
+      "patch": 2,
+      "overlap_mm3": 0.0,
+      "gap_mm": 0.799999999999983
+    },
+    {
+      "kind": "normal",
+      "side": "left",
+      "patch": 3,
+      "overlap_mm3": 0.0,
+      "gap_mm": 0.799999999999983
+    },
+    {
+      "kind": "normal",
+      "side": "right",
+      "patch": 0,
+      "overlap_mm3": 0.0,
+      "gap_mm": 0.799999999999983
+    },
+    {
+      "kind": "normal",
+      "side": "right",
+      "patch": 1,
+      "overlap_mm3": 0.0,
+      "gap_mm": 0.799999999999983
+    },
+    {
+      "kind": "normal",
+      "side": "right",
+      "patch": 2,
+      "overlap_mm3": 0.0,
+      "gap_mm": 0.799999999999983
+    },
+    {
+      "kind": "normal",
+      "side": "right",
+      "patch": 3,
+      "overlap_mm3": 0.0,
+      "gap_mm": 0.799999999999983
+    },
+    {
+      "kind": "magnetic",
+      "side": "left",
+      "patch": 0,
+      "overlap_mm3": 0.0,
+      "gap_mm": 0.799999999999983
+    },
+    {
+      "kind": "magnetic",
+      "side": "left",
+      "patch": 1,
+      "overlap_mm3": 0.0,
+      "gap_mm": 0.799999999999983
+    },
+    {
+      "kind": "magnetic",
+      "side": "left",
+      "patch": 2,
+      "overlap_mm3": 0.0,
+      "gap_mm": 0.799999999999983
+    },
+    {
+      "kind": "magnetic",
+      "side": "left",
+      "patch": 3,
+      "overlap_mm3": 0.0,
+      "gap_mm": 0.799999999999983
+    },
+    {
+      "kind": "magnetic",
+      "side": "right",
+      "patch": 0,
+      "overlap_mm3": 0.0,
+      "gap_mm": 0.799999999999983
+    },
+    {
+      "kind": "magnetic",
+      "side": "right",
+      "patch": 1,
+      "overlap_mm3": 0.0,
+      "gap_mm": 0.799999999999983
+    },
+    {
+      "kind": "magnetic",
+      "side": "right",
+      "patch": 2,
+      "overlap_mm3": 0.0,
+      "gap_mm": 0.799999999999983
+    },
+    {
+      "kind": "magnetic",
+      "side": "right",
+      "patch": 3,
+      "overlap_mm3": 0.0,
+      "gap_mm": 0.799999999999983
+    }
+  ],
+  "source_sha256": {
+    "hardware/MODELS/kc2_left_lower_housing.step": "f48bf886811ab82b3de1a0b62a344c295d16f59a586693a80884bde37a866e68",
+    "hardware/MODELS/kc2_flat_central_housing_manifest.json": "916759ed1ea45d3706386f1ac66f810c94a7baf979398cc414b660e33cf0fbd7",
+    "docs/reports/registered-housing-fit-20260913/evidence/perimeter-wall-plans.json": "25df0d616c4de1d928dfa132a5e964dd9471fcc4b8bd624fc71f2db262bd8cde",
+    "docs/reports/reinforced-covers-20260913/left-lower.json": "d5cda73b186052c18740c718bb73ca40e339d5ec7e28d680292a23b647e22739",
+    "tools/kc2_smooth_central_seam.py": "e96d608425fadf901a1705e9bc5c2d94dd94e754eb9cab07a531d47840fb9112",
+    "tools/test_kc2_smooth_central_seam.py": "e70856031de9bd6c7d5c1cba69e2bdc93e119e11749277fbde537fb4bc7189e8",
+    ".codex-tmp/smooth-central-seam/lower/left-normal/kc2_left_lower_housing.step": "dd9c7690ea4bf475da41c0a4b17a28f6bf7d554e6c866ec64d304344402ca8bd",
+    ".codex-tmp/smooth-central-seam/lower/left-normal/generation.json": "3d44e3007ef5456bb2fa1221454c21bac8245485248dd242b4fb629df4cbf401",
+    ".codex-tmp/smooth-central-seam/lower/left-normal/kc2_left_lower_housing.stl": "4e680642d5115a641d451ae9ebba54cd979a480c3e5fa062afd629467ef4e5f5",
+    "hardware/MODELS/kc2_left_lower_housing_magnetic.step": "565c1e4d052e507904ed8089ec46e109239fe9f2e76d52b4555e405b60ecea13",
+    ".codex-tmp/smooth-central-seam/lower/left-magnetic/kc2_left_lower_housing_magnetic.step": "4715d4c2ee4e2ea0f8b94e86b5a289aa55d1b1dafd37c7ab31c3a613fd462af3",
+    ".codex-tmp/smooth-central-seam/lower/left-magnetic/generation.json": "bd0bc0a647ce0c7c9163a7132035deb85b062cad60ab1c72af72bccc46e8b814",
+    ".codex-tmp/smooth-central-seam/lower/left-magnetic/kc2_left_lower_housing_magnetic.stl": "8fa4a7fd903f7a40e81d570b5f40345c5a5965cf7ef1ecc9bfb8012275055500",
+    "hardware/MODELS/kc2_right_lower_housing.step": "753a6cd0fba1ae737ebedd124f17cfd334e7dc766b35187258b2d2f7f14efa76",
+    "docs/reports/reinforced-covers-20260913/right-lower.json": "4cd18ca758b1064bfb963607c54b76577dc1fa637a603b5acd470b6fafff5cf5",
+    ".codex-tmp/smooth-central-seam/lower/right-normal/kc2_right_lower_housing.step": "5b94c9278b9d654e4082a9c628e51e0dd18dc1b0658e3275459301b9e2162775",
+    ".codex-tmp/smooth-central-seam/lower/right-normal/generation.json": "ec2b23b7829e0872522969c1bf15f2d75c5fe326abe344f580d2335550d25eda",
+    ".codex-tmp/smooth-central-seam/lower/right-normal/kc2_right_lower_housing_part_a.stl": "0d14b8a52bdd861be77917dd004a375478824a1225b5956fc175fbcaf06ff17f",
+    ".codex-tmp/smooth-central-seam/lower/right-normal/kc2_right_lower_housing_part_b.stl": "a6c3ee3be2d6110982d88a1de9108cb25cbe48a2b6ac022b3e35c5a55e328a0f",
+    "hardware/MODELS/kc2_right_lower_housing_magnetic.step": "270e480d9a422f141a5facca6c7fea086ac446362c9eb81735c6ccb4bc11b5d7",
+    ".codex-tmp/smooth-central-seam/lower/right-magnetic/kc2_right_lower_housing_magnetic.step": "8c68daf0434b5727f63c8d7142d5596befee561d9fa1f06b144b409065e826db",
+    ".codex-tmp/smooth-central-seam/lower/right-magnetic/generation.json": "273d81c7ba32f51b88b87fc10d33896df0114216ae5e5586a2a26b2d5f490073",
+    ".codex-tmp/smooth-central-seam/lower/right-magnetic/kc2_right_lower_housing_part_a_magnetic.stl": "4841e77403778bb07d0026f3e45a459bb6fc1966779232f77f7cac935e4a28a5",
+    ".codex-tmp/smooth-central-seam/lower/right-magnetic/kc2_right_lower_housing_part_b_magnetic.stl": "973df197ac08505d7d5bea2d0e14486938adc66f893be3e75e4982d744058777",
+    "tools/review_kc2_smooth_central_seam.py": "3690e12d031c3ea5a170d38bb0f6e274cd3d0024667c033ef049b08c15e825b9"
+  },
+  "physical_qualified": false,
+  "scope": "Fresh STEP signatures and STL manifold/section checks; new patches against complete opposite housing. Existing assembly protections follow unchanged stock and bounded additive proof."
+}

@@ -1,0 +1,67 @@
+{
+  "status": "pass",
+  "errors": [],
+  "selected_job": "right:magnetic",
+  "requirements": [
+    "CON-ARCH-006",
+    "OPS-ARCH-006"
+  ],
+  "fusion_version": "2705.1.11",
+  "source_step": "kc2_right_lower_housing_magnetic.step",
+  "source_sha256": "8c68daf0434b5727f63c8d7142d5596befee561d9fa1f06b144b409065e826db",
+  "generation_sha256": "273d81c7ba32f51b88b87fc10d33896df0114216ae5e5586a2a26b2d5f490073",
+  "source_bodies": [
+    {
+      "volume_mm3": 25464.883062739515,
+      "bounds_mm": [
+        82.14379,
+        -1.5000000000000002,
+        -2.2,
+        165.1875,
+        124.32600000000001,
+        4.999999999999999
+      ]
+    },
+    {
+      "volume_mm3": 24615.86737031894,
+      "bounds_mm": [
+        -1.5000000000000002,
+        28.75,
+        -2.2,
+        87.09375,
+        124.32600000000001,
+        4.1
+      ]
+    }
+  ],
+  "reopened_bodies": [
+    {
+      "volume_mm3": 25464.883062739515,
+      "bounds_mm": [
+        82.14379,
+        -1.5000000000000002,
+        -2.2,
+        165.1875,
+        124.32600000000001,
+        4.999999999999999
+      ]
+    },
+    {
+      "volume_mm3": 24615.86737031894,
+      "bounds_mm": [
+        -1.5000000000000002,
+        28.75,
+        -2.2,
+        87.09375,
+        124.32600000000001,
+        4.1
+      ]
+    }
+  ],
+  "f3d": "kc2_right_lower_housing_magnetic.f3d",
+  "f3d_sha256": "8d514fcbbf9c2572d1efb05cba982d231a38811e29d3ee5da5b3c713d74dfdef",
+  "readback_step": "kc2_right_lower_housing_magnetic.native-readback.step",
+  "readback_sha256": "53ee92f6e341b5a0bed5ea57ca30b4540cd2b84af376a0171fd3c8fc2c87964a",
+  "round_trip_verified": true,
+  "physical_qualified": false
+}

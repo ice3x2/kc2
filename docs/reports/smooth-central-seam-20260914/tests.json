@@ -1,0 +1,8 @@
+{
+  "status": "pass",
+  "requirements": ["CON-ARCH-006"],
+  "tests": 23,
+  "command": "C:/Python312/python.exe -B -m unittest tools.test_kc2_smooth_central_seam tools.test_publish_kc2_smooth_central_seam tools.test_kc2_flat_central_native tools.test_kc2_flat_central_revision tools.test_kc2_magnetic_entry tools.test_kc2_stl_zero_area_filter",
+  "failing_first": "Missing repair implementation and missing STL section reviewer failed before implementation; synthetic retained notch, added bulge and removed stock are rejected.",
+  "scope": "Smooth wall and floor BRep mutation checks, actual STL section detection, fail-closed publication, reused native and magnetic-entry/STL normalization contracts. Actual production CAD/native evidence is separate."
+}

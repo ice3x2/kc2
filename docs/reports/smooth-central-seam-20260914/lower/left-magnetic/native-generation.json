@@ -1,0 +1,45 @@
+{
+  "status": "pass",
+  "errors": [],
+  "selected_job": "left:magnetic",
+  "requirements": [
+    "CON-ARCH-006",
+    "OPS-ARCH-006"
+  ],
+  "fusion_version": "2705.1.11",
+  "source_step": "kc2_left_lower_housing_magnetic.step",
+  "source_sha256": "4715d4c2ee4e2ea0f8b94e86b5a289aa55d1b1dafd37c7ab31c3a613fd462af3",
+  "generation_sha256": "bd0bc0a647ce0c7c9163a7132035deb85b062cad60ab1c72af72bccc46e8b814",
+  "source_bodies": [
+    {
+      "volume_mm3": 44001.09293766914,
+      "bounds_mm": [
+        -1.5000000000000002,
+        -1.5000000000000002,
+        -2.2,
+        136.6125,
+        124.32600000000001,
+        4.999999999999999
+      ]
+    }
+  ],
+  "reopened_bodies": [
+    {
+      "volume_mm3": 44001.09293766914,
+      "bounds_mm": [
+        -1.5000000000000002,
+        -1.5000000000000002,
+        -2.2,
+        136.6125,
+        124.32600000000001,
+        4.999999999999999
+      ]
+    }
+  ],
+  "f3d": "kc2_left_lower_housing_magnetic.f3d",
+  "f3d_sha256": "006001410ddd9cc2b79c62344b3942603e250fe26d88c056bf2ce9f8205db0dc",
+  "readback_step": "kc2_left_lower_housing_magnetic.native-readback.step",
+  "readback_sha256": "bdeca6dbe06ab6515523bc2e3d9c60bf3d7292d052891e85c181cadf2db2feef",
+  "round_trip_verified": true,
+  "physical_qualified": false
+}

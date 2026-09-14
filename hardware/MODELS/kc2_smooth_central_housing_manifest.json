@@ -1,0 +1,117 @@
+{
+  "status": "digitally_verified_physical_pending",
+  "physical_qualified": false,
+  "requirement_ids": [
+    "CON-ARCH-006",
+    "CON-ARCH-007",
+    "OPS-ARCH-006"
+  ],
+  "baseline_revision": "9e0bb01d9ec8a0c93e5dc2f88271341e6ffd7513",
+  "parent_manifest": "hardware/MODELS/kc2_flat_central_housing_manifest.json",
+  "outputs": {
+    "hardware/MODELS/kc2_left_choc_v1_upper_housing.f3d": "e7651275eeabb2b56030541510f519f422aeddc95d61e9becf9ab83466ba6fa8",
+    "hardware/MODELS/kc2_left_choc_v1_upper_housing.step": "c89d5013f8470ab8ea9f72764401e10bd30f6ec9e897732c7ecfb64b3d383ebf",
+    "hardware/MODELS/kc2_left_choc_v1_upper_housing.stl": "8f160ff01b1c8dacdf1143f97e2ee036ad68240e149b4b6b49ae348344a71f28",
+    "hardware/MODELS/kc2_left_deep_sea_upper_housing.f3d": "71d2c06295c7ed22ed49fb935ca5a0afdd63b04f7b1bb4214222fad512fbc099",
+    "hardware/MODELS/kc2_left_deep_sea_upper_housing.step": "9b46877744888458f0a2077814cad82bcc59285b8f2d5d59cba50ed2042a4396",
+    "hardware/MODELS/kc2_left_deep_sea_upper_housing.stl": "3cbc0c53dec2e4bbb9fc0411855008f5d6f5af40bc226a3ffd1e89e4e7304f98",
+    "hardware/MODELS/kc2_left_mx_upper_housing.f3d": "0afd92e471de148590aa40c0aeb2da2ad4ba8d32fd95781064c9787ca5837095",
+    "hardware/MODELS/kc2_left_mx_upper_housing.step": "631bb0002583684303a93239ab24336c256deedfc89a0ada9c73044666bfc23a",
+    "hardware/MODELS/kc2_left_mx_upper_housing.stl": "f355a7a7c2f7870077eabff7070f9a09ddc4e23b9b396ba64ec247c911bac86f",
+    "hardware/MODELS/kc2_right_choc_v1_upper_housing.f3d": "e90e9429185b83972e6fb09452d59b0ddff2e0d7c20c8bbdd9b23af511a1ff46",
+    "hardware/MODELS/kc2_right_choc_v1_upper_housing.step": "2e601092f22b3e2253904dbc7a4059f1bde486196df0163591f8974d431b57b9",
+    "hardware/MODELS/kc2_right_choc_v1_upper_housing_part_a.stl": "f6a3f03aa51077d4ad9b1c06d8cbda3f95bec1939aab611be77d6efccb4bca24",
+    "hardware/MODELS/kc2_right_choc_v1_upper_housing_part_b.stl": "b7b4b00e78d56f38a79ba3bfe2a757a9f350a641fb78b4f2ed0e53dfbab61ef0",
+    "hardware/MODELS/kc2_right_deep_sea_upper_housing.f3d": "176a020b8e861bc64fb0ed04c75154670a9250fefc6dc4d82e3c1a3fa84a8010",
+    "hardware/MODELS/kc2_right_deep_sea_upper_housing.step": "677bbf8f51fe66d62371c35bfbddfbbaaee9f6569025912d948523a56f69a3d0",
+    "hardware/MODELS/kc2_right_deep_sea_upper_housing_part_a.stl": "395246476c2bab081df63d195b68f5ac14e2193462ca78900be71e38bc633e4a",
+    "hardware/MODELS/kc2_right_deep_sea_upper_housing_part_b.stl": "98f306fba49634b01f3cea063597e2cf9656ea18ae4e5b2c0b20e4fa9dd853b2",
+    "hardware/MODELS/kc2_right_mx_upper_housing.f3d": "77ebad2040ea4ec0891ad272baa6d985f507d224babf797853196cf61819d5b0",
+    "hardware/MODELS/kc2_right_mx_upper_housing.step": "28f2b02f78fd9b66ac678e1d01a25f48dc62e5d0d79343abd072a7a520868c34",
+    "hardware/MODELS/kc2_right_mx_upper_housing_part_a.stl": "59328f23b3c0ae54aa9440a5c1f0ec7e2d62a1dcddab6cdd51a029235b96fb9a",
+    "hardware/MODELS/kc2_right_mx_upper_housing_part_b.stl": "57deccce147a4006ae4ad88b7f59be4519e8b402bb5054cf427a7e328990beea",
+    "hardware/MODELS/kc2_left_lower_housing.step": "dd9c7690ea4bf475da41c0a4b17a28f6bf7d554e6c866ec64d304344402ca8bd",
+    "hardware/MODELS/kc2_left_lower_housing.f3d": "278640dc80d505f32910d41bfe44bb177efb6e1d8ceb3dc7f1b5ed590c9a46e3",
+    "hardware/MODELS/kc2_left_lower_housing.stl": "4e680642d5115a641d451ae9ebba54cd979a480c3e5fa062afd629467ef4e5f5",
+    "hardware/MODELS/kc2_left_lower_housing_magnetic.step": "4715d4c2ee4e2ea0f8b94e86b5a289aa55d1b1dafd37c7ab31c3a613fd462af3",
+    "hardware/MODELS/kc2_left_lower_housing_magnetic.f3d": "006001410ddd9cc2b79c62344b3942603e250fe26d88c056bf2ce9f8205db0dc",
+    "hardware/MODELS/kc2_left_lower_housing_magnetic.stl": "8fa4a7fd903f7a40e81d570b5f40345c5a5965cf7ef1ecc9bfb8012275055500",
+    "hardware/MODELS/kc2_right_lower_housing.step": "5b94c9278b9d654e4082a9c628e51e0dd18dc1b0658e3275459301b9e2162775",
+    "hardware/MODELS/kc2_right_lower_housing.f3d": "074313e095643d63e4192759e4df2b530aaa385c2f9d482affebbde126bd341e",
+    "hardware/MODELS/kc2_right_lower_housing_part_a.stl": "0d14b8a52bdd861be77917dd004a375478824a1225b5956fc175fbcaf06ff17f",
+    "hardware/MODELS/kc2_right_lower_housing_part_b.stl": "a6c3ee3be2d6110982d88a1de9108cb25cbe48a2b6ac022b3e35c5a55e328a0f",
+    "hardware/MODELS/kc2_right_lower_housing_magnetic.step": "8c68daf0434b5727f63c8d7142d5596befee561d9fa1f06b144b409065e826db",
+    "hardware/MODELS/kc2_right_lower_housing_magnetic.f3d": "8d514fcbbf9c2572d1efb05cba982d231a38811e29d3ee5da5b3c713d74dfdef",
+    "hardware/MODELS/kc2_right_lower_housing_part_a_magnetic.stl": "4841e77403778bb07d0026f3e45a459bb6fc1966779232f77f7cac935e4a28a5",
+    "hardware/MODELS/kc2_right_lower_housing_part_b_magnetic.stl": "973df197ac08505d7d5bea2d0e14486938adc66f893be3e75e4982d744058777"
+  },
+  "preserved_pcb_gerber_sha256": {
+    "hardware/GERBER/digital-validation.json": "13109c7dbb2b190df823dd52c3a4de0e5059613b07eabb78f47acc9fb9d19013",
+    "hardware/GERBER/fabrication-profile.json": "a8955afe47fd48d52bdcd62a0601282d5aa5ff3d4c657d2801cdfefaed254f4b",
+    "hardware/GERBER/kc2_left-manual-mx-bom.json": "148a008e1c98327bf617f5248b21967160b7e9260bb4f5fa63764427d13e587b",
+    "hardware/GERBER/kc2_left-pcb-fabrication-only.zip": "5f4d65a3f45e4efddb093bb8909eef03ea83c54483616d0d0d52935626806811",
+    "hardware/GERBER/kc2_right-manual-mx-bom.json": "553cf83b235cb798d661c6057845c33fda46d0de5f56a543f02f0de6c8a2e387",
+    "hardware/GERBER/kc2_right-pcb-fabrication-only.zip": "bfeb90e32a9dc7dd73c8b3ace95cf3cd7601e220daa7eefbdd51e2e940cf397c",
+    "hardware/GERBER/manifest.json": "2906bf329030840634a5cee1c53c74dd8efb1a70226d1fdc24b66156f693dc92",
+    "hardware/GERBER/review-evidence.json": "8fb871f17bb5ce284bdc2b507d0379a84175642d5d382ca5a7659b1cd15a0c5b",
+    "hardware/PCB/kc2_left/fp-lib-table": "e0814783a2bb96ee5b1e2567ba810e926c35aaf1725dd3cd4e71c93f426bf988",
+    "hardware/PCB/kc2_left/kc2_left.drc.json": "2d585babf6b447a398b2403366bbd244ccb54443251c9bb5dc465308cb1cbcdb",
+    "hardware/PCB/kc2_left/kc2_left.kicad_pcb": "568e1427e4cfb9d667b6d5b3754da3a4e24c924abfa85a8dfe394dd050b5fe67",
+    "hardware/PCB/kc2_left/kc2_left.kicad_pro": "13b909741bde6823ca1adf1f86600afd1c6f7caf5c13130e16ba2a84aa301c92",
+    "hardware/PCB/kc2_right/fp-lib-table": "e0814783a2bb96ee5b1e2567ba810e926c35aaf1725dd3cd4e71c93f426bf988",
+    "hardware/PCB/kc2_right/kc2_right.drc.json": "8d7e1aa5420af4b1eb33803305115bd47d00828712268acddf629873de547ebf",
+    "hardware/PCB/kc2_right/kc2_right.kicad_pcb": "88290c3b0cf3951d56221d216549665c0576a816a6315012f7f12b027f402577",
+    "hardware/PCB/kc2_right/kc2_right.kicad_pro": "31371aebc73784336fb184c6e7b9bafc9edb1a10efeee1a880a18a6fc9fcaa95"
+  },
+  "evidence_sha256": {
+    "docs/reports/smooth-central-seam-20260914/review.json": "23da39b96b7edd956d4fa41cbd42d48b23b30a208db14f94b96ad6107fa066c0",
+    "docs/reports/smooth-central-seam-20260914/native-generation.json": "cd54433fe74e85b52a2759a49f56388be82e6484661758a8367273f3e0946fce",
+    "docs/reports/smooth-central-seam-20260914/native-review.json": "18bed8db44bc7798a71bea26701f235255b5f8816d511e28afc4f1e3d9dcadc1",
+    "docs/reports/smooth-central-seam-20260914/wall-sections.png": "f7d7bbd27adbaf9910bf51407e5f724d627cb9275d338c6b6d077b00e2a88ef7",
+    "docs/reports/smooth-central-seam-20260914/tests.json": "44e664871f4b320b762e8f0e807d41f85e9bbeea668dbef444d93f7a4bbbe6c1",
+    "docs/reports/smooth-central-seam-20260914/lower/left-magnetic/generation.json": "bd0bc0a647ce0c7c9163a7132035deb85b062cad60ab1c72af72bccc46e8b814",
+    "docs/reports/smooth-central-seam-20260914/lower/left-magnetic/native-generation.json": "7b2bc54a400bc77326c42ce91f005277203d11472ba3405ceebf75b3ee65c538",
+    "docs/reports/smooth-central-seam-20260914/lower/left-normal/generation.json": "3d44e3007ef5456bb2fa1221454c21bac8245485248dd242b4fb629df4cbf401",
+    "docs/reports/smooth-central-seam-20260914/lower/left-normal/native-generation.json": "8c942a36fcf9167332989db1232cdd32c10e018008d88eb9ce137315ed9ed665",
+    "docs/reports/smooth-central-seam-20260914/lower/right-magnetic/generation.json": "273d81c7ba32f51b88b87fc10d33896df0114216ae5e5586a2a26b2d5f490073",
+    "docs/reports/smooth-central-seam-20260914/lower/right-magnetic/native-generation.json": "4019a45ac129d6c373ecaa93ec5daffdcb3016225e69ee3815042a6f4f16b005",
+    "docs/reports/smooth-central-seam-20260914/lower/right-normal/generation.json": "ec2b23b7829e0872522969c1bf15f2d75c5fe326abe344f580d2335550d25eda",
+    "docs/reports/smooth-central-seam-20260914/lower/right-normal/native-generation.json": "e87fc05b56f130d48642e749d60599d8e3f6eb2b21fa9bc83dd6919d92b10df9"
+  },
+  "source_sha256": {
+    "tools/kc2_smooth_central_seam.py": "e96d608425fadf901a1705e9bc5c2d94dd94e754eb9cab07a531d47840fb9112",
+    "tools/review_kc2_smooth_central_seam.py": "3690e12d031c3ea5a170d38bb0f6e274cd3d0024667c033ef049b08c15e825b9",
+    "tools/test_kc2_smooth_central_seam.py": "e70856031de9bd6c7d5c1cba69e2bdc93e119e11749277fbde537fb4bc7189e8",
+    "tools/publish_kc2_smooth_central_seam.py": "24c9f437533fb43e7ba28c0f1576f5a7d00033bc6072732f28c1073496eaff71",
+    "tools/test_publish_kc2_smooth_central_seam.py": "c1a191d20def249b4dab83c2cec4eff5d1254cd159d36828dde527a41228413c",
+    "tools/fusion/KC2SmoothCentral.py": "c4217274f86f5d9521be7ac2d897851140e5b1ecd8839a055483c34bfd3ef0c0",
+    "tools/kc2_flat_central_native.py": "8308c3896433513bfede4075ac41916c3b2a95a9fbc26e4b709a1ef8ed66b170",
+    "tools/review_kc2_flat_central_native.py": "2514908ed7bec210dd9bb23686443ba5a5d9487b56f1abd4049f648376717ee7",
+    "tools/fusion/KC2FlatCentralToF3D/KC2FlatCentralToF3D.py": "5f855f39804133b1f5316910c9c7daff00208c4b8159b8b2315d618404e1cf4d"
+  },
+  "documents_sha256": {
+    "hardware/MODELS/README.md": "ac8525bb7eb00a92b0433fa8bee0988a852f536941a3141a8156cdfde417f4cd",
+    "hardware/MODELS/PRINT-smooth-central-housings.md": "f01ec281e17ceabe749080b6368bcd260f9673dd504adb188377d868787a8fe2",
+    "docs/reports/smooth-central-seam-20260914/README.md": "5d05868e8a067e122a2947c28ff9469d62e31c9d29baee857190761c7f648b87",
+    "order.md": "17d4a9428720b0169946274efbf3db261157545e31ad5911dbac6246eaf60558"
+  },
+  "central_join": {
+    "guide_protrusions": 0,
+    "former_guide_cavities_filled": true,
+    "ys_mm": [
+      95,
+      117
+    ],
+    "wall_thickness_mm": 1.2
+  },
+  "magnets": {
+    "existing_pairs_y_mm": [
+      103.0,
+      111.0
+    ],
+    "controller_side_pair_added": false,
+    "outcome": "not added: safe material reserve and attraction gap cannot both be met without wall expansion",
+    "pocket_diameter_mm": 2.4,
+    "pocket_depth_mm": 1.2
+  }
+}

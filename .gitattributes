@@ -379,3 +379,12 @@
 /hardware/MODELS/kc2_flat_central_housing_manifest.json -text
 /hardware/MODELS/README.md -text
 /hardware/MODELS/PRINT-flat-central-housings.md -text
+/hardware/MODELS/PRINT-smooth-central-housings.md -text
+/hardware/MODELS/kc2_smooth_central_housing_manifest.json -text
+/docs/reports/smooth-central-seam-20260914/** -text
+/tools/kc2_smooth_central_seam.py -text
+/tools/test_kc2_smooth_central_seam.py -text
+/tools/review_kc2_smooth_central_seam.py -text
+/tools/publish_kc2_smooth_central_seam.py -text
+/tools/test_publish_kc2_smooth_central_seam.py -text
+/tools/fusion/KC2SmoothCentral.py -text
