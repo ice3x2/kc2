@@ -391,3 +391,6 @@
 /tools/kc2_pcb_seating.py -text
 /tools/test_kc2_pcb_seating.py -text
 /docs/reports/pcb-seating-20260920/** -text
+/tools/kc2_wall_engagement_study.py -text
+/tools/test_kc2_wall_engagement_study.py -text
+/docs/reports/wall-engagement-20260920/** -text

@@ -1,0 +1,432 @@
+{
+  "requirement": "CON-ARCH-006",
+  "status": "alternative_study_not_print_release",
+  "rows": {
+    "left:mx": {
+      "actual_upper_bounds_xy_mm": [
+        -1.2769999504089355,
+        -1.5,
+        136.38949584960938,
+        123.7770004272461
+      ],
+      "untrimmed_wrap_bounds_xy_mm": [
+        -2.7769999504089355,
+        -3.0,
+        137.88949584960938,
+        125.2770004272461
+      ],
+      "untrimmed_wrap_width_mm": 140.6664958000183,
+      "untrimmed_wrap_depth_mm": 128.2770004272461,
+      "expansion_each_side_mm": [
+        1.5,
+        1.5,
+        1.5,
+        1.5
+      ],
+      "wall_area_mm2": 810.9338079097233,
+      "height_candidates": [
+        {
+          "pcb_top_mm": 4.1,
+          "rise_mm": 1.0,
+          "wall_top_mm": 5.1,
+          "groove_roof_z_mm": 5.3999999999999995,
+          "nominal_overlap_mm": 0.6999999999999993,
+          "roof_mm": 3.9000000000000012,
+          "meets_user_height": true,
+          "roof_at_least_1_2_mm": true
+        },
+        {
+          "pcb_top_mm": 4.1,
+          "rise_mm": 1.2,
+          "wall_top_mm": 5.3,
+          "groove_roof_z_mm": 5.6,
+          "nominal_overlap_mm": 0.8999999999999995,
+          "roof_mm": 3.700000000000001,
+          "meets_user_height": true,
+          "roof_at_least_1_2_mm": true
+        },
+        {
+          "pcb_top_mm": 4.1,
+          "rise_mm": 1.5,
+          "wall_top_mm": 5.6,
+          "groove_roof_z_mm": 5.8999999999999995,
+          "nominal_overlap_mm": 1.1999999999999993,
+          "roof_mm": 3.4000000000000012,
+          "meets_user_height": true,
+          "roof_at_least_1_2_mm": true
+        },
+        {
+          "pcb_top_mm": 4.1,
+          "rise_mm": 2.0,
+          "wall_top_mm": 6.1,
+          "groove_roof_z_mm": 6.3999999999999995,
+          "nominal_overlap_mm": 1.6999999999999993,
+          "roof_mm": 2.9000000000000012,
+          "meets_user_height": true,
+          "roof_at_least_1_2_mm": true
+        }
+      ]
+    },
+    "left:choc_v1": {
+      "actual_upper_bounds_xy_mm": [
+        -0.8259999752044678,
+        -1.5,
+        135.93850708007812,
+        123.32599639892578
+      ],
+      "untrimmed_wrap_bounds_xy_mm": [
+        -2.3259999752044678,
+        -3.0,
+        137.43850708007812,
+        124.82599639892578
+      ],
+      "untrimmed_wrap_width_mm": 139.7645070552826,
+      "untrimmed_wrap_depth_mm": 127.82599639892578,
+      "expansion_each_side_mm": [
+        1.5,
+        1.5,
+        1.5,
+        1.5
+      ],
+      "wall_area_mm2": 806.7364855273318,
+      "height_candidates": [
+        {
+          "pcb_top_mm": 4.1,
+          "rise_mm": 1.0,
+          "wall_top_mm": 5.1,
+          "groove_roof_z_mm": 5.3999999999999995,
+          "nominal_overlap_mm": 0.6999999999999993,
+          "roof_mm": 1.1000000000000005,
+          "meets_user_height": true,
+          "roof_at_least_1_2_mm": false
+        },
+        {
+          "pcb_top_mm": 4.1,
+          "rise_mm": 1.2,
+          "wall_top_mm": 5.3,
+          "groove_roof_z_mm": 5.6,
+          "nominal_overlap_mm": 0.8999999999999995,
+          "roof_mm": 0.9000000000000004,
+          "meets_user_height": true,
+          "roof_at_least_1_2_mm": false
+        },
+        {
+          "pcb_top_mm": 4.1,
+          "rise_mm": 1.5,
+          "wall_top_mm": 5.6,
+          "groove_roof_z_mm": 5.8999999999999995,
+          "nominal_overlap_mm": 1.1999999999999993,
+          "roof_mm": 0.6000000000000005,
+          "meets_user_height": true,
+          "roof_at_least_1_2_mm": false
+        },
+        {
+          "pcb_top_mm": 4.1,
+          "rise_mm": 2.0,
+          "wall_top_mm": 6.1,
+          "groove_roof_z_mm": 6.3999999999999995,
+          "nominal_overlap_mm": 1.6999999999999993,
+          "roof_mm": 0.10000000000000053,
+          "meets_user_height": true,
+          "roof_at_least_1_2_mm": false
+        }
+      ]
+    },
+    "left:deep_sea": {
+      "actual_upper_bounds_xy_mm": [
+        -0.8259999752044678,
+        -1.5,
+        135.93850708007812,
+        123.32599639892578
+      ],
+      "untrimmed_wrap_bounds_xy_mm": [
+        -2.3259999752044678,
+        -3.0,
+        137.43850708007812,
+        124.82599639892578
+      ],
+      "untrimmed_wrap_width_mm": 139.7645070552826,
+      "untrimmed_wrap_depth_mm": 127.82599639892578,
+      "expansion_each_side_mm": [
+        1.5,
+        1.5,
+        1.5,
+        1.5
+      ],
+      "wall_area_mm2": 806.4749174783501,
+      "height_candidates": [
+        {
+          "pcb_top_mm": 4.1,
+          "rise_mm": 1.0,
+          "wall_top_mm": 5.1,
+          "groove_roof_z_mm": 5.3999999999999995,
+          "nominal_overlap_mm": 0.6999999999999993,
+          "roof_mm": 0.8500000000000005,
+          "meets_user_height": true,
+          "roof_at_least_1_2_mm": false
+        },
+        {
+          "pcb_top_mm": 4.1,
+          "rise_mm": 1.2,
+          "wall_top_mm": 5.3,
+          "groove_roof_z_mm": 5.6,
+          "nominal_overlap_mm": 0.8999999999999995,
+          "roof_mm": 0.6500000000000004,
+          "meets_user_height": true,
+          "roof_at_least_1_2_mm": false
+        },
+        {
+          "pcb_top_mm": 4.1,
+          "rise_mm": 1.5,
+          "wall_top_mm": 5.6,
+          "groove_roof_z_mm": 5.8999999999999995,
+          "nominal_overlap_mm": 1.1999999999999993,
+          "roof_mm": 0.35000000000000053,
+          "meets_user_height": true,
+          "roof_at_least_1_2_mm": false
+        },
+        {
+          "pcb_top_mm": 4.1,
+          "rise_mm": 2.0,
+          "wall_top_mm": 6.1,
+          "groove_roof_z_mm": 6.3999999999999995,
+          "nominal_overlap_mm": 1.6999999999999993,
+          "roof_mm": -0.14999999999999947,
+          "meets_user_height": true,
+          "roof_at_least_1_2_mm": false
+        }
+      ]
+    },
+    "right:mx": {
+      "actual_upper_bounds_xy_mm": [
+        -1.2769999504089355,
+        -1.5,
+        164.96449279785156,
+        123.7770004272461
+      ],
+      "untrimmed_wrap_bounds_xy_mm": [
+        -2.7769999504089355,
+        -3.0,
+        166.46449279785156,
+        125.2770004272461
+      ],
+      "untrimmed_wrap_width_mm": 169.2414927482605,
+      "untrimmed_wrap_depth_mm": 128.2770004272461,
+      "expansion_each_side_mm": [
+        1.5,
+        1.5,
+        1.5,
+        1.5
+      ],
+      "wall_area_mm2": 864.6852858529164,
+      "height_candidates": [
+        {
+          "pcb_top_mm": 4.1,
+          "rise_mm": 1.0,
+          "wall_top_mm": 5.1,
+          "groove_roof_z_mm": 5.3999999999999995,
+          "nominal_overlap_mm": 0.6999999999999993,
+          "roof_mm": 3.9000000000000012,
+          "meets_user_height": true,
+          "roof_at_least_1_2_mm": true
+        },
+        {
+          "pcb_top_mm": 4.1,
+          "rise_mm": 1.2,
+          "wall_top_mm": 5.3,
+          "groove_roof_z_mm": 5.6,
+          "nominal_overlap_mm": 0.8999999999999995,
+          "roof_mm": 3.700000000000001,
+          "meets_user_height": true,
+          "roof_at_least_1_2_mm": true
+        },
+        {
+          "pcb_top_mm": 4.1,
+          "rise_mm": 1.5,
+          "wall_top_mm": 5.6,
+          "groove_roof_z_mm": 5.8999999999999995,
+          "nominal_overlap_mm": 1.1999999999999993,
+          "roof_mm": 3.4000000000000012,
+          "meets_user_height": true,
+          "roof_at_least_1_2_mm": true
+        },
+        {
+          "pcb_top_mm": 4.1,
+          "rise_mm": 2.0,
+          "wall_top_mm": 6.1,
+          "groove_roof_z_mm": 6.3999999999999995,
+          "nominal_overlap_mm": 1.6999999999999993,
+          "roof_mm": 2.9000000000000012,
+          "meets_user_height": true,
+          "roof_at_least_1_2_mm": true
+        }
+      ]
+    },
+    "right:choc_v1": {
+      "actual_upper_bounds_xy_mm": [
+        -0.8259999752044678,
+        -1.5,
+        164.5135040283203,
+        123.32599639892578
+      ],
+      "untrimmed_wrap_bounds_xy_mm": [
+        -2.3259999752044678,
+        -3.0,
+        166.0135040283203,
+        124.82599639892578
+      ],
+      "untrimmed_wrap_width_mm": 168.33950400352478,
+      "untrimmed_wrap_depth_mm": 127.82599639892578,
+      "expansion_each_side_mm": [
+        1.5,
+        1.5,
+        1.5,
+        1.5
+      ],
+      "wall_area_mm2": 859.2834491893118,
+      "height_candidates": [
+        {
+          "pcb_top_mm": 4.1,
+          "rise_mm": 1.0,
+          "wall_top_mm": 5.1,
+          "groove_roof_z_mm": 5.3999999999999995,
+          "nominal_overlap_mm": 0.6999999999999993,
+          "roof_mm": 1.1000000000000005,
+          "meets_user_height": true,
+          "roof_at_least_1_2_mm": false
+        },
+        {
+          "pcb_top_mm": 4.1,
+          "rise_mm": 1.2,
+          "wall_top_mm": 5.3,
+          "groove_roof_z_mm": 5.6,
+          "nominal_overlap_mm": 0.8999999999999995,
+          "roof_mm": 0.9000000000000004,
+          "meets_user_height": true,
+          "roof_at_least_1_2_mm": false
+        },
+        {
+          "pcb_top_mm": 4.1,
+          "rise_mm": 1.5,
+          "wall_top_mm": 5.6,
+          "groove_roof_z_mm": 5.8999999999999995,
+          "nominal_overlap_mm": 1.1999999999999993,
+          "roof_mm": 0.6000000000000005,
+          "meets_user_height": true,
+          "roof_at_least_1_2_mm": false
+        },
+        {
+          "pcb_top_mm": 4.1,
+          "rise_mm": 2.0,
+          "wall_top_mm": 6.1,
+          "groove_roof_z_mm": 6.3999999999999995,
+          "nominal_overlap_mm": 1.6999999999999993,
+          "roof_mm": 0.10000000000000053,
+          "meets_user_height": true,
+          "roof_at_least_1_2_mm": false
+        }
+      ]
+    },
+    "right:deep_sea": {
+      "actual_upper_bounds_xy_mm": [
+        -0.8259999752044678,
+        -1.5,
+        164.5135040283203,
+        123.32599639892578
+      ],
+      "untrimmed_wrap_bounds_xy_mm": [
+        -2.3259999752044678,
+        -3.0,
+        166.0135040283203,
+        124.82599639892578
+      ],
+      "untrimmed_wrap_width_mm": 168.33950400352478,
+      "untrimmed_wrap_depth_mm": 127.82599639892578,
+      "expansion_each_side_mm": [
+        1.5,
+        1.5,
+        1.5,
+        1.5
+      ],
+      "wall_area_mm2": 859.1914677416426,
+      "height_candidates": [
+        {
+          "pcb_top_mm": 4.1,
+          "rise_mm": 1.0,
+          "wall_top_mm": 5.1,
+          "groove_roof_z_mm": 5.3999999999999995,
+          "nominal_overlap_mm": 0.6999999999999993,
+          "roof_mm": 0.8500000000000005,
+          "meets_user_height": true,
+          "roof_at_least_1_2_mm": false
+        },
+        {
+          "pcb_top_mm": 4.1,
+          "rise_mm": 1.2,
+          "wall_top_mm": 5.3,
+          "groove_roof_z_mm": 5.6,
+          "nominal_overlap_mm": 0.8999999999999995,
+          "roof_mm": 0.6500000000000004,
+          "meets_user_height": true,
+          "roof_at_least_1_2_mm": false
+        },
+        {
+          "pcb_top_mm": 4.1,
+          "rise_mm": 1.5,
+          "wall_top_mm": 5.6,
+          "groove_roof_z_mm": 5.8999999999999995,
+          "nominal_overlap_mm": 1.1999999999999993,
+          "roof_mm": 0.35000000000000053,
+          "meets_user_height": true,
+          "roof_at_least_1_2_mm": false
+        },
+        {
+          "pcb_top_mm": 4.1,
+          "rise_mm": 2.0,
+          "wall_top_mm": 6.1,
+          "groove_roof_z_mm": 6.3999999999999995,
+          "nominal_overlap_mm": 1.6999999999999993,
+          "roof_mm": -0.14999999999999947,
+          "meets_user_height": true,
+          "roof_at_least_1_2_mm": false
+        }
+      ]
+    }
+  },
+  "joins": {
+    "mx": {
+      "untrimmed_wrap_overlap_mm2": 60.90601682958482,
+      "untrimmed_wrap_gap_mm": 0.0
+    },
+    "choc_v1": {
+      "untrimmed_wrap_overlap_mm2": 76.90682381588147,
+      "untrimmed_wrap_gap_mm": 0.0
+    },
+    "deep_sea": {
+      "untrimmed_wrap_overlap_mm2": 76.90693881210078,
+      "untrimmed_wrap_gap_mm": 0.0
+    }
+  },
+  "source_sha256": {
+    "hardware/MODELS/kc2_left_mx_upper_housing.stl": "f355a7a7c2f7870077eabff7070f9a09ddc4e23b9b396ba64ec247c911bac86f",
+    "hardware/MODELS/kc2_left_choc_v1_upper_housing.stl": "8f160ff01b1c8dacdf1143f97e2ee036ad68240e149b4b6b49ae348344a71f28",
+    "hardware/MODELS/kc2_left_deep_sea_upper_housing.stl": "3cbc0c53dec2e4bbb9fc0411855008f5d6f5af40bc226a3ffd1e89e4e7304f98",
+    "hardware/MODELS/kc2_right_mx_upper_housing_part_a.stl": "59328f23b3c0ae54aa9440a5c1f0ec7e2d62a1dcddab6cdd51a029235b96fb9a",
+    "hardware/MODELS/kc2_right_mx_upper_housing_part_b.stl": "57deccce147a4006ae4ad88b7f59be4519e8b402bb5054cf427a7e328990beea",
+    "hardware/MODELS/kc2_right_choc_v1_upper_housing_part_a.stl": "f6a3f03aa51077d4ad9b1c06d8cbda3f95bec1939aab611be77d6efccb4bca24",
+    "hardware/MODELS/kc2_right_choc_v1_upper_housing_part_b.stl": "b7b4b00e78d56f38a79ba3bfe2a757a9f350a641fb78b4f2ed0e53dfbab61ef0",
+    "hardware/MODELS/kc2_right_deep_sea_upper_housing_part_a.stl": "395246476c2bab081df63d195b68f5ac14e2193462ca78900be71e38bc633e4a",
+    "hardware/MODELS/kc2_right_deep_sea_upper_housing_part_b.stl": "98f306fba49634b01f3cea063597e2cf9656ea18ae4e5b2c0b20e4fa9dd853b2",
+    "tools/kc2_wall_engagement_study.py": "e0d87eebb711c5e02b9a62ddccfe64eca8324ec0baeef866ca72720306ac74a5",
+    "tools/test_kc2_wall_engagement_study.py": "921d6c0f50ef2111cb42ac7f02eb0fc6017757b4afb92b3cbfd9e3d8ae0277fa",
+    "tools/kc2_pcb_seating.py": "c3bfcdf8d644688588860d46a6b1e6b99100b6242c332145cae1fa2678eb229a"
+  },
+  "physical_qualified": false,
+  "limitations": [
+    "Full-wrap silhouette is sampled from actual upper STL, not a finished wall design.",
+    "Central seam and USB/service openings are NOT removed in this deliberately naive candidate.",
+    "Right split mask, roots, keycap travel and native CAD are not implemented or qualified.",
+    "Clearance .30, thickness 1.20 and roof comparison are engineering assumptions.",
+    "A 1.50 mm PCB-relative rise wraps the lower portion of the upper side, not its entire height."
+  ]
+}
