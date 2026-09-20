@@ -1,0 +1,114 @@
+{
+  "status": "pass",
+  "source_sha256": {
+    "tools/review_kc2_wrap_native.py": "337d9b52aae528719ad800ba85bb66c02af110b11a57a8e880f42d31391c3ad4",
+    "tools/test_review_kc2_wrap_native.py": "4c2a13eb6c649e01d69cdea81a98ca8145d7c9888a0a489f8379b2e2019498f8",
+    "tools/kc2_wrap_native.py": "f590b9bb8e1f352fd63383914fe4d5c4c81fe2caa0bfa2fdc561a0058201bced",
+    "tools/test_kc2_wrap_native.py": "fb4670af299c7f8709d553aa305ffb7cf4b4222ab2678ef0b598b99e9d55fbea",
+    "tools/fusion/KC2WrapHousings.py": "4b712545e8bbcb7d75a418608bea98efdcdaa772c773761dc2e227bdba10a88f",
+    "tools/kc2_flat_central_native.py": "8308c3896433513bfede4075ac41916c3b2a95a9fbc26e4b709a1ef8ed66b170",
+    "tools/review_kc2_flat_central_native.py": "2514908ed7bec210dd9bb23686443ba5a5d9487b56f1abd4049f648376717ee7",
+    "tools/fusion/KC2FlatCentralToF3D/KC2FlatCentralToF3D.py": "5f855f39804133b1f5316910c9c7daff00208c4b8159b8b2315d618404e1cf4d",
+    ".codex-tmp/wrap-housing-20260920-r1/upper/right-deep_sea/kc2_right_deep_sea_upper_housing.step": "70f2a931d5658e5c5a48bc2adc81461e2614aa138cef8f9f3a3b7abca9ebb319",
+    ".codex-tmp/wrap-housing-20260920-r1/upper/right-deep_sea/generation.json": "ca6fdb20c4fb8c8fe253dd24f49cf3585bae550863edb436ad9168f15f74de70",
+    ".codex-tmp/wrap-housing-20260920-r1/upper/right-deep_sea/native-generation.json": "ba949b9ed212a371d562c221928965acacc1ca5ba4102fea103efa30116d2631",
+    ".codex-tmp/wrap-housing-20260920-r1/upper/right-deep_sea/kc2_right_deep_sea_upper_housing.f3d": "53503b44f86f53c031333ea68bcb4f6928ff94c6b4acc06cc1b1ed3fe5c51895",
+    ".codex-tmp/wrap-housing-20260920-r1/upper/right-deep_sea/kc2_right_deep_sea_upper_housing.native-readback.step": "84b9be9de23c1221228f033937fc75b13ff326e943730057114c58ada7207020"
+  },
+  "row": {
+    "status": "pass",
+    "errors": [],
+    "parts": [
+      {
+        "part": 0,
+        "source": {
+          "volume_mm3": 6389.158294289736,
+          "area_mm2": 10719.914965037731,
+          "center_mm": [
+            38.86494456795625,
+            73.6847558705808,
+            5.36551137163513
+          ],
+          "bounds_mm": [
+            -1.277,
+            28.973,
+            4.1,
+            97.08756000000027,
+            123.777,
+            6.6
+          ],
+          "faces": 10045,
+          "edges": 30036,
+          "vertices": 20024
+        },
+        "readback": {
+          "volume_mm3": 6389.158294289741,
+          "area_mm2": 10719.91496503775,
+          "center_mm": [
+            38.864944567956094,
+            73.68475587058144,
+            5.365511371635123
+          ],
+          "bounds_mm": [
+            -1.277,
+            28.973,
+            4.1,
+            97.08756000000027,
+            123.777,
+            6.6
+          ],
+          "faces": 10045,
+          "edges": 30036,
+          "vertices": 20024
+        },
+        "errors": []
+      },
+      {
+        "part": 1,
+        "source": {
+          "volume_mm3": 6477.442888627495,
+          "area_mm2": 10846.204133053981,
+          "center_mm": [
+            118.3116493549053,
+            70.03157201892246,
+            5.360703104086848
+          ],
+          "bounds_mm": [
+            73.0,
+            -1.5,
+            4.1,
+            164.5135,
+            123.777,
+            6.6
+          ],
+          "faces": 10395,
+          "edges": 31080,
+          "vertices": 20720
+        },
+        "readback": {
+          "volume_mm3": 6477.442888627478,
+          "area_mm2": 10846.20413305399,
+          "center_mm": [
+            118.31164935490521,
+            70.0315720189226,
+            5.360703104086833
+          ],
+          "bounds_mm": [
+            73.0,
+            -1.5,
+            4.1,
+            164.5135,
+            123.777,
+            6.6
+          ],
+          "faces": 10395,
+          "edges": 31080,
+          "vertices": 20720
+        },
+        "errors": []
+      }
+    ],
+    "f3d_sha256": "53503b44f86f53c031333ea68bcb4f6928ff94c6b4acc06cc1b1ed3fe5c51895",
+    "readback_sha256": "84b9be9de23c1221228f033937fc75b13ff326e943730057114c58ada7207020"
+  }
+}

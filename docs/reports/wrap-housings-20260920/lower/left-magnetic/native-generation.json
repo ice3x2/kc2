@@ -1,0 +1,41 @@
+{
+  "status": "pass",
+  "errors": [],
+  "selected_job": "left:magnetic",
+  "fusion_version": "2705.1.15",
+  "source_step": "kc2_left_lower_housing_magnetic.step",
+  "source_sha256": "9e18665c655078fbdca293151895ee99d70b66c77bdc3cdca3136d25185d4021",
+  "generation_sha256": "5afe0708d6d5140429d5c7fe32b03378b7386b396832711fb9dda59c11951123",
+  "source_bodies": [
+    {
+      "volume_mm3": 47284.26552502642,
+      "bounds_mm": [
+        -1.5000000000000002,
+        -3.0000000000000004,
+        -2.2,
+        137.8895,
+        125.27700000000002,
+        5.6000000000000005
+      ]
+    }
+  ],
+  "reopened_bodies": [
+    {
+      "volume_mm3": 47284.26552502642,
+      "bounds_mm": [
+        -1.5000000000000002,
+        -3.0000000000000004,
+        -2.2,
+        137.8895,
+        125.27700000000002,
+        5.6000000000000005
+      ]
+    }
+  ],
+  "f3d": "kc2_left_lower_housing_magnetic.f3d",
+  "f3d_sha256": "c99a542701d48c4926c817005f5c24efec300f3f3662937ecf699c56a19da863",
+  "readback_step": "kc2_left_lower_housing_magnetic.native-readback.step",
+  "readback_sha256": "8afc3e5767fff5b3f7eac8e2a2628b91362f6a3a4c14864ba734703f0370820e",
+  "round_trip_verified": true,
+  "physical_qualified": false
+}

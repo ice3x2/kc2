@@ -1,0 +1,532 @@
+{
+  "status": "pass",
+  "errors": [],
+  "requirements": [
+    "CON-ARCH-006",
+    "OPS-ARCH-006"
+  ],
+  "fusion_version": "2705.1.15",
+  "outputs": {
+    "left:normal": {
+      "status": "pass",
+      "errors": [],
+      "selected_job": "left:normal",
+      "fusion_version": "2705.1.15",
+      "source_step": "kc2_left_lower_housing.step",
+      "source_sha256": "a80fc3be85935630da964f622f11c276d2ef55c06250f371f7fecfe2e3f9c536",
+      "generation_sha256": "ce0611585f95695a42a39102b1ae89cf817024740d4fc7c48911e0a7416bbc84",
+      "source_bodies": [
+        {
+          "volume_mm3": 47305.980213448056,
+          "bounds_mm": [
+            -1.5000000000000002,
+            -3.0000000000000004,
+            -2.2,
+            137.8895,
+            125.27700000000002,
+            5.6000000000000005
+          ]
+        }
+      ],
+      "reopened_bodies": [
+        {
+          "volume_mm3": 47305.980213448056,
+          "bounds_mm": [
+            -1.5000000000000002,
+            -3.0000000000000004,
+            -2.2,
+            137.8895,
+            125.27700000000002,
+            5.6000000000000005
+          ]
+        }
+      ],
+      "f3d": "kc2_left_lower_housing.f3d",
+      "f3d_sha256": "d04a818e0953e7855acd9a91062ba8fe08f3960d7eceee47f3d57bb47cf6f940",
+      "readback_step": "kc2_left_lower_housing.native-readback.step",
+      "readback_sha256": "bbea33260740650e53d6974f80e130fe71620f157adb61541406c0d478b875c4",
+      "round_trip_verified": true,
+      "physical_qualified": false
+    },
+    "left:magnetic": {
+      "status": "pass",
+      "errors": [],
+      "selected_job": "left:magnetic",
+      "fusion_version": "2705.1.15",
+      "source_step": "kc2_left_lower_housing_magnetic.step",
+      "source_sha256": "9e18665c655078fbdca293151895ee99d70b66c77bdc3cdca3136d25185d4021",
+      "generation_sha256": "5afe0708d6d5140429d5c7fe32b03378b7386b396832711fb9dda59c11951123",
+      "source_bodies": [
+        {
+          "volume_mm3": 47284.26552502642,
+          "bounds_mm": [
+            -1.5000000000000002,
+            -3.0000000000000004,
+            -2.2,
+            137.8895,
+            125.27700000000002,
+            5.6000000000000005
+          ]
+        }
+      ],
+      "reopened_bodies": [
+        {
+          "volume_mm3": 47284.26552502642,
+          "bounds_mm": [
+            -1.5000000000000002,
+            -3.0000000000000004,
+            -2.2,
+            137.8895,
+            125.27700000000002,
+            5.6000000000000005
+          ]
+        }
+      ],
+      "f3d": "kc2_left_lower_housing_magnetic.f3d",
+      "f3d_sha256": "c99a542701d48c4926c817005f5c24efec300f3f3662937ecf699c56a19da863",
+      "readback_step": "kc2_left_lower_housing_magnetic.native-readback.step",
+      "readback_sha256": "8afc3e5767fff5b3f7eac8e2a2628b91362f6a3a4c14864ba734703f0370820e",
+      "round_trip_verified": true,
+      "physical_qualified": false
+    },
+    "left:mx": {
+      "status": "pass",
+      "errors": [],
+      "selected_job": "left:mx",
+      "fusion_version": "2705.1.15",
+      "source_step": "kc2_left_mx_upper_housing.step",
+      "source_sha256": "4abd84f0b4cec046c97fe199f4ee77208a2e01ac7aad8e5d60a233d3a3d6c35d",
+      "generation_sha256": "680aa5c0e3376f41cbc58ebdf7fca5da0688c133ed1beecaf238a6114dd21693",
+      "source_bodies": [
+        {
+          "volume_mm3": 26549.517647885612,
+          "bounds_mm": [
+            -1.2770000000000001,
+            -1.5000000000000002,
+            4.1,
+            136.3895,
+            123.77700000000002,
+            9.3
+          ]
+        }
+      ],
+      "reopened_bodies": [
+        {
+          "volume_mm3": 26549.517647885612,
+          "bounds_mm": [
+            -1.2770000000000001,
+            -1.5000000000000002,
+            4.1,
+            136.3895,
+            123.77700000000002,
+            9.3
+          ]
+        }
+      ],
+      "f3d": "kc2_left_mx_upper_housing.f3d",
+      "f3d_sha256": "2aa2567b227a2ff1b8ec433d17c059bd99b60dd304e2c7211bc152a7b35762f4",
+      "readback_step": "kc2_left_mx_upper_housing.native-readback.step",
+      "readback_sha256": "5271d36c115d5bcf481161a0e4bae395d0c8c7b1dc6af430b4e10ac041007683",
+      "round_trip_verified": true,
+      "physical_qualified": false
+    },
+    "left:choc_v1": {
+      "status": "pass",
+      "errors": [],
+      "selected_job": "left:choc_v1",
+      "fusion_version": "2705.1.15",
+      "source_step": "kc2_left_choc_v1_upper_housing.step",
+      "source_sha256": "31c7a95e7e447bf9e16befdd498bef3fd6866b916d20bd356f1a8b6c00377b06",
+      "generation_sha256": "3eb46fd27bb3da7a66fa93f3c97972522bde8007f39ec9acc7bc7d87e406902d",
+      "source_bodies": [
+        {
+          "volume_mm3": 12969.165084042126,
+          "bounds_mm": [
+            -0.851301415863,
+            -1.5000000000000002,
+            4.1,
+            136.3895,
+            123.77700000000002,
+            6.6000000000000005
+          ]
+        }
+      ],
+      "reopened_bodies": [
+        {
+          "volume_mm3": 12969.165084042126,
+          "bounds_mm": [
+            -0.851301415863,
+            -1.5000000000000002,
+            4.1,
+            136.3895,
+            123.77700000000002,
+            6.6000000000000005
+          ]
+        }
+      ],
+      "f3d": "kc2_left_choc_v1_upper_housing.f3d",
+      "f3d_sha256": "af81eea1f1f5312f3849810d9cc589cffa337aed4050b7b6d6e78d4c2fb8b41b",
+      "readback_step": "kc2_left_choc_v1_upper_housing.native-readback.step",
+      "readback_sha256": "a3d143f30a1156f0df1eebb9c79fea176842b3bb1b66f6b5aa2372062eea23d2",
+      "round_trip_verified": true,
+      "physical_qualified": false
+    },
+    "left:deep_sea": {
+      "status": "pass",
+      "errors": [],
+      "selected_job": "left:deep_sea",
+      "fusion_version": "2705.1.15",
+      "source_step": "kc2_left_deep_sea_upper_housing.step",
+      "source_sha256": "f31662007cbe25689923ee961f09cb280d66b639565e67cef7d86b2b72c14015",
+      "generation_sha256": "3a95f7c063d014002ec278ef4c0198adf31fbaf69a7ebddf0bb383ffff53a238",
+      "source_bodies": [
+        {
+          "volume_mm3": 11587.84154647187,
+          "bounds_mm": [
+            -0.851301415863,
+            -1.5000000000000002,
+            4.1,
+            136.3895,
+            123.77700000000002,
+            6.6000000000000005
+          ]
+        }
+      ],
+      "reopened_bodies": [
+        {
+          "volume_mm3": 11587.84154647187,
+          "bounds_mm": [
+            -0.851301415863,
+            -1.5000000000000002,
+            4.1,
+            136.3895,
+            123.77700000000002,
+            6.6000000000000005
+          ]
+        }
+      ],
+      "f3d": "kc2_left_deep_sea_upper_housing.f3d",
+      "f3d_sha256": "65515cb4d2ad7a3de01c1474360f092b48e3f8e0a6e11780a415e9cbefea670b",
+      "readback_step": "kc2_left_deep_sea_upper_housing.native-readback.step",
+      "readback_sha256": "c51cd6e80e9cc6a011ced630389abd9bf62089922246ce6969bcbd6003332bf7",
+      "round_trip_verified": true,
+      "physical_qualified": false
+    },
+    "right:normal": {
+      "status": "pass",
+      "errors": [],
+      "selected_job": "right:normal",
+      "fusion_version": "2705.1.15",
+      "source_step": "kc2_right_lower_housing.step",
+      "source_sha256": "9bac3e813aa1245a28c37752a07a3c7896047f0f1078344df67eec008ed03f4a",
+      "generation_sha256": "a1941a24b4ef89c2e89655580aa75edf34338f6cd363488ee54a71f9d98101c0",
+      "source_bodies": [
+        {
+          "volume_mm3": 26987.412079365327,
+          "bounds_mm": [
+            -2.777,
+            27.473,
+            -2.2,
+            87.09375,
+            125.27699999999999,
+            5.6000000000000005
+          ]
+        },
+        {
+          "volume_mm3": 26783.122607266796,
+          "bounds_mm": [
+            82.14379,
+            -3.0000000000000004,
+            -2.2,
+            165.1875,
+            125.27700000000002,
+            5.6000000000000005
+          ]
+        }
+      ],
+      "reopened_bodies": [
+        {
+          "volume_mm3": 26987.412079365327,
+          "bounds_mm": [
+            -2.777,
+            27.473,
+            -2.2,
+            87.09375,
+            125.27699999999999,
+            5.6000000000000005
+          ]
+        },
+        {
+          "volume_mm3": 26783.122607266796,
+          "bounds_mm": [
+            82.14379,
+            -3.0000000000000004,
+            -2.2,
+            165.1875,
+            125.27700000000002,
+            5.6000000000000005
+          ]
+        }
+      ],
+      "f3d": "kc2_right_lower_housing.f3d",
+      "f3d_sha256": "47541969035c83870539dc9c9ac9f4d69e6e523838e0820384fdc29b52137ea6",
+      "readback_step": "kc2_right_lower_housing.native-readback.step",
+      "readback_sha256": "c19202875a26146ebe250a1a1ffea68f39795a5a1765e4fbb1cb1b486041c73d",
+      "round_trip_verified": true,
+      "physical_qualified": false
+    },
+    "right:magnetic": {
+      "status": "pass",
+      "errors": [],
+      "selected_job": "right:magnetic",
+      "fusion_version": "2705.1.15",
+      "source_step": "kc2_right_lower_housing_magnetic.step",
+      "source_sha256": "733312559d473cd1625143f49551897e715134736471a4cc497f6e2adbba3818",
+      "generation_sha256": "3568a9ec6f637704fbd04ebd9b7b5616c4f061664d9da8230576c9f68f40d91b",
+      "source_bodies": [
+        {
+          "volume_mm3": 26987.412079365335,
+          "bounds_mm": [
+            -2.777,
+            27.473,
+            -2.2,
+            87.09375,
+            125.27699999999999,
+            5.6000000000000005
+          ]
+        },
+        {
+          "volume_mm3": 26761.407918845183,
+          "bounds_mm": [
+            82.14379,
+            -3.0000000000000004,
+            -2.2,
+            165.1875,
+            125.27700000000002,
+            5.6000000000000005
+          ]
+        }
+      ],
+      "reopened_bodies": [
+        {
+          "volume_mm3": 26987.412079365335,
+          "bounds_mm": [
+            -2.777,
+            27.473,
+            -2.2,
+            87.09375,
+            125.27699999999999,
+            5.6000000000000005
+          ]
+        },
+        {
+          "volume_mm3": 26761.407918845183,
+          "bounds_mm": [
+            82.14379,
+            -3.0000000000000004,
+            -2.2,
+            165.1875,
+            125.27700000000002,
+            5.6000000000000005
+          ]
+        }
+      ],
+      "f3d": "kc2_right_lower_housing_magnetic.f3d",
+      "f3d_sha256": "d149e5ab75e2e73ff3a7c346916148115c81b11a73f7c30f7a3b7b80c7074143",
+      "readback_step": "kc2_right_lower_housing_magnetic.native-readback.step",
+      "readback_sha256": "ac18ad261aca898a73230c258d2e924dacb31f4b724333991566c0e6c0c7fb6d",
+      "round_trip_verified": true,
+      "physical_qualified": false
+    },
+    "right:mx": {
+      "status": "pass",
+      "errors": [],
+      "selected_job": "right:mx",
+      "fusion_version": "2705.1.15",
+      "source_step": "kc2_right_mx_upper_housing.step",
+      "source_sha256": "a69afe58cc2ca8a4509aec44beb1cd0d0eb959987e3a1c536f4f559aaeeae241",
+      "generation_sha256": "8cca206bc590c97f224e9406e079140a444ab8dcd216fcf7148394a871163d81",
+      "source_bodies": [
+        {
+          "volume_mm3": 13995.958258836126,
+          "bounds_mm": [
+            -1.2770000000000001,
+            28.973,
+            4.1,
+            96.98756000000002,
+            123.77700000000002,
+            9.3
+          ]
+        },
+        {
+          "volume_mm3": 14874.988749749495,
+          "bounds_mm": [
+            72.890660399586,
+            -1.5000000000000002,
+            4.1,
+            164.9645,
+            123.77700000000002,
+            9.3
+          ]
+        }
+      ],
+      "reopened_bodies": [
+        {
+          "volume_mm3": 13995.958258836126,
+          "bounds_mm": [
+            -1.2770000000000001,
+            28.973,
+            4.1,
+            96.98756000000002,
+            123.77700000000002,
+            9.3
+          ]
+        },
+        {
+          "volume_mm3": 14874.988749749495,
+          "bounds_mm": [
+            72.890660399586,
+            -1.5000000000000002,
+            4.1,
+            164.9645,
+            123.77700000000002,
+            9.3
+          ]
+        }
+      ],
+      "f3d": "kc2_right_mx_upper_housing.f3d",
+      "f3d_sha256": "c7a0b85cf773dd2a7a8227ee7e6e3f8921f8710c338847192a5c334fd78f7fe3",
+      "readback_step": "kc2_right_mx_upper_housing.native-readback.step",
+      "readback_sha256": "8136095164757535ebe872eadf8ff82940044a42cc9b206a978c0e2f0058388d",
+      "round_trip_verified": true,
+      "physical_qualified": false
+    },
+    "right:choc_v1": {
+      "status": "pass",
+      "errors": [],
+      "selected_job": "right:choc_v1",
+      "fusion_version": "2705.1.15",
+      "source_step": "kc2_right_choc_v1_upper_housing.step",
+      "source_sha256": "518eed3b7066cbce2becd63847e94b6143e22eb7cfeffe473408a51fa9fff5a1",
+      "generation_sha256": "69b0fb8a24cc430d3556d45d8d13727118903991e90ec7d85691e51b3f827812",
+      "source_bodies": [
+        {
+          "volume_mm3": 7129.858395952788,
+          "bounds_mm": [
+            -1.2770000000000001,
+            28.973,
+            4.1,
+            97.08756000000001,
+            123.77700000000002,
+            6.6000000000000005
+          ]
+        },
+        {
+          "volume_mm3": 7245.7618916720185,
+          "bounds_mm": [
+            73.0,
+            -1.5000000000000002,
+            4.1,
+            164.51350000000002,
+            123.77700000000002,
+            6.6000000000000005
+          ]
+        }
+      ],
+      "reopened_bodies": [
+        {
+          "volume_mm3": 7129.858395952788,
+          "bounds_mm": [
+            -1.2770000000000001,
+            28.973,
+            4.1,
+            97.08756000000001,
+            123.77700000000002,
+            6.6000000000000005
+          ]
+        },
+        {
+          "volume_mm3": 7245.7618916720185,
+          "bounds_mm": [
+            73.0,
+            -1.5000000000000002,
+            4.1,
+            164.51350000000002,
+            123.77700000000002,
+            6.6000000000000005
+          ]
+        }
+      ],
+      "f3d": "kc2_right_choc_v1_upper_housing.f3d",
+      "f3d_sha256": "396fdfbb4b659800a8314b4cb40f1a557dc1361d291b9d64c569fbeda7d2e164",
+      "readback_step": "kc2_right_choc_v1_upper_housing.native-readback.step",
+      "readback_sha256": "8533114e69cf3ce3529d2e9dda4f5a70c77584a963ca71355a2dc35243f012ab",
+      "round_trip_verified": true,
+      "physical_qualified": false
+    },
+    "right:deep_sea": {
+      "status": "pass",
+      "errors": [],
+      "selected_job": "right:deep_sea",
+      "fusion_version": "2705.1.15",
+      "source_step": "kc2_right_deep_sea_upper_housing.step",
+      "source_sha256": "70f2a931d5658e5c5a48bc2adc81461e2614aa138cef8f9f3a3b7abca9ebb319",
+      "generation_sha256": "ca6fdb20c4fb8c8fe253dd24f49cf3585bae550863edb436ad9168f15f74de70",
+      "source_bodies": [
+        {
+          "volume_mm3": 6389.1582942909345,
+          "bounds_mm": [
+            -1.2770000000000001,
+            28.973,
+            4.1,
+            97.08756000000001,
+            123.77700000000002,
+            6.6000000000000005
+          ]
+        },
+        {
+          "volume_mm3": 6477.442888628357,
+          "bounds_mm": [
+            73.0,
+            -1.5000000000000002,
+            4.1,
+            164.51350000000002,
+            123.77700000000002,
+            6.6000000000000005
+          ]
+        }
+      ],
+      "reopened_bodies": [
+        {
+          "volume_mm3": 6389.1582942909345,
+          "bounds_mm": [
+            -1.2770000000000001,
+            28.973,
+            4.1,
+            97.08756000000001,
+            123.77700000000002,
+            6.6000000000000005
+          ]
+        },
+        {
+          "volume_mm3": 6477.442888628357,
+          "bounds_mm": [
+            73.0,
+            -1.5000000000000002,
+            4.1,
+            164.51350000000002,
+            123.77700000000002,
+            6.6000000000000005
+          ]
+        }
+      ],
+      "f3d": "kc2_right_deep_sea_upper_housing.f3d",
+      "f3d_sha256": "53503b44f86f53c031333ea68bcb4f6928ff94c6b4acc06cc1b1ed3fe5c51895",
+      "readback_step": "kc2_right_deep_sea_upper_housing.native-readback.step",
+      "readback_sha256": "84b9be9de23c1221228f033937fc75b13ff326e943730057114c58ada7207020",
+      "round_trip_verified": true,
+      "physical_qualified": false
+    }
+  },
+  "physical_qualified": false
+}

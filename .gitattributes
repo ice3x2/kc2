@@ -394,3 +394,13 @@
 /tools/kc2_wall_engagement_study.py -text
 /tools/test_kc2_wall_engagement_study.py -text
 /docs/reports/wall-engagement-20260920/** -text
+/tools/*kc2_wrap* -text whitespace=cr-at-eol
+/tools/kc2_stl_tjunction.py -text whitespace=cr-at-eol
+/tools/test_kc2_stl_tjunction.py -text whitespace=cr-at-eol
+/tools/fusion/KC2WrapHousings.py -text whitespace=cr-at-eol
+/docs/reports/wrap-housings-20260920/** -text whitespace=cr-at-eol
+/hardware/MODELS/kc2_wrap_housing_manifest.json -text whitespace=cr-at-eol
+/hardware/MODELS/PRINT-wrap-housings.md -text whitespace=cr-at-eol
+# Raw verification evidence retains exporter padding; canonical STEP is normalized.
+/docs/reports/wrap-housings-20260920/**/*.step whitespace=-blank-at-eol,cr-at-eol
+/docs/reports/wrap-housings-20260920/raw-step/*.raw whitespace=-blank-at-eol,cr-at-eol

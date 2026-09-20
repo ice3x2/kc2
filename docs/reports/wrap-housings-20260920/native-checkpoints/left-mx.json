@@ -1,0 +1,70 @@
+{
+  "status": "pass",
+  "source_sha256": {
+    "tools/review_kc2_wrap_native.py": "337d9b52aae528719ad800ba85bb66c02af110b11a57a8e880f42d31391c3ad4",
+    "tools/test_review_kc2_wrap_native.py": "4c2a13eb6c649e01d69cdea81a98ca8145d7c9888a0a489f8379b2e2019498f8",
+    "tools/kc2_wrap_native.py": "f590b9bb8e1f352fd63383914fe4d5c4c81fe2caa0bfa2fdc561a0058201bced",
+    "tools/test_kc2_wrap_native.py": "fb4670af299c7f8709d553aa305ffb7cf4b4222ab2678ef0b598b99e9d55fbea",
+    "tools/fusion/KC2WrapHousings.py": "4b712545e8bbcb7d75a418608bea98efdcdaa772c773761dc2e227bdba10a88f",
+    "tools/kc2_flat_central_native.py": "8308c3896433513bfede4075ac41916c3b2a95a9fbc26e4b709a1ef8ed66b170",
+    "tools/review_kc2_flat_central_native.py": "2514908ed7bec210dd9bb23686443ba5a5d9487b56f1abd4049f648376717ee7",
+    "tools/fusion/KC2FlatCentralToF3D/KC2FlatCentralToF3D.py": "5f855f39804133b1f5316910c9c7daff00208c4b8159b8b2315d618404e1cf4d",
+    ".codex-tmp/wrap-housing-20260920-r1/upper/left-mx/kc2_left_mx_upper_housing.step": "4abd84f0b4cec046c97fe199f4ee77208a2e01ac7aad8e5d60a233d3a3d6c35d",
+    ".codex-tmp/wrap-housing-20260920-r1/upper/left-mx/generation.json": "680aa5c0e3376f41cbc58ebdf7fca5da0688c133ed1beecaf238a6114dd21693",
+    ".codex-tmp/wrap-housing-20260920-r1/upper/left-mx/native-generation.json": "cd50991c847f2b2b74ffd79b9cc359dc12c68d1cb1f3adcd3948ae2adceb5192",
+    ".codex-tmp/wrap-housing-20260920-r1/upper/left-mx/kc2_left_mx_upper_housing.f3d": "2aa2567b227a2ff1b8ec433d17c059bd99b60dd304e2c7211bc152a7b35762f4",
+    ".codex-tmp/wrap-housing-20260920-r1/upper/left-mx/kc2_left_mx_upper_housing.native-readback.step": "5271d36c115d5bcf481161a0e4bae395d0c8c7b1dc6af430b4e10ac041007683"
+  },
+  "row": {
+    "status": "pass",
+    "errors": [],
+    "parts": [
+      {
+        "part": 0,
+        "source": {
+          "volume_mm3": 26549.51764788707,
+          "area_mm2": 27662.28998835714,
+          "center_mm": [
+            68.84305589603524,
+            74.14639318838883,
+            7.042910308748349
+          ],
+          "bounds_mm": [
+            -1.277,
+            -1.5,
+            4.1,
+            136.3895,
+            123.777,
+            9.3
+          ],
+          "faces": 12224,
+          "edges": 36525,
+          "vertices": 24350
+        },
+        "readback": {
+          "volume_mm3": 26549.517647887067,
+          "area_mm2": 27662.28998835709,
+          "center_mm": [
+            68.84305589603524,
+            74.14639318838883,
+            7.042910308748333
+          ],
+          "bounds_mm": [
+            -1.277,
+            -1.5,
+            4.1,
+            136.3895,
+            123.777,
+            9.3
+          ],
+          "faces": 12224,
+          "edges": 36525,
+          "vertices": 24350
+        },
+        "errors": []
+      }
+    ],
+    "f3d_sha256": "2aa2567b227a2ff1b8ec433d17c059bd99b60dd304e2c7211bc152a7b35762f4",
+    "readback_sha256": "5271d36c115d5bcf481161a0e4bae395d0c8c7b1dc6af430b4e10ac041007683"
+  }
+}

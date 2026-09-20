@@ -1,0 +1,41 @@
+{
+  "status": "pass",
+  "errors": [],
+  "selected_job": "left:choc_v1",
+  "fusion_version": "2705.1.15",
+  "source_step": "kc2_left_choc_v1_upper_housing.step",
+  "source_sha256": "31c7a95e7e447bf9e16befdd498bef3fd6866b916d20bd356f1a8b6c00377b06",
+  "generation_sha256": "3eb46fd27bb3da7a66fa93f3c97972522bde8007f39ec9acc7bc7d87e406902d",
+  "source_bodies": [
+    {
+      "volume_mm3": 12969.165084042126,
+      "bounds_mm": [
+        -0.851301415863,
+        -1.5000000000000002,
+        4.1,
+        136.3895,
+        123.77700000000002,
+        6.6000000000000005
+      ]
+    }
+  ],
+  "reopened_bodies": [
+    {
+      "volume_mm3": 12969.165084042126,
+      "bounds_mm": [
+        -0.851301415863,
+        -1.5000000000000002,
+        4.1,
+        136.3895,
+        123.77700000000002,
+        6.6000000000000005
+      ]
+    }
+  ],
+  "f3d": "kc2_left_choc_v1_upper_housing.f3d",
+  "f3d_sha256": "af81eea1f1f5312f3849810d9cc589cffa337aed4050b7b6d6e78d4c2fb8b41b",
+  "readback_step": "kc2_left_choc_v1_upper_housing.native-readback.step",
+  "readback_sha256": "a3d143f30a1156f0df1eebb9c79fea176842b3bb1b66f6b5aa2372062eea23d2",
+  "round_trip_verified": true,
+  "physical_qualified": false
+}

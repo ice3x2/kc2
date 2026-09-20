@@ -1,0 +1,114 @@
+{
+  "status": "pass",
+  "source_sha256": {
+    "tools/review_kc2_wrap_native.py": "337d9b52aae528719ad800ba85bb66c02af110b11a57a8e880f42d31391c3ad4",
+    "tools/test_review_kc2_wrap_native.py": "4c2a13eb6c649e01d69cdea81a98ca8145d7c9888a0a489f8379b2e2019498f8",
+    "tools/kc2_wrap_native.py": "f590b9bb8e1f352fd63383914fe4d5c4c81fe2caa0bfa2fdc561a0058201bced",
+    "tools/test_kc2_wrap_native.py": "fb4670af299c7f8709d553aa305ffb7cf4b4222ab2678ef0b598b99e9d55fbea",
+    "tools/fusion/KC2WrapHousings.py": "4b712545e8bbcb7d75a418608bea98efdcdaa772c773761dc2e227bdba10a88f",
+    "tools/kc2_flat_central_native.py": "8308c3896433513bfede4075ac41916c3b2a95a9fbc26e4b709a1ef8ed66b170",
+    "tools/review_kc2_flat_central_native.py": "2514908ed7bec210dd9bb23686443ba5a5d9487b56f1abd4049f648376717ee7",
+    "tools/fusion/KC2FlatCentralToF3D/KC2FlatCentralToF3D.py": "5f855f39804133b1f5316910c9c7daff00208c4b8159b8b2315d618404e1cf4d",
+    ".codex-tmp/wrap-housing-20260920-r1/lower/right-magnetic/kc2_right_lower_housing_magnetic.step": "733312559d473cd1625143f49551897e715134736471a4cc497f6e2adbba3818",
+    ".codex-tmp/wrap-housing-20260920-r1/lower/right-magnetic/generation.json": "3568a9ec6f637704fbd04ebd9b7b5616c4f061664d9da8230576c9f68f40d91b",
+    ".codex-tmp/wrap-housing-20260920-r1/lower/right-magnetic/native-generation.json": "99cd2d5af1c75666d809d9a175e1de292dc4e9fe278da682f764debdacaad93e",
+    ".codex-tmp/wrap-housing-20260920-r1/lower/right-magnetic/kc2_right_lower_housing_magnetic.f3d": "d149e5ab75e2e73ff3a7c346916148115c81b11a73f7c30f7a3b7b80c7074143",
+    ".codex-tmp/wrap-housing-20260920-r1/lower/right-magnetic/kc2_right_lower_housing_magnetic.native-readback.step": "ac18ad261aca898a73230c258d2e924dacb31f4b724333991566c0e6c0c7fb6d"
+  },
+  "row": {
+    "status": "pass",
+    "errors": [],
+    "parts": [
+      {
+        "part": 0,
+        "source": {
+          "volume_mm3": 26987.4120793691,
+          "area_mm2": 30039.295849410704,
+          "center_mm": [
+            38.05939220946824,
+            75.5642659212716,
+            0.04895685619852093
+          ],
+          "bounds_mm": [
+            -2.7770000000004336,
+            27.472999999999566,
+            -2.2,
+            87.09375000000063,
+            125.277,
+            5.6
+          ],
+          "faces": 5158,
+          "edges": 15310,
+          "vertices": 10212
+        },
+        "readback": {
+          "volume_mm3": 26987.41207936887,
+          "area_mm2": 30039.295849410722,
+          "center_mm": [
+            38.05939220946819,
+            75.5642659212704,
+            0.048956856198508675
+          ],
+          "bounds_mm": [
+            -2.7770000000004336,
+            27.472999999999566,
+            -2.2,
+            87.09375000000063,
+            125.277,
+            5.6
+          ],
+          "faces": 5158,
+          "edges": 15294,
+          "vertices": 10196
+        },
+        "errors": []
+      },
+      {
+        "part": 1,
+        "source": {
+          "volume_mm3": 26761.407911016064,
+          "area_mm2": 30330.211457165733,
+          "center_mm": [
+            119.85541293079636,
+            63.24770328940733,
+            -0.02342071834867197
+          ],
+          "bounds_mm": [
+            82.14379,
+            -3.0,
+            -2.2,
+            165.1875,
+            125.277,
+            5.6
+          ],
+          "faces": 5813,
+          "edges": 17285,
+          "vertices": 11525
+        },
+        "readback": {
+          "volume_mm3": 26761.40786309718,
+          "area_mm2": 30330.211418553175,
+          "center_mm": [
+            119.85541296028123,
+            63.24770325174284,
+            -0.023420720684525494
+          ],
+          "bounds_mm": [
+            82.14379,
+            -3.0,
+            -2.2,
+            165.1875,
+            125.277,
+            5.6
+          ],
+          "faces": 5811,
+          "edges": 17264,
+          "vertices": 11506
+        },
+        "errors": []
+      }
+    ],
+    "f3d_sha256": "d149e5ab75e2e73ff3a7c346916148115c81b11a73f7c30f7a3b7b80c7074143",
+    "readback_sha256": "ac18ad261aca898a73230c258d2e924dacb31f4b724333991566c0e6c0c7fb6d"
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "status": "pass",
+  "errors": [],
+  "selected_job": "left:normal",
+  "fusion_version": "2705.1.15",
+  "source_step": "kc2_left_lower_housing.step",
+  "source_sha256": "a80fc3be85935630da964f622f11c276d2ef55c06250f371f7fecfe2e3f9c536",
+  "generation_sha256": "ce0611585f95695a42a39102b1ae89cf817024740d4fc7c48911e0a7416bbc84",
+  "source_bodies": [
+    {
+      "volume_mm3": 47305.980213448056,
+      "bounds_mm": [
+        -1.5000000000000002,
+        -3.0000000000000004,
+        -2.2,
+        137.8895,
+        125.27700000000002,
+        5.6000000000000005
+      ]
+    }
+  ],
+  "reopened_bodies": [
+    {
+      "volume_mm3": 47305.980213448056,
+      "bounds_mm": [
+        -1.5000000000000002,
+        -3.0000000000000004,
+        -2.2,
+        137.8895,
+        125.27700000000002,
+        5.6000000000000005
+      ]
+    }
+  ],
+  "f3d": "kc2_left_lower_housing.f3d",
+  "f3d_sha256": "d04a818e0953e7855acd9a91062ba8fe08f3960d7eceee47f3d57bb47cf6f940",
+  "readback_step": "kc2_left_lower_housing.native-readback.step",
+  "readback_sha256": "bbea33260740650e53d6974f80e130fe71620f157adb61541406c0d478b875c4",
+  "round_trip_verified": true,
+  "physical_qualified": false
+}

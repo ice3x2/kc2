@@ -1,0 +1,114 @@
+{
+  "status": "pass",
+  "source_sha256": {
+    "tools/review_kc2_wrap_native.py": "337d9b52aae528719ad800ba85bb66c02af110b11a57a8e880f42d31391c3ad4",
+    "tools/test_review_kc2_wrap_native.py": "4c2a13eb6c649e01d69cdea81a98ca8145d7c9888a0a489f8379b2e2019498f8",
+    "tools/kc2_wrap_native.py": "f590b9bb8e1f352fd63383914fe4d5c4c81fe2caa0bfa2fdc561a0058201bced",
+    "tools/test_kc2_wrap_native.py": "fb4670af299c7f8709d553aa305ffb7cf4b4222ab2678ef0b598b99e9d55fbea",
+    "tools/fusion/KC2WrapHousings.py": "4b712545e8bbcb7d75a418608bea98efdcdaa772c773761dc2e227bdba10a88f",
+    "tools/kc2_flat_central_native.py": "8308c3896433513bfede4075ac41916c3b2a95a9fbc26e4b709a1ef8ed66b170",
+    "tools/review_kc2_flat_central_native.py": "2514908ed7bec210dd9bb23686443ba5a5d9487b56f1abd4049f648376717ee7",
+    "tools/fusion/KC2FlatCentralToF3D/KC2FlatCentralToF3D.py": "5f855f39804133b1f5316910c9c7daff00208c4b8159b8b2315d618404e1cf4d",
+    ".codex-tmp/wrap-housing-20260920-r1/lower/right-normal/kc2_right_lower_housing.step": "9bac3e813aa1245a28c37752a07a3c7896047f0f1078344df67eec008ed03f4a",
+    ".codex-tmp/wrap-housing-20260920-r1/lower/right-normal/generation.json": "a1941a24b4ef89c2e89655580aa75edf34338f6cd363488ee54a71f9d98101c0",
+    ".codex-tmp/wrap-housing-20260920-r1/lower/right-normal/native-generation.json": "acaf4e3f484e24043a8e56bb7eab25697e03314300dc663b9bc8838b0d74ff8b",
+    ".codex-tmp/wrap-housing-20260920-r1/lower/right-normal/kc2_right_lower_housing.f3d": "47541969035c83870539dc9c9ac9f4d69e6e523838e0820384fdc29b52137ea6",
+    ".codex-tmp/wrap-housing-20260920-r1/lower/right-normal/kc2_right_lower_housing.native-readback.step": "c19202875a26146ebe250a1a1ffea68f39795a5a1765e4fbb1cb1b486041c73d"
+  },
+  "row": {
+    "status": "pass",
+    "errors": [],
+    "parts": [
+      {
+        "part": 0,
+        "source": {
+          "volume_mm3": 26987.412079369136,
+          "area_mm2": 30039.29584941072,
+          "center_mm": [
+            38.05939220946805,
+            75.56426592127143,
+            0.04895685619852012
+          ],
+          "bounds_mm": [
+            -2.7770000000004336,
+            27.472999999999566,
+            -2.2,
+            87.09375000000058,
+            125.277,
+            5.6
+          ],
+          "faces": 5158,
+          "edges": 15310,
+          "vertices": 10212
+        },
+        "readback": {
+          "volume_mm3": 26987.412079368863,
+          "area_mm2": 30039.295849410715,
+          "center_mm": [
+            38.059392209468186,
+            75.56426592127039,
+            0.0489568561985107
+          ],
+          "bounds_mm": [
+            -2.7770000000004336,
+            27.472999999999566,
+            -2.2,
+            87.09375000000058,
+            125.277,
+            5.6
+          ],
+          "faces": 5158,
+          "edges": 15294,
+          "vertices": 10196
+        },
+        "errors": []
+      },
+      {
+        "part": 1,
+        "source": {
+          "volume_mm3": 26783.1225994374,
+          "area_mm2": 30312.115883481078,
+          "center_mm": [
+            119.87944758057475,
+            63.28317590792973,
+            -0.02279365965321076
+          ],
+          "bounds_mm": [
+            82.14379,
+            -3.0,
+            -2.2,
+            165.1875,
+            125.277,
+            5.6
+          ],
+          "faces": 5807,
+          "edges": 17273,
+          "vertices": 11517
+        },
+        "readback": {
+          "volume_mm3": 26783.122551549,
+          "area_mm2": 30312.1158448685,
+          "center_mm": [
+            119.87944761004549,
+            63.28317587039309,
+            -0.022793661985251144
+          ],
+          "bounds_mm": [
+            82.14379,
+            -3.0,
+            -2.2,
+            165.1875,
+            125.277,
+            5.6
+          ],
+          "faces": 5805,
+          "edges": 17252,
+          "vertices": 11498
+        },
+        "errors": []
+      }
+    ],
+    "f3d_sha256": "47541969035c83870539dc9c9ac9f4d69e6e523838e0820384fdc29b52137ea6",
+    "readback_sha256": "c19202875a26146ebe250a1a1ffea68f39795a5a1765e4fbb1cb1b486041c73d"
+  }
+}

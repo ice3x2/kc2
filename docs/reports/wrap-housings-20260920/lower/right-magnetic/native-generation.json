@@ -1,0 +1,63 @@
+{
+  "status": "pass",
+  "errors": [],
+  "selected_job": "right:magnetic",
+  "fusion_version": "2705.1.15",
+  "source_step": "kc2_right_lower_housing_magnetic.step",
+  "source_sha256": "733312559d473cd1625143f49551897e715134736471a4cc497f6e2adbba3818",
+  "generation_sha256": "3568a9ec6f637704fbd04ebd9b7b5616c4f061664d9da8230576c9f68f40d91b",
+  "source_bodies": [
+    {
+      "volume_mm3": 26987.412079365335,
+      "bounds_mm": [
+        -2.777,
+        27.473,
+        -2.2,
+        87.09375,
+        125.27699999999999,
+        5.6000000000000005
+      ]
+    },
+    {
+      "volume_mm3": 26761.407918845183,
+      "bounds_mm": [
+        82.14379,
+        -3.0000000000000004,
+        -2.2,
+        165.1875,
+        125.27700000000002,
+        5.6000000000000005
+      ]
+    }
+  ],
+  "reopened_bodies": [
+    {
+      "volume_mm3": 26987.412079365335,
+      "bounds_mm": [
+        -2.777,
+        27.473,
+        -2.2,
+        87.09375,
+        125.27699999999999,
+        5.6000000000000005
+      ]
+    },
+    {
+      "volume_mm3": 26761.407918845183,
+      "bounds_mm": [
+        82.14379,
+        -3.0000000000000004,
+        -2.2,
+        165.1875,
+        125.27700000000002,
+        5.6000000000000005
+      ]
+    }
+  ],
+  "f3d": "kc2_right_lower_housing_magnetic.f3d",
+  "f3d_sha256": "d149e5ab75e2e73ff3a7c346916148115c81b11a73f7c30f7a3b7b80c7074143",
+  "readback_step": "kc2_right_lower_housing_magnetic.native-readback.step",
+  "readback_sha256": "ac18ad261aca898a73230c258d2e924dacb31f4b724333991566c0e6c0c7fb6d",
+  "round_trip_verified": true,
+  "physical_qualified": false
+}

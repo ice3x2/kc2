@@ -1,0 +1,50 @@
+{
+  "status": "pass",
+  "requirements": [
+    "CON-ARCH-006"
+  ],
+  "modules": [
+    "tools.test_kc2_wrap_wall_plan",
+    "tools.test_kc2_wrap_partition",
+    "tools.test_kc2_stl_tjunction",
+    "tools.test_kc2_wrap_native",
+    "tools.test_review_kc2_wrap_housings",
+    "tools.test_review_kc2_wrap_native",
+    "tools.test_review_kc2_wrap_cad",
+    "tools.test_publish_kc2_wrap_housings",
+    "tools.test_kc2_smooth_central_seam",
+    "tools.test_publish_kc2_smooth_central_seam",
+    "tools.test_kc2_flat_central_native",
+    "tools.test_kc2_flat_central_revision",
+    "tools.test_kc2_magnetic_entry",
+    "tools.test_kc2_stl_zero_area_filter",
+    "tools.test_kc2_wall_engagement_study",
+    "tools.test_review_kc2_wrap_motion",
+    "tools.test_kc2_step_whitespace"
+  ],
+  "tests": 75,
+  "failures": 0,
+  "errors": 0,
+  "seconds": 2.7030000000377186,
+  "source_sha256": {
+    "tools/test_kc2_wrap_wall_plan.py": "18634eea7bf67b1617db8b20fbfc251d655281e2221838a0be5679561fcfc939",
+    "tools/test_kc2_wrap_partition.py": "fd7613f89f0320a277303b001f3c915a6e6f24d060f8288127dafd5cf24aa8b1",
+    "tools/test_kc2_stl_tjunction.py": "28f1107a6c56d4efbadcb5532ff29994fb2930aa854105e36b142ee15e224ae3",
+    "tools/test_kc2_wrap_native.py": "fb4670af299c7f8709d553aa305ffb7cf4b4222ab2678ef0b598b99e9d55fbea",
+    "tools/test_review_kc2_wrap_housings.py": "c1b1be10386cf76677dcfce72f8d83dc48917d295ca4313ce4627f8b584f70fd",
+    "tools/test_review_kc2_wrap_native.py": "4c2a13eb6c649e01d69cdea81a98ca8145d7c9888a0a489f8379b2e2019498f8",
+    "tools/test_review_kc2_wrap_cad.py": "21993b85783781efb3d32597e33ffb7c98b7c03d734c87881393660e062e54c4",
+    "tools/test_publish_kc2_wrap_housings.py": "f2db544a588865c2ed9f26bb830050bbf54e188ee81c49391ba70c9f8b19ed54",
+    "tools/test_kc2_smooth_central_seam.py": "e70856031de9bd6c7d5c1cba69e2bdc93e119e11749277fbde537fb4bc7189e8",
+    "tools/test_publish_kc2_smooth_central_seam.py": "c1a191d20def249b4dab83c2cec4eff5d1254cd159d36828dde527a41228413c",
+    "tools/test_kc2_flat_central_native.py": "154eee4a542c6c38525f7a42aa125b363a350c54090e2629eadabebd64f662b5",
+    "tools/test_kc2_flat_central_revision.py": "dd7236f57a3e45baef0a53af7274a4669e6ca11b1a3ebb23acb87cd36b238207",
+    "tools/test_kc2_magnetic_entry.py": "692c182ac936c8dbe281b4459bf1e6f1f8781176322be674923171f1b8125708",
+    "tools/test_kc2_stl_zero_area_filter.py": "d4098ee675f5bad3babb98fd72e123ac645d3e8ed27a94af3306f8d64225f24c",
+    "tools/test_kc2_wall_engagement_study.py": "921d6c0f50ef2111cb42ac7f02eb0fc6017757b4afb92b3cbfd9e3d8ae0277fa",
+    "tools/test_review_kc2_wrap_motion.py": "14b74a7030318fc0759a62e0969672485e3890de0aa224d5164cb11b9fa8893a",
+    "tools/test_kc2_step_whitespace.py": "ec80dc87a67c9a5d7afbaf09612e64cec4f1f6da7995338d9ec369c9eecccbb9",
+    "tools/run_kc2_wrap_tests.py": "90f47213bb33a239d738cf606f4a509010530fd32b4e0367eca39c06ad3b3183"
+  },
+  "physical_qualified": false
+}

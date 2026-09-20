@@ -1,0 +1,11 @@
+{
+  "status": "pass",
+  "isolated_file_count": 486,
+  "no_staging_directory": true,
+  "git_baseline_available": true,
+  "manifest_sha256": "54915a5a9ea8119fab0bb6af9383a64bea7be8b3670a58799cafa90b2584b837",
+  "exit_code": 0,
+  "stdout": "{\"status\": \"pass\", \"artifacts\": 35, \"physical_qualified\": false}\n",
+  "stderr": "",
+  "physical_qualified": false
+}

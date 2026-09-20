@@ -1,0 +1,41 @@
+{
+  "status": "pass",
+  "errors": [],
+  "selected_job": "left:mx",
+  "fusion_version": "2705.1.15",
+  "source_step": "kc2_left_mx_upper_housing.step",
+  "source_sha256": "4abd84f0b4cec046c97fe199f4ee77208a2e01ac7aad8e5d60a233d3a3d6c35d",
+  "generation_sha256": "680aa5c0e3376f41cbc58ebdf7fca5da0688c133ed1beecaf238a6114dd21693",
+  "source_bodies": [
+    {
+      "volume_mm3": 26549.517647885612,
+      "bounds_mm": [
+        -1.2770000000000001,
+        -1.5000000000000002,
+        4.1,
+        136.3895,
+        123.77700000000002,
+        9.3
+      ]
+    }
+  ],
+  "reopened_bodies": [
+    {
+      "volume_mm3": 26549.517647885612,
+      "bounds_mm": [
+        -1.2770000000000001,
+        -1.5000000000000002,
+        4.1,
+        136.3895,
+        123.77700000000002,
+        9.3
+      ]
+    }
+  ],
+  "f3d": "kc2_left_mx_upper_housing.f3d",
+  "f3d_sha256": "2aa2567b227a2ff1b8ec433d17c059bd99b60dd304e2c7211bc152a7b35762f4",
+  "readback_step": "kc2_left_mx_upper_housing.native-readback.step",
+  "readback_sha256": "5271d36c115d5bcf481161a0e4bae395d0c8c7b1dc6af430b4e10ac041007683",
+  "round_trip_verified": true,
+  "physical_qualified": false
+}
