@@ -1,0 +1,86 @@
+{
+  "status": "pass",
+  "label": "right:mx",
+  "errors": [],
+  "fusion_version": "2705.1.15",
+  "source_step_sha256": "fce43e4bc9cde7ffa2c5493f5844e0bf01a98276bb9042383bd56264b3b5610c",
+  "plan_sha256": "fd3d20b9e8bf025b17b04c704408856a5dd33118cbca49ce817110c2a2a52d00",
+  "outputs": {
+    "kc2_right_mx_upper_housing_part_a.stl": "8452deaacbee52006ae780c6835d2638d4c0e0e90b66e07c5347203ca0245ad3",
+    "kc2_right_mx_upper_housing_part_b.stl": "251fc9f1aeb6b433f59aef29496fe3f444da1d05fc6985036ecaf13042e31ae4",
+    "kc2_right_mx_upper_housing.f3d": "8c140916210b5e479c4562bbdee46ed8a1a0d445375b76d21dd4f2a21ce6cd70"
+  },
+  "before": [
+    {
+      "volume_mm3": 14014.28351752646,
+      "area_mm2": 15975.081761427,
+      "bounds_mm": [
+        [
+          -1.2770000000000001,
+          28.973,
+          4.1
+        ],
+        [
+          96.98756000000002,
+          123.77700000000002,
+          9.3
+        ]
+      ],
+      "solid": true
+    },
+    {
+      "volume_mm3": 14889.116058940172,
+      "area_mm2": 16659.543094789336,
+      "bounds_mm": [
+        [
+          72.890660399586,
+          -1.5000000000000002,
+          4.1
+        ],
+        [
+          164.9645,
+          123.77700000000002,
+          9.3
+        ]
+      ],
+      "solid": true
+    }
+  ],
+  "after": [
+    {
+      "volume_mm3": 14014.28351752646,
+      "area_mm2": 15975.081761427,
+      "bounds_mm": [
+        [
+          -1.2770000000000001,
+          28.973,
+          4.1
+        ],
+        [
+          96.98756000000002,
+          123.77700000000002,
+          9.3
+        ]
+      ],
+      "solid": true
+    },
+    {
+      "volume_mm3": 14889.116058940172,
+      "area_mm2": 16659.543094789336,
+      "bounds_mm": [
+        [
+          72.890660399586,
+          -1.5000000000000002,
+          4.1
+        ],
+        [
+          164.9645,
+          123.77700000000002,
+          9.3
+        ]
+      ],
+      "solid": true
+    }
+  ],
+  "physical_qualified": false
+}

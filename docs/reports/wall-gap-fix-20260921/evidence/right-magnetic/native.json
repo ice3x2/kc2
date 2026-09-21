@@ -1,0 +1,86 @@
+{
+  "status": "pass",
+  "label": "right:magnetic",
+  "errors": [],
+  "fusion_version": "2705.1.15",
+  "source_step_sha256": "c497142dcfda635f6049c4fa964a442fc3052dd8b072009b630492428ca34b00",
+  "plan_sha256": "fd3d20b9e8bf025b17b04c704408856a5dd33118cbca49ce817110c2a2a52d00",
+  "outputs": {
+    "kc2_right_lower_housing_part_a_magnetic.stl": "e25964266c58a20fd5b5d35090286d4b5947ebef645c4c019ee023b796990f0b",
+    "kc2_right_lower_housing_part_b_magnetic.stl": "8d14d52e115c2028f4421f11befa73708b9ccd58a48018456ec5dfeb9c63543e",
+    "kc2_right_lower_housing_magnetic.f3d": "34897d09a440f6d647c845f2c64c90ae2253377fed1eb2a994ad50768ada0935"
+  },
+  "before": [
+    {
+      "volume_mm3": 27297.246200785172,
+      "area_mm2": 27621.260946584574,
+      "bounds_mm": [
+        [
+          -2.777,
+          27.473,
+          -2.2
+        ],
+        [
+          87.09375,
+          125.27699999999999,
+          5.6000000000000005
+        ]
+      ],
+      "solid": true
+    },
+    {
+      "volume_mm3": 27108.335427849037,
+      "area_mm2": 28349.006089833067,
+      "bounds_mm": [
+        [
+          82.14379,
+          -3.0000000000000004,
+          -2.2
+        ],
+        [
+          165.1875,
+          125.27700000000002,
+          5.6000000000000005
+        ]
+      ],
+      "solid": true
+    }
+  ],
+  "after": [
+    {
+      "volume_mm3": 27297.246200785172,
+      "area_mm2": 27621.260946584574,
+      "bounds_mm": [
+        [
+          -2.777,
+          27.473,
+          -2.2
+        ],
+        [
+          87.09375,
+          125.27699999999999,
+          5.6000000000000005
+        ]
+      ],
+      "solid": true
+    },
+    {
+      "volume_mm3": 27108.335427849037,
+      "area_mm2": 28349.006089833067,
+      "bounds_mm": [
+        [
+          82.14379,
+          -3.0000000000000004,
+          -2.2
+        ],
+        [
+          165.1875,
+          125.27700000000002,
+          5.6000000000000005
+        ]
+      ],
+      "solid": true
+    }
+  ],
+  "physical_qualified": false
+}

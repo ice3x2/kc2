@@ -1,5 +1,7 @@
 # PCB 위로 올라오는 연속 외벽 — 인쇄·조립 안내
 
+> 이 문서는 틈 보강 이전 형상의 이력입니다. 후속 개정은 [틈 보강 안내](PRINT-wall-gap-fix.md)를 따르십시오. 후속 manifest 검증이 통과하기 전에는 인쇄를 보류합니다. 아래 검증은 이전 개정만 확인하며 새 canonical 파일의 검증을 대체하지 않습니다.
+
 <!-- kc2-wrap-guide: ready -->
 
 요구사항: `CON-ARCH-006`, `CON-ARCH-007`, `OPS-ARCH-006`.

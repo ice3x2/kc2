@@ -404,3 +404,17 @@
 # Raw verification evidence retains exporter padding; canonical STEP is normalized.
 /docs/reports/wrap-housings-20260920/**/*.step whitespace=-blank-at-eol,cr-at-eol
 /docs/reports/wrap-housings-20260920/raw-step/*.raw whitespace=-blank-at-eol,cr-at-eol
+/tools/*kc2_wall_gap* -text whitespace=cr-at-eol
+/tools/fusion/KC2WallGapFix.py -text whitespace=cr-at-eol
+/docs/reports/wall-gap-fix-20260921/** -text whitespace=cr-at-eol
+/hardware/MODELS/kc2_wall_gap_fix_manifest.json -text whitespace=cr-at-eol
+/hardware/MODELS/PRINT-wall-gap-fix.md -text whitespace=cr-at-eol
+/hardware/MODELS/STL_FROM_FUSION_20260921/** -text whitespace=cr-at-eol
+/tools/kc2_stl_clearance.py -text whitespace=cr-at-eol
+/tools/test_kc2_stl_clearance.py -text whitespace=cr-at-eol
+/tools/fusion/KC2WallGapClearance.py -text whitespace=cr-at-eol
+/tools/*kc2_upper_finish* -text whitespace=cr-at-eol
+/tools/fusion/KC2UpperFinish.py -text whitespace=cr-at-eol
+/docs/reports/upper-finish-20260921/** -text whitespace=cr-at-eol
+/hardware/MODELS/kc2_upper_finish_manifest.json -text whitespace=cr-at-eol
+/hardware/MODELS/PRINT-upper-finish.md -text whitespace=cr-at-eol

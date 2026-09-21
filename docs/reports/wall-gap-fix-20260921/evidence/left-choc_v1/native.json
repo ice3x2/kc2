@@ -1,0 +1,51 @@
+{
+  "status": "pass",
+  "label": "left:choc_v1",
+  "errors": [],
+  "fusion_version": "2705.1.15",
+  "source_step_sha256": "5435bb49da6e560f113f8d7d5ddfc6e8072cfe174dc357f341c82a59c3e21dd0",
+  "plan_sha256": "fd3d20b9e8bf025b17b04c704408856a5dd33118cbca49ce817110c2a2a52d00",
+  "outputs": {
+    "kc2_left_choc_v1_upper_housing.stl": "4874858d3811f619e9b88be690c7975e1340087d41dfe5d972d104a1a47f1415",
+    "kc2_left_choc_v1_upper_housing.f3d": "11711333b3a1f9d04dbb09a3c54eb8311ae00a7b1833c7de63c77993280bfef0"
+  },
+  "before": [
+    {
+      "volume_mm3": 13003.288259392924,
+      "area_mm2": 18830.218074980035,
+      "bounds_mm": [
+        [
+          -0.851301415863,
+          -1.5000000000000002,
+          4.1
+        ],
+        [
+          136.3895,
+          123.77700000000002,
+          6.6000000000000005
+        ]
+      ],
+      "solid": true
+    }
+  ],
+  "after": [
+    {
+      "volume_mm3": 13003.288259392924,
+      "area_mm2": 18830.218074980035,
+      "bounds_mm": [
+        [
+          -0.851301415863,
+          -1.5000000000000002,
+          4.1
+        ],
+        [
+          136.3895,
+          123.77700000000002,
+          6.6000000000000005
+        ]
+      ],
+      "solid": true
+    }
+  ],
+  "physical_qualified": false
+}

@@ -1,0 +1,91 @@
+{
+  "status": "pass",
+  "rows": {
+    "right:normal": {
+      "minimum_distance_mm": 0.39998999999999896,
+      "points_mm": [
+        [
+          81.7438,
+          124.0,
+          -1.0
+        ],
+        [
+          82.14379,
+          124.0,
+          -1.0000000000000004
+        ]
+      ]
+    },
+    "right:magnetic": {
+      "minimum_distance_mm": 0.39998999999999896,
+      "points_mm": [
+        [
+          81.7438,
+          124.0,
+          -1.0
+        ],
+        [
+          82.14379,
+          124.0,
+          -1.0000000000000004
+        ]
+      ]
+    },
+    "right:mx": {
+      "minimum_distance_mm": 0.39990000000000414,
+      "points_mm": [
+        [
+          75.69058,
+          122.40000000000002,
+          9.3
+        ],
+        [
+          76.09048,
+          122.40000000000002,
+          9.3
+        ]
+      ]
+    },
+    "right:choc_v1": {
+      "minimum_distance_mm": 0.39990000000000414,
+      "points_mm": [
+        [
+          75.69058,
+          122.40000000000002,
+          6.5
+        ],
+        [
+          76.09048,
+          122.40000000000002,
+          6.5
+        ]
+      ]
+    },
+    "right:deep_sea": {
+      "minimum_distance_mm": 0.39990000000000414,
+      "points_mm": [
+        [
+          75.69058,
+          122.40000000000002,
+          6.25
+        ],
+        [
+          76.09048,
+          122.40000000000002,
+          6.25
+        ]
+      ]
+    }
+  },
+  "source_sha256": {
+    ".codex-tmp/wall-gap-fix-20260921/right-normal/kc2_right_lower_housing.f3d": "9594054b2f8b39bc5c5ec6a40758f583a861c7f933753a902585052380fe6f7a",
+    ".codex-tmp/wall-gap-fix-20260921/right-magnetic/kc2_right_lower_housing_magnetic.f3d": "34897d09a440f6d647c845f2c64c90ae2253377fed1eb2a994ad50768ada0935",
+    ".codex-tmp/wall-gap-fix-20260921/right-mx/kc2_right_mx_upper_housing.f3d": "8c140916210b5e479c4562bbdee46ed8a1a0d445375b76d21dd4f2a21ce6cd70",
+    ".codex-tmp/wall-gap-fix-20260921/right-choc_v1/kc2_right_choc_v1_upper_housing.f3d": "2c8fc2d4349133ac0cfa4fba71682decc2014ada9557297e8eba2b474927ccee",
+    ".codex-tmp/wall-gap-fix-20260921/right-deep_sea/kc2_right_deep_sea_upper_housing.f3d": "0676cd0a2f887123585e218f1e0b487f52e12cb532bf6e0fd19805426400ebf9",
+    "tools/fusion/KC2WallGapClearance.py": "57c5fa335d956c52e46ce9ad06d614e214624888ebf4ca4bcda4c15653958922",
+    "tools/fusion/KC2WallGapFix.py": "c4f56959e1a3de77cc93dbe424ae25c78aff1517d84e5d1db289aaf793e86ca2"
+  },
+  "errors": [],
+  "fusion_version": "2705.1.15"
+}

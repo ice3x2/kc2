@@ -1,0 +1,1408 @@
+{
+  "requirements": [
+    "CON-ARCH-006",
+    "OPS-ARCH-006"
+  ],
+  "status": "pass",
+  "rows": {
+    "left:normal": {
+      "parts": [
+        {
+          "file": "kc2_left_lower_housing.stl",
+          "watertight": true,
+          "native_bounds_error_mm": 4.150390623181011e-06,
+          "native_volume_relative_error": 1.6058246711299107e-08,
+          "sections": [
+            {
+              "z_mm": -0.99,
+              "missing_required_mm2": 0.0,
+              "obstructed_protected_mm2": 0.0,
+              "off_plan_mm2": 0.0
+            },
+            {
+              "z_mm": 0.75,
+              "missing_required_mm2": 0.0,
+              "obstructed_protected_mm2": 0.0,
+              "off_plan_mm2": 0.0
+            },
+            {
+              "z_mm": 2.49,
+              "missing_required_mm2": 0.0,
+              "obstructed_protected_mm2": 0.0,
+              "off_plan_mm2": 0.0
+            }
+          ],
+          "preservation": {
+            "errors": [],
+            "removed_baseline_mm3": 0.0,
+            "unplanned_added_mm3": 0.0,
+            "missing_patch_mm3": 0.0,
+            "base_volume_mm3": 47305.98021344179,
+            "final_volume_mm3": 47935.114171941466
+          }
+        }
+      ]
+    },
+    "left:magnetic": {
+      "parts": [
+        {
+          "file": "kc2_left_lower_housing_magnetic.stl",
+          "watertight": true,
+          "native_bounds_error_mm": 4.150390623181011e-06,
+          "native_volume_relative_error": 3.8193245303177376e-08,
+          "sections": [
+            {
+              "z_mm": -0.99,
+              "missing_required_mm2": 0.0,
+              "obstructed_protected_mm2": 0.0,
+              "off_plan_mm2": 0.0
+            },
+            {
+              "z_mm": 0.75,
+              "missing_required_mm2": 0.0,
+              "obstructed_protected_mm2": 0.0,
+              "off_plan_mm2": 0.0
+            },
+            {
+              "z_mm": 2.49,
+              "missing_required_mm2": 0.0,
+              "obstructed_protected_mm2": 0.0,
+              "off_plan_mm2": 0.0
+            }
+          ],
+          "preservation": {
+            "errors": [],
+            "removed_baseline_mm3": 0.0,
+            "unplanned_added_mm3": 0.0,
+            "missing_patch_mm3": 0.0,
+            "base_volume_mm3": 47284.26552502013,
+            "final_volume_mm3": 47906.880634161396
+          }
+        }
+      ]
+    },
+    "left:mx": {
+      "parts": [
+        {
+          "file": "kc2_left_mx_upper_housing.stl",
+          "watertight": true,
+          "native_bounds_error_mm": 4.150390623181011e-06,
+          "native_volume_relative_error": 8.236671316945254e-08,
+          "sections": [
+            {
+              "z_mm": 4.41,
+              "missing_required_mm2": 0.0,
+              "obstructed_protected_mm2": 0.0,
+              "off_plan_mm2": 0.0
+            },
+            {
+              "z_mm": 4.800000000000001,
+              "missing_required_mm2": 0.0,
+              "obstructed_protected_mm2": 0.0,
+              "off_plan_mm2": 0.0
+            },
+            {
+              "z_mm": 5.19,
+              "missing_required_mm2": 0.0,
+              "obstructed_protected_mm2": 0.0,
+              "off_plan_mm2": 0.0
+            },
+            {
+              "z_mm": 5.21,
+              "missing_required_mm2": 0.0,
+              "obstructed_protected_mm2": 0.0,
+              "off_plan_mm2": 0.0
+            },
+            {
+              "z_mm": 6.5,
+              "missing_required_mm2": 0.0,
+              "obstructed_protected_mm2": 0.0,
+              "off_plan_mm2": 0.0
+            },
+            {
+              "z_mm": 7.79,
+              "missing_required_mm2": 0.0,
+              "obstructed_protected_mm2": 0.0,
+              "off_plan_mm2": 0.0
+            },
+            {
+              "z_mm": 7.81,
+              "missing_required_mm2": 0.0,
+              "obstructed_protected_mm2": 0.0,
+              "off_plan_mm2": 0.0
+            },
+            {
+              "z_mm": 8.55,
+              "missing_required_mm2": 0.0,
+              "obstructed_protected_mm2": 0.0,
+              "off_plan_mm2": 0.0
+            },
+            {
+              "z_mm": 9.290000000000001,
+              "missing_required_mm2": 0.0,
+              "obstructed_protected_mm2": 0.0,
+              "off_plan_mm2": 0.0
+            }
+          ],
+          "preservation": {
+            "errors": [],
+            "removed_baseline_mm3": 0.0,
+            "unplanned_added_mm3": 0.0,
+            "missing_patch_mm3": 0.0,
+            "base_volume_mm3": 26549.51764788707,
+            "final_volume_mm3": 26623.657721803917
+          }
+        }
+      ]
+    },
+    "left:choc_v1": {
+      "parts": [
+        {
+          "file": "kc2_left_choc_v1_upper_housing.stl",
+          "watertight": true,
+          "native_bounds_error_mm": 4.150390623181011e-06,
+          "native_volume_relative_error": 6.22588622273378e-08,
+          "sections": [
+            {
+              "z_mm": 4.41,
+              "missing_required_mm2": 0.0,
+              "obstructed_protected_mm2": 0.0,
+              "off_plan_mm2": 0.0
+            },
+            {
+              "z_mm": 4.75,
+              "missing_required_mm2": 0.0,
+              "obstructed_protected_mm2": 0.0,
+              "off_plan_mm2": 0.0
+            },
+            {
+              "z_mm": 5.09,
+              "missing_required_mm2": 0.0,
+              "obstructed_protected_mm2": 0.0,
+              "off_plan_mm2": 0.0
+            },
+            {
+              "z_mm": 5.109999999999999,
+              "missing_required_mm2": 0.0,
+              "obstructed_protected_mm2": 0.0,
+              "off_plan_mm2": 0.0
+            },
+            {
+              "z_mm": 5.15,
+              "missing_required_mm2": 0.0,
+              "obstructed_protected_mm2": 0.0,
+              "off_plan_mm2": 0.0
+            },
+            {
+              "z_mm": 5.19,
+              "missing_required_mm2": 0.0,
+              "obstructed_protected_mm2": 0.0,
+              "off_plan_mm2": 0.0
+            },
+            {
+              "z_mm": 5.21,
+              "missing_required_mm2": 0.0,
+              "obstructed_protected_mm2": 0.0,
+              "off_plan_mm2": 0.0
+            },
+            {
+              "z_mm": 5.25,
+              "missing_required_mm2": 0.0,
+              "obstructed_protected_mm2": 0.0,
+              "off_plan_mm2": 0.0
+            },
+            {
+              "z_mm": 5.29,
+              "missing_required_mm2": 0.0,
+              "obstructed_protected_mm2": 0.0,
+              "off_plan_mm2": 0.0
+            },
+            {
+              "z_mm": 5.31,
+              "missing_required_mm2": 0.0,
+              "obstructed_protected_mm2": 0.0,
+              "off_plan_mm2": 0.0
+            },
+            {
+              "z_mm": 5.9,
+              "missing_required_mm2": 0.0,
+              "obstructed_protected_mm2": 0.0,
+              "off_plan_mm2": 0.0
+            },
+            {
+              "z_mm": 6.49,
+              "missing_required_mm2": 0.0,
+              "obstructed_protected_mm2": 0.0,
+              "off_plan_mm2": 0.0
+            },
+            {
+              "z_mm": 6.51,
+              "missing_required_mm2": 0.0,
+              "obstructed_protected_mm2": 0.0,
+              "off_plan_mm2": 0.0
+            },
+            {
+              "z_mm": 6.55,
+              "missing_required_mm2": 0.0,
+              "obstructed_protected_mm2": 0.0,
+              "off_plan_mm2": 0.0
+            },
+            {
+              "z_mm": 6.59,
+              "missing_required_mm2": 0.0,
+              "obstructed_protected_mm2": 0.0,
+              "off_plan_mm2": 0.0
+            }
+          ],
+          "preservation": {
+            "errors": [],
+            "removed_baseline_mm3": 0.0,
+            "unplanned_added_mm3": 0.0,
+            "missing_patch_mm3": 0.0,
+            "base_volume_mm3": 12969.165084042279,
+            "final_volume_mm3": 13003.288259394294
+          }
+        }
+      ]
+    },
+    "left:deep_sea": {
+      "parts": [
+        {
+          "file": "kc2_left_deep_sea_upper_housing.stl",
+          "watertight": true,
+          "native_bounds_error_mm": 4.150390623181011e-06,
+          "native_volume_relative_error": 7.198403839397244e-08,
+          "sections": [
+            {
+              "z_mm": 4.41,
+              "missing_required_mm2": 0.0,
+              "obstructed_protected_mm2": 0.0,
+              "off_plan_mm2": 0.0
+            },
+            {
+              "z_mm": 4.725,
+              "missing_required_mm2": 0.0,
+              "obstructed_protected_mm2": 0.0,
+              "off_plan_mm2": 0.0
+            },
+            {
+              "z_mm": 5.04,
+              "missing_required_mm2": 0.0,
+              "obstructed_protected_mm2": 0.0,
+              "off_plan_mm2": 0.0
+            },
+            {
+              "z_mm": 5.06,
+              "missing_required_mm2": 0.0,
+              "obstructed_protected_mm2": 0.0,
+              "off_plan_mm2": 0.0
+            },
+            {
+              "z_mm": 5.074999999999999,
+              "missing_required_mm2": 0.0,
+              "obstructed_protected_mm2": 0.0,
+              "off_plan_mm2": 0.0
+            },
+            {
+              "z_mm": 5.09,
+              "missing_required_mm2": 0.0,
+              "obstructed_protected_mm2": 0.0,
+              "off_plan_mm2": 0.0
+            },
+            {
+              "z_mm": 5.109999999999999,
+              "missing_required_mm2": 0.0,
+              "obstructed_protected_mm2": 0.0,
+              "off_plan_mm2": 0.0
+            },
+            {
+              "z_mm": 5.15,
+              "missing_required_mm2": 0.0,
+              "obstructed_protected_mm2": 0.0,
+              "off_plan_mm2": 0.0
+            },
+            {
+              "z_mm": 5.19,
+              "missing_required_mm2": 0.0,
+              "obstructed_protected_mm2": 0.0,
+              "off_plan_mm2": 0.0
+            },
+            {
+              "z_mm": 5.21,
+              "missing_required_mm2": 0.0,
+              "obstructed_protected_mm2": 0.0,
+              "off_plan_mm2": 0.0
+            },
+            {
+              "z_mm": 5.725,
+              "missing_required_mm2": 0.0,
+              "obstructed_protected_mm2": 0.0,
+              "off_plan_mm2": 0.0
+            },
+            {
+              "z_mm": 6.24,
+              "missing_required_mm2": 0.0,
+              "obstructed_protected_mm2": 0.0,
+              "off_plan_mm2": 0.0
+            },
+            {
+              "z_mm": 6.26,
+              "missing_required_mm2": 0.0,
+              "obstructed_protected_mm2": 0.0,
+              "off_plan_mm2": 0.0
+            },
+            {
+              "z_mm": 6.425,
+              "missing_required_mm2": 0.0,
+              "obstructed_protected_mm2": 0.0,
+              "off_plan_mm2": 0.0
+            },
+            {
+              "z_mm": 6.59,
+              "missing_required_mm2": 0.0,
+              "obstructed_protected_mm2": 0.0,
+              "off_plan_mm2": 0.0
+            }
+          ],
+          "preservation": {
+            "errors": [],
+            "removed_baseline_mm3": 0.0,
+            "unplanned_added_mm3": 0.0,
+            "missing_patch_mm3": 0.0,
+            "base_volume_mm3": 11587.841546472051,
+            "final_volume_mm3": 11617.9212983766
+          }
+        }
+      ]
+    },
+    "right:normal": {
+      "parts": [
+        {
+          "file": "kc2_right_lower_housing_part_a.stl",
+          "watertight": true,
+          "native_bounds_error_mm": 4.272461069376732e-07,
+          "native_volume_relative_error": 6.903564257238418e-08,
+          "sections": [
+            {
+              "z_mm": -0.99,
+              "missing_required_mm2": 0.0,
+              "obstructed_protected_mm2": 0.0,
+              "off_plan_mm2": 0.0
+            },
+            {
+              "z_mm": 0.75,
+              "missing_required_mm2": 0.0,
+              "obstructed_protected_mm2": 0.0,
+              "off_plan_mm2": 0.0
+            },
+            {
+              "z_mm": 2.49,
+              "missing_required_mm2": 0.0,
+              "obstructed_protected_mm2": 0.0,
+              "off_plan_mm2": 0.0
+            }
+          ],
+          "preservation": {
+            "errors": [],
+            "removed_baseline_mm3": 0.0,
+            "unplanned_added_mm3": 0.0,
+            "missing_patch_mm3": 0.0,
+            "base_volume_mm3": 26987.412079369136,
+            "final_volume_mm3": 27297.246200788275
+          }
+        },
+        {
+          "file": "kc2_right_lower_housing_part_b.stl",
+          "watertight": true,
+          "native_bounds_error_mm": 1.1987304731064796e-06,
+          "native_volume_relative_error": 5.914313581138016e-08,
+          "sections": [
+            {
+              "z_mm": -0.99,
+              "missing_required_mm2": 0.0,
+              "obstructed_protected_mm2": 0.0,
+              "off_plan_mm2": 0.0
+            },
+            {
+              "z_mm": 0.75,
+              "missing_required_mm2": 0.0,
+              "obstructed_protected_mm2": 0.0,
+              "off_plan_mm2": 0.0
+            },
+            {
+              "z_mm": 2.49,
+              "missing_required_mm2": 0.0,
+              "obstructed_protected_mm2": 0.0,
+              "off_plan_mm2": 0.0
+            }
+          ],
+          "preservation": {
+            "errors": [],
+            "removed_baseline_mm3": 0.0,
+            "unplanned_added_mm3": 0.0,
+            "missing_patch_mm3": 0.0,
+            "base_volume_mm3": 26783.1225994374,
+            "final_volume_mm3": 27136.5689479106
+          }
+        }
+      ]
+    },
+    "right:magnetic": {
+      "parts": [
+        {
+          "file": "kc2_right_lower_housing_part_a_magnetic.stl",
+          "watertight": true,
+          "native_bounds_error_mm": 4.272461069376732e-07,
+          "native_volume_relative_error": 6.903564297220243e-08,
+          "sections": [
+            {
+              "z_mm": -0.99,
+              "missing_required_mm2": 0.0,
+              "obstructed_protected_mm2": 0.0,
+              "off_plan_mm2": 0.0
+            },
+            {
+              "z_mm": 0.75,
+              "missing_required_mm2": 0.0,
+              "obstructed_protected_mm2": 0.0,
+              "off_plan_mm2": 0.0
+            },
+            {
+              "z_mm": 2.49,
+              "missing_required_mm2": 0.0,
+              "obstructed_protected_mm2": 0.0,
+              "off_plan_mm2": 0.0
+            }
+          ],
+          "preservation": {
+            "errors": [],
+            "removed_baseline_mm3": 0.0,
+            "unplanned_added_mm3": 0.0,
+            "missing_patch_mm3": 0.0,
+            "base_volume_mm3": 26987.4120793691,
+            "final_volume_mm3": 27297.246200788246
+          }
+        },
+        {
+          "file": "kc2_right_lower_housing_part_b_magnetic.stl",
+          "watertight": true,
+          "native_bounds_error_mm": 1.1987304731064796e-06,
+          "native_volume_relative_error": 1.0271898332676102e-07,
+          "sections": [
+            {
+              "z_mm": -0.99,
+              "missing_required_mm2": 0.0,
+              "obstructed_protected_mm2": 0.0,
+              "off_plan_mm2": 0.0
+            },
+            {
+              "z_mm": 0.75,
+              "missing_required_mm2": 0.0,
+              "obstructed_protected_mm2": 0.0,
+              "off_plan_mm2": 0.0
+            },
+            {
+              "z_mm": 2.49,
+              "missing_required_mm2": 0.0,
+              "obstructed_protected_mm2": 0.0,
+              "off_plan_mm2": 0.0
+            }
+          ],
+          "preservation": {
+            "errors": [],
+            "removed_baseline_mm3": 0.0,
+            "unplanned_added_mm3": 0.0,
+            "missing_patch_mm3": 0.0,
+            "base_volume_mm3": 26761.407911016064,
+            "final_volume_mm3": 27108.335182225528
+          }
+        }
+      ]
+    },
+    "right:mx": {
+      "parts": [
+        {
+          "file": "kc2_right_mx_upper_housing_part_a.stl",
+          "watertight": true,
+          "native_bounds_error_mm": 3.542480484952648e-06,
+          "native_volume_relative_error": 8.563752127622172e-08,
+          "sections": [
+            {
+              "z_mm": 4.41,
+              "missing_required_mm2": 0.0,
+              "obstructed_protected_mm2": 0.0,
+              "off_plan_mm2": 0.0
+            },
+            {
+              "z_mm": 4.800000000000001,
+              "missing_required_mm2": 0.0,
+              "obstructed_protected_mm2": 0.0,
+              "off_plan_mm2": 0.0
+            },
+            {
+              "z_mm": 5.19,
+              "missing_required_mm2": 0.0,
+              "obstructed_protected_mm2": 0.0,
+              "off_plan_mm2": 0.0
+            },
+            {
+              "z_mm": 5.21,
+              "missing_required_mm2": 0.0,
+              "obstructed_protected_mm2": 0.0,
+              "off_plan_mm2": 0.0
+            },
+            {
+              "z_mm": 6.5,
+              "missing_required_mm2": 0.0,
+              "obstructed_protected_mm2": 0.0,
+              "off_plan_mm2": 0.0
+            },
+            {
+              "z_mm": 7.79,
+              "missing_required_mm2": 0.0,
+              "obstructed_protected_mm2": 0.0,
+              "off_plan_mm2": 0.0
+            },
+            {
+              "z_mm": 7.81,
+              "missing_required_mm2": 0.0,
+              "obstructed_protected_mm2": 0.0,
+              "off_plan_mm2": 0.0
+            },
+            {
+              "z_mm": 8.55,
+              "missing_required_mm2": 0.0,
+              "obstructed_protected_mm2": 0.0,
+              "off_plan_mm2": 0.0
+            },
+            {
+              "z_mm": 9.290000000000001,
+              "missing_required_mm2": 0.0,
+              "obstructed_protected_mm2": 0.0,
+              "off_plan_mm2": 0.0
+            }
+          ],
+          "preservation": {
+            "errors": [],
+            "removed_baseline_mm3": 0.0,
+            "unplanned_added_mm3": 0.0,
+            "missing_patch_mm3": 0.0,
+            "base_volume_mm3": 13995.958258833416,
+            "final_volume_mm3": 14014.283517523749
+          }
+        },
+        {
+          "file": "kc2_right_mx_upper_housing_part_b.stl",
+          "watertight": true,
+          "native_bounds_error_mm": 7.202148424312327e-06,
+          "native_volume_relative_error": 1.223653108844163e-07,
+          "sections": [
+            {
+              "z_mm": 4.41,
+              "missing_required_mm2": 0.0,
+              "obstructed_protected_mm2": 0.0,
+              "off_plan_mm2": 0.0
+            },
+            {
+              "z_mm": 4.800000000000001,
+              "missing_required_mm2": 0.0,
+              "obstructed_protected_mm2": 0.0,
+              "off_plan_mm2": 0.0
+            },
+            {
+              "z_mm": 5.19,
+              "missing_required_mm2": 0.0,
+              "obstructed_protected_mm2": 0.0,
+              "off_plan_mm2": 0.0
+            },
+            {
+              "z_mm": 5.21,
+              "missing_required_mm2": 0.0,
+              "obstructed_protected_mm2": 0.0,
+              "off_plan_mm2": 0.0
+            },
+            {
+              "z_mm": 6.5,
+              "missing_required_mm2": 0.0,
+              "obstructed_protected_mm2": 0.0,
+              "off_plan_mm2": 0.0
+            },
+            {
+              "z_mm": 7.79,
+              "missing_required_mm2": 0.0,
+              "obstructed_protected_mm2": 0.0,
+              "off_plan_mm2": 0.0
+            },
+            {
+              "z_mm": 7.81,
+              "missing_required_mm2": 0.0,
+              "obstructed_protected_mm2": 0.0,
+              "off_plan_mm2": 0.0
+            },
+            {
+              "z_mm": 8.55,
+              "missing_required_mm2": 0.0,
+              "obstructed_protected_mm2": 0.0,
+              "off_plan_mm2": 0.0
+            },
+            {
+              "z_mm": 9.290000000000001,
+              "missing_required_mm2": 0.0,
+              "obstructed_protected_mm2": 0.0,
+              "off_plan_mm2": 0.0
+            }
+          ],
+          "preservation": {
+            "errors": [],
+            "removed_baseline_mm3": 0.0,
+            "unplanned_added_mm3": 0.0,
+            "missing_patch_mm3": 0.0,
+            "base_volume_mm3": 14874.988749749458,
+            "final_volume_mm3": 14889.116058940772
+          }
+        }
+      ]
+    },
+    "right:choc_v1": {
+      "parts": [
+        {
+          "file": "kc2_right_choc_v1_upper_housing_part_a.stl",
+          "watertight": true,
+          "native_bounds_error_mm": 2.5610351457316938e-06,
+          "native_volume_relative_error": 3.445514094972365e-08,
+          "sections": [
+            {
+              "z_mm": 4.41,
+              "missing_required_mm2": 0.0,
+              "obstructed_protected_mm2": 0.0,
+              "off_plan_mm2": 0.0
+            },
+            {
+              "z_mm": 4.75,
+              "missing_required_mm2": 0.0,
+              "obstructed_protected_mm2": 0.0,
+              "off_plan_mm2": 0.0
+            },
+            {
+              "z_mm": 5.09,
+              "missing_required_mm2": 0.0,
+              "obstructed_protected_mm2": 0.0,
+              "off_plan_mm2": 0.0
+            },
+            {
+              "z_mm": 5.109999999999999,
+              "missing_required_mm2": 0.0,
+              "obstructed_protected_mm2": 0.0,
+              "off_plan_mm2": 0.0
+            },
+            {
+              "z_mm": 5.15,
+              "missing_required_mm2": 0.0,
+              "obstructed_protected_mm2": 0.0,
+              "off_plan_mm2": 0.0
+            },
+            {
+              "z_mm": 5.19,
+              "missing_required_mm2": 0.0,
+              "obstructed_protected_mm2": 0.0,
+              "off_plan_mm2": 0.0
+            },
+            {
+              "z_mm": 5.21,
+              "missing_required_mm2": 0.0,
+              "obstructed_protected_mm2": 0.0,
+              "off_plan_mm2": 0.0
+            },
+            {
+              "z_mm": 5.25,
+              "missing_required_mm2": 0.0,
+              "obstructed_protected_mm2": 0.0,
+              "off_plan_mm2": 0.0
+            },
+            {
+              "z_mm": 5.29,
+              "missing_required_mm2": 0.0,
+              "obstructed_protected_mm2": 0.0,
+              "off_plan_mm2": 0.0
+            },
+            {
+              "z_mm": 5.31,
+              "missing_required_mm2": 0.0,
+              "obstructed_protected_mm2": 0.0,
+              "off_plan_mm2": 0.0
+            },
+            {
+              "z_mm": 5.9,
+              "missing_required_mm2": 0.0,
+              "obstructed_protected_mm2": 0.0,
+              "off_plan_mm2": 0.0
+            },
+            {
+              "z_mm": 6.49,
+              "missing_required_mm2": 0.0,
+              "obstructed_protected_mm2": 0.0,
+              "off_plan_mm2": 0.0
+            }
+          ],
+          "preservation": {
+            "errors": [],
+            "removed_baseline_mm3": 0.0,
+            "unplanned_added_mm3": 0.0,
+            "missing_patch_mm3": 0.0,
+            "base_volume_mm3": 7129.858395951412,
+            "final_volume_mm3": 7138.211724761547
+          }
+        },
+        {
+          "file": "kc2_right_choc_v1_upper_housing_part_b.stl",
+          "watertight": true,
+          "native_bounds_error_mm": 4.028320290672127e-06,
+          "native_volume_relative_error": 3.745378190554051e-08,
+          "sections": [
+            {
+              "z_mm": 4.41,
+              "missing_required_mm2": 0.0,
+              "obstructed_protected_mm2": 0.0,
+              "off_plan_mm2": 0.0
+            },
+            {
+              "z_mm": 4.75,
+              "missing_required_mm2": 0.0,
+              "obstructed_protected_mm2": 0.0,
+              "off_plan_mm2": 0.0
+            },
+            {
+              "z_mm": 5.09,
+              "missing_required_mm2": 0.0,
+              "obstructed_protected_mm2": 0.0,
+              "off_plan_mm2": 0.0
+            },
+            {
+              "z_mm": 5.109999999999999,
+              "missing_required_mm2": 0.0,
+              "obstructed_protected_mm2": 0.0,
+              "off_plan_mm2": 0.0
+            },
+            {
+              "z_mm": 5.15,
+              "missing_required_mm2": 0.0,
+              "obstructed_protected_mm2": 0.0,
+              "off_plan_mm2": 0.0
+            },
+            {
+              "z_mm": 5.19,
+              "missing_required_mm2": 0.0,
+              "obstructed_protected_mm2": 0.0,
+              "off_plan_mm2": 0.0
+            },
+            {
+              "z_mm": 5.21,
+              "missing_required_mm2": 0.0,
+              "obstructed_protected_mm2": 0.0,
+              "off_plan_mm2": 0.0
+            },
+            {
+              "z_mm": 5.25,
+              "missing_required_mm2": 0.0,
+              "obstructed_protected_mm2": 0.0,
+              "off_plan_mm2": 0.0
+            },
+            {
+              "z_mm": 5.29,
+              "missing_required_mm2": 0.0,
+              "obstructed_protected_mm2": 0.0,
+              "off_plan_mm2": 0.0
+            },
+            {
+              "z_mm": 5.31,
+              "missing_required_mm2": 0.0,
+              "obstructed_protected_mm2": 0.0,
+              "off_plan_mm2": 0.0
+            },
+            {
+              "z_mm": 5.9,
+              "missing_required_mm2": 0.0,
+              "obstructed_protected_mm2": 0.0,
+              "off_plan_mm2": 0.0
+            },
+            {
+              "z_mm": 6.49,
+              "missing_required_mm2": 0.0,
+              "obstructed_protected_mm2": 0.0,
+              "off_plan_mm2": 0.0
+            }
+          ],
+          "preservation": {
+            "errors": [],
+            "removed_baseline_mm3": 0.0,
+            "unplanned_added_mm3": 0.0,
+            "missing_patch_mm3": 0.0,
+            "base_volume_mm3": 7245.7618916709735,
+            "final_volume_mm3": 7252.815745781211
+          }
+        }
+      ]
+    },
+    "right:deep_sea": {
+      "parts": [
+        {
+          "file": "kc2_right_deep_sea_upper_housing_part_a.stl",
+          "watertight": true,
+          "native_bounds_error_mm": 2.5610351457316938e-06,
+          "native_volume_relative_error": 4.8089125441467515e-08,
+          "sections": [
+            {
+              "z_mm": 4.41,
+              "missing_required_mm2": 0.0,
+              "obstructed_protected_mm2": 0.0,
+              "off_plan_mm2": 0.0
+            },
+            {
+              "z_mm": 4.725,
+              "missing_required_mm2": 0.0,
+              "obstructed_protected_mm2": 0.0,
+              "off_plan_mm2": 0.0
+            },
+            {
+              "z_mm": 5.04,
+              "missing_required_mm2": 0.0,
+              "obstructed_protected_mm2": 0.0,
+              "off_plan_mm2": 0.0
+            },
+            {
+              "z_mm": 5.06,
+              "missing_required_mm2": 0.0,
+              "obstructed_protected_mm2": 0.0,
+              "off_plan_mm2": 0.0
+            },
+            {
+              "z_mm": 5.074999999999999,
+              "missing_required_mm2": 0.0,
+              "obstructed_protected_mm2": 0.0,
+              "off_plan_mm2": 0.0
+            },
+            {
+              "z_mm": 5.09,
+              "missing_required_mm2": 0.0,
+              "obstructed_protected_mm2": 0.0,
+              "off_plan_mm2": 0.0
+            },
+            {
+              "z_mm": 5.109999999999999,
+              "missing_required_mm2": 0.0,
+              "obstructed_protected_mm2": 0.0,
+              "off_plan_mm2": 0.0
+            },
+            {
+              "z_mm": 5.15,
+              "missing_required_mm2": 0.0,
+              "obstructed_protected_mm2": 0.0,
+              "off_plan_mm2": 0.0
+            },
+            {
+              "z_mm": 5.19,
+              "missing_required_mm2": 0.0,
+              "obstructed_protected_mm2": 0.0,
+              "off_plan_mm2": 0.0
+            },
+            {
+              "z_mm": 5.21,
+              "missing_required_mm2": 0.0,
+              "obstructed_protected_mm2": 0.0,
+              "off_plan_mm2": 0.0
+            },
+            {
+              "z_mm": 5.725,
+              "missing_required_mm2": 0.0,
+              "obstructed_protected_mm2": 0.0,
+              "off_plan_mm2": 0.0
+            },
+            {
+              "z_mm": 6.24,
+              "missing_required_mm2": 0.0,
+              "obstructed_protected_mm2": 0.0,
+              "off_plan_mm2": 0.0
+            }
+          ],
+          "preservation": {
+            "errors": [],
+            "removed_baseline_mm3": 0.0,
+            "unplanned_added_mm3": 0.0,
+            "missing_patch_mm3": 0.0,
+            "base_volume_mm3": 6389.158294289736,
+            "final_volume_mm3": 6396.517179193867
+          }
+        },
+        {
+          "file": "kc2_right_deep_sea_upper_housing_part_b.stl",
+          "watertight": true,
+          "native_bounds_error_mm": 4.028320290672127e-06,
+          "native_volume_relative_error": 4.8956775991769706e-08,
+          "sections": [
+            {
+              "z_mm": 4.41,
+              "missing_required_mm2": 0.0,
+              "obstructed_protected_mm2": 0.0,
+              "off_plan_mm2": 0.0
+            },
+            {
+              "z_mm": 4.725,
+              "missing_required_mm2": 0.0,
+              "obstructed_protected_mm2": 0.0,
+              "off_plan_mm2": 0.0
+            },
+            {
+              "z_mm": 5.04,
+              "missing_required_mm2": 0.0,
+              "obstructed_protected_mm2": 0.0,
+              "off_plan_mm2": 0.0
+            },
+            {
+              "z_mm": 5.06,
+              "missing_required_mm2": 0.0,
+              "obstructed_protected_mm2": 0.0,
+              "off_plan_mm2": 0.0
+            },
+            {
+              "z_mm": 5.074999999999999,
+              "missing_required_mm2": 0.0,
+              "obstructed_protected_mm2": 0.0,
+              "off_plan_mm2": 0.0
+            },
+            {
+              "z_mm": 5.09,
+              "missing_required_mm2": 0.0,
+              "obstructed_protected_mm2": 0.0,
+              "off_plan_mm2": 0.0
+            },
+            {
+              "z_mm": 5.109999999999999,
+              "missing_required_mm2": 0.0,
+              "obstructed_protected_mm2": 0.0,
+              "off_plan_mm2": 0.0
+            },
+            {
+              "z_mm": 5.15,
+              "missing_required_mm2": 0.0,
+              "obstructed_protected_mm2": 0.0,
+              "off_plan_mm2": 0.0
+            },
+            {
+              "z_mm": 5.19,
+              "missing_required_mm2": 0.0,
+              "obstructed_protected_mm2": 0.0,
+              "off_plan_mm2": 0.0
+            },
+            {
+              "z_mm": 5.21,
+              "missing_required_mm2": 0.0,
+              "obstructed_protected_mm2": 0.0,
+              "off_plan_mm2": 0.0
+            },
+            {
+              "z_mm": 5.725,
+              "missing_required_mm2": 0.0,
+              "obstructed_protected_mm2": 0.0,
+              "off_plan_mm2": 0.0
+            },
+            {
+              "z_mm": 6.24,
+              "missing_required_mm2": 0.0,
+              "obstructed_protected_mm2": 0.0,
+              "off_plan_mm2": 0.0
+            }
+          ],
+          "preservation": {
+            "errors": [],
+            "removed_baseline_mm3": 0.0,
+            "unplanned_added_mm3": 0.0,
+            "missing_patch_mm3": 0.0,
+            "base_volume_mm3": 6477.442888627495,
+            "final_volume_mm3": 6483.6569982008
+          }
+        }
+      ]
+    }
+  },
+  "assembly": [
+    {
+      "side": "left",
+      "lower": "normal",
+      "upper": "mx",
+      "maximum_swept_overlap_mm2": 0.0
+    },
+    {
+      "side": "left",
+      "lower": "normal",
+      "upper": "choc_v1",
+      "maximum_swept_overlap_mm2": 0.0
+    },
+    {
+      "side": "left",
+      "lower": "normal",
+      "upper": "deep_sea",
+      "maximum_swept_overlap_mm2": 0.0
+    },
+    {
+      "side": "left",
+      "lower": "magnetic",
+      "upper": "mx",
+      "maximum_swept_overlap_mm2": 0.0
+    },
+    {
+      "side": "left",
+      "lower": "magnetic",
+      "upper": "choc_v1",
+      "maximum_swept_overlap_mm2": 0.0
+    },
+    {
+      "side": "left",
+      "lower": "magnetic",
+      "upper": "deep_sea",
+      "maximum_swept_overlap_mm2": 0.0
+    },
+    {
+      "side": "right",
+      "lower": "normal",
+      "upper": "mx",
+      "maximum_swept_overlap_mm2": 0.0
+    },
+    {
+      "side": "right",
+      "lower": "normal",
+      "upper": "choc_v1",
+      "maximum_swept_overlap_mm2": 0.0
+    },
+    {
+      "side": "right",
+      "lower": "normal",
+      "upper": "deep_sea",
+      "maximum_swept_overlap_mm2": 0.0
+    },
+    {
+      "side": "right",
+      "lower": "magnetic",
+      "upper": "mx",
+      "maximum_swept_overlap_mm2": 0.0
+    },
+    {
+      "side": "right",
+      "lower": "magnetic",
+      "upper": "choc_v1",
+      "maximum_swept_overlap_mm2": 0.0
+    },
+    {
+      "side": "right",
+      "lower": "magnetic",
+      "upper": "deep_sea",
+      "maximum_swept_overlap_mm2": 0.0
+    }
+  ],
+  "joined": [
+    {
+      "lower": "normal",
+      "upper": "mx",
+      "swept_overlap_mm2": 0.0
+    },
+    {
+      "lower": "normal",
+      "upper": "choc_v1",
+      "swept_overlap_mm2": 0.0
+    },
+    {
+      "lower": "normal",
+      "upper": "deep_sea",
+      "swept_overlap_mm2": 0.0
+    },
+    {
+      "lower": "magnetic",
+      "upper": "mx",
+      "swept_overlap_mm2": 0.0
+    },
+    {
+      "lower": "magnetic",
+      "upper": "choc_v1",
+      "swept_overlap_mm2": 0.0
+    },
+    {
+      "lower": "magnetic",
+      "upper": "deep_sea",
+      "swept_overlap_mm2": 0.0
+    }
+  ],
+  "ab": [
+    {
+      "label": "right:normal",
+      "gap_mm": 0.399993896484375,
+      "overlap_mm2": 0.0,
+      "native": {
+        "minimum_distance_mm": 0.39998999999999896,
+        "points_mm": [
+          [
+            81.7438,
+            124.0,
+            -1.0
+          ],
+          [
+            82.14379,
+            124.0,
+            -1.0000000000000004
+          ]
+        ]
+      },
+      "rounding": {
+        "mesh_gap_mm": 0.399993896484375,
+        "cad_gap_mm": 0.39998999999999896,
+        "required_mm": 0.3999,
+        "float32_distance_bound_mm": 2.1579186437577746e-05,
+        "cad_kernel_tolerance_mm": 1e-07,
+        "pass": true
+      }
+    },
+    {
+      "label": "right:magnetic",
+      "gap_mm": 0.399993896484375,
+      "overlap_mm2": 0.0,
+      "native": {
+        "minimum_distance_mm": 0.39998999999999896,
+        "points_mm": [
+          [
+            81.7438,
+            124.0,
+            -1.0
+          ],
+          [
+            82.14379,
+            124.0,
+            -1.0000000000000004
+          ]
+        ]
+      },
+      "rounding": {
+        "mesh_gap_mm": 0.399993896484375,
+        "cad_gap_mm": 0.39998999999999896,
+        "required_mm": 0.3999,
+        "float32_distance_bound_mm": 2.1579186437577746e-05,
+        "cad_kernel_tolerance_mm": 1e-07,
+        "pass": true
+      }
+    },
+    {
+      "label": "right:mx",
+      "gap_mm": 0.39989471435546875,
+      "overlap_mm2": 0.0,
+      "native": {
+        "minimum_distance_mm": 0.39990000000000414,
+        "points_mm": [
+          [
+            75.69058,
+            122.40000000000002,
+            9.3
+          ],
+          [
+            76.09048,
+            122.40000000000002,
+            9.3
+          ]
+        ]
+      },
+      "rounding": {
+        "mesh_gap_mm": 0.39989471435546875,
+        "cad_gap_mm": 0.39990000000000414,
+        "required_mm": 0.3999,
+        "float32_distance_bound_mm": 2.1579186437577746e-05,
+        "cad_kernel_tolerance_mm": 1e-07,
+        "pass": true
+      }
+    },
+    {
+      "label": "right:choc_v1",
+      "gap_mm": 0.39989471435546875,
+      "overlap_mm2": 0.0,
+      "native": {
+        "minimum_distance_mm": 0.39990000000000414,
+        "points_mm": [
+          [
+            75.69058,
+            122.40000000000002,
+            6.5
+          ],
+          [
+            76.09048,
+            122.40000000000002,
+            6.5
+          ]
+        ]
+      },
+      "rounding": {
+        "mesh_gap_mm": 0.39989471435546875,
+        "cad_gap_mm": 0.39990000000000414,
+        "required_mm": 0.3999,
+        "float32_distance_bound_mm": 2.1579186437577746e-05,
+        "cad_kernel_tolerance_mm": 1e-07,
+        "pass": true
+      }
+    },
+    {
+      "label": "right:deep_sea",
+      "gap_mm": 0.39989471435546875,
+      "overlap_mm2": 0.0,
+      "native": {
+        "minimum_distance_mm": 0.39990000000000414,
+        "points_mm": [
+          [
+            75.69058,
+            122.40000000000002,
+            6.25
+          ],
+          [
+            76.09048,
+            122.40000000000002,
+            6.25
+          ]
+        ]
+      },
+      "rounding": {
+        "mesh_gap_mm": 0.39989471435546875,
+        "cad_gap_mm": 0.39990000000000414,
+        "required_mm": 0.3999,
+        "float32_distance_bound_mm": 2.1579186437577746e-05,
+        "cad_kernel_tolerance_mm": 1e-07,
+        "pass": true
+      }
+    }
+  ],
+  "errors": [],
+  "source_sha256": {
+    "docs/reports/wrap-housings-20260920/plan.json": "7437e1e75ad9172c26a73c6251b0d02138bf50f3f483b265237e1c6a42867784",
+    "docs/reports/wrap-housings-20260920/board-envelopes.json": "c1be9249f3ddcef1359eacb49fb3dc5568c483051b83d32e0b3f3dd4d384041b",
+    "docs/reports/reinforced-covers-20260913/left-lower.json": "d5cda73b186052c18740c718bb73ca40e339d5ec7e28d680292a23b647e22739",
+    "hardware/MODELS/kc2_left_lower_housing.step": "82dbb31ec3811920e524cc82fe67bf83ab8c98ac38c7a1e47366d65c2459f426",
+    "hardware/MODELS/kc2_left_lower_housing.f3d": "d04a818e0953e7855acd9a91062ba8fe08f3960d7eceee47f3d57bb47cf6f940",
+    "hardware/MODELS/kc2_left_lower_housing.stl": "c7107a0aad02b17ed1178a2b24a2b1b75425f564bae02135e7a8da79d40209ea",
+    "docs/reports/solid-filled-plates-20260913/left-mx.json": "3965411eb2d455cb006c03d4fc016f21b2ed851a52e5160c86a910226d26cd50",
+    "hardware/MODELS/kc2_left_lower_housing_magnetic.step": "77a313689b087717b849812ea497ae3d335c4eb121ad33d2339f2db8c28fa708",
+    "hardware/MODELS/kc2_left_lower_housing_magnetic.f3d": "c99a542701d48c4926c817005f5c24efec300f3f3662937ecf699c56a19da863",
+    "hardware/MODELS/kc2_left_lower_housing_magnetic.stl": "0911ca0a37b8a8d58967d0e07ff51261d19f244f2486db1c76410282b3d4e701",
+    "hardware/MODELS/kc2_left_mx_upper_housing.step": "92aee1e9ca27828f0b2e8c340ec80af1178b674d9f6aebcd7614d473e7a4a384",
+    "hardware/MODELS/kc2_left_mx_upper_housing.f3d": "2aa2567b227a2ff1b8ec433d17c059bd99b60dd304e2c7211bc152a7b35762f4",
+    "hardware/MODELS/kc2_left_mx_upper_housing.stl": "8c967581fefe46c40663cece967f32fbd484ef5050604bb49b0606109a9ebdd3",
+    "docs/reports/registered-housing-fit-20260913/evidence/upper/left-mx/generation.json": "fc263e623aec97e34bb0a48b3c1d29fcbd91b9ffd51cc64059dc3939c46660e8",
+    "hardware/MODELS/kc2_left_choc_v1_upper_housing.step": "2227d0aa68acb8abd8e93e67dee099de51fcfe75ccf44505d7abee1e2ce87b8c",
+    "hardware/MODELS/kc2_left_choc_v1_upper_housing.f3d": "af81eea1f1f5312f3849810d9cc589cffa337aed4050b7b6d6e78d4c2fb8b41b",
+    "hardware/MODELS/kc2_left_choc_v1_upper_housing.stl": "aa357d4d5558d654f32ef3b023dac34a68fb14fcba99d1abe2e1ceaa402b7810",
+    "docs/reports/registered-housing-fit-20260913/evidence/upper/left-choc_v1/generation.json": "4ffa4b9b6b0a1321ac6451752e43089edc12d5bf1ff2ef7f9c09e2bb35612b93",
+    "docs/reports/solid-filled-plates-20260913/left-choc_v1.json": "fd08b2d864e13885355268200d5f1611dd76a325fa73617f77eab7c51f71a3d4",
+    "hardware/MODELS/kc2_left_deep_sea_upper_housing.step": "0f04fd3c5f9c556a944ea987a63b771b1edcf8dfc51e3f93ba13a62decdc7e1a",
+    "hardware/MODELS/kc2_left_deep_sea_upper_housing.f3d": "65515cb4d2ad7a3de01c1474360f092b48e3f8e0a6e11780a415e9cbefea670b",
+    "hardware/MODELS/kc2_left_deep_sea_upper_housing.stl": "b039f364d326c017ceae25507e0ca22dec7a649fb64866cda9cb43c48d44ab8b",
+    "docs/reports/registered-housing-fit-20260913/evidence/upper/left-deep_sea/generation.json": "a3eef4a9c3c88d5ac4ab260471dfdaede105abf3cdaf64f20ddb2d8f7b68bfac",
+    "docs/reports/solid-filled-plates-20260913/left-deep_sea.json": "9952ca3664387ebde9975e5b1be91d114a6da1cc544a1523e6c6daef4db0cdf1",
+    "docs/reports/reinforced-covers-20260913/right-lower.json": "4cd18ca758b1064bfb963607c54b76577dc1fa637a603b5acd470b6fafff5cf5",
+    "hardware/MODELS/kc2_right_lower_housing.step": "878043a85182675ac719adc6ac6b8747d8a60c6d98d642de6600a23cecec6246",
+    "hardware/MODELS/kc2_right_lower_housing.f3d": "47541969035c83870539dc9c9ac9f4d69e6e523838e0820384fdc29b52137ea6",
+    "hardware/MODELS/kc2_right_lower_housing_part_a.stl": "42e529e746228f0bedb22bdd821d0e366b42fe4f95fb10e988a9470dc613dc5d",
+    "hardware/MODELS/kc2_right_lower_housing_part_b.stl": "3b9cdd66ccef342b45b3691aa0d1d639d85a3214a421e65734de15465034b32a",
+    "docs/reports/solid-filled-plates-20260913/right-mx.json": "efd3a04be41f07dff47b101ba112616ce506b76cf0d682148c945f589749c8db",
+    "hardware/MODELS/kc2_right_lower_housing_magnetic.step": "3029678b00e7b0534309b8e0fbe9577fe6df636692eebb8038cc8a8bfd49f38a",
+    "hardware/MODELS/kc2_right_lower_housing_magnetic.f3d": "d149e5ab75e2e73ff3a7c346916148115c81b11a73f7c30f7a3b7b80c7074143",
+    "hardware/MODELS/kc2_right_lower_housing_part_a_magnetic.stl": "dd1bb7637a60339c50f57d8bec4b200b1b086ffea7adac3d735f83ef128fda51",
+    "hardware/MODELS/kc2_right_lower_housing_part_b_magnetic.stl": "192f0b3f19330fe211751c73b9fcb6dd2d08ad68c335c44e4f21016eba76341e",
+    "hardware/MODELS/kc2_right_mx_upper_housing.step": "20a775662854e426be8b1232ac57a9ed28ae6f817200540993cc1044029f1f72",
+    "hardware/MODELS/kc2_right_mx_upper_housing.f3d": "c7a0b85cf773dd2a7a8227ee7e6e3f8921f8710c338847192a5c334fd78f7fe3",
+    "hardware/MODELS/kc2_right_mx_upper_housing_part_a.stl": "336b1b478846a856307dc9ed9bcfd52283cb288cd92daaad2c2fb245551ebae9",
+    "hardware/MODELS/kc2_right_mx_upper_housing_part_b.stl": "d730620f78b8c076ab06279aded15a4eb4414845b10a78910b3865199a0a0a89",
+    "docs/reports/registered-housing-fit-20260913/evidence/upper/right-mx/generation.json": "4e8edfb7b77f707c1bfc8466f1c5546ea44f26d49fc3fbdf86973feb07df21c9",
+    "hardware/MODELS/kc2_right_choc_v1_upper_housing.step": "158c6fdca5b447c26361f6d0239162018ec3a4d9f6c57484ffb0e2afb80584fe",
+    "hardware/MODELS/kc2_right_choc_v1_upper_housing.f3d": "396fdfbb4b659800a8314b4cb40f1a557dc1361d291b9d64c569fbeda7d2e164",
+    "hardware/MODELS/kc2_right_choc_v1_upper_housing_part_a.stl": "435e82feaa9af57dfcae7f01146d61295fa3848b03fbd06af150cab22189d637",
+    "hardware/MODELS/kc2_right_choc_v1_upper_housing_part_b.stl": "3f6ca571a2269e106b83e3290876ee81f06152c84eb1f4c82f6f56bd710e0b4b",
+    "docs/reports/registered-housing-fit-20260913/evidence/upper/right-choc_v1/generation.json": "1cfb2a999bc70e37ccd378c9d585397c509226de9fb0e93222e357ed80b3f239",
+    "docs/reports/solid-filled-plates-20260913/right-choc_v1.json": "97b969b56465d10dffd6df10482801874be2db8c06289483d6f716bbaba2f58f",
+    "hardware/MODELS/kc2_right_deep_sea_upper_housing.step": "69e417a8bddc40e3c9c4f0c1dc950ebb64040e44ef200ffb6254fe4847c98f07",
+    "hardware/MODELS/kc2_right_deep_sea_upper_housing.f3d": "53503b44f86f53c031333ea68bcb4f6928ff94c6b4acc06cc1b1ed3fe5c51895",
+    "hardware/MODELS/kc2_right_deep_sea_upper_housing_part_a.stl": "8c532d85cb1c8bfcfa5ad86ab1d7bad34048a1ae65e9cc093203c7251a29a933",
+    "hardware/MODELS/kc2_right_deep_sea_upper_housing_part_b.stl": "503a713ff6f83cc647f91aba00ef3b9d0f731121ffafe6b040d8c270b435fa28",
+    "docs/reports/registered-housing-fit-20260913/evidence/upper/right-deep_sea/generation.json": "b5e7bf70bb18d078f1a52f93c4de4cc485fa68298bb334a948abbcb5637d5a25",
+    "docs/reports/solid-filled-plates-20260913/right-deep_sea.json": "9a51a4d3899ce0b8196c1347236b1cfd74fc2a8d473e71e03b989e6f8a812ac9",
+    "tools/kc2_wall_gap_fix.py": "24be68bb49885f2a5864d32e690f5cc798122ec3e3f5b2a540d18deab62d54da",
+    "tools/test_kc2_wall_gap_fix.py": "00c64aa0a8400ccf6c4057c8df1c835adbca5a8fce2bcc65ba2d4ac277484866",
+    "tools/kc2_pcb_seating.py": "c3bfcdf8d644688588860d46a6b1e6b99100b6242c332145cae1fa2678eb229a",
+    ".codex-tmp/wall-gap-fix-20260921/right-normal/kc2_right_lower_housing.f3d": "9594054b2f8b39bc5c5ec6a40758f583a861c7f933753a902585052380fe6f7a",
+    ".codex-tmp/wall-gap-fix-20260921/right-magnetic/kc2_right_lower_housing_magnetic.f3d": "34897d09a440f6d647c845f2c64c90ae2253377fed1eb2a994ad50768ada0935",
+    ".codex-tmp/wall-gap-fix-20260921/right-mx/kc2_right_mx_upper_housing.f3d": "8c140916210b5e479c4562bbdee46ed8a1a0d445375b76d21dd4f2a21ce6cd70",
+    ".codex-tmp/wall-gap-fix-20260921/right-choc_v1/kc2_right_choc_v1_upper_housing.f3d": "2c8fc2d4349133ac0cfa4fba71682decc2014ada9557297e8eba2b474927ccee",
+    ".codex-tmp/wall-gap-fix-20260921/right-deep_sea/kc2_right_deep_sea_upper_housing.f3d": "0676cd0a2f887123585e218f1e0b487f52e12cb532bf6e0fd19805426400ebf9",
+    "tools/fusion/KC2WallGapClearance.py": "57c5fa335d956c52e46ce9ad06d614e214624888ebf4ca4bcda4c15653958922",
+    "tools/fusion/KC2WallGapFix.py": "c4f56959e1a3de77cc93dbe424ae25c78aff1517d84e5d1db289aaf793e86ca2",
+    ".codex-tmp/wall-gap-fix-20260921/clearance-native.json": "8511f613523141b4545008f4e75e342c2dccb841c6387e888047de9073784055",
+    ".codex-tmp/wall-gap-fix-20260921/review-initial.json": "2e2c947721202dcd6b6c4f4635201dc20c47a01f53bc899a5b233600a7135eb3",
+    ".codex-tmp/wall-gap-fix-20260921/plan.json": "fd3d20b9e8bf025b17b04c704408856a5dd33118cbca49ce817110c2a2a52d00",
+    ".codex-tmp/wall-gap-fix-20260921/left-normal/kc2_left_lower_housing.stl": "f3052f14ed89594a43875abe7ead25faca3af1b48d92140537e8d05925276b0d",
+    ".codex-tmp/wall-gap-fix-20260921/left-normal/kc2_left_lower_housing.f3d": "9683390f5721d641c237ad252f2bbed0b37ecbb8d906d4f8e3c72be62943308c",
+    ".codex-tmp/wall-gap-fix-20260921/left-normal/generation.json": "7583616d3fad3cbf131c1ef34c751c69b3c9da23a935a19c8ed799fa86135339",
+    ".codex-tmp/wall-gap-fix-20260921/left-normal/native.json": "d425b724cb5b1314bad09313b7dfc377f57b1d835c915a6ad245f4c0e7942b3f",
+    ".codex-tmp/wall-gap-fix-20260921/left-normal/kc2_left_lower_housing.step": "e03731af73a845289d244b7e5de62b681ff3d7e19f646e8c1e0c2f6eb22d31ba",
+    ".codex-tmp/wall-gap-fix-20260921/left-magnetic/kc2_left_lower_housing_magnetic.stl": "e6d53ae6ca3e04f94cfca757de3b86f6cea4844f23a3d6279fba9adeaf71a44d",
+    ".codex-tmp/wall-gap-fix-20260921/left-magnetic/kc2_left_lower_housing_magnetic.f3d": "9d36e44b1b1d3fb4de953bb1c0ba2c0cac2cee89480082f7f13973749e62cea0",
+    ".codex-tmp/wall-gap-fix-20260921/left-magnetic/generation.json": "73f22a702834bffd52d821a7ea27649b41125f64b369e157a61c1bd993c76ac9",
+    ".codex-tmp/wall-gap-fix-20260921/left-magnetic/native.json": "aeb1c7ae59e894017b8c7db4e4cb5cac6cee28f39bbb7d9270e7e5505d8c5045",
+    ".codex-tmp/wall-gap-fix-20260921/left-magnetic/kc2_left_lower_housing_magnetic.step": "719b0ee22dbe8965a3945ad7c00a63f019a01290ef8099490ec2a66b767c2587",
+    ".codex-tmp/wall-gap-fix-20260921/left-mx/kc2_left_mx_upper_housing.stl": "9799ebee3219cc6e2e904ba4ef55a5ea59068aaf0b594b010520088e332bb38f",
+    ".codex-tmp/wall-gap-fix-20260921/left-mx/kc2_left_mx_upper_housing.f3d": "db4c1783ebd6da3ba483356e5cf00d63353b4ce78ce725e1fea30acf99667260",
+    ".codex-tmp/wall-gap-fix-20260921/left-mx/generation.json": "de2e7abe4f1514508eba41249deed58e636e648e33fde5651e102b42bb617b51",
+    ".codex-tmp/wall-gap-fix-20260921/left-mx/native.json": "1edd8009d9a101797ecb3bcc0701f80fdcab22d644d0856839219df4e6c9acd2",
+    ".codex-tmp/wall-gap-fix-20260921/left-mx/kc2_left_mx_upper_housing.step": "7387bc7d0863a7461e17a666e8772c5e3681b236e0f61bf38362040e613efd04",
+    ".codex-tmp/wall-gap-fix-20260921/left-choc_v1/kc2_left_choc_v1_upper_housing.stl": "4874858d3811f619e9b88be690c7975e1340087d41dfe5d972d104a1a47f1415",
+    ".codex-tmp/wall-gap-fix-20260921/left-choc_v1/kc2_left_choc_v1_upper_housing.f3d": "11711333b3a1f9d04dbb09a3c54eb8311ae00a7b1833c7de63c77993280bfef0",
+    ".codex-tmp/wall-gap-fix-20260921/left-choc_v1/generation.json": "ddadf35a74eab1f369c01b5df34b93239f2ae3149fc9a521ac2229d8af7e8219",
+    ".codex-tmp/wall-gap-fix-20260921/left-choc_v1/native.json": "0a0a0dc143ca3ec72ac997e9b1275d46b5b90e3aa91b4a757ef5971f53c8369d",
+    ".codex-tmp/wall-gap-fix-20260921/left-choc_v1/kc2_left_choc_v1_upper_housing.step": "5435bb49da6e560f113f8d7d5ddfc6e8072cfe174dc357f341c82a59c3e21dd0",
+    ".codex-tmp/wall-gap-fix-20260921/left-deep_sea/kc2_left_deep_sea_upper_housing.stl": "7f614d659d2316b3d14217ca85200c85a59ed622dee2cc5d7a75c96d393fdb3c",
+    ".codex-tmp/wall-gap-fix-20260921/left-deep_sea/kc2_left_deep_sea_upper_housing.f3d": "f85b58070ae5a13721a00f8e835294fe83eb139edaae9f75794f5295eb111e43",
+    ".codex-tmp/wall-gap-fix-20260921/left-deep_sea/generation.json": "41abf4ae319dbc3cd6ac8907caaa24e0dfe577978f6b3020f0894fbd369ad579",
+    ".codex-tmp/wall-gap-fix-20260921/left-deep_sea/native.json": "48510916a2b307354c33481c86c931e3eab20b07216cba75427036580d240acd",
+    ".codex-tmp/wall-gap-fix-20260921/left-deep_sea/kc2_left_deep_sea_upper_housing.step": "382293f8810afbff080a7eceee2f774f1f79403d2bae457a73d79645f6a816e3",
+    "tools/build_kc2_wall_gap_precision.py": "3ee93930947c11e3469c74bd8d8978aaf09132b5b536b41094f3c7d68d386378",
+    "tools/test_kc2_wall_gap_precision.py": "9656cb93c27119b89ed736fe265e2ff3d15354f10368d30ef7723d3c3e6b49b9",
+    ".codex-tmp/wall-gap-fix-20260921/right-normal/kc2_right_lower_housing_part_a.stl": "e25964266c58a20fd5b5d35090286d4b5947ebef645c4c019ee023b796990f0b",
+    ".codex-tmp/wall-gap-fix-20260921/right-normal/kc2_right_lower_housing_part_b.stl": "2b0b2287d9bf931a58fdc72f432db7e8a706d57a3ec54cf323d37386e0ab71d9",
+    ".codex-tmp/wall-gap-fix-20260921/right-normal/generation.json": "989b9299084a5f160129e8c45633fac0c9c5e4970e00e05aab7289517be12c3f",
+    ".codex-tmp/wall-gap-fix-20260921/right-normal/native.json": "bf9371d18b4aec48dfac6b0ad98f7b39f14a93a02e48c4c173abbedff825f833",
+    ".codex-tmp/wall-gap-fix-20260921/right-normal/kc2_right_lower_housing.step": "722268fd98e5b208040502bc16a26e3da83e6f95ae12a844adcdd2ecafdf2235",
+    ".codex-tmp/wall-gap-fix-20260921/right-magnetic/kc2_right_lower_housing_part_a_magnetic.stl": "e25964266c58a20fd5b5d35090286d4b5947ebef645c4c019ee023b796990f0b",
+    ".codex-tmp/wall-gap-fix-20260921/right-magnetic/kc2_right_lower_housing_part_b_magnetic.stl": "8d14d52e115c2028f4421f11befa73708b9ccd58a48018456ec5dfeb9c63543e",
+    ".codex-tmp/wall-gap-fix-20260921/right-magnetic/generation.json": "805c156f356a8f882d0a496fd3fbebee1ed57a166e97a1a07067594ccaeffde6",
+    ".codex-tmp/wall-gap-fix-20260921/right-magnetic/native.json": "bccfc27b2a696b654483052cc11e42b24d0a235734f98732ec1c3950e24da8ad",
+    ".codex-tmp/wall-gap-fix-20260921/right-magnetic/kc2_right_lower_housing_magnetic.step": "c497142dcfda635f6049c4fa964a442fc3052dd8b072009b630492428ca34b00",
+    ".codex-tmp/wall-gap-fix-20260921/right-mx/kc2_right_mx_upper_housing_part_a.stl": "8452deaacbee52006ae780c6835d2638d4c0e0e90b66e07c5347203ca0245ad3",
+    ".codex-tmp/wall-gap-fix-20260921/right-mx/kc2_right_mx_upper_housing_part_b.stl": "251fc9f1aeb6b433f59aef29496fe3f444da1d05fc6985036ecaf13042e31ae4",
+    ".codex-tmp/wall-gap-fix-20260921/right-mx/generation.json": "1a12eaf5c67e0a848832e78ad5c4f7c78d628205fd6bb728b3924041beb7acf5",
+    ".codex-tmp/wall-gap-fix-20260921/right-mx/native.json": "b8952e90606fe218f3f7fcd770e245b624f64a868ccbfeb7237b0525df67eabd",
+    ".codex-tmp/wall-gap-fix-20260921/right-mx/kc2_right_mx_upper_housing.step": "fce43e4bc9cde7ffa2c5493f5844e0bf01a98276bb9042383bd56264b3b5610c",
+    ".codex-tmp/wall-gap-fix-20260921/right-choc_v1/kc2_right_choc_v1_upper_housing_part_a.stl": "0272c11b2ea5c051c4709ab26cfc109d587bc4f96cd34a4a6bf5bdf0f1e1efe5",
+    ".codex-tmp/wall-gap-fix-20260921/right-choc_v1/kc2_right_choc_v1_upper_housing_part_b.stl": "3556217b44defb004b3f495c5f340de5f8da94e84869f96f5564eeb34e5b3318",
+    ".codex-tmp/wall-gap-fix-20260921/right-choc_v1/generation.json": "4bc22896af49642586a43172133973083506a3042518d876e456a55c2e86fadf",
+    ".codex-tmp/wall-gap-fix-20260921/right-choc_v1/native.json": "3ce6f49da02ce5fc1d4554cce214c7e95ec2d7bce750b1dbf485dbfd05c86a0c",
+    ".codex-tmp/wall-gap-fix-20260921/right-choc_v1/kc2_right_choc_v1_upper_housing.step": "f362a10df2ce5193b8d7676a6c0ba4c061bb5c8210c2043d9f9d2393e8a95f92",
+    ".codex-tmp/wall-gap-fix-20260921/right-deep_sea/kc2_right_deep_sea_upper_housing_part_a.stl": "d304630d571c9997f0815236f398bfd5536154e20780843eb29f765f35d62060",
+    ".codex-tmp/wall-gap-fix-20260921/right-deep_sea/kc2_right_deep_sea_upper_housing_part_b.stl": "65f89ebf50916d4199475a19b3cce8e6830801d94b757203f8fccf5717b83ff5",
+    ".codex-tmp/wall-gap-fix-20260921/right-deep_sea/generation.json": "16f9f193d84d63ce052a05edb8526a7b60965c1f842eef9b3d5ecaafb409c383",
+    ".codex-tmp/wall-gap-fix-20260921/right-deep_sea/native.json": "6404a550a4634933cb4023bd115bfaf9e7e1c3fa1713390dceb9d766fb9ad4da",
+    ".codex-tmp/wall-gap-fix-20260921/right-deep_sea/kc2_right_deep_sea_upper_housing.step": "93cf6e14e670922ffaba42e82b5ad5c5332d71a40d4cf0e61e74cf7716ebc4d4",
+    "tools/review_kc2_wall_gap_fix.py": "1fe06b75ce1444c57faeca9c17a166d0b41cd041ac1ff3835c3b240b5c2d3063",
+    "tools/review_kc2_wrap_motion.py": "634c3625903b3cbc160a7872120f47670ff18c56d129af487bf098bd6a5abec0",
+    "tools/review_kc2_wrap_housings.py": "8e73db31a2396ae3a7976231bb753f56b693422d0be297b2956362ae05c01a11",
+    "tools/stage_kc2_registered_lower.py": "fc2ff26e0d227653a8929c569a9db9b61827bdab691da66912e5f8d1277fa140",
+    "tools/kc2_central_flexure.py": "34dbc9be59a2674d317bc29c9d0d21af1089912a9cef24995de98e73979c96e0",
+    "tools/kc2_step_whitespace.py": "3c4fa1e1f78e8cc0735bf4a962907010ffd391bb6a840f8d04dab9ddc4b5e91d",
+    "tools/test_review_kc2_wrap_motion.py": "14b74a7030318fc0759a62e0969672485e3890de0aa224d5164cb11b9fa8893a",
+    "tools/test_kc2_step_whitespace.py": "ec80dc87a67c9a5d7afbaf09612e64cec4f1f6da7995338d9ec369c9eecccbb9",
+    "tools/test_kc2_stl_tjunction.py": "28f1107a6c56d4efbadcb5532ff29994fb2930aa854105e36b142ee15e224ae3",
+    "tools/kc2_stl_tjunction.py": "7bc63a6bb9a121cbe10e047cecaf168f242a45f5972f0b372b5d0824637fa706",
+    "tools/kc2_stl_clearance.py": "f4f5f6d0d781efbad5f763f1db5628a0896b44e7a3864436c324392567b7ee56",
+    "tools/test_kc2_stl_clearance.py": "7e0fae5c235bbef305e1a5445f9d126b7b163dc83b9f4b59c4b58cbd8cc12080"
+  },
+  "physical_qualified": false,
+  "scope": "Source-bound additive CAD proofs, Fusion archive reopen and STL, actual slit sections and protected regions, continuous prismatic upper insertion and projected A/B/central approach"
+}

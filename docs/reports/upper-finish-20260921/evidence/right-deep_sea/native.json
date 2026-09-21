@@ -1,0 +1,101 @@
+{
+  "status": "pass",
+  "label": "right:deep_sea",
+  "errors": [],
+  "fusion_version": "2705.1.15",
+  "source_step_sha256": "89f36d3594d16163c1146b20622634daea47a9c06d5dd24a4b3526fa47c73461",
+  "plan_sha256": "b428c40f3cfe0d8b33b12b68b84b58a79ad1bc31e88e6ef2034d2d8e7e6762ac",
+  "outputs": {
+    "kc2_right_deep_sea_upper_housing_part_a.stl": "0e3214b08b416f991ae58a0812aed7b671fa0cb1aed0d532f08744d9e49ab80b",
+    "kc2_right_deep_sea_upper_housing_part_b.stl": "04eadaab8d1c52771cf88bd91bbe1fffd1abcfb4f4c0f40ad08c01003f61392e",
+    "kc2_right_deep_sea_upper_housing.f3d": "7bb4c991c4b1fffcfef7fa44a08e45b9878d335f7ef96cb86303475f6f6b8270"
+  },
+  "native_ab_clearance": {
+    "minimum_distance_mm": 0.39990000000000414,
+    "points_mm": [
+      [
+        75.69058,
+        122.40000000000002,
+        4.4
+      ],
+      [
+        76.09048,
+        122.40000000000002,
+        4.4
+      ]
+    ]
+  },
+  "before": [
+    {
+      "volume_mm3": 6390.4482315462465,
+      "area_mm2": 10634.621120472964,
+      "solid": true,
+      "bounds_mm": [
+        [
+          -1.2770000000000001,
+          28.973,
+          4.4
+        ],
+        [
+          97.08756000000001,
+          123.77700000000002,
+          6.6000000000000005
+        ]
+      ]
+    },
+    {
+      "volume_mm3": 6476.070813640629,
+      "area_mm2": 10765.917552865081,
+      "solid": true,
+      "bounds_mm": [
+        [
+          73.0,
+          -1.5000000000000002,
+          4.4
+        ],
+        [
+          164.51350000000002,
+          123.77700000000002,
+          6.6000000000000005
+        ]
+      ]
+    }
+  ],
+  "after": [
+    {
+      "volume_mm3": 6390.4482315462465,
+      "area_mm2": 10634.621120472964,
+      "solid": true,
+      "bounds_mm": [
+        [
+          -1.2770000000000001,
+          28.973,
+          4.4
+        ],
+        [
+          97.08756000000001,
+          123.77700000000002,
+          6.6000000000000005
+        ]
+      ]
+    },
+    {
+      "volume_mm3": 6476.070813640629,
+      "area_mm2": 10765.917552865081,
+      "solid": true,
+      "bounds_mm": [
+        [
+          73.0,
+          -1.5000000000000002,
+          4.4
+        ],
+        [
+          164.51350000000002,
+          123.77700000000002,
+          6.6000000000000005
+        ]
+      ]
+    }
+  ],
+  "physical_qualified": false
+}

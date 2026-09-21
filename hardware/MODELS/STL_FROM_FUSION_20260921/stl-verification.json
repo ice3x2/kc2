@@ -1,0 +1,385 @@
+{
+  "requirements": [
+    "CON-ARCH-006",
+    "OPS-ARCH-006"
+  ],
+  "status": "pass",
+  "note": "Native STL re-export check; sampled surface comparison is not exhaustive physical fit verification.",
+  "outputs": [
+    {
+      "file": "kc2_left_choc_v1_upper_housing.stl",
+      "errors": [],
+      "watertight": true,
+      "bounds_mm": [
+        [
+          -0.8513014316558838,
+          -1.5,
+          4.099999904632568
+        ],
+        [
+          136.38949584960938,
+          123.7770004272461,
+          6.599999904632568
+        ]
+      ],
+      "native_bounds_error_mm": 4.150390623181011e-06,
+      "native_volume_relative_error": 6.015990151319224e-08,
+      "sampled_bidirectional_surface_max_mm": [
+        2.059481845240064e-11,
+        1.3307044658836186e-10
+      ],
+      "samples_each_direction": 1000,
+      "byte_identical_to_previous": false
+    },
+    {
+      "file": "kc2_left_deep_sea_upper_housing.stl",
+      "errors": [],
+      "watertight": true,
+      "bounds_mm": [
+        [
+          -0.8513014316558838,
+          -1.5,
+          4.099999904632568
+        ],
+        [
+          136.38949584960938,
+          123.7770004272461,
+          6.599999904632568
+        ]
+      ],
+      "native_bounds_error_mm": 4.150390623181011e-06,
+      "native_volume_relative_error": 6.990010973815052e-08,
+      "sampled_bidirectional_surface_max_mm": [
+        1.0169289644887343e-11,
+        6.090107601080747e-11
+      ],
+      "samples_each_direction": 1000,
+      "byte_identical_to_previous": false
+    },
+    {
+      "file": "kc2_left_lower_housing.stl",
+      "errors": [],
+      "watertight": true,
+      "bounds_mm": [
+        [
+          -1.5,
+          -3.0,
+          -2.200000047683716
+        ],
+        [
+          137.88949584960938,
+          125.2770004272461,
+          5.599999904632568
+        ]
+      ],
+      "native_bounds_error_mm": 4.150390623181011e-06,
+      "native_volume_relative_error": 4.844201209549116e-08,
+      "sampled_bidirectional_surface_max_mm": [
+        8.710590244135514e-05,
+        2.7140521516171398e-05
+      ],
+      "samples_each_direction": 1000,
+      "byte_identical_to_previous": false
+    },
+    {
+      "file": "kc2_left_lower_housing_magnetic.stl",
+      "errors": [],
+      "watertight": true,
+      "bounds_mm": [
+        [
+          -1.5,
+          -3.0,
+          -2.200000047683716
+        ],
+        [
+          137.88949584960938,
+          125.2770004272461,
+          5.599999904632568
+        ]
+      ],
+      "native_bounds_error_mm": 4.150390623181011e-06,
+      "native_volume_relative_error": 2.4955013427659492e-08,
+      "sampled_bidirectional_surface_max_mm": [
+        9.180909778331962e-05,
+        6.817106871783507e-05
+      ],
+      "samples_each_direction": 1000,
+      "byte_identical_to_previous": false
+    },
+    {
+      "file": "kc2_left_mx_upper_housing.stl",
+      "errors": [],
+      "watertight": true,
+      "bounds_mm": [
+        [
+          -1.2769999504089355,
+          -1.5,
+          4.099999904632568
+        ],
+        [
+          136.38949584960938,
+          123.7770004272461,
+          9.300000190734863
+        ]
+      ],
+      "native_bounds_error_mm": 4.150390623181011e-06,
+      "native_volume_relative_error": 8.179011139268226e-08,
+      "sampled_bidirectional_surface_max_mm": [
+        1.3290233320933478e-11,
+        1.623331256685291e-11
+      ],
+      "samples_each_direction": 1000,
+      "byte_identical_to_previous": false
+    },
+    {
+      "file": "kc2_right_choc_v1_upper_housing_part_a.stl",
+      "errors": [],
+      "watertight": true,
+      "bounds_mm": [
+        [
+          -1.2769999504089355,
+          28.972999572753906,
+          4.099999904632568
+        ],
+        [
+          97.08756256103516,
+          123.7770004272461,
+          6.599999904632568
+        ]
+      ],
+      "native_bounds_error_mm": 2.5610351457316938e-06,
+      "native_volume_relative_error": 3.501872009736631e-08,
+      "sampled_bidirectional_surface_max_mm": [
+        1.455689547367265e-11,
+        1.3582076842573086e-09
+      ],
+      "samples_each_direction": 1000,
+      "byte_identical_to_previous": false
+    },
+    {
+      "file": "kc2_right_choc_v1_upper_housing_part_b.stl",
+      "errors": [],
+      "watertight": true,
+      "bounds_mm": [
+        [
+          73.0,
+          -1.5,
+          4.099999904632568
+        ],
+        [
+          164.5135040283203,
+          123.7770004272461,
+          6.599999904632568
+        ]
+      ],
+      "native_bounds_error_mm": 4.028320290672127e-06,
+      "native_volume_relative_error": 2.2842296344556878e-08,
+      "sampled_bidirectional_surface_max_mm": [
+        2.2131662298148788e-11,
+        2.023907553534248e-07
+      ],
+      "samples_each_direction": 1000,
+      "byte_identical_to_previous": false
+    },
+    {
+      "file": "kc2_right_deep_sea_upper_housing_part_a.stl",
+      "errors": [],
+      "watertight": true,
+      "bounds_mm": [
+        [
+          -1.2769999504089355,
+          28.972999572753906,
+          4.099999904632568
+        ],
+        [
+          97.08756256103516,
+          123.7770004272461,
+          6.599999904632568
+        ]
+      ],
+      "native_bounds_error_mm": 2.5610351457316938e-06,
+      "native_volume_relative_error": 4.865180511723608e-08,
+      "sampled_bidirectional_surface_max_mm": [
+        2.3595313060646075e-11,
+        2.1316396506747795e-07
+      ],
+      "samples_each_direction": 1000,
+      "byte_identical_to_previous": false
+    },
+    {
+      "file": "kc2_right_deep_sea_upper_housing_part_b.stl",
+      "errors": [],
+      "watertight": true,
+      "bounds_mm": [
+        [
+          73.0,
+          -1.5,
+          4.099999904632568
+        ],
+        [
+          164.5135040283203,
+          123.7770004272461,
+          6.599999904632568
+        ]
+      ],
+      "native_bounds_error_mm": 4.028320290672127e-06,
+      "native_volume_relative_error": 3.456309158756362e-08,
+      "sampled_bidirectional_surface_max_mm": [
+        6.230280520371788e-11,
+        7.374950320966942e-08
+      ],
+      "samples_each_direction": 1000,
+      "byte_identical_to_previous": false
+    },
+    {
+      "file": "kc2_right_lower_housing_part_a.stl",
+      "errors": [],
+      "watertight": true,
+      "bounds_mm": [
+        [
+          -2.7769999504089355,
+          27.472999572753906,
+          -2.200000047683716
+        ],
+        [
+          87.09375,
+          125.2770004272461,
+          5.599999904632568
+        ]
+      ],
+      "native_bounds_error_mm": 4.272461069376732e-07,
+      "native_volume_relative_error": 6.332102184810545e-08,
+      "sampled_bidirectional_surface_max_mm": [
+        9.793412817148257e-05,
+        5.318373159136327e-05
+      ],
+      "samples_each_direction": 1000,
+      "byte_identical_to_previous": false
+    },
+    {
+      "file": "kc2_right_lower_housing_part_b.stl",
+      "errors": [],
+      "watertight": true,
+      "bounds_mm": [
+        [
+          82.14379119873047,
+          -3.0,
+          -2.200000047683716
+        ],
+        [
+          165.1875,
+          125.2770004272461,
+          5.599999904632568
+        ]
+      ],
+      "native_bounds_error_mm": 1.1987304731064796e-06,
+      "native_volume_relative_error": 1.0116593999308792e-07,
+      "sampled_bidirectional_surface_max_mm": [
+        5.879853424013634e-05,
+        9.486822722279882e-05
+      ],
+      "samples_each_direction": 1000,
+      "byte_identical_to_previous": false
+    },
+    {
+      "file": "kc2_right_lower_housing_part_a_magnetic.stl",
+      "errors": [],
+      "watertight": true,
+      "bounds_mm": [
+        [
+          -2.7769999504089355,
+          27.472999572753906,
+          -2.200000047683716
+        ],
+        [
+          87.09375,
+          125.2770004272461,
+          5.599999904632568
+        ]
+      ],
+      "native_bounds_error_mm": 4.272461069376732e-07,
+      "native_volume_relative_error": 6.332102157849982e-08,
+      "sampled_bidirectional_surface_max_mm": [
+        9.793412817148257e-05,
+        5.318373159136327e-05
+      ],
+      "samples_each_direction": 1000,
+      "byte_identical_to_previous": false
+    },
+    {
+      "file": "kc2_right_lower_housing_part_b_magnetic.stl",
+      "errors": [],
+      "watertight": true,
+      "bounds_mm": [
+        [
+          82.14379119873047,
+          -3.0,
+          -2.200000047683716
+        ],
+        [
+          165.1875,
+          125.2770004272461,
+          5.599999904632568
+        ]
+      ],
+      "native_bounds_error_mm": 1.1987304731064796e-06,
+      "native_volume_relative_error": 1.448288844665457e-07,
+      "sampled_bidirectional_surface_max_mm": [
+        8.391508925376299e-05,
+        9.486822722279882e-05
+      ],
+      "samples_each_direction": 1000,
+      "byte_identical_to_previous": false
+    },
+    {
+      "file": "kc2_right_mx_upper_housing_part_a.stl",
+      "errors": [],
+      "watertight": true,
+      "bounds_mm": [
+        [
+          -1.2769999504089355,
+          28.972999572753906,
+          4.099999904632568
+        ],
+        [
+          96.98755645751953,
+          123.7770004272461,
+          9.300000190734863
+        ]
+      ],
+      "native_bounds_error_mm": 3.542480484952648e-06,
+      "native_volume_relative_error": 8.537286950414523e-08,
+      "sampled_bidirectional_surface_max_mm": [
+        5.290922571278366e-11,
+        1.2400173437138387e-10
+      ],
+      "samples_each_direction": 1000,
+      "byte_identical_to_previous": false
+    },
+    {
+      "file": "kc2_right_mx_upper_housing_part_b.stl",
+      "errors": [],
+      "watertight": true,
+      "bounds_mm": [
+        [
+          72.89066314697266,
+          -1.5,
+          4.099999904632568
+        ],
+        [
+          164.96449279785156,
+          123.7770004272461,
+          9.300000190734863
+        ]
+      ],
+      "native_bounds_error_mm": 7.202148424312327e-06,
+      "native_volume_relative_error": 1.3675624399794356e-07,
+      "sampled_bidirectional_surface_max_mm": [
+        3.721131325202938e-10,
+        8.677784653398906e-08
+      ],
+      "samples_each_direction": 1000,
+      "byte_identical_to_previous": false
+    }
+  ]
+}

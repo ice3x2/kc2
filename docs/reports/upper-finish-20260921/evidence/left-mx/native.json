@@ -1,0 +1,51 @@
+{
+  "status": "pass",
+  "label": "left:mx",
+  "errors": [],
+  "fusion_version": "2705.1.15",
+  "source_step_sha256": "2a54395379903f25c5b19df7eee75725ebcb3c9c40e164a0470bca2aafa105a0",
+  "plan_sha256": "b428c40f3cfe0d8b33b12b68b84b58a79ad1bc31e88e6ef2034d2d8e7e6762ac",
+  "outputs": {
+    "kc2_left_mx_upper_housing.stl": "94614d3139e2f6f4cb02536add4a56a3bb0f234bd34ca331ec1e605cacbc8270",
+    "kc2_left_mx_upper_housing.f3d": "0210d917cd20fccb1bd1e2a67dfd888fd79cd5108816232ca09c1d9ede08c19e"
+  },
+  "before": [
+    {
+      "volume_mm3": 26616.976208862594,
+      "area_mm2": 26877.980594967266,
+      "solid": true,
+      "bounds_mm": [
+        [
+          -1.2770000000000001,
+          -1.5000000000000002,
+          4.4
+        ],
+        [
+          136.3895,
+          123.77700000000002,
+          9.3
+        ]
+      ]
+    }
+  ],
+  "after": [
+    {
+      "volume_mm3": 26616.976208862594,
+      "area_mm2": 26877.980594967266,
+      "solid": true,
+      "bounds_mm": [
+        [
+          -1.2770000000000001,
+          -1.5000000000000002,
+          4.4
+        ],
+        [
+          136.3895,
+          123.77700000000002,
+          9.3
+        ]
+      ]
+    }
+  ],
+  "physical_qualified": false
+}

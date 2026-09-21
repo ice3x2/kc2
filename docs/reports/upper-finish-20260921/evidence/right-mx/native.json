@@ -1,0 +1,101 @@
+{
+  "status": "pass",
+  "label": "right:mx",
+  "errors": [],
+  "fusion_version": "2705.1.15",
+  "source_step_sha256": "f0c5543297c6f7a6cf825a34dc6dffcebb352a8d6c2188ecf2e98b4a3543ad15",
+  "plan_sha256": "b428c40f3cfe0d8b33b12b68b84b58a79ad1bc31e88e6ef2034d2d8e7e6762ac",
+  "outputs": {
+    "kc2_right_mx_upper_housing_part_a.stl": "f34c29e12643cb97be69642be3f99c2599a2e84bd1c81132776224dd0618669e",
+    "kc2_right_mx_upper_housing_part_b.stl": "ea8d016dd275d1e5047d4c266ff3720d9ae02b1037a61292b5ccf0a3462e2cea",
+    "kc2_right_mx_upper_housing.f3d": "a5945852f5434446798b8f2631b4a7ec5d85aca5d6123ac58c038c07adc1d5a3"
+  },
+  "native_ab_clearance": {
+    "minimum_distance_mm": 0.39990000000000414,
+    "points_mm": [
+      [
+        75.69058,
+        122.40000000000002,
+        4.4
+      ],
+      [
+        76.09048,
+        122.40000000000002,
+        4.4
+      ]
+    ]
+  },
+  "before": [
+    {
+      "volume_mm3": 14008.214569877622,
+      "area_mm2": 15957.740605244351,
+      "solid": true,
+      "bounds_mm": [
+        [
+          -1.2770000000000001,
+          28.973,
+          4.4
+        ],
+        [
+          96.98756000000002,
+          123.77700000000002,
+          9.3
+        ]
+      ]
+    },
+    {
+      "volume_mm3": 14881.529874379197,
+      "area_mm2": 16637.86664956178,
+      "solid": true,
+      "bounds_mm": [
+        [
+          72.890660399586,
+          -1.5000000000000002,
+          4.4
+        ],
+        [
+          164.9645,
+          123.77700000000002,
+          9.3
+        ]
+      ]
+    }
+  ],
+  "after": [
+    {
+      "volume_mm3": 14008.214569877622,
+      "area_mm2": 15957.740605244351,
+      "solid": true,
+      "bounds_mm": [
+        [
+          -1.2770000000000001,
+          28.973,
+          4.4
+        ],
+        [
+          96.98756000000002,
+          123.77700000000002,
+          9.3
+        ]
+      ]
+    },
+    {
+      "volume_mm3": 14881.529874379197,
+      "area_mm2": 16637.86664956178,
+      "solid": true,
+      "bounds_mm": [
+        [
+          72.890660399586,
+          -1.5000000000000002,
+          4.4
+        ],
+        [
+          164.9645,
+          123.77700000000002,
+          9.3
+        ]
+      ]
+    }
+  ],
+  "physical_qualified": false
+}

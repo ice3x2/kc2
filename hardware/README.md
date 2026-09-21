@@ -2,7 +2,7 @@
 
 요구사항: `CON-ARCH-006`, `CON-ARCH-007`, `OPS-ARCH-006/007`.
 
-하우징을 인쇄하기 전에 [현재 인쇄·조립 안내](MODELS/PRINT-wrap-housings.md)의 검증 명령을 실행하세요. 검증이 실패하거나 manifest가 없으면 인쇄를 보류합니다. 실제 끼움·강도·키캡 간섭·나사 토크는 출력·조립 후 확인해야 합니다.
+하우징을 인쇄하기 전에 [현재 인쇄·조립 안내](MODELS/PRINT-upper-finish.md)의 검증 명령을 실행하세요. 상판의 비기능 내부 틈을 메우고 국부 하향 돌출을 제거하여 아홉 상판 STL의 최저면을 `Z=4.40`으로 공면화한 개정입니다. 검증이 실패하거나 manifest가 없으면 게시가 미완료된 것이므로 인쇄를 보류합니다. 실제 끼움·강도·키캡 간섭·나사 토크는 출력·조립 후 확인해야 합니다.
 
 - `PCB/`: 기존 주문 설계. [왼쪽 PCB](PCB/kc2_left/kc2_left.kicad_pcb), [오른쪽 PCB](PCB/kc2_right/kc2_right.kicad_pcb). 각 KiCad 프로젝트 폴더 전체와 저장소 `third_party` 라이브러리를 유지하세요.
 - `GERBER/`: 변경하지 않은 주문 r4 PCB-only 패키지. [왼쪽 제조 ZIP](GERBER/kc2_left-pcb-fabrication-only.zip), [오른쪽 제조 ZIP](GERBER/kc2_right-pcb-fabrication-only.zip), [주문 manifest](GERBER/manifest.json). 이번 기구 개정으로 재주문할 필요는 없습니다.

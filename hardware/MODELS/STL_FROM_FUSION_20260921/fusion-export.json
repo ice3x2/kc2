@@ -1,0 +1,327 @@
+{
+  "requirements": [
+    "CON-ARCH-006",
+    "OPS-ARCH-006"
+  ],
+  "status": "exported_pending_mesh_check",
+  "fusion_version": "2705.1.15",
+  "units": "mm",
+  "outputs": [
+    {
+      "source_f3d": "kc2_left_choc_v1_upper_housing.f3d",
+      "source_sha256": "af81eea1f1f5312f3849810d9cc589cffa337aed4050b7b6d6e78d4c2fb8b41b",
+      "stl": "kc2_left_choc_v1_upper_housing.stl",
+      "stl_sha256": "9f9612fe5b5c419cc27956f5a217cdb9f934dcc381c41a08d27fa43c7b7ac032",
+      "body_name": "KC2 continuous sleeve left:choc_v1 part 1",
+      "bounds_mm": [
+        [
+          -0.851301415863,
+          -1.5000000000000002,
+          4.1
+        ],
+        [
+          136.3895,
+          123.77700000000002,
+          6.6000000000000005
+        ]
+      ],
+      "volume_mm3": 12969.165084042126,
+      "surface_deviation_mm": 0.005
+    },
+    {
+      "source_f3d": "kc2_left_deep_sea_upper_housing.f3d",
+      "source_sha256": "65515cb4d2ad7a3de01c1474360f092b48e3f8e0a6e11780a415e9cbefea670b",
+      "stl": "kc2_left_deep_sea_upper_housing.stl",
+      "stl_sha256": "5901f0d83ffcbd04352d6130f209efa68467285c82ebb8b11fc3f60a72f21b5a",
+      "body_name": "KC2 continuous sleeve left:deep_sea part 1",
+      "bounds_mm": [
+        [
+          -0.851301415863,
+          -1.5000000000000002,
+          4.1
+        ],
+        [
+          136.3895,
+          123.77700000000002,
+          6.6000000000000005
+        ]
+      ],
+      "volume_mm3": 11587.84154647187,
+      "surface_deviation_mm": 0.005
+    },
+    {
+      "source_f3d": "kc2_left_lower_housing.f3d",
+      "source_sha256": "d04a818e0953e7855acd9a91062ba8fe08f3960d7eceee47f3d57bb47cf6f940",
+      "stl": "kc2_left_lower_housing.stl",
+      "stl_sha256": "63a1e1a4be6ef0735b50d715aac2891fe73a7fa59b1024261629f150c9a8f5e0",
+      "body_name": "KC2 continuous sleeve left:normal part 1",
+      "bounds_mm": [
+        [
+          -1.5000000000000002,
+          -3.0000000000000004,
+          -2.2
+        ],
+        [
+          137.8895,
+          125.27700000000002,
+          5.6000000000000005
+        ]
+      ],
+      "volume_mm3": 47305.980213448056,
+      "surface_deviation_mm": 0.005
+    },
+    {
+      "source_f3d": "kc2_left_lower_housing_magnetic.f3d",
+      "source_sha256": "c99a542701d48c4926c817005f5c24efec300f3f3662937ecf699c56a19da863",
+      "stl": "kc2_left_lower_housing_magnetic.stl",
+      "stl_sha256": "aa0bdaf2bf2a088b779d7f6ba339d930387c36fe7df69835787ba900c773820e",
+      "body_name": "KC2 continuous sleeve left:magnetic part 1",
+      "bounds_mm": [
+        [
+          -1.5000000000000002,
+          -3.0000000000000004,
+          -2.2
+        ],
+        [
+          137.8895,
+          125.27700000000002,
+          5.6000000000000005
+        ]
+      ],
+      "volume_mm3": 47284.26552502642,
+      "surface_deviation_mm": 0.005
+    },
+    {
+      "source_f3d": "kc2_left_mx_upper_housing.f3d",
+      "source_sha256": "2aa2567b227a2ff1b8ec433d17c059bd99b60dd304e2c7211bc152a7b35762f4",
+      "stl": "kc2_left_mx_upper_housing.stl",
+      "stl_sha256": "cb43cab70f3e3e0109f4ea53171cd43c398ac3451bd5d697300a001a66dae0c4",
+      "body_name": "KC2 continuous sleeve left:mx part 1",
+      "bounds_mm": [
+        [
+          -1.2770000000000001,
+          -1.5000000000000002,
+          4.1
+        ],
+        [
+          136.3895,
+          123.77700000000002,
+          9.3
+        ]
+      ],
+      "volume_mm3": 26549.517647885612,
+      "surface_deviation_mm": 0.005
+    },
+    {
+      "source_f3d": "kc2_right_choc_v1_upper_housing.f3d",
+      "source_sha256": "396fdfbb4b659800a8314b4cb40f1a557dc1361d291b9d64c569fbeda7d2e164",
+      "stl": "kc2_right_choc_v1_upper_housing_part_a.stl",
+      "stl_sha256": "d179e09b141aa6df18b881742ebc343f864c3e46e00f21c542c67ae1c943a772",
+      "body_name": "KC2 continuous sleeve right:choc_v1 part 1",
+      "bounds_mm": [
+        [
+          -1.2770000000000001,
+          28.973,
+          4.1
+        ],
+        [
+          97.08756000000001,
+          123.77700000000002,
+          6.6000000000000005
+        ]
+      ],
+      "volume_mm3": 7129.858395952788,
+      "surface_deviation_mm": 0.005
+    },
+    {
+      "source_f3d": "kc2_right_choc_v1_upper_housing.f3d",
+      "source_sha256": "396fdfbb4b659800a8314b4cb40f1a557dc1361d291b9d64c569fbeda7d2e164",
+      "stl": "kc2_right_choc_v1_upper_housing_part_b.stl",
+      "stl_sha256": "abfa8a9c7cd0f8cebce6804c18005770252c80226aff246a159b54c5714a261b",
+      "body_name": "KC2 continuous sleeve right:choc_v1 part 2",
+      "bounds_mm": [
+        [
+          73.0,
+          -1.5000000000000002,
+          4.1
+        ],
+        [
+          164.51350000000002,
+          123.77700000000002,
+          6.6000000000000005
+        ]
+      ],
+      "volume_mm3": 7245.7618916720185,
+      "surface_deviation_mm": 0.005
+    },
+    {
+      "source_f3d": "kc2_right_deep_sea_upper_housing.f3d",
+      "source_sha256": "53503b44f86f53c031333ea68bcb4f6928ff94c6b4acc06cc1b1ed3fe5c51895",
+      "stl": "kc2_right_deep_sea_upper_housing_part_a.stl",
+      "stl_sha256": "48cf4586cb98b74e3776871e1d95c1f0d0e0ac25cc4aca74bb4b1ade801095c7",
+      "body_name": "KC2 continuous sleeve right:deep_sea part 1",
+      "bounds_mm": [
+        [
+          -1.2770000000000001,
+          28.973,
+          4.1
+        ],
+        [
+          97.08756000000001,
+          123.77700000000002,
+          6.6000000000000005
+        ]
+      ],
+      "volume_mm3": 6389.1582942909345,
+      "surface_deviation_mm": 0.005
+    },
+    {
+      "source_f3d": "kc2_right_deep_sea_upper_housing.f3d",
+      "source_sha256": "53503b44f86f53c031333ea68bcb4f6928ff94c6b4acc06cc1b1ed3fe5c51895",
+      "stl": "kc2_right_deep_sea_upper_housing_part_b.stl",
+      "stl_sha256": "e26b7542f4eca83e84ce63b94edbcfbb416be35ce9bddc7e5c9dc8193a0dc0c0",
+      "body_name": "KC2 continuous sleeve right:deep_sea part 2",
+      "bounds_mm": [
+        [
+          73.0,
+          -1.5000000000000002,
+          4.1
+        ],
+        [
+          164.51350000000002,
+          123.77700000000002,
+          6.6000000000000005
+        ]
+      ],
+      "volume_mm3": 6477.442888628357,
+      "surface_deviation_mm": 0.005
+    },
+    {
+      "source_f3d": "kc2_right_lower_housing.f3d",
+      "source_sha256": "47541969035c83870539dc9c9ac9f4d69e6e523838e0820384fdc29b52137ea6",
+      "stl": "kc2_right_lower_housing_part_a.stl",
+      "stl_sha256": "1e1d32b573735b2e938d267bf44a3828102c8ad504d24381c80b15d3170abcc4",
+      "body_name": "KC2 continuous sleeve right:normal part 1",
+      "bounds_mm": [
+        [
+          -2.777,
+          27.473,
+          -2.2
+        ],
+        [
+          87.09375,
+          125.27699999999999,
+          5.6000000000000005
+        ]
+      ],
+      "volume_mm3": 26987.412079365327,
+      "surface_deviation_mm": 0.005
+    },
+    {
+      "source_f3d": "kc2_right_lower_housing.f3d",
+      "source_sha256": "47541969035c83870539dc9c9ac9f4d69e6e523838e0820384fdc29b52137ea6",
+      "stl": "kc2_right_lower_housing_part_b.stl",
+      "stl_sha256": "f5ebacf4f3e66ff78cda79be6459be8d5f01b0cfdb8f3e0ccf2c17b702d0bad2",
+      "body_name": "KC2 continuous sleeve right:normal part 2",
+      "bounds_mm": [
+        [
+          82.14379,
+          -3.0000000000000004,
+          -2.2
+        ],
+        [
+          165.1875,
+          125.27700000000002,
+          5.6000000000000005
+        ]
+      ],
+      "volume_mm3": 26783.122607266796,
+      "surface_deviation_mm": 0.005
+    },
+    {
+      "source_f3d": "kc2_right_lower_housing_magnetic.f3d",
+      "source_sha256": "d149e5ab75e2e73ff3a7c346916148115c81b11a73f7c30f7a3b7b80c7074143",
+      "stl": "kc2_right_lower_housing_part_a_magnetic.stl",
+      "stl_sha256": "1e1d32b573735b2e938d267bf44a3828102c8ad504d24381c80b15d3170abcc4",
+      "body_name": "KC2 continuous sleeve right:magnetic part 1",
+      "bounds_mm": [
+        [
+          -2.777,
+          27.473,
+          -2.2
+        ],
+        [
+          87.09375,
+          125.27699999999999,
+          5.6000000000000005
+        ]
+      ],
+      "volume_mm3": 26987.412079365335,
+      "surface_deviation_mm": 0.005
+    },
+    {
+      "source_f3d": "kc2_right_lower_housing_magnetic.f3d",
+      "source_sha256": "d149e5ab75e2e73ff3a7c346916148115c81b11a73f7c30f7a3b7b80c7074143",
+      "stl": "kc2_right_lower_housing_part_b_magnetic.stl",
+      "stl_sha256": "a086fb1b878c501b02c25bc33efa3e9f64754f337992fe3c9d1132492cd86d8a",
+      "body_name": "KC2 continuous sleeve right:magnetic part 2",
+      "bounds_mm": [
+        [
+          82.14379,
+          -3.0000000000000004,
+          -2.2
+        ],
+        [
+          165.1875,
+          125.27700000000002,
+          5.6000000000000005
+        ]
+      ],
+      "volume_mm3": 26761.407918845183,
+      "surface_deviation_mm": 0.005
+    },
+    {
+      "source_f3d": "kc2_right_mx_upper_housing.f3d",
+      "source_sha256": "c7a0b85cf773dd2a7a8227ee7e6e3f8921f8710c338847192a5c334fd78f7fe3",
+      "stl": "kc2_right_mx_upper_housing_part_a.stl",
+      "stl_sha256": "b596375b71005ee856dc463c2ea3db9580afbdacc98693dd86c73a7d357ad65f",
+      "body_name": "KC2 continuous sleeve right:mx part 1",
+      "bounds_mm": [
+        [
+          -1.2770000000000001,
+          28.973,
+          4.1
+        ],
+        [
+          96.98756000000002,
+          123.77700000000002,
+          9.3
+        ]
+      ],
+      "volume_mm3": 13995.958258836126,
+      "surface_deviation_mm": 0.005
+    },
+    {
+      "source_f3d": "kc2_right_mx_upper_housing.f3d",
+      "source_sha256": "c7a0b85cf773dd2a7a8227ee7e6e3f8921f8710c338847192a5c334fd78f7fe3",
+      "stl": "kc2_right_mx_upper_housing_part_b.stl",
+      "stl_sha256": "a002a042a83a9e4eec9485feb046d8425af55b95916ac1552192e76ddc937fdd",
+      "body_name": "KC2 continuous sleeve right:mx part 2",
+      "bounds_mm": [
+        [
+          72.890660399586,
+          -1.5000000000000002,
+          4.1
+        ],
+        [
+          164.9645,
+          123.77700000000002,
+          9.3
+        ]
+      ],
+      "volume_mm3": 14874.988749749495,
+      "surface_deviation_mm": 0.005
+    }
+  ],
+  "errors": []
+}

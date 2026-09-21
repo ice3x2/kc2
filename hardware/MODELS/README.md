@@ -4,10 +4,10 @@
 
 현재 인쇄·편집 파일은 이 디렉터리에 바로 있습니다. 하판 외벽을 PCB 윗면보다 1.50 mm 높게 만들어 상판 아래쪽을 1.20 mm 감싸도록 했습니다. PCB 받침 높이·1.60 mm PCB 두께·주문 거버는 그대로입니다. 상판 외곽도 대응하도록 바뀌었으므로 새 상판과 하판을 함께 사용하십시오. 중앙 요철은 복원하지 않았고 기존 소켓 가림벽과 두 자석 쌍은 유지합니다.
 
-인쇄 전에 [현재 인쇄 안내](PRINT-wrap-housings.md)를 읽고 저장소 루트에서 다음 검증을 실행하십시오.
+현재 상판은 내부 비기능 틈을 메우고 나사 랜드의 0.30 mm 하향 돌출을 제거해 최저면을 `Z=4.40`으로 공면화한 개정입니다. [현재 인쇄 안내](PRINT-upper-finish.md)를 따르십시오. 아래 검증이 통과해야 게시가 완료된 것입니다. manifest가 없거나 실패하면 인쇄를 보류하십시오.
 
 ```powershell
-python -B -m tools.publish_kc2_wrap_housings
+python -B -m tools.publish_kc2_upper_finish
 ```
 
 ## 하판 선택
@@ -29,6 +29,6 @@ MX, Choc V1, Deep Sea Mini 중 실제 스위치와 맞는 한 종류만 선택�
 - Choc V1: `kc2_left_choc_v1_upper_housing.stl`, `kc2_right_choc_v1_upper_housing_part_a.stl`, `kc2_right_choc_v1_upper_housing_part_b.stl`
 - Deep Sea Mini: `kc2_left_deep_sea_upper_housing.stl`, `kc2_right_deep_sea_upper_housing_part_a.stl`, `kc2_right_deep_sea_upper_housing_part_b.stl`
 
-STL은 인쇄용, STEP과 F3D는 편집·검토용입니다. 오른쪽 전체 STEP/F3D에는 두 몸체가 들어 있으므로 150 mm 프린터에서는 반드시 A/B STL을 사용하십시오. 이전 registered/flat-central/smooth-central manifest는 이력이며, 현재 manifest는 [외벽 개정 manifest](kc2_wrap_housing_manifest.json)입니다.
+STL은 인쇄용, STEP과 F3D는 편집·검토용입니다. 오른쪽 전체 STEP/F3D에는 두 몸체가 들어 있으므로 150 mm 프린터에서는 반드시 A/B STL을 사용하십시오. 현재 manifest는 `kc2_upper_finish_manifest.json`입니다. 이전 wall-gap/registered/flat-central/smooth-central/wrap manifest와 `STL_FROM_FUSION_20260921`은 비교 이력입니다. 나사식 조립과 실제 상·하판 여유는 유지합니다.
 
 디지털 검증은 실제 출력물의 수축·팽창, 자석 접착력, 장기 강도와 조립 감각을 확정하지 않습니다. 먼저 시험 출력 후 좌우 간격과 자석 극성을 확인하십시오.

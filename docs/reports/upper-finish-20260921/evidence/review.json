@@ -1,0 +1,1255 @@
+{
+  "requirements": [
+    "CON-ARCH-006",
+    "OPS-ARCH-006"
+  ],
+  "status": "pass",
+  "rows": {
+    "left:mx": {
+      "parts": [
+        {
+          "file": "kc2_left_mx_upper_housing.stl",
+          "native_bounds_error_mm": 4.150390623181011e-06,
+          "native_volume_relative_error": 8.105815789798188e-08,
+          "inner_void_checks": [
+            {
+              "z_mm": 4.41,
+              "missing_mm2": 0.0,
+              "protected_intrusion_mm2": 0.0,
+              "off_plan_mm2": 0.0,
+              "remaining_nonfunctional_void_mm2": 0.0
+            },
+            {
+              "z_mm": 4.800000000000001,
+              "missing_mm2": 0.0,
+              "protected_intrusion_mm2": 0.0,
+              "off_plan_mm2": 0.0,
+              "remaining_nonfunctional_void_mm2": 0.0
+            },
+            {
+              "z_mm": 5.19,
+              "missing_mm2": 0.0,
+              "protected_intrusion_mm2": 0.0,
+              "off_plan_mm2": 0.0,
+              "remaining_nonfunctional_void_mm2": 0.0
+            },
+            {
+              "z_mm": 5.21,
+              "missing_mm2": 0.0,
+              "protected_intrusion_mm2": 0.0,
+              "off_plan_mm2": 0.0,
+              "remaining_nonfunctional_void_mm2": 0.0
+            },
+            {
+              "z_mm": 6.5,
+              "missing_mm2": 0.0,
+              "protected_intrusion_mm2": 0.0,
+              "off_plan_mm2": 0.0,
+              "remaining_nonfunctional_void_mm2": 0.0
+            },
+            {
+              "z_mm": 7.79,
+              "missing_mm2": 0.0,
+              "protected_intrusion_mm2": 0.0,
+              "off_plan_mm2": 0.0,
+              "remaining_nonfunctional_void_mm2": 0.0
+            },
+            {
+              "z_mm": 7.81,
+              "missing_mm2": 0.0,
+              "protected_intrusion_mm2": 0.0,
+              "off_plan_mm2": 0.0,
+              "remaining_nonfunctional_void_mm2": 0.0
+            },
+            {
+              "z_mm": 8.55,
+              "missing_mm2": 0.0,
+              "protected_intrusion_mm2": 0.0,
+              "off_plan_mm2": 0.0,
+              "remaining_nonfunctional_void_mm2": 0.0
+            },
+            {
+              "z_mm": 9.290000000000001,
+              "missing_mm2": 0.0,
+              "protected_intrusion_mm2": 0.0,
+              "off_plan_mm2": 0.0,
+              "remaining_nonfunctional_void_mm2": 0.0
+            }
+          ],
+          "below_datum_section_area_mm2": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "mounts": [
+            {
+              "center_xy": [
+                57.25,
+                3.75
+              ],
+              "section_change_mm2": 4.3107463902634124e-15,
+              "new_material_mm2": 16.045638629755768
+            },
+            {
+              "center_xy": [
+                26.0,
+                27.0
+              ],
+              "section_change_mm2": 3.2923163062798697e-15,
+              "new_material_mm2": 16.056102342217734
+            },
+            {
+              "center_xy": [
+                130.75,
+                71.75
+              ],
+              "section_change_mm2": 1.8419877985233605e-14,
+              "new_material_mm2": 16.05609908533904
+            },
+            {
+              "center_xy": [
+                106.5,
+                83.75
+              ],
+              "section_change_mm2": 1.357200384489286e-14,
+              "new_material_mm2": 16.056102730768405
+            },
+            {
+              "center_xy": [
+                89.0,
+                112.5
+              ],
+              "section_change_mm2": 1.3572003527255505e-14,
+              "new_material_mm2": 16.05610273076841
+            },
+            {
+              "center_xy": [
+                32.75,
+                114.25
+              ],
+              "section_change_mm2": 1.0065799098309494e-14,
+              "new_material_mm2": 16.056102210552
+            },
+            {
+              "center_xy": [
+                4.25,
+                109.5
+              ],
+              "section_change_mm2": 7.955629125421333e-15,
+              "new_material_mm2": 16.056102279287973
+            },
+            {
+              "center_xy": [
+                94.8625,
+                94.75
+              ],
+              "section_change_mm2": 1.3132923970728862e-14,
+              "new_material_mm2": 16.05610182779297
+            }
+          ],
+          "preservation": {
+            "errors": [],
+            "removed_baseline_mm3": 0.0,
+            "unplanned_added_mm3": 0.0,
+            "missing_addition_mm3": 0.0,
+            "base_volume_mm3": 26623.657721802505,
+            "clipped_volume_mm3": 26611.519826505122,
+            "final_volume_mm3": 26616.97620886688,
+            "addition_count": 3,
+            "clip": {
+              "datum_mm": 4.4,
+              "source_min_z_mm": 4.1,
+              "result_min_z_mm": 4.4,
+              "removed_below_datum_mm3": 12.137895297382784,
+              "removed_at_or_above_datum_mm3": 0.0,
+              "added_material_mm3": 0.0,
+              "operation": "bounded half-space subtraction; independent above-datum section comparison required"
+            }
+          }
+        }
+      ]
+    },
+    "left:choc_v1": {
+      "parts": [
+        {
+          "file": "kc2_left_choc_v1_upper_housing.stl",
+          "native_bounds_error_mm": 4.150390623181011e-06,
+          "native_volume_relative_error": 6.432135275861236e-08,
+          "inner_void_checks": [
+            {
+              "z_mm": 4.41,
+              "missing_mm2": 0.0,
+              "protected_intrusion_mm2": 0.0,
+              "off_plan_mm2": 0.0,
+              "remaining_nonfunctional_void_mm2": 0.0
+            },
+            {
+              "z_mm": 4.75,
+              "missing_mm2": 0.0,
+              "protected_intrusion_mm2": 0.0,
+              "off_plan_mm2": 0.0,
+              "remaining_nonfunctional_void_mm2": 0.0
+            },
+            {
+              "z_mm": 5.09,
+              "missing_mm2": 0.0,
+              "protected_intrusion_mm2": 0.0,
+              "off_plan_mm2": 0.0,
+              "remaining_nonfunctional_void_mm2": 0.0
+            },
+            {
+              "z_mm": 5.109999999999999,
+              "missing_mm2": 0.0,
+              "protected_intrusion_mm2": 0.0,
+              "off_plan_mm2": 0.0,
+              "remaining_nonfunctional_void_mm2": 0.0
+            },
+            {
+              "z_mm": 5.15,
+              "missing_mm2": 0.0,
+              "protected_intrusion_mm2": 0.0,
+              "off_plan_mm2": 0.0,
+              "remaining_nonfunctional_void_mm2": 0.0
+            },
+            {
+              "z_mm": 5.19,
+              "missing_mm2": 0.0,
+              "protected_intrusion_mm2": 0.0,
+              "off_plan_mm2": 0.0,
+              "remaining_nonfunctional_void_mm2": 0.0
+            },
+            {
+              "z_mm": 5.21,
+              "missing_mm2": 0.0,
+              "protected_intrusion_mm2": 0.0,
+              "off_plan_mm2": 0.0,
+              "remaining_nonfunctional_void_mm2": 0.0
+            },
+            {
+              "z_mm": 5.25,
+              "missing_mm2": 0.0,
+              "protected_intrusion_mm2": 0.0,
+              "off_plan_mm2": 0.0,
+              "remaining_nonfunctional_void_mm2": 0.0
+            },
+            {
+              "z_mm": 5.29,
+              "missing_mm2": 0.0,
+              "protected_intrusion_mm2": 0.0,
+              "off_plan_mm2": 0.0,
+              "remaining_nonfunctional_void_mm2": 0.0
+            },
+            {
+              "z_mm": 5.31,
+              "missing_mm2": 0.0,
+              "protected_intrusion_mm2": 0.0,
+              "off_plan_mm2": 0.0,
+              "remaining_nonfunctional_void_mm2": 0.0
+            },
+            {
+              "z_mm": 5.9,
+              "missing_mm2": 0.0,
+              "protected_intrusion_mm2": 0.0,
+              "off_plan_mm2": 0.0,
+              "remaining_nonfunctional_void_mm2": 0.0
+            },
+            {
+              "z_mm": 6.49,
+              "missing_mm2": 0.0,
+              "protected_intrusion_mm2": 0.0,
+              "off_plan_mm2": 0.0,
+              "remaining_nonfunctional_void_mm2": 0.0
+            }
+          ],
+          "below_datum_section_area_mm2": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "mounts": [
+            {
+              "center_xy": [
+                57.25,
+                3.75
+              ],
+              "section_change_mm2": 3.82382042925809e-15,
+              "new_material_mm2": 16.04563862975577
+            },
+            {
+              "center_xy": [
+                26.0,
+                27.0
+              ],
+              "section_change_mm2": 3.401894803860663e-15,
+              "new_material_mm2": 16.056102342217734
+            },
+            {
+              "center_xy": [
+                130.75,
+                71.75
+              ],
+              "section_change_mm2": 1.806779574528634e-14,
+              "new_material_mm2": 16.05609908533904
+            },
+            {
+              "center_xy": [
+                106.5,
+                83.75
+              ],
+              "section_change_mm2": 1.395184423588259e-14,
+              "new_material_mm2": 16.05610273076841
+            },
+            {
+              "center_xy": [
+                89.0,
+                112.5
+              ],
+              "section_change_mm2": 1.3951843388849643e-14,
+              "new_material_mm2": 16.05610273076841
+            },
+            {
+              "center_xy": [
+                32.75,
+                114.25
+              ],
+              "section_change_mm2": 9.361746870132813e-15,
+              "new_material_mm2": 16.056102210552
+            },
+            {
+              "center_xy": [
+                4.25,
+                109.5
+              ],
+              "section_change_mm2": 7.998658189865156e-15,
+              "new_material_mm2": 16.056102279287973
+            },
+            {
+              "center_xy": [
+                94.8625,
+                94.75
+              ],
+              "section_change_mm2": 1.4420201755271572e-14,
+              "new_material_mm2": 16.05610182779297
+            }
+          ],
+          "preservation": {
+            "errors": [],
+            "removed_baseline_mm3": 0.0,
+            "unplanned_added_mm3": 0.0,
+            "missing_addition_mm3": 0.0,
+            "base_volume_mm3": 13003.288259393697,
+            "clipped_volume_mm3": 12991.150364096095,
+            "final_volume_mm3": 12993.73942946271,
+            "addition_count": 4,
+            "clip": {
+              "datum_mm": 4.4,
+              "source_min_z_mm": 4.1,
+              "result_min_z_mm": 4.4,
+              "removed_below_datum_mm3": 12.137895297602881,
+              "removed_at_or_above_datum_mm3": 0.0,
+              "added_material_mm3": 0.0,
+              "operation": "bounded half-space subtraction; independent above-datum section comparison required"
+            }
+          }
+        }
+      ]
+    },
+    "left:deep_sea": {
+      "parts": [
+        {
+          "file": "kc2_left_deep_sea_upper_housing.stl",
+          "native_bounds_error_mm": 4.150390623181011e-06,
+          "native_volume_relative_error": 7.408621853148141e-08,
+          "inner_void_checks": [
+            {
+              "z_mm": 4.41,
+              "missing_mm2": 0.0,
+              "protected_intrusion_mm2": 0.0,
+              "off_plan_mm2": 0.0,
+              "remaining_nonfunctional_void_mm2": 0.0
+            },
+            {
+              "z_mm": 4.725,
+              "missing_mm2": 0.0,
+              "protected_intrusion_mm2": 0.0,
+              "off_plan_mm2": 0.0,
+              "remaining_nonfunctional_void_mm2": 0.0
+            },
+            {
+              "z_mm": 5.04,
+              "missing_mm2": 0.0,
+              "protected_intrusion_mm2": 0.0,
+              "off_plan_mm2": 0.0,
+              "remaining_nonfunctional_void_mm2": 0.0
+            },
+            {
+              "z_mm": 5.06,
+              "missing_mm2": 0.0,
+              "protected_intrusion_mm2": 0.0,
+              "off_plan_mm2": 0.0,
+              "remaining_nonfunctional_void_mm2": 0.0
+            },
+            {
+              "z_mm": 5.074999999999999,
+              "missing_mm2": 0.0,
+              "protected_intrusion_mm2": 0.0,
+              "off_plan_mm2": 0.0,
+              "remaining_nonfunctional_void_mm2": 0.0
+            },
+            {
+              "z_mm": 5.09,
+              "missing_mm2": 0.0,
+              "protected_intrusion_mm2": 0.0,
+              "off_plan_mm2": 0.0,
+              "remaining_nonfunctional_void_mm2": 0.0
+            },
+            {
+              "z_mm": 5.109999999999999,
+              "missing_mm2": 0.0,
+              "protected_intrusion_mm2": 0.0,
+              "off_plan_mm2": 0.0,
+              "remaining_nonfunctional_void_mm2": 0.0
+            },
+            {
+              "z_mm": 5.15,
+              "missing_mm2": 0.0,
+              "protected_intrusion_mm2": 0.0,
+              "off_plan_mm2": 0.0,
+              "remaining_nonfunctional_void_mm2": 0.0
+            },
+            {
+              "z_mm": 5.19,
+              "missing_mm2": 0.0,
+              "protected_intrusion_mm2": 0.0,
+              "off_plan_mm2": 0.0,
+              "remaining_nonfunctional_void_mm2": 0.0
+            },
+            {
+              "z_mm": 5.21,
+              "missing_mm2": 0.0,
+              "protected_intrusion_mm2": 0.0,
+              "off_plan_mm2": 0.0,
+              "remaining_nonfunctional_void_mm2": 0.0
+            },
+            {
+              "z_mm": 5.725,
+              "missing_mm2": 0.0,
+              "protected_intrusion_mm2": 0.0,
+              "off_plan_mm2": 0.0,
+              "remaining_nonfunctional_void_mm2": 0.0
+            },
+            {
+              "z_mm": 6.24,
+              "missing_mm2": 0.0,
+              "protected_intrusion_mm2": 0.0,
+              "off_plan_mm2": 0.0,
+              "remaining_nonfunctional_void_mm2": 0.0
+            }
+          ],
+          "below_datum_section_area_mm2": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "mounts": [
+            {
+              "center_xy": [
+                57.25,
+                3.75
+              ],
+              "section_change_mm2": 3.823820561606988e-15,
+              "new_material_mm2": 16.045638629755768
+            },
+            {
+              "center_xy": [
+                26.0,
+                27.0
+              ],
+              "section_change_mm2": 3.401894803860663e-15,
+              "new_material_mm2": 16.056102342217734
+            },
+            {
+              "center_xy": [
+                130.75,
+                71.75
+              ],
+              "section_change_mm2": 1.806779574528634e-14,
+              "new_material_mm2": 16.05609908533904
+            },
+            {
+              "center_xy": [
+                106.5,
+                83.75
+              ],
+              "section_change_mm2": 1.395184423588259e-14,
+              "new_material_mm2": 16.05610273076841
+            },
+            {
+              "center_xy": [
+                89.0,
+                112.5
+              ],
+              "section_change_mm2": 1.3951842541816696e-14,
+              "new_material_mm2": 16.05610273076841
+            },
+            {
+              "center_xy": [
+                32.75,
+                114.25
+              ],
+              "section_change_mm2": 9.361746870132813e-15,
+              "new_material_mm2": 16.056102210552
+            },
+            {
+              "center_xy": [
+                4.25,
+                109.5
+              ],
+              "section_change_mm2": 7.998661577996945e-15,
+              "new_material_mm2": 16.056102279287973
+            },
+            {
+              "center_xy": [
+                94.8625,
+                94.75
+              ],
+              "section_change_mm2": 1.4420201755271572e-14,
+              "new_material_mm2": 16.05610182779297
+            }
+          ],
+          "preservation": {
+            "errors": [],
+            "removed_baseline_mm3": 0.0,
+            "unplanned_added_mm3": 0.0,
+            "missing_addition_mm3": 0.0,
+            "base_volume_mm3": 11617.921298376077,
+            "clipped_volume_mm3": 11605.783403078482,
+            "final_volume_mm3": 11608.064246377442,
+            "addition_count": 4,
+            "clip": {
+              "datum_mm": 4.4,
+              "source_min_z_mm": 4.1,
+              "result_min_z_mm": 4.4,
+              "removed_below_datum_mm3": 12.137895297595605,
+              "removed_at_or_above_datum_mm3": 0.0,
+              "added_material_mm3": 0.0,
+              "operation": "bounded half-space subtraction; independent above-datum section comparison required"
+            }
+          }
+        }
+      ]
+    },
+    "right:mx": {
+      "parts": [
+        {
+          "file": "kc2_right_mx_upper_housing_part_a.stl",
+          "native_bounds_error_mm": 3.542480484952648e-06,
+          "native_volume_relative_error": 8.540689081932985e-08,
+          "inner_void_checks": [],
+          "below_datum_section_area_mm2": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "mounts": [
+            {
+              "center_xy": [
+                28.25,
+                56.0
+              ],
+              "section_change_mm2": 4.950839688334152e-15,
+              "new_material_mm2": 16.056102085929407
+            },
+            {
+              "center_xy": [
+                4.25,
+                59.5
+              ],
+              "section_change_mm2": 4.272654419480061e-15,
+              "new_material_mm2": 16.056101828900754
+            },
+            {
+              "center_xy": [
+                42.75,
+                73.25
+              ],
+              "section_change_mm2": 1.0452268776944477e-14,
+              "new_material_mm2": 16.056102280008297
+            },
+            {
+              "center_xy": [
+                20.9375,
+                78.0
+              ],
+              "section_change_mm2": 8.774430372313009e-15,
+              "new_material_mm2": 16.056102536325724
+            }
+          ],
+          "preservation": {
+            "errors": [],
+            "removed_baseline_mm3": 0.0,
+            "unplanned_added_mm3": 0.0,
+            "missing_addition_mm3": 0,
+            "base_volume_mm3": 14014.283517523734,
+            "clipped_volume_mm3": 14008.214569874937,
+            "final_volume_mm3": 14008.214569874937,
+            "addition_count": 0,
+            "clip": {
+              "datum_mm": 4.4,
+              "source_min_z_mm": 4.1,
+              "result_min_z_mm": 4.4,
+              "removed_below_datum_mm3": 6.068947648796893,
+              "removed_at_or_above_datum_mm3": 0.0,
+              "added_material_mm3": 0.0,
+              "operation": "bounded half-space subtraction; independent above-datum section comparison required"
+            }
+          }
+        },
+        {
+          "file": "kc2_right_mx_upper_housing_part_b.stl",
+          "native_bounds_error_mm": 7.202148424312327e-06,
+          "native_volume_relative_error": 1.2224459417376275e-07,
+          "inner_void_checks": [],
+          "below_datum_section_area_mm2": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "mounts": [
+            {
+              "center_xy": [
+                101.5,
+                4.0
+              ],
+              "section_change_mm2": 8.047204868286425e-15,
+              "new_material_mm2": 16.056102276539487
+            },
+            {
+              "center_xy": [
+                126.25,
+                27.75
+              ],
+              "section_change_mm2": 8.774421000356669e-15,
+              "new_material_mm2": 16.05610253632573
+            },
+            {
+              "center_xy": [
+                128.5,
+                107.5
+              ],
+              "section_change_mm2": 1.6397395251736023e-14,
+              "new_material_mm2": 16.056101093910787
+            },
+            {
+              "center_xy": [
+                101.0,
+                112.75
+              ],
+              "section_change_mm2": 1.3572003831657971e-14,
+              "new_material_mm2": 16.05610273076841
+            },
+            {
+              "center_xy": [
+                76.0,
+                111.75
+              ],
+              "section_change_mm2": 1.3572003831657971e-14,
+              "new_material_mm2": 16.056102730768405
+            }
+          ],
+          "preservation": {
+            "errors": [],
+            "removed_baseline_mm3": 0.0,
+            "unplanned_added_mm3": 0.0,
+            "missing_addition_mm3": 0,
+            "base_volume_mm3": 14889.116058940775,
+            "clipped_volume_mm3": 14881.529874379483,
+            "final_volume_mm3": 14881.529874379483,
+            "addition_count": 0,
+            "clip": {
+              "datum_mm": 4.4,
+              "source_min_z_mm": 4.1,
+              "result_min_z_mm": 4.4,
+              "removed_below_datum_mm3": 7.586184561292612,
+              "removed_at_or_above_datum_mm3": 0.0,
+              "added_material_mm3": 0.0,
+              "operation": "bounded half-space subtraction; independent above-datum section comparison required"
+            }
+          }
+        }
+      ]
+    },
+    "right:choc_v1": {
+      "parts": [
+        {
+          "file": "kc2_right_choc_v1_upper_housing_part_a.stl",
+          "native_bounds_error_mm": 2.5610351457316938e-06,
+          "native_volume_relative_error": 3.5010319599248784e-08,
+          "inner_void_checks": [],
+          "below_datum_section_area_mm2": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "mounts": [
+            {
+              "center_xy": [
+                28.25,
+                56.0
+              ],
+              "section_change_mm2": 4.718341949068729e-15,
+              "new_material_mm2": 16.056102085929403
+            },
+            {
+              "center_xy": [
+                4.25,
+                59.5
+              ],
+              "section_change_mm2": 3.647553879613276e-15,
+              "new_material_mm2": 16.056101828900754
+            },
+            {
+              "center_xy": [
+                42.75,
+                73.25
+              ],
+              "section_change_mm2": 9.549273062659884e-15,
+              "new_material_mm2": 16.0561022800083
+            },
+            {
+              "center_xy": [
+                20.9375,
+                78.0
+              ],
+              "section_change_mm2": 8.91451245820475e-15,
+              "new_material_mm2": 16.056102536325724
+            }
+          ],
+          "preservation": {
+            "errors": [],
+            "removed_baseline_mm3": 0.0,
+            "unplanned_added_mm3": 0.0,
+            "missing_addition_mm3": 0,
+            "base_volume_mm3": 7138.211724761543,
+            "clipped_volume_mm3": 7132.142777112683,
+            "final_volume_mm3": 7132.142777112683,
+            "addition_count": 0,
+            "clip": {
+              "datum_mm": 4.4,
+              "source_min_z_mm": 4.1,
+              "result_min_z_mm": 4.4,
+              "removed_below_datum_mm3": 6.068947648860558,
+              "removed_at_or_above_datum_mm3": 0.0,
+              "added_material_mm3": 0.0,
+              "operation": "bounded half-space subtraction; independent above-datum section comparison required"
+            }
+          }
+        },
+        {
+          "file": "kc2_right_choc_v1_upper_housing_part_b.stl",
+          "native_bounds_error_mm": 4.028320290672127e-06,
+          "native_volume_relative_error": 3.786907562081748e-08,
+          "inner_void_checks": [],
+          "below_datum_section_area_mm2": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "mounts": [
+            {
+              "center_xy": [
+                101.5,
+                4.0
+              ],
+              "section_change_mm2": 8.034768102724752e-15,
+              "new_material_mm2": 16.056102276539484
+            },
+            {
+              "center_xy": [
+                126.25,
+                27.75
+              ],
+              "section_change_mm2": 8.914519406521895e-15,
+              "new_material_mm2": 16.056102536325735
+            },
+            {
+              "center_xy": [
+                128.5,
+                107.5
+              ],
+              "section_change_mm2": 1.572580769931795e-14,
+              "new_material_mm2": 16.056101093910787
+            },
+            {
+              "center_xy": [
+                101.0,
+                112.75
+              ],
+              "section_change_mm2": 1.3951843388849643e-14,
+              "new_material_mm2": 16.05610273076841
+            },
+            {
+              "center_xy": [
+                76.0,
+                111.75
+              ],
+              "section_change_mm2": 1.3951843388849643e-14,
+              "new_material_mm2": 16.05610273076841
+            }
+          ],
+          "preservation": {
+            "errors": [],
+            "removed_baseline_mm3": 0.0,
+            "unplanned_added_mm3": 0.0,
+            "missing_addition_mm3": 0,
+            "base_volume_mm3": 7252.8157457812085,
+            "clipped_volume_mm3": 7245.229561220131,
+            "final_volume_mm3": 7245.229561220131,
+            "addition_count": 0,
+            "clip": {
+              "datum_mm": 4.4,
+              "source_min_z_mm": 4.1,
+              "result_min_z_mm": 4.4,
+              "removed_below_datum_mm3": 7.586184561077971,
+              "removed_at_or_above_datum_mm3": 0.0,
+              "added_material_mm3": 0.0,
+              "operation": "bounded half-space subtraction; independent above-datum section comparison required"
+            }
+          }
+        }
+      ]
+    },
+    "right:deep_sea": {
+      "parts": [
+        {
+          "file": "kc2_right_deep_sea_upper_housing_part_a.stl",
+          "native_bounds_error_mm": 2.5610351457316938e-06,
+          "native_volume_relative_error": 4.8721685147215464e-08,
+          "inner_void_checks": [],
+          "below_datum_section_area_mm2": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "mounts": [
+            {
+              "center_xy": [
+                28.25,
+                56.0
+              ],
+              "section_change_mm2": 4.718341949068729e-15,
+              "new_material_mm2": 16.056102085929407
+            },
+            {
+              "center_xy": [
+                4.25,
+                59.5
+              ],
+              "section_change_mm2": 3.647553985492394e-15,
+              "new_material_mm2": 16.056101828900754
+            },
+            {
+              "center_xy": [
+                42.75,
+                73.25
+              ],
+              "section_change_mm2": 9.549273062659884e-15,
+              "new_material_mm2": 16.0561022800083
+            },
+            {
+              "center_xy": [
+                20.9375,
+                78.0
+              ],
+              "section_change_mm2": 8.914513516995934e-15,
+              "new_material_mm2": 16.056102536325724
+            }
+          ],
+          "preservation": {
+            "errors": [],
+            "removed_baseline_mm3": 0.0,
+            "unplanned_added_mm3": 0.0,
+            "missing_addition_mm3": 0,
+            "base_volume_mm3": 6396.517179193867,
+            "clipped_volume_mm3": 6390.4482315450805,
+            "final_volume_mm3": 6390.4482315450805,
+            "addition_count": 0,
+            "clip": {
+              "datum_mm": 4.4,
+              "source_min_z_mm": 4.1,
+              "result_min_z_mm": 4.4,
+              "removed_below_datum_mm3": 6.068947648786889,
+              "removed_at_or_above_datum_mm3": 0.0,
+              "added_material_mm3": 0.0,
+              "operation": "bounded half-space subtraction; independent above-datum section comparison required"
+            }
+          }
+        },
+        {
+          "file": "kc2_right_deep_sea_upper_housing_part_b.stl",
+          "native_bounds_error_mm": 4.028320290672127e-06,
+          "native_volume_relative_error": 4.943488048217853e-08,
+          "inner_void_checks": [],
+          "below_datum_section_area_mm2": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "mounts": [
+            {
+              "center_xy": [
+                101.5,
+                4.0
+              ],
+              "section_change_mm2": 8.034761749977648e-15,
+              "new_material_mm2": 16.056102276539487
+            },
+            {
+              "center_xy": [
+                126.25,
+                27.75
+              ],
+              "section_change_mm2": 8.914519406521895e-15,
+              "new_material_mm2": 16.05610253632573
+            },
+            {
+              "center_xy": [
+                128.5,
+                107.5
+              ],
+              "section_change_mm2": 1.572580777872729e-14,
+              "new_material_mm2": 16.056101093910787
+            },
+            {
+              "center_xy": [
+                101.0,
+                112.75
+              ],
+              "section_change_mm2": 1.3951843388849643e-14,
+              "new_material_mm2": 16.05610273076841
+            },
+            {
+              "center_xy": [
+                76.0,
+                111.75
+              ],
+              "section_change_mm2": 1.3951843388849643e-14,
+              "new_material_mm2": 16.056102730768412
+            }
+          ],
+          "preservation": {
+            "errors": [],
+            "removed_baseline_mm3": 0.0,
+            "unplanned_added_mm3": 0.0,
+            "missing_addition_mm3": 0,
+            "base_volume_mm3": 6483.6569982007995,
+            "clipped_volume_mm3": 6476.0708136397425,
+            "final_volume_mm3": 6476.0708136397425,
+            "addition_count": 0,
+            "clip": {
+              "datum_mm": 4.4,
+              "source_min_z_mm": 4.1,
+              "result_min_z_mm": 4.4,
+              "removed_below_datum_mm3": 7.586184561057053,
+              "removed_at_or_above_datum_mm3": 0.0,
+              "added_material_mm3": 0.0,
+              "operation": "bounded half-space subtraction; independent above-datum section comparison required"
+            }
+          }
+        }
+      ]
+    }
+  },
+  "ab": [
+    {
+      "label": "right:mx",
+      "gap_mm": 0.39989471435546875,
+      "overlap_mm2": 0.0,
+      "native": {
+        "minimum_distance_mm": 0.39990000000000414,
+        "points_mm": [
+          [
+            75.69058,
+            122.40000000000002,
+            4.4
+          ],
+          [
+            76.09048,
+            122.40000000000002,
+            4.4
+          ]
+        ]
+      },
+      "rounding": {
+        "mesh_gap_mm": 0.39989471435546875,
+        "cad_gap_mm": 0.39990000000000414,
+        "required_mm": 0.3999,
+        "float32_distance_bound_mm": 2.1579186437577746e-05,
+        "cad_kernel_tolerance_mm": 1e-07,
+        "pass": true
+      },
+      "lateral_witness": true
+    },
+    {
+      "label": "right:choc_v1",
+      "gap_mm": 0.39989471435546875,
+      "overlap_mm2": 0.0,
+      "native": {
+        "minimum_distance_mm": 0.39990000000000414,
+        "points_mm": [
+          [
+            75.69058,
+            122.40000000000002,
+            4.4
+          ],
+          [
+            76.09048,
+            122.40000000000002,
+            4.4
+          ]
+        ]
+      },
+      "rounding": {
+        "mesh_gap_mm": 0.39989471435546875,
+        "cad_gap_mm": 0.39990000000000414,
+        "required_mm": 0.3999,
+        "float32_distance_bound_mm": 2.1579186437577746e-05,
+        "cad_kernel_tolerance_mm": 1e-07,
+        "pass": true
+      },
+      "lateral_witness": true
+    },
+    {
+      "label": "right:deep_sea",
+      "gap_mm": 0.39989471435546875,
+      "overlap_mm2": 0.0,
+      "native": {
+        "minimum_distance_mm": 0.39990000000000414,
+        "points_mm": [
+          [
+            75.69058,
+            122.40000000000002,
+            4.4
+          ],
+          [
+            76.09048,
+            122.40000000000002,
+            4.4
+          ]
+        ]
+      },
+      "rounding": {
+        "mesh_gap_mm": 0.39989471435546875,
+        "cad_gap_mm": 0.39990000000000414,
+        "required_mm": 0.3999,
+        "float32_distance_bound_mm": 2.1579186437577746e-05,
+        "cad_kernel_tolerance_mm": 1e-07,
+        "pass": true
+      },
+      "lateral_witness": true
+    }
+  ],
+  "assembly": [
+    {
+      "side": "left",
+      "lower": "normal",
+      "upper": "mx",
+      "maximum_swept_overlap_mm2": 0.0
+    },
+    {
+      "side": "left",
+      "lower": "normal",
+      "upper": "choc_v1",
+      "maximum_swept_overlap_mm2": 0.0
+    },
+    {
+      "side": "left",
+      "lower": "normal",
+      "upper": "deep_sea",
+      "maximum_swept_overlap_mm2": 0.0
+    },
+    {
+      "side": "left",
+      "lower": "magnetic",
+      "upper": "mx",
+      "maximum_swept_overlap_mm2": 0.0
+    },
+    {
+      "side": "left",
+      "lower": "magnetic",
+      "upper": "choc_v1",
+      "maximum_swept_overlap_mm2": 0.0
+    },
+    {
+      "side": "left",
+      "lower": "magnetic",
+      "upper": "deep_sea",
+      "maximum_swept_overlap_mm2": 0.0
+    },
+    {
+      "side": "right",
+      "lower": "normal",
+      "upper": "mx",
+      "maximum_swept_overlap_mm2": 0.0
+    },
+    {
+      "side": "right",
+      "lower": "normal",
+      "upper": "choc_v1",
+      "maximum_swept_overlap_mm2": 0.0
+    },
+    {
+      "side": "right",
+      "lower": "normal",
+      "upper": "deep_sea",
+      "maximum_swept_overlap_mm2": 0.0
+    },
+    {
+      "side": "right",
+      "lower": "magnetic",
+      "upper": "mx",
+      "maximum_swept_overlap_mm2": 0.0
+    },
+    {
+      "side": "right",
+      "lower": "magnetic",
+      "upper": "choc_v1",
+      "maximum_swept_overlap_mm2": 0.0
+    },
+    {
+      "side": "right",
+      "lower": "magnetic",
+      "upper": "deep_sea",
+      "maximum_swept_overlap_mm2": 0.0
+    }
+  ],
+  "joined": [
+    {
+      "lower": "normal",
+      "upper": "mx",
+      "swept_overlap_mm2": 0.0
+    },
+    {
+      "lower": "normal",
+      "upper": "choc_v1",
+      "swept_overlap_mm2": 0.0
+    },
+    {
+      "lower": "normal",
+      "upper": "deep_sea",
+      "swept_overlap_mm2": 0.0
+    },
+    {
+      "lower": "magnetic",
+      "upper": "mx",
+      "swept_overlap_mm2": 0.0
+    },
+    {
+      "lower": "magnetic",
+      "upper": "choc_v1",
+      "swept_overlap_mm2": 0.0
+    },
+    {
+      "lower": "magnetic",
+      "upper": "deep_sea",
+      "swept_overlap_mm2": 0.0
+    }
+  ],
+  "errors": [],
+  "source_sha256": {
+    "hardware/MODELS/kc2_wall_gap_fix_manifest.json": "26d7162edc39a0c4e5df4ca952626df5583863c1f5126948d21c261efdc06887",
+    "docs/reports/wall-gap-fix-20260921/evidence/plan.json": "fd3d20b9e8bf025b17b04c704408856a5dd33118cbca49ce817110c2a2a52d00",
+    "docs/reports/solid-filled-plates-20260913/left-mx.json": "3965411eb2d455cb006c03d4fc016f21b2ed851a52e5160c86a910226d26cd50",
+    "docs/reports/registered-housing-fit-20260913/evidence/upper/left-mx/generation.json": "fc263e623aec97e34bb0a48b3c1d29fcbd91b9ffd51cc64059dc3939c46660e8",
+    "hardware/MODELS/kc2_left_mx_upper_housing.step": "7387bc7d0863a7461e17a666e8772c5e3681b236e0f61bf38362040e613efd04",
+    "hardware/MODELS/kc2_left_mx_upper_housing.f3d": "db4c1783ebd6da3ba483356e5cf00d63353b4ce78ce725e1fea30acf99667260",
+    "hardware/MODELS/kc2_left_mx_upper_housing.stl": "9799ebee3219cc6e2e904ba4ef55a5ea59068aaf0b594b010520088e332bb38f",
+    "hardware/MODELS/STL_FROM_FUSION_20260921/kc2_left_mx_upper_housing.stl": "cb43cab70f3e3e0109f4ea53171cd43c398ac3451bd5d697300a001a66dae0c4",
+    "docs/reports/solid-filled-plates-20260913/left-choc_v1.json": "fd08b2d864e13885355268200d5f1611dd76a325fa73617f77eab7c51f71a3d4",
+    "docs/reports/registered-housing-fit-20260913/evidence/upper/left-choc_v1/generation.json": "4ffa4b9b6b0a1321ac6451752e43089edc12d5bf1ff2ef7f9c09e2bb35612b93",
+    "hardware/MODELS/kc2_left_choc_v1_upper_housing.step": "5435bb49da6e560f113f8d7d5ddfc6e8072cfe174dc357f341c82a59c3e21dd0",
+    "hardware/MODELS/kc2_left_choc_v1_upper_housing.f3d": "11711333b3a1f9d04dbb09a3c54eb8311ae00a7b1833c7de63c77993280bfef0",
+    "hardware/MODELS/kc2_left_choc_v1_upper_housing.stl": "4874858d3811f619e9b88be690c7975e1340087d41dfe5d972d104a1a47f1415",
+    "hardware/MODELS/STL_FROM_FUSION_20260921/kc2_left_choc_v1_upper_housing.stl": "9f9612fe5b5c419cc27956f5a217cdb9f934dcc381c41a08d27fa43c7b7ac032",
+    "docs/reports/solid-filled-plates-20260913/left-deep_sea.json": "9952ca3664387ebde9975e5b1be91d114a6da1cc544a1523e6c6daef4db0cdf1",
+    "docs/reports/registered-housing-fit-20260913/evidence/upper/left-deep_sea/generation.json": "a3eef4a9c3c88d5ac4ab260471dfdaede105abf3cdaf64f20ddb2d8f7b68bfac",
+    "hardware/MODELS/kc2_left_deep_sea_upper_housing.step": "382293f8810afbff080a7eceee2f774f1f79403d2bae457a73d79645f6a816e3",
+    "hardware/MODELS/kc2_left_deep_sea_upper_housing.f3d": "f85b58070ae5a13721a00f8e835294fe83eb139edaae9f75794f5295eb111e43",
+    "hardware/MODELS/kc2_left_deep_sea_upper_housing.stl": "7f614d659d2316b3d14217ca85200c85a59ed622dee2cc5d7a75c96d393fdb3c",
+    "hardware/MODELS/STL_FROM_FUSION_20260921/kc2_left_deep_sea_upper_housing.stl": "5901f0d83ffcbd04352d6130f209efa68467285c82ebb8b11fc3f60a72f21b5a",
+    "docs/reports/solid-filled-plates-20260913/right-mx.json": "efd3a04be41f07dff47b101ba112616ce506b76cf0d682148c945f589749c8db",
+    "docs/reports/registered-housing-fit-20260913/evidence/upper/right-mx/generation.json": "4e8edfb7b77f707c1bfc8466f1c5546ea44f26d49fc3fbdf86973feb07df21c9",
+    "hardware/MODELS/kc2_right_mx_upper_housing.step": "fce43e4bc9cde7ffa2c5493f5844e0bf01a98276bb9042383bd56264b3b5610c",
+    "hardware/MODELS/kc2_right_mx_upper_housing.f3d": "8c140916210b5e479c4562bbdee46ed8a1a0d445375b76d21dd4f2a21ce6cd70",
+    "hardware/MODELS/kc2_right_mx_upper_housing_part_a.stl": "8452deaacbee52006ae780c6835d2638d4c0e0e90b66e07c5347203ca0245ad3",
+    "hardware/MODELS/kc2_right_mx_upper_housing_part_b.stl": "251fc9f1aeb6b433f59aef29496fe3f444da1d05fc6985036ecaf13042e31ae4",
+    "hardware/MODELS/STL_FROM_FUSION_20260921/kc2_right_mx_upper_housing_part_a.stl": "b596375b71005ee856dc463c2ea3db9580afbdacc98693dd86c73a7d357ad65f",
+    "hardware/MODELS/STL_FROM_FUSION_20260921/kc2_right_mx_upper_housing_part_b.stl": "a002a042a83a9e4eec9485feb046d8425af55b95916ac1552192e76ddc937fdd",
+    "docs/reports/solid-filled-plates-20260913/right-choc_v1.json": "97b969b56465d10dffd6df10482801874be2db8c06289483d6f716bbaba2f58f",
+    "docs/reports/registered-housing-fit-20260913/evidence/upper/right-choc_v1/generation.json": "1cfb2a999bc70e37ccd378c9d585397c509226de9fb0e93222e357ed80b3f239",
+    "hardware/MODELS/kc2_right_choc_v1_upper_housing.step": "f362a10df2ce5193b8d7676a6c0ba4c061bb5c8210c2043d9f9d2393e8a95f92",
+    "hardware/MODELS/kc2_right_choc_v1_upper_housing.f3d": "2c8fc2d4349133ac0cfa4fba71682decc2014ada9557297e8eba2b474927ccee",
+    "hardware/MODELS/kc2_right_choc_v1_upper_housing_part_a.stl": "0272c11b2ea5c051c4709ab26cfc109d587bc4f96cd34a4a6bf5bdf0f1e1efe5",
+    "hardware/MODELS/kc2_right_choc_v1_upper_housing_part_b.stl": "3556217b44defb004b3f495c5f340de5f8da94e84869f96f5564eeb34e5b3318",
+    "hardware/MODELS/STL_FROM_FUSION_20260921/kc2_right_choc_v1_upper_housing_part_a.stl": "d179e09b141aa6df18b881742ebc343f864c3e46e00f21c542c67ae1c943a772",
+    "hardware/MODELS/STL_FROM_FUSION_20260921/kc2_right_choc_v1_upper_housing_part_b.stl": "abfa8a9c7cd0f8cebce6804c18005770252c80226aff246a159b54c5714a261b",
+    "docs/reports/solid-filled-plates-20260913/right-deep_sea.json": "9a51a4d3899ce0b8196c1347236b1cfd74fc2a8d473e71e03b989e6f8a812ac9",
+    "docs/reports/registered-housing-fit-20260913/evidence/upper/right-deep_sea/generation.json": "b5e7bf70bb18d078f1a52f93c4de4cc485fa68298bb334a948abbcb5637d5a25",
+    "hardware/MODELS/kc2_right_deep_sea_upper_housing.step": "93cf6e14e670922ffaba42e82b5ad5c5332d71a40d4cf0e61e74cf7716ebc4d4",
+    "hardware/MODELS/kc2_right_deep_sea_upper_housing.f3d": "0676cd0a2f887123585e218f1e0b487f52e12cb532bf6e0fd19805426400ebf9",
+    "hardware/MODELS/kc2_right_deep_sea_upper_housing_part_a.stl": "d304630d571c9997f0815236f398bfd5536154e20780843eb29f765f35d62060",
+    "hardware/MODELS/kc2_right_deep_sea_upper_housing_part_b.stl": "65f89ebf50916d4199475a19b3cce8e6830801d94b757203f8fccf5717b83ff5",
+    "hardware/MODELS/STL_FROM_FUSION_20260921/kc2_right_deep_sea_upper_housing_part_a.stl": "48cf4586cb98b74e3776871e1d95c1f0d0e0ac25cc4aca74bb4b1ade801095c7",
+    "hardware/MODELS/STL_FROM_FUSION_20260921/kc2_right_deep_sea_upper_housing_part_b.stl": "e26b7542f4eca83e84ce63b94edbcfbb416be35ce9bddc7e5c9dc8193a0dc0c0",
+    "tools/kc2_upper_finish.py": "6891fcf03e8cb79bce8a73b64c5cb4575092531ad90cdffce314a63173ee0f5d",
+    "tools/test_kc2_upper_finish.py": "b76876278347d4597b1b07d96a123bc33aeb470a62945b33374f472c29fe7447",
+    "tools/kc2_pcb_seating.py": "c3bfcdf8d644688588860d46a6b1e6b99100b6242c332145cae1fa2678eb229a",
+    ".codex-tmp/upper-finish-20260921/plan.json": "b428c40f3cfe0d8b33b12b68b84b58a79ad1bc31e88e6ef2034d2d8e7e6762ac",
+    ".codex-tmp/upper-finish-20260921/left-mx/kc2_left_mx_upper_housing.stl": "94614d3139e2f6f4cb02536add4a56a3bb0f234bd34ca331ec1e605cacbc8270",
+    ".codex-tmp/upper-finish-20260921/left-mx/kc2_left_mx_upper_housing.f3d": "0210d917cd20fccb1bd1e2a67dfd888fd79cd5108816232ca09c1d9ede08c19e",
+    ".codex-tmp/upper-finish-20260921/left-mx/generation.json": "0612fff7976b455f4e8ca480a0cd371b677e8232e7979d4476bc03f7793e0e4b",
+    ".codex-tmp/upper-finish-20260921/left-mx/native.json": "393afd129274d899f44adc5c4423a5f1e382c01cab6f2382cb7e1e709f7de4fa",
+    ".codex-tmp/upper-finish-20260921/left-mx/kc2_left_mx_upper_housing.step": "2a54395379903f25c5b19df7eee75725ebcb3c9c40e164a0470bca2aafa105a0",
+    ".codex-tmp/upper-finish-20260921/left-choc_v1/kc2_left_choc_v1_upper_housing.stl": "a95caaa0215d797236784e9d61d2e885e2c2fefcc5e0d82093d23a07dc7e9110",
+    ".codex-tmp/upper-finish-20260921/left-choc_v1/kc2_left_choc_v1_upper_housing.f3d": "115590b445547318cb72cd6a0e32a89ab7ff3616ce06c8da1884d8514b948743",
+    ".codex-tmp/upper-finish-20260921/left-choc_v1/generation.json": "1d5f9dc7d00046ece20fd7136ea7bd5b44714f02ce739529d07a360f78892da1",
+    ".codex-tmp/upper-finish-20260921/left-choc_v1/native.json": "ae995cc217fe29a33cd96f31014e5e0652f633a7a9a932c84dbc7e9f446277e6",
+    ".codex-tmp/upper-finish-20260921/left-choc_v1/kc2_left_choc_v1_upper_housing.step": "4aa21de6bbcc4c7c3b24405cbf566cd4572e4a8986bd9c7ec3c36af6192ede5b",
+    ".codex-tmp/upper-finish-20260921/left-deep_sea/kc2_left_deep_sea_upper_housing.stl": "fae3cf497face55f63d01fb45a39e140c9e2bfb147d4683c26fb2635fbf5a2f8",
+    ".codex-tmp/upper-finish-20260921/left-deep_sea/kc2_left_deep_sea_upper_housing.f3d": "54807ec80569d3e050655c55645824d8bf3cf0ad4d3e287a71a80d8d1ff7a41e",
+    ".codex-tmp/upper-finish-20260921/left-deep_sea/generation.json": "5f4afd999b6952398321f8bb7ca56a3cdb28d17fcb61fbd0ff7331b30340d3ea",
+    ".codex-tmp/upper-finish-20260921/left-deep_sea/native.json": "0ca5c7b0f343a287adef0a2d7b0c8dc4e00c122966035dcc3dca2e5fd504cae2",
+    ".codex-tmp/upper-finish-20260921/left-deep_sea/kc2_left_deep_sea_upper_housing.step": "b92453e332fdb1ef4814106457496d771500d13967794c57fb5c4bc91b2d4c5b",
+    ".codex-tmp/upper-finish-20260921/right-mx/kc2_right_mx_upper_housing_part_a.stl": "f34c29e12643cb97be69642be3f99c2599a2e84bd1c81132776224dd0618669e",
+    ".codex-tmp/upper-finish-20260921/right-mx/kc2_right_mx_upper_housing_part_b.stl": "ea8d016dd275d1e5047d4c266ff3720d9ae02b1037a61292b5ccf0a3462e2cea",
+    ".codex-tmp/upper-finish-20260921/right-mx/kc2_right_mx_upper_housing.f3d": "a5945852f5434446798b8f2631b4a7ec5d85aca5d6123ac58c038c07adc1d5a3",
+    ".codex-tmp/upper-finish-20260921/right-mx/generation.json": "7b6218363f9c5dae4b2f8c583cda57053176a051257489274e2a092f5ae5252e",
+    ".codex-tmp/upper-finish-20260921/right-mx/native.json": "112afac5fa7836ac452e94a3c16eb5f8d0e14cd8ba34f36536acb3132a459f38",
+    ".codex-tmp/upper-finish-20260921/right-mx/kc2_right_mx_upper_housing.step": "f0c5543297c6f7a6cf825a34dc6dffcebb352a8d6c2188ecf2e98b4a3543ad15",
+    ".codex-tmp/upper-finish-20260921/right-choc_v1/kc2_right_choc_v1_upper_housing_part_a.stl": "8ae860356126bbbd0fbc30ba3bd9911a4cc3f71ba3d5d5166d1a01cc5151e27c",
+    ".codex-tmp/upper-finish-20260921/right-choc_v1/kc2_right_choc_v1_upper_housing_part_b.stl": "e5eb9a75773756f24b6c7c5731590c25bd37b9a0c23c9c2f700d225e726a277c",
+    ".codex-tmp/upper-finish-20260921/right-choc_v1/kc2_right_choc_v1_upper_housing.f3d": "2f5a645fb141810f1de85d7b440e422ad7cb278d9193ee56349c7843cec81d6a",
+    ".codex-tmp/upper-finish-20260921/right-choc_v1/generation.json": "d86610980e90dadd0bd872f261aef26d5768549081ceb81cd37abc06b86d2604",
+    ".codex-tmp/upper-finish-20260921/right-choc_v1/native.json": "b33debdd337ac3377b6bfc1e494db71838a9e5efc5b1c5728d3a03515d291ab2",
+    ".codex-tmp/upper-finish-20260921/right-choc_v1/kc2_right_choc_v1_upper_housing.step": "c451da5698e8ab5398da9791027cd9cbd1f8a716951310ed609573c530b5edff",
+    ".codex-tmp/upper-finish-20260921/right-deep_sea/kc2_right_deep_sea_upper_housing_part_a.stl": "0e3214b08b416f991ae58a0812aed7b671fa0cb1aed0d532f08744d9e49ab80b",
+    ".codex-tmp/upper-finish-20260921/right-deep_sea/kc2_right_deep_sea_upper_housing_part_b.stl": "04eadaab8d1c52771cf88bd91bbe1fffd1abcfb4f4c0f40ad08c01003f61392e",
+    ".codex-tmp/upper-finish-20260921/right-deep_sea/kc2_right_deep_sea_upper_housing.f3d": "7bb4c991c4b1fffcfef7fa44a08e45b9878d335f7ef96cb86303475f6f6b8270",
+    ".codex-tmp/upper-finish-20260921/right-deep_sea/generation.json": "7cc09bf3d2ef3c1c5d71353329cbb2147c7c729e17d4c74e228d6ed0f8e5da41",
+    ".codex-tmp/upper-finish-20260921/right-deep_sea/native.json": "09587cc70c8159cf2fcfb48a9dd2bcdf155e92cdce41225c8725963a596bd034",
+    ".codex-tmp/upper-finish-20260921/right-deep_sea/kc2_right_deep_sea_upper_housing.step": "89f36d3594d16163c1146b20622634daea47a9c06d5dd24a4b3526fa47c73461",
+    "hardware/MODELS/kc2_left_lower_housing.stl": "f3052f14ed89594a43875abe7ead25faca3af1b48d92140537e8d05925276b0d",
+    "hardware/MODELS/kc2_left_lower_housing_magnetic.stl": "e6d53ae6ca3e04f94cfca757de3b86f6cea4844f23a3d6279fba9adeaf71a44d",
+    "hardware/MODELS/kc2_right_lower_housing_part_a.stl": "e25964266c58a20fd5b5d35090286d4b5947ebef645c4c019ee023b796990f0b",
+    "hardware/MODELS/kc2_right_lower_housing_part_b.stl": "2b0b2287d9bf931a58fdc72f432db7e8a706d57a3ec54cf323d37386e0ab71d9",
+    "hardware/MODELS/kc2_right_lower_housing_part_a_magnetic.stl": "e25964266c58a20fd5b5d35090286d4b5947ebef645c4c019ee023b796990f0b",
+    "hardware/MODELS/kc2_right_lower_housing_part_b_magnetic.stl": "8d14d52e115c2028f4421f11befa73708b9ccd58a48018456ec5dfeb9c63543e",
+    "tools/review_kc2_upper_finish.py": "0680a75d760371944538969ae975bd49263e1372a2e9512ffeddce9d4ee9518d",
+    "tools/fusion/KC2UpperFinish.py": "7e498fbda714b9590a4c8aa0ba2847728ee2dec29ba755591ab68db70355affa",
+    "tools/kc2_stl_clearance.py": "f4f5f6d0d781efbad5f763f1db5628a0896b44e7a3864436c324392567b7ee56",
+    "tools/review_kc2_wrap_motion.py": "634c3625903b3cbc160a7872120f47670ff18c56d129af487bf098bd6a5abec0",
+    "tools/review_kc2_wrap_housings.py": "8e73db31a2396ae3a7976231bb753f56b693422d0be297b2956362ae05c01a11"
+  },
+  "physical_qualified": false,
+  "scope": "Closed upper voids, no material below common Z4.40 print datum, preserved screw bores/bosses, actual Fusion/STL and assembly motion"
+}

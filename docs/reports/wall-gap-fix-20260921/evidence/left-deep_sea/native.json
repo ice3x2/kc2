@@ -1,0 +1,51 @@
+{
+  "status": "pass",
+  "label": "left:deep_sea",
+  "errors": [],
+  "fusion_version": "2705.1.15",
+  "source_step_sha256": "382293f8810afbff080a7eceee2f774f1f79403d2bae457a73d79645f6a816e3",
+  "plan_sha256": "fd3d20b9e8bf025b17b04c704408856a5dd33118cbca49ce817110c2a2a52d00",
+  "outputs": {
+    "kc2_left_deep_sea_upper_housing.stl": "7f614d659d2316b3d14217ca85200c85a59ed622dee2cc5d7a75c96d393fdb3c",
+    "kc2_left_deep_sea_upper_housing.f3d": "f85b58070ae5a13721a00f8e835294fe83eb139edaae9f75794f5295eb111e43"
+  },
+  "before": [
+    {
+      "volume_mm3": 11617.921298375319,
+      "area_mm2": 18211.37464117481,
+      "bounds_mm": [
+        [
+          -0.851301415863,
+          -1.5000000000000002,
+          4.1
+        ],
+        [
+          136.3895,
+          123.77700000000002,
+          6.6000000000000005
+        ]
+      ],
+      "solid": true
+    }
+  ],
+  "after": [
+    {
+      "volume_mm3": 11617.921298375319,
+      "area_mm2": 18211.37464117481,
+      "bounds_mm": [
+        [
+          -0.851301415863,
+          -1.5000000000000002,
+          4.1
+        ],
+        [
+          136.3895,
+          123.77700000000002,
+          6.6000000000000005
+        ]
+      ],
+      "solid": true
+    }
+  ],
+  "physical_qualified": false
+}

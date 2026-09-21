@@ -1,0 +1,51 @@
+{
+  "status": "pass",
+  "label": "left:magnetic",
+  "errors": [],
+  "fusion_version": "2705.1.15",
+  "source_step_sha256": "719b0ee22dbe8965a3945ad7c00a63f019a01290ef8099490ec2a66b767c2587",
+  "plan_sha256": "fd3d20b9e8bf025b17b04c704408856a5dd33118cbca49ce817110c2a2a52d00",
+  "outputs": {
+    "kc2_left_lower_housing_magnetic.stl": "e6d53ae6ca3e04f94cfca757de3b86f6cea4844f23a3d6279fba9adeaf71a44d",
+    "kc2_left_lower_housing_magnetic.f3d": "9d36e44b1b1d3fb4de953bb1c0ba2c0cac2cee89480082f7f13973749e62cea0"
+  },
+  "before": [
+    {
+      "volume_mm3": 47906.88063198859,
+      "area_mm2": 46955.00269460423,
+      "bounds_mm": [
+        [
+          -1.5000000000000002,
+          -3.0000000000000004,
+          -2.2
+        ],
+        [
+          137.8895,
+          125.27700000000002,
+          5.6000000000000005
+        ]
+      ],
+      "solid": true
+    }
+  ],
+  "after": [
+    {
+      "volume_mm3": 47906.88063198859,
+      "area_mm2": 46955.00269460423,
+      "bounds_mm": [
+        [
+          -1.5000000000000002,
+          -3.0000000000000004,
+          -2.2
+        ],
+        [
+          137.8895,
+          125.27700000000002,
+          5.6000000000000005
+        ]
+      ],
+      "solid": true
+    }
+  ],
+  "physical_qualified": false
+}

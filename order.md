@@ -1,5 +1,9 @@
 # KC2 디렉토리·PCB 주문·3D 인쇄 안내
 
+> 2026-09-21 상판 공면 개정: MX, Choc V1, Deep Sea 상판의 닫힌 비기능 내부 틈을 메우고, 나사 랜드만 0.30 mm 아래로 내려오던 돌출을 제거하여 모든 상판 STL의 최저면을 `Z=4.40`으로 맞췄습니다. [최신 STL 안내](hardware/MODELS/PRINT-upper-finish.md)와 `python -B -m tools.publish_kc2_upper_finish`를 사용하십시오. 현재 manifest는 `hardware/MODELS/kc2_upper_finish_manifest.json`입니다. 하판과 이미 주문한 PCB/Gerber는 변경하지 않았습니다. 아래 하우징 개정 설명은 이력입니다.
+
+> 2026-09-21 틈 보강 개정: 좌우 외벽과 본체 사이의 불필요한 좁은 틈을 메웁니다. 나사식 조립, PCB 높이와 기능 공간은 유지합니다. [최신 STL 안내](hardware/MODELS/PRINT-wall-gap-fix.md)와 `python -B -m tools.publish_kc2_wall_gap_fix`를 사용하십시오. 검증 통과 전에는 게시 미완료이므로 인쇄를 보류합니다. 파일은 계속 `hardware/MODELS` 바로 아래이며, `STL_FROM_FUSION_20260921` 폴더는 보강 전 비교용입니다. 주문 PCB/Gerber는 그대로입니다. 아래 날짜의 하우징 설명은 이력입니다.
+
 > 2026-09-20 현재 하우징: 하판 외벽이 PCB 윗면보다 1.50 mm 높아 상판 아래쪽을 감쌉니다. [현재 STL 선택 및 인쇄 안내](hardware/MODELS/PRINT-wrap-housings.md)를 따르십시오. 상판과 하판을 함께 새 버전으로 인쇄합니다. 파일은 `hardware/MODELS` 바로 아래, 현재 manifest는 `kc2_wrap_housing_manifest.json`입니다. 이미 주문한 r4 PCB/Gerber는 변경하지 않았습니다. 아래 하우징 개정 설명은 이전 이력입니다.
 
 > 2026-09-14 현재 하우징: 인쇄 파일은 `hardware/MODELS` 바로 아래에 있습니다. 중앙 좌우 요철을 모두 제거한 최신 하판은 [hardware/MODELS/README.md](hardware/MODELS/README.md)와 [PRINT-flat-central-housings.md](hardware/MODELS/PRINT-flat-central-housings.md)를 따르십시오. 자석형은 기존 두 쌍만 유지하며, 컨트롤러 쪽 세 번째 홈은 안전 여유가 없어 추가하지 않았습니다. 현재 검증 manifest는 `hardware/MODELS/kc2_flat_central_housing_manifest.json`입니다. 아래의 과거 `hardware/case` 경로 설명은 이력으로만 보십시오.
